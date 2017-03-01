@@ -1,7 +1,7 @@
-JavaPoet
-========
+KotlinPoet
+==========
 
-`JavaPoet` is a Java API for generating `.java` source files.
+`JavaPoet` is a Kotlin and Java API for generating `.kt` source files.
 
 Source file generation can be useful when doing things such as annotation processing or interacting
 with metadata files (e.g., database schemas, protocol formats). By generating code, you eliminate
@@ -12,13 +12,11 @@ the need to write boilerplate while also keeping a single source of truth for th
 
 Here's a (boring) `HelloWorld` class:
 
-```java
-package com.example.helloworld;
+```kotlin
+package com.example.helloworld
 
-public final class HelloWorld {
-  public static void main(String[] args) {
-    System.out.println("Hello, JavaPoet!");
-  }
+fun main(vararg args: String) {
+  println("Hello, KotlinPoet!")
 }
 ```
 
@@ -836,13 +834,13 @@ Download [the latest .jar][dl] or depend via Maven:
 ```xml
 <dependency>
   <groupId>com.squareup</groupId>
-  <artifactId>javapoet</artifactId>
-  <version>1.8.0</version>
+  <artifactId>kotlinpoet</artifactId>
+  <version>0.1.0</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'com.squareup:javapoet:1.8.0'
+compile 'com.squareup:kotlinpoet:0.1.0'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
@@ -868,15 +866,6 @@ License
 
 
 
-JavaWriter
-==========
-
-JavaPoet is the successor to [JavaWriter][javawriter]. New projects should prefer JavaPoet because
-it has a stronger code model: it understands types and can manage imports automatically. JavaPoet is
-also better suited to composition: rather than streaming the contents of a `.java` file
-top-to-bottom in a single pass, a file can be assembled as a tree of declarations.
-
-JavaWriter continues to be available in [GitHub][javawriter] and [Maven Central][javawriter_maven].
 
 
  [dl]: https://search.maven.org/remote_content?g=com.squareup&a=javapoet&v=LATEST

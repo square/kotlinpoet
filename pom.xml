@@ -10,12 +10,12 @@
   </parent>
 
   <groupId>com.squareup</groupId>
-  <artifactId>javapoet</artifactId>
-  <version>1.9.0-SNAPSHOT</version>
+  <artifactId>kotlinpoet</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
 
-  <name>JavaPoet</name>
-  <description>Use beautiful Java code to generate beautiful Java code.</description>
-  <url>http://github.com/square/javapoet/</url>
+  <name>KotlinPoet</name>
+  <description>Use beautiful Java code to generate beautiful Kotlin code.</description>
+  <url>http://github.com/square/kotlinpoet/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,15 +27,15 @@
   </properties>
 
   <scm>
-    <url>http://github.com/square/javapoet/</url>
-    <connection>scm:git:git://github.com/square/javapoet.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/square/javapoet.git</developerConnection>
+    <url>http://github.com/square/kotlinpoet/</url>
+    <connection>scm:git:git://github.com/square/kotlinpoet.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/square/kotlinpoet.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>http://github.com/square/javapoet/issues</url>
+    <url>http://github.com/square/kotlinpoet/issues</url>
   </issueManagement>
 
   <licenses>
