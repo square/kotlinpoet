@@ -42,7 +42,7 @@ import static com.squareup.javapoet.Util.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /** A Java file containing a single top level class. */
-public final class JavaFile {
+public final class KotlinFile {
   private static final Appendable NULL_APPENDABLE = new Appendable() {
     @Override public Appendable append(CharSequence charSequence) {
       return this;
@@ -62,7 +62,7 @@ public final class JavaFile {
   private final Set<String> staticImports;
   private final String indent;
 
-  private JavaFile(Builder builder) {
+  private KotlinFile(Builder builder) {
     this.fileComment = builder.fileComment.build();
     this.packageName = builder.packageName;
     this.typeSpec = builder.typeSpec;
@@ -132,13 +132,13 @@ public final class JavaFile {
     }
 
     if (!packageName.isEmpty()) {
-      codeWriter.emit("package $L;\n", packageName);
+      codeWriter.emit("package $L\n", packageName);
       codeWriter.emit("\n");
     }
 
     if (!staticImports.isEmpty()) {
       for (String signature : staticImports) {
-        codeWriter.emit("import static $L;\n", signature);
+        codeWriter.emit("import static $L\n", signature);
       }
       codeWriter.emit("\n");
     }
@@ -146,7 +146,7 @@ public final class JavaFile {
     int importedTypesCount = 0;
     for (ClassName className : new TreeSet<>(codeWriter.importedTypes().values())) {
       if (skipJavaLangImports && className.packageName().equals("java.lang")) continue;
-      codeWriter.emit("import $L;\n", className);
+      codeWriter.emit("import $L\n", className);
       importedTypesCount++;
     }
 
@@ -188,7 +188,7 @@ public final class JavaFile {
     return new SimpleJavaFileObject(uri, Kind.SOURCE) {
       private final long lastModified = System.currentTimeMillis();
       @Override public String getCharContent(boolean ignoreEncodingErrors) {
-        return JavaFile.this.toString();
+        return KotlinFile.this.toString();
       }
       @Override public InputStream openInputStream() throws IOException {
         return new ByteArrayInputStream(getCharContent(true).getBytes(UTF_8));
@@ -268,8 +268,8 @@ public final class JavaFile {
       return this;
     }
 
-    public JavaFile build() {
-      return new JavaFile(this);
+    public KotlinFile build() {
+      return new KotlinFile(this);
     }
   }
 }

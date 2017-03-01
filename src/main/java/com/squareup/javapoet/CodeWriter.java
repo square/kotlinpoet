@@ -37,7 +37,7 @@ import static com.squareup.javapoet.Util.join;
 import static com.squareup.javapoet.Util.stringLiteralWithDoubleQuotes;
 
 /**
- * Converts a {@link JavaFile} to a string suitable to both human- and javac-consumption. This
+ * Converts a {@link KotlinFile} to a string suitable to both human- and javac-consumption. This
  * honors imports, indentation, and deferred variable names.
  */
 final class CodeWriter {

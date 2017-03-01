@@ -50,12 +50,12 @@ public final class FileWritingTest {
 
   @Test public void pathNotDirectory() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile javaFile = JavaFile.builder("example", type).build();
+    KotlinFile kotlinFile = KotlinFile.builder("example", type).build();
     Path path = fs.getPath("/foo/bar");
     Files.createDirectories(path.getParent());
     Files.createFile(path);
     try {
-      javaFile.writeTo(path);
+      kotlinFile.writeTo(path);
       fail();
     } catch (IllegalArgumentException e) {
       assertThat(e.getMessage()).isEqualTo("path /foo/bar exists but is not a directory.");
@@ -64,11 +64,11 @@ public final class FileWritingTest {
 
   @Test public void fileNotDirectory() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile javaFile = JavaFile.builder("example", type).build();
+    KotlinFile kotlinFile = KotlinFile.builder("example", type).build();
     File file = new File(tmp.newFolder("foo"), "bar");
     file.createNewFile();
     try {
-      javaFile.writeTo(file);
+      kotlinFile.writeTo(file);
       fail();
     } catch (IllegalArgumentException e) {
       assertThat(e.getMessage()).isEqualTo(
@@ -78,7 +78,7 @@ public final class FileWritingTest {
 
   @Test public void pathDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("", type).build().writeTo(fsRoot);
+    KotlinFile.builder("", type).build().writeTo(fsRoot);
 
     Path testPath = fsRoot.resolve("Test.java");
     assertThat(Files.exists(testPath)).isTrue();
@@ -86,7 +86,7 @@ public final class FileWritingTest {
 
   @Test public void fileDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("", type).build().writeTo(tmp.getRoot());
+    KotlinFile.builder("", type).build().writeTo(tmp.getRoot());
 
     File testFile = new File(tmp.getRoot(), "Test.java");
     assertThat(testFile.exists()).isTrue();
@@ -94,7 +94,7 @@ public final class FileWritingTest {
 
   @Test public void filerDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("", type).build().writeTo(filer);
+    KotlinFile.builder("", type).build().writeTo(filer);
 
     Path testPath = fsRoot.resolve("Test.java");
     assertThat(Files.exists(testPath)).isTrue();
@@ -102,9 +102,9 @@ public final class FileWritingTest {
 
   @Test public void pathNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("foo", type).build().writeTo(fsRoot);
-    JavaFile.builder("foo.bar", type).build().writeTo(fsRoot);
-    JavaFile.builder("foo.bar.baz", type).build().writeTo(fsRoot);
+    KotlinFile.builder("foo", type).build().writeTo(fsRoot);
+    KotlinFile.builder("foo.bar", type).build().writeTo(fsRoot);
+    KotlinFile.builder("foo.bar.baz", type).build().writeTo(fsRoot);
 
     Path fooPath = fsRoot.resolve(fs.getPath("foo", "Test.java"));
     Path barPath = fsRoot.resolve(fs.getPath("foo", "bar", "Test.java"));
@@ -116,9 +116,9 @@ public final class FileWritingTest {
 
   @Test public void fileNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("foo", type).build().writeTo(tmp.getRoot());
-    JavaFile.builder("foo.bar", type).build().writeTo(tmp.getRoot());
-    JavaFile.builder("foo.bar.baz", type).build().writeTo(tmp.getRoot());
+    KotlinFile.builder("foo", type).build().writeTo(tmp.getRoot());
+    KotlinFile.builder("foo.bar", type).build().writeTo(tmp.getRoot());
+    KotlinFile.builder("foo.bar.baz", type).build().writeTo(tmp.getRoot());
 
     File fooDir = new File(tmp.getRoot(), "foo");
     File fooFile = new File(fooDir, "Test.java");
@@ -133,9 +133,9 @@ public final class FileWritingTest {
 
   @Test public void filerNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
-    JavaFile.builder("foo", type).build().writeTo(filer);
-    JavaFile.builder("foo.bar", type).build().writeTo(filer);
-    JavaFile.builder("foo.bar.baz", type).build().writeTo(filer);
+    KotlinFile.builder("foo", type).build().writeTo(filer);
+    KotlinFile.builder("foo.bar", type).build().writeTo(filer);
+    KotlinFile.builder("foo.bar.baz", type).build().writeTo(filer);
 
     Path fooPath = fsRoot.resolve(fs.getPath("foo", "Test.java"));
     Path barPath = fsRoot.resolve(fs.getPath("foo", "bar", "Test.java"));
@@ -158,8 +158,8 @@ public final class FileWritingTest {
         .addOriginatingElement(element2_2)
         .build();
 
-    JavaFile.builder("example", test1).build().writeTo(filer);
-    JavaFile.builder("example", test2).build().writeTo(filer);
+    KotlinFile.builder("example", test1).build().writeTo(filer);
+    KotlinFile.builder("example", test2).build().writeTo(filer);
 
     Path testPath1 = fsRoot.resolve(fs.getPath("example", "Test1.java"));
     assertThat(filer.getOriginatingElements(testPath1)).containsExactly(element1_1);
@@ -176,18 +176,18 @@ public final class FileWritingTest {
             .addCode("$T.out.println($S);\n", System.class, "Hello World!")
             .build())
         .build();
-    JavaFile.builder("foo", test).indent("\t").build().writeTo(filer);
+    KotlinFile.builder("foo", test).indent("\t").build().writeTo(filer);
 
     Path fooPath = fsRoot.resolve(fs.getPath("foo", "Test.java"));
     assertThat(Files.exists(fooPath)).isTrue();
     String source = new String(Files.readAllBytes(fooPath));
 
     assertThat(source).isEqualTo(""
-        + "package foo;\n"
+        + "package foo\n"
         + "\n"
-        + "import java.lang.String;\n"
-        + "import java.lang.System;\n"
-        + "import java.util.Date;\n"
+        + "import java.lang.String\n"
+        + "import java.lang.System\n"
+        + "import java.util.Date\n"
         + "\n"
         + "class Test {\n"
         + "\tDate madeFreshDate;\n"
@@ -203,15 +203,15 @@ public final class FileWritingTest {
    * charset is customized with {@code -Dfile.encoding=ISO-8859-1}.
    */
   @Test public void fileIsUtf8() throws IOException {
-    JavaFile javaFile = JavaFile.builder("foo", TypeSpec.classBuilder("Taco").build())
+    KotlinFile kotlinFile = KotlinFile.builder("foo", TypeSpec.classBuilder("Taco").build())
         .addFileComment("Pi\u00f1ata\u00a1")
         .build();
-    javaFile.writeTo(fsRoot);
+    kotlinFile.writeTo(fsRoot);
 
     Path fooPath = fsRoot.resolve(fs.getPath("foo", "Taco.java"));
     assertThat(new String(Files.readAllBytes(fooPath), UTF_8)).isEqualTo(""
         + "// Pi\u00f1ata\u00a1\n"
-        + "package foo;\n"
+        + "package foo\n"
         + "\n"
         + "class Taco {\n"
         + "}\n");

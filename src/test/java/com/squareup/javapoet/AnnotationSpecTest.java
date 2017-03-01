@@ -123,12 +123,12 @@ public final class AnnotationSpecTest {
         .addAnnotation(annotation)
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.javapoet.AnnotationSpecTest;\n"
-        + "import java.lang.Double;\n"
-        + "import java.lang.Float;\n"
-        + "import java.lang.Override;\n"
+        + "import com.squareup.javapoet.AnnotationSpecTest\n"
+        + "import java.lang.Double\n"
+        + "import java.lang.Float\n"
+        + "import java.lang.Override\n"
         + "\n"
         + "@AnnotationSpecTest.HasDefaultsAnnotation(\n"
         + "    o = AnnotationSpecTest.Breakfast.PANCAKES,\n"
@@ -157,13 +157,13 @@ public final class AnnotationSpecTest {
     AnnotationSpec annotation = AnnotationSpec.get(element.getAnnotationMirrors().get(0));
     TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(IsAnnotated.class.getSimpleName());
     typeBuilder.addAnnotation(annotation);
-    JavaFile file = JavaFile.builder("com.squareup.javapoet", typeBuilder.build()).build();
+    KotlinFile file = KotlinFile.builder("com.squareup.javapoet", typeBuilder.build()).build();
     assertThat(file.toString()).isEqualTo(
-        "package com.squareup.javapoet;\n"
+        "package com.squareup.javapoet\n"
             + "\n"
-            + "import java.lang.Double;\n"
-            + "import java.lang.Float;\n"
-            + "import java.lang.Override;\n"
+            + "import java.lang.Double\n"
+            + "import java.lang.Float\n"
+            + "import java.lang.Override\n"
             + "\n"
             + "@AnnotationSpecTest.HasDefaultsAnnotation(\n"
             + "    o = AnnotationSpecTest.Breakfast.PANCAKES,\n"
@@ -265,12 +265,12 @@ public final class AnnotationSpecTest {
         .addAnnotation(spec)
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.javapoet.AnnotationSpecTest;\n"
-        + "import java.lang.Double;\n"
-        + "import java.lang.Float;\n"
-        + "import java.lang.Override;\n"
+        + "import com.squareup.javapoet.AnnotationSpecTest\n"
+        + "import java.lang.Double\n"
+        + "import java.lang.Float\n"
+        + "import java.lang.Override\n"
         + "\n"
         + "@AnnotationSpecTest.HasDefaultsAnnotation(\n"
         + "    f = 11.1,\n"
@@ -299,12 +299,12 @@ public final class AnnotationSpecTest {
         .addAnnotation(spec)
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.javapoet.AnnotationSpecTest;\n"
-        + "import java.lang.Double;\n"
-        + "import java.lang.Float;\n"
-        + "import java.lang.Override;\n"
+        + "import com.squareup.javapoet.AnnotationSpecTest\n"
+        + "import java.lang.Double\n"
+        + "import java.lang.Float\n"
+        + "import java.lang.Override\n"
         + "\n"
         + "@AnnotationSpecTest.HasDefaultsAnnotation(\n"
         + "    a = 5,\n"
@@ -351,6 +351,6 @@ public final class AnnotationSpecTest {
   }
 
   private String toString(TypeSpec typeSpec) {
-    return JavaFile.builder("com.squareup.tacos", typeSpec).build().toString();
+    return KotlinFile.builder("com.squareup.tacos", typeSpec).build().toString();
   }
 }

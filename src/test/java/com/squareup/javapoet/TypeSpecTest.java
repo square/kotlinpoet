@@ -71,10 +71,10 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  @Override\n"
@@ -98,11 +98,11 @@ public final class TypeSpecTest {
         .addField(listOfSuper, "superString")
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.lang.String;\n"
-        + "import java.util.List;\n"
+        + "import java.io.Serializable\n"
+        + "import java.lang.String\n"
+        + "import java.util.List\n"
         + "\n"
         + "class Taco {\n"
         + "  List<?> extendsObject;\n"
@@ -154,9 +154,9 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
+        + "import java.lang.Override\n"
         + "\n"
         + "class Taco {\n"
         + "  static final Thing.Thang<Foo, Bar> NAME = new Thing.Thang<Foo, Bar>() {\n"
@@ -197,9 +197,9 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(service)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Foo {\n"
         + "  public Foo(long id, @Ping String one, @Ping String two, @Pong(\"pong\") String three,\n"
@@ -221,10 +221,10 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
-        + "import javax.annotation.FreeRange;\n"
+        + "import java.lang.String\n"
+        + "import javax.annotation.FreeRange\n"
         + "\n"
         + "class EthicalTaco {\n"
         + "  @FreeRange String meat;\n"
@@ -272,10 +272,10 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(service)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
-        + "import java.util.Map;\n"
+        + "import java.lang.String\n"
+        + "import java.util.Map\n"
         + "\n"
         + "interface Service {\n"
         + "  @Headers({\n"
@@ -298,9 +298,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  @JsonAdapter(Foo.class)\n"
@@ -319,7 +319,7 @@ public final class TypeSpecTest {
         .addModifiers(Modifier.PUBLIC)
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "@Something(\n"
         + "    hi = SomeType.FIELD,\n"
@@ -356,10 +356,10 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(roshambo)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "public enum Roshambo {\n"
         + "  /**\n"
@@ -403,9 +403,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(roshambo)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
+        + "import java.lang.Override\n"
         + "\n"
         + "public enum Tortilla {\n"
         + "  CORN {\n"
@@ -449,10 +449,10 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(roshambo)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "enum Roshambo {\n"
         + "  SPOCK {\n"
@@ -475,9 +475,9 @@ public final class TypeSpecTest {
         .addEnumConstant("SCISSORS")
         .build();
     assertThat(toString(roshambo)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Deprecated;\n"
+        + "import java.lang.Deprecated\n"
         + "\n"
         + "public enum Roshambo {\n"
         + "  @Deprecated\n"
@@ -509,9 +509,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.IOException;\n"
+        + "import java.io.IOException\n"
         + "\n"
         + "abstract class Taco {\n"
         + "  void throwOne() throws IOException {\n"
@@ -542,7 +542,7 @@ public final class TypeSpecTest {
             .addModifiers(Modifier.PUBLIC)
             .returns(int.class)
             .addParameter(p, "p")
-            .addCode("return 0;\n")
+            .addStatement("return 0")
             .build())
         .addMethod(MethodSpec.methodBuilder("of")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -552,16 +552,16 @@ public final class TypeSpecTest {
             .addParameter(t, "label")
             .addParameter(p, "x")
             .addParameter(p, "y")
-            .addCode("throw new $T($S);\n", UnsupportedOperationException.class, "TODO")
+            .addStatement("throw new $T($S)", UnsupportedOperationException.class, "TODO")
             .build())
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Comparable;\n"
-        + "import java.lang.Number;\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.UnsupportedOperationException;\n"
+        + "import java.lang.Comparable\n"
+        + "import java.lang.Number\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.UnsupportedOperationException\n"
         + "\n"
         + "class Location<T, P extends Number> implements Comparable<P> {\n"
         + "  T label;\n"
@@ -572,11 +572,11 @@ public final class TypeSpecTest {
         + "\n"
         + "  @Override\n"
         + "  public int compareTo(P p) {\n"
-        + "    return 0;\n"
+        + "    return 0\n"
         + "  }\n"
         + "\n"
         + "  public static <T, P extends Number> Location<T, P> of(T label, P x, P y) {\n"
-        + "    throw new UnsupportedOperationException(\"TODO\");\n"
+        + "    throw new UnsupportedOperationException(\"TODO\")\n"
         + "  }\n"
         + "}\n");
   }
@@ -592,10 +592,10 @@ public final class TypeSpecTest {
         .addField(q, "y")
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Comparable;\n"
-        + "import java.lang.Number;\n"
+        + "import java.lang.Comparable\n"
+        + "import java.lang.Number\n"
         + "\n"
         + "class Location<P extends Number & Comparable, Q extends Number & Comparable> {\n"
         + "  P x;\n"
@@ -614,11 +614,11 @@ public final class TypeSpecTest {
         .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable.class), taco))
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.lang.Comparable;\n"
-        + "import java.util.AbstractSet;\n"
+        + "import java.io.Serializable\n"
+        + "import java.lang.Comparable\n"
+        + "import java.util.AbstractSet\n"
         + "\n"
         + "abstract class Taco extends AbstractSet<Food> "
         + "implements Serializable, Comparable<Taco> {\n"
@@ -635,9 +635,9 @@ public final class TypeSpecTest {
         .addSuperinterface(tacoBellTaco)
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Comparable;\n"
+        + "import java.lang.Comparable\n"
         + "\n"
         + "class Taco extends org.fish.taco.Taco "
         + "implements Comparable<Taco>, com.taco.bell.Taco {\n"
@@ -657,9 +657,9 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.util.concurrent.Callable;\n"
+        + "import java.util.concurrent.Callable\n"
         + "\n"
         + "class Outer extends Callable<Outer.Inner> {\n"
         + "  static class Inner {\n"
@@ -675,10 +675,10 @@ public final class TypeSpecTest {
         .addEnumConstant("SHREDDED_CHEESE")
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.lang.Cloneable;\n"
+        + "import java.io.Serializable\n"
+        + "import java.lang.Cloneable\n"
         + "\n"
         + "enum Food implements Serializable, Cloneable {\n"
         + "  LEAN_GROUND_BEEF,\n"
@@ -694,10 +694,10 @@ public final class TypeSpecTest {
         .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable.class), taco))
         .build();
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.lang.Comparable;\n"
+        + "import java.io.Serializable\n"
+        + "import java.lang.Comparable\n"
         + "\n"
         + "interface Taco extends Serializable, Comparable<Taco> {\n"
         + "}\n");
@@ -735,9 +735,9 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(typeSpec)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.util.List;\n"
+        + "import java.util.List\n"
         + "\n"
         + "class Combo {\n"
         + "  Taco taco;\n"
@@ -787,7 +787,7 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(annotation)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "public @interface MyAnnotation {\n"
         + "  int test() default 0;\n"
@@ -805,9 +805,9 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(bar)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Deprecated;\n"
+        + "import java.lang.Deprecated\n"
         + "\n"
         + "@interface Bar {\n"
         + "  Deprecated value() default @Deprecated;\n"
@@ -826,7 +826,7 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(anno)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "@interface Anno {\n"
         + "  int FOO = 101;\n"
@@ -876,11 +876,11 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(bar)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "interface Tacos {\n"
         + "  static int test() {\n"
-        + "    return 0;\n"
+        + "    return 0\n"
         + "  }\n"
         + "}\n"
     );
@@ -898,11 +898,11 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(bar)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "interface Tacos {\n"
         + "  default int test() {\n"
-        + "    return 0;\n"
+        + "    return 0\n"
         + "  }\n"
         + "}\n"
     );
@@ -936,9 +936,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(top)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.donuts.Bottom;\n"
+        + "import com.squareup.donuts.Bottom\n"
         + "\n"
         + "class Top {\n"
         + "  Top internalTop;\n"
@@ -981,7 +981,7 @@ public final class TypeSpecTest {
         .addField(externalOther)
         .build();
     assertThat(toString(gen)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Gen {\n"
         + "  Other internalOther;\n"
@@ -1012,10 +1012,10 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.util.Comparator;\n"
+        + "import java.io.Serializable\n"
+        + "import java.util.Comparator\n"
         + "\n"
         + "class Taco {\n"
         + "  <T extends Comparator & Serializable> T getComparator() {\n"
@@ -1029,7 +1029,7 @@ public final class TypeSpecTest {
         .addField(int[].class, "ints")
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  int[] ints;\n"
@@ -1054,9 +1054,9 @@ public final class TypeSpecTest {
     // Mentioning a type in Javadoc will not cause an import to be added (java.util.Random here),
     // but the short name will be used if it's already imported (java.util.Locale here).
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.util.Locale;\n"
+        + "import java.util.Locale\n"
         + "\n"
         + "/**\n"
         + " * A hard or soft tortilla, loosely folded and filled with whatever {@link \n"
@@ -1098,7 +1098,7 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(menu)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "@MealDeal(\n"
         + "    price = 500,\n"
@@ -1120,9 +1120,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taqueria)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Runnable;\n"
+        + "import java.lang.Runnable\n"
         + "\n"
         + "class Taqueria {\n"
         + "  void prepare(int workers, Runnable... jobs) {\n"
@@ -1170,13 +1170,13 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(util)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.google.common.collect.ImmutableMap;\n"
-        + "import java.lang.Math;\n"
-        + "import java.lang.String;\n"
-        + "import java.util.List;\n"
-        + "import java.util.Map;\n"
+        + "import com.google.common.collect.ImmutableMap\n"
+        + "import java.lang.Math\n"
+        + "import java.lang.String\n"
+        + "import java.util.List\n"
+        + "import java.util.Map\n"
         + "\n"
         + "class Util {\n"
         + "  private static final Map<String, String> ESCAPE_HTML = \n"
@@ -1188,15 +1188,15 @@ public final class TypeSpecTest {
         + "          .build();\n"
         + "\n"
         + "  int commonPrefixLength(List<String> listA, List<String> listB) {\n"
-        + "    int size = Math.min(listA.size(), listB.size());\n"
+        + "    int size = Math.min(listA.size(), listB.size())\n"
         + "    for (int i = 0; i < size; i++) {\n"
-        + "      String a = listA.get(i);\n"
-        + "      String b = listB.get(i);\n"
+        + "      String a = listA.get(i)\n"
+        + "      String b = listB.get(i)\n"
         + "      if (!a.equals(b)) {\n"
-        + "        return i;\n"
+        + "        return i\n"
         + "      }\n"
         + "    }\n"
-        + "    return size;\n"
+        + "    return size\n"
         + "  }\n"
         + "}\n");
   }
@@ -1212,16 +1212,16 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.System;\n"
+        + "import java.lang.System\n"
         + "\n"
         + "class Taco {\n"
         + "  void choices() {\n"
         + "    if (taco != null || taco == otherTaco) {\n"
-        + "      System.out.println(\"only one taco? NOO!\");\n"
+        + "      System.out.println(\"only one taco? NOO!\")\n"
         + "    } else if (taco.isSupreme() && otherTaco.isSupreme()) {\n"
-        + "      System.out.println(\"taco heaven\");\n"
+        + "      System.out.println(\"taco heaven\")\n"
         + "    }\n"
         + "  }\n"
         + "}\n");
@@ -1238,39 +1238,17 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.System;\n"
+        + "import java.lang.System\n"
         + "\n"
         + "class Taco {\n"
         + "  void choices() {\n"
         + "    if (5 < 4)  {\n"
-        + "      System.out.println(\"wat\");\n"
+        + "      System.out.println(\"wat\")\n"
         + "    } else if (5 < 6) {\n"
-        + "      System.out.println(\"hello\");\n"
+        + "      System.out.println(\"hello\")\n"
         + "    }\n"
-        + "  }\n"
-        + "}\n");
-  }
-
-  @Test public void doWhile() throws Exception {
-    TypeSpec taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("loopForever")
-            .beginControlFlow("do")
-            .addStatement("$T.out.println($S)", System.class, "hello")
-            .endControlFlow("while (5 < 6)")
-            .build())
-        .build();
-    assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
-        + "\n"
-        + "import java.lang.System;\n"
-        + "\n"
-        + "class Taco {\n"
-        + "  void loopForever() {\n"
-        + "    do {\n"
-        + "      System.out.println(\"hello\");\n"
-        + "    } while (5 < 6);\n"
         + "  }\n"
         + "}\n");
   }
@@ -1282,9 +1260,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.System;\n"
+        + "import java.lang.System\n"
         + "\n"
         + "class Taco {\n"
         + "  void inlineIndent() {\n"
@@ -1309,9 +1287,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "interface Taco {\n"
         + "  String SHELL = \"crunchy corn\";\n"
@@ -1337,7 +1315,7 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  static class Meat {\n"
@@ -1370,9 +1348,9 @@ public final class TypeSpecTest {
         .build();
     // Static fields, instance fields, constructors, methods, classes.
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Members {\n"
         + "  static String X;\n"
@@ -1422,16 +1400,16 @@ public final class TypeSpecTest {
             .addCode(CodeBlock.builder()
                 .add(" /*-{\n")
                 .indent()
-                .addStatement("$$wnd.alert(msg)")
+                .addStatement("$$wnd.alert(msg);")
                 .unindent()
                 .add("}-*/")
                 .build())
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  native int nativeInt();\n"
@@ -1449,9 +1427,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  String NULL = null;\n"
@@ -1469,7 +1447,7 @@ public final class TypeSpecTest {
     CodeBlock codeBlock = CodeBlock.builder()
         .addStatement("$T $N = $S.substring(0, 3)", String.class, "s", "taco")
         .build();
-    assertThat(codeBlock.toString()).isEqualTo("java.lang.String s = \"taco\".substring(0, 3);\n");
+    assertThat(codeBlock.toString()).isEqualTo("java.lang.String s = \"taco\".substring(0, 3)\n");
   }
 
   @Test public void fieldToString() throws Exception {
@@ -1490,7 +1468,7 @@ public final class TypeSpecTest {
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public java.lang.String toString() {\n"
-        + "  return \"taco\";\n"
+        + "  return \"taco\"\n"
         + "}\n");
   }
 
@@ -1502,7 +1480,7 @@ public final class TypeSpecTest {
         .build();
     assertThat(constructor.toString()).isEqualTo(""
         + "public Constructor(com.squareup.tacos.Taco taco) {\n"
-        + "  this.taco = taco;\n"
+        + "  this.taco = taco\n"
         + "}\n");
   }
 
@@ -1556,7 +1534,7 @@ public final class TypeSpecTest {
   }
 
   private String toString(TypeSpec typeSpec) {
-    return JavaFile.builder(tacosPackage, typeSpec).build().toString();
+    return KotlinFile.builder(tacosPackage, typeSpec).build().toString();
   }
 
   @Test public void multilineStatement() throws Exception {
@@ -1570,10 +1548,10 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  @Override\n"
@@ -1582,7 +1560,7 @@ public final class TypeSpecTest {
         + "        + \"beef,\"\n"
         + "        + \"lettuce,\"\n"
         + "        + \"cheese\"\n"
-        + "        + \")\";\n"
+        + "        + \")\"\n"
         + "  }\n"
         + "}\n");
   }
@@ -1615,13 +1593,13 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
-        + "import java.util.Collections;\n"
-        + "import java.util.Comparator;\n"
-        + "import java.util.List;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
+        + "import java.util.Collections\n"
+        + "import java.util.Comparator\n"
+        + "import java.util.List\n"
         + "\n"
         + "class Taco {\n"
         + "  Comparator<String> comparePrefix(final int length) {\n"
@@ -1629,9 +1607,9 @@ public final class TypeSpecTest {
         + "      @Override\n"
         + "      public int compare(String a, String b) {\n"
         + "        return a.substring(0, length)\n"
-        + "            .compareTo(b.substring(0, length));\n"
+        + "            .compareTo(b.substring(0, length))\n"
         + "      }\n"
-        + "    };\n"
+        + "    }\n"
         + "  }\n"
         + "\n"
         + "  void sortPrefix(List<String> list, final int length) {\n"
@@ -1641,9 +1619,9 @@ public final class TypeSpecTest {
         + "          @Override\n"
         + "          public int compare(String a, String b) {\n"
         + "            return a.substring(0, length)\n"
-        + "                .compareTo(b.substring(0, length));\n"
+        + "                .compareTo(b.substring(0, length))\n"
         + "          }\n"
-        + "        });\n"
+        + "        })\n"
         + "  }\n"
         + "}\n");
   }
@@ -1655,9 +1633,9 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  String toppings = \"shell\\n\"\n"
@@ -1706,10 +1684,10 @@ public final class TypeSpecTest {
             AnnotationSpec.builder(Deprecated.class).build()))
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Deprecated;\n"
-        + "import java.lang.SuppressWarnings;\n"
+        + "import java.lang.Deprecated\n"
+        + "import java.lang.SuppressWarnings\n"
         + "\n"
         + "@SuppressWarnings(\"unchecked\")\n"
         + "@Deprecated\n"
@@ -1734,9 +1712,9 @@ public final class TypeSpecTest {
             FieldSpec.builder(BigDecimal.class, "price", Modifier.PRIVATE).build()))
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.math.BigDecimal;\n"
+        + "import java.math.BigDecimal\n"
         + "\n"
         + "class Taco {\n"
         + "  static final int ANSWER;\n"
@@ -1771,17 +1749,17 @@ public final class TypeSpecTest {
                 .build()))
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  public static int getAnswer() {\n"
-        + "    return 42;\n"
+        + "    return 42\n"
         + "  }\n"
         + "\n"
         + "  /**\n"
         + "   * chosen by fair dice roll ;) */\n"
         + "  public int getRandomQuantity() {\n"
-        + "    return 4;\n"
+        + "    return 4\n"
         + "  }\n"
         + "}\n");
   }
@@ -1827,10 +1805,10 @@ public final class TypeSpecTest {
             TypeName.get(EventListener.class)))
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.io.Serializable;\n"
-        + "import java.util.EventListener;\n"
+        + "import java.io.Serializable\n"
+        + "import java.util.EventListener\n"
         + "\n"
         + "class Taco implements Serializable, EventListener {\n"
         + "}\n");
@@ -1853,9 +1831,9 @@ public final class TypeSpecTest {
             TypeVariableName.get("P", Number.class)))
         .build();
     assertThat(toString(location)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Number;\n"
+        + "import java.lang.Number\n"
         + "\n"
         + "class Location<T, P extends Number> {\n"
         + "}\n");
@@ -1878,7 +1856,7 @@ public final class TypeSpecTest {
             TypeSpec.classBuilder("Sauce").build()))
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  class Topping {\n"
@@ -1901,7 +1879,7 @@ public final class TypeSpecTest {
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  void addTopping(Topping topping) {\n"
@@ -1928,14 +1906,14 @@ public final class TypeSpecTest {
         )
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  boolean isDelicious(int count) {\n"
         + "    if (count > 0) {\n"
-        + "      return true;\n"
+        + "      return true\n"
         + "    } else {\n"
-        + "      return false;\n"
+        + "      return false\n"
         + "    }\n"
         + "  }\n"
         + "}\n");
@@ -2111,27 +2089,27 @@ public final class TypeSpecTest {
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String.class)
-            .addCode("return FOO;\n")
+            .addStatement("return FOO")
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  private static final String FOO;\n"
         + "\n"
         + "  static {\n"
-        + "    FOO = \"FOO\";\n"
+        + "    FOO = \"FOO\"\n"
         + "  }\n"
         + "\n"
         + "  private String foo;\n"
         + "\n"
         + "  @Override\n"
         + "  public String toString() {\n"
-        + "    return FOO;\n"
+        + "    return FOO\n"
         + "  }\n"
         + "}\n");
   }
@@ -2148,29 +2126,29 @@ public final class TypeSpecTest {
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String.class)
-            .addCode("return FOO;\n")
+            .addStatement("return FOO")
             .build())
         .addInitializerBlock(CodeBlock.builder()
             .addStatement("foo = $S", "FOO")
             .build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  private static final String FOO;\n"
         + "\n"
         + "  static {\n"
-        + "    FOO = \"FOO\";\n"
+        + "    FOO = \"FOO\"\n"
         + "  }\n"
         + "\n"
         + "  private String foo;\n"
         + "\n"
         + "  {\n"
-        + "    foo = \"FOO\";\n"
+        + "    foo = \"FOO\"\n"
         + "  }\n"
         + "\n"
         + "  Taco() {\n"
@@ -2178,7 +2156,7 @@ public final class TypeSpecTest {
         + "\n"
         + "  @Override\n"
         + "  public String toString() {\n"
-        + "    return FOO;\n"
+        + "    return FOO\n"
         + "  }\n"
         + "}\n");
   }
@@ -2196,7 +2174,7 @@ public final class TypeSpecTest {
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String.class)
-            .addCode("return FOO;\n")
+            .addStatement("return FOO")
             .build())
         .addInitializerBlock(CodeBlock.builder()
             .addStatement("foo = $S", "FOO")
@@ -2216,28 +2194,28 @@ public final class TypeSpecTest {
         .build();
 
     assertThat(toString(initializersAdded)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.Override;\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.Override\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  private static final String FOO;\n"
         + "\n"
         + "  static {\n"
-        + "    FOO = \"FOO\";\n"
+        + "    FOO = \"FOO\"\n"
         + "  }\n"
         + "  static {\n"
-        + "    FOO = \"staticFoo\";\n"
+        + "    FOO = \"staticFoo\"\n"
         + "  }\n"
         + "\n"
         + "  private String foo;\n"
         + "\n"
         + "  {\n"
-        + "    foo = \"FOO\";\n"
+        + "    foo = \"FOO\"\n"
         + "  }\n"
         + "  {\n"
-        + "    foo = \"instanceFoo\";\n"
+        + "    foo = \"instanceFoo\"\n"
         + "  }\n"
         + "\n"
         + "  Taco() {\n"
@@ -2245,7 +2223,7 @@ public final class TypeSpecTest {
         + "\n"
         + "  @Override\n"
         + "  public String toString() {\n"
-        + "    return FOO;\n"
+        + "    return FOO\n"
         + "  }\n"
         + "}\n");
   }
@@ -2281,9 +2259,9 @@ public final class TypeSpecTest {
         .addMethod(methodBuilder.build())
         .build();
     assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.lang.String;\n"
+        + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
         + "  void call(String s0, String s1, String s2, String s3, String s4, String s5, String s6, String s7,\n"

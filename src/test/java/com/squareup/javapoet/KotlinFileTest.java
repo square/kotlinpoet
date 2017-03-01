@@ -27,7 +27,7 @@ import org.junit.runners.JUnit4;
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(JUnit4.class)
-public final class JavaFileTest {
+public final class KotlinFileTest {
   @Test public void importStaticReadmeExample() {
     ClassName hoverboard = ClassName.get("com.mattel", "Hoverboard");
     ClassName namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards");
@@ -46,36 +46,36 @@ public final class JavaFileTest {
     TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
         .addMethod(beyond)
         .build();
-    JavaFile example = JavaFile.builder("com.example.helloworld", hello)
+    KotlinFile example = KotlinFile.builder("com.example.helloworld", hello)
         .addStaticImport(hoverboard, "createNimbus")
         .addStaticImport(namedBoards, "*")
         .addStaticImport(Collections.class, "*")
         .build();
     assertThat(example.toString()).isEqualTo(""
-        + "package com.example.helloworld;\n"
+        + "package com.example.helloworld\n"
         + "\n"
-        + "import static com.mattel.Hoverboard.Boards.*;\n"
-        + "import static com.mattel.Hoverboard.createNimbus;\n"
-        + "import static java.util.Collections.*;\n"
+        + "import static com.mattel.Hoverboard.Boards.*\n"
+        + "import static com.mattel.Hoverboard.createNimbus\n"
+        + "import static java.util.Collections.*\n"
         + "\n"
-        + "import com.mattel.Hoverboard;\n"
-        + "import java.util.ArrayList;\n"
-        + "import java.util.List;\n"
+        + "import com.mattel.Hoverboard\n"
+        + "import java.util.ArrayList\n"
+        + "import java.util.List\n"
         + "\n"
         + "class HelloWorld {\n"
         + "  List<Hoverboard> beyond() {\n"
-        + "    List<Hoverboard> result = new ArrayList<>();\n"
-        + "    result.add(createNimbus(2000));\n"
-        + "    result.add(createNimbus(\"2001\"));\n"
-        + "    result.add(createNimbus(THUNDERBOLT));\n"
-        + "    sort(result);\n"
-        + "    return result.isEmpty() ? emptyList() : result;\n"
+        + "    List<Hoverboard> result = new ArrayList<>()\n"
+        + "    result.add(createNimbus(2000))\n"
+        + "    result.add(createNimbus(\"2001\"))\n"
+        + "    result.add(createNimbus(THUNDERBOLT))\n"
+        + "    sort(result)\n"
+        + "    return result.isEmpty() ? emptyList() : result\n"
         + "  }\n"
         + "}\n");
   }
   @Test public void importStaticForCrazyFormatsWorks() {
     MethodSpec method = MethodSpec.methodBuilder("method").build();
-    JavaFile.builder("com.squareup.tacos",
+    KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
                 .addStatement("$T", Runtime.class)
@@ -98,7 +98,7 @@ public final class JavaFileTest {
   }
 
   @Test public void importStaticMixed() {
-    JavaFile source = JavaFile.builder("com.squareup.tacos",
+    KotlinFile source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
                 .addStatement("assert $1T.valueOf(\"BLOCKED\") == $1T.BLOCKED", Thread.State.class)
@@ -115,19 +115,19 @@ public final class JavaFileTest {
         .addStaticImport(Thread.State.class, "valueOf")
         .build();
     assertThat(source.toString()).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import static java.lang.System.*;\n"
-        + "import static java.lang.Thread.State.BLOCKED;\n"
-        + "import static java.lang.Thread.State.valueOf;\n"
+        + "import static java.lang.System.*\n"
+        + "import static java.lang.Thread.State.BLOCKED\n"
+        + "import static java.lang.Thread.State.valueOf\n"
         + "\n"
-        + "import java.lang.Thread;\n"
+        + "import java.lang.Thread\n"
         + "\n"
         + "class Taco {\n"
         + "  static {\n"
-        + "    assert valueOf(\"BLOCKED\") == BLOCKED;\n"
-        + "    gc();\n"
-        + "    out.println(nanoTime());\n"
+        + "    assert valueOf(\"BLOCKED\") == BLOCKED\n"
+        + "    gc()\n"
+        + "    out.println(nanoTime())\n"
         + "  }\n"
         + "\n"
         + "  Taco(Thread.State... states) {\n"
@@ -137,7 +137,7 @@ public final class JavaFileTest {
 
   @Ignore("addStaticImport doesn't support members with $L")
   @Test public void importStaticDynamic() {
-    JavaFile source = JavaFile.builder("com.squareup.tacos",
+    KotlinFile source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addMethod(MethodSpec.methodBuilder("main")
                 .addStatement("$T.$L.println($S)", System.class, "out", "hello")
@@ -158,74 +158,74 @@ public final class JavaFileTest {
   }
 
   @Test public void importStaticNone() {
-    assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
+    assertThat(KotlinFile.builder("readme", importStaticTypeSpec("Util"))
         .build().toString()).isEqualTo(""
-        + "package readme;\n"
+        + "package readme\n"
         + "\n"
-        + "import java.lang.System;\n"
-        + "import java.util.concurrent.TimeUnit;\n"
+        + "import java.lang.System\n"
+        + "import java.util.concurrent.TimeUnit\n"
         + "\n"
         + "class Util {\n"
         + "  public static long minutesToSeconds(long minutes) {\n"
-        + "    System.gc();\n"
-        + "    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES);\n"
+        + "    System.gc()\n"
+        + "    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)\n"
         + "  }\n"
         + "}\n");
   }
 
   @Test public void importStaticOnce() {
-    assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
+    assertThat(KotlinFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS)
         .build().toString()).isEqualTo(""
-        + "package readme;\n"
+        + "package readme\n"
         + "\n"
-        + "import static java.util.concurrent.TimeUnit.SECONDS;\n"
+        + "import static java.util.concurrent.TimeUnit.SECONDS\n"
         + "\n"
-        + "import java.lang.System;\n"
-        + "import java.util.concurrent.TimeUnit;\n"
+        + "import java.lang.System\n"
+        + "import java.util.concurrent.TimeUnit\n"
         + "\n"
         + "class Util {\n"
         + "  public static long minutesToSeconds(long minutes) {\n"
-        + "    System.gc();\n"
-        + "    return SECONDS.convert(minutes, TimeUnit.MINUTES);\n"
+        + "    System.gc()\n"
+        + "    return SECONDS.convert(minutes, TimeUnit.MINUTES)\n"
         + "  }\n"
         + "}\n");
   }
 
   @Test public void importStaticTwice() {
-    assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
+    assertThat(KotlinFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS)
         .addStaticImport(TimeUnit.MINUTES)
         .build().toString()).isEqualTo(""
-            + "package readme;\n"
+            + "package readme\n"
             + "\n"
-            + "import static java.util.concurrent.TimeUnit.MINUTES;\n"
-            + "import static java.util.concurrent.TimeUnit.SECONDS;\n"
+            + "import static java.util.concurrent.TimeUnit.MINUTES\n"
+            + "import static java.util.concurrent.TimeUnit.SECONDS\n"
             + "\n"
-            + "import java.lang.System;\n"
+            + "import java.lang.System\n"
             + "\n"
             + "class Util {\n"
             + "  public static long minutesToSeconds(long minutes) {\n"
-            + "    System.gc();\n"
-            + "    return SECONDS.convert(minutes, MINUTES);\n"
+            + "    System.gc()\n"
+            + "    return SECONDS.convert(minutes, MINUTES)\n"
             + "  }\n"
             + "}\n");
   }
 
   @Test public void importStaticUsingWildcards() {
-    assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
+    assertThat(KotlinFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.class, "*")
         .addStaticImport(System.class, "*")
         .build().toString()).isEqualTo(""
-            + "package readme;\n"
+            + "package readme\n"
             + "\n"
-            + "import static java.lang.System.*;\n"
-            + "import static java.util.concurrent.TimeUnit.*;\n"
+            + "import static java.lang.System.*\n"
+            + "import static java.util.concurrent.TimeUnit.*\n"
             + "\n"
             + "class Util {\n"
             + "  public static long minutesToSeconds(long minutes) {\n"
-            + "    gc();\n"
-            + "    return SECONDS.convert(minutes, MINUTES);\n"
+            + "    gc()\n"
+            + "    return SECONDS.convert(minutes, MINUTES)\n"
             + "  }\n"
             + "}\n");
   }
@@ -242,28 +242,28 @@ public final class JavaFileTest {
 
   }
   @Test public void noImports() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "}\n");
   }
 
   @Test public void singleImport() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addField(Date.class, "madeFreshDate")
             .build())
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.util.Date;\n"
+        + "import java.util.Date\n"
         + "\n"
         + "class Taco {\n"
         + "  Date madeFreshDate;\n"
@@ -271,7 +271,7 @@ public final class JavaFileTest {
   }
 
   @Test public void conflictingImports() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addField(Date.class, "madeFreshDate")
             .addField(ClassName.get("java.sql", "Date"), "madeFreshDatabaseDate")
@@ -279,9 +279,9 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import java.util.Date;\n"
+        + "import java.util.Date\n"
         + "\n"
         + "class Taco {\n"
         + "  Date madeFreshDate;\n"
@@ -292,7 +292,7 @@ public final class JavaFileTest {
 
   @Test public void skipJavaLangImportsWithConflictingClassLast() throws Exception {
     // Whatever is used first wins! In this case the Float in java.lang is imported.
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addField(ClassName.get("java.lang", "Float"), "litres")
             .addField(ClassName.get("com.squareup.soda", "Float"), "beverage")
@@ -301,7 +301,7 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  Float litres;\n"
@@ -312,7 +312,7 @@ public final class JavaFileTest {
 
   @Test public void skipJavaLangImportsWithConflictingClassFirst() throws Exception {
     // Whatever is used first wins! In this case the Float in com.squareup.soda is imported.
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addField(ClassName.get("com.squareup.soda", "Float"), "beverage")
             .addField(ClassName.get("java.lang", "Float"), "litres")
@@ -321,9 +321,9 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.soda.Float;\n"
+        + "import com.squareup.soda.Float\n"
         + "\n"
         + "class Taco {\n"
         + "  Float beverage;\n"
@@ -333,7 +333,7 @@ public final class JavaFileTest {
   }
 
   @Test public void conflictingParentName() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("Twin").build())
@@ -349,7 +349,7 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class A {\n"
         + "  class B {\n"
@@ -369,7 +369,7 @@ public final class JavaFileTest {
   }
 
   @Test public void conflictingChildName() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
@@ -385,7 +385,7 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class A {\n"
         + "  class B {\n"
@@ -405,7 +405,7 @@ public final class JavaFileTest {
   }
 
   @Test public void conflictingNameOutOfScope() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
@@ -423,7 +423,7 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class A {\n"
         + "  class B {\n"
@@ -445,7 +445,7 @@ public final class JavaFileTest {
   }
 
   @Test public void nestedClassAndSuperclassShareName() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .superclass(ClassName.get("com.squareup.wire", "Message"))
             .addType(TypeSpec.classBuilder("Builder")
@@ -455,9 +455,9 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import com.squareup.wire.Message;\n"
+        + "import com.squareup.wire.Message\n"
         + "\n"
         + "class Taco extends Message {\n"
         + "  class Builder extends Message.Builder {\n"
@@ -467,7 +467,7 @@ public final class JavaFileTest {
 
   /** https://github.com/square/javapoet/issues/366 */
   @Test public void annotationIsNestedClass() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("TestComponent")
             .addAnnotation(ClassName.get("dagger", "Component"))
             .addType(TypeSpec.classBuilder("Builder")
@@ -477,9 +477,9 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
-        + "import dagger.Component;\n"
+        + "import dagger.Component\n"
         + "\n"
         + "@Component\n"
         + "class TestComponent {\n"
@@ -490,7 +490,7 @@ public final class JavaFileTest {
   }
 
   @Test public void defaultPackage() throws Exception {
-    String source = JavaFile.builder("",
+    String source = KotlinFile.builder("",
         TypeSpec.classBuilder("HelloWorld")
             .addMethod(MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -501,8 +501,8 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "import java.lang.String;\n"
-        + "import java.lang.System;\n"
+        + "import java.lang.String\n"
+        + "import java.lang.System\n"
         + "\n"
         + "class HelloWorld {\n"
         + "  public static void main(String[] args) {\n"
@@ -512,33 +512,33 @@ public final class JavaFileTest {
   }
 
   @Test public void defaultPackageTypesAreNotImported() throws Exception {
-    String source = JavaFile.builder("hello",
+    String source = KotlinFile.builder("hello",
           TypeSpec.classBuilder("World").addSuperinterface(ClassName.get("", "Test")).build())
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package hello;\n"
+        + "package hello\n"
         + "\n"
         + "class World implements Test {\n"
         + "}\n");
   }
 
   @Test public void topOfFileComment() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
         .addFileComment("Generated $L by JavaPoet. DO NOT EDIT!", "2015-01-13")
         .build()
         .toString();
     assertThat(source).isEqualTo(""
         + "// Generated 2015-01-13 by JavaPoet. DO NOT EDIT!\n"
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "}\n");
   }
 
   @Test public void emptyLinesInTopOfFileComment() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
         .addFileComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
         .build()
@@ -549,14 +549,14 @@ public final class JavaFileTest {
         + "//\n"
         + "// DO NOT EDIT!\n"
         + "//\n"
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "}\n");
   }
 
   @Test public void packageClassConflictsWithNestedClass() throws Exception {
-    String source = JavaFile.builder("com.squareup.tacos",
+    String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addField(ClassName.get("com.squareup.tacos", "A"), "a")
             .addType(TypeSpec.classBuilder("A").build())
@@ -564,7 +564,7 @@ public final class JavaFileTest {
         .build()
         .toString();
     assertThat(source).isEqualTo(""
-        + "package com.squareup.tacos;\n"
+        + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
         + "  com.squareup.tacos.A a;\n"
