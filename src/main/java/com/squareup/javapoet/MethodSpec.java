@@ -455,15 +455,6 @@ public final class MethodSpec {
       return this;
     }
 
-    /**
-     * @param controlFlow the optional control flow construct and its code, such as
-     *     "while(foo == 20)". Only used for "do/while" control flows.
-     */
-    public Builder endControlFlow(String controlFlow, Object... args) {
-      code.endControlFlow(controlFlow, args);
-      return this;
-    }
-
     public Builder addStatement(String format, Object... args) {
       code.addStatement(format, args);
       return this;
