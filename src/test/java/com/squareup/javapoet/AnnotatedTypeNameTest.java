@@ -15,15 +15,15 @@
  */
 package com.squareup.javapoet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AnnotatedTypeNameTest {
 
@@ -82,14 +82,14 @@ public class AnnotatedTypeNameTest {
   }
 
   @Test public void annotatedWildcardTypeNameWithSuper() {
-    String expected = "? super @" + NN + " java.lang.String";
+    String expected = "in @" + NN + " java.lang.String";
     TypeName type = TypeName.get(String.class).annotated(NEVER_NULL);
     String actual = WildcardTypeName.supertypeOf(type).toString();
     assertEquals(expected, actual);
   }
 
   @Test public void annotatedWildcardTypeNameWithExtends() {
-    String expected = "? extends @" + NN + " java.lang.String";
+    String expected = "out @" + NN + " java.lang.String";
     TypeName type = TypeName.get(String.class).annotated(NEVER_NULL);
     String actual = WildcardTypeName.subtypeOf(type).toString();
     assertEquals(expected, actual);

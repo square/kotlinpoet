@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,11 +63,11 @@ public final class WildcardTypeName extends TypeName {
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {
     if (lowerBounds.size() == 1) {
-      return out.emit("? super $T", lowerBounds.get(0));
+      return out.emit("in $T", lowerBounds.get(0));
     }
-    return upperBounds.get(0).equals(TypeName.OBJECT)
-        ? out.emit("?")
-        : out.emit("? extends $T", upperBounds.get(0));
+    return upperBounds.get(0).equals(TypeName.OBJECT) // TODO should this be Any? or special cased.
+        ? out.emit("*")
+        : out.emit("out $T", upperBounds.get(0));
   }
 
   /**
@@ -78,7 +77,8 @@ public final class WildcardTypeName extends TypeName {
    * ? extends Object}.
    */
   public static WildcardTypeName subtypeOf(TypeName upperBound) {
-    return new WildcardTypeName(Arrays.asList(upperBound), Collections.<TypeName>emptyList());
+    return new WildcardTypeName(Collections.singletonList(upperBound),
+        Collections.<TypeName>emptyList());
   }
 
   public static WildcardTypeName subtypeOf(Type upperBound) {
@@ -90,7 +90,8 @@ public final class WildcardTypeName extends TypeName {
    * bound} is {@code String.class}, this returns {@code ? super String}.
    */
   public static WildcardTypeName supertypeOf(TypeName lowerBound) {
-    return new WildcardTypeName(Arrays.<TypeName>asList(OBJECT), Arrays.asList(lowerBound));
+    return new WildcardTypeName(Collections.<TypeName>singletonList(OBJECT),
+        Collections.singletonList(lowerBound));
   }
 
   public static WildcardTypeName supertypeOf(Type lowerBound) {
