@@ -194,7 +194,7 @@ final class CodeWriter {
       emit("$L", typeVariable.name);
       boolean firstBound = true;
       for (TypeName bound : typeVariable.bounds) {
-        emit(firstBound ? " extends $T" : " & $T", bound);
+        emit(firstBound ? " : $T" : " & $T", bound);
         firstBound = false;
       }
       firstTypeVariable = false;

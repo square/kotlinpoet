@@ -93,9 +93,9 @@ public final class TypeSpecTest {
     TypeName listOfSuper = ParameterizedTypeName.get(ClassName.get(List.class),
         WildcardTypeName.supertypeOf(String.class));
     TypeSpec taco = TypeSpec.classBuilder("Taco")
-        .addField(listOfAny, "extendsObject")
-        .addField(listOfExtends, "extendsSerializable")
-        .addField(listOfSuper, "superString")
+        .addField(listOfAny, "star")
+        .addField(listOfExtends, "outSerializable")
+        .addField(listOfSuper, "inString")
         .build();
     assertThat(toString(taco)).isEqualTo(""
         + "package com.squareup.tacos\n"
@@ -105,11 +105,11 @@ public final class TypeSpecTest {
         + "import java.util.List\n"
         + "\n"
         + "class Taco {\n"
-        + "  List<?> extendsObject;\n"
+        + "  List<*> star;\n"
         + "\n"
-        + "  List<? extends Serializable> extendsSerializable;\n"
+        + "  List<out Serializable> outSerializable;\n"
         + "\n"
-        + "  List<? super String> superString;\n"
+        + "  List<in String> inString;\n"
         + "}\n");
   }
 
@@ -161,7 +161,7 @@ public final class TypeSpecTest {
         + "class Taco {\n"
         + "  static final Thing.Thang<Foo, Bar> NAME = new Thing.Thang<Foo, Bar>() {\n"
         + "    @Override\n"
-        + "    public Thung<? super Bar> call(final Thung<? super Foo> thung) {\n"
+        + "    public Thung<in Bar> call(final Thung<in Foo> thung) {\n"
         + "      return new SimpleThung<Bar>(thung) {\n"
         + "        @Override\n"
         + "        public void doSomething(Bar bar) {\n"
@@ -563,7 +563,7 @@ public final class TypeSpecTest {
         + "import java.lang.Override\n"
         + "import java.lang.UnsupportedOperationException\n"
         + "\n"
-        + "class Location<T, P extends Number> implements Comparable<P> {\n"
+        + "class Location<T, P : Number> implements Comparable<P> {\n"
         + "  T label;\n"
         + "\n"
         + "  P x;\n"
@@ -575,7 +575,7 @@ public final class TypeSpecTest {
         + "    return 0\n"
         + "  }\n"
         + "\n"
-        + "  public static <T, P extends Number> Location<T, P> of(T label, P x, P y) {\n"
+        + "  public static <T, P : Number> Location<T, P> of(T label, P x, P y) {\n"
         + "    throw new UnsupportedOperationException(\"TODO\")\n"
         + "  }\n"
         + "}\n");
@@ -597,7 +597,7 @@ public final class TypeSpecTest {
         + "import java.lang.Comparable\n"
         + "import java.lang.Number\n"
         + "\n"
-        + "class Location<P extends Number & Comparable, Q extends Number & Comparable> {\n"
+        + "class Location<P : Number & Comparable, Q : Number & Comparable> {\n"
         + "  P x;\n"
         + "\n"
         + "  @A Q y;\n"
@@ -1018,7 +1018,7 @@ public final class TypeSpecTest {
         + "import java.util.Comparator\n"
         + "\n"
         + "class Taco {\n"
-        + "  <T extends Comparator & Serializable> T getComparator() {\n"
+        + "  <T : Comparator & Serializable> T getComparator() {\n"
         + "    return null;\n"
         + "  }\n"
         + "}\n");
@@ -1835,7 +1835,7 @@ public final class TypeSpecTest {
         + "\n"
         + "import java.lang.Number\n"
         + "\n"
-        + "class Location<T, P extends Number> {\n"
+        + "class Location<T, P : Number> {\n"
         + "}\n");
   }
 

@@ -15,16 +15,12 @@
  */
 package com.squareup.javapoet;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.*;
-
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
@@ -37,8 +33,10 @@ import javax.lang.model.type.TypeVisitor;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-
 import org.junit.Test;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.fail;
 
 public abstract class AbstractTypesTest {
   protected abstract Elements getElements();
@@ -176,43 +174,43 @@ public abstract class AbstractTypesTest {
     assertThat(type.toString()).isEqualTo("java.lang.String[]");
   }
 
-  @Test public void wildcardExtendsType() throws Exception {
-    WildcardTypeName type = WildcardTypeName.subtypeOf(CharSequence.class);
-    assertThat(type.toString()).isEqualTo("? extends java.lang.CharSequence");
-  }
-
-  @Test public void wildcardExtendsObject() throws Exception {
+  @Test public void starProjection() throws Exception {
     WildcardTypeName type = WildcardTypeName.subtypeOf(Object.class);
-    assertThat(type.toString()).isEqualTo("?");
+    assertThat(type.toString()).isEqualTo("*");
   }
 
-  @Test public void wildcardSuperType() throws Exception {
-    WildcardTypeName type = WildcardTypeName.supertypeOf(String.class);
-    assertThat(type.toString()).isEqualTo("? super java.lang.String");
-  }
-
-  @Test public void wildcardMirrorNoBounds() throws Exception {
+  @Test public void starProjectionFromMirror() throws Exception {
     WildcardType wildcard = getTypes().getWildcardType(null, null);
     TypeName type = TypeName.get(wildcard);
-    assertThat(type.toString()).isEqualTo("?");
+    assertThat(type.toString()).isEqualTo("*");
   }
 
-  @Test public void wildcardMirrorExtendsType() throws Exception {
+  @Test public void varianceOutType() throws Exception {
+    WildcardTypeName type = WildcardTypeName.subtypeOf(CharSequence.class);
+    assertThat(type.toString()).isEqualTo("out java.lang.CharSequence");
+  }
+
+  @Test public void varianceOutTypeFromMirror() throws Exception {
     Types types = getTypes();
     Elements elements = getElements();
     TypeMirror charSequence = elements.getTypeElement(CharSequence.class.getName()).asType();
     WildcardType wildcard = types.getWildcardType(charSequence, null);
     TypeName type = TypeName.get(wildcard);
-    assertThat(type.toString()).isEqualTo("? extends java.lang.CharSequence");
+    assertThat(type.toString()).isEqualTo("out java.lang.CharSequence");
   }
 
-  @Test public void wildcardMirrorSuperType() throws Exception {
+  @Test public void varianceInType() throws Exception {
+    WildcardTypeName type = WildcardTypeName.supertypeOf(String.class);
+    assertThat(type.toString()).isEqualTo("in java.lang.String");
+  }
+
+  @Test public void varianceInTypeFromMirror() throws Exception {
     Types types = getTypes();
     Elements elements = getElements();
     TypeMirror string = elements.getTypeElement(String.class.getName()).asType();
     WildcardType wildcard = types.getWildcardType(null, string);
     TypeName type = TypeName.get(wildcard);
-    assertThat(type.toString()).isEqualTo("? super java.lang.String");
+    assertThat(type.toString()).isEqualTo("in java.lang.String");
   }
 
   @Test public void typeVariable() throws Exception {
