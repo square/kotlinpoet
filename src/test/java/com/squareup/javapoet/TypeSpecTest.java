@@ -161,10 +161,10 @@ public final class TypeSpecTest {
         + "class Taco {\n"
         + "  static final Thing.Thang<Foo, Bar> NAME = new Thing.Thang<Foo, Bar>() {\n"
         + "    @Override\n"
-        + "    public call(final Thung<in Foo> thung): Thung<in Bar> {\n"
+        + "    public call(final thung: Thung<in Foo>): Thung<in Bar> {\n"
         + "      return new SimpleThung<Bar>(thung) {\n"
         + "        @Override\n"
-        + "        public doSomething(Bar bar): void {\n"
+        + "        public doSomething(bar: Bar): void {\n"
         + "          /* code snippets */\n"
         + "        }\n"
         + "      };\n"
@@ -202,8 +202,8 @@ public final class TypeSpecTest {
         + "import java.lang.String\n"
         + "\n"
         + "class Foo {\n"
-        + "  public constructor(long id, @Ping String one, @Ping String two, @Pong(\"pong\") String three,\n"
-        + "      @Ping String four) {\n"
+        + "  public constructor(id: long, @Ping one: String, @Ping two: String, @Pong(\"pong\") three: String,\n"
+        + "      @Ping four: String) {\n"
         + "    /* code snippets */\n"
         + "  }\n"
         + "}\n");
@@ -283,8 +283,8 @@ public final class TypeSpecTest {
         + "      \"User-Agent: foobar\"\n"
         + "  })\n"
         + "  @POST(\"/foo/bar\")\n"
-        + "  fooBar(@Body Things<Thing> things, @QueryMap(encodeValues = false) Map<String, String> query,\n"
-        + "      @Header(\"Authorization\") String authorization): Observable<FooBar>;\n"
+        + "  fooBar(@Body things: Things<Thing>, @QueryMap(encodeValues = false) query: Map<String, String>,\n"
+        + "      @Header(\"Authorization\") authorization: String): Observable<FooBar>;\n"
         + "}\n");
   }
 
@@ -377,7 +377,7 @@ public final class TypeSpecTest {
         + "\n"
         + "  private final String handPosition;\n"
         + "\n"
-        + "  constructor(String handPosition) {\n"
+        + "  constructor(handPosition: String) {\n"
         + "    this.handPosition = handPosition;\n"
         + "  }\n"
         + "\n"
@@ -570,11 +570,11 @@ public final class TypeSpecTest {
         + "  P y;\n"
         + "\n"
         + "  @Override\n"
-        + "  public compareTo(P p): int {\n"
+        + "  public compareTo(p: P): int {\n"
         + "    return 0\n"
         + "  }\n"
         + "\n"
-        + "  public static <T, P : Number> of(T label, P x, P y): Location<T, P> {\n"
+        + "  public static <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {\n"
         + "    throw new UnsupportedOperationException(\"TODO\")\n"
         + "  }\n"
         + "}\n");
@@ -1073,7 +1073,7 @@ public final class TypeSpecTest {
         + "   *\n"
         + "   * <p>For {@link Locale#KOREAN}, the front may also be folded.\n"
         + "   */\n"
-        + "  refold(Locale locale): void {\n"
+        + "  refold(locale: Locale): void {\n"
         + "  }\n"
         + "}\n");
   }
@@ -1124,7 +1124,7 @@ public final class TypeSpecTest {
         + "import java.lang.Runnable\n"
         + "\n"
         + "class Taqueria {\n"
-        + "  prepare(int workers, Runnable... jobs): void {\n"
+        + "  prepare(workers: int, vararg jobs: Runnable): void {\n"
         + "  }\n"
         + "}\n");
   }
@@ -1186,7 +1186,7 @@ public final class TypeSpecTest {
         + "          .add(\">\", \"&gt;\")\n"
         + "          .build();\n"
         + "\n"
-        + "  commonPrefixLength(List<String> listA, List<String> listB): int {\n"
+        + "  commonPrefixLength(listA: List<String>, listB: List<String>): int {\n"
         + "    int size = Math.min(listA.size(), listB.size())\n"
         + "    for (int i = 0; i < size; i++) {\n"
         + "      String a = listA.get(i)\n"
@@ -1360,10 +1360,10 @@ public final class TypeSpecTest {
         + "\n"
         + "  String U;\n"
         + "\n"
-        + "  constructor(int p) {\n"
+        + "  constructor(p: int) {\n"
         + "  }\n"
         + "\n"
-        + "  constructor(long o) {\n"
+        + "  constructor(o: long) {\n"
         + "  }\n"
         + "\n"
         + "  static T(): void {\n"
@@ -1413,7 +1413,7 @@ public final class TypeSpecTest {
         + "class Taco {\n"
         + "  native nativeInt(): int;\n"
         + "\n"
-        + "  public static native alert(String msg): void /*-{\n"
+        + "  public static native alert(msg: String): void /*-{\n"
         + "    $wnd.alert(msg);\n"
         + "  }-*/;\n"
         + "}\n");
@@ -1478,7 +1478,7 @@ public final class TypeSpecTest {
         .addStatement("this.$N = $N", "taco", "taco")
         .build();
     assertThat(constructor.toString()).isEqualTo(""
-        + "public constructor(com.squareup.tacos.Taco taco) {\n"
+        + "public constructor(taco: com.squareup.tacos.Taco) {\n"
         + "  this.taco = taco\n"
         + "}\n");
   }
@@ -1489,7 +1489,7 @@ public final class TypeSpecTest {
         .addAnnotation(ClassName.get("javax.annotation", "Nullable"))
         .build();
     assertThat(parameter.toString())
-        .isEqualTo("@javax.annotation.Nullable final com.squareup.tacos.Taco taco");
+        .isEqualTo("@javax.annotation.Nullable final taco: com.squareup.tacos.Taco");
   }
 
   @Test public void classToString() throws Exception {
@@ -1601,22 +1601,22 @@ public final class TypeSpecTest {
         + "import java.util.List\n"
         + "\n"
         + "class Taco {\n"
-        + "  comparePrefix(final int length): Comparator<String> {\n"
+        + "  comparePrefix(final length: int): Comparator<String> {\n"
         + "    return new Comparator<String>() {\n"
         + "      @Override\n"
-        + "      public compare(String a, String b): int {\n"
+        + "      public compare(a: String, b: String): int {\n"
         + "        return a.substring(0, length)\n"
         + "            .compareTo(b.substring(0, length))\n"
         + "      }\n"
         + "    }\n"
         + "  }\n"
         + "\n"
-        + "  sortPrefix(List<String> list, final int length): void {\n"
+        + "  sortPrefix(list: List<String>, final length: int): void {\n"
         + "    Collections.sort(\n"
         + "        list,\n"
         + "        new Comparator<String>() {\n"
         + "          @Override\n"
-        + "          public compare(String a, String b): int {\n"
+        + "          public compare(a: String, b: String): int {\n"
         + "            return a.substring(0, length)\n"
         + "                .compareTo(b.substring(0, length))\n"
         + "          }\n"
@@ -1881,7 +1881,7 @@ public final class TypeSpecTest {
         + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
-        + "  addTopping(Topping topping): void {\n"
+        + "  addTopping(topping: Topping): void {\n"
         + "    try {\n"
         + "      /* do something tricky with the topping */\n"
         + "    } catch (IllegalToppingException e) {\n"
@@ -1908,7 +1908,7 @@ public final class TypeSpecTest {
         + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
-        + "  isDelicious(int count): boolean {\n"
+        + "  isDelicious(count: int): boolean {\n"
         + "    if (count > 0) {\n"
         + "      return true\n"
         + "    } else {\n"
@@ -2263,11 +2263,11 @@ public final class TypeSpecTest {
         + "import java.lang.String\n"
         + "\n"
         + "class Taco {\n"
-        + "  call(String s0, String s1, String s2, String s3, String s4, String s5, String s6, String s7,\n"
-        + "      String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15,\n"
-        + "      String s16, String s17, String s18, String s19, String s20, String s21, String s22,\n"
-        + "      String s23, String s24, String s25, String s26, String s27, String s28, String s29,\n"
-        + "      String s30, String s31): void {\n"
+        + "  call(s0: String, s1: String, s2: String, s3: String, s4: String, s5: String, s6: String,\n"
+        + "      s7: String, s8: String, s9: String, s10: String, s11: String, s12: String, s13: String,\n"
+        + "      s14: String, s15: String, s16: String, s17: String, s18: String, s19: String, s20: String,\n"
+        + "      s21: String, s22: String, s23: String, s24: String, s25: String, s26: String, s27: String,\n"
+        + "      s28: String, s29: String, s30: String, s31: String): void {\n"
         + "    call(\"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\", \"11\", \"12\", \"13\", \"14\", \"15\", \"16\",\n"
         + "        \"17\", \"18\", \"19\", \"20\", \"21\", \"22\", \"23\", \"24\", \"25\", \"26\", \"27\", \"28\", \"29\", \"30\", \"31\");\n"
         + "  }\n"
