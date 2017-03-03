@@ -192,7 +192,7 @@ public final class FileWritingTest {
         + "class Test {\n"
         + "\tDate madeFreshDate;\n"
         + "\n"
-        + "\tpublic static void main(String[] args) {\n"
+        + "\tpublic static main(String[] args): void {\n"
         + "\t\tSystem.out.println(\"Hello World!\");\n"
         + "\t}\n"
         + "}\n");
