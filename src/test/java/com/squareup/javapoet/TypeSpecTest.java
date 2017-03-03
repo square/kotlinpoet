@@ -1872,7 +1872,7 @@ public final class TypeSpecTest {
             .addParameter(ClassName.get("com.squareup.tacos", "Topping"), "topping")
             .beginControlFlow("try")
             .addCode("/* do something tricky with the topping */\n")
-            .nextControlFlow("catch ($T e)",
+            .nextControlFlow("catch (e: $T)",
                 ClassName.get("com.squareup.tacos", "IllegalToppingException"))
             .endControlFlow()
             .build())
@@ -1884,7 +1884,7 @@ public final class TypeSpecTest {
         + "  addTopping(topping: Topping): void {\n"
         + "    try {\n"
         + "      /* do something tricky with the topping */\n"
-        + "    } catch (IllegalToppingException e) {\n"
+        + "    } catch (e: IllegalToppingException) {\n"
         + "    }\n"
         + "  }\n"
         + "}\n");
