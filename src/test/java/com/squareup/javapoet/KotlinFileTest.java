@@ -503,9 +503,10 @@ public final class KotlinFileTest {
     assertThat(source).isEqualTo(""
         + "import java.lang.String\n"
         + "import java.lang.System\n"
+        + "import kotlin.Array\n"
         + "\n"
         + "class HelloWorld {\n"
-        + "  public static main(args: String[]): void {\n"
+        + "  public static main(args: Array<String>): void {\n"
         + "    System.out.println(\"Hello World!\");\n"
         + "  }\n"
         + "}\n");
