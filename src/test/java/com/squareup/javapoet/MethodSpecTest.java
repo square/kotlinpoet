@@ -131,8 +131,8 @@ public final class MethodSpecTest {
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "protected <T : java.lang.Runnable & java.io.Closeable> "
-        + "everything(java.lang.String arg0,\n"
-        + "    java.util.List<out T> arg1): java.lang.Runnable throws java.io.IOException,\n"
+        + "everything(arg0: java.lang.String,\n"
+        + "    arg1: java.util.List<out T>): java.lang.Runnable throws java.io.IOException,\n"
         + "    java.lang.SecurityException {\n"
         + "}\n");
   }
@@ -175,7 +175,7 @@ public final class MethodSpecTest {
     method = MethodSpec.overriding(exec, classType, types).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public compareTo(java.lang.Long arg0): int {\n"
+        + "public compareTo(arg0: java.lang.Long): int {\n"
         + "}\n");
   }
 
