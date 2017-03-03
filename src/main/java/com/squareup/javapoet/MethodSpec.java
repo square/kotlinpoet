@@ -92,9 +92,9 @@ public final class MethodSpec {
     }
 
     if (isConstructor()) {
-      codeWriter.emit("$L(", enclosingName);
+      codeWriter.emit("constructor(", enclosingName);
     } else {
-      codeWriter.emit("$T $L(", returnType, name);
+      codeWriter.emit("$L(", name);
     }
 
     boolean firstParameter = true;
@@ -106,6 +106,9 @@ public final class MethodSpec {
     }
 
     codeWriter.emit(")");
+    if (!isConstructor()) {
+      codeWriter.emit(": $T", returnType);
+    }
 
     if (defaultValue != null && !defaultValue.isEmpty()) {
       codeWriter.emit(" default ");
