@@ -57,7 +57,7 @@ public final class FieldSpec {
     codeWriter.emitJavadoc(javadoc);
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
-    codeWriter.emit("$T $L", type, name);
+    codeWriter.emit("$L: $T", name, type);
     if (!initializer.isEmpty()) {
       codeWriter.emit(" = ");
       codeWriter.emit(initializer);

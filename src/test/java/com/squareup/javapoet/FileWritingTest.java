@@ -191,7 +191,7 @@ public final class FileWritingTest {
         + "import kotlin.Array\n"
         + "\n"
         + "class Test {\n"
-        + "\tDate madeFreshDate;\n"
+        + "\tmadeFreshDate: Date;\n"
         + "\n"
         + "\tpublic static main(args: Array<String>): void {\n"
         + "\t\tSystem.out.println(\"Hello World!\");\n"

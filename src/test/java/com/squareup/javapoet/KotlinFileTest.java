@@ -266,7 +266,7 @@ public final class KotlinFileTest {
         + "import java.util.Date\n"
         + "\n"
         + "class Taco {\n"
-        + "  Date madeFreshDate;\n"
+        + "  madeFreshDate: Date;\n"
         + "}\n");
   }
 
@@ -284,9 +284,9 @@ public final class KotlinFileTest {
         + "import java.util.Date\n"
         + "\n"
         + "class Taco {\n"
-        + "  Date madeFreshDate;\n"
+        + "  madeFreshDate: Date;\n"
         + "\n"
-        + "  java.sql.Date madeFreshDatabaseDate;\n"
+        + "  madeFreshDatabaseDate: java.sql.Date;\n"
         + "}\n");
   }
 
@@ -304,9 +304,9 @@ public final class KotlinFileTest {
         + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
-        + "  Float litres;\n"
+        + "  litres: Float;\n"
         + "\n"
-        + "  com.squareup.soda.Float beverage;\n" // Second 'Float' is fully qualified.
+        + "  beverage: com.squareup.soda.Float;\n" // Second 'Float' is fully qualified.
         + "}\n");
   }
 
@@ -326,9 +326,9 @@ public final class KotlinFileTest {
         + "import com.squareup.soda.Float\n"
         + "\n"
         + "class Taco {\n"
-        + "  Float beverage;\n"
+        + "  beverage: Float;\n"
         + "\n"
-        + "  java.lang.Float litres;\n" // Second 'Float' is fully qualified.
+        + "  litres: java.lang.Float;\n" // Second 'Float' is fully qualified.
         + "}\n");
   }
 
@@ -357,7 +357,7 @@ public final class KotlinFileTest {
         + "    }\n"
         + "\n"
         + "    class C {\n"
-        + "      A.Twin.D d;\n"
+        + "      d: A.Twin.D;\n"
         + "    }\n"
         + "  }\n"
         + "\n"
@@ -390,7 +390,7 @@ public final class KotlinFileTest {
         + "class A {\n"
         + "  class B {\n"
         + "    class C {\n"
-        + "      A.Twin.D d;\n"
+        + "      d: A.Twin.D;\n"
         + "\n"
         + "      class Twin {\n"
         + "      }\n"
@@ -428,7 +428,7 @@ public final class KotlinFileTest {
         + "class A {\n"
         + "  class B {\n"
         + "    class C {\n"
-        + "      Twin.D d;\n"
+        + "      d: Twin.D;\n"
         + "\n"
         + "      class Nested {\n"
         + "        class Twin {\n"
@@ -568,7 +568,7 @@ public final class KotlinFileTest {
         + "package com.squareup.tacos\n"
         + "\n"
         + "class Taco {\n"
-        + "  com.squareup.tacos.A a;\n"
+        + "  a: com.squareup.tacos.A;\n"
         + "\n"
         + "  class A {\n"
         + "  }\n"
