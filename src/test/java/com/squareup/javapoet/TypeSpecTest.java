@@ -1030,8 +1030,10 @@ public final class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo(""
         + "package com.squareup.tacos\n"
         + "\n"
+        + "import kotlin.Array\n"
+        + "\n"
         + "class Taco {\n"
-        + "  int[] ints;\n"
+        + "  Array<int> ints;\n"
         + "}\n");
   }
 

@@ -28,6 +28,8 @@ import javax.lang.model.type.ArrayType;
 import static com.squareup.javapoet.Util.checkNotNull;
 
 public final class ArrayTypeName extends TypeName {
+  private static final ClassName ARRAY_TYPE = ClassName.get("kotlin", "Array");
+
   public final TypeName componentType;
 
   private ArrayTypeName(TypeName componentType) {
@@ -48,7 +50,7 @@ public final class ArrayTypeName extends TypeName {
   }
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {
-    return out.emit("$T[]", componentType);
+    return out.emit("$T<$T>", ARRAY_TYPE, componentType);
   }
 
   /** Returns an array type whose elements are all instances of {@code componentType}. */

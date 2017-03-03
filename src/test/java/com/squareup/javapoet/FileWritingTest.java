@@ -188,11 +188,12 @@ public final class FileWritingTest {
         + "import java.lang.String\n"
         + "import java.lang.System\n"
         + "import java.util.Date\n"
+        + "import kotlin.Array\n"
         + "\n"
         + "class Test {\n"
         + "\tDate madeFreshDate;\n"
         + "\n"
-        + "\tpublic static main(args: String[]): void {\n"
+        + "\tpublic static main(args: Array<String>): void {\n"
         + "\t\tSystem.out.println(\"Hello World!\");\n"
         + "\t}\n"
         + "}\n");

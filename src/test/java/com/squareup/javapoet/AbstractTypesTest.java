@@ -124,7 +124,7 @@ public abstract class AbstractTypesTest {
 
     assertThat(typeVariableName.toString()).isEqualTo("T");
     assertThat(typeVariableName.bounds.toString())
-        .isEqualTo("[java.util.Map<java.util.List<T>, java.util.Set<T[]>>]");
+        .isEqualTo("[java.util.Map<java.util.List<T>, java.util.Set<kotlin.Array<T>>>]");
   }
 
   @Test public void getPrimitiveTypeMirror() {
@@ -171,7 +171,7 @@ public abstract class AbstractTypesTest {
 
   @Test public void arrayType() throws Exception {
     ArrayTypeName type = ArrayTypeName.of(String.class);
-    assertThat(type.toString()).isEqualTo("java.lang.String[]");
+    assertThat(type.toString()).isEqualTo("kotlin.Array<java.lang.String>");
   }
 
   @Test public void starProjection() throws Exception {
