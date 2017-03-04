@@ -193,7 +193,7 @@ public final class FileWritingTest {
         + "class Test {\n"
         + "\tmadeFreshDate: Date;\n"
         + "\n"
-        + "\tpublic static main(args: Array<String>): void {\n"
+        + "\tpublic static fun main(args: Array<String>): void {\n"
         + "\t\tSystem.out.println(\"Hello World!\");\n"
         + "\t}\n"
         + "}\n");

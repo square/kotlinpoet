@@ -86,6 +86,10 @@ public final class MethodSpec {
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
 
+    if (!isConstructor()) {
+      codeWriter.emit("fun ");
+    }
+
     if (!typeVariables.isEmpty()) {
       codeWriter.emitTypeVariables(typeVariables);
       codeWriter.emit(" ");

@@ -130,7 +130,7 @@ public final class MethodSpecTest {
     MethodSpec method = MethodSpec.overriding(methodElement).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "protected <T : java.lang.Runnable & java.io.Closeable> "
+        + "protected fun <T : java.lang.Runnable & java.io.Closeable> "
         + "everything(arg0: java.lang.String,\n"
         + "    arg1: java.util.List<out T>): java.lang.Runnable throws java.io.IOException,\n"
         + "    java.lang.SecurityException {\n"
@@ -143,7 +143,7 @@ public final class MethodSpecTest {
     MethodSpec method = MethodSpec.overriding(exec).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public toString(): java.lang.String {\n"
+        + "public fun toString(): java.lang.String {\n"
         + "}\n");
   }
 
@@ -157,7 +157,7 @@ public final class MethodSpecTest {
     MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public spliterator(): java.util.Spliterator<java.lang.Object> {\n"
+        + "public fun spliterator(): java.util.Spliterator<java.lang.Object> {\n"
         + "}\n");
   }
 
@@ -169,13 +169,13 @@ public final class MethodSpecTest {
     MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public call(): java.lang.Integer throws java.lang.Exception {\n"
+        + "public fun call(): java.lang.Integer throws java.lang.Exception {\n"
         + "}\n");
     exec = findFirst(methods, "compareTo");
     method = MethodSpec.overriding(exec, classType, types).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public compareTo(arg0: java.lang.Long): int {\n"
+        + "public fun compareTo(arg0: java.lang.Long): int {\n"
         + "}\n");
   }
 
