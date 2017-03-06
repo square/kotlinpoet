@@ -33,6 +33,7 @@ import javax.lang.model.type.TypeVisitor;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -153,7 +154,7 @@ public abstract class AbstractTypesTest {
 
   @Test public void getVoidTypeMirror() {
     assertThat(TypeName.get(getTypes().getNoType(TypeKind.VOID)))
-        .isEqualTo(TypeName.VOID);
+        .isEqualTo(TypeName.UNIT);
   }
 
   @Test public void getNullTypeMirror() {
@@ -175,10 +176,11 @@ public abstract class AbstractTypesTest {
   }
 
   @Test public void starProjection() throws Exception {
-    WildcardTypeName type = WildcardTypeName.subtypeOf(Object.class);
+    WildcardTypeName type = WildcardTypeName.subtypeOf(TypeName.ANY);
     assertThat(type.toString()).isEqualTo("*");
   }
 
+  @Ignore("Figure out what this maps to in Kotlin.")
   @Test public void starProjectionFromMirror() throws Exception {
     WildcardType wildcard = getTypes().getWildcardType(null, null);
     TypeName type = TypeName.get(wildcard);
@@ -216,32 +218,6 @@ public abstract class AbstractTypesTest {
   @Test public void typeVariable() throws Exception {
     TypeVariableName type = TypeVariableName.get("T", CharSequence.class);
     assertThat(type.toString()).isEqualTo("T"); // (Bounds are only emitted in declaration.)
-  }
-
-  @Test public void box() throws Exception {
-    assertThat(TypeName.INT.box()).isEqualTo(ClassName.get(Integer.class));
-    assertThat(TypeName.VOID.box()).isEqualTo(ClassName.get(Void.class));
-    assertThat(ClassName.get(Integer.class).box()).isEqualTo(ClassName.get(Integer.class));
-    assertThat(ClassName.get(Void.class).box()).isEqualTo(ClassName.get(Void.class));
-    assertThat(TypeName.OBJECT.box()).isEqualTo(TypeName.OBJECT);
-    assertThat(ClassName.get(String.class).box()).isEqualTo(ClassName.get(String.class));
-  }
-
-  @Test public void unbox() throws Exception {
-    assertThat(TypeName.INT).isEqualTo(TypeName.INT.unbox());
-    assertThat(TypeName.VOID).isEqualTo(TypeName.VOID.unbox());
-    assertThat(ClassName.get(Integer.class).unbox()).isEqualTo(TypeName.INT.unbox());
-    assertThat(ClassName.get(Void.class).unbox()).isEqualTo(TypeName.VOID.unbox());
-    try {
-      TypeName.OBJECT.unbox();
-      fail();
-    } catch (UnsupportedOperationException expected) {
-    }
-    try {
-      ClassName.get(String.class).unbox();
-      fail();
-    } catch (UnsupportedOperationException expected) {
-    }
   }
 
   private static class DeclaredTypeAsErrorType implements ErrorType {

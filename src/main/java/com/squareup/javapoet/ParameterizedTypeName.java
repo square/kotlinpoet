@@ -47,10 +47,6 @@ public final class ParameterizedTypeName extends TypeName {
 
     checkArgument(!this.typeArguments.isEmpty() || enclosingType != null,
         "no type arguments: %s", rawType);
-    for (TypeName typeArgument : this.typeArguments) {
-      checkArgument(!typeArgument.isPrimitive() && typeArgument != VOID,
-          "invalid type parameter: %s", typeArgument);
-    }
   }
 
   @Override public ParameterizedTypeName annotated(List<AnnotationSpec> annotations) {

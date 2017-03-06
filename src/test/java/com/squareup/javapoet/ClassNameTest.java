@@ -138,7 +138,7 @@ public final class ClassNameTest {
 
   @Test
   public void reflectionName() {
-    assertEquals("java.lang.Object", TypeName.OBJECT.reflectionName());
+    assertEquals("kotlin.Any", TypeName.ANY.reflectionName());
     assertEquals("java.lang.Thread$State", ClassName.get(Thread.State.class).reflectionName());
     assertEquals("java.util.Map$Entry", ClassName.get(Map.Entry.class).reflectionName());
     assertEquals("Foo", ClassName.get("", "Foo").reflectionName());

@@ -442,7 +442,6 @@ public final class TypeSpec {
       checkState(this.kind == Kind.CLASS, "only classes have super classes, not " + this.kind);
       checkState(this.superclass == ClassName.OBJECT,
           "superclass already set to " + this.superclass);
-      checkArgument(!superclass.isPrimitive(), "superclass may not be a primitive");
       this.superclass = superclass;
       return this;
     }
