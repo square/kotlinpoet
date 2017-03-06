@@ -37,6 +37,7 @@ import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleTypeVisitor7;
+import kotlin.Unit;
 
 /**
  * Any type in Java's type system, plus {@code void}. This class is an identifier for primitive
@@ -52,9 +53,6 @@ import javax.lang.model.util.SimpleTypeVisitor7;
  *
  * <h3>Referencing existing types</h3>
  *
- * <p>Primitives and void are constants that you can reference directly: see {@link #INT}, {@link
- * #DOUBLE}, and {@link #VOID}.
- *
  * <p>In an annotation processor you can get a type name instance for a type mirror by calling
  * {@link #get(TypeMirror)}. In reflection code, you can use {@link #get(Type)}.
  *
@@ -65,61 +63,34 @@ import javax.lang.model.util.SimpleTypeVisitor7;
  * {@code Set<Long>}, use the factory methods on {@link ArrayTypeName}, {@link
  * ParameterizedTypeName}, {@link TypeVariableName}, and {@link WildcardTypeName}.
  */
-public class TypeName {
-  public static final TypeName VOID = new TypeName("void");
-  public static final TypeName BOOLEAN = new TypeName("boolean");
-  public static final TypeName BYTE = new TypeName("byte");
-  public static final TypeName SHORT = new TypeName("short");
-  public static final TypeName INT = new TypeName("int");
-  public static final TypeName LONG = new TypeName("long");
-  public static final TypeName CHAR = new TypeName("char");
-  public static final TypeName FLOAT = new TypeName("float");
-  public static final TypeName DOUBLE = new TypeName("double");
-  public static final ClassName OBJECT = ClassName.get("java.lang", "Object");
+public abstract class TypeName {
+  public static final ClassName ANY = ClassName.get("kotlin", "Any");
+  static final ClassName UNIT = ClassName.get(Unit.class);
+  static final ClassName BOOLEAN = ClassName.get("kotlin", "Boolean");
+  static final ClassName BYTE = ClassName.get("kotlin", "Byte");
+  static final ClassName SHORT = ClassName.get("kotlin", "Short");
+  static final ClassName INT = ClassName.get("kotlin", "Int");
+  static final ClassName LONG = ClassName.get("kotlin", "Long");
+  static final ClassName CHAR = ClassName.get("kotlin", "Char");
+  static final ClassName FLOAT = ClassName.get("kotlin", "Float");
+  static final ClassName DOUBLE = ClassName.get("kotlin", "Double");
 
-  private static final ClassName BOXED_VOID = ClassName.get("java.lang", "Void");
-  private static final ClassName BOXED_BOOLEAN = ClassName.get("java.lang", "Boolean");
-  private static final ClassName BOXED_BYTE = ClassName.get("java.lang", "Byte");
-  private static final ClassName BOXED_SHORT = ClassName.get("java.lang", "Short");
-  private static final ClassName BOXED_INT = ClassName.get("java.lang", "Integer");
-  private static final ClassName BOXED_LONG = ClassName.get("java.lang", "Long");
-  private static final ClassName BOXED_CHAR = ClassName.get("java.lang", "Character");
-  private static final ClassName BOXED_FLOAT = ClassName.get("java.lang", "Float");
-  private static final ClassName BOXED_DOUBLE = ClassName.get("java.lang", "Double");
-
-  /** The name of this type if it is a keyword, or null. */
-  private final String keyword;
   public final List<AnnotationSpec> annotations;
 
   /** Lazily-initialized toString of this type name. */
   private String cachedString;
 
-  private TypeName(String keyword) {
-    this(keyword, new ArrayList<AnnotationSpec>());
-  }
-
-  private TypeName(String keyword, List<AnnotationSpec> annotations) {
-    this.keyword = keyword;
-    this.annotations = Util.immutableList(annotations);
-  }
-
-  // Package-private constructor to prevent third-party subclasses.
   TypeName(List<AnnotationSpec> annotations) {
-    this(null, annotations);
+    this.annotations = Util.immutableList(annotations);
   }
 
   public final TypeName annotated(AnnotationSpec... annotations) {
     return annotated(Arrays.asList(annotations));
   }
 
-  public TypeName annotated(List<AnnotationSpec> annotations) {
-    Util.checkNotNull(annotations, "annotations == null");
-    return new TypeName(keyword, concatAnnotations(annotations));
-  }
+  public abstract TypeName annotated(List<AnnotationSpec> annotations);
 
-  public TypeName withoutAnnotations() {
-    return new TypeName(keyword);
-  }
+  public abstract TypeName withoutAnnotations();
 
   protected final List<AnnotationSpec> concatAnnotations(List<AnnotationSpec> annotations) {
     List<AnnotationSpec> allAnnotations = new ArrayList<>(this.annotations);
@@ -129,67 +100,6 @@ public class TypeName {
 
   public boolean isAnnotated() {
     return !annotations.isEmpty();
-  }
-
-  /**
-   * Returns true if this is a primitive type like {@code int}. Returns false for all other types
-   * types including boxed primitives and {@code void}.
-   */
-  public boolean isPrimitive() {
-    return keyword != null && this != VOID;
-  }
-
-  /**
-   * Returns true if this is a boxed primitive type like {@code Integer}. Returns false for all
-   * other types types including unboxed primitives and {@code java.lang.Void}.
-   */
-  public boolean isBoxedPrimitive() {
-    return this.equals(BOXED_BOOLEAN)
-        || this.equals(BOXED_BYTE)
-        || this.equals(BOXED_SHORT)
-        || this.equals(BOXED_INT)
-        || this.equals(BOXED_LONG)
-        || this.equals(BOXED_CHAR)
-        || this.equals(BOXED_FLOAT)
-        || this.equals(BOXED_DOUBLE);
-  }
-
-  /**
-   * Returns a boxed type if this is a primitive type (like {@code Integer} for {@code int}) or
-   * {@code void}. Returns this type if boxing doesn't apply.
-   */
-  public TypeName box() {
-    if (keyword == null) return this; // Doesn't need boxing.
-    if (this == VOID) return BOXED_VOID;
-    if (this == BOOLEAN) return BOXED_BOOLEAN;
-    if (this == BYTE) return BOXED_BYTE;
-    if (this == SHORT) return BOXED_SHORT;
-    if (this == INT) return BOXED_INT;
-    if (this == LONG) return BOXED_LONG;
-    if (this == CHAR) return BOXED_CHAR;
-    if (this == FLOAT) return BOXED_FLOAT;
-    if (this == DOUBLE) return BOXED_DOUBLE;
-    throw new AssertionError(keyword);
-  }
-
-  /**
-   * Returns an unboxed type if this is a boxed primitive type (like {@code int} for {@code
-   * Integer}) or {@code Void}. Returns this type if it is already unboxed.
-   *
-   * @throws UnsupportedOperationException if this type isn't eligible for unboxing.
-   */
-  public TypeName unbox() {
-    if (keyword != null) return this; // Already unboxed.
-    if (this.equals(BOXED_VOID)) return VOID;
-    if (this.equals(BOXED_BOOLEAN)) return BOOLEAN;
-    if (this.equals(BOXED_BYTE)) return BYTE;
-    if (this.equals(BOXED_SHORT)) return SHORT;
-    if (this.equals(BOXED_INT)) return INT;
-    if (this.equals(BOXED_LONG)) return LONG;
-    if (this.equals(BOXED_CHAR)) return CHAR;
-    if (this.equals(BOXED_FLOAT)) return FLOAT;
-    if (this.equals(BOXED_DOUBLE)) return DOUBLE;
-    throw new UnsupportedOperationException("cannot unbox " + this);
   }
 
   @Override public final boolean equals(Object o) {
@@ -220,17 +130,13 @@ public class TypeName {
     return result;
   }
 
-  CodeWriter emit(CodeWriter out) throws IOException {
-    if (keyword == null) throw new AssertionError();
-    return out.emitAndIndent(keyword);
-  }
+  abstract CodeWriter emit(CodeWriter out) throws IOException;
 
-  CodeWriter emitAnnotations(CodeWriter out) throws IOException {
+  void emitAnnotations(CodeWriter out) throws IOException {
     for (AnnotationSpec annotation : annotations) {
       annotation.emit(out, true);
       out.emit(" ");
     }
-    return out;
   }
 
   /** Returns a type name equivalent to {@code mirror}. */
@@ -244,21 +150,21 @@ public class TypeName {
       @Override public TypeName visitPrimitive(PrimitiveType t, Void p) {
         switch (t.getKind()) {
           case BOOLEAN:
-            return TypeName.BOOLEAN;
+            return BOOLEAN;
           case BYTE:
-            return TypeName.BYTE;
+            return BYTE;
           case SHORT:
-            return TypeName.SHORT;
+            return SHORT;
           case INT:
-            return TypeName.INT;
+            return INT;
           case LONG:
-            return TypeName.LONG;
+            return LONG;
           case CHAR:
-            return TypeName.CHAR;
+            return CHAR;
           case FLOAT:
-            return TypeName.FLOAT;
+            return FLOAT;
           case DOUBLE:
-            return TypeName.DOUBLE;
+            return DOUBLE;
           default:
             throw new AssertionError();
         }
@@ -303,7 +209,7 @@ public class TypeName {
       }
 
       @Override public TypeName visitNoType(NoType t, Void p) {
-        if (t.getKind() == TypeKind.VOID) return TypeName.VOID;
+        if (t.getKind() == TypeKind.VOID) return UNIT;
         return super.visitUnknown(t, p);
       }
 
@@ -321,7 +227,7 @@ public class TypeName {
   static TypeName get(Type type, Map<Type, TypeVariableName> map) {
     if (type instanceof Class<?>) {
       Class<?> classType = (Class<?>) type;
-      if (type == void.class) return VOID;
+      if (type == void.class) return UNIT;
       if (type == boolean.class) return BOOLEAN;
       if (type == byte.class) return BYTE;
       if (type == short.class) return SHORT;

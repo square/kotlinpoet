@@ -43,14 +43,6 @@ public final class WildcardTypeName extends TypeName {
     this.lowerBounds = Util.immutableList(lowerBounds);
 
     checkArgument(this.upperBounds.size() == 1, "unexpected extends bounds: %s", upperBounds);
-    for (TypeName upperBound : this.upperBounds) {
-      checkArgument(!upperBound.isPrimitive() && upperBound != VOID,
-          "invalid upper bound: %s", upperBound);
-    }
-    for (TypeName lowerBound : this.lowerBounds) {
-      checkArgument(!lowerBound.isPrimitive() && lowerBound != VOID,
-          "invalid lower bound: %s", lowerBound);
-    }
   }
 
   @Override public WildcardTypeName annotated(List<AnnotationSpec> annotations) {
@@ -65,7 +57,7 @@ public final class WildcardTypeName extends TypeName {
     if (lowerBounds.size() == 1) {
       return out.emit("in $T", lowerBounds.get(0));
     }
-    return upperBounds.get(0).equals(TypeName.OBJECT) // TODO should this be Any? or special cased.
+    return upperBounds.get(0).equals(ANY)
         ? out.emit("*")
         : out.emit("out $T", upperBounds.get(0));
   }
@@ -90,7 +82,7 @@ public final class WildcardTypeName extends TypeName {
    * bound} is {@code String.class}, this returns {@code ? super String}.
    */
   public static WildcardTypeName supertypeOf(TypeName lowerBound) {
-    return new WildcardTypeName(Collections.<TypeName>singletonList(OBJECT),
+    return new WildcardTypeName(Collections.<TypeName>singletonList(ANY),
         Collections.singletonList(lowerBound));
   }
 

@@ -175,7 +175,7 @@ public final class MethodSpecTest {
     method = MethodSpec.overriding(exec, classType, types).build();
     assertThat(method.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public fun compareTo(arg0: java.lang.Long): int {\n"
+        + "public fun compareTo(arg0: java.lang.Long): kotlin.Int {\n"
         + "}\n");
   }
 

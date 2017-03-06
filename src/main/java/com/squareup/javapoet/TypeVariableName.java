@@ -23,12 +23,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 
-import static com.squareup.javapoet.Util.checkArgument;
 import static com.squareup.javapoet.Util.checkNotNull;
 
 public final class TypeVariableName extends TypeName {
@@ -43,10 +41,6 @@ public final class TypeVariableName extends TypeName {
     super(annotations);
     this.name = checkNotNull(name, "name == null");
     this.bounds = bounds;
-
-    for (TypeName bound : this.bounds) {
-      checkArgument(!bound.isPrimitive() && bound != VOID, "invalid bound: %s", bound);
-    }
   }
 
   @Override public TypeVariableName annotated(List<AnnotationSpec> annotations) {
@@ -75,7 +69,7 @@ public final class TypeVariableName extends TypeName {
   private static TypeVariableName of(String name, List<TypeName> bounds) {
     // Strip java.lang.Object from bounds if it is present.
     List<TypeName> boundsNoObject = new ArrayList<>(bounds);
-    boundsNoObject.remove(OBJECT);
+    boundsNoObject.remove(ANY);
     return new TypeVariableName(name, Collections.unmodifiableList(boundsNoObject));
   }
 
@@ -125,7 +119,7 @@ public final class TypeVariableName extends TypeName {
       for (TypeMirror typeMirror : element.getBounds()) {
         bounds.add(TypeName.get(typeMirror, typeVariables));
       }
-      bounds.remove(OBJECT);
+      bounds.remove(ANY);
     }
     return typeVariableName;
   }
@@ -160,7 +154,7 @@ public final class TypeVariableName extends TypeName {
       for (Type bound : type.getBounds()) {
         bounds.add(TypeName.get(bound, map));
       }
-      bounds.remove(OBJECT);
+      bounds.remove(ANY);
     }
     return result;
   }

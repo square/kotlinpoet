@@ -96,7 +96,7 @@ public class AnnotatedTypeNameTest {
   }
 
   @Test public void annotatedEquivalence() {
-    annotatedEquivalence(TypeName.VOID);
+    annotatedEquivalence(TypeName.UNIT);
     annotatedEquivalence(ArrayTypeName.get(Object[].class));
     annotatedEquivalence(ClassName.get(Object.class));
     annotatedEquivalence(ParameterizedTypeName.get(List.class, Object.class));

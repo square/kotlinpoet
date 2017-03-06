@@ -116,7 +116,7 @@ public class TypeNameTest {
     assertEqualsHashCodeAndToString(TypeName.INT, TypeName.INT);
     assertEqualsHashCodeAndToString(TypeName.LONG, TypeName.LONG);
     assertEqualsHashCodeAndToString(TypeName.SHORT, TypeName.SHORT);
-    assertEqualsHashCodeAndToString(TypeName.VOID, TypeName.VOID);
+    assertEqualsHashCodeAndToString(TypeName.UNIT, TypeName.UNIT);
   }
 
   @Test public void equalsAndHashCodeArrayTypeName() {
@@ -157,22 +157,6 @@ public class TypeNameTest {
         WildcardTypeName.subtypeOf(Serializable.class));
     assertEqualsHashCodeAndToString(WildcardTypeName.supertypeOf(String.class),
         WildcardTypeName.supertypeOf(String.class));
-  }
-
-  @Test public void isPrimitive() throws Exception {
-    assertThat(TypeName.INT.isPrimitive()).isTrue();
-    assertThat(ClassName.get("java.lang", "Integer").isPrimitive()).isFalse();
-    assertThat(ClassName.get("java.lang", "String").isPrimitive()).isFalse();
-    assertThat(TypeName.VOID.isPrimitive()).isFalse();
-    assertThat(ClassName.get("java.lang", "Void").isPrimitive()).isFalse();
-  }
-
-  @Test public void isBoxedPrimitive() throws Exception {
-    assertThat(TypeName.INT.isBoxedPrimitive()).isFalse();
-    assertThat(ClassName.get("java.lang", "Integer").isBoxedPrimitive()).isTrue();
-    assertThat(ClassName.get("java.lang", "String").isBoxedPrimitive()).isFalse();
-    assertThat(TypeName.VOID.isBoxedPrimitive()).isFalse();
-    assertThat(ClassName.get("java.lang", "Void").isBoxedPrimitive()).isFalse();
   }
 
   private void assertEqualsHashCodeAndToString(TypeName a, TypeName b) {
