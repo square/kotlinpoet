@@ -18,7 +18,6 @@ package com.squareup.javapoet;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,24 +32,10 @@ public final class WildcardTypeName extends TypeName {
   public final List<TypeName> lowerBounds;
 
   private WildcardTypeName(List<TypeName> upperBounds, List<TypeName> lowerBounds) {
-    this(upperBounds, lowerBounds, new ArrayList<AnnotationSpec>());
-  }
-
-  private WildcardTypeName(List<TypeName> upperBounds, List<TypeName> lowerBounds,
-      List<AnnotationSpec> annotations) {
-    super(annotations);
     this.upperBounds = Util.immutableList(upperBounds);
     this.lowerBounds = Util.immutableList(lowerBounds);
 
     checkArgument(this.upperBounds.size() == 1, "unexpected extends bounds: %s", upperBounds);
-  }
-
-  @Override public WildcardTypeName annotated(List<AnnotationSpec> annotations) {
-    return new WildcardTypeName(upperBounds, lowerBounds, concatAnnotations(annotations));
-  }
-
-  @Override public TypeName withoutAnnotations() {
-    return new WildcardTypeName(upperBounds, lowerBounds);
   }
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {

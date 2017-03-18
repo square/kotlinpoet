@@ -210,28 +210,6 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
-  /**
-   * We had a bug where annotations were preventing us from doing the right thing when resolving
-   * imports. https://github.com/square/javapoet/issues/422
-   */
-  @Test public void annotationsAndJavaLangTypes() throws Exception {
-    ClassName freeRange = ClassName.get("javax.annotation", "FreeRange");
-    TypeSpec taco = TypeSpec.classBuilder("EthicalTaco")
-        .addField(ClassName.get(String.class)
-            .annotated(AnnotationSpec.builder(freeRange).build()), "meat")
-        .build();
-
-    assertThat(toString(taco)).isEqualTo(""
-        + "package com.squareup.tacos\n"
-        + "\n"
-        + "import java.lang.String\n"
-        + "import javax.annotation.FreeRange\n"
-        + "\n"
-        + "class EthicalTaco {\n"
-        + "  meat: @FreeRange String;\n"
-        + "}\n");
-  }
-
   @Test public void retrofitStyleInterface() throws Exception {
     ClassName observable = ClassName.get(tacosPackage, "Observable");
     ClassName fooBar = ClassName.get(tacosPackage, "FooBar");
@@ -584,9 +562,8 @@ public final class TypeSpecTest {
   }
 
   @Test public void typeVariableWithBounds() {
-    AnnotationSpec a = AnnotationSpec.builder(ClassName.get("com.squareup.tacos", "A")).build();
     TypeVariableName p = TypeVariableName.get("P", Number.class);
-    TypeVariableName q = (TypeVariableName) TypeVariableName.get("Q", Number.class).annotated(a);
+    TypeVariableName q = TypeVariableName.get("Q", Number.class);
     TypeSpec typeSpec = TypeSpec.classBuilder("Location")
         .addTypeVariable(p.withBounds(Comparable.class))
         .addTypeVariable(q.withBounds(Comparable.class))
@@ -602,7 +579,7 @@ public final class TypeSpecTest {
         + "class Location<P : Number & Comparable, Q : Number & Comparable> {\n"
         + "  x: P;\n"
         + "\n"
-        + "  y: @A Q;\n"
+        + "  y: Q;\n"
         + "}\n");
   }
 
