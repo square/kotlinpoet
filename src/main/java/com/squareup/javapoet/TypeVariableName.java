@@ -34,21 +34,8 @@ public final class TypeVariableName extends TypeName {
   public final List<TypeName> bounds;
 
   private TypeVariableName(String name, List<TypeName> bounds) {
-    this(name, bounds, new ArrayList<AnnotationSpec>());
-  }
-
-  private TypeVariableName(String name, List<TypeName> bounds, List<AnnotationSpec> annotations) {
-    super(annotations);
     this.name = checkNotNull(name, "name == null");
     this.bounds = bounds;
-  }
-
-  @Override public TypeVariableName annotated(List<AnnotationSpec> annotations) {
-    return new TypeVariableName(name, bounds, annotations);
-  }
-
-  @Override public TypeName withoutAnnotations() {
-    return new TypeVariableName(name, bounds);
   }
 
   public TypeVariableName withBounds(Type... bounds) {
@@ -63,7 +50,7 @@ public final class TypeVariableName extends TypeName {
     ArrayList<TypeName> newBounds = new ArrayList<>();
     newBounds.addAll(this.bounds);
     newBounds.addAll(bounds);
-    return new TypeVariableName(name, newBounds, annotations);
+    return new TypeVariableName(name, newBounds);
   }
 
   private static TypeVariableName of(String name, List<TypeName> bounds) {

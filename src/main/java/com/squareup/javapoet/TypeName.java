@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,31 +74,11 @@ public abstract class TypeName {
   static final ClassName FLOAT = ClassName.get("kotlin", "Float");
   static final ClassName DOUBLE = ClassName.get("kotlin", "Double");
 
-  public final List<AnnotationSpec> annotations;
-
   /** Lazily-initialized toString of this type name. */
   private String cachedString;
 
-  TypeName(List<AnnotationSpec> annotations) {
-    this.annotations = Util.immutableList(annotations);
-  }
-
-  public final TypeName annotated(AnnotationSpec... annotations) {
-    return annotated(Arrays.asList(annotations));
-  }
-
-  public abstract TypeName annotated(List<AnnotationSpec> annotations);
-
-  public abstract TypeName withoutAnnotations();
-
-  protected final List<AnnotationSpec> concatAnnotations(List<AnnotationSpec> annotations) {
-    List<AnnotationSpec> allAnnotations = new ArrayList<>(this.annotations);
-    allAnnotations.addAll(annotations);
-    return allAnnotations;
-  }
-
-  public boolean isAnnotated() {
-    return !annotations.isEmpty();
+  TypeName() {
+    // No external subclasses.
   }
 
   @Override public final boolean equals(Object o) {
@@ -119,7 +98,6 @@ public abstract class TypeName {
       try {
         StringBuilder resultBuilder = new StringBuilder();
         CodeWriter codeWriter = new CodeWriter(resultBuilder);
-        emitAnnotations(codeWriter);
         emit(codeWriter);
         result = resultBuilder.toString();
         cachedString = result;
@@ -131,13 +109,6 @@ public abstract class TypeName {
   }
 
   abstract CodeWriter emit(CodeWriter out) throws IOException;
-
-  void emitAnnotations(CodeWriter out) throws IOException {
-    for (AnnotationSpec annotation : annotations) {
-      annotation.emit(out, true);
-      out.emit(" ");
-    }
-  }
 
   /** Returns a type name equivalent to {@code mirror}. */
   public static TypeName get(TypeMirror mirror) {
