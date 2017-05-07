@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 
@@ -77,6 +78,10 @@ public final class WildcardTypeName extends TypeName {
     return subtypeOf(TypeName.get(upperBound));
   }
 
+  public static WildcardTypeName subtypeOf(KClass<?> upperBound) {
+    return subtypeOf(TypeName.get(upperBound));
+  }
+
   /**
    * Returns a type that represents an unknown supertype of {@code bound}. For example, if {@code
    * bound} is {@code String.class}, this returns {@code ? super String}.
@@ -87,6 +92,10 @@ public final class WildcardTypeName extends TypeName {
   }
 
   public static WildcardTypeName supertypeOf(Type lowerBound) {
+    return supertypeOf(TypeName.get(lowerBound));
+  }
+
+  public static WildcardTypeName supertypeOf(KClass<?> lowerBound) {
     return supertypeOf(TypeName.get(lowerBound));
   }
 

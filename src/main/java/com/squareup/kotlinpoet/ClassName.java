@@ -25,6 +25,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -151,6 +152,12 @@ public final class ClassName extends TypeName implements Comparable<ClassName> {
     if (lastDot != -1) names.add(clazz.getName().substring(0, lastDot));
     Collections.reverse(names);
     return new ClassName(names);
+  }
+
+  public static ClassName get(KClass<?> clazz) {
+    TypeName typeName = TypeName.get(clazz);
+    if (typeName instanceof ClassName) return (ClassName) typeName;
+    throw new IllegalArgumentException(clazz + " cannot be represented as a ClassName");
   }
 
   /**

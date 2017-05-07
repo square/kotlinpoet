@@ -34,6 +34,7 @@ import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Types;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -325,6 +326,10 @@ public final class MethodSpec {
       return addAnnotation(ClassName.get(annotation));
     }
 
+    public Builder addAnnotation(KClass<?> annotation) {
+      return addAnnotation(ClassName.get(annotation));
+    }
+
     public Builder addModifiers(Modifier... modifiers) {
       Collections.addAll(this.modifiers, modifiers);
       return this;
@@ -361,6 +366,10 @@ public final class MethodSpec {
       return returns(TypeName.get(returnType));
     }
 
+    public Builder returns(KClass<?> returnType) {
+      return returns(TypeName.get(returnType));
+    }
+
     public Builder addParameters(Iterable<ParameterSpec> parameterSpecs) {
       checkArgument(parameterSpecs != null, "parameterSpecs == null");
       for (ParameterSpec parameterSpec : parameterSpecs) {
@@ -379,6 +388,10 @@ public final class MethodSpec {
     }
 
     public Builder addParameter(Type type, String name, Modifier... modifiers) {
+      return addParameter(TypeName.get(type), name, modifiers);
+    }
+
+    public Builder addParameter(KClass<?> type, String name, Modifier... modifiers) {
       return addParameter(TypeName.get(type), name, modifiers);
     }
 
@@ -405,6 +418,10 @@ public final class MethodSpec {
     }
 
     public Builder addException(Type exception) {
+      return addException(TypeName.get(exception));
+    }
+
+    public Builder addException(KClass<?> exception) {
       return addException(TypeName.get(exception));
     }
 

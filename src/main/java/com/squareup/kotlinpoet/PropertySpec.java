@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -95,6 +96,10 @@ public final class PropertySpec {
   }
 
   public static Builder builder(Type type, String name, Modifier... modifiers) {
+    return builder(TypeName.get(type), name, modifiers);
+  }
+
+  public static Builder builder(KClass<?> type, String name, Modifier... modifiers) {
     return builder(TypeName.get(type), name, modifiers);
   }
 

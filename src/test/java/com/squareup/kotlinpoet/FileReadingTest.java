@@ -21,13 +21,10 @@ import java.net.URI;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@RunWith(JUnit4.class)
 public class FileReadingTest {
   @Test public void javaFileObjectUri() {
     TypeSpec type = TypeSpec.classBuilder("Test").build();

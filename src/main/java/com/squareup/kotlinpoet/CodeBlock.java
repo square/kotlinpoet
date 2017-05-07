@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 
@@ -310,6 +311,7 @@ public final class CodeBlock {
       if (o instanceof TypeMirror) return TypeName.get((TypeMirror) o);
       if (o instanceof Element) return TypeName.get(((Element) o).asType());
       if (o instanceof Type) return TypeName.get((Type) o);
+      if (o instanceof KClass) return TypeName.get((KClass<?>) o);
       throw new IllegalArgumentException("expected type but was " + o);
     }
 
