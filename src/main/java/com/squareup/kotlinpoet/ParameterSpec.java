@@ -26,6 +26,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -104,6 +105,10 @@ public final class ParameterSpec {
   }
 
   public static Builder builder(Type type, String name, Modifier... modifiers) {
+    return builder(TypeName.get(type), name, modifiers);
+  }
+
+  public static Builder builder(KClass<?> type, String name, Modifier... modifiers) {
     return builder(TypeName.get(type), name, modifiers);
   }
 

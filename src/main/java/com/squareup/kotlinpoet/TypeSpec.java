@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -417,6 +418,10 @@ public final class TypeSpec {
       return addAnnotation(ClassName.get(annotation));
     }
 
+    public Builder addAnnotation(KClass<?> annotation) {
+      return addAnnotation((ClassName) ClassName.get(annotation));
+    }
+
     public Builder addModifiers(Modifier... modifiers) {
       checkState(anonymousTypeArguments == null, "forbidden on anonymous types.");
       Collections.addAll(this.modifiers, modifiers);
@@ -468,6 +473,10 @@ public final class TypeSpec {
       return addSuperinterface(TypeName.get(superinterface));
     }
 
+    public Builder addSuperinterface(KClass<?> superinterface) {
+      return addSuperinterface(TypeName.get(superinterface));
+    }
+
     public Builder addEnumConstant(String name) {
       return addEnumConstant(name, anonymousClassBuilder("").build());
     }
@@ -505,6 +514,10 @@ public final class TypeSpec {
     }
 
     public Builder addProperty(Type type, String name, Modifier... modifiers) {
+      return addProperty(TypeName.get(type), name, modifiers);
+    }
+
+    public Builder addProperty(KClass<?> type, String name, Modifier... modifiers) {
       return addProperty(TypeName.get(type), name, modifiers);
     }
 

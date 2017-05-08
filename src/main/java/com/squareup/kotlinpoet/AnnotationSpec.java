@@ -35,6 +35,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleAnnotationValueVisitor7;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.characterLiteralWithoutSingleQuotes;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -161,6 +162,10 @@ public final class AnnotationSpec {
   }
 
   public static Builder builder(Class<?> type) {
+    return builder(ClassName.get(type));
+  }
+
+  public static Builder builder(KClass<?> type) {
     return builder(ClassName.get(type));
   }
 

@@ -15,13 +15,11 @@
  */
 package com.squareup.kotlinpoet;
 
-import static com.google.common.base.Charsets.*;
-import static com.google.common.base.Preconditions.*;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
@@ -34,19 +32,16 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.Statement;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Preconditions.checkState;
 
-@RunWith(JUnit4.class)
 public final class TypesEclipseTest extends AbstractTypesTest {
   /**
    * A {@link JUnit4} {@link Rule} that executes tests such that a instances of {@link Elements} and

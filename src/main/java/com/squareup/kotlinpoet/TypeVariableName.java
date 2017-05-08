@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkNotNull;
 
@@ -52,6 +53,10 @@ public final class TypeVariableName extends TypeName {
   }
 
   public TypeVariableName withBounds(Type... bounds) {
+    return withBounds(TypeName.list(bounds));
+  }
+
+  public TypeVariableName withBounds(KClass<?>... bounds) {
     return withBounds(TypeName.list(bounds));
   }
 
@@ -85,6 +90,12 @@ public final class TypeVariableName extends TypeName {
   /** Returns type variable named {@code name} with {@code bounds}. */
   public static TypeVariableName get(String name, TypeName... bounds) {
     return TypeVariableName.of(name, Arrays.asList(bounds));
+  }
+
+
+  /** Returns type variable named {@code name} with {@code bounds}. */
+  public static TypeVariableName get(String name, KClass<?>... bounds) {
+    return TypeVariableName.of(name, TypeName.list(bounds));
   }
 
   /** Returns type variable named {@code name} with {@code bounds}. */

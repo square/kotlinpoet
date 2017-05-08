@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import kotlin.reflect.KClass;
 
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
@@ -105,6 +106,12 @@ public final class ParameterizedTypeName extends TypeName {
   /** Returns a parameterized type, applying {@code typeArguments} to {@code rawType}. */
   public static ParameterizedTypeName get(ClassName rawType, TypeName... typeArguments) {
     return new ParameterizedTypeName(null, rawType, Arrays.asList(typeArguments));
+  }
+
+  /** Returns a parameterized type, applying {@code typeArguments} to {@code rawType}. */
+  public static ParameterizedTypeName get(KClass<?> rawType, KClass<?>... typeArguments) {
+    return new ParameterizedTypeName(
+        null, ClassName.get(rawType), TypeName.list(typeArguments));
   }
 
   /** Returns a parameterized type, applying {@code typeArguments} to {@code rawType}. */

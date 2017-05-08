@@ -38,6 +38,8 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleTypeVisitor7;
 import kotlin.Unit;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KClass;
 
 /**
  * Any type in Kotlin's type system. This class identifies simple types like {@code Int} and {@code
@@ -224,6 +226,11 @@ public abstract class TypeName {
     return get(type, new LinkedHashMap<Type, TypeVariableName>());
   }
 
+  /** Returns a type name equivalent to {@code type}. */
+  public static TypeName get(KClass<?> type) {
+    return get(JvmClassMappingKt.getJavaClass(type));
+  }
+
   static TypeName get(Type type, Map<Type, TypeVariableName> map) {
     if (type instanceof Class<?>) {
       Class<?> classType = (Class<?>) type;
@@ -259,6 +266,14 @@ public abstract class TypeName {
   /** Converts an array of types to a list of type names. */
   static List<TypeName> list(Type[] types) {
     return list(types, new LinkedHashMap<Type, TypeVariableName>());
+  }
+
+  static List<TypeName> list(KClass<?>[] types) {
+    List<TypeName> result = new ArrayList<>(types.length);
+    for (KClass<?> type : types) {
+      result.add(get(type));
+    }
+    return result;
   }
 
   static List<TypeName> list(Type[] types, Map<Type, TypeVariableName> map) {
