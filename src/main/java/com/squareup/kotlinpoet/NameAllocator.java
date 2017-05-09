@@ -48,13 +48,13 @@ import static com.squareup.kotlinpoet.Util.checkNotNull;
  *       .addModifiers(Modifier.PUBLIC)
  *       .returns(String.class);
  *
- *   builder.addStatement("$1T $2N = new $1T()",
+ *   builder.addStatement("%1T %2N = new %1T()",
  *       StringBuilder.class, nameAllocator.get("string builder"));
  *   for (MyProperty property : properties) {
- *     builder.addStatement("$N.append($N)",
+ *     builder.addStatement("%N.append(%N)",
  *         nameAllocator.get("string builder"), nameAllocator.get(property));
  *   }
- *   builder.addStatement("return $N", nameAllocator.get("string builder"));
+ *   builder.addStatement("return %N", nameAllocator.get("string builder"));
  *   return builder.build();
  * }</pre>
  *

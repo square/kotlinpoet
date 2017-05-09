@@ -170,7 +170,7 @@ public final class FileWritingTest {
         .addMethod(MethodSpec.methodBuilder("main")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(String[].class, "args")
-            .addCode("$T.out.println($S);\n", System.class, "Hello World!")
+            .addCode("%T.out.println(%S);\n", System.class, "Hello World!")
             .build())
         .build();
     KotlinFile.builder("foo", test).indent("\t").build().writeTo(filer);

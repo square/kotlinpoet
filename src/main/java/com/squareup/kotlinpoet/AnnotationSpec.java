@@ -55,10 +55,10 @@ public final class AnnotationSpec {
     String memberSeparator = inline ? ", " : ",\n";
     if (members.isEmpty()) {
       // @Singleton
-      codeWriter.emit("@$T", type);
+      codeWriter.emit("@%T", type);
     } else if (members.size() == 1 && members.containsKey("value")) {
       // @Named("foo")
-      codeWriter.emit("@$T(", type);
+      codeWriter.emit("@%T(", type);
       emitAnnotationValues(codeWriter, whitespace, memberSeparator, members.get("value"));
       codeWriter.emit(")");
     } else {
@@ -70,12 +70,12 @@ public final class AnnotationSpec {
       //       name = "updated_at",
       //       nullable = false
       //   )
-      codeWriter.emit("@$T(" + whitespace, type);
+      codeWriter.emit("@%T(" + whitespace, type);
       codeWriter.indent(2);
       for (Iterator<Map.Entry<String, List<CodeBlock>>> i
           = members.entrySet().iterator(); i.hasNext(); ) {
         Map.Entry<String, List<CodeBlock>> entry = i.next();
-        codeWriter.emit("$L = ", entry.getKey());
+        codeWriter.emit("%L = ", entry.getKey());
         emitAnnotationValues(codeWriter, whitespace, memberSeparator, entry.getValue());
         if (i.hasNext()) codeWriter.emit(memberSeparator);
       }
@@ -133,7 +133,7 @@ public final class AnnotationSpec {
           continue;
         }
         if (value instanceof Annotation) {
-          builder.addMember(method.getName(), "$L", get((Annotation) value));
+          builder.addMember(method.getName(), "%L", get((Annotation) value));
           continue;
         }
         builder.addMemberForValue(method.getName(), value);
@@ -192,7 +192,7 @@ public final class AnnotationSpec {
     StringWriter out = new StringWriter();
     try {
       CodeWriter codeWriter = new CodeWriter(out);
-      codeWriter.emit("$L", this);
+      codeWriter.emit("%L", this);
       return out.toString();
     } catch (IOException e) {
       throw new AssertionError();
@@ -223,28 +223,28 @@ public final class AnnotationSpec {
 
     /**
      * Delegates to {@link #addMember(String, String, Object...)}, with parameter {@code format}
-     * depending on the given {@code value} object. Falls back to {@code "$L"} literal format if
+     * depending on the given {@code value} object. Falls back to {@code "%L"} literal format if
      * the class of the given {@code value} object is not supported.
      */
     Builder addMemberForValue(String memberName, Object value) {
       checkNotNull(memberName, "memberName == null");
       checkNotNull(value, "value == null, constant non-null value expected for %s", memberName);
       if (value instanceof Class<?>) {
-        return addMember(memberName, "$T.class", value);
+        return addMember(memberName, "%T.class", value);
       }
       if (value instanceof Enum) {
-        return addMember(memberName, "$T.$L", value.getClass(), ((Enum<?>) value).name());
+        return addMember(memberName, "%T.%L", value.getClass(), ((Enum<?>) value).name());
       }
       if (value instanceof String) {
-        return addMember(memberName, "$S", value);
+        return addMember(memberName, "%S", value);
       }
       if (value instanceof Float) {
-        return addMember(memberName, "$Lf", value);
+        return addMember(memberName, "%Lf", value);
       }
       if (value instanceof Character) {
-        return addMember(memberName, "'$L'", characterLiteralWithoutSingleQuotes((char) value));
+        return addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes((char) value));
       }
-      return addMember(memberName, "$L", value);
+      return addMember(memberName, "%L", value);
     }
 
     public AnnotationSpec build() {
@@ -268,15 +268,15 @@ public final class AnnotationSpec {
     }
 
     @Override public Builder visitAnnotation(AnnotationMirror a, String name) {
-      return builder.addMember(name, "$L", get(a));
+      return builder.addMember(name, "%L", get(a));
     }
 
     @Override public Builder visitEnumConstant(VariableElement c, String name) {
-      return builder.addMember(name, "$T.$L", c.asType(), c.getSimpleName());
+      return builder.addMember(name, "%T.%L", c.asType(), c.getSimpleName());
     }
 
     @Override public Builder visitType(TypeMirror t, String name) {
-      return builder.addMember(name, "$T.class", t);
+      return builder.addMember(name, "%T.class", t);
     }
 
     @Override public Builder visitArray(List<? extends AnnotationValue> values, String name) {

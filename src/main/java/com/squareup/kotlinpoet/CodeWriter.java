@@ -191,10 +191,10 @@ final class CodeWriter {
     boolean firstTypeVariable = true;
     for (TypeVariableName typeVariable : typeVariables) {
       if (!firstTypeVariable) emit(", ");
-      emit("$L", typeVariable.name);
+      emit("%L", typeVariable.name);
       boolean firstBound = true;
       for (TypeName bound : typeVariable.bounds) {
-        emit(firstBound ? " : $T" : " & $T", bound);
+        emit(firstBound ? " : %T" : " & %T", bound);
         firstBound = false;
       }
       firstTypeVariable = false;
@@ -217,15 +217,15 @@ final class CodeWriter {
     while (partIterator.hasNext()) {
       String part = partIterator.next();
       switch (part) {
-        case "$L":
+        case "%L":
           emitLiteral(codeBlock.args.get(a++));
           break;
 
-        case "$N":
+        case "%N":
           emitAndIndent((String) codeBlock.args.get(a++));
           break;
 
-        case "$S":
+        case "%S":
           String string = (String) codeBlock.args.get(a++);
           // Emit null as a literal null: no quotes.
           emitAndIndent(string != null
@@ -233,7 +233,7 @@ final class CodeWriter {
               : "null");
           break;
 
-        case "$T":
+        case "%T":
           TypeName typeName = (TypeName) codeBlock.args.get(a++);
           if (typeName.isAnnotated()) {
             typeName.emitAnnotations(this);
@@ -241,7 +241,7 @@ final class CodeWriter {
           }
           // defer "typeName.emit(this)" if next format part will be handled by the default case
           if (typeName instanceof ClassName && partIterator.hasNext()) {
-            if (!codeBlock.formatParts.get(partIterator.nextIndex()).startsWith("$")) {
+            if (!codeBlock.formatParts.get(partIterator.nextIndex()).startsWith("%")) {
               ClassName candidate = (ClassName) typeName;
               if (staticImportClassNames.contains(candidate.canonicalName)) {
                 checkState(deferredTypeName == null, "pending type for static import?!");
@@ -253,32 +253,32 @@ final class CodeWriter {
           typeName.emit(this);
           break;
 
-        case "$$":
-          emitAndIndent("$");
+        case "%%":
+          emitAndIndent("%");
           break;
 
-        case "$>":
+        case "%>":
           indent();
           break;
 
-        case "$<":
+        case "%<":
           unindent();
           break;
 
-        case "$[":
-          checkState(statementLine == -1, "statement enter $[ followed by statement enter $[");
+        case "%[":
+          checkState(statementLine == -1, "statement enter %%[ followed by statement enter %%[");
           statementLine = 0;
           break;
 
-        case "$]":
-          checkState(statementLine != -1, "statement exit $] has no matching statement enter $[");
+        case "%]":
+          checkState(statementLine != -1, "statement exit %%] has no matching statement enter %%[");
           if (statementLine > 0) {
             unindent(2); // End a multi-line statement. Decrease the indentation level.
           }
           statementLine = -1;
           break;
 
-        case "$W":
+        case "%W":
           out.wrappingSpace(indentLevel + 2);
           break;
 

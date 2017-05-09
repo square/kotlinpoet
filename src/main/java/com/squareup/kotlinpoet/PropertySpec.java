@@ -58,7 +58,7 @@ public final class PropertySpec {
     codeWriter.emitJavadoc(javadoc);
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
-    codeWriter.emit("$L: $T", name, type);
+    codeWriter.emit("%L: %T", name, type);
     if (!initializer.isEmpty()) {
       codeWriter.emit(" = ");
       codeWriter.emit(initializer);

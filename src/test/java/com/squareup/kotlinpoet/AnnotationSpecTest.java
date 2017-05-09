@@ -108,8 +108,8 @@ public final class AnnotationSpecTest {
     AnnotationSpec b = AnnotationSpec.builder(AnnotationC.class).build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-    a = AnnotationSpec.builder(AnnotationC.class).addMember("value", "$S", "123").build();
-    b = AnnotationSpec.builder(AnnotationC.class).addMember("value", "$S", "123").build();
+    a = AnnotationSpec.builder(AnnotationC.class).addMember("value", "%S", "123").build();
+    b = AnnotationSpec.builder(AnnotationC.class).addMember("value", "%S", "123").build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
   }
@@ -189,10 +189,10 @@ public final class AnnotationSpecTest {
 
   @Test public void emptyArray() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
-    builder.addMember("n", "$L", "{}");
+    builder.addMember("n", "%L", "{}");
     assertThat(builder.build().toString()).isEqualTo(
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" + "n = {}" + ")");
-    builder.addMember("m", "$L", "{}");
+    builder.addMember("m", "%L", "{}");
     assertThat(builder.build().toString())
         .isEqualTo(
             "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation("
@@ -202,15 +202,15 @@ public final class AnnotationSpecTest {
 
   @Test public void dynamicArrayOfEnumConstants() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
-    builder.addMember("n", "$T.$L", Breakfast.class, Breakfast.PANCAKES.name());
+    builder.addMember("n", "%T.%L", Breakfast.class, Breakfast.PANCAKES.name());
     assertThat(builder.build().toString()).isEqualTo(
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation("
             + "n = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES"
             + ")");
 
     // builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
-    builder.addMember("n", "$T.$L", Breakfast.class, Breakfast.WAFFLES.name());
-    builder.addMember("n", "$T.$L", Breakfast.class, Breakfast.PANCAKES.name());
+    builder.addMember("n", "%T.%L", Breakfast.class, Breakfast.WAFFLES.name());
+    builder.addMember("n", "%T.%L", Breakfast.class, Breakfast.PANCAKES.name());
     assertThat(builder.build().toString()).isEqualTo(
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation("
             + "n = {"
@@ -228,7 +228,7 @@ public final class AnnotationSpecTest {
             + ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES"
             + "})");
 
-    builder.addMember("n", "$T.$L", Breakfast.class, Breakfast.WAFFLES.name());
+    builder.addMember("n", "%T.%L", Breakfast.class, Breakfast.WAFFLES.name());
     assertThat(builder.build().toString()).isEqualTo(
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation("
             + "n = {"
@@ -244,7 +244,7 @@ public final class AnnotationSpecTest {
     TypeElement element = compilation.getElements().getTypeElement(name);
     AnnotationSpec.Builder builder = AnnotationSpec.get(element.getAnnotationMirrors().get(0))
         .toBuilder();
-    builder.addMember("m", "$L", 123);
+    builder.addMember("m", "%L", 123);
     assertThat(builder.build().toString()).isEqualTo(
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation("
             + "o = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES"

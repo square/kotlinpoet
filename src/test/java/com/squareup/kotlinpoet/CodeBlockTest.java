@@ -28,86 +28,86 @@ public final class CodeBlockTest {
     CodeBlock b = CodeBlock.builder().build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-    a = CodeBlock.builder().add("$L", "taco").build();
-    b = CodeBlock.builder().add("$L", "taco").build();
+    a = CodeBlock.builder().add("%L", "taco").build();
+    b = CodeBlock.builder().add("%L", "taco").build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
   }
 
   @Test public void of() {
-    CodeBlock a = CodeBlock.of("$L taco", "delicious");
+    CodeBlock a = CodeBlock.of("%L taco", "delicious");
     assertThat(a.toString()).isEqualTo("delicious taco");
   }
 
   @Test public void indentCannotBeIndexed() {
     try {
-      CodeBlock.builder().add("$1>", "taco").build();
+      CodeBlock.builder().add("%1>", "taco").build();
       fail();
     } catch (IllegalArgumentException exp) {
-      assertThat(exp).hasMessage("$$, $>, $<, $[, $], and $W may not have an index");
+      assertThat(exp).hasMessage("%%, %>, %<, %[, %], and %W may not have an index");
     }
   }
 
   @Test public void deindentCannotBeIndexed() {
     try {
-      CodeBlock.builder().add("$1<", "taco").build();
+      CodeBlock.builder().add("%1<", "taco").build();
       fail();
     } catch (IllegalArgumentException exp) {
-      assertThat(exp).hasMessage("$$, $>, $<, $[, $], and $W may not have an index");
+      assertThat(exp).hasMessage("%%, %>, %<, %[, %], and %W may not have an index");
     }
   }
 
-  @Test public void dollarSignEscapeCannotBeIndexed() {
+  @Test public void percentEscapeCannotBeIndexed() {
     try {
-      CodeBlock.builder().add("$1$", "taco").build();
+      CodeBlock.builder().add("%1%", "taco").build();
       fail();
     } catch (IllegalArgumentException exp) {
-      assertThat(exp).hasMessage("$$, $>, $<, $[, $], and $W may not have an index");
+      assertThat(exp).hasMessage("%%, %>, %<, %[, %], and %W may not have an index");
     }
   }
 
   @Test public void statementBeginningCannotBeIndexed() {
     try {
-      CodeBlock.builder().add("$1[", "taco").build();
+      CodeBlock.builder().add("%1[", "taco").build();
       fail();
     } catch (IllegalArgumentException exp) {
-      assertThat(exp).hasMessage("$$, $>, $<, $[, $], and $W may not have an index");
+      assertThat(exp).hasMessage("%%, %>, %<, %[, %], and %W may not have an index");
     }
   }
 
   @Test public void statementEndingCannotBeIndexed() {
     try {
-      CodeBlock.builder().add("$1]", "taco").build();
+      CodeBlock.builder().add("%1]", "taco").build();
       fail();
     } catch (IllegalArgumentException exp) {
-      assertThat(exp).hasMessage("$$, $>, $<, $[, $], and $W may not have an index");
+      assertThat(exp).hasMessage("%%, %>, %<, %[, %], and %W may not have an index");
     }
   }
 
   @Test public void nameFormatCanBeIndexed() {
-    CodeBlock block = CodeBlock.builder().add("$1N", "taco").build();
+    CodeBlock block = CodeBlock.builder().add("%1N", "taco").build();
     assertThat(block.toString()).isEqualTo("taco");
   }
 
   @Test public void literalFormatCanBeIndexed() {
-    CodeBlock block = CodeBlock.builder().add("$1L", "taco").build();
+    CodeBlock block = CodeBlock.builder().add("%1L", "taco").build();
     assertThat(block.toString()).isEqualTo("taco");
   }
 
   @Test public void stringFormatCanBeIndexed() {
-    CodeBlock block = CodeBlock.builder().add("$1S", "taco").build();
+    CodeBlock block = CodeBlock.builder().add("%1S", "taco").build();
     assertThat(block.toString()).isEqualTo("\"taco\"");
   }
 
   @Test public void typeFormatCanBeIndexed() {
-    CodeBlock block = CodeBlock.builder().add("$1T", String.class).build();
+    CodeBlock block = CodeBlock.builder().add("%1T", String.class).build();
     assertThat(block.toString()).isEqualTo("java.lang.String");
   }
 
   @Test public void simpleNamedArgument() {
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("text", "taco");
-    CodeBlock block = CodeBlock.builder().addNamed("$text:S", map).build();
+    CodeBlock block = CodeBlock.builder().addNamed("%text:S", map).build();
     assertThat(block.toString()).isEqualTo("\"taco\"");
   }
 
@@ -115,7 +115,7 @@ public final class CodeBlockTest {
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("text", "tacos");
     CodeBlock block = CodeBlock.builder()
-        .addNamed("\"I like \" + $text:S + \". Do you like \" + $text:S + \"?\"", map)
+        .addNamed("\"I like \" + %text:S + \". Do you like \" + %text:S + \"?\"", map)
         .build();
     assertThat(block.toString()).isEqualTo(
         "\"I like \" + \"tacos\" + \". Do you like \" + \"tacos\" + \"?\"");
@@ -125,17 +125,17 @@ public final class CodeBlockTest {
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("text", "tacos");
     CodeBlock block = CodeBlock.builder()
-        .addNamed("$>\n$text:L for $$3.50", map).build();
-    assertThat(block.toString()).isEqualTo("\n  tacos for $3.50");
+        .addNamed("%>\n%text:L for %%3.50", map).build();
+    assertThat(block.toString()).isEqualTo("\n  tacos for %3.50");
   }
 
   @Test public void missingNamedArgument() {
     try {
       Map<String, Object> map = new LinkedHashMap<>();
-      CodeBlock.builder().addNamed("$text:S", map).build();
+      CodeBlock.builder().addNamed("%text:S", map).build();
       fail();
     } catch(IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("Missing named argument for $text");
+      assertThat(expected).hasMessage("Missing named argument for %text");
     }
   }
 
@@ -143,7 +143,7 @@ public final class CodeBlockTest {
     try {
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("Text", "tacos");
-      CodeBlock block = CodeBlock.builder().addNamed("$Text:S", map).build();
+      CodeBlock.builder().addNamed("%Text:S", map).build();
       fail();
     } catch(IllegalArgumentException expected) {
       assertThat(expected).hasMessage("argument 'Text' must start with a lowercase character");
@@ -156,7 +156,7 @@ public final class CodeBlockTest {
     map.put("text", "tacos");
 
     CodeBlock block = CodeBlock.builder()
-        .addNamed("$pipe:T.out.println(\"Let's eat some $text:L\");", map)
+        .addNamed("%pipe:T.out.println(\"Let's eat some %text:L\");", map)
         .build();
 
     assertThat(block.toString()).isEqualTo(
@@ -166,7 +166,7 @@ public final class CodeBlockTest {
   @Test public void namedNewline() {
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("clazz", Integer.class);
-    CodeBlock block = CodeBlock.builder().addNamed("$clazz:T\n", map).build();
+    CodeBlock block = CodeBlock.builder().addNamed("%clazz:T\n", map).build();
     assertThat(block.toString()).isEqualTo("java.lang.Integer\n");
   }
 
@@ -174,111 +174,111 @@ public final class CodeBlockTest {
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("clazz", Integer.class);
     try {
-      CodeBlock.builder().addNamed("$clazz:T$", map).build();
+      CodeBlock.builder().addNamed("%clazz:T%", map).build();
       fail();
     } catch(IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("dangling $ at end");
+      assertThat(expected).hasMessage("dangling % at end");
     }
   }
 
   @Test public void indexTooHigh() {
     try {
-      CodeBlock.builder().add("$2T", String.class).build();
+      CodeBlock.builder().add("%2T", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("index 2 for '$2T' not in range (received 1 arguments)");
+      assertThat(expected).hasMessage("index 2 for '%2T' not in range (received 1 arguments)");
     }
   }
 
   @Test public void indexIsZero() {
     try {
-      CodeBlock.builder().add("$0T", String.class).build();
+      CodeBlock.builder().add("%0T", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("index 0 for '$0T' not in range (received 1 arguments)");
+      assertThat(expected).hasMessage("index 0 for '%0T' not in range (received 1 arguments)");
     }
   }
 
   @Test public void indexIsNegative() {
     try {
-      CodeBlock.builder().add("$-1T", String.class).build();
+      CodeBlock.builder().add("%-1T", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("invalid format string: '$-1T'");
+      assertThat(expected).hasMessage("invalid format string: '%-1T'");
     }
   }
 
   @Test public void indexWithoutFormatType() {
     try {
-      CodeBlock.builder().add("$1", String.class).build();
+      CodeBlock.builder().add("%1", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("dangling format characters in '$1'");
+      assertThat(expected).hasMessage("dangling format characters in '%1'");
     }
   }
 
   @Test public void indexWithoutFormatTypeNotAtStringEnd() {
     try {
-      CodeBlock.builder().add("$1 taco", String.class).build();
+      CodeBlock.builder().add("%1 taco", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("invalid format string: '$1 taco'");
+      assertThat(expected).hasMessage("invalid format string: '%1 taco'");
     }
   }
 
   @Test public void indexButNoArguments() {
     try {
-      CodeBlock.builder().add("$1T").build();
+      CodeBlock.builder().add("%1T").build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("index 1 for '$1T' not in range (received 0 arguments)");
+      assertThat(expected).hasMessage("index 1 for '%1T' not in range (received 0 arguments)");
     }
   }
 
   @Test public void formatIndicatorAlone() {
     try {
-      CodeBlock.builder().add("$", String.class).build();
+      CodeBlock.builder().add("%", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("dangling format characters in '$'");
+      assertThat(expected).hasMessage("dangling format characters in '%'");
     }
   }
 
   @Test public void formatIndicatorWithoutIndexOrFormatType() {
     try {
-      CodeBlock.builder().add("$ tacoString", String.class).build();
+      CodeBlock.builder().add("% tacoString", String.class).build();
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("invalid format string: '$ tacoString'");
+      assertThat(expected).hasMessage("invalid format string: '% tacoString'");
     }
   }
 
   @Test public void sameIndexCanBeUsedWithDifferentFormats() {
     CodeBlock block = CodeBlock.builder()
-        .add("$1T.out.println($1S)", ClassName.get(System.class))
+        .add("%1T.out.println(%1S)", ClassName.get(System.class))
         .build();
     assertThat(block.toString()).isEqualTo("java.lang.System.out.println(\"java.lang.System\")");
   }
 
   @Test public void tooManyStatementEnters() {
-    CodeBlock codeBlock = CodeBlock.builder().add("$[$[").build();
+    CodeBlock codeBlock = CodeBlock.builder().add("%[%[").build();
     try {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString();
       fail();
     } catch (IllegalStateException expected) {
-      assertThat(expected).hasMessage("statement enter $[ followed by statement enter $[");
+      assertThat(expected).hasMessage("statement enter %[ followed by statement enter %[");
     }
   }
 
   @Test public void statementExitWithoutStatementEnter() {
-    CodeBlock codeBlock = CodeBlock.builder().add("$]").build();
+    CodeBlock codeBlock = CodeBlock.builder().add("%]").build();
     try {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString();
       fail();
     } catch (IllegalStateException expected) {
-      assertThat(expected).hasMessage("statement exit $] has no matching statement enter $[");
+      assertThat(expected).hasMessage("statement exit %] has no matching statement enter %[");
     }
   }
 }

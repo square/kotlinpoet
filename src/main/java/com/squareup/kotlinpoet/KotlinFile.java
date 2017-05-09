@@ -135,13 +135,13 @@ public final class KotlinFile {
     }
 
     if (!packageName.isEmpty()) {
-      codeWriter.emit("package $L\n", packageName);
+      codeWriter.emit("package %L\n", packageName);
       codeWriter.emit("\n");
     }
 
     if (!staticImports.isEmpty()) {
       for (String signature : staticImports) {
-        codeWriter.emit("import static $L\n", signature);
+        codeWriter.emit("import static %L\n", signature);
       }
       codeWriter.emit("\n");
     }
@@ -149,7 +149,7 @@ public final class KotlinFile {
     int importedTypesCount = 0;
     for (ClassName className : new TreeSet<>(codeWriter.importedTypes().values())) {
       if (skipJavaLangImports && className.packageName().equals("java.lang")) continue;
-      codeWriter.emit("import $L\n", className);
+      codeWriter.emit("import %L\n", className);
       importedTypesCount++;
     }
 
