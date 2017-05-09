@@ -33,12 +33,12 @@ public final class KotlinFileTest {
     TypeName listOfHoverboards = ParameterizedTypeName.get(list, hoverboard);
     MethodSpec beyond = MethodSpec.methodBuilder("beyond")
         .returns(listOfHoverboards)
-        .addStatement("$T result = new $T<>()", listOfHoverboards, arrayList)
-        .addStatement("result.add($T.createNimbus(2000))", hoverboard)
-        .addStatement("result.add($T.createNimbus(\"2001\"))", hoverboard)
-        .addStatement("result.add($T.createNimbus($T.THUNDERBOLT))", hoverboard, namedBoards)
-        .addStatement("$T.sort(result)", Collections.class)
-        .addStatement("return result.isEmpty() ? $T.emptyList() : result", Collections.class)
+        .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
+        .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
+        .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
+        .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
+        .addStatement("%T.sort(result)", Collections.class)
+        .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections.class)
         .build();
     TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
         .addMethod(beyond)
@@ -75,18 +75,18 @@ public final class KotlinFileTest {
     KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
-                .addStatement("$T", Runtime.class)
-                .addStatement("$T.a()", Runtime.class)
-                .addStatement("$T.X", Runtime.class)
-                .addStatement("$T$T", Runtime.class, Runtime.class)
-                .addStatement("$T.$T", Runtime.class, Runtime.class)
-                .addStatement("$1T$1T", Runtime.class)
-                .addStatement("$1T$2L$1T", Runtime.class, "?")
-                .addStatement("$1T$2L$2S$1T", Runtime.class, "?")
-                .addStatement("$1T$2L$2S$1T$3N$1T", Runtime.class, "?", method)
-                .addStatement("$T$L", Runtime.class, "?")
-                .addStatement("$T$S", Runtime.class, "?")
-                .addStatement("$T$N", Runtime.class, method)
+                .addStatement("%T", Runtime.class)
+                .addStatement("%T.a()", Runtime.class)
+                .addStatement("%T.X", Runtime.class)
+                .addStatement("%T%T", Runtime.class, Runtime.class)
+                .addStatement("%T.%T", Runtime.class, Runtime.class)
+                .addStatement("%1T%1T", Runtime.class)
+                .addStatement("%1T%2L%1T", Runtime.class, "?")
+                .addStatement("%1T%2L%2S%1T", Runtime.class, "?")
+                .addStatement("%1T%2L%2S%1T%3N%1T", Runtime.class, "?", method)
+                .addStatement("%T%L", Runtime.class, "?")
+                .addStatement("%T%S", Runtime.class, "?")
+                .addStatement("%T%N", Runtime.class, method)
                 .build())
             .build())
         .addStaticImport(Runtime.class, "*")
@@ -98,9 +98,9 @@ public final class KotlinFileTest {
     KotlinFile source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
-                .addStatement("assert $1T.valueOf(\"BLOCKED\") == $1T.BLOCKED", Thread.State.class)
-                .addStatement("$T.gc()", System.class)
-                .addStatement("$1T.out.println($1T.nanoTime())", System.class)
+                .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State.class)
+                .addStatement("%T.gc()", System.class)
+                .addStatement("%1T.out.println(%1T.nanoTime())", System.class)
                 .build())
             .addMethod(MethodSpec.constructorBuilder()
                 .addParameter(Thread.State[].class, "states")
@@ -132,12 +132,12 @@ public final class KotlinFileTest {
         + "}\n");
   }
 
-  @Ignore("addStaticImport doesn't support members with $L")
+  @Ignore("addStaticImport doesn't support members with %L")
   @Test public void importStaticDynamic() {
     KotlinFile source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addMethod(MethodSpec.methodBuilder("main")
-                .addStatement("$T.$L.println($S)", System.class, "out", "hello")
+                .addStatement("%T.%L.println(%S)", System.class, "out", "hello")
                 .build())
             .build())
         .addStaticImport(System.class, "out")
@@ -237,8 +237,8 @@ public final class KotlinFileTest {
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .returns(long.class)
         .addParameter(long.class, "minutes")
-        .addStatement("$T.gc()", System.class)
-        .addStatement("return $1T.SECONDS.convert(minutes, $1T.MINUTES)", TimeUnit.class)
+        .addStatement("%T.gc()", System.class)
+        .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit.class)
         .build();
     return TypeSpec.classBuilder(name).addMethod(method).build();
 
@@ -497,7 +497,7 @@ public final class KotlinFileTest {
             .addMethod(MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(String[].class, "args")
-                .addCode("$T.out.println($S);\n", System.class, "Hello World!")
+                .addCode("%T.out.println(%S);\n", System.class, "Hello World!")
                 .build())
             .build())
         .build()
@@ -529,7 +529,7 @@ public final class KotlinFileTest {
   @Test public void topOfFileComment() throws Exception {
     String source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
-        .addFileComment("Generated $L by JavaPoet. DO NOT EDIT!", "2015-01-13")
+        .addFileComment("Generated %L by JavaPoet. DO NOT EDIT!", "2015-01-13")
         .build()
         .toString();
     assertThat(source).isEqualTo(""

@@ -99,7 +99,7 @@ public final class MethodSpec {
     if (isConstructor()) {
       codeWriter.emit("constructor(", enclosingName);
     } else {
-      codeWriter.emit("$L(", name);
+      codeWriter.emit("%L(", name);
     }
 
     boolean firstParameter = true;
@@ -112,7 +112,7 @@ public final class MethodSpec {
 
     codeWriter.emit(")");
     if (returnType != null) {
-      codeWriter.emit(": $T", returnType);
+      codeWriter.emit(": %T", returnType);
     }
 
     if (defaultValue != null && !defaultValue.isEmpty()) {
@@ -125,7 +125,7 @@ public final class MethodSpec {
       boolean firstException = true;
       for (TypeName exception : exceptions) {
         if (!firstException) codeWriter.emit(",");
-        codeWriter.emitWrappingSpace().emit("$T", exception);
+        codeWriter.emitWrappingSpace().emit("%T", exception);
         firstException = false;
       }
     }

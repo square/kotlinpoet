@@ -50,7 +50,7 @@ public final class ArrayTypeName extends TypeName {
   }
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {
-    return out.emit("$T<$T>", ARRAY_TYPE, componentType);
+    return out.emit("%T<%T>", ARRAY_TYPE, componentType);
   }
 
   /** Returns an array type whose elements are all instances of {@code componentType}. */

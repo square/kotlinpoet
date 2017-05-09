@@ -56,11 +56,11 @@ public final class WildcardTypeName extends TypeName {
 
   @Override CodeWriter emit(CodeWriter out) throws IOException {
     if (lowerBounds.size() == 1) {
-      return out.emit("in $T", lowerBounds.get(0));
+      return out.emit("in %T", lowerBounds.get(0));
     }
     return upperBounds.get(0).equals(ANY)
         ? out.emit("*")
-        : out.emit("out $T", upperBounds.get(0));
+        : out.emit("out %T", upperBounds.get(0));
   }
 
   /**

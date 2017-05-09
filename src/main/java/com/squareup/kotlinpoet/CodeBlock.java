@@ -34,36 +34,35 @@ import static com.squareup.kotlinpoet.Util.checkArgument;
  * Code blocks are not necessarily well-formed Kotlin code, and are not validated. This class
  * assumes kotlinc will check correctness later!
  *
- * <p>Code blocks support placeholders like {@link java.text.Format}. Where {@link String#format}
- * uses percent {@code %} to reference target values, this class uses dollar sign {@code $} and has
- * its own set of permitted placeholders:
+ * <p>Code blocks support placeholders like {@link java.text.Format}. This class uses a percent sign
+ * {@code %} but has its own set of permitted placeholders:
  *
  * <ul>
- *   <li>{@code $L} emits a <em>literal</em> value with no escaping. Arguments for literals may be
+ *   <li>{@code %L} emits a <em>literal</em> value with no escaping. Arguments for literals may be
  *       strings, primitives, {@linkplain TypeSpec type declarations}, {@linkplain AnnotationSpec
  *       annotations} and even other code blocks.
- *   <li>{@code $N} emits a <em>name</em>, using name collision avoidance where necessary. Arguments
+ *   <li>{@code %N} emits a <em>name</em>, using name collision avoidance where necessary. Arguments
  *       for names may be strings (actually any {@linkplain CharSequence character sequence}),
  *       {@linkplain ParameterSpec parameters}, {@linkplain PropertySpec properties}, {@linkplain
  *       MethodSpec methods}, and {@linkplain TypeSpec types}.
- *   <li>{@code $S} escapes the value as a <em>string</em>, wraps it with double quotes, and emits
+ *   <li>{@code %S} escapes the value as a <em>string</em>, wraps it with double quotes, and emits
  *       that. For example, {@code 6" sandwich} is emitted {@code "6\" sandwich"}.
- *   <li>{@code $T} emits a <em>type</em> reference. Types will be imported if possible. Arguments
+ *   <li>{@code %T} emits a <em>type</em> reference. Types will be imported if possible. Arguments
  *       for types may be {@linkplain Class classes}, {@linkplain javax.lang.model.type.TypeMirror
 ,*       type mirrors}, and {@linkplain javax.lang.model.element.Element elements}.
- *   <li>{@code $$} emits a dollar sign.
- *   <li>{@code $W} emits a space or a newline, depending on its position on the line. This prefers
+ *   <li>{@code %%} emits a percent sign.
+ *   <li>{@code %W} emits a space or a newline, depending on its position on the line. This prefers
  *       to wrap lines before 100 columns.
- *   <li>{@code $>} increases the indentation level.
- *   <li>{@code $<} decreases the indentation level.
- *   <li>{@code $[} begins a statement. For multiline statements, every line after the first line
+ *   <li>{@code %>} increases the indentation level.
+ *   <li>{@code %<} decreases the indentation level.
+ *   <li>{@code %[} begins a statement. For multiline statements, every line after the first line
  *       is double-indented.
- *   <li>{@code $]} ends a statement.
+ *   <li>{@code %]} ends a statement.
  * </ul>
  */
 public final class CodeBlock {
   private static final Pattern NAMED_ARGUMENT =
-      Pattern.compile("\\$(?<argumentName>[\\w_]+):(?<typeChar>[\\w]).*");
+      Pattern.compile("%(?<argumentName>[\\w_]+):(?<typeChar>[\\w]).*");
   private static final Pattern LOWERCASE = Pattern.compile("[a-z]+[\\w_]*");
 
   /** A heterogeneous list containing string literals and value placeholders. */
@@ -125,12 +124,12 @@ public final class CodeBlock {
     /**
      * Adds code using named arguments.
      *
-     * <p>Named arguments specify their name after the '$' followed by : and the corresponding type
+     * <p>Named arguments specify their name after the '%' followed by : and the corresponding type
      * character. Argument names consist of characters in {@code a-z, A-Z, 0-9, and _} and must
      * start with a lowercase character.
      *
      * <p>For example, to refer to the type {@link java.lang.Integer} with the argument name {@code
-     * clazz} use a format string containing {@code $clazz:T} and include the key {@code clazz} with
+     * clazz} use a format string containing {@code %clazz:T} and include the key {@code clazz} with
      * value {@code java.lang.Integer.class} in the argument map.
      */
     public Builder addNamed(String format, Map<String, ?> arguments) {
@@ -142,7 +141,7 @@ public final class CodeBlock {
       }
 
       while (p < format.length()) {
-        int nextP = format.indexOf("$", p);
+        int nextP = format.indexOf("%", p);
         if (nextP == -1) {
           formatParts.add(format.substring(p, format.length()));
           break;
@@ -161,16 +160,16 @@ public final class CodeBlock {
         }
         if (matcher != null && matcher.lookingAt()) {
           String argumentName = matcher.group("argumentName");
-          checkArgument(arguments.containsKey(argumentName), "Missing named argument for $%s",
+          checkArgument(arguments.containsKey(argumentName), "Missing named argument for %%%s",
               argumentName);
           char formatChar = matcher.group("typeChar").charAt(0);
           addArgument(format, formatChar, arguments.get(argumentName));
-          formatParts.add("$" + formatChar);
+          formatParts.add("%" + formatChar);
           p += matcher.regionEnd();
         } else {
-          checkArgument(p < format.length() - 1, "dangling $ at end");
+          checkArgument(p < format.length() - 1, "dangling %% at end");
           checkArgument(isNoArgPlaceholder(format.charAt(p + 1)),
-              "unknown format $%s at %s in '%s'", format.charAt(p + 1), p + 1, format);
+              "unknown format %%%s at %s in '%s'", format.charAt(p + 1), p + 1, format);
           formatParts.add(format.substring(p, p + 2));
           p += 2;
         }
@@ -185,7 +184,7 @@ public final class CodeBlock {
      * <p>Relative arguments map 1:1 with the placeholders in the format string.
      *
      * <p>Positional arguments use an index after the placeholder to identify which argument index
-     * to use. For example, for a literal to reference the 3rd argument: "$3L" (1 based index)
+     * to use. For example, for a literal to reference the 3rd argument: "%3L" (1 based index)
      *
      * <p>Mixing relative and positional arguments in a call to add is invalid and will result in an
      * error.
@@ -198,17 +197,17 @@ public final class CodeBlock {
       int[] indexedParameterCount = new int[args.length];
 
       for (int p = 0; p < format.length(); ) {
-        if (format.charAt(p) != '$') {
-          int nextP = format.indexOf('$', p + 1);
+        if (format.charAt(p) != '%') {
+          int nextP = format.indexOf('%', p + 1);
           if (nextP == -1) nextP = format.length();
           formatParts.add(format.substring(p, nextP));
           p = nextP;
           continue;
         }
 
-        p++; // '$'.
+        p++; // '%'.
 
-        // Consume zero or more digits, leaving 'c' as the first non-digit char after the '$'.
+        // Consume zero or more digits, leaving 'c' as the first non-digit char after the '%'.
         int indexStart = p;
         char c;
         do {
@@ -219,8 +218,9 @@ public final class CodeBlock {
 
         // If 'c' doesn't take an argument, we're done.
         if (isNoArgPlaceholder(c)) {
-          checkArgument(indexStart == indexEnd, "$$, $>, $<, $[, $], and $W may not have an index");
-          formatParts.add("$" + c);
+          checkArgument(indexStart == indexEnd,
+              "%%%%, %%>, %%<, %%[, %%], and %%W may not have an index");
+          formatParts.add("%" + c);
           continue;
         }
 
@@ -245,7 +245,7 @@ public final class CodeBlock {
 
         addArgument(format, c, args[index]);
 
-        formatParts.add("$" + c);
+        formatParts.add("%" + c);
       }
 
       if (hasRelative) {
@@ -256,7 +256,7 @@ public final class CodeBlock {
         List<String> unused = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
           if (indexedParameterCount[i] == 0) {
-            unused.add("$" + (i + 1));
+            unused.add("%" + (i + 1));
           }
         }
         String s = unused.size() == 1 ? "" : "s";
@@ -266,7 +266,7 @@ public final class CodeBlock {
     }
 
     private boolean isNoArgPlaceholder(char c) {
-      return c == '$' || c == '>' || c == '<' || c == '[' || c == ']' || c == 'W';
+      return c == '%' || c == '>' || c == '<' || c == '[' || c == ']' || c == 'W';
     }
 
     private void addArgument(String format, char c, Object arg) {
@@ -343,9 +343,9 @@ public final class CodeBlock {
     }
 
     public Builder addStatement(String format, Object... args) {
-      add("$[");
+      add("%[");
       add(format, args);
-      add("\n$]");
+      add("\n%]");
       return this;
     }
 
@@ -356,12 +356,12 @@ public final class CodeBlock {
     }
 
     public Builder indent() {
-      this.formatParts.add("$>");
+      this.formatParts.add("%>");
       return this;
     }
 
     public Builder unindent() {
-      this.formatParts.add("$<");
+      this.formatParts.add("%<");
       return this;
     }
 

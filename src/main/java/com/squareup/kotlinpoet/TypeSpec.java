@@ -153,7 +153,7 @@ public final class TypeSpec {
       if (enumName != null) {
         codeWriter.emitJavadoc(javadoc);
         codeWriter.emitAnnotations(annotations, false);
-        codeWriter.emit("$L", enumName);
+        codeWriter.emit("%L", enumName);
         if (!anonymousTypeArguments.formatParts.isEmpty()) {
           codeWriter.emit("(");
           codeWriter.emit(anonymousTypeArguments);
@@ -165,7 +165,7 @@ public final class TypeSpec {
         codeWriter.emit(" {\n");
       } else if (anonymousTypeArguments != null) {
         TypeName supertype = !superinterfaces.isEmpty() ? superinterfaces.get(0) : superclass;
-        codeWriter.emit("new $T(", supertype);
+        codeWriter.emit("new %T(", supertype);
         codeWriter.emit(anonymousTypeArguments);
         codeWriter.emit(") {\n");
       } else {
@@ -173,9 +173,9 @@ public final class TypeSpec {
         codeWriter.emitAnnotations(annotations, false);
         codeWriter.emitModifiers(modifiers, Util.union(implicitModifiers, kind.asMemberModifiers));
         if (kind == Kind.ANNOTATION) {
-          codeWriter.emit("$L $L", "@interface", name);
+          codeWriter.emit("%L %L", "@interface", name);
         } else {
-          codeWriter.emit("$L $L", kind.name().toLowerCase(Locale.US), name);
+          codeWriter.emit("%L %L", kind.name().toLowerCase(Locale.US), name);
         }
         codeWriter.emitTypeVariables(typeVariables);
 
@@ -196,7 +196,7 @@ public final class TypeSpec {
           boolean firstType = true;
           for (TypeName type : extendsTypes) {
             if (!firstType) codeWriter.emit(",");
-            codeWriter.emit(" $T", type);
+            codeWriter.emit(" %T", type);
             firstType = false;
           }
         }
@@ -206,7 +206,7 @@ public final class TypeSpec {
           boolean firstType = true;
           for (TypeName type : implementsTypes) {
             if (!firstType) codeWriter.emit(",");
-            codeWriter.emit(" $T", type);
+            codeWriter.emit(" %T", type);
             firstType = false;
           }
         }

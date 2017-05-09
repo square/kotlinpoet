@@ -27,7 +27,7 @@ MethodSpec main = MethodSpec.methodBuilder("main")
     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     .returns(void.class)
     .addParameter(String[].class, "args")
-    .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+    .addStatement("%T.out.println(%S)", System.class, "Hello, JavaPoet!")
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
@@ -127,11 +127,11 @@ Methods generating methods! And since JavaPoet generates source instead of bytec
 read through it to make sure it's right.
 
 
-### $L for Literals
+### %L for Literals
 
 The string-concatenation in calls to `beginControlFlow()` and `addStatement` is distracting. Too
 many operators. To address this, JavaPoet offers a syntax inspired-by but incompatible-with
-[`String.format()`][formatter]. It accepts **`$L`** to emit a **literal** value in the output. This
+[`String.format()`][formatter]. It accepts **`%L`** to emit a **literal** value in the output. This
 works just like `Formatter`'s `%s`:
 
 ```java
@@ -139,8 +139,8 @@ private MethodSpec computeRange(String name, int from, int to, String op) {
   return MethodSpec.methodBuilder(name)
       .returns(int.class)
       .addStatement("int result = 0")
-      .beginControlFlow("for (int i = $L; i < $L; i++)", from, to)
-      .addStatement("result = result $L i", op)
+      .beginControlFlow("for (int i = %L; i < %L; i++)", from, to)
+      .addStatement("result = result %L i", op)
       .endControlFlow()
       .addStatement("return result")
       .build();
@@ -150,9 +150,9 @@ private MethodSpec computeRange(String name, int from, int to, String op) {
 Literals are emitted directly to the output code with no escaping. Arguments for literals may be
 strings, primitives, and a few JavaPoet types described below.
 
-### $S for Strings
+### %S for Strings
 
-When emitting code that includes string literals, we can use **`$S`** to emit a **string**, complete
+When emitting code that includes string literals, we can use **`%S`** to emit a **string**, complete
 with wrapping quotation marks and escaping. Here's a program that emits 3 methods, each of which
 returns its own name:
 
@@ -174,12 +174,12 @@ public static void main(String[] args) throws Exception {
 private static MethodSpec whatsMyName(String name) {
   return MethodSpec.methodBuilder(name)
       .returns(String.class)
-      .addStatement("return $S", name)
+      .addStatement("return %S", name)
       .build();
 }
 ```
 
-In this case, using `$S` gives us quotation marks:
+In this case, using `%S` gives us quotation marks:
 
 ```java
 public final class HelloWorld {
@@ -197,16 +197,16 @@ public final class HelloWorld {
 }
 ```
 
-### $T for Types
+### %T for Types
 
 We Java programmers love our types: they make our code easier to understand. And JavaPoet is on
 board. It has rich built-in support for types, including automatic generation of `import`
-statements. Just use **`$T`** to reference **types**:
+statements. Just use **`%T`** to reference **types**:
 
 ```java
 MethodSpec today = MethodSpec.methodBuilder("today")
     .returns(Date.class)
-    .addStatement("return new $T()", Date.class)
+    .addStatement("return new %T()", Date.class)
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
@@ -243,7 +243,7 @@ ClassName hoverboard = ClassName.get("com.mattel", "Hoverboard");
 
 MethodSpec today = MethodSpec.methodBuilder("tomorrow")
     .returns(hoverboard)
-    .addStatement("return new $T()", hoverboard)
+    .addStatement("return new %T()", hoverboard)
     .build();
 ```
 
@@ -274,10 +274,10 @@ TypeName listOfHoverboards = ParameterizedTypeName.get(list, hoverboard);
 
 MethodSpec beyond = MethodSpec.methodBuilder("beyond")
     .returns(listOfHoverboards)
-    .addStatement("$T result = new $T<>()", listOfHoverboards, arrayList)
-    .addStatement("result.add(new $T())", hoverboard)
-    .addStatement("result.add(new $T())", hoverboard)
-    .addStatement("result.add(new $T())", hoverboard)
+    .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
+    .addStatement("result.add(new %T())", hoverboard)
+    .addStatement("result.add(new %T())", hoverboard)
+    .addStatement("result.add(new %T())", hoverboard)
     .addStatement("return result")
     .build();
 ```
@@ -313,12 +313,12 @@ ClassName namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards");
 
 MethodSpec beyond = MethodSpec.methodBuilder("beyond")
     .returns(listOfHoverboards)
-    .addStatement("$T result = new $T<>()", listOfHoverboards, arrayList)
-    .addStatement("result.add($T.createNimbus(2000))", hoverboard)
-    .addStatement("result.add($T.createNimbus(\"2001\"))", hoverboard)
-    .addStatement("result.add($T.createNimbus($T.THUNDERBOLT))", hoverboard, namedBoards)
-    .addStatement("$T.sort(result)", Collections.class)
-    .addStatement("return result.isEmpty() ? $T.emptyList() : result", Collections.class)
+    .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
+    .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
+    .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
+    .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
+    .addStatement("%T.sort(result)", Collections.class)
+    .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections.class)
     .build();
 
 TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
@@ -358,9 +358,9 @@ class HelloWorld {
 }
 ```
 
-### $N for Names
+### %N for Names
 
-Generated code is often self-referential. Use **`$N`** to refer to another generated declaration by
+Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
 its name. Here's a method that calls another:
 
 ```java
@@ -377,7 +377,7 @@ public char hexDigit(int i) {
 ```
 
 When generating the code above, we pass the `hexDigit()` method as an argument to the `byteToHex()`
-method using `$N`:
+method using `%N`:
 
 ```java
 MethodSpec hexDigit = MethodSpec.methodBuilder("hexDigit")
@@ -390,8 +390,8 @@ MethodSpec byteToHex = MethodSpec.methodBuilder("byteToHex")
     .addParameter(int.class, "b")
     .returns(String.class)
     .addStatement("char[] result = new char[2]")
-    .addStatement("result[0] = $N((b >>> 4) & 0xf)", hexDigit)
-    .addStatement("result[1] = $N(b & 0xf)", hexDigit)
+    .addStatement("result[0] = %N((b >>> 4) & 0xf)", hexDigit)
+    .addStatement("result[1] = %N(b & 0xf)", hexDigit)
     .addStatement("return new String(result)")
     .build();
 ```
@@ -407,7 +407,7 @@ Pass an argument value for each placeholder in the format string to `CodeBlock.a
 example, we generate code to say "I ate 3 tacos"
 
 ```java
-CodeBlock.builder().add("I ate $L $L", 3, "tacos")
+CodeBlock.builder().add("I ate %L %L", 3, "tacos")
 ```
 
 #### Positional Arguments
@@ -416,12 +416,12 @@ Place an integer index (1-based) before the placeholder in the format string to 
  argument to use.
 
 ```java
-CodeBlock.builder().add("I ate $2L $1L", "tacos", 3)
+CodeBlock.builder().add("I ate %2L %1L", "tacos", 3)
 ```
 
 #### Named Arguments
 
-Use the syntax `$argumentName:X` where `X` is the format character and call `CodeBlock.addNamed()`
+Use the syntax `%argumentName:X` where `X` is the format character and call `CodeBlock.addNamed()`
 with a map containing all argument keys in the format string. Argument names use characters in
 `a-z`, `A-Z`, `0-9`, and `_`, and must start with a lowercase character.
 
@@ -429,7 +429,7 @@ with a map containing all argument keys in the format string. Argument names use
 Map<String, Object> map = new LinkedHashMap<>();
 map.put("food", "tacos");
 map.put("count", 3);
-CodeBlock.builder().addNamed("I ate $count:L $food:L", map)
+CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
 ```
 
 ### Methods
@@ -472,7 +472,7 @@ return type. All of these are configured with `MethodSpec.Builder`.
 MethodSpec flux = MethodSpec.constructorBuilder()
     .addModifiers(Modifier.PUBLIC)
     .addParameter(String.class, "greeting")
-    .addStatement("this.$N = $N", "greeting", "greeting")
+    .addStatement("this.%N = %N", "greeting", "greeting")
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
@@ -556,7 +556,7 @@ blocks above:
 ```java
 FieldSpec android = FieldSpec.builder(String.class, "android")
     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-    .initializer("$S + $L", "Lollipop v.", 5.0d)
+    .initializer("%S + %L", "Lollipop v.", 5.0d)
     .build();
 ```
 
@@ -577,7 +577,7 @@ TypeSpec helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC)
     .addField(FieldSpec.builder(String.class, "ONLY_THING_THAT_IS_CONSTANT")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-        .initializer("$S", "change")
+        .initializer("%S", "change")
         .build())
     .addMethod(MethodSpec.methodBuilder("beep")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -627,21 +627,21 @@ Here's a comprehensive example:
 ```java
 TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
     .addModifiers(Modifier.PUBLIC)
-    .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("$S", "fist")
+    .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("%S", "fist")
         .addMethod(MethodSpec.methodBuilder("toString")
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
-            .addStatement("return $S", "avalanche!")
+            .addStatement("return %S", "avalanche!")
             .build())
         .build())
-    .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("$S", "peace")
+    .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("%S", "peace")
         .build())
-    .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("$S", "flat")
+    .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
         .build())
     .addField(String.class, "handsign", Modifier.PRIVATE, Modifier.FINAL)
     .addMethod(MethodSpec.constructorBuilder()
         .addParameter(String.class, "handsign")
-        .addStatement("this.$N = $N", "handsign", "handsign")
+        .addStatement("this.%N = %N", "handsign", "handsign")
         .build())
     .build();
 ```
@@ -672,7 +672,7 @@ public enum Roshambo {
 ### Anonymous Inner Classes
 
 In the enum code, we used `Types.anonymousInnerClass()`. Anonymous inner classes can also be used in
-code blocks. They are values that can be referenced with `$L`:
+code blocks. They are values that can be referenced with `%L`:
 
 ```java
 TypeSpec comparator = TypeSpec.anonymousClassBuilder("")
@@ -683,14 +683,14 @@ TypeSpec comparator = TypeSpec.anonymousClassBuilder("")
         .addParameter(String.class, "a")
         .addParameter(String.class, "b")
         .returns(int.class)
-        .addStatement("return $N.length() - $N.length()", "a", "b")
+        .addStatement("return %N.length() - %N.length()", "a", "b")
         .build())
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addMethod(MethodSpec.methodBuilder("sortByLength")
         .addParameter(ParameterizedTypeName.get(List.class, String.class), "strings")
-        .addStatement("$T.sort($N, $L)", Collections.class, "strings", comparator)
+        .addStatement("%T.sort(%N, %L)", Collections.class, "strings", comparator)
         .build())
     .build();
 ```
@@ -723,7 +723,7 @@ MethodSpec toString = MethodSpec.methodBuilder("toString")
     .addAnnotation(Override.class)
     .returns(String.class)
     .addModifiers(Modifier.PUBLIC)
-    .addStatement("return $S", "Hoverboard")
+    .addStatement("return %S", "Hoverboard")
     .build();
 ```
 
@@ -742,8 +742,8 @@ Use `AnnotationSpec.builder()` to set properties on annotations:
 MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addAnnotation(AnnotationSpec.builder(Headers.class)
-        .addMember("accept", "$S", "application/json; charset=utf-8")
-        .addMember("userAgent", "$S", "Square Cash")
+        .addMember("accept", "%S", "application/json; charset=utf-8")
+        .addMember("userAgent", "%S", "Square Cash")
         .build())
     .addParameter(LogRecord.class, "logRecord")
     .returns(LogReceipt.class)
@@ -760,20 +760,20 @@ Which generates this annotation with `accept` and `userAgent` properties:
 LogReceipt recordEvent(LogRecord logRecord);
 ```
 
-When you get fancy, annotation values can be annotations themselves. Use `$L` for embedded
+When you get fancy, annotation values can be annotations themselves. Use `%L` for embedded
 annotations:
 
 ```java
 MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addAnnotation(AnnotationSpec.builder(HeaderList.class)
-        .addMember("value", "$L", AnnotationSpec.builder(Header.class)
-            .addMember("name", "$S", "Accept")
-            .addMember("value", "$S", "application/json; charset=utf-8")
+        .addMember("value", "%L", AnnotationSpec.builder(Header.class)
+            .addMember("name", "%S", "Accept")
+            .addMember("value", "%S", "application/json; charset=utf-8")
             .build())
-        .addMember("value", "$L", AnnotationSpec.builder(Header.class)
-            .addMember("name", "$S", "User-Agent")
-            .addMember("value", "$S", "Square Cash")
+        .addMember("value", "%L", AnnotationSpec.builder(Header.class)
+            .addMember("name", "%S", "User-Agent")
+            .addMember("value", "%S", "Square Cash")
             .build())
         .build())
     .addParameter(LogRecord.class, "logRecord")
@@ -804,7 +804,7 @@ MethodSpec dismiss = MethodSpec.methodBuilder("dismiss")
         + "participants in the conversation will continue to see the\n"
         + "message in their own history unless they also delete it.\n")
     .addJavadoc("\n")
-    .addJavadoc("<p>Use {@link #delete($T)} to delete the entire\n"
+    .addJavadoc("<p>Use {@link #delete(%T)} to delete the entire\n"
         + "conversation for all participants.\n", Conversation.class)
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addParameter(Message.class, "message")
@@ -825,7 +825,7 @@ Which generates this:
   void dismiss(Message message);
 ```
 
-Use `$T` when referencing types in Javadoc to get automatic imports.
+Use `%T` when referencing types in Javadoc to get automatic imports.
 
 Download
 --------
