@@ -43,7 +43,7 @@ import static com.squareup.kotlinpoet.Util.checkNotNull;
  *
  * <p>Once we've allocated names we can use them when generating code: <pre>   {@code
  *
- *   MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
+ *   FunSpec.Builder builder = FunSpec.builder("toString")
  *       .addAnnotation(Override.class)
  *       .addModifiers(Modifier.PUBLIC)
  *       .returns(String.class);

@@ -45,7 +45,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public final class MethodSpecTest {
+public final class FunSpecTest {
   @Rule public final CompilationRule compilation = new CompilationRule();
 
   private Elements elements;
@@ -71,7 +71,7 @@ public final class MethodSpecTest {
 
   @Test public void nullAnnotationsAddition() {
     try {
-      MethodSpec.methodBuilder("doSomething").addAnnotations(null);
+      FunSpec.builder("doSomething").addAnnotations(null);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("annotationSpecs == null");
@@ -80,7 +80,7 @@ public final class MethodSpecTest {
 
   @Test public void nullTypeVariablesAddition() {
     try {
-      MethodSpec.methodBuilder("doSomething").addTypeVariables(null);
+      FunSpec.builder("doSomething").addTypeVariables(null);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("typeVariables == null");
@@ -89,7 +89,7 @@ public final class MethodSpecTest {
 
   @Test public void nullParametersAddition() {
     try {
-      MethodSpec.methodBuilder("doSomething").addParameters(null);
+      FunSpec.builder("doSomething").addParameters(null);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("parameterSpecs == null");
@@ -98,7 +98,7 @@ public final class MethodSpecTest {
 
   @Test public void nullExceptionsAddition() {
     try {
-      MethodSpec.methodBuilder("doSomething").addExceptions(null);
+      FunSpec.builder("doSomething").addExceptions(null);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("exceptions == null");
@@ -127,8 +127,8 @@ public final class MethodSpecTest {
   @Test public void overrideEverything() {
     TypeElement classElement = getElement(Everything.class);
     ExecutableElement methodElement = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
-    MethodSpec method = MethodSpec.overriding(methodElement).build();
-    assertThat(method.toString()).isEqualTo(""
+    FunSpec funSpec = FunSpec.overriding(methodElement).build();
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "protected fun <T : java.lang.Runnable & java.io.Closeable> "
         + "everything(arg0: java.lang.String,\n"
@@ -140,8 +140,8 @@ public final class MethodSpecTest {
   @Test public void overrideDoesNotCopyOverrideAnnotation() {
     TypeElement classElement = getElement(HasAnnotation.class);
     ExecutableElement exec = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
-    MethodSpec method = MethodSpec.overriding(exec).build();
-    assertThat(method.toString()).isEqualTo(""
+    FunSpec funSpec = FunSpec.overriding(exec).build();
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public fun toString(): java.lang.String {\n"
         + "}\n");
@@ -154,8 +154,8 @@ public final class MethodSpecTest {
     ExecutableElement exec = findFirst(methods, "iterator");
     assume().that(Util.DEFAULT).isNotNull();
     exec = findFirst(methods, "spliterator");
-    MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
+    FunSpec funSpec = FunSpec.overriding(exec, classType, types).build();
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public fun spliterator(): java.util.Spliterator<java.lang.Object> {\n"
         + "}\n");
@@ -166,14 +166,14 @@ public final class MethodSpecTest {
     DeclaredType classType = (DeclaredType) classElement.asType();
     List<ExecutableElement> methods = methodsIn(elements.getAllMembers(classElement));
     ExecutableElement exec = findFirst(methods, "call");
-    MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
+    FunSpec funSpec = FunSpec.overriding(exec, classType, types).build();
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public fun call(): java.lang.Integer throws java.lang.Exception {\n"
         + "}\n");
     exec = findFirst(methods, "compareTo");
-    method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
+    funSpec = FunSpec.overriding(exec, classType, types).build();
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public fun compareTo(arg0: java.lang.Long): kotlin.Int {\n"
         + "}\n");
@@ -186,21 +186,21 @@ public final class MethodSpecTest {
     when(element.asType()).thenReturn(mock(DeclaredType.class));
     when(method.getEnclosingElement()).thenReturn(element);
     try {
-      MethodSpec.overriding(method);
+      FunSpec.overriding(method);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("cannot override method with modifiers: [final]");
     }
     when(method.getModifiers()).thenReturn(ImmutableSet.of(Modifier.PRIVATE));
     try {
-      MethodSpec.overriding(method);
+      FunSpec.overriding(method);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("cannot override method with modifiers: [private]");
     }
     when(method.getModifiers()).thenReturn(ImmutableSet.of(Modifier.STATIC));
     try {
-      MethodSpec.overriding(method);
+      FunSpec.overriding(method);
       fail();
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("cannot override method with modifiers: [static]");
@@ -208,18 +208,18 @@ public final class MethodSpecTest {
   }
 
   @Test public void equalsAndHashCode() {
-    MethodSpec a = MethodSpec.constructorBuilder().build();
-    MethodSpec b = MethodSpec.constructorBuilder().build();
+    FunSpec a = FunSpec.constructorBuilder().build();
+    FunSpec b = FunSpec.constructorBuilder().build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-    a = MethodSpec.methodBuilder("taco").build();
-    b = MethodSpec.methodBuilder("taco").build();
+    a = FunSpec.builder("taco").build();
+    b = FunSpec.builder("taco").build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
     TypeElement classElement = getElement(Everything.class);
     ExecutableElement methodElement = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
-    a = MethodSpec.overriding(methodElement).build();
-    b = MethodSpec.overriding(methodElement).build();
+    a = FunSpec.overriding(methodElement).build();
+    b = FunSpec.overriding(methodElement).build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
   }
@@ -227,14 +227,14 @@ public final class MethodSpecTest {
   @Test public void duplicateExceptionsIgnored() {
     ClassName ioException = ClassName.get(IOException.class);
     ClassName timeoutException = ClassName.get(TimeoutException.class);
-    MethodSpec methodSpec = MethodSpec.methodBuilder("duplicateExceptions")
+    FunSpec funSpec = FunSpec.builder("duplicateExceptions")
       .addException(ioException)
       .addException(timeoutException)
       .addException(timeoutException)
       .addException(ioException)
       .build();
-    assertThat(methodSpec.exceptions).isEqualTo(Arrays.asList(ioException, timeoutException));
-    assertThat(methodSpec.toBuilder().addException(ioException).build().exceptions)
+    assertThat(funSpec.exceptions).isEqualTo(Arrays.asList(ioException, timeoutException));
+    assertThat(funSpec.toBuilder().addException(ioException).build().exceptions)
       .isEqualTo(Arrays.asList(ioException, timeoutException));
   }
 

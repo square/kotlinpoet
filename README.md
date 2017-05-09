@@ -1,7 +1,7 @@
 KotlinPoet
 ==========
 
-`JavaPoet` is a Kotlin and Java API for generating `.kt` source files.
+`KotlinPoet` is a Kotlin and Java API for generating `.kt` source files.
 
 Source file generation can be useful when doing things such as annotation processing or interacting
 with metadata files (e.g., database schemas, protocol formats). By generating code, you eliminate
@@ -20,19 +20,19 @@ fun main(vararg args: String) {
 }
 ```
 
-And this is the (exciting) code to generate it with JavaPoet:
+And this is the (exciting) code to generate it with KotlinPoet:
 
 ```java
-MethodSpec main = MethodSpec.methodBuilder("main")
+FunSpec main = FunSpec.builder("main")
     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
     .returns(void.class)
     .addParameter(String[].class, "args")
-    .addStatement("%T.out.println(%S)", System.class, "Hello, JavaPoet!")
+    .addStatement("%T.out.println(%S)", System.class, "Hello, KotlinPoet!")
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-    .addMethod(main)
+    .addFun(main)
     .build();
 
 JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
@@ -41,27 +41,27 @@ JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
 javaFile.writeTo(System.out);
 ```
 
-To declare the main method, we've created a `MethodSpec` "main" configured with modifiers, return
-type, parameters and code statements. We add the main method to a `HelloWorld` class, and then add
+To declare the main function, we've created a `FunSpec` "main" configured with modifiers, return
+type, parameters and code statements. We add the main function to a `HelloWorld` class, and then add
 that to a `HelloWorld.java` file.
 
 In this case we write the file to `System.out`, but we could also get it as a string
-(`JavaFile.toString()`) or write it to the file system (`JavaPoet.writeTo()`).
+(`JavaFile.toString()`) or write it to the file system (`KotlinPoet.writeTo()`).
 
-The [Javadoc][javadoc] catalogs the complete JavaPoet API, which we explore below.
+The [KDoc][kdoc] catalogs the complete KotlinPoet API, which we explore below.
 
 ### Code & Control Flow
 
-Most of JavaPoet's API uses plain old immutable Java objects. There's also builders, method chaining
-and varargs to make the API friendly. JavaPoet offers models for classes & interfaces (`TypeSpec`),
-fields (`FieldSpec`), methods & constructors (`MethodSpec`), parameters (`ParameterSpec`) and
-annotations (`AnnotationSpec`).
+Most of KotlinPoet's API uses plain old immutable Java objects. There's also builders, function
+chaining and varargs to make the API friendly. KotlinPoet offers models for classes & interfaces
+(`TypeSpec`), fields (`FieldSpec`), functions & constructors (`FunSpec`), parameters
+(`ParameterSpec`) and annotations (`AnnotationSpec`).
 
-But the _body_ of methods and constructors is not modeled. There's no expression class, no
-statement class or syntax tree nodes. Instead, JavaPoet uses strings for code blocks:
+But the _body_ of functions and constructors is not modeled. There's no expression class, no
+statement class or syntax tree nodes. Instead, KotlinPoet uses strings for code blocks:
 
 ```java
-MethodSpec main = MethodSpec.methodBuilder("main")
+FunSpec main = FunSpec.builder("main")
     .addCode(""
         + "int total = 0;\n"
         + "for (int i = 0; i < 10; i++) {\n"
@@ -81,13 +81,13 @@ void main() {
 }
 ```
 
-The manual semicolons, line wrapping, and indentation are tedious and so JavaPoet offers APIs to
+The manual semicolons, line wrapping, and indentation are tedious and so KotlinPoet offers APIs to
 make it easier. There's `addStatement()` which takes care of semicolons and newline, and
 `beginControlFlow()` + `endControlFlow()` which are used together for braces, newlines, and
 indentation:
 
 ```java
-MethodSpec main = MethodSpec.methodBuilder("main")
+FunSpec main = FunSpec.builder("main")
     .addStatement("int total = 0")
     .beginControlFlow("for (int i = 0; i < 10; i++)")
     .addStatement("total += i")
@@ -96,11 +96,11 @@ MethodSpec main = MethodSpec.methodBuilder("main")
 ```
 
 This example is lame because the generated code is constant! Suppose instead of just adding 0 to 10,
-we want to make the operation and range configurable. Here's a method that generates a method:
+we want to make the operation and range configurable. Here's a function that generates a function:
 
 ```java
-private MethodSpec computeRange(String name, int from, int to, String op) {
-  return MethodSpec.methodBuilder(name)
+private FunSpec computeRange(String name, int from, int to, String op) {
+  return FunSpec.builder(name)
       .returns(int.class)
       .addStatement("int result = 0")
       .beginControlFlow("for (int i = " + from + "; i < " + to + "; i++)")
@@ -123,20 +123,20 @@ int multiply10to20() {
 }
 ```
 
-Methods generating methods! And since JavaPoet generates source instead of bytecode, you can
+Functions generating functions! And since KotlinPoet generates source instead of bytecode, you can
 read through it to make sure it's right.
 
 
 ### %L for Literals
 
 The string-concatenation in calls to `beginControlFlow()` and `addStatement` is distracting. Too
-many operators. To address this, JavaPoet offers a syntax inspired-by but incompatible-with
+many operators. To address this, KotlinPoet offers a syntax inspired-by but incompatible-with
 [`String.format()`][formatter]. It accepts **`%L`** to emit a **literal** value in the output. This
 works just like `Formatter`'s `%s`:
 
 ```java
-private MethodSpec computeRange(String name, int from, int to, String op) {
-  return MethodSpec.methodBuilder(name)
+private FunSpec computeRange(String name, int from, int to, String op) {
+  return FunSpec.builder(name)
       .returns(int.class)
       .addStatement("int result = 0")
       .beginControlFlow("for (int i = %L; i < %L; i++)", from, to)
@@ -148,21 +148,21 @@ private MethodSpec computeRange(String name, int from, int to, String op) {
 ```
 
 Literals are emitted directly to the output code with no escaping. Arguments for literals may be
-strings, primitives, and a few JavaPoet types described below.
+strings, primitives, and a few KotlinPoet types described below.
 
 ### %S for Strings
 
 When emitting code that includes string literals, we can use **`%S`** to emit a **string**, complete
-with wrapping quotation marks and escaping. Here's a program that emits 3 methods, each of which
+with wrapping quotation marks and escaping. Here's a program that emits 3 functions, each of which
 returns its own name:
 
 ```java
 public static void main(String[] args) throws Exception {
   TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
       .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-      .addMethod(whatsMyName("slimShady"))
-      .addMethod(whatsMyName("eminem"))
-      .addMethod(whatsMyName("marshallMathers"))
+      .addFun(whatsMyName("slimShady"))
+      .addFun(whatsMyName("eminem"))
+      .addFun(whatsMyName("marshallMathers"))
       .build();
 
   JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
@@ -171,8 +171,8 @@ public static void main(String[] args) throws Exception {
   javaFile.writeTo(System.out);
 }
 
-private static MethodSpec whatsMyName(String name) {
-  return MethodSpec.methodBuilder(name)
+private static FunSpec whatsMyName(String name) {
+  return FunSpec.builder(name)
       .returns(String.class)
       .addStatement("return %S", name)
       .build();
@@ -199,19 +199,19 @@ public final class HelloWorld {
 
 ### %T for Types
 
-We Java programmers love our types: they make our code easier to understand. And JavaPoet is on
+We Java programmers love our types: they make our code easier to understand. And KotlinPoet is on
 board. It has rich built-in support for types, including automatic generation of `import`
 statements. Just use **`%T`** to reference **types**:
 
 ```java
-MethodSpec today = MethodSpec.methodBuilder("today")
+FunSpec today = FunSpec.builder("today")
     .returns(Date.class)
     .addStatement("return new %T()", Date.class)
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-    .addMethod(today)
+    .addFun(today)
     .build();
 
 JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
@@ -241,7 +241,7 @@ references a class that doesn't exist (yet):
 ```java
 ClassName hoverboard = ClassName.get("com.mattel", "Hoverboard");
 
-MethodSpec today = MethodSpec.methodBuilder("tomorrow")
+FunSpec today = FunSpec.builder("tomorrow")
     .returns(hoverboard)
     .addStatement("return new %T()", hoverboard)
     .build();
@@ -261,9 +261,9 @@ public final class HelloWorld {
 }
 ```
 
-The `ClassName` type is very important, and you'll need it frequently when you're using JavaPoet.
+The `ClassName` type is very important, and you'll need it frequently when you're using KotlinPoet.
 It can identify any _declared_ class. Declared types are just the beginning of Java's rich type
-system: we also have arrays, parameterized types, wildcard types, and type variables. JavaPoet has
+system: we also have arrays, parameterized types, wildcard types, and type variables. KotlinPoet has
 classes for building each of these:
 
 ```java
@@ -272,7 +272,7 @@ ClassName list = ClassName.get("java.util", "List");
 ClassName arrayList = ClassName.get("java.util", "ArrayList");
 TypeName listOfHoverboards = ParameterizedTypeName.get(list, hoverboard);
 
-MethodSpec beyond = MethodSpec.methodBuilder("beyond")
+FunSpec beyond = FunSpec.builder("beyond")
     .returns(listOfHoverboards)
     .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
     .addStatement("result.add(new %T())", hoverboard)
@@ -282,7 +282,7 @@ MethodSpec beyond = MethodSpec.methodBuilder("beyond")
     .build();
 ```
 
-JavaPoet will decompose each type and import its components where possible.
+KotlinPoet will decompose each type and import its components where possible.
 
 ```java
 package com.example.helloworld;
@@ -304,14 +304,14 @@ public final class HelloWorld {
 
 #### Import static
 
-JavaPoet supports `import static`. It does it via explicitly collecting type member names. Let's
+KotlinPoet supports `import static`. It does it via explicitly collecting type member names. Let's
 enhance the previous example with some static sugar:
 
 ```java
 ...
 ClassName namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards");
 
-MethodSpec beyond = MethodSpec.methodBuilder("beyond")
+FunSpec beyond = FunSpec.builder("beyond")
     .returns(listOfHoverboards)
     .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
     .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
@@ -322,7 +322,7 @@ MethodSpec beyond = MethodSpec.methodBuilder("beyond")
     .build();
 
 TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
-    .addMethod(beyond)
+    .addFun(beyond)
     .build();
 
 JavaFile.builder("com.example.helloworld", hello)
@@ -332,7 +332,7 @@ JavaFile.builder("com.example.helloworld", hello)
     .build();
 ```
 
-JavaPoet will first add your `import static` block to the file as configured, match and mangle
+KotlinPoet will first add your `import static` block to the file as configured, match and mangle
 all calls accordingly and also import all other types as needed.
 
 ```java
@@ -361,7 +361,7 @@ class HelloWorld {
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
-its name. Here's a method that calls another:
+its name. Here's a function that calls another:
 
 ```java
 public String byteToHex(int b) {
@@ -376,17 +376,17 @@ public char hexDigit(int i) {
 }
 ```
 
-When generating the code above, we pass the `hexDigit()` method as an argument to the `byteToHex()`
-method using `%N`:
+When generating the code above, we pass the `hexDigit()` function as an argument to the `byteToHex()`
+functino using `%N`:
 
 ```java
-MethodSpec hexDigit = MethodSpec.methodBuilder("hexDigit")
+FunSpec hexDigit = FunSpec.builder("hexDigit")
     .addParameter(int.class, "i")
     .returns(char.class)
     .addStatement("return (char) (i < 10 ? i + '0' : i - 10 + 'a')")
     .build();
 
-MethodSpec byteToHex = MethodSpec.methodBuilder("byteToHex")
+FunSpec byteToHex = FunSpec.builder("byteToHex")
     .addParameter(int.class, "b")
     .returns(String.class)
     .addStatement("char[] result = new char[2]")
@@ -432,19 +432,19 @@ map.put("count", 3);
 CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
 ```
 
-### Methods
+### Functions
 
-All of the above methods have a code body. Use `Modifiers.ABSTRACT` to get a method without any
+All of the above functions have a code body. Use `Modifiers.ABSTRACT` to get a function without any
 body. This is only legal if the enclosing class is either abstract or an interface.
 
 ```java
-MethodSpec flux = MethodSpec.methodBuilder("flux")
+FunSpec flux = FunSpec.builder("flux")
     .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-    .addMethod(flux)
+    .addFun(flux)
     .build();
 ```
 
@@ -456,20 +456,20 @@ public abstract class HelloWorld {
 }
 ```
 
-The other modifiers work where permitted. Note that when specifying modifiers, JavaPoet uses
+The other modifiers work where permitted. Note that when specifying modifiers, KotlinPoet uses
 [`javax.lang.model.element.Modifier`][modifier], a class that is not available on Android. This
 limitation applies to code-generating-code only; the output code runs everywhere: JVMs, Android,
 and GWT.
 
-Methods also have parameters, exceptions, varargs, Javadoc, annotations, type variables, and a
-return type. All of these are configured with `MethodSpec.Builder`.
+Functions also have parameters, exceptions, varargs, KDoc, annotations, type variables, and a return
+type. All of these are configured with `FunSpec.Builder`.
 
 ### Constructors
 
-`MethodSpec` is a slight misnomer; it can also be used for constructors:
+`FunSpec` is a slight misnomer; it can also be used for constructors:
 
 ```java
-MethodSpec flux = MethodSpec.constructorBuilder()
+FunSpec flux = FunSpec.constructorBuilder()
     .addModifiers(Modifier.PUBLIC)
     .addParameter(String.class, "greeting")
     .addStatement("this.%N = %N", "greeting", "greeting")
@@ -478,7 +478,7 @@ MethodSpec flux = MethodSpec.constructorBuilder()
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC)
     .addField(String.class, "greeting", Modifier.PRIVATE, Modifier.FINAL)
-    .addMethod(flux)
+    .addFun(flux)
     .build();
 ```
 
@@ -494,20 +494,20 @@ public class HelloWorld {
 }
 ```
 
-For the most part, constructors work just like methods. When emitting code, JavaPoet will place
-constructors before methods in the output file.
+For the most part, constructors work just like functions. When emitting code, KotlinPoet will place
+constructors before functions in the output file.
 
 ### Parameters
 
-Declare parameters on methods and constructors with either `ParameterSpec.builder()` or
-`MethodSpec`'s convenient `addParameter()` API:
+Declare parameters on functions and constructors with either `ParameterSpec.builder()` or
+`FunSpec`'s convenient `addParameter()` API:
 
 ```java
 ParameterSpec android = ParameterSpec.builder(String.class, "android")
     .addModifiers(Modifier.FINAL)
     .build();
 
-MethodSpec welcomeOverlords = MethodSpec.methodBuilder("welcomeOverlords")
+FunSpec welcomeOverlords = FunSpec.builder("welcomeOverlords")
     .addParameter(android)
     .addParameter(String.class, "robot", Modifier.FINAL)
     .build();
@@ -525,7 +525,7 @@ The extended `Builder` form is necessary when the parameter has annotations (suc
 
 ### Fields
 
-Like parameters, fields can be created either with builders or by using convenient helper methods:
+Like parameters, fields can be created either with builders or by using convenient helper functions:
 
 ```java
 FieldSpec android = FieldSpec.builder(String.class, "android")
@@ -549,9 +549,8 @@ public class HelloWorld {
 }
 ```
 
-The extended `Builder` form is necessary when a field has Javadoc, annotations, or a field
-initializer. Field initializers use the same [`String.format()`][formatter]-like syntax as the code
-blocks above:
+The extended `Builder` form is necessary when a field has KDoc, annotations, or a field initializer.
+Field initializers use the same [`String.format()`][formatter]-like syntax as the code blocks above:
 
 ```java
 FieldSpec android = FieldSpec.builder(String.class, "android")
@@ -568,7 +567,7 @@ private final String android = "Lollipop v." + 5.0;
 
 ### Interfaces
 
-JavaPoet has no trouble with interfaces. Note that interface methods must always be `PUBLIC
+KotlinPoet has no trouble with interfaces. Note that interface functions must always be `PUBLIC
 ABSTRACT` and interface fields must always be `PUBLIC STATIC FINAL`. These modifiers are necessary
 when defining the interface:
 
@@ -579,7 +578,7 @@ TypeSpec helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
         .initializer("%S", "change")
         .build())
-    .addMethod(MethodSpec.methodBuilder("beep")
+    .addFun(FunSpec.builder("beep")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .build())
     .build();
@@ -621,14 +620,14 @@ public enum Roshambo {
 }
 ```
 
-Fancy enums are supported, where the enum values override methods or call a superclass constructor.
-Here's a comprehensive example:
+Fancy enums are supported, where the enum values override functions or call a superclass
+constructor. Here's a comprehensive example:
 
 ```java
 TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
     .addModifiers(Modifier.PUBLIC)
     .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("%S", "fist")
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override.class)
             .addModifiers(Modifier.PUBLIC)
             .addStatement("return %S", "avalanche!")
@@ -639,7 +638,7 @@ TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
     .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
         .build())
     .addField(String.class, "handsign", Modifier.PRIVATE, Modifier.FINAL)
-    .addMethod(MethodSpec.constructorBuilder()
+    .addFun(FunSpec.constructorBuilder()
         .addParameter(String.class, "handsign")
         .addStatement("this.%N = %N", "handsign", "handsign")
         .build())
@@ -677,7 +676,7 @@ code blocks. They are values that can be referenced with `%L`:
 ```java
 TypeSpec comparator = TypeSpec.anonymousClassBuilder("")
     .addSuperinterface(ParameterizedTypeName.get(Comparator.class, String.class))
-    .addMethod(MethodSpec.methodBuilder("compare")
+    .addFun(FunSpec.builder("compare")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
         .addParameter(String.class, "a")
@@ -688,14 +687,14 @@ TypeSpec comparator = TypeSpec.anonymousClassBuilder("")
     .build();
 
 TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addMethod(MethodSpec.methodBuilder("sortByLength")
+    .addFun(FunSpec.builder("sortByLength")
         .addParameter(ParameterizedTypeName.get(List.class, String.class), "strings")
         .addStatement("%T.sort(%N, %L)", Collections.class, "strings", comparator)
         .build())
     .build();
 ```
 
-This generates a method that contains a class that contains a method:
+This generates a function that contains a class that contains a function:
 
 ```java
 void sortByLength(List<String> strings) {
@@ -710,7 +709,7 @@ void sortByLength(List<String> strings) {
 
 One particularly tricky part of defining anonymous inner classes is the arguments to the superclass
 constructor. In the above code we're passing the empty string for no arguments:
-`TypeSpec.anonymousClassBuilder("")`. To pass different parameters use JavaPoet's code block
+`TypeSpec.anonymousClassBuilder("")`. To pass different parameters use KotlinPoet's code block
 syntax with commas to separate arguments.
 
 
@@ -719,7 +718,7 @@ syntax with commas to separate arguments.
 Simple annotations are easy:
 
 ```java
-MethodSpec toString = MethodSpec.methodBuilder("toString")
+FunSpec toString = FunSpec.builder("toString")
     .addAnnotation(Override.class)
     .returns(String.class)
     .addModifiers(Modifier.PUBLIC)
@@ -727,7 +726,7 @@ MethodSpec toString = MethodSpec.methodBuilder("toString")
     .build();
 ```
 
-Which generates this method with an `@Override` annotation:
+Which generates this function with an `@Override` annotation:
 
 ```java
   @Override
@@ -739,7 +738,7 @@ Which generates this method with an `@Override` annotation:
 Use `AnnotationSpec.builder()` to set properties on annotations:
 
 ```java
-MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
+FunSpec logRecord = FunSpec.builder("recordEvent")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addAnnotation(AnnotationSpec.builder(Headers.class)
         .addMember("accept", "%S", "application/json; charset=utf-8")
@@ -764,7 +763,7 @@ When you get fancy, annotation values can be annotations themselves. Use `%L` fo
 annotations:
 
 ```java
-MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
+FunSpec logRecord = FunSpec.builder("recordEvent")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addAnnotation(AnnotationSpec.builder(HeaderList.class)
         .addMember("value", "%L", AnnotationSpec.builder(Header.class)
@@ -794,18 +793,18 @@ LogReceipt recordEvent(LogRecord logRecord);
 Note that you can call `addMember()` multiple times with the same property name to populate a list
 of values for that property.
 
-### Javadoc
+### KDoc
 
-Fields, methods and types can be documented with Javadoc:
+Fields, functions, and types can be documented with KDoc:
 
 ```java
-MethodSpec dismiss = MethodSpec.methodBuilder("dismiss")
-    .addJavadoc("Hides {@code message} from the caller's history. Other\n"
-        + "participants in the conversation will continue to see the\n"
-        + "message in their own history unless they also delete it.\n")
-    .addJavadoc("\n")
-    .addJavadoc("<p>Use {@link #delete(%T)} to delete the entire\n"
-        + "conversation for all participants.\n", Conversation.class)
+FunSpec dismiss = FunSpec.builder("dismiss")
+    .addKdoc("Hides `message` from the caller's history. Other participants in the\n"
+        + "conversation will continue to see the message in their own history\n"
+        + " unless they also delete it.\n")
+    .addKdoc("\n")
+    .addKdoc("Use [Message.delete(%T)] to delete the entire conversation\n"
+        + "for all participants.\n", Conversation.class)
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addParameter(Message.class, "message")
     .build();
@@ -815,12 +814,12 @@ Which generates this:
 
 ```java
   /**
-   * Hides {@code message} from the caller's history. Other
-   * participants in the conversation will continue to see the
-   * message in their own history unless they also delete it.
+   * Hides `message` from the caller's history. Other participants in the
+   * conversation will continue to see the message in their own history
+   * unless they also delete it.
    *
-   * <p>Use {@link #delete(Conversation)} to delete the entire
-   * conversation for all participants.
+   * Use [Message.delete(Conversation)] to delete the entire conversation
+   * for all participants.
    */
   void dismiss(Message message);
 ```
@@ -850,7 +849,7 @@ Snapshots of the development version are available in [Sonatype's `snapshots` re
 License
 -------
 
-    Copyright 2015 Square, Inc.
+    Copyright 2017 Square, Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -870,8 +869,6 @@ License
 
  [dl]: https://search.maven.org/remote_content?g=com.squareup&a=javapoet&v=LATEST
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/com/squareup/javapoet/
- [javadoc]: https://square.github.io/javapoet/1.x/javapoet/
- [javawriter]: https://github.com/square/javapoet/tree/javawriter_2
- [javawriter_maven]: http://search.maven.org/#artifactdetails%7Ccom.squareup%7Cjavawriter%7C2.5.1%7Cjar
+ [kdoc]: https://square.github.io/javapoet/1.x/javapoet/
  [formatter]: http://developer.android.com/reference/java/util/Formatter.html
  [modifier]: http://docs.oracle.com/javase/8/docs/api/javax/lang/model/element/Modifier.html

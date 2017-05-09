@@ -47,7 +47,7 @@ import kotlin.reflect.KClass;
  * Set<String>}, and unassignable types like {@code Unit}.
  *
  * <p>Type names are dumb identifiers only and do not model the values they name. For example, the
- * type name for {@code kotlin.List} doesn't know about the {@code size()} method, the fact that
+ * type name for {@code kotlin.List} doesn't know about the {@code size()} function, the fact that
  * lists are collections, or even that it accepts a single type parameter.
  *
  * <p>Instances of this class are immutable value objects that implement {@code equals()} and {@code

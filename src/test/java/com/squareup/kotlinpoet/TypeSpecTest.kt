@@ -59,7 +59,7 @@ class TypeSpecTest {
 
   @Test fun basic() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
             .returns(String::class)
@@ -127,7 +127,7 @@ class TypeSpecTest {
         .build()
     val aSimpleThung = TypeSpec.anonymousClassBuilder("%N", thungParameter)
         .superclass(simpleThungOfBar)
-        .addMethod(MethodSpec.methodBuilder("doSomething")
+        .addFun(FunSpec.builder("doSomething")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .addParameter(bar, "bar")
@@ -136,7 +136,7 @@ class TypeSpecTest {
         .build()
     val aThingThang = TypeSpec.anonymousClassBuilder("")
         .superclass(thingThangOfFooBar)
-        .addMethod(MethodSpec.methodBuilder("call")
+        .addFun(FunSpec.builder("call")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(thungOfSuperBar)
@@ -174,7 +174,7 @@ class TypeSpecTest {
 
   @Test fun annotatedParameters() {
     val service = TypeSpec.classBuilder("Foo")
-        .addMethod(MethodSpec.constructorBuilder()
+        .addFun(FunSpec.constructorBuilder()
             .addModifiers(Modifier.PUBLIC)
             .addParameter(Long::class.javaPrimitiveType, "id")
             .addParameter(ParameterSpec.builder(String::class, "one")
@@ -246,7 +246,7 @@ class TypeSpecTest {
     val queryMap = ClassName.get(tacosPackage, "QueryMap")
     val header = ClassName.get(tacosPackage, "Header")
     val service = TypeSpec.interfaceBuilder("Service")
-        .addMethod(MethodSpec.methodBuilder("fooBar")
+        .addFun(FunSpec.builder("fooBar")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(headers)
                 .addMember("value", "%S", "Accept: application/json")
@@ -339,10 +339,10 @@ class TypeSpecTest {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
         .addModifiers(Modifier.PUBLIC)
         .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("")
-            .addJavadoc("Avalanche!\n")
+            .addKdoc("Avalanche!\n")
             .build())
         .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
-            .addMethod(MethodSpec.methodBuilder("toString")
+            .addFun(FunSpec.builder("toString")
                 .addAnnotation(Override::class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(String::class)
@@ -352,11 +352,11 @@ class TypeSpecTest {
         .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("%S", "peace sign")
             .build())
         .addProperty(String::class, "handPosition", Modifier.PRIVATE, Modifier.FINAL)
-        .addMethod(MethodSpec.constructorBuilder()
+        .addFun(FunSpec.constructorBuilder()
             .addParameter(String::class, "handPosition")
             .addCode("this.handPosition = handPosition;\n")
             .build())
-        .addMethod(MethodSpec.constructorBuilder()
+        .addFun(FunSpec.constructorBuilder()
             .addCode("this(%S);\n", "fist")
             .build())
         .build()
@@ -395,16 +395,16 @@ class TypeSpecTest {
   }
 
   /** https://github.com/square/javapoet/issues/193  */
-  @Test fun enumsMayDefineAbstractMethods() {
+  @Test fun enumsMayDefineAbstractFunctions() {
     val roshambo = TypeSpec.enumBuilder("Tortilla")
         .addModifiers(Modifier.PUBLIC)
         .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder("")
-            .addMethod(MethodSpec.methodBuilder("fold")
+            .addFun(FunSpec.builder("fold")
                 .addAnnotation(Override::class)
                 .addModifiers(Modifier.PUBLIC)
                 .build())
             .build())
-        .addMethod(MethodSpec.methodBuilder("fold")
+        .addFun(FunSpec.builder("fold")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .build())
         .build()
@@ -449,7 +449,7 @@ class TypeSpecTest {
   @Test fun enumWithMembersButNoConstructorCall() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
         .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder("")
-            .addMethod(MethodSpec.methodBuilder("toString")
+            .addFun(FunSpec.builder("toString")
                 .addAnnotation(Override::class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(String::class)
@@ -500,21 +500,21 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun methodThrows() {
+  @Test fun funThrows() {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(Modifier.ABSTRACT)
-        .addMethod(MethodSpec.methodBuilder("throwOne")
+        .addFun(FunSpec.builder("throwOne")
             .addException(IOException::class)
             .build())
-        .addMethod(MethodSpec.methodBuilder("throwTwo")
+        .addFun(FunSpec.builder("throwTwo")
             .addException(IOException::class)
             .addException(ClassName.get(tacosPackage, "SourCreamException"))
             .build())
-        .addMethod(MethodSpec.methodBuilder("abstractThrow")
+        .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(Modifier.ABSTRACT)
             .addException(IOException::class)
             .build())
-        .addMethod(MethodSpec.methodBuilder("nativeThrow")
+        .addFun(FunSpec.builder("nativeThrow")
             .addModifiers(Modifier.NATIVE)
             .addException(IOException::class)
             .build())
@@ -549,14 +549,14 @@ class TypeSpecTest {
         .addProperty(t, "label")
         .addProperty(p, "x")
         .addProperty(p, "y")
-        .addMethod(MethodSpec.methodBuilder("compareTo")
+        .addFun(FunSpec.builder("compareTo")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(Int::class.javaPrimitiveType)
             .addParameter(p, "p")
             .addStatement("return 0")
             .build())
-        .addMethod(MethodSpec.methodBuilder("of")
+        .addFun(FunSpec.builder("of")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addTypeVariable(t)
             .addTypeVariable(p)
@@ -798,7 +798,7 @@ class TypeSpecTest {
   @Test fun annotation() {
     val annotation = TypeSpec.annotationBuilder("MyAnnotation")
         .addModifiers(Modifier.PUBLIC)
-        .addMethod(MethodSpec.methodBuilder("test")
+        .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .defaultValue("%L", 0)
             .returns(Int::class.javaPrimitiveType)
@@ -818,7 +818,7 @@ class TypeSpecTest {
 
   @Test fun innerAnnotationInAnnotationDeclaration() {
     val bar = TypeSpec.annotationBuilder("Bar")
-        .addMethod(MethodSpec.methodBuilder("value")
+        .addFun(FunSpec.builder("value")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .defaultValue("@%T", java.lang.Deprecated::class)
             .returns(java.lang.Deprecated::class)
@@ -857,10 +857,10 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun classCannotHaveDefaultValueForMethod() {
+  @Test fun classCannotHaveDefaultValueForFunction() {
     try {
       TypeSpec.classBuilder("Tacos")
-          .addMethod(MethodSpec.methodBuilder("test")
+          .addFun(FunSpec.builder("test")
               .addModifiers(Modifier.PUBLIC)
               .defaultValue("0")
               .returns(Int::class.javaPrimitiveType)
@@ -872,11 +872,11 @@ class TypeSpecTest {
 
   }
 
-  @Test fun classCannotHaveDefaultMethods() {
+  @Test fun classCannotHaveDefaultFunctions() {
     assumeTrue(isJava8)
     try {
       TypeSpec.classBuilder("Tacos")
-          .addMethod(MethodSpec.methodBuilder("test")
+          .addFun(FunSpec.builder("test")
               .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
               .returns(Int::class.javaPrimitiveType)
               .addCode(CodeBlock.builder().addStatement("return 0").build())
@@ -888,9 +888,9 @@ class TypeSpecTest {
 
   }
 
-  @Test fun interfaceStaticMethods() {
+  @Test fun interfaceStaticFunctions() {
     val bar = TypeSpec.interfaceBuilder("Tacos")
-        .addMethod(MethodSpec.methodBuilder("test")
+        .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .returns(Int::class.javaPrimitiveType)
             .addCode(CodeBlock.builder().addStatement("return 0").build())
@@ -910,10 +910,10 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun interfaceDefaultMethods() {
+  @Test fun interfaceDefaultFunctions() {
     assumeTrue(isJava8)
     val bar = TypeSpec.interfaceBuilder("Tacos")
-        .addMethod(MethodSpec.methodBuilder("test")
+        .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
             .returns(Int::class.javaPrimitiveType)
             .addCode(CodeBlock.builder().addStatement("return 0").build())
@@ -1032,7 +1032,7 @@ class TypeSpecTest {
   @Test fun intersectionType() {
     val typeVariable = TypeVariableName.get("T", Comparator::class, Serializable::class)
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("getComparator")
+        .addFun(FunSpec.builder("getComparator")
             .addTypeVariable(typeVariable)
             .returns(typeVariable)
             .addCode("return null;\n")
@@ -1068,23 +1068,23 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun javadoc() {
+  @Test fun kdoc() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addJavadoc("A hard or soft tortilla, loosely folded and filled with whatever\n")
-        .addJavadoc("[random][%T] tex-mex stuff we could find in the pantry\n", Random::class)
-        .addJavadoc(CodeBlock.of("and some [%T] cheese.\n", String::class))
+        .addKdoc("A hard or soft tortilla, loosely folded and filled with whatever\n")
+        .addKdoc("[random][%T] tex-mex stuff we could find in the pantry\n", Random::class)
+        .addKdoc(CodeBlock.of("and some [%T] cheese.\n", String::class))
         .addProperty(PropertySpec.builder(Boolean::class.javaPrimitiveType, "soft")
-            .addJavadoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
+            .addKdoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
             .build())
-        .addMethod(MethodSpec.methodBuilder("refold")
-            .addJavadoc("Folds the back of this taco to reduce sauce leakage.\n"
+        .addFun(FunSpec.builder("refold")
+            .addKdoc("Folds the back of this taco to reduce sauce leakage.\n"
                 + "\n"
                 + "For [%T#KOREAN], the front may also be folded.\n", Locale::class)
             .addParameter(Locale::class, "locale")
             .build())
         .build()
-    // Mentioning a type in Javadoc will not cause an import to be added (java.util.Random here),
-    // but the short name will be used if it's already imported (java.util.Locale here).
+    // Mentioning a type in KDoc will not cause an import to be added (java.util.Random here), but
+    // the short name will be used if it's already imported (java.util.Locale here).
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
@@ -1148,7 +1148,7 @@ class TypeSpecTest {
 
   @Test fun varargs() {
     val taqueria = TypeSpec.classBuilder("Taqueria")
-        .addMethod(MethodSpec.methodBuilder("prepare")
+        .addFun(FunSpec.builder("prepare")
             .addParameter(Int::class.javaPrimitiveType, "workers")
             .addParameter(Array<Runnable>::class, "jobs")
             .varargs()
@@ -1173,7 +1173,7 @@ class TypeSpecTest {
         .addStatement("return i")
         .endControlFlow()
         .build()
-    val methodBody = CodeBlock.builder()
+    val funBody = CodeBlock.builder()
         .addStatement("%T size = %T.min(listA.size(), listB.size())", Int::class.javaPrimitiveType, Math::class)
         .beginControlFlow("for (%T i = 0; i < size; i++)", Int::class.javaPrimitiveType)
         .addStatement("%T %N = %N.get(i)", String::class, "a", "listA")
@@ -1199,11 +1199,11 @@ class TypeSpecTest {
         .build()
     val util = TypeSpec.classBuilder("Util")
         .addProperty(escapeHtml)
-        .addMethod(MethodSpec.methodBuilder("commonPrefixLength")
+        .addFun(FunSpec.builder("commonPrefixLength")
             .returns(Int::class.javaPrimitiveType)
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listA")
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listB")
-            .addCode(methodBody)
+            .addCode(funBody)
             .build())
         .build()
     assertThat(toString(util)).isEqualTo("""
@@ -1241,7 +1241,7 @@ class TypeSpecTest {
 
   @Test fun indexedElseIf() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("choices")
+        .addFun(FunSpec.builder("choices")
             .beginControlFlow("if (%1L != null || %1L == %2L)", "taco", "otherTaco")
             .addStatement("%T.out.println(%S)", System::class, "only one taco? NOO!")
             .nextControlFlow("else if (%1L.%3L && %2L.%3L)", "taco", "otherTaco", "isSupreme()")
@@ -1268,7 +1268,7 @@ class TypeSpecTest {
 
   @Test fun elseIf() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("choices")
+        .addFun(FunSpec.builder("choices")
             .beginControlFlow("if (5 < 4) ")
             .addStatement("%T.out.println(%S)", System::class, "wat")
             .nextControlFlow("else if (5 < 6)")
@@ -1295,7 +1295,7 @@ class TypeSpecTest {
 
   @Test fun inlineIndent() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("inlineIndent")
+        .addFun(FunSpec.builder("inlineIndent")
             .addCode("if (3 < 4) {\n%>%T.out.println(%S);\n%<}\n", System::class, "hello")
             .build())
         .build()
@@ -1320,7 +1320,7 @@ class TypeSpecTest {
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
             .initializer("%S", "crunchy corn")
             .build())
-        .addMethod(MethodSpec.methodBuilder("fold")
+        .addFun(FunSpec.builder("fold")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .build())
         .addType(TypeSpec.classBuilder("Topping")
@@ -1382,14 +1382,14 @@ class TypeSpecTest {
         .addProperty(String::class, "W")
         .addProperty(String::class, "V", Modifier.STATIC)
         .addProperty(String::class, "U")
-        .addMethod(MethodSpec.methodBuilder("T").addModifiers(Modifier.STATIC).build())
-        .addMethod(MethodSpec.methodBuilder("S").build())
-        .addMethod(MethodSpec.methodBuilder("R").addModifiers(Modifier.STATIC).build())
-        .addMethod(MethodSpec.methodBuilder("Q").build())
-        .addMethod(MethodSpec.constructorBuilder().addParameter(Int::class.javaPrimitiveType, "p").build())
-        .addMethod(MethodSpec.constructorBuilder().addParameter(Long::class.javaPrimitiveType, "o").build())
+        .addFun(FunSpec.builder("T").addModifiers(Modifier.STATIC).build())
+        .addFun(FunSpec.builder("S").build())
+        .addFun(FunSpec.builder("R").addModifiers(Modifier.STATIC).build())
+        .addFun(FunSpec.builder("Q").build())
+        .addFun(FunSpec.constructorBuilder().addParameter(Int::class.javaPrimitiveType, "p").build())
+        .addFun(FunSpec.constructorBuilder().addParameter(Long::class.javaPrimitiveType, "o").build())
         .build()
-    // Static properties, instance properties, constructors, methods, classes.
+    // Static properties, instance properties, constructors, functions, classes.
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
@@ -1433,14 +1433,14 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nativeMethods() {
+  @Test fun nativeFunctions() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("nativeInt")
+        .addFun(FunSpec.builder("nativeInt")
             .addModifiers(Modifier.NATIVE)
             .returns(Int::class.javaPrimitiveType)
             .build())
         // GWT JSNI
-        .addMethod(MethodSpec.methodBuilder("alert")
+        .addFun(FunSpec.builder("alert")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.NATIVE)
             .addParameter(String::class, "msg")
             .addCode(CodeBlock.builder()
@@ -1507,14 +1507,14 @@ class TypeSpecTest {
         .isEqualTo("final s: java.lang.String = \"taco\".substring(0, 3);\n")
   }
 
-  @Test fun methodToString() {
-    val method = MethodSpec.methodBuilder("toString")
+  @Test fun functionToString() {
+    val funSpec = FunSpec.builder("toString")
         .addAnnotation(Override::class)
         .addModifiers(Modifier.PUBLIC)
         .returns(String::class)
         .addStatement("return %S", "taco")
         .build()
-    assertThat(method.toString()).isEqualTo(""
+    assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
         + "public fun toString(): java.lang.String {\n"
         + "  return \"taco\"\n"
@@ -1522,7 +1522,7 @@ class TypeSpecTest {
   }
 
   @Test fun constructorToString() {
-    val constructor = MethodSpec.constructorBuilder()
+    val constructor = FunSpec.constructorBuilder()
         .addModifiers(Modifier.PUBLIC)
         .addParameter(ClassName.get(tacosPackage, "Taco"), "taco")
         .addStatement("this.%N = %N", "taco", "taco")
@@ -1553,7 +1553,7 @@ class TypeSpecTest {
   @Test fun anonymousClassToString() {
     val type = TypeSpec.anonymousClassBuilder("")
         .addSuperinterface(Runnable::class)
-        .addMethod(MethodSpec.methodBuilder("run")
+        .addFun(FunSpec.builder("run")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .build())
@@ -1590,7 +1590,7 @@ class TypeSpecTest {
 
   @Test fun multilineStatement() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String::class)
@@ -1622,7 +1622,7 @@ class TypeSpecTest {
     val listOfString = ParameterizedTypeName.get(List::class, String::class)
     val prefixComparator = TypeSpec.anonymousClassBuilder("")
         .addSuperinterface(stringComparator)
-        .addMethod(MethodSpec.methodBuilder("compare")
+        .addFun(FunSpec.builder("compare")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(Int::class.javaPrimitiveType)
@@ -1632,12 +1632,12 @@ class TypeSpecTest {
             .build())
         .build()
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("comparePrefix")
+        .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
             .addParameter(Int::class.javaPrimitiveType, "length", Modifier.FINAL)
             .addStatement("return %L", prefixComparator)
             .build())
-        .addMethod(MethodSpec.methodBuilder("sortPrefix")
+        .addFun(FunSpec.builder("sortPrefix")
             .addParameter(listOfString, "list")
             .addParameter(Int::class.javaPrimitiveType, "length", Modifier.FINAL)
             .addStatement("%T.sort(\nlist,\n%L)", Collections::class, prefixComparator)
@@ -1783,29 +1783,27 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nullMethodsAddition() {
+  @Test fun nullFunctionsAddition() {
     try {
-      TypeSpec.classBuilder("Taco").addMethods(null)
+      TypeSpec.classBuilder("Taco").addFunctions(null)
       fail()
     } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("methodSpecs == null")
+      assertThat(expected.message).isEqualTo("funSpecs == null")
     }
-
   }
 
-  @Test fun multipleMethodAddition() {
+  @Test fun multipleFunctionAddition() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethods(Arrays.asList(
-            MethodSpec.methodBuilder("getAnswer")
+        .addFunctions(Arrays.asList(
+            FunSpec.builder("getAnswer")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(Int::class.javaPrimitiveType)
                 .addStatement("return %L", 42)
                 .build(),
-            MethodSpec.methodBuilder("getRandomQuantity")
+            FunSpec.builder("getRandomQuantity")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(Int::class.javaPrimitiveType)
-                .addJavadoc("chosen by fair dice roll ;)")
+                .addKdoc("chosen by fair dice roll ;)")
                 .addStatement("return %L", 4)
                 .build()))
         .build()
@@ -1940,7 +1938,7 @@ class TypeSpecTest {
 
   @Test fun tryCatch() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(MethodSpec.methodBuilder("addTopping")
+        .addFun(FunSpec.builder("addTopping")
             .addParameter(ClassName.get("com.squareup.tacos", "Topping"), "topping")
             .beginControlFlow("try")
             .addCode("/* do something tricky with the topping */\n")
@@ -1965,8 +1963,8 @@ class TypeSpecTest {
 
   @Test fun ifElse() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(
-            MethodSpec.methodBuilder("isDelicious")
+        .addFun(
+            FunSpec.builder("isDelicious")
                 .addParameter(TypeName.INT, "count")
                 .returns(TypeName.BOOLEAN)
                 .beginControlFlow("if (count > 0)")
@@ -2018,12 +2016,12 @@ class TypeSpecTest {
     assertThat(CodeBlock.of("%N", parameter).toString()).isEqualTo("parameter")
   }
 
-  @Test fun nameFromMethod() {
-    val method = MethodSpec.methodBuilder("method")
+  @Test fun nameFromFunction() {
+    val funSpec = FunSpec.builder("method")
         .addModifiers(Modifier.ABSTRACT)
         .returns(String::class)
         .build()
-    assertThat(CodeBlock.of("%N", method).toString()).isEqualTo("method")
+    assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("method")
   }
 
   @Test fun nameFromType() {
@@ -2166,7 +2164,7 @@ class TypeSpecTest {
         .addStaticBlock(CodeBlock.builder()
             .addStatement("FOO = %S", "FOO")
             .build())
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String::class)
@@ -2203,8 +2201,8 @@ class TypeSpecTest {
         .addStaticBlock(CodeBlock.builder()
             .addStatement("FOO = %S", "FOO")
             .build())
-        .addMethod(MethodSpec.constructorBuilder().build())
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.constructorBuilder().build())
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String::class)
@@ -2252,8 +2250,8 @@ class TypeSpecTest {
         .addStaticBlock(CodeBlock.builder()
             .addStatement("FOO = %S", "FOO")
             .build())
-        .addMethod(MethodSpec.constructorBuilder().build())
-        .addMethod(MethodSpec.methodBuilder("toString")
+        .addFun(FunSpec.constructorBuilder().build())
+        .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
             .returns(String::class)
@@ -2333,16 +2331,16 @@ class TypeSpecTest {
   }
 
   @Test fun lineWrapping() {
-    val methodBuilder = MethodSpec.methodBuilder("call")
-    methodBuilder.addCode("%[call(")
+    val funSpecBuilder = FunSpec.builder("call")
+    funSpecBuilder.addCode("%[call(")
     for (i in 0..31) {
-      methodBuilder.addParameter(String::class, "s" + i)
-      methodBuilder.addCode(if (i > 0) ",%W%S" else "%S", i)
+      funSpecBuilder.addParameter(String::class, "s" + i)
+      funSpecBuilder.addCode(if (i > 0) ",%W%S" else "%S", i)
     }
-    methodBuilder.addCode(");%]\n")
+    funSpecBuilder.addCode(");%]\n")
 
     val taco = TypeSpec.classBuilder("Taco")
-        .addMethod(methodBuilder.build())
+        .addFun(funSpecBuilder.build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos

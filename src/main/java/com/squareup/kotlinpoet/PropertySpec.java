@@ -34,7 +34,7 @@ import static com.squareup.kotlinpoet.Util.checkState;
 public final class PropertySpec {
   public final TypeName type;
   public final String name;
-  public final CodeBlock javadoc;
+  public final CodeBlock kdoc;
   public final List<AnnotationSpec> annotations;
   public final Set<Modifier> modifiers;
   public final CodeBlock initializer;
@@ -42,7 +42,7 @@ public final class PropertySpec {
   private PropertySpec(Builder builder) {
     this.type = checkNotNull(builder.type, "type == null");
     this.name = checkNotNull(builder.name, "name == null");
-    this.javadoc = builder.javadoc.build();
+    this.kdoc = builder.kdoc.build();
     this.annotations = Util.immutableList(builder.annotations);
     this.modifiers = Util.immutableSet(builder.modifiers);
     this.initializer = (builder.initializer == null)
@@ -55,7 +55,7 @@ public final class PropertySpec {
   }
 
   void emit(CodeWriter codeWriter, Set<Modifier> implicitModifiers) throws IOException {
-    codeWriter.emitJavadoc(javadoc);
+    codeWriter.emitKdoc(kdoc);
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
     codeWriter.emit("%L: %T", name, type);
@@ -105,7 +105,7 @@ public final class PropertySpec {
 
   public Builder toBuilder() {
     Builder builder = new Builder(type, name);
-    builder.javadoc.add(javadoc);
+    builder.kdoc.add(kdoc);
     builder.annotations.addAll(annotations);
     builder.modifiers.addAll(modifiers);
     builder.initializer = initializer.isEmpty() ? null : initializer;
@@ -116,7 +116,7 @@ public final class PropertySpec {
     private final TypeName type;
     private final String name;
 
-    private final CodeBlock.Builder javadoc = CodeBlock.builder();
+    private final CodeBlock.Builder kdoc = CodeBlock.builder();
     private final List<AnnotationSpec> annotations = new ArrayList<>();
     private final List<Modifier> modifiers = new ArrayList<>();
     private CodeBlock initializer = null;
@@ -126,13 +126,13 @@ public final class PropertySpec {
       this.name = name;
     }
 
-    public Builder addJavadoc(String format, Object... args) {
-      javadoc.add(format, args);
+    public Builder addKdoc(String format, Object... args) {
+      kdoc.add(format, args);
       return this;
     }
 
-    public Builder addJavadoc(CodeBlock block) {
-      javadoc.add(block);
+    public Builder addKdoc(CodeBlock block) {
+      kdoc.add(block);
       return this;
     }
 
