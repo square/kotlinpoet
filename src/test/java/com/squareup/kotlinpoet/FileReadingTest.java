@@ -43,8 +43,8 @@ public class FileReadingTest {
 
   @Test public void javaFileObjectCharacterContent() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test")
-        .addJavadoc("Pi\u00f1ata\u00a1")
-        .addMethod(MethodSpec.methodBuilder("fooBar").build())
+        .addKdoc("Pi\u00f1ata\u00a1")
+        .addFun(FunSpec.builder("fooBar").build())
         .build();
     KotlinFile kotlinFile = KotlinFile.builder("foo", type).build();
     JavaFileObject javaFileObject = kotlinFile.toJavaFileObject();

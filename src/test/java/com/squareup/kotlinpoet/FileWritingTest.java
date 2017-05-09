@@ -167,7 +167,7 @@ public final class FileWritingTest {
   @Test public void filerClassesWithTabIndent() throws IOException {
     TypeSpec test = TypeSpec.classBuilder("Test")
         .addProperty(Date.class, "madeFreshDate")
-        .addMethod(MethodSpec.methodBuilder("main")
+        .addFun(FunSpec.builder("main")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(String[].class, "args")
             .addCode("%T.out.println(%S);\n", System.class, "Hello World!")

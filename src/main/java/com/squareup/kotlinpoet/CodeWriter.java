@@ -48,7 +48,7 @@ final class CodeWriter {
   private final LineWrapper out;
   private int indentLevel;
 
-  private boolean javadoc = false;
+  private boolean kdoc = false;
   private boolean comment = false;
   private String packageName = NO_PACKAGE;
   private final List<TypeSpec> typeSpecStack = new ArrayList<>();
@@ -142,15 +142,15 @@ final class CodeWriter {
     }
   }
 
-  public void emitJavadoc(CodeBlock javadocCodeBlock) throws IOException {
-    if (javadocCodeBlock.isEmpty()) return;
+  public void emitKdoc(CodeBlock kdocCodeBlock) throws IOException {
+    if (kdocCodeBlock.isEmpty()) return;
 
     emit("/**\n");
-    javadoc = true;
+    kdoc = true;
     try {
-      emit(javadocCodeBlock);
+      emit(kdocCodeBlock);
     } finally {
-      javadoc = false;
+      kdoc = false;
     }
     emit(" */\n");
   }
@@ -378,7 +378,7 @@ final class CodeWriter {
     }
 
     // We'll have to use the fully-qualified name. Mark the type as importable for a future pass.
-    if (!javadoc) {
+    if (!kdoc) {
       importableType(className);
     }
 
@@ -443,11 +443,11 @@ final class CodeWriter {
   CodeWriter emitAndIndent(String s) throws IOException {
     boolean first = true;
     for (String line : s.split("\n", -1)) {
-      // Emit a newline character. Make sure blank lines in Javadoc & comments look good.
+      // Emit a newline character. Make sure blank lines in KDoc & comments look good.
       if (!first) {
-        if ((javadoc || comment) && trailingNewline) {
+        if ((kdoc || comment) && trailingNewline) {
           emitIndentation();
-          out.append(javadoc ? " *" : "//");
+          out.append(kdoc ? " *" : "//");
         }
         out.append("\n");
         trailingNewline = true;
@@ -465,7 +465,7 @@ final class CodeWriter {
       // Emit indentation and comment prefix if necessary.
       if (trailingNewline) {
         emitIndentation();
-        if (javadoc) {
+        if (kdoc) {
           out.append(" * ");
         } else if (comment) {
           out.append("// ");

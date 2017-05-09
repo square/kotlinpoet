@@ -31,7 +31,7 @@ public final class KotlinFileTest {
     ClassName list = ClassName.get("java.util", "List");
     ClassName arrayList = ClassName.get("java.util", "ArrayList");
     TypeName listOfHoverboards = ParameterizedTypeName.get(list, hoverboard);
-    MethodSpec beyond = MethodSpec.methodBuilder("beyond")
+    FunSpec beyond = FunSpec.builder("beyond")
         .returns(listOfHoverboards)
         .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
         .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
@@ -41,7 +41,7 @@ public final class KotlinFileTest {
         .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections.class)
         .build();
     TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
-        .addMethod(beyond)
+        .addFun(beyond)
         .build();
     KotlinFile example = KotlinFile.builder("com.example.helloworld", hello)
         .addStaticImport(hoverboard, "createNimbus")
@@ -71,7 +71,7 @@ public final class KotlinFileTest {
         + "}\n");
   }
   @Test public void importStaticForCrazyFormatsWorks() {
-    MethodSpec method = MethodSpec.methodBuilder("method").build();
+    FunSpec method = FunSpec.builder("method").build();
     KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
@@ -102,7 +102,7 @@ public final class KotlinFileTest {
                 .addStatement("%T.gc()", System.class)
                 .addStatement("%1T.out.println(%1T.nanoTime())", System.class)
                 .build())
-            .addMethod(MethodSpec.constructorBuilder()
+            .addFun(FunSpec.constructorBuilder()
                 .addParameter(Thread.State[].class, "states")
                 .varargs(true)
                 .build())
@@ -136,7 +136,7 @@ public final class KotlinFileTest {
   @Test public void importStaticDynamic() {
     KotlinFile source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
-            .addMethod(MethodSpec.methodBuilder("main")
+            .addFun(FunSpec.builder("main")
                 .addStatement("%T.%L.println(%S)", System.class, "out", "hello")
                 .build())
             .build())
@@ -233,14 +233,14 @@ public final class KotlinFileTest {
   }
 
   private TypeSpec importStaticTypeSpec(String name) {
-    MethodSpec method = MethodSpec.methodBuilder("minutesToSeconds")
+    FunSpec funSpec = FunSpec.builder("minutesToSeconds")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .returns(long.class)
         .addParameter(long.class, "minutes")
         .addStatement("%T.gc()", System.class)
         .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit.class)
         .build();
-    return TypeSpec.classBuilder(name).addMethod(method).build();
+    return TypeSpec.classBuilder(name).addFun(funSpec).build();
 
   }
   @Test public void noImports() throws Exception {
@@ -494,7 +494,7 @@ public final class KotlinFileTest {
   @Test public void defaultPackage() throws Exception {
     String source = KotlinFile.builder("",
         TypeSpec.classBuilder("HelloWorld")
-            .addMethod(MethodSpec.methodBuilder("main")
+            .addFun(FunSpec.builder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(String[].class, "args")
                 .addCode("%T.out.println(%S);\n", System.class, "Hello World!")

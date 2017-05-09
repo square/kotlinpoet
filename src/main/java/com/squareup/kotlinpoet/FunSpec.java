@@ -40,12 +40,12 @@ import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
 import static com.squareup.kotlinpoet.Util.checkState;
 
-/** A generated constructor or method declaration. */
-public final class MethodSpec {
+/** A generated function declaration. */
+public final class FunSpec {
   static final String CONSTRUCTOR = "<init>";
 
   public final String name;
-  public final CodeBlock javadoc;
+  public final CodeBlock kdoc;
   public final List<AnnotationSpec> annotations;
   public final Set<Modifier> modifiers;
   public final List<TypeVariableName> typeVariables;
@@ -56,15 +56,15 @@ public final class MethodSpec {
   public final CodeBlock code;
   public final CodeBlock defaultValue;
 
-  private MethodSpec(Builder builder) {
+  private FunSpec(Builder builder) {
     CodeBlock code = builder.code.build();
     checkArgument(code.isEmpty() || !builder.modifiers.contains(Modifier.ABSTRACT),
-        "abstract method %s cannot have code", builder.name);
+        "abstract function %s cannot have code", builder.name);
     checkArgument(!builder.varargs || lastParameterIsArray(builder.parameters),
-        "last parameter of varargs method %s must be an array", builder.name);
+        "last parameter of varargs function %s must be an array", builder.name);
 
     this.name = checkNotNull(builder.name, "name == null");
-    this.javadoc = builder.javadoc.build();
+    this.kdoc = builder.kdoc.build();
     this.annotations = Util.immutableList(builder.annotations);
     this.modifiers = Util.immutableSet(builder.modifiers);
     this.typeVariables = Util.immutableList(builder.typeVariables);
@@ -83,7 +83,7 @@ public final class MethodSpec {
 
   void emit(CodeWriter codeWriter, String enclosingName, Set<Modifier> implicitModifiers)
       throws IOException {
-    codeWriter.emitJavadoc(javadoc);
+    codeWriter.emitKdoc(kdoc);
     codeWriter.emitAnnotations(annotations, false);
     codeWriter.emitModifiers(modifiers, implicitModifiers);
 
@@ -177,7 +177,7 @@ public final class MethodSpec {
     }
   }
 
-  public static Builder methodBuilder(String name) {
+  public static Builder builder(String name) {
     return new Builder(name);
   }
 
@@ -186,13 +186,10 @@ public final class MethodSpec {
   }
 
   /**
-   * Returns a new method spec builder that overrides {@code method}.
+   * Returns a new fun spec builder that overrides {@code method}.
    *
    * <p>This will copy its visibility modifiers, type parameters, return type, name, parameters, and
    * throws declarations. An {@link Override} annotation will be added.
-   *
-   * <p>Note that in JavaPoet 1.2 through 1.7 this method retained annotations from the method and
-   * parameters of the overridden method. Since JavaPoet 1.8 annotations must be added separately.
    */
   public static Builder overriding(ExecutableElement method) {
     checkNotNull(method, "method == null");
@@ -205,42 +202,39 @@ public final class MethodSpec {
     }
 
     String methodName = method.getSimpleName().toString();
-    MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName);
+    FunSpec.Builder funBuilder = FunSpec.builder(methodName);
 
-    methodBuilder.addAnnotation(Override.class);
+    funBuilder.addAnnotation(Override.class);
 
     modifiers = new LinkedHashSet<>(modifiers);
     modifiers.remove(Modifier.ABSTRACT);
     modifiers.remove(Util.DEFAULT); // LinkedHashSet permits null as element for Java 7
-    methodBuilder.addModifiers(modifiers);
+    funBuilder.addModifiers(modifiers);
 
     for (TypeParameterElement typeParameterElement : method.getTypeParameters()) {
       TypeVariable var = (TypeVariable) typeParameterElement.asType();
-      methodBuilder.addTypeVariable(TypeVariableName.get(var));
+      funBuilder.addTypeVariable(TypeVariableName.get(var));
     }
 
-    methodBuilder.returns(TypeName.get(method.getReturnType()));
-    methodBuilder.addParameters(ParameterSpec.parametersOf(method));
-    methodBuilder.varargs(method.isVarArgs());
+    funBuilder.returns(TypeName.get(method.getReturnType()));
+    funBuilder.addParameters(ParameterSpec.parametersOf(method));
+    funBuilder.varargs(method.isVarArgs());
 
     for (TypeMirror thrownType : method.getThrownTypes()) {
-      methodBuilder.addException(TypeName.get(thrownType));
+      funBuilder.addException(TypeName.get(thrownType));
     }
 
-    return methodBuilder;
+    return funBuilder;
   }
 
   /**
-   * Returns a new method spec builder that overrides {@code method} as a member of {@code
+   * Returns a new function spec builder that overrides {@code method} as a member of {@code
    * enclosing}. This will resolve type parameters: for example overriding {@link
    * Comparable#compareTo} in a type that implements {@code Comparable<Movie>}, the {@code T}
    * parameter will be resolved to {@code Movie}.
    *
    * <p>This will copy its visibility modifiers, type parameters, return type, name, parameters, and
    * throws declarations. An {@link Override} annotation will be added.
-   *
-   * <p>Note that in JavaPoet 1.2 through 1.7 this method retained annotations from the method and
-   * parameters of the overridden method. Since JavaPoet 1.8 annotations must be added separately.
    */
   public static Builder overriding(
       ExecutableElement method, DeclaredType enclosing, Types types) {
@@ -261,7 +255,7 @@ public final class MethodSpec {
 
   public Builder toBuilder() {
     Builder builder = new Builder(name);
-    builder.javadoc.add(javadoc);
+    builder.kdoc.add(kdoc);
     builder.annotations.addAll(annotations);
     builder.modifiers.addAll(modifiers);
     builder.typeVariables.addAll(typeVariables);
@@ -277,7 +271,7 @@ public final class MethodSpec {
   public static final class Builder {
     private final String name;
 
-    private final CodeBlock.Builder javadoc = CodeBlock.builder();
+    private final CodeBlock.Builder kdoc = CodeBlock.builder();
     private final List<AnnotationSpec> annotations = new ArrayList<>();
     private final List<Modifier> modifiers = new ArrayList<>();
     private List<TypeVariableName> typeVariables = new ArrayList<>();
@@ -294,13 +288,13 @@ public final class MethodSpec {
       this.name = name;
     }
 
-    public Builder addJavadoc(String format, Object... args) {
-      javadoc.add(format, args);
+    public Builder addKdoc(String format, Object... args) {
+      kdoc.add(format, args);
       return this;
     }
 
-    public Builder addJavadoc(CodeBlock block) {
-      javadoc.add(block);
+    public Builder addKdoc(CodeBlock block) {
+      kdoc.add(block);
       return this;
     }
 
@@ -483,8 +477,8 @@ public final class MethodSpec {
       return this;
     }
 
-    public MethodSpec build() {
-      return new MethodSpec(this);
+    public FunSpec build() {
+      return new FunSpec(this);
     }
   }
 }
