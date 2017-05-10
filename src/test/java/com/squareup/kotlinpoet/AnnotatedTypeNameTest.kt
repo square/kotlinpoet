@@ -19,7 +19,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Test
 import java.util.Map
@@ -29,14 +28,6 @@ class AnnotatedTypeNameTest {
   private val NN = NeverNull::class.java.canonicalName
 
   annotation class NeverNull
-
-  @Test fun nullAnnotationList() {
-    try {
-      TypeName.DOUBLE.annotated(null as List<AnnotationSpec>?)
-      fail()
-    } catch(expected: NullPointerException) {
-    }
-  }
 
   @Test fun annotated() {
     val simpleString = TypeName.get(String::class.java)
@@ -93,12 +84,12 @@ class AnnotatedTypeNameTest {
   }
 
   @Test fun annotatedEquivalence() {
-    annotatedEquivalence(TypeName.UNIT)
-    annotatedEquivalence(ArrayTypeName.get(Array<Any>::class.java))
+    annotatedEquivalence(UNIT)
+    annotatedEquivalence(ArrayTypeName.of(Object::class.java))
     annotatedEquivalence(ClassName.get(Any::class.java))
     annotatedEquivalence(ParameterizedTypeName.get(List::class.java, Any::class.java))
-    annotatedEquivalence(TypeVariableName.get(Any::class.java))
-    annotatedEquivalence(WildcardTypeName.get(Any::class.java))
+    annotatedEquivalence(TypeVariableName.get("A"))
+    annotatedEquivalence(WildcardTypeName.subtypeOf(Object::class))
   }
 
   private fun annotatedEquivalence(type: TypeName) {

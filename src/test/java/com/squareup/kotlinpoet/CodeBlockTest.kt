@@ -15,11 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import java.util.LinkedHashMap
-import org.junit.Test
-
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.fail
+import org.junit.Test
+import java.util.LinkedHashMap
 
 class CodeBlockTest {
   @Test fun equalsAndHashCode() {
@@ -171,7 +170,7 @@ class CodeBlockTest {
 
   @Test fun namedNewline() {
     val map = LinkedHashMap<String, Any>()
-    map.put("clazz", Int::class.java)
+    map.put("clazz", java.lang.Integer::class.java)
     val block = CodeBlock.builder().addNamed("%clazz:T\n", map).build()
     assertThat(block.toString()).isEqualTo("java.lang.Integer\n")
   }
