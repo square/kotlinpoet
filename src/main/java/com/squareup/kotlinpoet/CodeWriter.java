@@ -191,9 +191,9 @@ final class CodeWriter {
     boolean firstTypeVariable = true;
     for (TypeVariableName typeVariable : typeVariables) {
       if (!firstTypeVariable) emit(", ");
-      emit("%L", typeVariable.name);
+      emit("%L", typeVariable.getName());
       boolean firstBound = true;
-      for (TypeName bound : typeVariable.bounds) {
+      for (TypeName bound : typeVariable.getBounds()) {
         emit(firstBound ? " : %T" : " & %T", bound);
         firstBound = false;
       }
@@ -243,7 +243,7 @@ final class CodeWriter {
           if (typeName instanceof ClassName && partIterator.hasNext()) {
             if (!codeBlock.formatParts.get(partIterator.nextIndex()).startsWith("%")) {
               ClassName candidate = (ClassName) typeName;
-              if (staticImportClassNames.contains(candidate.canonicalName)) {
+              if (staticImportClassNames.contains(candidate.getCanonicalName())) {
                 checkState(deferredTypeName == null, "pending type for static import?!");
                 deferredTypeName = candidate;
                 break;
@@ -286,7 +286,7 @@ final class CodeWriter {
           // handle deferred type
           if (deferredTypeName != null) {
             if (part.startsWith(".")) {
-              if (emitStaticImportMember(deferredTypeName.canonicalName, part)) {
+              if (emitStaticImportMember(deferredTypeName.getCanonicalName(), part)) {
                 // okay, static import hit and all was emitted, so clean-up and jump to next part
                 deferredTypeName = null;
                 break;
@@ -368,7 +368,7 @@ final class CodeWriter {
 
     // If the name resolved but wasn't a match, we're stuck with the fully qualified name.
     if (nameResolved) {
-      return className.canonicalName;
+      return className.getCanonicalName();
     }
 
     // If the class is in the same package, we're done.
@@ -382,7 +382,7 @@ final class CodeWriter {
       importableType(className);
     }
 
-    return className.canonicalName;
+    return className.getCanonicalName();
   }
 
   private void importableType(ClassName className) {

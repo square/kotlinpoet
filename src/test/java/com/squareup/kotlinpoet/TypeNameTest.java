@@ -108,15 +108,15 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodePrimitive() {
-    assertEqualsHashCodeAndToString(TypeName.BOOLEAN, TypeName.BOOLEAN);
-    assertEqualsHashCodeAndToString(TypeName.BYTE, TypeName.BYTE);
-    assertEqualsHashCodeAndToString(TypeName.CHAR, TypeName.CHAR);
-    assertEqualsHashCodeAndToString(TypeName.DOUBLE, TypeName.DOUBLE);
-    assertEqualsHashCodeAndToString(TypeName.FLOAT, TypeName.FLOAT);
-    assertEqualsHashCodeAndToString(TypeName.INT, TypeName.INT);
-    assertEqualsHashCodeAndToString(TypeName.LONG, TypeName.LONG);
-    assertEqualsHashCodeAndToString(TypeName.SHORT, TypeName.SHORT);
-    assertEqualsHashCodeAndToString(TypeName.UNIT, TypeName.UNIT);
+    assertEqualsHashCodeAndToString(TypeNameKt.BOOLEAN, TypeNameKt.BOOLEAN);
+    assertEqualsHashCodeAndToString(TypeNameKt.BYTE, TypeNameKt.BYTE);
+    assertEqualsHashCodeAndToString(TypeNameKt.CHAR, TypeNameKt.CHAR);
+    assertEqualsHashCodeAndToString(TypeNameKt.DOUBLE, TypeNameKt.DOUBLE);
+    assertEqualsHashCodeAndToString(TypeNameKt.FLOAT, TypeNameKt.FLOAT);
+    assertEqualsHashCodeAndToString(TypeNameKt.INT, TypeNameKt.INT);
+    assertEqualsHashCodeAndToString(TypeNameKt.LONG, TypeNameKt.LONG);
+    assertEqualsHashCodeAndToString(TypeNameKt.SHORT, TypeNameKt.SHORT);
+    assertEqualsHashCodeAndToString(TypeNameKt.UNIT, TypeNameKt.UNIT);
   }
 
   @Test public void equalsAndHashCodeArrayTypeName() {
@@ -134,8 +134,8 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodeParameterizedTypeName() {
-    assertEqualsHashCodeAndToString(ParameterizedTypeName.get(Object.class),
-        ParameterizedTypeName.get(Object.class));
+    assertEqualsHashCodeAndToString(ParameterizedTypeName.get(List.class, Object.class),
+        ParameterizedTypeName.get(List.class, Object.class));
     assertEqualsHashCodeAndToString(ParameterizedTypeName.get(Set.class, UUID.class),
         ParameterizedTypeName.get(Set.class, UUID.class));
     assertNotEquals(ClassName.get(List.class), ParameterizedTypeName.get(List.class,
@@ -143,8 +143,8 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodeTypeVariableName() {
-    assertEqualsHashCodeAndToString(TypeVariableName.get(Object.class),
-        TypeVariableName.get(Object.class));
+    assertEqualsHashCodeAndToString(TypeVariableName.get("A"),
+        TypeVariableName.get("A"));
     TypeVariableName typeVar1 = TypeVariableName.get("T", Comparator.class, Serializable.class);
     TypeVariableName typeVar2 = TypeVariableName.get("T", Comparator.class, Serializable.class);
     assertEqualsHashCodeAndToString(typeVar1, typeVar2);

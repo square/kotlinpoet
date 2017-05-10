@@ -42,7 +42,7 @@ class ClassNameTest {
   }
 
   @Test fun bestGuessForString_nestedClass() {
-    assertThat(ClassName.bestGuess(Map.Entry::class.java!!.getCanonicalName()))
+    assertThat(ClassName.bestGuess(Map.Entry::class.java.getCanonicalName()))
         .isEqualTo(ClassName.get("java.util", "Map", "Entry"))
     assertThat(ClassName.bestGuess(OuterClass.InnerClass::class.java.canonicalName))
         .isEqualTo(ClassName.get("com.squareup.kotlinpoet",
@@ -113,7 +113,7 @@ class ClassNameTest {
 
   @Test fun fromClassRejectionTypes() {
     try {
-      ClassName.get(Int::class.javaPrimitiveType)
+      ClassName.get(java.lang.Integer.TYPE)
       fail()
     } catch (expected: IllegalArgumentException) {
     }
@@ -133,7 +133,7 @@ class ClassNameTest {
   }
 
   @Test fun reflectionName() {
-    assertThat(TypeName.ANY.reflectionName())
+    assertThat(ANY.reflectionName())
         .isEqualTo("kotlin.Any")
     assertThat(ClassName.get(Thread.State::class.java).reflectionName())
         .isEqualTo("java.lang.Thread\$State")

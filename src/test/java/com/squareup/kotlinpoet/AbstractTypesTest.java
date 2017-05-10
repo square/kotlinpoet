@@ -37,6 +37,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.squareup.kotlinpoet.TypeNameKt.ANY;
+import static com.squareup.kotlinpoet.TypeNameKt.BOOLEAN;
+import static com.squareup.kotlinpoet.TypeNameKt.BYTE;
+import static com.squareup.kotlinpoet.TypeNameKt.CHAR;
+import static com.squareup.kotlinpoet.TypeNameKt.DOUBLE;
+import static com.squareup.kotlinpoet.TypeNameKt.FLOAT;
+import static com.squareup.kotlinpoet.TypeNameKt.INT;
+import static com.squareup.kotlinpoet.TypeNameKt.LONG;
+import static com.squareup.kotlinpoet.TypeNameKt.OBJECT;
+import static com.squareup.kotlinpoet.TypeNameKt.SHORT;
+import static com.squareup.kotlinpoet.TypeNameKt.UNIT;
 import static org.junit.Assert.fail;
 
 public abstract class AbstractTypesTest {
@@ -63,8 +74,8 @@ public abstract class AbstractTypesTest {
   @Test public void getParameterizedTypeMirror() {
     DeclaredType setType =
         getTypes().getDeclaredType(getElement(Set.class), getMirror(Object.class));
-    assertThat(TypeName.get(setType))
-        .isEqualTo(ParameterizedTypeName.get(ClassName.get(Set.class), ClassName.OBJECT));
+    assertThat(TypeName.get(setType)).isEqualTo(
+        ParameterizedTypeName.get(ClassName.get(Set.class), OBJECT));
   }
 
   @Test public void getErrorType() {
@@ -97,12 +108,14 @@ public abstract class AbstractTypesTest {
     assertThat(TypeName.get(typeVariables.get(2).asType()))
         .isEqualTo(TypeVariableName.get("ExtendsInterface", runnable));
     assertThat(TypeName.get(typeVariables.get(3).asType()))
-        .isEqualTo(TypeVariableName.get("ExtendsTypeVariable", TypeVariableName.get("Simple")));
+        .isEqualTo(TypeVariableName.get("ExtendsTypeVariable",
+            TypeVariableName.get("Simple")));
     assertThat(TypeName.get(typeVariables.get(4).asType()))
         .isEqualTo(TypeVariableName.get("Intersection", number, runnable));
     assertThat(TypeName.get(typeVariables.get(5).asType()))
         .isEqualTo(TypeVariableName.get("IntersectionOfInterfaces", runnable, serializable));
-    assertThat(((TypeVariableName) TypeName.get(typeVariables.get(4).asType())).bounds)
+    assertThat(
+        ((TypeVariableName) TypeName.get(typeVariables.get(4).asType())).getBounds())
         .containsExactly(number, runnable);
   }
 
@@ -115,46 +128,46 @@ public abstract class AbstractTypesTest {
     String className = Recursive.class.getCanonicalName();
     assertThat(typeName.toString()).isEqualTo(className + "<T>");
 
-    TypeVariableName typeVariableName = (TypeVariableName) typeName.typeArguments.get(0);
+    TypeVariableName typeVariableName = (TypeVariableName) typeName.getTypeArguments().get(0);
 
     try {
-      typeVariableName.bounds.set(0, null);
+      typeVariableName.getBounds().set(0, null);
       fail("Expected UnsupportedOperationException");
     } catch (UnsupportedOperationException expected) {
     }
 
     assertThat(typeVariableName.toString()).isEqualTo("T");
-    assertThat(typeVariableName.bounds.toString())
+    assertThat(typeVariableName.getBounds().toString())
         .isEqualTo("[java.util.Map<java.util.List<T>, java.util.Set<kotlin.Array<T>>>]");
   }
 
   @Test public void getPrimitiveTypeMirror() {
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.BOOLEAN)))
-        .isEqualTo(TypeName.BOOLEAN);
+        .isEqualTo(BOOLEAN);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.BYTE)))
-        .isEqualTo(TypeName.BYTE);
+        .isEqualTo(BYTE);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.SHORT)))
-        .isEqualTo(TypeName.SHORT);
+        .isEqualTo(SHORT);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.INT)))
-        .isEqualTo(TypeName.INT);
+        .isEqualTo(INT);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.LONG)))
-        .isEqualTo(TypeName.LONG);
+        .isEqualTo(LONG);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.CHAR)))
-        .isEqualTo(TypeName.CHAR);
+        .isEqualTo(CHAR);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.FLOAT)))
-        .isEqualTo(TypeName.FLOAT);
+        .isEqualTo(FLOAT);
     assertThat(TypeName.get(getTypes().getPrimitiveType(TypeKind.DOUBLE)))
-        .isEqualTo(TypeName.DOUBLE);
+        .isEqualTo(DOUBLE);
   }
 
   @Test public void getArrayTypeMirror() {
     assertThat(TypeName.get(getTypes().getArrayType(getMirror(Object.class))))
-        .isEqualTo(ArrayTypeName.of(ClassName.OBJECT));
+        .isEqualTo(ArrayTypeName.of(OBJECT));
   }
 
   @Test public void getVoidTypeMirror() {
     assertThat(TypeName.get(getTypes().getNoType(TypeKind.VOID)))
-        .isEqualTo(TypeName.UNIT);
+        .isEqualTo(UNIT);
   }
 
   @Test public void getNullTypeMirror() {
@@ -176,7 +189,7 @@ public abstract class AbstractTypesTest {
   }
 
   @Test public void starProjection() throws Exception {
-    WildcardTypeName type = WildcardTypeName.subtypeOf(TypeName.ANY);
+    WildcardTypeName type = WildcardTypeName.subtypeOf(ANY);
     assertThat(type.toString()).isEqualTo("*");
   }
 

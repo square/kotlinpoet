@@ -248,7 +248,7 @@ public final class KotlinFile {
       checkArgument(names.length > 0, "names array is empty");
       for (String name : names) {
         checkArgument(name != null, "null entry in names array: %s", Arrays.toString(names));
-        staticImports.add(className.canonicalName + "." + name);
+        staticImports.add(className.getCanonicalName() + "." + name);
       }
       return this;
     }

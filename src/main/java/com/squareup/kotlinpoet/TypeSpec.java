@@ -33,6 +33,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import kotlin.reflect.KClass;
 
+import static com.squareup.kotlinpoet.TypeNameKt.OBJECT;
 import static com.squareup.kotlinpoet.Util.checkArgument;
 import static com.squareup.kotlinpoet.Util.checkNotNull;
 import static com.squareup.kotlinpoet.Util.checkState;
@@ -185,7 +186,7 @@ public final class TypeSpec {
           extendsTypes = superinterfaces;
           implementsTypes = Collections.emptyList();
         } else {
-          extendsTypes = superclass.equals(ClassName.OBJECT)
+          extendsTypes = superclass.equals(OBJECT)
               ? Collections.<TypeName>emptyList()
               : Collections.singletonList(superclass);
           implementsTypes = superinterfaces;
@@ -369,7 +370,7 @@ public final class TypeSpec {
     private final List<AnnotationSpec> annotations = new ArrayList<>();
     private final List<Modifier> modifiers = new ArrayList<>();
     private final List<TypeVariableName> typeVariables = new ArrayList<>();
-    private TypeName superclass = ClassName.OBJECT;
+    private TypeName superclass = OBJECT;
     private final List<TypeName> superinterfaces = new ArrayList<>();
     private final Map<String, TypeSpec> enumConstants = new LinkedHashMap<>();
     private final List<PropertySpec> propertySpecs = new ArrayList<>();
@@ -445,7 +446,7 @@ public final class TypeSpec {
 
     public Builder superclass(TypeName superclass) {
       checkState(this.kind == Kind.CLASS, "only classes have super classes, not " + this.kind);
-      checkState(this.superclass == ClassName.OBJECT,
+      checkState(this.superclass == OBJECT,
           "superclass already set to " + this.superclass);
       this.superclass = superclass;
       return this;
@@ -598,7 +599,7 @@ public final class TypeSpec {
             "non-abstract type %s cannot declare abstract function %s", name, funSpec.name);
       }
 
-      boolean superclassIsObject = superclass.equals(ClassName.OBJECT);
+      boolean superclassIsObject = superclass.equals(OBJECT);
       int interestingSupertypeCount = (superclassIsObject ? 0 : 1) + superinterfaces.size();
       checkArgument(anonymousTypeArguments == null || interestingSupertypeCount <= 1,
           "anonymous type has too many supertypes");

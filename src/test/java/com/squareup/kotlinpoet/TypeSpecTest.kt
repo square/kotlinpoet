@@ -84,7 +84,7 @@ class TypeSpecTest {
 
   @Test fun interestingTypes() {
     val listOfAny = ParameterizedTypeName.get(
-        ClassName.get(List::class) as ClassName, WildcardTypeName.subtypeOf(TypeName.ANY))
+        ClassName.get(List::class), WildcardTypeName.subtypeOf(ANY))
     val listOfExtends = ParameterizedTypeName.get(
         ClassName.get(List::class), WildcardTypeName.subtypeOf(Serializable::class))
     val listOfSuper = ParameterizedTypeName.get(ClassName.get(List::class),
@@ -1963,17 +1963,15 @@ class TypeSpecTest {
 
   @Test fun ifElse() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addFun(
-            FunSpec.builder("isDelicious")
-                .addParameter(TypeName.INT, "count")
-                .returns(TypeName.BOOLEAN)
-                .beginControlFlow("if (count > 0)")
-                .addStatement("return true")
-                .nextControlFlow("else")
-                .addStatement("return false")
-                .endControlFlow()
-                .build()
-        )
+        .addFun(FunSpec.builder("isDelicious")
+            .addParameter(INT, "count")
+            .returns(BOOLEAN)
+            .beginControlFlow("if (count > 0)")
+            .addStatement("return true")
+            .nextControlFlow("else")
+            .addStatement("return false")
+            .endControlFlow()
+            .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
