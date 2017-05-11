@@ -26,12 +26,11 @@ import kotlin.reflect.KClass
 
 class ParameterizedTypeName internal constructor(
     private val enclosingType: ParameterizedTypeName?,
-    rawType: ClassName,
+    val rawType: ClassName,
     typeArguments: List<TypeName>,
     annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>())
   : TypeName(annotations) {
 
-  val rawType = requireNotNull(rawType) { "rawType == null" }
   val typeArguments: List<TypeName> = Util.immutableList(typeArguments)
 
   init {
@@ -40,15 +39,11 @@ class ParameterizedTypeName internal constructor(
     }
   }
 
-  override fun annotated(annotations: List<AnnotationSpec>): ParameterizedTypeName {
-    return ParameterizedTypeName(
-        enclosingType, rawType, typeArguments, concatAnnotations(annotations))
-  }
+  override fun annotated(annotations: List<AnnotationSpec>)
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, concatAnnotations(annotations))
 
-  override fun withoutAnnotations(): TypeName {
-    return ParameterizedTypeName(
-        enclosingType, rawType, typeArguments, ArrayList<AnnotationSpec>())
-  }
+  override fun withoutAnnotations()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, ArrayList<AnnotationSpec>())
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
@@ -78,42 +73,34 @@ class ParameterizedTypeName internal constructor(
    * Returns a new [ParameterizedTypeName] instance for the specified `name` as nested inside this
    * class.
    */
-  fun nestedClass(name: String): ParameterizedTypeName {
-    requireNotNull(name) { "name == null" }
-    return ParameterizedTypeName(this, rawType.nestedClass(name), ArrayList<TypeName>(),
-        ArrayList<AnnotationSpec>())
-  }
+  fun nestedClass(name: String)
+      = ParameterizedTypeName(
+      this, rawType.nestedClass(name), ArrayList<TypeName>(), ArrayList<AnnotationSpec>())
 
   /**
    * Returns a new [ParameterizedTypeName] instance for the specified `name` as nested inside this
    * class, with the specified `typeArguments`.
    */
-  fun nestedClass(name: String, typeArguments: List<TypeName>): ParameterizedTypeName {
-    requireNotNull(name) { "name == null" }
-    return ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments,
-        ArrayList<AnnotationSpec>())
-  }
+  fun nestedClass(name: String, typeArguments: List<TypeName>)
+      = ParameterizedTypeName(
+      this, rawType.nestedClass(name), typeArguments, ArrayList<AnnotationSpec>())
 
   companion object {
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: ClassName, vararg typeArguments: TypeName): ParameterizedTypeName {
-      return ParameterizedTypeName(null, rawType, Arrays.asList(*typeArguments))
-    }
+    @JvmStatic fun get(rawType: ClassName, vararg typeArguments: TypeName)
+        = ParameterizedTypeName(null, rawType, Arrays.asList(*typeArguments))
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>): ParameterizedTypeName {
-      return ParameterizedTypeName(null, ClassName.get(rawType), TypeName.list(*typeArguments))
-    }
+    @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
+        = ParameterizedTypeName(null, ClassName.get(rawType), TypeName.list(*typeArguments))
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type): ParameterizedTypeName {
-      return ParameterizedTypeName(null, ClassName.get(rawType), list(*typeArguments))
-    }
+    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type)
+        = ParameterizedTypeName(null, ClassName.get(rawType), list(*typeArguments))
 
     /** Returns a parameterized type equivalent to `type`.  */
-    @JvmStatic fun get(type: ParameterizedType): ParameterizedTypeName {
-      return get(type, LinkedHashMap<Type, TypeVariableName>())
-    }
+    @JvmStatic fun get(type: ParameterizedType)
+        = get(type, LinkedHashMap<Type, TypeVariableName>())
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(

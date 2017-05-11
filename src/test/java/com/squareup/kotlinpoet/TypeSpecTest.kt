@@ -28,7 +28,6 @@ import java.io.IOException
 import java.io.Serializable
 import java.math.BigDecimal
 import java.util.AbstractSet
-import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collections
 import java.util.Comparator
@@ -176,7 +175,7 @@ class TypeSpecTest {
     val service = TypeSpec.classBuilder("Foo")
         .addFun(FunSpec.constructorBuilder()
             .addModifiers(Modifier.PUBLIC)
-            .addParameter(Long::class.javaPrimitiveType, "id")
+            .addParameter(Long::class.javaPrimitiveType!!, "id")
             .addParameter(ParameterSpec.builder(String::class, "one")
                 .addAnnotation(ClassName.get(tacosPackage, "Ping"))
                 .build())
@@ -552,7 +551,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("compareTo")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .addParameter(p, "p")
             .addStatement("return 0")
             .build())
@@ -801,7 +800,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .defaultValue("%L", 0)
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .build())
         .build()
 
@@ -837,7 +836,7 @@ class TypeSpecTest {
   }
 
   @Test fun annotationWithProperties() {
-    val property = PropertySpec.builder(Int::class.javaPrimitiveType, "FOO")
+    val property = PropertySpec.builder(Int::class.javaPrimitiveType!!, "FOO")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
         .initializer("%L", 101)
         .build()
@@ -863,7 +862,7 @@ class TypeSpecTest {
           .addFun(FunSpec.builder("test")
               .addModifiers(Modifier.PUBLIC)
               .defaultValue("0")
-              .returns(Int::class.javaPrimitiveType)
+              .returns(Int::class.javaPrimitiveType!!)
               .build())
           .build()
       fail()
@@ -878,7 +877,7 @@ class TypeSpecTest {
       TypeSpec.classBuilder("Tacos")
           .addFun(FunSpec.builder("test")
               .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
-              .returns(Int::class.javaPrimitiveType)
+              .returns(Int::class.javaPrimitiveType!!)
               .addCode(CodeBlock.builder().addStatement("return 0").build())
               .build())
           .build()
@@ -892,7 +891,7 @@ class TypeSpecTest {
     val bar = TypeSpec.interfaceBuilder("Tacos")
         .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .addCode(CodeBlock.builder().addStatement("return 0").build())
             .build())
         .build()
@@ -915,7 +914,7 @@ class TypeSpecTest {
     val bar = TypeSpec.interfaceBuilder("Tacos")
         .addFun(FunSpec.builder("test")
             .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .addCode(CodeBlock.builder().addStatement("return 0").build())
             .build())
         .build()
@@ -1073,7 +1072,7 @@ class TypeSpecTest {
         .addKdoc("A hard or soft tortilla, loosely folded and filled with whatever\n")
         .addKdoc("[random][%T] tex-mex stuff we could find in the pantry\n", Random::class)
         .addKdoc(CodeBlock.of("and some [%T] cheese.\n", String::class))
-        .addProperty(PropertySpec.builder(Boolean::class.javaPrimitiveType, "soft")
+        .addProperty(PropertySpec.builder(Boolean::class.javaPrimitiveType!!, "soft")
             .addKdoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
             .build())
         .addFun(FunSpec.builder("refold")
@@ -1149,7 +1148,7 @@ class TypeSpecTest {
   @Test fun varargs() {
     val taqueria = TypeSpec.classBuilder("Taqueria")
         .addFun(FunSpec.builder("prepare")
-            .addParameter(Int::class.javaPrimitiveType, "workers")
+            .addParameter(Int::class.javaPrimitiveType!!, "workers")
             .addParameter(Array<Runnable>::class, "jobs")
             .varargs()
             .build())
@@ -1200,7 +1199,7 @@ class TypeSpecTest {
     val util = TypeSpec.classBuilder("Util")
         .addProperty(escapeHtml)
         .addFun(FunSpec.builder("commonPrefixLength")
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listA")
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listB")
             .addCode(funBody)
@@ -1386,8 +1385,12 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("S").build())
         .addFun(FunSpec.builder("R").addModifiers(Modifier.STATIC).build())
         .addFun(FunSpec.builder("Q").build())
-        .addFun(FunSpec.constructorBuilder().addParameter(Int::class.javaPrimitiveType, "p").build())
-        .addFun(FunSpec.constructorBuilder().addParameter(Long::class.javaPrimitiveType, "o").build())
+        .addFun(FunSpec.constructorBuilder()
+            .addParameter(Int::class.javaPrimitiveType!!, "p")
+            .build())
+        .addFun(FunSpec.constructorBuilder()
+            .addParameter(Long::class.javaPrimitiveType!!, "o")
+            .build())
         .build()
     // Static properties, instance properties, constructors, functions, classes.
     assertThat(toString(taco)).isEqualTo("""
@@ -1437,7 +1440,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("nativeInt")
             .addModifiers(Modifier.NATIVE)
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .build())
         // GWT JSNI
         .addFun(FunSpec.builder("alert")
@@ -1471,7 +1474,7 @@ class TypeSpecTest {
   @Test fun nullStringLiteral() {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder(String::class, "NULL")
-            .initializer("%S", null as Any?)
+            .initializer("%S", null)
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -1625,7 +1628,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("compare")
             .addAnnotation(Override::class)
             .addModifiers(Modifier.PUBLIC)
-            .returns(Int::class.javaPrimitiveType)
+            .returns(Int::class.javaPrimitiveType!!)
             .addParameter(String::class, "a")
             .addParameter(String::class, "b")
             .addStatement("return a.substring(0, length)\n" + ".compareTo(b.substring(0, length))")
@@ -1634,12 +1637,12 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
-            .addParameter(Int::class.javaPrimitiveType, "length", Modifier.FINAL)
+            .addParameter(Int::class.javaPrimitiveType!!, "length", Modifier.FINAL)
             .addStatement("return %L", prefixComparator)
             .build())
         .addFun(FunSpec.builder("sortPrefix")
             .addParameter(listOfString, "list")
-            .addParameter(Int::class.javaPrimitiveType, "length", Modifier.FINAL)
+            .addParameter(Int::class.javaPrimitiveType!!, "length", Modifier.FINAL)
             .addStatement("%T.sort(\nlist,\n%L)", Collections::class, prefixComparator)
             .build())
         .build()
@@ -1720,17 +1723,6 @@ class TypeSpecTest {
 
   }
 
-  @Test fun nullAnnotationsAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addAnnotations(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("annotationSpecs == null")
-    }
-
-  }
-
   @Test fun multipleAnnotationAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addAnnotations(Arrays.asList(
@@ -1752,21 +1744,11 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nullPropertiesAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addProperties(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("propertySpecs == null")
-    }
-
-  }
-
   @Test fun multiplePropertyAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperties(Arrays.asList(
-            PropertySpec.builder(Int::class.javaPrimitiveType, "ANSWER", Modifier.STATIC, Modifier.FINAL).build(),
+            PropertySpec.builder(Int::class.javaPrimitiveType!!,
+                "ANSWER", Modifier.STATIC, Modifier.FINAL).build(),
             PropertySpec.builder(BigDecimal::class, "price", Modifier.PRIVATE).build()))
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -1783,26 +1765,17 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nullFunctionsAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addFunctions(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message).isEqualTo("funSpecs == null")
-    }
-  }
-
   @Test fun multipleFunctionAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFunctions(Arrays.asList(
             FunSpec.builder("getAnswer")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(Int::class.javaPrimitiveType)
+                .returns(Int::class.javaPrimitiveType!!)
                 .addStatement("return %L", 42)
                 .build(),
             FunSpec.builder("getRandomQuantity")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(Int::class.javaPrimitiveType)
+                .returns(Int::class.javaPrimitiveType!!)
                 .addKdoc("chosen by fair dice roll ;)")
                 .addStatement("return %L", 4)
                 .build()))
@@ -1826,43 +1799,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nullSuperinterfacesAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addSuperinterfaces(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("superinterfaces == null")
-    }
-
-  }
-
-  @Test fun nullSingleSuperinterfaceAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addSuperinterface(null as TypeName?)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("superinterface == null")
-    }
-
-  }
-
-  @Test fun nullInSuperinterfaceIterableAddition() {
-    val superinterfaces = ArrayList<TypeName?>()
-    superinterfaces.add(TypeName.get(List::class))
-    superinterfaces.add(null)
-
-    try {
-      TypeSpec.classBuilder("Taco").addSuperinterfaces(superinterfaces)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("superinterface == null")
-    }
-
-  }
-
   @Test fun multipleSuperinterfaceAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addSuperinterfaces(Arrays.asList(
@@ -1880,16 +1816,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun nullTypeVariablesAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addTypeVariables(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("typeVariables == null")
-    }
-  }
-
   @Test fun multipleTypeVariableAddition() {
     val location = TypeSpec.classBuilder("Location")
         .addTypeVariables(Arrays.asList(
@@ -1904,17 +1830,6 @@ class TypeSpecTest {
         |class Location<T, P : Number> {
         |}
         |""".trimMargin())
-  }
-
-  @Test fun nullTypesAddition() {
-    try {
-      TypeSpec.classBuilder("Taco").addTypes(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message)
-          .isEqualTo("typeSpecs == null")
-    }
-
   }
 
   @Test fun multipleTypeAddition() {

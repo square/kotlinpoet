@@ -15,33 +15,20 @@
  */
 package com.squareup.kotlinpoet;
 
+import javax.lang.model.element.Modifier;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
-
-import javax.lang.model.element.Modifier;
 
 public class PropertySpecTest {
   @Test public void equalsAndHashCode() {
-    PropertySpec a = PropertySpec.builder(int.class, "foo").build();
-    PropertySpec b = PropertySpec.builder(int.class, "foo").build();
+    PropertySpec a = PropertySpec.Companion.builder(int.class, "foo").build();
+    PropertySpec b = PropertySpec.Companion.builder(int.class, "foo").build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-    a = PropertySpec.builder(int.class, "FOO", Modifier.PUBLIC, Modifier.STATIC).build();
-    b = PropertySpec.builder(int.class, "FOO", Modifier.PUBLIC, Modifier.STATIC).build();
+    a = PropertySpec.Companion.builder(int.class, "FOO", Modifier.PUBLIC, Modifier.STATIC).build();
+    b = PropertySpec.Companion.builder(int.class, "FOO", Modifier.PUBLIC, Modifier.STATIC).build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-  }
-
-  @Test public void nullAnnotationsAddition() {
-    try {
-      PropertySpec.builder(int.class, "foo").addAnnotations(null);
-      fail();
-    }
-    catch (IllegalArgumentException expected) {
-      assertThat(expected.getMessage())
-          .isEqualTo("annotationSpecs == null");
-    }
   }
 }

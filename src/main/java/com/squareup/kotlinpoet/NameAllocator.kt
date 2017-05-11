@@ -104,7 +104,7 @@ class NameAllocator private constructor(
   }
 
   /** Retrieve a name created with [NameAllocator.newName]. */
-  operator fun get(tag: Any): String {
+  fun get(tag: Any): String {
     return tagToName[tag] ?: throw IllegalArgumentException("unknown tag: $tag")
   }
 

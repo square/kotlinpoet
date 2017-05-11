@@ -15,12 +15,10 @@
  */
 package com.squareup.kotlinpoet;
 
+import javax.lang.model.element.Modifier;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.fail;
-
-import javax.lang.model.element.Modifier;
 
 public class ParameterSpecTest {
   @Test public void equalsAndHashCode() {
@@ -32,15 +30,5 @@ public class ParameterSpecTest {
     b = ParameterSpec.builder(int.class, "i").addModifiers(Modifier.STATIC).build();
     assertThat(a.equals(b)).isTrue();
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
-  }
-
-  @Test public void nullAnnotationsAddition() {
-    try {
-      ParameterSpec.builder(int.class, "foo").addAnnotations(null);
-      fail();
-    } catch (Exception e) {
-      assertThat(e.getMessage())
-          .isEqualTo("annotationSpecs == null");
-    }
   }
 }

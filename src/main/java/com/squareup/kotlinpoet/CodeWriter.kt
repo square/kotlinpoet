@@ -123,7 +123,7 @@ internal class CodeWriter @JvmOverloads constructor(
 
   @Throws(IOException::class)
   fun emitKdoc(kdocCodeBlock: CodeBlock) {
-    if (kdocCodeBlock.isEmpty) return
+    if (kdocCodeBlock.isEmpty()) return
 
     emit("/**\n")
     kdoc = true
@@ -186,7 +186,7 @@ internal class CodeWriter @JvmOverloads constructor(
   fun emit(s: String): CodeWriter = emitAndIndent(s)
 
   @Throws(IOException::class)
-  fun emit(format: String, vararg args: Any): CodeWriter = emit(CodeBlock.of(format, *args))
+  fun emit(format: String, vararg args: Any?): CodeWriter = emit(CodeBlock.of(format, *args))
 
   @Throws(IOException::class)
   fun emit(codeBlock: CodeBlock): CodeWriter {
@@ -297,7 +297,7 @@ internal class CodeWriter @JvmOverloads constructor(
   }
 
   @Throws(IOException::class)
-  private fun emitLiteral(o: Any) {
+  private fun emitLiteral(o: Any?) {
     if (o is TypeSpec) {
       o.emit(this, null, emptySet<Modifier>())
     } else if (o is AnnotationSpec) {
@@ -393,9 +393,9 @@ internal class CodeWriter @JvmOverloads constructor(
 
   /** Returns the class named `simpleName` when nested in the class at `stackDepth`.  */
   private fun stackClassName(stackDepth: Int, simpleName: String): ClassName {
-    var className = ClassName.get(packageName, typeSpecStack[0].name)
+    var className = ClassName.get(packageName, typeSpecStack[0].name!!)
     for (i in 1..stackDepth) {
-      className = className.nestedClass(typeSpecStack[i].name)
+      className = className.nestedClass(typeSpecStack[i].name!!)
     }
     return className.nestedClass(simpleName)
   }
