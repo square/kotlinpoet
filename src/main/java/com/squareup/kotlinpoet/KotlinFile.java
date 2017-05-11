@@ -81,7 +81,7 @@ public final class KotlinFile {
     Map<String, ClassName> suggestedImports = importsCollector.suggestedImports();
 
     // Second pass: write the code, taking advantage of the imports.
-    CodeWriter codeWriter = new CodeWriter(out, indent, suggestedImports, staticImports);
+    CodeWriter codeWriter = new CodeWriter(out, indent, staticImports, suggestedImports);
     emit(codeWriter);
   }
 
