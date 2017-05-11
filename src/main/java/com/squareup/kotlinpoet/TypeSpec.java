@@ -147,8 +147,8 @@ public final class TypeSpec {
       throws IOException {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
-    int previousStatementLine = codeWriter.statementLine;
-    codeWriter.statementLine = -1;
+    int previousStatementLine = codeWriter.getStatementLine();
+    codeWriter.setStatementLine(-1);
 
     try {
       if (enumName != null) {
@@ -294,7 +294,7 @@ public final class TypeSpec {
         codeWriter.emit("\n"); // If this type isn't also a value, include a trailing newline.
       }
     } finally {
-      codeWriter.statementLine = previousStatementLine;
+      codeWriter.setStatementLine(previousStatementLine);
     }
   }
 
