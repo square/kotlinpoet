@@ -91,7 +91,6 @@ class ClassName private constructor(
    * class.
    */
   fun nestedClass(name: String): ClassName {
-    requireNotNull(name) { "name == null" }
     val result = ArrayList<String>(names.size + 1)
     result.addAll(names)
     result.add(name)
@@ -123,7 +122,6 @@ class ClassName private constructor(
 
   companion object {
     @JvmStatic fun get(clazz: Class<*>): ClassName {
-      requireNotNull(clazz) { "clazz == null" }
       require(!clazz.isPrimitive) { "primitive types cannot be represented as a ClassName" }
       require(Void.TYPE != clazz) { "'void' type cannot be represented as a ClassName" }
       require(!clazz.isArray) { "array types cannot be represented as a ClassName" }
@@ -167,7 +165,7 @@ class ClassName private constructor(
       names.add(if (p != 0) classNameString.substring(0, p - 1) else "")
 
       // Add the class names, like "Map" and "Entry".
-      for (part in classNameString.substring(p).split("\\.".toRegex()).toTypedArray()) {
+      for (part in classNameString.substring(p).split("\\.".toRegex())) {
         require(!part.isEmpty() && Character.isUpperCase(part.codePointAt(0))) {
           "couldn't make a guess for $classNameString"
         }
@@ -196,7 +194,6 @@ class ClassName private constructor(
 
     /** Returns the class name for `element`.  */
     @JvmStatic fun get(element: TypeElement): ClassName {
-      requireNotNull(element) { "element == null" }
       val names = ArrayList<String>()
       var e: Element = element
       while (isClassOrInterface(e)) {

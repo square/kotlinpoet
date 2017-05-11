@@ -43,8 +43,8 @@ import javax.lang.model.util.Types
 class FunSpecTest {
   @Rule @JvmField val compilation = CompilationRule()
 
-  private var elements: Elements? = null
-  private var types: Types? = null
+  private lateinit var elements: Elements
+  private lateinit var types: Types
 
   @Before fun setUp() {
     elements = compilation.elements
@@ -52,7 +52,7 @@ class FunSpecTest {
   }
 
   private fun getElement(clazz: Class<*>): TypeElement {
-    return elements!!.getTypeElement(clazz.canonicalName)
+    return elements.getTypeElement(clazz.canonicalName)
   }
 
   private fun findFirst(elements: Collection<ExecutableElement>, name: String): ExecutableElement {
@@ -62,45 +62,6 @@ class FunSpecTest {
       }
     }
     throw IllegalArgumentException(name + " not found in " + elements)
-  }
-
-  @Test fun nullAnnotationsAddition() {
-    try {
-      FunSpec.builder("doSomething").addAnnotations(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("annotationSpecs == null")
-    }
-  }
-
-  @Test fun nullTypeVariablesAddition() {
-    try {
-      FunSpec.builder("doSomething").addTypeVariables(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("typeVariables == null")
-    }
-
-  }
-
-  @Test fun nullParametersAddition() {
-    try {
-      FunSpec.builder("doSomething").addParameters(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("parameterSpecs == null")
-    }
-
-  }
-
-  @Test fun nullExceptionsAddition() {
-    try {
-      FunSpec.builder("doSomething").addExceptions(null)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("exceptions == null")
-    }
-
   }
 
   @Target(AnnotationTarget.VALUE_PARAMETER)
@@ -162,7 +123,7 @@ class FunSpecTest {
   @Test fun overrideExtendsOthersWorksWithActualTypeParameters() {
     val classElement = getElement(ExtendsOthers::class.java)
     val classType = classElement.asType() as DeclaredType
-    val methods = methodsIn(elements!!.getAllMembers(classElement))
+    val methods = methodsIn(elements.getAllMembers(classElement))
     var exec = findFirst(methods, "call")
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
