@@ -65,7 +65,7 @@ class TypeVariableName private constructor(
 
     /** Returns type variable named `name` without bounds.  */
     @JvmStatic fun get(name: String): TypeVariableName {
-      return TypeVariableName.of(name, emptyList<TypeName>())
+      return TypeVariableName.of(name, emptyList())
     }
 
     /** Returns type variable named `name` with `bounds`.  */

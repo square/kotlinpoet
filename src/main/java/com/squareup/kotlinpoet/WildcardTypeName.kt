@@ -58,7 +58,7 @@ class WildcardTypeName private constructor(
      * this returns `?`, which is shorthand for `? extends Object`.
      */
     @JvmStatic fun subtypeOf(upperBound: TypeName): WildcardTypeName {
-      return WildcardTypeName(listOf(upperBound), emptyList<TypeName>())
+      return WildcardTypeName(listOf(upperBound), emptyList())
     }
 
     @JvmStatic fun subtypeOf(upperBound: Type): WildcardTypeName {

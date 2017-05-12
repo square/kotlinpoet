@@ -69,8 +69,8 @@ class FunSpecTest {
 
   internal abstract class Everything {
     @Deprecated("") @Throws(IOException::class, SecurityException::class)
-    protected abstract fun <T : Runnable> everything(
-        @Nullable thing: String, things: List<T>): Runnable where T : Closeable
+    protected abstract fun <T> everything(
+        @Nullable thing: String, things: List<T>): Runnable where T : Runnable, T : Closeable
   }
 
   internal abstract class HasAnnotation {

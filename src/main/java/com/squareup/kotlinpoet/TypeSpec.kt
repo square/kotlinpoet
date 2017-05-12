@@ -115,12 +115,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         val implementsTypes: List<TypeName>
         if (kind == Kind.INTERFACE) {
           extendsTypes = superinterfaces
-          implementsTypes = emptyList<TypeName>()
+          implementsTypes = emptyList()
         } else {
-          extendsTypes = if (superclass == OBJECT)
-            emptyList<TypeName>()
-          else
-            listOf(superclass)
+          extendsTypes = if (superclass == OBJECT) emptyList() else listOf(superclass)
           implementsTypes = superinterfaces
         }
 
