@@ -42,8 +42,8 @@ private fun extractMemberName(part: String): String {
 internal class CodeWriter @JvmOverloads constructor(
     out: Appendable,
     private val indent: String = "  ",
-    private val staticImports: Set<String> = emptySet<String>(),
-    private val importedTypes: Map<String, ClassName> = emptyMap<String, ClassName>()) {
+    private val memberImports: Set<String> = emptySet(),
+    private val importedTypes: Map<String, ClassName> = emptyMap()) {
 
   private val out: LineWrapper = LineWrapper(out, indent, 100)
   private var indentLevel: Int = 0
@@ -52,7 +52,7 @@ internal class CodeWriter @JvmOverloads constructor(
   private var comment = false
   private var packageName = NO_PACKAGE
   private val typeSpecStack = mutableListOf<TypeSpec>()
-  private val staticImportClassNames = mutableSetOf<String>()
+  private val memberImportClassNames = mutableSetOf<String>()
   private val importableTypes = mutableMapOf<String, ClassName>()
   private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
@@ -65,8 +65,8 @@ internal class CodeWriter @JvmOverloads constructor(
   var statementLine = -1
 
   init {
-    for (signature in staticImports) {
-      staticImportClassNames.add(signature.substring(0, signature.lastIndexOf('.')))
+    for (signature in memberImports) {
+      memberImportClassNames.add(signature.substring(0, signature.lastIndexOf('.')))
     }
   }
 
@@ -215,7 +215,7 @@ internal class CodeWriter @JvmOverloads constructor(
           if (typeName is ClassName && partIterator.hasNext()) {
             if (!codeBlock.formatParts[partIterator.nextIndex()].startsWith("%")) {
               val candidate = typeName
-              if (staticImportClassNames.contains(candidate.canonicalName)) {
+              if (memberImportClassNames.contains(candidate.canonicalName)) {
                 check(deferredTypeName == null) { "pending type for static import?!" }
                 deferredTypeName = candidate
                 defer = true
@@ -285,7 +285,7 @@ internal class CodeWriter @JvmOverloads constructor(
     if (!Character.isJavaIdentifierStart(first)) return false
     val explicit = canonical + "." + extractMemberName(partWithoutLeadingDot)
     val wildcard = canonical + ".*"
-    if (staticImports.contains(explicit) || staticImports.contains(wildcard)) {
+    if (memberImports.contains(explicit) || memberImports.contains(wildcard)) {
       emitAndIndent(partWithoutLeadingDot)
       return true
     }

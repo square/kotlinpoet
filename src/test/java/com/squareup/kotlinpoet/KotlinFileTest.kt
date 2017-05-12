@@ -50,12 +50,11 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.example.helloworld
         |
-        |import static com.mattel.Hoverboard.Boards.*
-        |import static com.mattel.Hoverboard.createNimbus
-        |import static java.util.Collections.*
-        |
         |import com.mattel.Hoverboard
+        |import com.mattel.Hoverboard.Boards.*
+        |import com.mattel.Hoverboard.createNimbus
         |import java.util.ArrayList
+        |import java.util.Collections.*
         |import java.util.List
         |
         |class HelloWorld {
@@ -115,11 +114,10 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import static java.lang.System.*
-        |import static java.lang.Thread.State.BLOCKED
-        |import static java.lang.Thread.State.valueOf
-        |
+        |import java.lang.System.*
         |import java.lang.Thread
+        |import java.lang.Thread.State.BLOCKED
+        |import java.lang.Thread.State.valueOf
         |
         |class Taco {
         |  static {
@@ -182,10 +180,9 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package readme
         |
-        |import static java.util.concurrent.TimeUnit.SECONDS
-        |
         |import java.lang.System
         |import java.util.concurrent.TimeUnit
+        |import java.util.concurrent.TimeUnit.SECONDS
         |import kotlin.Long
         |
         |class Util {
@@ -205,10 +202,9 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package readme
         |
-        |import static java.util.concurrent.TimeUnit.MINUTES
-        |import static java.util.concurrent.TimeUnit.SECONDS
-        |
         |import java.lang.System
+        |import java.util.concurrent.TimeUnit.MINUTES
+        |import java.util.concurrent.TimeUnit.SECONDS
         |import kotlin.Long
         |
         |class Util {
@@ -228,9 +224,8 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package readme
         |
-        |import static java.lang.System.*
-        |import static java.util.concurrent.TimeUnit.*
-        |
+        |import java.lang.System.*
+        |import java.util.concurrent.TimeUnit.*
         |import kotlin.Long
         |
         |class Util {
