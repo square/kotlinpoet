@@ -163,11 +163,11 @@ class FileWritingTest {
 
   @Test fun filerClassesWithTabIndent() {
     val test = TypeSpec.classBuilder("Test")
-        .addProperty(Date::class.java, "madeFreshDate")
+        .addProperty(Date::class, "madeFreshDate")
         .addFun(FunSpec.builder("main")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addParameter(Array<String>::class.java, "args")
-            .addCode("%T.out.println(%S);\n", System::class.java, "Hello World!")
+            .addParameter(Array<String>::class, "args")
+            .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
             .build())
         .build()
     KotlinFile.builder("foo", test).indent("\t").build().writeTo(filer)

@@ -93,7 +93,7 @@ class WildcardTypeName private constructor(
       if (extendsBound == null) {
         val superBound = mirror.superBound
         return if (superBound == null)
-          subtypeOf(Any::class.java) else
+          subtypeOf(ANY) else
           supertypeOf(TypeName.get(superBound, typeVariables))
       } else {
         return subtypeOf(TypeName.get(extendsBound, typeVariables))

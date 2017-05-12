@@ -189,8 +189,8 @@ class FunSpecTest {
   }
 
   @Test fun duplicateExceptionsIgnored() {
-    val ioException = ClassName.get(IOException::class.java)
-    val timeoutException = ClassName.get(TimeoutException::class.java)
+    val ioException = ClassName.get(IOException::class)
+    val timeoutException = ClassName.get(TimeoutException::class)
     val funSpec = FunSpec.builder("duplicateExceptions")
         .addException(ioException)
         .addException(timeoutException)

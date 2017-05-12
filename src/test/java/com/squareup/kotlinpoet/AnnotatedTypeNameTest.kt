@@ -23,15 +23,15 @@ import org.junit.Ignore
 import org.junit.Test
 
 class AnnotatedTypeNameTest {
-  private val NEVER_NULL = AnnotationSpec.builder(NeverNull::class.java).build()
+  private val NEVER_NULL = AnnotationSpec.builder(NeverNull::class).build()
   private val NN = NeverNull::class.java.canonicalName
 
   annotation class NeverNull
 
   @Test fun annotated() {
-    val simpleString = TypeName.get(String::class.java)
+    val simpleString = TypeName.get(String::class)
     assertFalse(simpleString.isAnnotated)
-    assertEquals(simpleString, TypeName.get(String::class.java))
+    assertEquals(simpleString, TypeName.get(String::class))
     val annotated = simpleString.annotated(NEVER_NULL)
     assertTrue(annotated.isAnnotated)
     assertEquals(annotated, annotated.annotated())
@@ -39,54 +39,54 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedType() {
     val expected = "@$NN java.lang.String"
-    val type = TypeName.get(String::class.java)
+    val type = TypeName.get(String::class)
     val actual = type.annotated(NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedTwice() {
     val expected = "@$NN @java.lang.Override java.lang.String"
-    val type = TypeName.get(String::class.java)
+    val type = TypeName.get(String::class)
     val actual = type.annotated(NEVER_NULL)
-        .annotated(AnnotationSpec.builder(Override::class.java).build())
+        .annotated(AnnotationSpec.builder(Override::class).build())
         .toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedParameterizedType() {
     val expected = "@$NN java.util.List<java.lang.String>"
-    val type = ParameterizedTypeName.get(List::class.java, String::class.java)
+    val type = ParameterizedTypeName.get(List::class, String::class)
     val actual = type.annotated(NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedArgumentOfParameterizedType() {
     val expected = "java.util.List<@$NN java.lang.String>"
-    val type = TypeName.get(String::class.java).annotated(NEVER_NULL)
-    val list = ClassName.get(List::class.java)
+    val type = TypeName.get(String::class).annotated(NEVER_NULL)
+    val list = ClassName.get(List::class)
     val actual = ParameterizedTypeName.get(list, type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithSuper() {
     val expected = "in @$NN java.lang.String"
-    val type = TypeName.get(String::class.java).annotated(NEVER_NULL)
+    val type = TypeName.get(String::class).annotated(NEVER_NULL)
     val actual = WildcardTypeName.supertypeOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithExtends() {
     val expected = "out @$NN java.lang.String"
-    val type = TypeName.get(String::class.java).annotated(NEVER_NULL)
+    val type = TypeName.get(String::class).annotated(NEVER_NULL)
     val actual = WildcardTypeName.subtypeOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedEquivalence() {
     annotatedEquivalence(UNIT)
-    annotatedEquivalence(ArrayTypeName.of(Object::class.java))
-    annotatedEquivalence(ClassName.get(Any::class.java))
-    annotatedEquivalence(ParameterizedTypeName.get(List::class.java, Any::class.java))
+    annotatedEquivalence(ArrayTypeName.of(Object::class))
+    annotatedEquivalence(ClassName.get(Any::class))
+    annotatedEquivalence(ParameterizedTypeName.get(List::class, Any::class))
     annotatedEquivalence(TypeVariableName.get("A"))
     annotatedEquivalence(WildcardTypeName.subtypeOf(Object::class))
   }
@@ -108,8 +108,8 @@ class AnnotatedTypeNameTest {
   // https://github.com/square/javapoet/issues/431
   @Ignore @Test fun annotatedNestedType() {
     val expected = "java.util.Map.@" + TypeUseAnnotation::class.java.canonicalName + " Entry"
-    val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class.java).build()
-    val type = TypeName.get(Map.Entry::class.java).annotated(typeUseAnnotation)
+    val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
+    val type = TypeName.get(Map.Entry::class).annotated(typeUseAnnotation)
     val actual = type.toString()
     assertEquals(expected, actual)
   }
@@ -118,8 +118,8 @@ class AnnotatedTypeNameTest {
   @Ignore @Test fun annotatedNestedParameterizedType() {
     val expected = "java.util.Map.@" + TypeUseAnnotation::class.java.canonicalName +
         " Entry<java.lang.Byte, java.lang.Byte>"
-    val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class.java).build()
-    val type = ParameterizedTypeName.get(Map.Entry::class.java, Byte::class.java, Byte::class.java)
+    val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
+    val type = ParameterizedTypeName.get(Map.Entry::class, Byte::class, Byte::class)
         .annotated(typeUseAnnotation)
     val actual = type.toString()
     assertEquals(expected, actual)

@@ -102,9 +102,16 @@ class ClassNameTest {
         .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
   }
 
+  @Test fun classNameFromKClass() {
+    assertThat(ClassName.get(Any::class).toString())
+        .isEqualTo("java.lang.Object")
+    assertThat(ClassName.get(OuterClass.InnerClass::class).toString())
+        .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
+  }
+
   @Test fun peerClass() {
-    assertThat(ClassName.get(java.lang.Double::class.java).peerClass("Short"))
-        .isEqualTo(ClassName.get(java.lang.Short::class.java))
+    assertThat(ClassName.get(java.lang.Double::class).peerClass("Short"))
+        .isEqualTo(ClassName.get(java.lang.Short::class))
     assertThat(ClassName.get("", "Double").peerClass("Short"))
         .isEqualTo(ClassName.get("", "Short"))
     assertThat(ClassName.get("a.b", "Combo", "Taco").peerClass("Burrito"))
@@ -130,14 +137,20 @@ class ClassNameTest {
     } catch (expected: IllegalArgumentException) {
     }
 
+    try {
+      ClassName.get(Array<Any>::class)
+      fail()
+    } catch (expected: IllegalArgumentException) {
+    }
+
   }
 
   @Test fun reflectionName() {
     assertThat(ANY.reflectionName())
         .isEqualTo("kotlin.Any")
-    assertThat(ClassName.get(Thread.State::class.java).reflectionName())
+    assertThat(ClassName.get(Thread.State::class).reflectionName())
         .isEqualTo("java.lang.Thread\$State")
-    assertThat(ClassName.get(Map.Entry::class.java).reflectionName())
+    assertThat(ClassName.get(Map.Entry::class).reflectionName())
         .isEqualTo("java.util.Map\$Entry")
     assertThat(ClassName.get("", "Foo").reflectionName())
         .isEqualTo("Foo")
