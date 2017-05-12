@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet;
+package com.squareup.kotlinpoet
 
-import com.google.testing.compile.CompilationRule;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import org.junit.Rule;
+import com.google.testing.compile.CompilationRule
+import org.junit.Rule
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
-public final class TypesTest extends AbstractTypesTest {
-  @Rule public final CompilationRule compilation = new CompilationRule();
+class TypesTest : AbstractTypesTest() {
+  @JvmField @Rule val compilation = CompilationRule()
 
-  @Override
-  protected Elements getElements() {
-    return compilation.getElements();
-  }
+  override val elements : Elements
+    get() = compilation.elements
 
-  @Override
-  protected Types getTypes() {
-    return compilation.getTypes();
-  }
+  override val types : Types
+    get() = compilation.types
 }
