@@ -21,7 +21,6 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
-import java.util.Map
 
 class AnnotatedTypeNameTest {
   private val NEVER_NULL = AnnotationSpec.builder(NeverNull::class.java).build()

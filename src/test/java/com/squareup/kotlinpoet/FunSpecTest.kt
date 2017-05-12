@@ -108,7 +108,7 @@ class FunSpecTest {
   @Test fun overrideDoesNotCopyDefaultModifier() {
     val classElement = getElement(ExtendsIterableWithDefaultMethods::class.java)
     val classType = classElement.asType() as DeclaredType
-    val methods = methodsIn(elements!!.getAllMembers(classElement))
+    val methods = methodsIn(elements.getAllMembers(classElement))
     var exec = findFirst(methods, "iterator")
     assume().that(Util.DEFAULT).isNotNull()
     exec = findFirst(methods, "spliterator")

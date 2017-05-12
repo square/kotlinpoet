@@ -48,11 +48,11 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     }
   }
 
-  override fun equals(o: Any?): Boolean {
-    if (this === o) return true
-    if (o == null) return false
-    if (javaClass != o.javaClass) return false
-    return toString() == o.toString()
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null) return false
+    if (javaClass != other.javaClass) return false
+    return toString() == other.toString()
   }
 
   override fun hashCode() = toString().hashCode()
