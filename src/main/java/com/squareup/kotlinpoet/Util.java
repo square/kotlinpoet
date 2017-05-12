@@ -60,19 +60,6 @@ final class Util {
     return Collections.unmodifiableMap(new LinkedHashMap<>(map));
   }
 
-  static void checkArgument(boolean condition, String format, Object... args) {
-    if (!condition) throw new IllegalArgumentException(String.format(format, args));
-  }
-
-  static <T> T checkNotNull(T reference, String format, Object... args) {
-    if (reference == null) throw new NullPointerException(String.format(format, args));
-    return reference;
-  }
-
-  static void checkState(boolean condition, String format, Object... args) {
-    if (!condition) throw new IllegalStateException(String.format(format, args));
-  }
-
   static <T> List<T> immutableList(Collection<T> collection) {
     return Collections.unmodifiableList(new ArrayList<>(collection));
   }
@@ -81,31 +68,17 @@ final class Util {
     return Collections.unmodifiableSet(new LinkedHashSet<>(set));
   }
 
-  static String join(String separator, List<String> parts) {
-    if (parts.isEmpty()) return "";
-    StringBuilder result = new StringBuilder();
-    result.append(parts.get(0));
-    for (int i = 1; i < parts.size(); i++) {
-      result.append(separator).append(parts.get(i));
-    }
-    return result.toString();
-  }
-
-  static <T> Set<T> union(Set<T> a, Set<T> b) {
-    Set<T> result = new LinkedHashSet<>();
-    result.addAll(a);
-    result.addAll(b);
-    return result;
-  }
-
   static void requireExactlyOneOf(Set<Modifier> modifiers, Modifier... mutuallyExclusive) {
     int count = 0;
     for (Modifier modifier : mutuallyExclusive) {
       if (modifier == null && Util.DEFAULT == null) continue; // Skip 'DEFAULT' if it doesn't exist!
       if (modifiers.contains(modifier)) count++;
     }
-    checkArgument(count == 1, "modifiers %s must contain one of %s",
-        modifiers, Arrays.toString(mutuallyExclusive));
+    if (count != 1) {
+      throw new IllegalArgumentException(
+          String.format("modifiers %s must contain one of %s", modifiers,
+              Arrays.toString(mutuallyExclusive)));
+    }
   }
 
   static boolean hasDefaultModifier(Collection<Modifier> modifiers) {

@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.checkState
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -121,7 +120,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     fun initializer(format: String, vararg args: Any?) = initializer(CodeBlock.of(format, *args))
 
     fun initializer(codeBlock: CodeBlock): Builder {
-      checkState(this.initializer == null, "initializer was already set")
+      check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
       return this
     }

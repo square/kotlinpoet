@@ -15,8 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.checkArgument
-import com.squareup.kotlinpoet.Util.checkState
 import com.squareup.kotlinpoet.Util.hasDefaultModifier
 import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
@@ -108,7 +106,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitModifiers(modifiers, Util.union(implicitModifiers, kind.asMemberModifiers))
+        codeWriter.emitModifiers(modifiers, implicitModifiers + kind.asMemberModifiers)
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("%L %L", "@interface", name)
         } else {
@@ -339,13 +337,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
 
     fun addModifiers(vararg modifiers: Modifier): Builder {
-      checkState(anonymousTypeArguments == null, "forbidden on anonymous types.")
+      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       Collections.addAll(this.modifiers, *modifiers)
       return this
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
-      checkState(anonymousTypeArguments == null, "forbidden on anonymous types.")
+      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       for (typeVariable in typeVariables) {
         this.typeVariables.add(typeVariable)
       }
@@ -353,15 +351,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName): Builder {
-      checkState(anonymousTypeArguments == null, "forbidden on anonymous types.")
+      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       typeVariables.add(typeVariable)
       return this
     }
 
     fun superclass(superclass: TypeName): Builder {
-      checkState(this.kind == Kind.CLASS, "only classes have super classes, not " + this.kind)
-      checkState(this.superclass === OBJECT,
-          "superclass already set to " + this.superclass)
+      check(kind == Kind.CLASS) { "only classes have super classes, not $kind" }
+      check(this.superclass === OBJECT) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
       return this
     }
@@ -392,9 +389,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         name: String,
         typeSpec: TypeSpec = anonymousClassBuilder("").build()): Builder {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
-      checkArgument(typeSpec.anonymousTypeArguments != null,
-          "enum constants must have anonymous type arguments")
-      checkArgument(SourceVersion.isName(name), "not a valid enum constant: %s", name)
+      require(typeSpec.anonymousTypeArguments != null) {
+          "enum constants must have anonymous type arguments" }
+      require(SourceVersion.isName(name)) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
       return this
     }
@@ -410,8 +407,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (kind == Kind.INTERFACE || kind == Kind.ANNOTATION) {
         requireExactlyOneOf(propertySpec.modifiers, Modifier.PUBLIC, Modifier.PRIVATE)
         val check = EnumSet.of(Modifier.STATIC, Modifier.FINAL)
-        checkState(propertySpec.modifiers.containsAll(check), "%s %s.%s requires modifiers %s",
-            kind, name, propertySpec.name, check)
+        check(propertySpec.modifiers.containsAll(check)) {
+          "$kind $name.${propertySpec.name} requires modifiers $check" }
       }
       propertySpecs.add(propertySpec)
       return this
@@ -455,17 +452,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         requireExactlyOneOf(funSpec.modifiers, Modifier.ABSTRACT, Modifier.STATIC, Util.DEFAULT)
         requireExactlyOneOf(funSpec.modifiers, Modifier.PUBLIC, Modifier.PRIVATE)
       } else if (kind == Kind.ANNOTATION) {
-        checkState(funSpec.modifiers == kind.implicitFunctionModifiers,
-            "%s %s.%s requires modifiers %s",
-            kind, name, funSpec.name, kind.implicitFunctionModifiers)
+        check(funSpec.modifiers == kind.implicitFunctionModifiers) {
+            "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}" }
       }
       if (kind != Kind.ANNOTATION) {
-        checkState(funSpec.defaultValue == null, "%s %s.%s cannot have a default value",
-            kind, name, funSpec.name)
+        check(funSpec.defaultValue == null) {
+          "$kind $name.${funSpec.name} cannot have a default value" }
       }
       if (kind != Kind.INTERFACE) {
-        checkState(!hasDefaultModifier(funSpec.modifiers), "%s %s.%s cannot be default",
-            kind, name, funSpec.name)
+        check(!hasDefaultModifier(funSpec.modifiers)) {
+          "$kind $name.${funSpec.name} cannot be default" }
       }
       funSpecs.add(funSpec)
       return this
@@ -479,9 +475,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addType(typeSpec: TypeSpec): Builder {
-      checkArgument(typeSpec.modifiers.containsAll(kind.implicitTypeModifiers),
-          "%s %s.%s requires modifiers %s", kind, name, typeSpec.name,
-          kind.implicitTypeModifiers)
+      require(typeSpec.modifiers.containsAll(kind.implicitTypeModifiers)) {
+          "$kind $name.${typeSpec.name} requires modifiers ${kind.implicitTypeModifiers}" }
       typeSpecs.add(typeSpec)
       return this
     }
@@ -492,19 +487,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun build(): TypeSpec {
-      checkArgument(kind != Kind.ENUM || !enumConstants.isEmpty(),
-          "at least one enum constant is required for %s", name)
+      require(kind != Kind.ENUM || !enumConstants.isEmpty()) {
+          "at least one enum constant is required for $name" }
 
       val isAbstract = modifiers.contains(Modifier.ABSTRACT) || kind != Kind.CLASS
       for (funSpec in funSpecs) {
-        checkArgument(isAbstract || !funSpec.hasModifier(Modifier.ABSTRACT),
-            "non-abstract type %s cannot declare abstract function %s", name, funSpec.name)
+        require(isAbstract || !funSpec.hasModifier(Modifier.ABSTRACT)) {
+            "non-abstract type $name cannot declare abstract function ${funSpec.name}" }
       }
 
       val superclassIsObject = superclass == OBJECT
       val interestingSupertypeCount = (if (superclassIsObject) 0 else 1) + superinterfaces.size
-      checkArgument(anonymousTypeArguments == null || interestingSupertypeCount <= 1,
-          "anonymous type has too many supertypes")
+      require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
+          "anonymous type has too many supertypes" }
 
       return TypeSpec(this)
     }
