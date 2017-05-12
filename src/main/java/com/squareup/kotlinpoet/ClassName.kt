@@ -113,7 +113,7 @@ class ClassName private constructor(
   /** Returns the simple name of this class, like `"Entry"` for [Map.Entry].  */
   fun simpleName(): String = names[names.size - 1]
 
-  override fun compareTo(o: ClassName) = canonicalName.compareTo(o.canonicalName)
+  override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
