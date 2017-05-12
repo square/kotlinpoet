@@ -404,7 +404,7 @@ internal class CodeWriter @JvmOverloads constructor(
   @Throws(IOException::class)
   fun emitAndIndent(s: String): CodeWriter {
     var first = true
-    for (line in s.split("\n".toRegex())) {
+    for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
       if (!first) {
         if ((kdoc || comment) && trailingNewline) {
