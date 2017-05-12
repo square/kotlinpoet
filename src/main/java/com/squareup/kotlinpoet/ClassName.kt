@@ -36,8 +36,8 @@ class ClassName private constructor(
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
   internal val names = Util.immutableList(names)
   val canonicalName = if (names[0].isEmpty())
-    Util.join(".", names.subList(1, names.size)) else
-    Util.join(".", names)
+    names.subList(1, names.size).joinToString(".") else
+    names.joinToString(".")
 
   init {
     for (i in 1..names.size - 1) {

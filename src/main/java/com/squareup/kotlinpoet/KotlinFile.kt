@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.checkArgument
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
@@ -73,8 +72,8 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
   fun writeTo(directory: Path) {
-    checkArgument(Files.notExists(directory) || Files.isDirectory(directory),
-        "path %s exists but is not a directory.", directory)
+    require(Files.notExists(directory) || Files.isDirectory(directory)) {
+        "path $directory exists but is not a directory." }
     var outputDirectory = directory
     if (!packageName.isEmpty()) {
       for (packageComponent in packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }) {

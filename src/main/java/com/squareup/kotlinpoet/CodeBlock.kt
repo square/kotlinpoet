@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.checkArgument
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -109,8 +108,8 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       var p = 0
 
       for (argument in arguments.keys) {
-        checkArgument(LOWERCASE.matcher(argument).matches(),
-            "argument '%s' must start with a lowercase character", argument)
+        require(LOWERCASE.matcher(argument).matches()) {
+            "argument '$argument' must start with a lowercase character" }
       }
 
       while (p < format.length) {
@@ -133,16 +132,16 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
         }
         if (matcher != null && matcher.lookingAt()) {
           val argumentName = matcher.group("argumentName")
-          checkArgument(arguments.containsKey(argumentName), "Missing named argument for %%%s",
-              argumentName)
+          require(arguments.containsKey(argumentName)) {
+            "Missing named argument for %$argumentName" }
           val formatChar = matcher.group("typeChar")[0]
           addArgument(format, formatChar, arguments[argumentName])
           formatParts.add("%" + formatChar)
           p += matcher.regionEnd()
         } else {
-          checkArgument(p < format.length - 1, "dangling %% at end")
-          checkArgument(isNoArgPlaceholder(format[p + 1]),
-              "unknown format %%%s at %s in '%s'", format[p + 1], p + 1, format)
+          require(p < format.length - 1) { "dangling % at end" }
+          require(isNoArgPlaceholder(format[p + 1])) {
+            "unknown format %${format[p + 1]} at ${p + 1} in '$format'" }
           formatParts.add(format.substring(p, p + 2))
           p += 2
         }
@@ -185,15 +184,15 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
         val indexStart = p
         var c: Char
         do {
-          checkArgument(p < format.length, "dangling format characters in '%s'", format)
+          require(p < format.length) { "dangling format characters in '$format'" }
           c = format[p++]
         } while (c >= '0' && c <= '9')
         val indexEnd = p - 1
 
         // If 'c' doesn't take an argument, we're done.
         if (isNoArgPlaceholder(c)) {
-          checkArgument(indexStart == indexEnd,
-              "%%%%, %%>, %%<, %%[, %%], and %%W may not have an index")
+          require(indexStart == indexEnd) {
+            "%%, %>, %<, %[, %], and %W may not have an index" }
           formatParts.add("%" + c)
           continue
         }
@@ -212,10 +211,11 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
           relativeParameterCount++
         }
 
-        checkArgument(index >= 0 && index < args.size,
-            "index %d for '%s' not in range (received %s arguments)",
-            index + 1, format.substring(indexStart - 1, indexEnd + 1), args.size)
-        checkArgument(!hasIndexed || !hasRelative, "cannot mix indexed and positional parameters")
+        require(index >= 0 && index < args.size) {
+          "index ${index + 1} for '${format.substring(indexStart - 1,
+              indexEnd + 1)}' not in range (received ${args.size} arguments)"
+        }
+        require(!hasIndexed || !hasRelative) { "cannot mix indexed and positional parameters" }
 
         addArgument(format, c, args[index])
 
@@ -223,8 +223,8 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       }
 
       if (hasRelative) {
-        checkArgument(relativeParameterCount >= args.size,
-            "unused arguments: expected %s, received %s", relativeParameterCount, args.size)
+        require(relativeParameterCount >= args.size) {
+            "unused arguments: expected $relativeParameterCount, received ${args.size}" }
       }
       if (hasIndexed) {
         val unused = ArrayList<String>()
@@ -234,7 +234,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
           }
         }
         val s = if (unused.size == 1) "" else "s"
-        checkArgument(unused.isEmpty(), "unused argument%s: %s", s, Util.join(", ", unused))
+        require(unused.isEmpty()) { "unused argument$s: ${unused.joinToString(", ")}" }
       }
       return this
     }

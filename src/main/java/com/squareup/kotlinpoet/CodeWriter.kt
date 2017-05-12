@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.join
 import com.squareup.kotlinpoet.Util.stringLiteralWithDoubleQuotes
 import java.io.IOException
 import java.util.ArrayList
@@ -325,8 +324,8 @@ internal class CodeWriter @JvmOverloads constructor(
 
       if (resolved == c) {
         val suffixOffset = c.simpleNames().size - 1
-        return join(".", className.simpleNames().subList(
-            suffixOffset, className.simpleNames().size))
+        return className.simpleNames().subList(suffixOffset,
+            className.simpleNames().size).joinToString(".")
       }
       c = c.enclosingClassName()
     }
@@ -339,7 +338,7 @@ internal class CodeWriter @JvmOverloads constructor(
     // If the class is in the same package, we're done.
     if (packageName == className.packageName()) {
       referencedNames.add(className.topLevelClassName().simpleName())
-      return join(".", className.simpleNames())
+      return className.simpleNames().joinToString(".")
     }
 
     // We'll have to use the fully-qualified name. Mark the type as importable for a future pass.

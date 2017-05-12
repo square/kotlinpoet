@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.checkState
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -253,7 +252,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     fun returns(returnType: TypeName): Builder {
-      checkState(name != CONSTRUCTOR, "constructor cannot have return type.")
+      check(name != CONSTRUCTOR) { "constructor cannot have return type." }
       this.returnType = returnType
       return this
     }
