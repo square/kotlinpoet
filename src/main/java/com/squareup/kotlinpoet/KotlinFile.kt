@@ -53,18 +53,18 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   val packageName: String = builder.packageName
   val typeSpec: TypeSpec = builder.typeSpec
   val skipJavaLangImports: Boolean = builder.skipJavaLangImports
-  private val staticImports: Set<String> = Util.immutableSet(builder.staticImports)
-  private val indent: String = builder.indent
+  private val memberImports = Util.immutableSet(builder.memberImports)
+  private val indent = builder.indent
 
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
-    val importsCollector = CodeWriter(NULL_APPENDABLE, indent, staticImports)
+    val importsCollector = CodeWriter(NULL_APPENDABLE, indent, memberImports)
     emit(importsCollector)
     val suggestedImports = importsCollector.suggestedImports()
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, staticImports, suggestedImports)
+    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports)
     emit(codeWriter)
   }
 
@@ -124,20 +124,16 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       codeWriter.emit("\n")
     }
 
-    if (!staticImports.isEmpty()) {
-      for (signature in staticImports) {
-        codeWriter.emit("import static %L\n", signature)
-      }
-      codeWriter.emit("\n")
-    }
+    val imports = codeWriter.importedTypes().values
+        .filterNot { skipJavaLangImports && it.packageName() == "java.lang" }
+        .map { it.canonicalName }
+        .plus(memberImports)
 
     var importedTypesCount = 0
-    for (className in codeWriter.importedTypes().values.toSortedSet()) {
-      if (skipJavaLangImports && className.packageName() == "java.lang") continue
+    for (className in imports.toSortedSet()) {
       codeWriter.emit("import %L\n", className)
       importedTypesCount++
     }
-
     if (importedTypesCount > 0) {
       codeWriter.emit("\n")
     }
@@ -199,7 +195,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       internal val packageName: String,
       internal val typeSpec: TypeSpec) {
     internal val fileComment = CodeBlock.builder()
-    internal val staticImports = sortedSetOf<String>()
+    internal val memberImports = sortedSetOf<String>()
     internal var skipJavaLangImports: Boolean = false
     internal var indent = "  "
 
@@ -218,7 +214,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     fun addStaticImport(className: ClassName, vararg names: String): Builder {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        staticImports.add(className.canonicalName + "." + name)
+        memberImports.add(className.canonicalName + "." + name)
       }
       return this
     }

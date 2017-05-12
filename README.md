@@ -302,10 +302,10 @@ public final class HelloWorld {
 }
 ```
 
-#### Import static
+#### Member imports
 
-KotlinPoet supports `import static`. It does it via explicitly collecting type member names. Let's
-enhance the previous example with some static sugar:
+KotlinPoet supports field and function imports. It does it via explicitly collecting member names.
+Let's enhance the previous example with some static sugar:
 
 ```java
 ...
@@ -326,24 +326,23 @@ TypeSpec hello = TypeSpec.classBuilder("HelloWorld")
     .build();
 
 JavaFile.builder("com.example.helloworld", hello)
-    .addStaticImport(hoverboard, "createNimbus")
-    .addStaticImport(namedBoards, "*")
-    .addStaticImport(Collections.class, "*")
+    .addMemberImport(hoverboard, "createNimbus")
+    .addMemberImport(namedBoards, "*")
+    .addMemberImport(Collections.class, "*")
     .build();
 ```
 
-KotlinPoet will first add your `import static` block to the file as configured, match and mangle
+KotlinPoet will add these `import` statements to the file as configured, match and mangle
 all calls accordingly and also import all other types as needed.
 
 ```java
 package com.example.helloworld;
 
-import static com.mattel.Hoverboard.Boards.*;
-import static com.mattel.Hoverboard.createNimbus;
-import static java.util.Collections.*;
-
 import com.mattel.Hoverboard;
+import com.mattel.Hoverboard.Boards.*;
+import com.mattel.Hoverboard.createNimbus;
 import java.util.ArrayList;
+import java.util.Collections.*;
 import java.util.List;
 
 class HelloWorld {
