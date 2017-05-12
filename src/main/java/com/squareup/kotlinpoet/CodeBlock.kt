@@ -59,8 +59,6 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
 
   fun isEmpty() = formatParts.isEmpty()
 
-  fun formatParts() = formatParts
-
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
