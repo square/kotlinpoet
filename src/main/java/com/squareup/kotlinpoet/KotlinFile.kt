@@ -75,7 +75,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
         "path $directory exists but is not a directory." }
     var outputDirectory = directory
     if (!packageName.isEmpty()) {
-      for (packageComponent in packageName.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }) {
+      for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
         outputDirectory = outputDirectory.resolve(packageComponent)
       }
       Files.createDirectories(outputDirectory)
