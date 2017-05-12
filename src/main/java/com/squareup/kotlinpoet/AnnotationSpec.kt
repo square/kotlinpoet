@@ -189,26 +189,26 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       try {
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
-        val methods = annotation.annotationType().getDeclaredMethods()
+        val methods = annotation.annotationType().declaredMethods
         Arrays.sort(methods, { m1, m2 -> m1.name.compareTo(m2.name) })
         for (method in methods) {
           val value = method.invoke(annotation)
           if (!includeDefaultValues) {
-            if (Objects.deepEquals(value, method.getDefaultValue())) {
+            if (Objects.deepEquals(value, method.defaultValue)) {
               continue
             }
           }
-          if (value.javaClass.isArray()) {
+          if (value.javaClass.isArray) {
             for (i in 0..Array.getLength(value) - 1) {
-              builder.addMemberForValue(method.getName(), Array.get(value, i))
+              builder.addMemberForValue(method.name, Array.get(value, i))
             }
             continue
           }
           if (value is Annotation) {
-            builder.addMember(method.getName(), "%L", get(value))
+            builder.addMember(method.name, "%L", get(value))
             continue
           }
-          builder.addMemberForValue(method.getName(), value)
+          builder.addMemberForValue(method.name, value)
         }
         return builder.build()
       } catch (e: Exception) {

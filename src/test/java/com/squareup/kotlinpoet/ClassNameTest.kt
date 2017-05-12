@@ -42,7 +42,7 @@ class ClassNameTest {
   }
 
   @Test fun bestGuessForString_nestedClass() {
-    assertThat(ClassName.bestGuess(Map.Entry::class.java.getCanonicalName()))
+    assertThat(ClassName.bestGuess(Map.Entry::class.java.canonicalName))
         .isEqualTo(ClassName.get("java.util", "Map", "Entry"))
     assertThat(ClassName.bestGuess(OuterClass.InnerClass::class.java.canonicalName))
         .isEqualTo(ClassName.get("com.squareup.kotlinpoet",
