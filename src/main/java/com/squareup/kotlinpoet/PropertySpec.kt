@@ -29,7 +29,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
   val kdoc: CodeBlock = builder.kdoc.build()
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
   val modifiers: Set<Modifier> = Util.immutableSet(builder.modifiers)
-  val initializer: CodeBlock = builder.initializer ?: CodeBlock.builder().build()
+  val initializer: CodeBlock? = builder.initializer
 
   fun hasModifier(modifier: Modifier) = modifiers.contains(modifier)
 
@@ -39,7 +39,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
     codeWriter.emit("%L: %T", name, type)
-    if (!initializer.isEmpty()) {
+    if (initializer != null) {
       codeWriter.emit(" = ")
       codeWriter.emit(initializer)
     }
@@ -71,7 +71,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     builder.kdoc.add(kdoc)
     builder.annotations.addAll(annotations)
     builder.modifiers.addAll(modifiers)
-    builder.initializer = if (initializer.isEmpty()) null else initializer
+    builder.initializer = initializer
     return builder
   }
 
