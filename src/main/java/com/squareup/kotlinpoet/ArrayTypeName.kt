@@ -28,7 +28,7 @@ class ArrayTypeName private constructor(
     annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>()) : TypeName(annotations) {
 
   override fun annotated(annotations: List<AnnotationSpec>): ArrayTypeName {
-    return ArrayTypeName(componentType, concatAnnotations(annotations))
+    return ArrayTypeName(componentType, this.annotations + annotations)
   }
 
   override fun withoutAnnotations(): TypeName {

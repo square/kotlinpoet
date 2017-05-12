@@ -81,10 +81,6 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
 
   abstract fun withoutAnnotations(): TypeName
 
-  protected fun concatAnnotations(annotations: List<AnnotationSpec>): List<AnnotationSpec> {
-    return this.annotations + annotations
-  }
-
   val isAnnotated: Boolean
     get() = !annotations.isEmpty()
 

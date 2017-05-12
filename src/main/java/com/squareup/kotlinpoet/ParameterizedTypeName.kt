@@ -40,7 +40,7 @@ class ParameterizedTypeName internal constructor(
   }
 
   override fun annotated(annotations: List<AnnotationSpec>)
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, concatAnnotations(annotations))
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, this.annotations + annotations)
 
   override fun withoutAnnotations()
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, ArrayList<AnnotationSpec>())

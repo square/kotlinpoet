@@ -36,7 +36,7 @@ class WildcardTypeName private constructor(
   }
 
   override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
-    return WildcardTypeName(upperBounds, lowerBounds, concatAnnotations(annotations))
+    return WildcardTypeName(upperBounds, lowerBounds, this.annotations + annotations)
   }
 
   override fun withoutAnnotations(): TypeName {

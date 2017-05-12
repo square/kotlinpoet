@@ -46,7 +46,7 @@ class ClassName private constructor(
   }
 
   override fun annotated(annotations: List<AnnotationSpec>)
-      = ClassName(names, concatAnnotations(annotations))
+      = ClassName(names, this.annotations + annotations)
 
   override fun withoutAnnotations() = ClassName(names)
 
