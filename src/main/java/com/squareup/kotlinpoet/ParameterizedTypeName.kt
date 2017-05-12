@@ -19,16 +19,13 @@ import java.io.IOException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.LinkedHashMap
 import kotlin.reflect.KClass
 
 class ParameterizedTypeName internal constructor(
     private val enclosingType: ParameterizedTypeName?,
     val rawType: ClassName,
     typeArguments: List<TypeName>,
-    annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>())
+    annotations: List<AnnotationSpec> = emptyList())
   : TypeName(annotations) {
 
   val typeArguments: List<TypeName> = Util.immutableList(typeArguments)
@@ -42,8 +39,7 @@ class ParameterizedTypeName internal constructor(
   override fun annotated(annotations: List<AnnotationSpec>)
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, this.annotations + annotations)
 
-  override fun withoutAnnotations()
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, ArrayList<AnnotationSpec>())
+  override fun withoutAnnotations() = ParameterizedTypeName(enclosingType, rawType, typeArguments)
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
@@ -71,36 +67,27 @@ class ParameterizedTypeName internal constructor(
 
   /**
    * Returns a new [ParameterizedTypeName] instance for the specified `name` as nested inside this
-   * class.
-   */
-  fun nestedClass(name: String)
-      = ParameterizedTypeName(
-      this, rawType.nestedClass(name), ArrayList<TypeName>(), ArrayList<AnnotationSpec>())
-
-  /**
-   * Returns a new [ParameterizedTypeName] instance for the specified `name` as nested inside this
    * class, with the specified `typeArguments`.
    */
   fun nestedClass(name: String, typeArguments: List<TypeName>)
-      = ParameterizedTypeName(
-      this, rawType.nestedClass(name), typeArguments, ArrayList<AnnotationSpec>())
+      = ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
 
   companion object {
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
     @JvmStatic fun get(rawType: ClassName, vararg typeArguments: TypeName)
-        = ParameterizedTypeName(null, rawType, Arrays.asList(*typeArguments))
+        = ParameterizedTypeName(null, rawType, typeArguments.toList())
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
     @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
-        = ParameterizedTypeName(null, ClassName.get(rawType), TypeName.list(*typeArguments))
+        = ParameterizedTypeName(null, ClassName.get(rawType),
+        typeArguments.map { TypeName.get(it) })
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
     @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type)
-        = ParameterizedTypeName(null, ClassName.get(rawType), list(*typeArguments))
+        = ParameterizedTypeName(null, ClassName.get(rawType), typeArguments.map { TypeName.get(it) })
 
     /** Returns a parameterized type equivalent to `type`.  */
-    @JvmStatic fun get(type: ParameterizedType)
-        = get(type, LinkedHashMap<Type, TypeVariableName>())
+    @JvmStatic fun get(type: ParameterizedType) = get(type, mutableMapOf())
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(
@@ -112,9 +99,9 @@ class ParameterizedTypeName internal constructor(
         type.ownerType as ParameterizedType else
         null
 
-      val typeArguments = TypeName.list(*type.actualTypeArguments, map = map)
+      val typeArguments = type.actualTypeArguments.map { TypeName.get(it, map = map) }
       return if (ownerType != null)
-        get(ownerType, map).nestedClass(rawType.simpleName(), typeArguments) else
+        get(ownerType, map = map).nestedClass(rawType.simpleName(), typeArguments) else
         ParameterizedTypeName(null, rawType, typeArguments)
     }
   }

@@ -21,8 +21,6 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
-import java.util.ArrayList
-import java.util.LinkedHashMap
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
@@ -119,8 +117,7 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
     /** Returns a type name equivalent to `mirror`.  */
     @JvmOverloads @JvmStatic fun get(
         mirror: TypeMirror,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
-        = LinkedHashMap<TypeParameterElement, TypeVariableName>())
+        typeVariables: MutableMap<TypeParameterElement, TypeVariableName> = mutableMapOf())
         : TypeName {
       return mirror.accept(object : SimpleTypeVisitor7<TypeName, Void?>() {
         override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
@@ -148,7 +145,7 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
             return rawType
           }
 
-          val typeArgumentNames = ArrayList<TypeName>()
+          val typeArgumentNames = mutableListOf<TypeName>()
           for (typeArgument in t.typeArguments) {
             typeArgumentNames.add(get(typeArgument, typeVariables))
           }
@@ -186,14 +183,12 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
 
 
     /** Returns a type name equivalent to `type`.  */
-    @JvmStatic fun get(type: KClass<*>): TypeName {
-      return get(type.java)
-    }
+    @JvmStatic fun get(type: KClass<*>) = get(type.java)
 
     /** Returns a type name equivalent to `type`.  */
     @JvmOverloads @JvmStatic fun get(
         type: Type,
-        map: MutableMap<Type, TypeVariableName> = LinkedHashMap<Type, TypeVariableName>())
+        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
         : TypeName {
       when (type) {
         is Class<*> -> {
@@ -217,26 +212,6 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
         is GenericArrayType -> return ArrayTypeName.get(type, map)
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
-    }
-
-    /** Converts an array of types to a list of type names.  */
-    internal fun list(vararg types: KClass<*>): List<TypeName> {
-      val result = ArrayList<TypeName>(types.size)
-      for (type in types) {
-        result.add(get(type))
-      }
-      return result
-    }
-
-    @JvmOverloads internal fun list(
-        vararg types: Type,
-        map: MutableMap<Type, TypeVariableName> = LinkedHashMap<Type, TypeVariableName>())
-        : List<TypeName> {
-      val result = ArrayList<TypeName>(types.size)
-      for (type in types) {
-        result.add(get(type, map))
-      }
-      return result
     }
 
     /** Returns the array component of `type`, or null if `type` is not an array.  */

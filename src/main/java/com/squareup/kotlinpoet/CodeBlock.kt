@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.ArrayList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.lang.model.element.Element
@@ -90,8 +89,8 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
   }
 
   class Builder {
-    internal val formatParts: MutableList<String> = ArrayList()
-    internal val args: MutableList<Any?> = ArrayList()
+    internal val formatParts = mutableListOf<String>()
+    internal val args = mutableListOf<Any?>()
 
     /**
      * Adds code using named arguments.
@@ -227,7 +226,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
             "unused arguments: expected $relativeParameterCount, received ${args.size}" }
       }
       if (hasIndexed) {
-        val unused = ArrayList<String>()
+        val unused = mutableListOf<String>()
         for (i in args.indices) {
           if (indexedParameterCount[i] == 0) {
             unused.add("%" + (i + 1))

@@ -17,10 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.Util.stringLiteralWithDoubleQuotes
 import java.io.IOException
-import java.util.ArrayList
 import java.util.EnumSet
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
 import java.util.Locale
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
@@ -54,10 +51,10 @@ internal class CodeWriter @JvmOverloads constructor(
   private var kdoc = false
   private var comment = false
   private var packageName = NO_PACKAGE
-  private val typeSpecStack = ArrayList<TypeSpec>()
-  private val staticImportClassNames = LinkedHashSet<String>()
-  private val importableTypes = LinkedHashMap<String, ClassName>()
-  private val referencedNames = LinkedHashSet<String>()
+  private val typeSpecStack = mutableListOf<TypeSpec>()
+  private val staticImportClassNames = mutableSetOf<String>()
+  private val importableTypes = mutableMapOf<String, ClassName>()
+  private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
 
   /**
@@ -455,8 +452,6 @@ internal class CodeWriter @JvmOverloads constructor(
    * collisions, that type's first use is imported.
    */
   fun suggestedImports(): Map<String, ClassName> {
-    val result = LinkedHashMap(importableTypes)
-    result.keys.removeAll(referencedNames)
-    return result
+    return importableTypes.filterKeys { it !in referencedNames }
   }
 }

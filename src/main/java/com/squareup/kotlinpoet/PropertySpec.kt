@@ -18,8 +18,6 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.Collections
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
 import kotlin.reflect.KClass
@@ -79,8 +77,8 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
 
   class Builder internal constructor(internal val type: TypeName, internal val name: String) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = ArrayList<AnnotationSpec>()
-    internal val modifiers = ArrayList<Modifier>()
+    internal val annotations = mutableListOf<AnnotationSpec>()
+    internal val modifiers = mutableListOf<Modifier>()
     internal var initializer: CodeBlock? = null
 
     fun addKdoc(format: String, vararg args: Any): Builder {
@@ -113,7 +111,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
 
     fun addModifiers(vararg modifiers: Modifier): Builder {
-      Collections.addAll(this.modifiers, *modifiers)
+      this.modifiers += modifiers
       return this
     }
 

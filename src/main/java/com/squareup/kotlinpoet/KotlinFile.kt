@@ -24,7 +24,6 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.TreeSet
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.tools.JavaFileObject
@@ -133,7 +132,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     }
 
     var importedTypesCount = 0
-    for (className in TreeSet(codeWriter.importedTypes().values)) {
+    for (className in codeWriter.importedTypes().values.toSortedSet()) {
       if (skipJavaLangImports && className.packageName() == "java.lang") continue
       codeWriter.emit("import %L\n", className)
       importedTypesCount++
@@ -200,7 +199,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       internal val packageName: String,
       internal val typeSpec: TypeSpec) {
     internal val fileComment = CodeBlock.builder()
-    internal val staticImports = TreeSet<String>()
+    internal val staticImports = sortedSetOf<String>()
     internal var skipJavaLangImports: Boolean = false
     internal var indent = "  "
 

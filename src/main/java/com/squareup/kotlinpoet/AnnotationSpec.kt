@@ -19,9 +19,7 @@ import com.squareup.kotlinpoet.Util.characterLiteralWithoutSingleQuotes
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Array
-import java.util.ArrayList
 import java.util.Arrays
-import java.util.LinkedHashMap
 import java.util.Objects
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -99,7 +97,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(type)
     for ((key, value) in members) {
-      builder.members.put(key, ArrayList(value))
+      builder.members.put(key, value.toMutableList())
     }
     return builder
   }
@@ -128,14 +126,14 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   }
 
   class Builder internal constructor(internal val type: TypeName) {
-    internal val members = LinkedHashMap<String, MutableList<CodeBlock>>()
+    internal val members = mutableMapOf<String, MutableList<CodeBlock>>()
 
     fun addMember(name: String, format: String, vararg args: Any): Builder {
       return addMember(name, CodeBlock.of(format, *args))
     }
 
     fun addMember(name: String, codeBlock: CodeBlock): Builder {
-      members.getOrPut(name, ::ArrayList).add(codeBlock)
+      members.getOrPut(name, { mutableListOf() }).add(codeBlock)
       return this
     }
 
