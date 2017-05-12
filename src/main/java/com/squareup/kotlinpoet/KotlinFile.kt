@@ -240,7 +240,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     fun addStaticImport(className: ClassName, vararg names: String): Builder {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports.add(className.canonicalName + "." + name)
+        memberImports += className.canonicalName + "." + name
       }
       return this
     }

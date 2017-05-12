@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.Collections
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -166,12 +165,12 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(name)
     builder.kdoc.add(kdoc)
-    builder.annotations.addAll(annotations)
-    builder.modifiers.addAll(modifiers)
-    builder.typeVariables.addAll(typeVariables)
+    builder.annotations += annotations
+    builder.modifiers += modifiers
+    builder.typeVariables += typeVariables
     builder.returnType = returnType
-    builder.parameters.addAll(parameters)
-    builder.exceptions.addAll(exceptions)
+    builder.parameters += parameters
+    builder.exceptions += exceptions
     builder.code.add(code)
     builder.varargs = varargs
     builder.defaultValue = defaultValue
@@ -205,19 +204,17 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
-      for (annotationSpec in annotationSpecs) {
-        this.annotations.add(annotationSpec)
-      }
+      this.annotations += annotationSpecs
       return this
     }
 
     fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
-      this.annotations.add(annotationSpec)
+      annotations += annotationSpec
       return this
     }
 
     fun addAnnotation(annotation: ClassName): Builder {
-      this.annotations.add(AnnotationSpec.builder(annotation).build())
+      annotations += AnnotationSpec.builder(annotation).build()
       return this
     }
 
@@ -226,26 +223,22 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
 
     fun addModifiers(vararg modifiers: Modifier): Builder {
-      Collections.addAll(this.modifiers, *modifiers)
+      this.modifiers += modifiers
       return this
     }
 
     fun addModifiers(modifiers: Iterable<Modifier>): Builder {
-      for (modifier in modifiers) {
-        this.modifiers.add(modifier)
-      }
+      this.modifiers += modifiers
       return this
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
-      for (typeVariable in typeVariables) {
-        this.typeVariables.add(typeVariable)
-      }
+      this.typeVariables += typeVariables
       return this
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName): Builder {
-      typeVariables.add(typeVariable)
+      typeVariables += typeVariable
       return this
     }
 
@@ -260,14 +253,12 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     fun returns(returnType: KClass<*>) = returns(TypeName.get(returnType))
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder {
-      for (parameterSpec in parameterSpecs) {
-        this.parameters.add(parameterSpec)
-      }
+      parameters += parameterSpecs
       return this
     }
 
     fun addParameter(parameterSpec: ParameterSpec): Builder {
-      this.parameters.add(parameterSpec)
+      parameters += parameterSpec
       return this
     }
 
@@ -286,14 +277,12 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     fun addExceptions(exceptions: Iterable<TypeName>): Builder {
-      for (exception in exceptions) {
-        this.exceptions.add(exception)
-      }
+      this.exceptions += exceptions
       return this
     }
 
     fun addException(exception: TypeName): Builder {
-      this.exceptions.add(exception)
+      exceptions += exception
       return this
     }
 

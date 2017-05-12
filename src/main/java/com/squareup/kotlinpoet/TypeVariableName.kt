@@ -109,7 +109,7 @@ class TypeVariableName private constructor(
         typeVariableName = TypeVariableName(element.simpleName.toString(), visibleBounds)
         typeVariables.put(element, typeVariableName)
         for (typeMirror in element.bounds) {
-          bounds.add(TypeName.get(typeMirror, typeVariables))
+          bounds += TypeName.get(typeMirror, typeVariables)
         }
         bounds.remove(ANY)
       }
@@ -123,7 +123,7 @@ class TypeVariableName private constructor(
 
       val boundsTypeNames = mutableListOf<TypeName>()
       for (typeMirror in boundsMirrors) {
-        boundsTypeNames.add(TypeName.get(typeMirror))
+        boundsTypeNames += TypeName.get(typeMirror)
       }
 
       return TypeVariableName.of(name, boundsTypeNames)
@@ -141,7 +141,7 @@ class TypeVariableName private constructor(
         result = TypeVariableName(type.name, visibleBounds)
         map.put(type, result)
         for (bound in type.bounds) {
-          bounds.add(TypeName.get(bound, map))
+          bounds += TypeName.get(bound, map)
         }
         bounds.remove(ANY)
       }

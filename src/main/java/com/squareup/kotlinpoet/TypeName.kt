@@ -147,7 +147,7 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
 
           val typeArgumentNames = mutableListOf<TypeName>()
           for (typeArgument in t.typeArguments) {
-            typeArgumentNames.add(get(typeArgument, typeVariables))
+            typeArgumentNames += get(typeArgument, typeVariables)
           }
           return if (enclosing is ParameterizedTypeName)
             enclosing.nestedClass(rawType.simpleName(), typeArgumentNames) else
