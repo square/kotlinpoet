@@ -15,8 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
 import java.util.UUID
 import javax.lang.model.SourceVersion
 
@@ -81,7 +79,7 @@ class NameAllocator private constructor(
     private val allocatedNames: MutableSet<String>,
     private val tagToName: MutableMap<Any, String>) : Cloneable {
 
-  constructor() : this(LinkedHashSet<String>(), LinkedHashMap<Any, String>())
+  constructor() : this(mutableSetOf(), mutableMapOf())
 
   /**
    * Return a new name using `suggestion` that will not be a Java identifier or clash with other
@@ -116,7 +114,7 @@ class NameAllocator private constructor(
    * @return A deep copy of this NameAllocator.
    */
   public override fun clone(): NameAllocator {
-    return NameAllocator(LinkedHashSet(this.allocatedNames), LinkedHashMap(this.tagToName))
+    return NameAllocator(allocatedNames.toMutableSet(), tagToName.toMutableMap())
   }
 }
 

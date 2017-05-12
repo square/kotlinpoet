@@ -18,8 +18,6 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.Collections
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -79,8 +77,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   class Builder internal constructor(
       internal val type: TypeName,
       internal val name: String) {
-    internal val annotations = ArrayList<AnnotationSpec>()
-    internal val modifiers = ArrayList<Modifier>()
+    internal val annotations = mutableListOf<AnnotationSpec>()
+    internal val modifiers = mutableListOf<Modifier>()
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
       for (annotationSpec in annotationSpecs) {
@@ -102,7 +100,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
 
     fun addModifiers(vararg modifiers: Modifier): Builder {
-      Collections.addAll(this.modifiers, *modifiers)
+      this.modifiers += modifiers
       return this
     }
 

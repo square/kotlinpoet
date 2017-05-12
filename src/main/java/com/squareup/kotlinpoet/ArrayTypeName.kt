@@ -18,14 +18,12 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.LinkedHashMap
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.ArrayType
 
 class ArrayTypeName private constructor(
     val componentType: TypeName,
-    annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>()) : TypeName(annotations) {
+    annotations: List<AnnotationSpec> = emptyList()) : TypeName(annotations) {
 
   override fun annotated(annotations: List<AnnotationSpec>): ArrayTypeName {
     return ArrayTypeName(componentType, this.annotations + annotations)
@@ -56,8 +54,7 @@ class ArrayTypeName private constructor(
     /** Returns an array type equivalent to `mirror`.  */
     @JvmStatic internal fun get(
         mirror: ArrayType,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
-        = LinkedHashMap<TypeParameterElement, TypeVariableName>())
+        typeVariables: MutableMap<TypeParameterElement, TypeVariableName> = mutableMapOf())
         : ArrayTypeName {
       return ArrayTypeName(TypeName.get(mirror.componentType, typeVariables))
     }
@@ -65,7 +62,7 @@ class ArrayTypeName private constructor(
     /** Returns an array type equivalent to `type`.  */
     @JvmStatic internal fun get(
         type: GenericArrayType,
-        map: MutableMap<Type, TypeVariableName> = LinkedHashMap<Type, TypeVariableName>())
+        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
         : ArrayTypeName {
       return ArrayTypeName.of(TypeName.get(type.genericComponentType, map = map))
     }

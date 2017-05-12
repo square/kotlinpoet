@@ -18,15 +18,13 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.ArrayList
-import java.util.LinkedHashMap
 import javax.lang.model.element.TypeParameterElement
 import kotlin.reflect.KClass
 
 class WildcardTypeName private constructor(
     upperBounds: List<TypeName>,
     lowerBounds: List<TypeName>,
-    annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>()) : TypeName(annotations) {
+    annotations: List<AnnotationSpec> = emptyList()) : TypeName(annotations) {
 
   val upperBounds: List<TypeName> = Util.immutableList(upperBounds)
   val lowerBounds: List<TypeName> = Util.immutableList(lowerBounds)
@@ -89,8 +87,7 @@ class WildcardTypeName private constructor(
 
     @JvmOverloads @JvmStatic fun get(
         mirror: javax.lang.model.type.WildcardType,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
-        = LinkedHashMap<TypeParameterElement, TypeVariableName>())
+        typeVariables: MutableMap<TypeParameterElement, TypeVariableName> = mutableMapOf())
         : TypeName {
       val extendsBound = mirror.extendsBound
       if (extendsBound == null) {
@@ -105,11 +102,11 @@ class WildcardTypeName private constructor(
 
     @JvmStatic fun get(
         wildcardName: WildcardType,
-        map: MutableMap<Type, TypeVariableName> = LinkedHashMap<Type, TypeVariableName>())
+        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
         : TypeName {
       return WildcardTypeName(
-          list(*wildcardName.upperBounds, map = map),
-          list(*wildcardName.lowerBounds, map = map))
+          wildcardName.upperBounds.map { TypeName.get(it, map = map) },
+          wildcardName.lowerBounds.map { TypeName.get(it, map = map) })
     }
   }
 }

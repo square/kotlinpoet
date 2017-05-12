@@ -16,8 +16,6 @@
 package com.squareup.kotlinpoet
 
 import java.io.IOException
-import java.util.ArrayList
-import java.util.Collections
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -30,7 +28,7 @@ import kotlin.reflect.KClass
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName private constructor(
     names: List<String>,
-    annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>())
+    annotations: List<AnnotationSpec> = emptyList())
   : TypeName(annotations), Comparable<ClassName> {
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
@@ -90,14 +88,9 @@ class ClassName private constructor(
    * Returns a new [ClassName] instance for the specified `name` as nested inside this
    * class.
    */
-  fun nestedClass(name: String): ClassName {
-    val result = ArrayList<String>(names.size + 1)
-    result.addAll(names)
-    result.add(name)
-    return ClassName(result)
-  }
+  fun nestedClass(name: String) = ClassName(names + name)
 
-  fun simpleNames(): List<String> = names.subList(1, names.size)
+  fun simpleNames() = names.subList(1, names.size)
 
   /**
    * Returns a class that shares the same enclosing package or class. If this class is enclosed by
@@ -105,13 +98,13 @@ class ClassName private constructor(
    * it is equivalent to `get(packageName(), name)`.
    */
   fun peerClass(name: String): ClassName {
-    val result = ArrayList(names)
+    val result = names.toMutableList()
     result[result.size - 1] = name
     return ClassName(result)
   }
 
   /** Returns the simple name of this class, like `"Entry"` for [Map.Entry].  */
-  fun simpleName(): String = names[names.size - 1]
+  fun simpleName() = names[names.size - 1]
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
@@ -125,7 +118,7 @@ class ClassName private constructor(
       require(!clazz.isPrimitive) { "primitive types cannot be represented as a ClassName" }
       require(Void.TYPE != clazz) { "'void' type cannot be represented as a ClassName" }
       require(!clazz.isArray) { "array types cannot be represented as a ClassName" }
-      val names = ArrayList<String>()
+      val names = mutableListOf<String>()
       var c = clazz
       while (true) {
         names.add(c.simpleName)
@@ -135,7 +128,7 @@ class ClassName private constructor(
       // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
       val lastDot = c.name.lastIndexOf('.')
       if (lastDot != -1) names.add(c.name.substring(0, lastDot))
-      Collections.reverse(names)
+      names.reverse()
       return ClassName(names)
     }
 
@@ -154,7 +147,7 @@ class ClassName private constructor(
      * instances without such restrictions.
      */
     @JvmStatic fun bestGuess(classNameString: String): ClassName {
-      val names = ArrayList<String>()
+      val names = mutableListOf<String>()
 
       // Add the package name, like "java.util.concurrent", or "" for no package.
       var p = 0
@@ -185,16 +178,12 @@ class ClassName private constructor(
         packageName: String,
         simpleName: String,
         vararg simpleNames: String): ClassName {
-      val result = ArrayList<String>()
-      result.add(packageName)
-      result.add(simpleName)
-      Collections.addAll(result, *simpleNames)
-      return ClassName(result)
+      return ClassName(listOf(packageName, simpleName, *simpleNames))
     }
 
     /** Returns the class name for `element`.  */
     @JvmStatic fun get(element: TypeElement): ClassName {
-      val names = ArrayList<String>()
+      val names = mutableListOf<String>()
       var e: Element = element
       while (isClassOrInterface(e)) {
         require(element.nestingKind == TOP_LEVEL || element.nestingKind == MEMBER) {
@@ -204,7 +193,7 @@ class ClassName private constructor(
         e = e.enclosingElement
       }
       names.add(getPackage(element).qualifiedName.toString())
-      Collections.reverse(names)
+      names.reverse()
       return ClassName(names)
     }
 

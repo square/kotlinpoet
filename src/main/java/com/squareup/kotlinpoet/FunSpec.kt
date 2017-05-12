@@ -18,9 +18,7 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.ArrayList
 import java.util.Collections
-import java.util.LinkedHashSet
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -182,12 +180,12 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = ArrayList<AnnotationSpec>()
-    internal val modifiers = ArrayList<Modifier>()
-    internal val typeVariables = ArrayList<TypeVariableName>()
+    internal val annotations = mutableListOf<AnnotationSpec>()
+    internal val modifiers = mutableListOf<Modifier>()
+    internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var returnType: TypeName? = null
-    internal val parameters = ArrayList<ParameterSpec>()
-    internal val exceptions = LinkedHashSet<TypeName>()
+    internal val parameters = mutableListOf<ParameterSpec>()
+    internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
     internal var varargs: Boolean = false
     internal var defaultValue: CodeBlock? = null
@@ -395,7 +393,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
       funBuilder.addAnnotation(Override::class.java)
 
-      modifiers = LinkedHashSet(modifiers)
+      modifiers = modifiers.toMutableSet()
       modifiers.remove(Modifier.ABSTRACT)
       modifiers.remove(Util.DEFAULT) // LinkedHashSet permits null as element for Java 7
       funBuilder.addModifiers(modifiers)

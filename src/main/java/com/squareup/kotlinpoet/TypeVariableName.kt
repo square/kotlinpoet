@@ -17,17 +17,15 @@ package com.squareup.kotlinpoet
 
 import java.io.IOException
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.Arrays
 import java.util.Collections
-import java.util.LinkedHashMap
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
 
 class TypeVariableName private constructor(
     val name: String,
-    val bounds: List<TypeName>, annotations: List<AnnotationSpec> = ArrayList<AnnotationSpec>())
+    val bounds: List<TypeName>,
+    annotations: List<AnnotationSpec> = emptyList())
   : TypeName(annotations) {
 
   override fun annotated(annotations: List<AnnotationSpec>): TypeVariableName {
@@ -39,11 +37,11 @@ class TypeVariableName private constructor(
   }
 
   fun withBounds(vararg bounds: Type): TypeVariableName {
-    return withBounds(TypeName.list(*bounds))
+    return withBounds(bounds.map { get(it) })
   }
 
   fun withBounds(vararg bounds: KClass<*>): TypeVariableName {
-    return withBounds(TypeName.list(*bounds))
+    return withBounds(bounds.map { TypeName.get(it) })
   }
 
   fun withBounds(vararg bounds: TypeName): TypeVariableName {
@@ -62,9 +60,7 @@ class TypeVariableName private constructor(
   companion object {
     private fun of(name: String, bounds: List<TypeName>): TypeVariableName {
       // Strip java.lang.Object from bounds if it is present.
-      val boundsNoObject = ArrayList(bounds)
-      boundsNoObject.remove(ANY)
-      return TypeVariableName(name, Collections.unmodifiableList(boundsNoObject))
+      return TypeVariableName(name, bounds.filter { it != ANY })
     }
 
     /** Returns type variable named `name` without bounds.  */
@@ -79,12 +75,12 @@ class TypeVariableName private constructor(
 
     /** Returns type variable named `name` with `bounds`.  */
     @JvmStatic fun get(name: String, vararg bounds: KClass<*>): TypeVariableName {
-      return TypeVariableName.of(name, TypeName.list(*bounds))
+      return TypeVariableName.of(name, bounds.map { TypeName.get(it) })
     }
 
     /** Returns type variable named `name` with `bounds`.  */
     @JvmStatic fun get(name: String, vararg bounds: Type): TypeVariableName {
-      return TypeVariableName.of(name, TypeName.list(*bounds))
+      return TypeVariableName.of(name, bounds.map { get(it) })
     }
 
     /** Returns type variable equivalent to `mirror`.  */
@@ -108,7 +104,7 @@ class TypeVariableName private constructor(
       if (typeVariableName == null) {
         // Since the bounds field is public, we need to make it an unmodifiableList. But we control
         // the List that that wraps, which means we can change it before returning.
-        val bounds = ArrayList<TypeName>()
+        val bounds = mutableListOf<TypeName>()
         val visibleBounds = Collections.unmodifiableList(bounds)
         typeVariableName = TypeVariableName(element.simpleName.toString(), visibleBounds)
         typeVariables.put(element, typeVariableName)
@@ -125,7 +121,7 @@ class TypeVariableName private constructor(
       val name = element.simpleName.toString()
       val boundsMirrors = element.bounds
 
-      val boundsTypeNames = ArrayList<TypeName>()
+      val boundsTypeNames = mutableListOf<TypeName>()
       for (typeMirror in boundsMirrors) {
         boundsTypeNames.add(TypeName.get(typeMirror))
       }
@@ -136,11 +132,11 @@ class TypeVariableName private constructor(
     /** Returns type variable equivalent to `type`.  */
     @JvmOverloads @JvmStatic internal fun get(
         type: java.lang.reflect.TypeVariable<*>,
-        map: MutableMap<Type, TypeVariableName> = LinkedHashMap<Type, TypeVariableName>())
+        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
         : TypeVariableName {
       var result: TypeVariableName? = map[type]
       if (result == null) {
-        val bounds = ArrayList<TypeName>()
+        val bounds = mutableListOf<TypeName>()
         val visibleBounds = Collections.unmodifiableList(bounds)
         result = TypeVariableName(type.name, visibleBounds)
         map.put(type, result)

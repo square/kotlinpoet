@@ -20,10 +20,7 @@ import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.ArrayList
-import java.util.Collections
 import java.util.EnumSet
-import java.util.LinkedHashMap
 import java.util.Locale
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
@@ -50,7 +47,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val originatingElements: List<Element>
 
   init {
-    val originatingElementsMutable = ArrayList<Element>()
+    val originatingElementsMutable = mutableListOf<Element>()
     originatingElementsMutable.addAll(builder.originatingElements)
     for (typeSpec in builder.typeSpecs) {
       originatingElementsMutable.addAll(typeSpec.originatingElements)
@@ -290,18 +287,18 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       internal val name: String?,
       internal val anonymousTypeArguments: CodeBlock?) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = ArrayList<AnnotationSpec>()
-    internal val modifiers = ArrayList<Modifier>()
-    internal val typeVariables = ArrayList<TypeVariableName>()
+    internal val annotations = mutableListOf<AnnotationSpec>()
+    internal val modifiers = mutableListOf<Modifier>()
+    internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var superclass: TypeName = OBJECT
-    internal val superinterfaces = ArrayList<TypeName>()
-    internal val enumConstants = LinkedHashMap<String, TypeSpec>()
-    internal val propertySpecs = ArrayList<PropertySpec>()
+    internal val superinterfaces = mutableListOf<TypeName>()
+    internal val enumConstants = mutableMapOf<String, TypeSpec>()
+    internal val propertySpecs = mutableListOf<PropertySpec>()
     internal val staticBlock = CodeBlock.builder()
     internal val initializerBlock = CodeBlock.builder()
-    internal val funSpecs = ArrayList<FunSpec>()
-    internal val typeSpecs = ArrayList<TypeSpec>()
-    internal val originatingElements = ArrayList<Element>()
+    internal val funSpecs = mutableListOf<FunSpec>()
+    internal val typeSpecs = mutableListOf<TypeSpec>()
+    internal val originatingElements = mutableListOf<Element>()
 
     init {
       require(name == null || SourceVersion.isName(name)) { "not a valid name: $name" }
@@ -338,7 +335,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addModifiers(vararg modifiers: Modifier): Builder {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
-      Collections.addAll(this.modifiers, *modifiers)
+      this.modifiers += modifiers
       return this
     }
 
