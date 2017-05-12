@@ -21,7 +21,6 @@ import org.junit.Ignore
 import org.junit.Test
 import java.io.Serializable
 import java.nio.charset.Charset
-import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ErrorType
 import javax.lang.model.type.TypeKind
@@ -199,13 +198,13 @@ abstract class AbstractTypesTest {
     override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P)
         = typeVisitor.visitError(this, p)
 
-    // JDK8 Compatibility:
-    fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A>
+    override fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A>
         = throw UnsupportedOperationException()
 
-    fun <A : Annotation> getAnnotation(annotationType: Class<A>): A
+    override fun <A : Annotation> getAnnotation(annotationType: Class<A>): A
         = throw UnsupportedOperationException()
 
-    val annotationMirrors: List<AnnotationMirror> get() = throw UnsupportedOperationException()
+    override fun getAnnotationMirrors()
+        = throw UnsupportedOperationException()
   }
 }
