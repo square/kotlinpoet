@@ -46,9 +46,10 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun getParameterizedTypeMirror() {
-    val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(Any::class.java))
+    val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(String::class.java))
     assertThat(TypeName.get(setType))
-        .isEqualTo(ParameterizedTypeName.get(ClassName.get(Set::class), OBJECT))
+        .isEqualTo(
+            ParameterizedTypeName.get(ClassName.get(Set::class), ClassName.get(String::class)))
   }
 
   @Test fun getErrorType() {
@@ -115,8 +116,8 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun getArrayTypeMirror() {
-    assertThat(TypeName.get(types.getArrayType(getMirror(Any::class.java))))
-        .isEqualTo(ArrayTypeName.of(OBJECT))
+    assertThat(TypeName.get(types.getArrayType(getMirror(String::class.java))))
+        .isEqualTo(ArrayTypeName.of(ClassName.get(String::class)))
   }
 
   @Test fun getVoidTypeMirror() {

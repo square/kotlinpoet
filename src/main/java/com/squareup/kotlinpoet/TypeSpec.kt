@@ -117,7 +117,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           extendsTypes = superinterfaces
           implementsTypes = emptyList()
         } else {
-          extendsTypes = if (superclass == OBJECT) emptyList() else listOf(superclass)
+          extendsTypes = if (superclass == ANY) emptyList() else listOf(superclass)
           implementsTypes = superinterfaces
         }
 
@@ -287,7 +287,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
-    internal var superclass: TypeName = OBJECT
+    internal var superclass: TypeName = ANY
     internal val superinterfaces = mutableListOf<TypeName>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
@@ -352,7 +352,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun superclass(superclass: TypeName): Builder {
       check(kind == Kind.CLASS) { "only classes have super classes, not $kind" }
-      check(this.superclass === OBJECT) { "superclass already set to ${this.superclass}" }
+      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
       return this
     }
@@ -490,8 +490,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             "non-abstract type $name cannot declare abstract function ${funSpec.name}" }
       }
 
-      val superclassIsObject = superclass == OBJECT
-      val interestingSupertypeCount = (if (superclassIsObject) 0 else 1) + superinterfaces.size
+      val superclassIsAny = superclass == ANY
+      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
       require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
           "anonymous type has too many supertypes" }
 
