@@ -86,7 +86,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emit("%L", enumName)
-        if (!anonymousTypeArguments!!.formatParts().isEmpty()) {
+        if (!anonymousTypeArguments!!.formatParts.isEmpty()) {
           codeWriter.emit("(")
           codeWriter.emit(anonymousTypeArguments)
           codeWriter.emit(")")
