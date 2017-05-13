@@ -85,21 +85,13 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     if (isConstructor) {
-      codeWriter.emit("constructor(", enclosingName)
+      codeWriter.emit("constructor", enclosingName)
     } else {
-      codeWriter.emit("%L(", name)
+      codeWriter.emit("%L", name)
     }
 
-    var firstParameter = true
-    val i = parameters.iterator()
-    while (i.hasNext()) {
-      val parameter = i.next()
-      if (!firstParameter) codeWriter.emit(",").emitWrappingSpace()
-      parameter.emit(codeWriter, !i.hasNext() && varargs)
-      firstParameter = false
-    }
+    emitParameterList(codeWriter)
 
-    codeWriter.emit(")")
     if (returnType != null) {
       codeWriter.emit(": %T", returnType)
     }
@@ -134,6 +126,20 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
       codeWriter.emit("}\n")
     }
+  }
+
+  @Throws(IOException::class)
+  internal fun emitParameterList(codeWriter: CodeWriter) {
+    codeWriter.emit("(")
+    var firstParameter = true
+    val i = parameters.iterator()
+    while (i.hasNext()) {
+      val parameter = i.next()
+      if (!firstParameter) codeWriter.emit(",").emitWrappingSpace()
+      parameter.emit(codeWriter, !i.hasNext() && varargs)
+      firstParameter = false
+    }
+    codeWriter.emit(")")
   }
 
   fun hasModifier(modifier: Modifier) = modifiers.contains(modifier)

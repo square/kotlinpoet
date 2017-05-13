@@ -2228,9 +2228,8 @@ class TypeSpecTest {
     try {
       interfaceBuilder.addInitializerBlock(CodeBlock.builder().build())
       fail("Exception expected")
-    } catch (e: UnsupportedOperationException) {
+    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun initializerBlockUnsupportedExceptionOnAnnotation() {
@@ -2238,9 +2237,8 @@ class TypeSpecTest {
     try {
       annotationBuilder.addInitializerBlock(CodeBlock.builder().build())
       fail("Exception expected")
-    } catch (e: UnsupportedOperationException) {
+    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun lineWrapping() {

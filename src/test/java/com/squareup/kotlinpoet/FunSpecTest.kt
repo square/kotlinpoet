@@ -168,7 +168,6 @@ class FunSpecTest {
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("cannot override method with modifiers: [static]")
     }
-
   }
 
   @Test fun equalsAndHashCode() {
