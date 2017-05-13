@@ -22,6 +22,7 @@ import java.nio.file.Path
 import java.util.Arrays
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Element
+import javax.tools.FileObject
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.SimpleJavaFileObject
@@ -57,8 +58,12 @@ internal class TestFiler(
       = throw UnsupportedOperationException("Not implemented.")
 
   override fun createResource(location: JavaFileManager.Location, pkg: CharSequence,
-                              relativeName: CharSequence, vararg originatingElements: Element)
-      = throw UnsupportedOperationException("Not implemented.")
+      relativeName: CharSequence, vararg originatingElements: Element): FileObject {
+    val relative = pkg.toString().replace(".", separator) + separator + relativeName
+    val path = fileSystemRoot.resolve(relative)
+    originatingElementsMap.put(path, Util.immutableSet(Arrays.asList(*originatingElements)))
+    return Source(path)
+  }
 
   override fun getResource(
       location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence)

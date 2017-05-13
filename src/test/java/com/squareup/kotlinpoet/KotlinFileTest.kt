@@ -42,7 +42,8 @@ class KotlinFileTest {
     val hello = TypeSpec.classBuilder("HelloWorld")
         .addFun(beyond)
         .build()
-    val source = KotlinFile.builder("com.example.helloworld", hello)
+    val source = KotlinFile.builder("com.example.helloworld", "HelloWorld")
+        .addType(hello)
         .addStaticImport(hoverboard, "createNimbus")
         .addStaticImport(namedBoards, "*")
         .addStaticImport(Collections::class, "*")
@@ -72,8 +73,8 @@ class KotlinFileTest {
 
   @Test fun importStaticForCrazyFormatsWorks() {
     val method = FunSpec.builder("method").build()
-    KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
                 .addStatement("%T", Runtime::class)
                 .addStatement("%T.a()", Runtime::class)
@@ -95,8 +96,8 @@ class KotlinFileTest {
   }
 
   @Test fun importStaticMixed() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
                 .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
                 .addStatement("%T.gc()", System::class)
@@ -135,8 +136,8 @@ class KotlinFileTest {
   @Ignore("addStaticImport doesn't support members with %L")
   @Test
   fun importStaticDynamic() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addFun(FunSpec.builder("main")
                 .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
                 .build())
@@ -157,7 +158,9 @@ class KotlinFileTest {
   }
 
   @Test fun importStaticNone() {
-    val source = KotlinFile.builder("readme", importStaticTypeSpec("Util")).build()
+    val source = KotlinFile.builder("readme", "Util")
+        .addType(importStaticTypeSpec("Util"))
+        .build()
     assertThat(source.toString()).isEqualTo("""
         |package readme
         |
@@ -175,7 +178,8 @@ class KotlinFileTest {
   }
 
   @Test fun importStaticOnce() {
-    val source = KotlinFile.builder("readme", importStaticTypeSpec("Util"))
+    val source = KotlinFile.builder("readme", "Util")
+        .addType(importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS).build()
     assertThat(source.toString()).isEqualTo("""
         |package readme
@@ -195,7 +199,8 @@ class KotlinFileTest {
   }
 
   @Test fun importStaticTwice() {
-    val source = KotlinFile.builder("readme", importStaticTypeSpec("Util"))
+    val source = KotlinFile.builder("readme", "Util")
+        .addType(importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS)
         .addStaticImport(TimeUnit.MINUTES)
         .build()
@@ -217,7 +222,8 @@ class KotlinFileTest {
   }
 
   @Test fun importStaticUsingWildcards() {
-    val source = KotlinFile.builder("readme", importStaticTypeSpec("Util"))
+    val source = KotlinFile.builder("readme", "Util")
+        .addType(importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit::class, "*")
         .addStaticImport(System::class, "*")
         .build()
@@ -250,8 +256,8 @@ class KotlinFileTest {
   }
 
   @Test fun noImports() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco").build())
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco").build())
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
@@ -262,8 +268,8 @@ class KotlinFileTest {
   }
 
   @Test fun singleImport() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addProperty(Date::class, "madeFreshDate")
             .build())
         .build()
@@ -279,8 +285,8 @@ class KotlinFileTest {
   }
 
   @Test fun conflictingImports() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addProperty(Date::class, "madeFreshDate")
             .addProperty(ClassName.get("java.sql", "Date"), "madeFreshDatabaseDate")
             .build())
@@ -300,8 +306,8 @@ class KotlinFileTest {
 
   @Test fun skipJavaLangImportsWithConflictingClassLast() {
     // Whatever is used first wins! In this case the Float in java.lang is imported.
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addProperty(ClassName.get("java.lang", "Float"), "litres")
             .addProperty(ClassName.get("com.squareup.soda", "Float"), "beverage")
             .build())
@@ -320,8 +326,8 @@ class KotlinFileTest {
 
   @Test fun skipJavaLangImportsWithConflictingClassFirst() {
     // Whatever is used first wins! In this case the Float in com.squareup.soda is imported.
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addProperty(ClassName.get("com.squareup.soda", "Float"), "beverage")
             .addProperty(ClassName.get("java.lang", "Float"), "litres")
             .build())
@@ -341,8 +347,8 @@ class KotlinFileTest {
   }
 
   @Test fun conflictingParentName() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("A")
+    val source = KotlinFile.builder("com.squareup.tacos", "A")
+        .addType(TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("Twin").build())
                 .addType(TypeSpec.classBuilder("C")
@@ -377,8 +383,8 @@ class KotlinFileTest {
   }
 
   @Test fun conflictingChildName() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("A")
+    val source = KotlinFile.builder("com.squareup.tacos", "A")
+        .addType(TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
                     .addProperty(ClassName.get("com.squareup.tacos", "A", "Twin", "D"), "d")
@@ -413,8 +419,8 @@ class KotlinFileTest {
   }
 
   @Test fun conflictingNameOutOfScope() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("A")
+    val source = KotlinFile.builder("com.squareup.tacos", "A")
+        .addType(TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
                     .addProperty(ClassName.get("com.squareup.tacos", "A", "Twin", "D"), "d")
@@ -453,8 +459,8 @@ class KotlinFileTest {
   }
 
   @Test fun nestedClassAndSuperclassShareName() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .superclass(ClassName.get("com.squareup.wire", "Message"))
             .addType(TypeSpec.classBuilder("Builder")
                 .superclass(ClassName.get("com.squareup.wire", "Message", "Builder"))
@@ -475,8 +481,8 @@ class KotlinFileTest {
 
   /** https://github.com/square/javapoet/issues/366  */
   @Test fun annotationIsNestedClass() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("TestComponent")
+    val source = KotlinFile.builder("com.squareup.tacos", "TestComponent")
+        .addType(TypeSpec.classBuilder("TestComponent")
             .addAnnotation(ClassName.get("dagger", "Component"))
             .addType(TypeSpec.classBuilder("Builder")
                 .addAnnotation(ClassName.get("dagger", "Component", "Builder"))
@@ -498,8 +504,8 @@ class KotlinFileTest {
   }
 
   @Test fun defaultPackage() {
-    val source = KotlinFile.builder("",
-        TypeSpec.classBuilder("HelloWorld")
+    val source = KotlinFile.builder("", "HelloWorld")
+        .addType(TypeSpec.classBuilder("HelloWorld")
             .addFun(FunSpec.builder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(Array<String>::class, "args")
@@ -521,8 +527,10 @@ class KotlinFileTest {
   }
 
   @Test fun defaultPackageTypesAreNotImported() {
-    val source = KotlinFile.builder("hello",
-        TypeSpec.classBuilder("World").addSuperinterface(ClassName.get("", "Test")).build())
+    val source = KotlinFile.builder("hello", "World")
+        .addType(TypeSpec.classBuilder("World")
+            .addSuperinterface(ClassName.get("", "Test"))
+            .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package hello
@@ -533,8 +541,8 @@ class KotlinFileTest {
   }
 
   @Test fun topOfFileComment() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco").build())
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco").build())
         .addFileComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
         .build()
     assertThat(source.toString()).isEqualTo("""
@@ -547,8 +555,8 @@ class KotlinFileTest {
   }
 
   @Test fun emptyLinesInTopOfFileComment() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco").build())
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco").build())
         .addFileComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
         .build()
     assertThat(source.toString()).isEqualTo("""
@@ -565,8 +573,8 @@ class KotlinFileTest {
   }
 
   @Test fun packageClassConflictsWithNestedClass() {
-    val source = KotlinFile.builder("com.squareup.tacos",
-        TypeSpec.classBuilder("Taco")
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
             .addProperty(ClassName.get("com.squareup.tacos", "A"), "a")
             .addType(TypeSpec.classBuilder("A").build())
             .build())
@@ -579,6 +587,22 @@ class KotlinFileTest {
         |
         |  class A {
         |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun multipleTypesInOneFile() {
+    val source = KotlinFile.builder("com.squareup.tacos", "AB")
+        .addType(TypeSpec.classBuilder("A").build())
+        .addType(TypeSpec.classBuilder("B").build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class A {
+        |}
+        |
+        |class B {
         |}
         |""".trimMargin())
   }
