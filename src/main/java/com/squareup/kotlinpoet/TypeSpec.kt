@@ -36,6 +36,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
   val modifiers: Set<Modifier> = Util.immutableSet(builder.modifiers)
   val typeVariables: List<TypeVariableName> = Util.immutableList(builder.typeVariables)
+  val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superinterfaces: List<TypeName> = Util.immutableList(builder.superinterfaces)
   val enumConstants: Map<String, TypeSpec> = Util.immutableMap(builder.enumConstants)
@@ -111,6 +112,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emitTypeVariables(typeVariables)
 
+        primaryConstructor?.emitParameterList(codeWriter)
+
         val extendsTypes: List<TypeName>
         val implementsTypes: List<TypeName>
         if (kind == Kind.INTERFACE) {
@@ -183,6 +186,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         if (!firstMember) codeWriter.emit("\n")
         propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
         firstMember = false
+      }
+
+      if (primaryConstructor != null && !primaryConstructor.code.isEmpty()) {
+        codeWriter.emit("init {\n")
+        codeWriter.indent()
+        codeWriter.emit(primaryConstructor.code)
+        codeWriter.unindent()
+        codeWriter.emit("}\n")
       }
 
       // Initializer block.
@@ -287,6 +298,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
+    internal var primaryConstructor : FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val superinterfaces = mutableListOf<TypeName>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
@@ -343,6 +355,17 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addTypeVariable(typeVariable: TypeVariableName): Builder {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       typeVariables += typeVariable
+      return this
+    }
+
+    fun primaryConstructor(primaryConstructor: FunSpec?): Builder {
+      check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      if (primaryConstructor != null) {
+        require (primaryConstructor.isConstructor) {
+          "expected a constructor but was ${primaryConstructor.name}"
+        }
+      }
+      this.primaryConstructor = primaryConstructor
       return this
     }
 
@@ -415,9 +438,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addInitializerBlock(block: CodeBlock): Builder {
-      if (kind != Kind.CLASS && kind != Kind.ENUM) {
-        throw UnsupportedOperationException(kind.toString() + " can't have initializer blocks")
-      }
+      check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       initializerBlock.add("{\n")
           .indent()
           .add(block)
