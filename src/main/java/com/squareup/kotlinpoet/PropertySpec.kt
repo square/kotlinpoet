@@ -69,8 +69,8 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(type, name)
     builder.kdoc.add(kdoc)
-    builder.annotations.addAll(annotations)
-    builder.modifiers.addAll(modifiers)
+    builder.annotations += annotations
+    builder.modifiers += modifiers
     builder.initializer = initializer
     return builder
   }
@@ -92,19 +92,17 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
-      for (annotationSpec in annotationSpecs) {
-        this.annotations.add(annotationSpec)
-      }
+      annotations += annotationSpecs
       return this
     }
 
     fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
-      this.annotations.add(annotationSpec)
+      annotations += annotationSpec
       return this
     }
 
     fun addAnnotation(annotation: ClassName): Builder {
-      this.annotations.add(AnnotationSpec.builder(annotation).build())
+      annotations += AnnotationSpec.builder(annotation).build()
       return this
     }
 

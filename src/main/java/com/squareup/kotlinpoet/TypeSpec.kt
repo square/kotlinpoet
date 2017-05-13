@@ -48,9 +48,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   init {
     val originatingElementsMutable = mutableListOf<Element>()
-    originatingElementsMutable.addAll(builder.originatingElements)
+    originatingElementsMutable += builder.originatingElements
     for (typeSpec in builder.typeSpecs) {
-      originatingElementsMutable.addAll(typeSpec.originatingElements)
+      originatingElementsMutable += typeSpec.originatingElements
     }
     this.originatingElements = Util.immutableList(originatingElementsMutable)
   }
@@ -60,15 +60,15 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, anonymousTypeArguments)
     builder.kdoc.add(kdoc)
-    builder.annotations.addAll(annotations)
-    builder.modifiers.addAll(modifiers)
-    builder.typeVariables.addAll(typeVariables)
+    builder.annotations += annotations
+    builder.modifiers += modifiers
+    builder.typeVariables += typeVariables
     builder.superclass = superclass
-    builder.superinterfaces.addAll(superinterfaces)
-    builder.enumConstants.putAll(enumConstants)
-    builder.propertySpecs.addAll(propertySpecs)
-    builder.funSpecs.addAll(funSpecs)
-    builder.typeSpecs.addAll(typeSpecs)
+    builder.superinterfaces += superinterfaces
+    builder.enumConstants += enumConstants
+    builder.propertySpecs += propertySpecs
+    builder.funSpecs += funSpecs
+    builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
     builder.staticBlock.add(staticBlock)
     return builder
@@ -312,14 +312,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
-      for (annotationSpec in annotationSpecs) {
-        this.annotations.add(annotationSpec)
-      }
+      annotations += annotationSpecs
       return this
     }
 
     fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
-      this.annotations.add(annotationSpec)
+      annotations += annotationSpec
       return this
     }
 
@@ -338,15 +336,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
-      for (typeVariable in typeVariables) {
-        this.typeVariables.add(typeVariable)
-      }
+      this.typeVariables += typeVariables
       return this
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName): Builder {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
-      typeVariables.add(typeVariable)
+      typeVariables += typeVariable
       return this
     }
 
@@ -362,14 +358,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>): Builder {
-      for (superinterface in superinterfaces) {
-        addSuperinterface(superinterface)
-      }
+      this.superinterfaces += superinterfaces
       return this
     }
 
     fun addSuperinterface(superinterface: TypeName): Builder {
-      this.superinterfaces.add(superinterface)
+      superinterfaces += superinterface
       return this
     }
 
@@ -391,9 +385,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperties(propertySpecs: Iterable<PropertySpec>): Builder {
-      for (propertySpec in propertySpecs) {
-        addProperty(propertySpec)
-      }
+      this.propertySpecs += propertySpecs
       return this
     }
 
@@ -404,7 +396,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         check(propertySpec.modifiers.containsAll(check)) {
           "$kind $name.${propertySpec.name} requires modifiers $check" }
       }
-      propertySpecs.add(propertySpec)
+      propertySpecs += propertySpec
       return this
     }
 
@@ -435,9 +427,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunctions(funSpecs: Iterable<FunSpec>): Builder {
-      for (funSpec in funSpecs) {
-        addFun(funSpec)
-      }
+      this.funSpecs += funSpecs
       return this
     }
 
@@ -457,26 +447,24 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         check(!hasDefaultModifier(funSpec.modifiers)) {
           "$kind $name.${funSpec.name} cannot be default" }
       }
-      funSpecs.add(funSpec)
+      funSpecs += funSpec
       return this
     }
 
     fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder {
-      for (typeSpec in typeSpecs) {
-        addType(typeSpec)
-      }
+      this.typeSpecs += typeSpecs
       return this
     }
 
     fun addType(typeSpec: TypeSpec): Builder {
       require(typeSpec.modifiers.containsAll(kind.implicitTypeModifiers)) {
           "$kind $name.${typeSpec.name} requires modifiers ${kind.implicitTypeModifiers}" }
-      typeSpecs.add(typeSpec)
+      typeSpecs += typeSpec
       return this
     }
 
     fun addOriginatingElement(originatingElement: Element): Builder {
-      originatingElements.add(originatingElement)
+      originatingElements += originatingElement
       return this
     }
 

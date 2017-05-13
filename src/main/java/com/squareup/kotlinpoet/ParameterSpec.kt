@@ -69,8 +69,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   fun toBuilder(type: TypeName = this.type, name: String = this.name): Builder {
     val builder = Builder(type, name)
-    builder.annotations.addAll(annotations)
-    builder.modifiers.addAll(modifiers)
+    builder.annotations += annotations
+    builder.modifiers += modifiers
     return builder
   }
 
@@ -81,19 +81,17 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     internal val modifiers = mutableListOf<Modifier>()
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
-      for (annotationSpec in annotationSpecs) {
-        this.annotations.add(annotationSpec)
-      }
+      annotations += annotationSpecs
       return this
     }
 
     fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
-      this.annotations.add(annotationSpec)
+      annotations += annotationSpec
       return this
     }
 
     fun addAnnotation(annotation: ClassName): Builder {
-      this.annotations.add(AnnotationSpec.builder(annotation).build())
+      annotations += AnnotationSpec.builder(annotation).build()
       return this
     }
 
@@ -105,9 +103,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     }
 
     fun addModifiers(modifiers: Iterable<Modifier>): Builder {
-      for (modifier in modifiers) {
-        this.modifiers.add(modifier)
-      }
+      this.modifiers += modifiers
       return this
     }
 

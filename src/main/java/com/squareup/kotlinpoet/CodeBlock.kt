@@ -81,7 +81,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
 
   fun toBuilder(): Builder {
     val builder = Builder()
-    builder.formatParts.addAll(formatParts)
+    builder.formatParts += formatParts
     builder.args.addAll(args)
     return builder
   }
@@ -112,12 +112,12 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       while (p < format.length) {
         val nextP = format.indexOf("%", p)
         if (nextP == -1) {
-          formatParts.add(format.substring(p, format.length))
+          formatParts += format.substring(p, format.length)
           break
         }
 
         if (p != nextP) {
-          formatParts.add(format.substring(p, nextP))
+          formatParts += format.substring(p, nextP)
           p = nextP
         }
 
@@ -133,13 +133,13 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
             "Missing named argument for %$argumentName" }
           val formatChar = matcher.group("typeChar")[0]
           addArgument(format, formatChar, arguments[argumentName])
-          formatParts.add("%" + formatChar)
+          formatParts += "%" + formatChar
           p += matcher.regionEnd()
         } else {
           require(p < format.length - 1) { "dangling % at end" }
           require(isNoArgPlaceholder(format[p + 1])) {
             "unknown format %${format[p + 1]} at ${p + 1} in '$format'" }
-          formatParts.add(format.substring(p, p + 2))
+          formatParts += format.substring(p, p + 2)
           p += 2
         }
       }
@@ -170,7 +170,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
         if (format[p] != '%') {
           var nextP = format.indexOf('%', p + 1)
           if (nextP == -1) nextP = format.length
-          formatParts.add(format.substring(p, nextP))
+          formatParts += format.substring(p, nextP)
           p = nextP
           continue
         }
@@ -190,7 +190,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
         if (isNoArgPlaceholder(c)) {
           require(indexStart == indexEnd) {
             "%%, %>, %<, %[, %], and %W may not have an index" }
-          formatParts.add("%" + c)
+          formatParts += "%" + c
           continue
         }
 
@@ -216,7 +216,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
 
         addArgument(format, c, args[index])
 
-        formatParts.add("%" + c)
+        formatParts += "%" + c
       }
 
       if (hasRelative) {
@@ -227,7 +227,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
         val unused = mutableListOf<String>()
         for (i in args.indices) {
           if (indexedParameterCount[i] == 0) {
-            unused.add("%" + (i + 1))
+            unused += "%" + (i + 1)
           }
         }
         val s = if (unused.size == 1) "" else "s"
@@ -241,10 +241,10 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
 
     private fun addArgument(format: String, c: Char, arg: Any?) {
       when (c) {
-        'N' -> this.args.add(argToName(arg))
-        'L' -> this.args.add(argToLiteral(arg))
-        'S' -> this.args.add(argToString(arg))
-        'T' -> this.args.add(argToType(arg))
+        'N' -> this.args += argToName(arg)
+        'L' -> this.args += argToLiteral(arg)
+        'S' -> this.args += argToString(arg)
+        'T' -> this.args += argToType(arg)
         else -> throw IllegalArgumentException(
             String.format("invalid format string: '%s'", format))
       }
@@ -311,18 +311,18 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
     }
 
     fun add(codeBlock: CodeBlock): Builder {
-      formatParts.addAll(codeBlock.formatParts)
+      formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
       return this
     }
 
     fun indent(): Builder {
-      this.formatParts.add("%>")
+      formatParts += "%>"
       return this
     }
 
     fun unindent(): Builder {
-      this.formatParts.add("%<")
+      formatParts += "%<"
       return this
     }
 

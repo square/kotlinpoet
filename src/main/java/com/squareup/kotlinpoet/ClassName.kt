@@ -121,13 +121,13 @@ class ClassName private constructor(
       val names = mutableListOf<String>()
       var c = clazz
       while (true) {
-        names.add(c.simpleName)
+        names += c.simpleName
         val enclosing = c.enclosingClass ?: break
         c = enclosing
       }
       // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
       val lastDot = c.name.lastIndexOf('.')
-      if (lastDot != -1) names.add(c.name.substring(0, lastDot))
+      if (lastDot != -1) names += c.name.substring(0, lastDot)
       names.reverse()
       return ClassName(names)
     }
@@ -155,7 +155,7 @@ class ClassName private constructor(
         p = classNameString.indexOf('.', p) + 1
         require(p != 0) { "couldn't make a guess for ${classNameString}" }
       }
-      names.add(if (p != 0) classNameString.substring(0, p - 1) else "")
+      names += if (p != 0) classNameString.substring(0, p - 1) else ""
 
       // Add the class names, like "Map" and "Entry".
       for (part in classNameString.substring(p).split('.')) {
@@ -163,7 +163,7 @@ class ClassName private constructor(
           "couldn't make a guess for $classNameString"
         }
 
-        names.add(part)
+        names += part
       }
 
       require(names.size >= 2) { "couldn't make a guess for $classNameString" }
@@ -189,10 +189,10 @@ class ClassName private constructor(
         require(element.nestingKind == TOP_LEVEL || element.nestingKind == MEMBER) {
           "unexpected type testing"
         }
-        names.add(e.simpleName.toString())
+        names += e.simpleName.toString()
         e = e.enclosingElement
       }
-      names.add(getPackage(element).qualifiedName.toString())
+      names += getPackage(element).qualifiedName.toString()
       names.reverse()
       return ClassName(names)
     }
