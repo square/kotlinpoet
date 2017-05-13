@@ -391,7 +391,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       val methodName = method.simpleName.toString()
       val funBuilder = FunSpec.builder(methodName)
 
-      funBuilder.addAnnotation(Override::class.java)
+      funBuilder.addAnnotation(Override::class)
 
       modifiers = modifiers.toMutableSet()
       modifiers.remove(Modifier.ABSTRACT)

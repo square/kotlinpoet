@@ -36,8 +36,8 @@ class KotlinFileTest {
         .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
         .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
         .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
-        .addStatement("%T.sort(result)", Collections::class.java)
-        .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections::class.java)
+        .addStatement("%T.sort(result)", Collections::class)
+        .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections::class)
         .build()
     val hello = TypeSpec.classBuilder("HelloWorld")
         .addFun(beyond)
@@ -45,7 +45,7 @@ class KotlinFileTest {
     val source = KotlinFile.builder("com.example.helloworld", hello)
         .addStaticImport(hoverboard, "createNimbus")
         .addStaticImport(namedBoards, "*")
-        .addStaticImport(Collections::class.java, "*")
+        .addStaticImport(Collections::class, "*")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.example.helloworld
@@ -75,21 +75,21 @@ class KotlinFileTest {
     KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
-                .addStatement("%T", Runtime::class.java)
-                .addStatement("%T.a()", Runtime::class.java)
-                .addStatement("%T.X", Runtime::class.java)
-                .addStatement("%T%T", Runtime::class.java, Runtime::class.java)
-                .addStatement("%T.%T", Runtime::class.java, Runtime::class.java)
-                .addStatement("%1T%1T", Runtime::class.java)
-                .addStatement("%1T%2L%1T", Runtime::class.java, "?")
-                .addStatement("%1T%2L%2S%1T", Runtime::class.java, "?")
-                .addStatement("%1T%2L%2S%1T%3N%1T", Runtime::class.java, "?", method)
-                .addStatement("%T%L", Runtime::class.java, "?")
-                .addStatement("%T%S", Runtime::class.java, "?")
-                .addStatement("%T%N", Runtime::class.java, method)
+                .addStatement("%T", Runtime::class)
+                .addStatement("%T.a()", Runtime::class)
+                .addStatement("%T.X", Runtime::class)
+                .addStatement("%T%T", Runtime::class, Runtime::class)
+                .addStatement("%T.%T", Runtime::class, Runtime::class)
+                .addStatement("%1T%1T", Runtime::class)
+                .addStatement("%1T%2L%1T", Runtime::class, "?")
+                .addStatement("%1T%2L%2S%1T", Runtime::class, "?")
+                .addStatement("%1T%2L%2S%1T%3N%1T", Runtime::class, "?", method)
+                .addStatement("%T%L", Runtime::class, "?")
+                .addStatement("%T%S", Runtime::class, "?")
+                .addStatement("%T%N", Runtime::class, method)
                 .build())
             .build())
-        .addStaticImport(Runtime::class.java, "*")
+        .addStaticImport(Runtime::class, "*")
         .build()
         .toString() // don't look at the generated code...
   }
@@ -98,18 +98,18 @@ class KotlinFileTest {
     val source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addStaticBlock(CodeBlock.builder()
-                .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class.java)
-                .addStatement("%T.gc()", System::class.java)
-                .addStatement("%1T.out.println(%1T.nanoTime())", System::class.java)
+                .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
+                .addStatement("%T.gc()", System::class)
+                .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
                 .build())
             .addFun(FunSpec.constructorBuilder()
-                .addParameter(Array<Thread.State>::class.java, "states")
+                .addParameter(Array<Thread.State>::class, "states")
                 .varargs(true)
                 .build())
             .build())
         .addStaticImport(Thread.State.BLOCKED)
-        .addStaticImport(System::class.java, "*")
-        .addStaticImport(Thread.State::class.java, "valueOf")
+        .addStaticImport(System::class, "*")
+        .addStaticImport(Thread.State::class, "valueOf")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
@@ -138,10 +138,10 @@ class KotlinFileTest {
     val source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
             .addFun(FunSpec.builder("main")
-                .addStatement("%T.%L.println(%S)", System::class.java, "out", "hello")
+                .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
                 .build())
             .build())
-        .addStaticImport(System::class.java, "out")
+        .addStaticImport(System::class, "out")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos;
@@ -218,8 +218,8 @@ class KotlinFileTest {
 
   @Test fun importStaticUsingWildcards() {
     val source = KotlinFile.builder("readme", importStaticTypeSpec("Util"))
-        .addStaticImport(TimeUnit::class.java, "*")
-        .addStaticImport(System::class.java, "*")
+        .addStaticImport(TimeUnit::class, "*")
+        .addStaticImport(System::class, "*")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package readme
@@ -242,8 +242,8 @@ class KotlinFileTest {
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .returns(Long::class.javaPrimitiveType!!)
         .addParameter(Long::class.javaPrimitiveType!!, "minutes")
-        .addStatement("%T.gc()", System::class.java)
-        .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class.java)
+        .addStatement("%T.gc()", System::class)
+        .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
         .build()
     return TypeSpec.classBuilder(name).addFun(funSpec).build()
 
@@ -264,7 +264,7 @@ class KotlinFileTest {
   @Test fun singleImport() {
     val source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
-            .addProperty(Date::class.java, "madeFreshDate")
+            .addProperty(Date::class, "madeFreshDate")
             .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
@@ -281,7 +281,7 @@ class KotlinFileTest {
   @Test fun conflictingImports() {
     val source = KotlinFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
-            .addProperty(Date::class.java, "madeFreshDate")
+            .addProperty(Date::class, "madeFreshDate")
             .addProperty(ClassName.get("java.sql", "Date"), "madeFreshDatabaseDate")
             .build())
         .build()
@@ -502,8 +502,8 @@ class KotlinFileTest {
         TypeSpec.classBuilder("HelloWorld")
             .addFun(FunSpec.builder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addParameter(Array<String>::class.java, "args")
-                .addCode("%T.out.println(%S);\n", System::class.java, "Hello World!")
+                .addParameter(Array<String>::class, "args")
+                .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
                 .build())
             .build())
         .build()

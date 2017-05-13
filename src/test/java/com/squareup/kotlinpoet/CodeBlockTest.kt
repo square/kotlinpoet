@@ -103,7 +103,7 @@ class CodeBlockTest {
   }
 
   @Test fun typeFormatCanBeIndexed() {
-    val block = CodeBlock.builder().add("%1T", String::class.java).build()
+    val block = CodeBlock.builder().add("%1T", String::class).build()
     assertThat(block.toString()).isEqualTo("java.lang.String")
   }
 
@@ -157,7 +157,7 @@ class CodeBlockTest {
 
   @Test fun multipleNamedArguments() {
     val map = LinkedHashMap<String, Any>()
-    map.put("pipe", System::class.java)
+    map.put("pipe", System::class)
     map.put("text", "tacos")
 
     val block = CodeBlock.builder()
@@ -170,14 +170,14 @@ class CodeBlockTest {
 
   @Test fun namedNewline() {
     val map = LinkedHashMap<String, Any>()
-    map.put("clazz", java.lang.Integer::class.java)
+    map.put("clazz", java.lang.Integer::class)
     val block = CodeBlock.builder().addNamed("%clazz:T\n", map).build()
     assertThat(block.toString()).isEqualTo("java.lang.Integer\n")
   }
 
   @Test fun danglingNamed() {
     val map = LinkedHashMap<String, Any>()
-    map.put("clazz", Int::class.java)
+    map.put("clazz", Int::class)
     try {
       CodeBlock.builder().addNamed("%clazz:T%", map).build()
       fail()
@@ -189,7 +189,7 @@ class CodeBlockTest {
 
   @Test fun indexTooHigh() {
     try {
-      CodeBlock.builder().add("%2T", String::class.java).build()
+      CodeBlock.builder().add("%2T", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("index 2 for '%2T' not in range (received 1 arguments)")
@@ -199,7 +199,7 @@ class CodeBlockTest {
 
   @Test fun indexIsZero() {
     try {
-      CodeBlock.builder().add("%0T", String::class.java).build()
+      CodeBlock.builder().add("%0T", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("index 0 for '%0T' not in range (received 1 arguments)")
@@ -209,7 +209,7 @@ class CodeBlockTest {
 
   @Test fun indexIsNegative() {
     try {
-      CodeBlock.builder().add("%-1T", String::class.java).build()
+      CodeBlock.builder().add("%-1T", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("invalid format string: '%-1T'")
@@ -219,7 +219,7 @@ class CodeBlockTest {
 
   @Test fun indexWithoutFormatType() {
     try {
-      CodeBlock.builder().add("%1", String::class.java).build()
+      CodeBlock.builder().add("%1", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("dangling format characters in '%1'")
@@ -229,7 +229,7 @@ class CodeBlockTest {
 
   @Test fun indexWithoutFormatTypeNotAtStringEnd() {
     try {
-      CodeBlock.builder().add("%1 taco", String::class.java).build()
+      CodeBlock.builder().add("%1 taco", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("invalid format string: '%1 taco'")
@@ -249,7 +249,7 @@ class CodeBlockTest {
 
   @Test fun formatIndicatorAlone() {
     try {
-      CodeBlock.builder().add("%", String::class.java).build()
+      CodeBlock.builder().add("%", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("dangling format characters in '%'")
@@ -259,7 +259,7 @@ class CodeBlockTest {
 
   @Test fun formatIndicatorWithoutIndexOrFormatType() {
     try {
-      CodeBlock.builder().add("% tacoString", String::class.java).build()
+      CodeBlock.builder().add("% tacoString", String::class).build()
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("invalid format string: '% tacoString'")
@@ -269,7 +269,7 @@ class CodeBlockTest {
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
     val block = CodeBlock.builder()
-        .add("%1T.out.println(%1S)", ClassName.get(System::class.java))
+        .add("%1T.out.println(%1S)", ClassName.get(System::class))
         .build()
     assertThat(block.toString()).isEqualTo("java.lang.System.out.println(\"java.lang.System\")")
   }

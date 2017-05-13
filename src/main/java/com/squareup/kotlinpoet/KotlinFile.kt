@@ -29,6 +29,7 @@ import javax.lang.model.element.Modifier
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
+import kotlin.reflect.KClass
 
 private val NULL_APPENDABLE = object : Appendable {
   override fun append(charSequence: CharSequence): Appendable {
@@ -209,6 +210,9 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
         (constant as java.lang.Enum<*>).getDeclaringClass()), constant.name)
 
     fun addStaticImport(clazz: Class<*>, vararg names: String)
+        = addStaticImport(ClassName.get(clazz), *names)
+
+    fun addStaticImport(clazz: KClass<*>, vararg names: String)
         = addStaticImport(ClassName.get(clazz), *names)
 
     fun addStaticImport(className: ClassName, vararg names: String): Builder {

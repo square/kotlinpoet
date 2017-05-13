@@ -20,6 +20,7 @@ import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.ArrayType
+import kotlin.reflect.KClass
 
 class ArrayTypeName private constructor(
     val componentType: TypeName,
@@ -48,6 +49,11 @@ class ArrayTypeName private constructor(
 
     /** Returns an array type whose elements are all instances of `componentType`.  */
     @JvmStatic fun of(componentType: Type): ArrayTypeName {
+      return of(TypeName.get(componentType))
+    }
+
+    /** Returns an array type whose elements are all instances of `componentType`.  */
+    @JvmStatic fun of(componentType: KClass<*>): TypeName {
       return of(TypeName.get(componentType))
     }
 

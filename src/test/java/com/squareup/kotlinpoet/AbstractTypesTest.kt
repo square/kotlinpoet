@@ -40,20 +40,20 @@ abstract class AbstractTypesTest {
     assertThat(TypeName.get(getMirror(Any::class.java)))
         .isEqualTo(ClassName.get(Any::class.java))
     assertThat(TypeName.get(getMirror(Charset::class.java)))
-        .isEqualTo(ClassName.get(Charset::class.java))
+        .isEqualTo(ClassName.get(Charset::class))
     assertThat(TypeName.get(getMirror(AbstractTypesTest::class.java)))
-        .isEqualTo(ClassName.get(AbstractTypesTest::class.java))
+        .isEqualTo(ClassName.get(AbstractTypesTest::class))
   }
 
   @Test fun getParameterizedTypeMirror() {
     val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(Any::class.java))
     assertThat(TypeName.get(setType))
-        .isEqualTo(ParameterizedTypeName.get(ClassName.get(Set::class.java), OBJECT))
+        .isEqualTo(ParameterizedTypeName.get(ClassName.get(Set::class), OBJECT))
   }
 
   @Test fun getErrorType() {
     val errorType = DeclaredTypeAsErrorType(types.getDeclaredType(getElement(Set::class.java)))
-    assertThat(TypeName.get(errorType)).isEqualTo(ClassName.get(Set::class.java))
+    assertThat(TypeName.get(errorType)).isEqualTo(ClassName.get(Set::class))
   }
 
   internal class Parameterized<
@@ -69,9 +69,9 @@ abstract class AbstractTypesTest {
     val typeVariables = getElement(Parameterized::class.java).typeParameters
 
     // Members of converted types use ClassName and not Class<?>.
-    val number = ClassName.get(Number::class.java)
-    val runnable = ClassName.get(Runnable::class.java)
-    val serializable = ClassName.get(Serializable::class.java)
+    val number = ClassName.get(Number::class)
+    val runnable = ClassName.get(Runnable::class)
+    val serializable = ClassName.get(Serializable::class)
 
     assertThat(TypeName.get(typeVariables[0].asType()))
         .isEqualTo(TypeVariableName.get("Simple"))
@@ -132,12 +132,12 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun parameterizedType() {
-    val type = ParameterizedTypeName.get(Map::class.java, String::class.java, Long::class.java)
+    val type = ParameterizedTypeName.get(Map::class, String::class, Long::class)
     assertThat(type.toString()).isEqualTo("java.util.Map<java.lang.String, kotlin.Long>")
   }
 
   @Test fun arrayType() {
-    val type = ArrayTypeName.of(String::class.java)
+    val type = ArrayTypeName.of(String::class)
     assertThat(type.toString()).isEqualTo("kotlin.Array<java.lang.String>")
   }
 
@@ -154,7 +154,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun varianceOutType() {
-    val type = WildcardTypeName.subtypeOf(CharSequence::class.java)
+    val type = WildcardTypeName.subtypeOf(CharSequence::class)
     assertThat(type.toString()).isEqualTo("out java.lang.CharSequence")
   }
 
@@ -168,7 +168,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun varianceInType() {
-    val type = WildcardTypeName.supertypeOf(String::class.java)
+    val type = WildcardTypeName.supertypeOf(String::class)
     assertThat(type.toString()).isEqualTo("in java.lang.String")
   }
 
@@ -182,7 +182,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun typeVariable() {
-    val type = TypeVariableName.get("T", CharSequence::class.java)
+    val type = TypeVariableName.get("T", CharSequence::class)
     assertThat(type.toString()).isEqualTo("T") // (Bounds are only emitted in declaration.)
   }
 
