@@ -20,7 +20,6 @@ import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.EnumSet
 import java.util.Locale
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
@@ -41,7 +40,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val superinterfaces: List<TypeName> = Util.immutableList(builder.superinterfaces)
   val enumConstants: Map<String, TypeSpec> = Util.immutableMap(builder.enumConstants)
   val propertySpecs: List<PropertySpec> = Util.immutableList(builder.propertySpecs)
-  val staticBlock = builder.staticBlock.build()
   val initializerBlock = builder.initializerBlock.build()
   val funSpecs: List<FunSpec> = Util.immutableList(builder.funSpecs)
   val typeSpecs: List<TypeSpec> = Util.immutableList(builder.typeSpecs)
@@ -71,7 +69,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.funSpecs += funSpecs
     builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
-    builder.staticBlock.add(staticBlock)
     return builder
   }
 
@@ -104,7 +101,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitModifiers(modifiers, implicitModifiers + kind.asMemberModifiers)
+        codeWriter.emitJavaModifiers(modifiers, implicitModifiers + kind.asMemberModifiers)
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("%L %L", "@interface", name)
         } else {
@@ -166,23 +163,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
 
-      // Static properties.
-      for (propertySpec in propertySpecs) {
-        if (!propertySpec.hasModifier(Modifier.STATIC)) continue
-        if (!firstMember) codeWriter.emit("\n")
-        propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
-        firstMember = false
-      }
-
-      if (!staticBlock.isEmpty()) {
-        if (!firstMember) codeWriter.emit("\n")
-        codeWriter.emit(staticBlock)
-        firstMember = false
-      }
-
       // Non-static properties.
       for (propertySpec in propertySpecs) {
-        if (propertySpec.hasModifier(Modifier.STATIC)) continue
         if (!firstMember) codeWriter.emit("\n")
         propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
         firstMember = false
@@ -261,30 +243,30 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   enum class Kind(
-      internal val implicitPropertyModifiers: Set<Modifier>,
+      internal val implicitPropertyModifiers: Set<KModifier>,
       internal val implicitFunctionModifiers: Set<Modifier>,
       internal val implicitTypeModifiers: Set<Modifier>,
       internal val asMemberModifiers: Set<Modifier>) {
     CLASS(
-        emptySet<Modifier>(),
+        setOf(KModifier.PUBLIC),
         emptySet<Modifier>(),
         emptySet<Modifier>(),
         emptySet<Modifier>()),
 
     INTERFACE(
-        setOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL),
+        setOf(KModifier.PUBLIC),
         setOf(Modifier.PUBLIC, Modifier.ABSTRACT),
         setOf(Modifier.PUBLIC, Modifier.STATIC),
         setOf(Modifier.STATIC)),
 
     ENUM(
-        emptySet<Modifier>(),
+        setOf(KModifier.PUBLIC),
         emptySet<Modifier>(),
         emptySet<Modifier>(),
         setOf(Modifier.STATIC)),
 
     ANNOTATION(
-        setOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL),
+        emptySet(),
         setOf(Modifier.PUBLIC, Modifier.ABSTRACT),
         setOf(Modifier.PUBLIC, Modifier.STATIC),
         setOf(Modifier.STATIC))
@@ -303,7 +285,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val superinterfaces = mutableListOf<TypeName>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
-    internal val staticBlock = CodeBlock.builder()
     internal val initializerBlock = CodeBlock.builder()
     internal val funSpecs = mutableListOf<FunSpec>()
     internal val typeSpecs = mutableListOf<TypeSpec>()
@@ -413,29 +394,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperty(propertySpec: PropertySpec): Builder {
-      if (kind == Kind.INTERFACE || kind == Kind.ANNOTATION) {
-        requireExactlyOneOf(propertySpec.modifiers, Modifier.PUBLIC, Modifier.PRIVATE)
-        val check = EnumSet.of(Modifier.STATIC, Modifier.FINAL)
-        check(propertySpec.modifiers.containsAll(check)) {
-          "$kind $name.${propertySpec.name} requires modifiers $check" }
+      check(kind == Kind.CLASS || kind == Kind.ENUM) {
+        "cannot add property $propertySpec to $kind"
       }
       propertySpecs += propertySpec
       return this
     }
 
-    fun addProperty(type: TypeName, name: String, vararg modifiers: Modifier)
+    fun addProperty(type: TypeName, name: String, vararg modifiers: KModifier)
         = addProperty(PropertySpec.builder(type, name, *modifiers).build())
 
-    fun addProperty(type: Type, name: String, vararg modifiers: Modifier)
+    fun addProperty(type: Type, name: String, vararg modifiers: KModifier)
         = addProperty(TypeName.get(type), name, *modifiers)
 
-    fun addProperty(type: KClass<*>, name: String, vararg modifiers: Modifier)
+    fun addProperty(type: KClass<*>, name: String, vararg modifiers: KModifier)
         = addProperty(TypeName.get(type), name, *modifiers)
-
-    fun addStaticBlock(block: CodeBlock): Builder {
-      staticBlock.beginControlFlow("static").add(block).endControlFlow()
-      return this
-    }
 
     fun addInitializerBlock(block: CodeBlock): Builder {
       check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }

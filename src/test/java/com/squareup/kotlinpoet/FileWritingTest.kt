@@ -189,7 +189,7 @@ class FileWritingTest {
         |import kotlin.Array
         |
         |class Test {
-        |${"\t"}madeFreshDate: Date;
+        |${"\t"}val madeFreshDate: Date
         |
         |${"\t"}public static fun main(args: Array<String>) {
         |${"\t\t"}System.out.println("Hello World!");

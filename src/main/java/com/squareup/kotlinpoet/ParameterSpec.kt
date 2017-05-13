@@ -38,7 +38,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, varargs: Boolean) {
     codeWriter.emitAnnotations(annotations, true)
-    codeWriter.emitModifiers(modifiers)
+    codeWriter.emitJavaModifiers(modifiers)
     if (varargs) {
       codeWriter.emit("vararg %L: %T", name, TypeName.arrayComponent(type))
     } else {

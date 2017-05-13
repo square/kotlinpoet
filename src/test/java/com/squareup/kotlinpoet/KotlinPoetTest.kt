@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import kotlin.test.fail
 
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -43,5 +44,36 @@ class KotlinPoetTest {
         |  }
         |}
         |""".trimMargin())
+  }
+
+  @Test fun propertyModifiers() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder(
+            String::class, "CHEESE", KModifier.PRIVATE, KModifier.CONST)
+            .initializer("%S", "monterey jack")
+            .build())
+        .addProperty(PropertySpec.varBuilder(String::class, "sauce", KModifier.PUBLIC)
+            .initializer("%S", "chipotle mayo")
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |class Taco {
+        |  private const val CHEESE: String = "monterey jack"
+        |
+        |  var sauce: String = "chipotle mayo"
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun mistargetedModifier() {
+    try {
+      PropertySpec.builder(String::class, "CHEESE", KModifier.DATA)
+      fail()
+    } catch(expected: IllegalArgumentException) {
+    }
   }
 }

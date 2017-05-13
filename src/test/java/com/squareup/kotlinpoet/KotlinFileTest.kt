@@ -75,7 +75,7 @@ class KotlinFileTest {
     val method = FunSpec.builder("method").build()
     KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addStaticBlock(CodeBlock.builder()
+            .addInitializerBlock(CodeBlock.builder()
                 .addStatement("%T", Runtime::class)
                 .addStatement("%T.a()", Runtime::class)
                 .addStatement("%T.X", Runtime::class)
@@ -98,7 +98,7 @@ class KotlinFileTest {
   @Test fun importStaticMixed() {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addStaticBlock(CodeBlock.builder()
+            .addInitializerBlock(CodeBlock.builder()
                 .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
                 .addStatement("%T.gc()", System::class)
                 .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
@@ -121,7 +121,7 @@ class KotlinFileTest {
         |import java.lang.Thread.State.valueOf
         |
         |class Taco {
-        |  static {
+        |  {
         |    assert valueOf("BLOCKED") == BLOCKED
         |    gc()
         |    out.println(nanoTime())
@@ -279,7 +279,7 @@ class KotlinFileTest {
         |import java.util.Date
         |
         |class Taco {
-        |  madeFreshDate: Date;
+        |  val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -297,9 +297,9 @@ class KotlinFileTest {
         |import java.util.Date
         |
         |class Taco {
-        |  madeFreshDate: Date;
+        |  val madeFreshDate: Date
         |
-        |  madeFreshDatabaseDate: java.sql.Date;
+        |  val madeFreshDatabaseDate: java.sql.Date
         |}
         |""".trimMargin())
   }
@@ -317,9 +317,9 @@ class KotlinFileTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  litres: Float;
+        |  val litres: Float
         |
-        |  beverage: com.squareup.soda.Float;
+        |  val beverage: com.squareup.soda.Float
         |}
         |""".trimMargin())
   }
@@ -339,9 +339,9 @@ class KotlinFileTest {
         |import com.squareup.soda.Float
         |
         |class Taco {
-        |  beverage: Float;
+        |  val beverage: Float
         |
-        |  litres: java.lang.Float;
+        |  val litres: java.lang.Float
         |}
         |""".trimMargin())
   }
@@ -370,7 +370,7 @@ class KotlinFileTest {
         |    }
         |
         |    class C {
-        |      d: A.Twin.D;
+        |      val d: A.Twin.D
         |    }
         |  }
         |
@@ -403,7 +403,7 @@ class KotlinFileTest {
         |class A {
         |  class B {
         |    class C {
-        |      d: A.Twin.D;
+        |      val d: A.Twin.D
         |
         |      class Twin {
         |      }
@@ -441,7 +441,7 @@ class KotlinFileTest {
         |class A {
         |  class B {
         |    class C {
-        |      d: Twin.D;
+        |      val d: Twin.D
         |
         |      class Nested {
         |        class Twin {
@@ -583,7 +583,7 @@ class KotlinFileTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  a: com.squareup.tacos.A;
+        |  val a: com.squareup.tacos.A
         |
         |  class A {
         |  }

@@ -142,11 +142,29 @@ internal class CodeWriter @JvmOverloads constructor(
   /**
    * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
    * be emitted.
+   *
+   * TODO: migrate all callers to [CodeWriter.emitModifiers].
+   */
+  @Throws(IOException::class)
+  @JvmOverloads fun emitJavaModifiers(
+      modifiers: Set<Modifier>,
+      implicitModifiers: Set<Modifier> = emptySet<Modifier>()) {
+    if (modifiers.isEmpty()) return
+    for (modifier in EnumSet.copyOf(modifiers)) {
+      if (implicitModifiers.contains(modifier)) continue
+      emitAndIndent(modifier.name.toLowerCase(Locale.US))
+      emitAndIndent(" ")
+    }
+  }
+
+  /**
+   * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
+   * be emitted.
    */
   @Throws(IOException::class)
   @JvmOverloads fun emitModifiers(
-      modifiers: Set<Modifier>,
-      implicitModifiers: Set<Modifier> = emptySet<Modifier>()) {
+      modifiers: Set<KModifier>,
+      implicitModifiers: Set<KModifier> = emptySet<KModifier>()) {
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
@@ -398,7 +416,7 @@ internal class CodeWriter @JvmOverloads constructor(
 
   /**
    * Emits `s` with indentation as required. It's important that all code that writes to
-   * [.out] does it through here, since we emit indentation lazily in order to avoid
+   * [CodeWriter.out] does it through here, since we emit indentation lazily in order to avoid
    * unnecessary trailing whitespace.
    */
   @Throws(IOException::class)

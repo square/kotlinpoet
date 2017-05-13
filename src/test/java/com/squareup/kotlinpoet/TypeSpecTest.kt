@@ -101,11 +101,11 @@ class TypeSpecTest {
         |import java.util.List
         |
         |class Taco {
-        |  star: List<*>;
+        |  val star: List<*>
         |
-        |  outSerializable: List<out Serializable>;
+        |  val outSerializable: List<out Serializable>
         |
-        |  inString: List<in String>;
+        |  val inString: List<in String>
         |}
         |""".trimMargin())
   }
@@ -145,7 +145,6 @@ class TypeSpecTest {
         .build()
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder(thingThangOfFooBar, "NAME")
-            .addModifiers(Modifier.STATIC, Modifier.FINAL, Modifier.FINAL)
             .initializer("%L", aThingThang)
             .build())
         .build()
@@ -156,7 +155,7 @@ class TypeSpecTest {
         |import java.lang.Override
         |
         |class Taco {
-        |  static final NAME: Thing.Thang<Foo, Bar> = new Thing.Thang<Foo, Bar>() {
+        |  val NAME: Thing.Thang<Foo, Bar> = new Thing.Thang<Foo, Bar>() {
         |    @Override
         |    public fun call(final thung: Thung<in Foo>): Thung<in Bar> {
         |      return new SimpleThung<Bar>(thung) {
@@ -166,7 +165,7 @@ class TypeSpecTest {
         |        }
         |      };
         |    }
-        |  };
+        |  }
         |}
         |""".trimMargin())
   }
@@ -227,7 +226,7 @@ class TypeSpecTest {
         |import javax.annotation.FreeRange
         |
         |class EthicalTaco {
-        |  meat: @FreeRange String;
+        |  val meat: @FreeRange String
         |}
         |""".trimMargin())
   }
@@ -293,7 +292,7 @@ class TypeSpecTest {
 
   @Test fun annotatedProperty() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addProperty(PropertySpec.builder(String::class, "thing", Modifier.PRIVATE, Modifier.FINAL)
+        .addProperty(PropertySpec.builder(String::class, "thing", KModifier.PRIVATE)
             .addAnnotation(AnnotationSpec.builder(ClassName.get(tacosPackage, "JsonAdapter"))
                 .addMember("value", "%T.class", ClassName.get(tacosPackage, "Foo"))
                 .build())
@@ -306,7 +305,7 @@ class TypeSpecTest {
         |
         |class Taco {
         |  @JsonAdapter(Foo.class)
-        |  private final thing: String;
+        |  private val thing: String
         |}
         |""".trimMargin())
   }
@@ -350,7 +349,7 @@ class TypeSpecTest {
             .build())
         .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("%S", "peace sign")
             .build())
-        .addProperty(String::class, "handPosition", Modifier.PRIVATE, Modifier.FINAL)
+        .addProperty(String::class, "handPosition", KModifier.PRIVATE)
         .addFun(FunSpec.constructorBuilder()
             .addParameter(String::class, "handPosition")
             .addCode("this.handPosition = handPosition;\n")
@@ -380,7 +379,7 @@ class TypeSpecTest {
         |
         |  SCISSORS("peace sign");
         |
-        |  private final handPosition: String;
+        |  private val handPosition: String
         |
         |  constructor(handPosition: String) {
         |    this.handPosition = handPosition;
@@ -576,11 +575,11 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Location<T, P : Number> implements Comparable<P> {
-        |  label: T;
+        |  val label: T
         |
-        |  x: P;
+        |  val x: P
         |
-        |  y: P;
+        |  val y: P
         |
         |  @Override
         |  public fun compareTo(p: P): Int {
@@ -611,9 +610,9 @@ class TypeSpecTest {
         |import java.lang.Number
         |
         |class Location<P : Number & Comparable, Q : Number & Comparable> {
-        |  x: P;
+        |  val x: P
         |
-        |  y: @A Q;
+        |  val y: @A Q
         |}
         |""".trimMargin())
   }
@@ -757,14 +756,14 @@ class TypeSpecTest {
         |import java.util.List
         |
         |class Combo {
-        |  taco: Taco;
+        |  val taco: Taco
         |
-        |  chips: Chips;
+        |  val chips: Chips
         |
         |  static class Taco {
-        |    toppings: List<Topping>;
+        |    val toppings: List<Topping>
         |
-        |    sauce: Sauce;
+        |    val sauce: Sauce
         |
         |    enum Topping {
         |      SHREDDED_CHEESE,
@@ -774,9 +773,9 @@ class TypeSpecTest {
         |  }
         |
         |  static class Chips {
-        |    topping: Taco.Topping;
+        |    val topping: Taco.Topping
         |
-        |    dippingSauce: Sauce;
+        |    val dippingSauce: Sauce
         |  }
         |
         |  enum Sauce {
@@ -835,25 +834,22 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun annotationWithProperties() {
-    val property = PropertySpec.builder(Int::class.javaPrimitiveType!!, "FOO")
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-        .initializer("%L", 101)
-        .build()
+  @Test fun annotationForbidsProperties() {
+    try {
+      TypeSpec.annotationBuilder("Taco")
+          .addProperty(Int::class, "v")
+      fail()
+    } catch(expected: IllegalStateException) {
+    }
+  }
 
-    val anno = TypeSpec.annotationBuilder("Anno")
-        .addProperty(property)
-        .build()
-
-    assertThat(toString(anno)).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import kotlin.Int
-        |
-        |@interface Anno {
-        |  FOO: Int = 101;
-        |}
-        |""".trimMargin())
+  @Test fun interfaceForbidsProperties() {
+    try {
+      TypeSpec.interfaceBuilder("Taco")
+          .addProperty(Int::class, "v")
+      fail()
+    } catch(expected: IllegalStateException) {
+    }
   }
 
   @Test fun classCannotHaveDefaultValueForFunction() {
@@ -965,31 +961,31 @@ class TypeSpecTest {
         |import com.squareup.donuts.Bottom
         |
         |class Top {
-        |  internalTop: Top;
+        |  val internalTop: Top
         |
-        |  internalBottom: Middle.Bottom;
+        |  val internalBottom: Middle.Bottom
         |
-        |  externalTop: com.squareup.donuts.Top;
+        |  val externalTop: com.squareup.donuts.Top
         |
-        |  externalBottom: Bottom;
+        |  val externalBottom: Bottom
         |
         |  class Middle {
-        |    internalTop: Top;
+        |    val internalTop: Top
         |
-        |    internalBottom: Bottom;
+        |    val internalBottom: Bottom
         |
-        |    externalTop: com.squareup.donuts.Top;
+        |    val externalTop: com.squareup.donuts.Top
         |
-        |    externalBottom: com.squareup.donuts.Bottom;
+        |    val externalBottom: com.squareup.donuts.Bottom
         |
         |    class Bottom {
-        |      internalTop: Top;
+        |      val internalTop: Top
         |
-        |      internalBottom: Bottom;
+        |      val internalBottom: Bottom
         |
-        |      externalTop: com.squareup.donuts.Top;
+        |      val externalTop: com.squareup.donuts.Top
         |
-        |      externalBottom: com.squareup.donuts.Bottom;
+        |      val externalBottom: com.squareup.donuts.Bottom
         |    }
         |  }
         |}
@@ -1009,9 +1005,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Gen {
-        |  internalOther: Other;
+        |  val internalOther: Other
         |
-        |  externalOther: com.squareup.donuts.Other;
+        |  val externalOther: com.squareup.donuts.Other
         |}
         |""".trimMargin())
   }
@@ -1062,7 +1058,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |  ints: Array<Int>;
+        |  val ints: Array<Int>
         |}
         |""".trimMargin())
   }
@@ -1099,7 +1095,7 @@ class TypeSpecTest {
         |  /**
         |   * True for a soft flour tortilla; false for a crunchy corn tortilla.
         |   */
-        |  soft: Boolean;
+        |  val soft: Boolean
         |
         |  /**
         |   * Folds the back of this taco to reduce sauce leakage.
@@ -1193,7 +1189,7 @@ class TypeSpecTest {
         .build()
     val escapeHtml = PropertySpec.builder(ParameterizedTypeName.get(
         Map::class, String::class, String::class), "ESCAPE_HTML")
-        .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+        .addModifiers(KModifier.PRIVATE)
         .initializer(propertyBlock)
         .build()
     val util = TypeSpec.classBuilder("Util")
@@ -1216,12 +1212,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Util {
-        |  private static final ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
+        |  private val ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
         |          .add("'", "&#39;")
         |          .add("&", "&amp;")
         |          .add("<", "&lt;")
         |          .add(">", "&gt;")
-        |          .build();
+        |          .build()
         |
         |  fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
         |    Int size = Math.min(listA.size(), listB.size())
@@ -1313,35 +1309,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun defaultModifiersForInterfaceMembers() {
-    val taco = TypeSpec.interfaceBuilder("Taco")
-        .addProperty(PropertySpec.builder(String::class, "SHELL")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-            .initializer("%S", "crunchy corn")
-            .build())
-        .addFun(FunSpec.builder("fold")
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-            .build())
-        .addType(TypeSpec.classBuilder("Topping")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .build())
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import java.lang.String
-        |
-        |interface Taco {
-        |  SHELL: String = "crunchy corn";
-        |
-        |  fun fold();
-        |
-        |  class Topping {
-        |  }
-        |}
-        |""".trimMargin())
-  }
-
   @Test fun defaultModifiersForMemberInterfacesAndEnums() {
     val taco = TypeSpec.classBuilder("Taco")
         .addType(TypeSpec.classBuilder("Meat")
@@ -1377,9 +1344,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Members")
         .addType(TypeSpec.classBuilder("Z").build())
         .addType(TypeSpec.classBuilder("Y").build())
-        .addProperty(String::class, "X", Modifier.STATIC)
         .addProperty(String::class, "W")
-        .addProperty(String::class, "V", Modifier.STATIC)
         .addProperty(String::class, "U")
         .addFun(FunSpec.builder("T").addModifiers(Modifier.STATIC).build())
         .addFun(FunSpec.builder("S").build())
@@ -1401,13 +1366,9 @@ class TypeSpecTest {
         |import kotlin.Long
         |
         |class Members {
-        |  static X: String;
+        |  val W: String
         |
-        |  static V: String;
-        |
-        |  W: String;
-        |
-        |  U: String;
+        |  val U: String
         |
         |  constructor(p: Int) {
         |  }
@@ -1483,7 +1444,7 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  NULL: String = null;
+        |  val NULL: String = null
         |}
         |""".trimMargin())
   }
@@ -1503,11 +1464,11 @@ class TypeSpecTest {
   }
 
   @Test fun propertyToString() {
-    val property = PropertySpec.builder(String::class, "s", Modifier.FINAL)
+    val property = PropertySpec.builder(String::class, "s")
         .initializer("%S.substring(0, 3)", "taco")
         .build()
     assertThat(property.toString())
-        .isEqualTo("final s: java.lang.String = \"taco\".substring(0, 3);\n")
+        .isEqualTo("val s: java.lang.String = \"taco\".substring(0, 3)\n")
   }
 
   @Test fun functionToString() {
@@ -1694,10 +1655,10 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  toppings: String = "shell\n"
+        |  val toppings: String = "shell\n"
         |      + "beef\n"
         |      + "lettuce\n"
-        |      + "cheese\n";
+        |      + "cheese\n"
         |}
         |""".trimMargin())
   }
@@ -1747,9 +1708,8 @@ class TypeSpecTest {
   @Test fun multiplePropertyAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperties(Arrays.asList(
-            PropertySpec.builder(Int::class.javaPrimitiveType!!,
-                "ANSWER", Modifier.STATIC, Modifier.FINAL).build(),
-            PropertySpec.builder(BigDecimal::class, "price", Modifier.PRIVATE).build()))
+            PropertySpec.builder(Int::class, "ANSWER", KModifier.CONST).build(),
+            PropertySpec.builder(BigDecimal::class, "price", KModifier.PRIVATE).build()))
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
@@ -1758,9 +1718,9 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |  static final ANSWER: Int;
+        |  const val ANSWER: Int
         |
-        |  private price: BigDecimal;
+        |  private val price: BigDecimal
         |}
         |""".trimMargin())
   }
@@ -2072,10 +2032,9 @@ class TypeSpecTest {
 
   @Test fun staticCodeBlock() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addProperty(String::class, "foo", Modifier.PRIVATE)
-        .addProperty(String::class, "FOO", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-        .addStaticBlock(CodeBlock.builder()
-            .addStatement("FOO = %S", "FOO")
+        .addProperty(String::class, "foo", KModifier.PRIVATE)
+        .addProperty(PropertySpec.builder(String::class, "FOO", KModifier.PRIVATE, KModifier.CONST)
+            .initializer("%S", "FOO")
             .build())
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
@@ -2091,13 +2050,9 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  private static final FOO: String;
+        |  private val foo: String
         |
-        |  static {
-        |    FOO = "FOO"
-        |  }
-        |
-        |  private foo: String;
+        |  private const val FOO: String = "FOO"
         |
         |  @Override
         |  public fun toString(): String {
@@ -2109,10 +2064,9 @@ class TypeSpecTest {
 
   @Test fun initializerBlockInRightPlace() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addProperty(String::class, "foo", Modifier.PRIVATE)
-        .addProperty(String::class, "FOO", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-        .addStaticBlock(CodeBlock.builder()
-            .addStatement("FOO = %S", "FOO")
+        .addProperty(String::class, "foo", KModifier.PRIVATE)
+        .addProperty(PropertySpec.builder(String::class, "FOO", KModifier.PRIVATE, KModifier.CONST)
+            .initializer("%S", "FOO")
             .build())
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
@@ -2132,13 +2086,9 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  private static final FOO: String;
+        |  private val foo: String
         |
-        |  static {
-        |    FOO = "FOO"
-        |  }
-        |
-        |  private foo: String;
+        |  private const val FOO: String = "FOO"
         |
         |  {
         |    foo = "FOO"
@@ -2156,12 +2106,11 @@ class TypeSpecTest {
   }
 
   @Test fun initializersToBuilder() {
-    // Tests if toBuilder() contains correct static and instance initializers
+    // Tests if toBuilder() contains instance initializers
     val taco = TypeSpec.classBuilder("Taco")
-        .addProperty(String::class, "foo", Modifier.PRIVATE)
-        .addProperty(String::class, "FOO", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-        .addStaticBlock(CodeBlock.builder()
-            .addStatement("FOO = %S", "FOO")
+        .addProperty(PropertySpec.builder(String::class, "foo", KModifier.PRIVATE).build())
+        .addProperty(PropertySpec.builder(String::class, "FOO", KModifier.PRIVATE, KModifier.CONST)
+            .initializer("%S", "FOO")
             .build())
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
@@ -2169,9 +2118,6 @@ class TypeSpecTest {
             .addModifiers(Modifier.PUBLIC)
             .returns(String::class)
             .addStatement("return FOO")
-            .build())
-        .addInitializerBlock(CodeBlock.builder()
-            .addStatement("foo = %S", "FOO")
             .build())
         .build()
 
@@ -2182,9 +2128,6 @@ class TypeSpecTest {
         .addInitializerBlock(CodeBlock.builder()
             .addStatement("foo = %S", "instanceFoo")
             .build())
-        .addStaticBlock(CodeBlock.builder()
-            .addStatement("FOO = %S", "staticFoo")
-            .build())
         .build()
 
     assertThat(toString(initializersAdded)).isEqualTo("""
@@ -2194,20 +2137,10 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  private static final FOO: String;
+        |  private val foo: String
         |
-        |  static {
-        |    FOO = "FOO"
-        |  }
-        |  static {
-        |    FOO = "staticFoo"
-        |  }
+        |  private const val FOO: String = "FOO"
         |
-        |  private foo: String;
-        |
-        |  {
-        |    foo = "FOO"
-        |  }
         |  {
         |    foo = "instanceFoo"
         |  }

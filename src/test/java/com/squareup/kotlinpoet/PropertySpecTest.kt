@@ -17,19 +17,16 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import javax.lang.model.element.Modifier
 
 class PropertySpecTest {
   @Test fun equalsAndHashCode() {
-    val type = Int::class.javaPrimitiveType!!
+    val type = Int::class
     var a = PropertySpec.builder(type, "foo").build()
     var b = PropertySpec.builder(type, "foo").build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
-    a = PropertySpec.builder(type, "FOO", Modifier.PUBLIC, Modifier.STATIC)
-        .build()
-    b = PropertySpec.builder(type, "FOO", Modifier.PUBLIC, Modifier.STATIC)
-        .build()
+    a = PropertySpec.builder(type, "FOO", KModifier.PUBLIC, KModifier.LATEINIT).build()
+    b = PropertySpec.builder(type, "FOO", KModifier.PUBLIC, KModifier.LATEINIT).build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
