@@ -1588,7 +1588,7 @@ class TypeSpecTest {
   }
 
   private fun toString(typeSpec: TypeSpec): String {
-    return KotlinFile.builder(tacosPackage, typeSpec).build().toString()
+    return KotlinFile.get(tacosPackage, typeSpec).toString()
   }
 
   @Test fun multilineStatement() {

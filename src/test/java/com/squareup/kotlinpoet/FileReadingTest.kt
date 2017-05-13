@@ -25,16 +25,16 @@ import javax.tools.JavaFileObject.Kind
 class FileReadingTest {
   @Test fun javaFileObjectUri() {
     val type = TypeSpec.classBuilder("Test").build()
-    assertThat(KotlinFile.builder("", type).build().toJavaFileObject().toUri())
-        .isEqualTo(URI.create("Test.java"))
-    assertThat(KotlinFile.builder("foo", type).build().toJavaFileObject().toUri())
-        .isEqualTo(URI.create("foo/Test.java"))
-    assertThat(KotlinFile.builder("com.example", type).build().toJavaFileObject().toUri())
-        .isEqualTo(URI.create("com/example/Test.java"))
+    assertThat(KotlinFile.get("", type).toJavaFileObject().toUri())
+        .isEqualTo(URI.create("Test.kt"))
+    assertThat(KotlinFile.get("foo", type).toJavaFileObject().toUri())
+        .isEqualTo(URI.create("foo/Test.kt"))
+    assertThat(KotlinFile.get("com.example", type).toJavaFileObject().toUri())
+        .isEqualTo(URI.create("com/example/Test.kt"))
   }
 
   @Test fun javaFileObjectKind() {
-    val kotlinFile = KotlinFile.builder("", TypeSpec.classBuilder("Test").build()).build()
+    val kotlinFile = KotlinFile.get("", TypeSpec.classBuilder("Test").build())
     assertThat(kotlinFile.toJavaFileObject().kind).isEqualTo(Kind.SOURCE)
   }
 
@@ -43,7 +43,7 @@ class FileReadingTest {
         .addKdoc("Pi\u00f1ata\u00a1")
         .addFun(FunSpec.builder("fooBar").build())
         .build()
-    val kotlinFile = KotlinFile.builder("foo", type).build()
+    val kotlinFile = KotlinFile.get("foo", type)
     val javaFileObject = kotlinFile.toJavaFileObject()
 
     // We can never have encoding issues (everything is in process)
@@ -52,7 +52,8 @@ class FileReadingTest {
   }
 
   @Test fun javaFileObjectInputStreamIsUtf8() {
-    val kotlinFile = KotlinFile.builder("foo", TypeSpec.classBuilder("Test").build())
+    val kotlinFile = KotlinFile.builder("foo", "Test")
+        .addType(TypeSpec.classBuilder("Test").build())
         .addFileComment("Pi\u00f1ata\u00a1")
         .build()
     val bytes = ByteStreams.toByteArray(kotlinFile.toJavaFileObject().openInputStream())

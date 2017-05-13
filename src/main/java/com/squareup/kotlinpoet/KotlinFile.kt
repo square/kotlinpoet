@@ -25,10 +25,13 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.annotation.processing.Filer
+import javax.lang.model.SourceVersion
+import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
+import javax.tools.StandardLocation
 import kotlin.reflect.KClass
 
 private val NULL_APPENDABLE = object : Appendable {
@@ -52,7 +55,8 @@ private val NULL_APPENDABLE = object : Appendable {
 class KotlinFile private constructor(builder: KotlinFile.Builder) {
   val fileComment: CodeBlock = builder.fileComment.build()
   val packageName: String = builder.packageName
-  val typeSpec: TypeSpec = builder.typeSpec
+  val fileName: String = builder.fileName
+  val members: List<Any> = builder.members.toList()
   val skipJavaLangImports: Boolean = builder.skipJavaLangImports
   private val memberImports = Util.immutableSet(builder.memberImports)
   private val indent = builder.indent
@@ -82,7 +86,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       Files.createDirectories(outputDirectory)
     }
 
-    val outputPath = outputDirectory.resolve(typeSpec.name + ".java")
+    val outputPath = outputDirectory.resolve("$fileName.kt")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
   }
 
@@ -93,12 +97,15 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   /** Writes this to `filer`.  */
   @Throws(IOException::class)
   fun writeTo(filer: Filer) {
-    val fileName = if (packageName.isEmpty())
-      typeSpec.name
-    else
-      packageName + "." + typeSpec.name
-    val originatingElements = typeSpec.originatingElements
-    val filerSourceFile = filer.createSourceFile(fileName, *originatingElements.toTypedArray())
+    val originatingElements = mutableListOf<Element>()
+    for (member in members) {
+      when (member) {
+        is TypeSpec -> originatingElements += member.originatingElements
+        else -> throw AssertionError()
+      }
+    }
+    val filerSourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT,
+        packageName, "$fileName.kt", *originatingElements.toTypedArray())
     try {
       filerSourceFile.openWriter().use { writer -> writeTo(writer) }
     } catch (e: Exception) {
@@ -106,10 +113,8 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
         filerSourceFile.delete()
       } catch (ignored: Exception) {
       }
-
       throw e
     }
-
   }
 
   @Throws(IOException::class)
@@ -139,7 +144,13 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       codeWriter.emit("\n")
     }
 
-    typeSpec.emit(codeWriter, null, emptySet<Modifier>())
+    for ((i, member) in members.withIndex()) {
+      if (i > 0) codeWriter.emit("\n")
+      when (member) {
+        is TypeSpec -> member.emit(codeWriter, null, emptySet<Modifier>())
+        else -> throw AssertionError()
+      }
+    }
 
     codeWriter.popPackage()
   }
@@ -165,8 +176,8 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
   fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create((if (packageName.isEmpty())
-      typeSpec.name else
-      packageName.replace('.', '/') + '/' + typeSpec.name) + Kind.SOURCE.extension)
+      fileName else
+      packageName.replace('.', '/') + '/' + fileName) + ".kt")
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
       override fun getCharContent(ignoreEncodingErrors: Boolean): String {
@@ -185,8 +196,9 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(packageName, typeSpec)
+    val builder = Builder(packageName, fileName)
     builder.fileComment.add(fileComment)
+    builder.members.addAll(this.members)
     builder.skipJavaLangImports = skipJavaLangImports
     builder.indent = indent
     return builder
@@ -194,14 +206,24 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
   class Builder internal constructor(
       internal val packageName: String,
-      internal val typeSpec: TypeSpec) {
+      internal val fileName: String) {
     internal val fileComment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
     internal var skipJavaLangImports: Boolean = false
     internal var indent = "  "
+    internal val members = mutableListOf<Any>()
+
+    init {
+      require(SourceVersion.isName(fileName)) { "not a valid file name: $fileName" }
+    }
 
     fun addFileComment(format: String, vararg args: Any): Builder {
       this.fileComment.add(format, *args)
+      return this
+    }
+
+    fun addType(typeSpec: TypeSpec): Builder {
+      members += typeSpec
       return this
     }
 
@@ -225,12 +247,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
     /**
      * Call this to omit imports for classes in `java.lang`, such as `java.lang.String`.
-
      *
-     * By default, JavaPoet explicitly imports types in `java.lang` to defend against
-     * naming conflicts. Suppose an (ill-advised) class is named `com.example.String`. When
-     * `java.lang` imports are skipped, generated code in `com.example` that references
-     * `java.lang.String` will get `com.example.String` instead.
+     * By default, JavaPoet explicitly imports types in `java.lang` to defend against naming
+     * conflicts. Suppose an (ill-advised) class is named `com.example.String`. When `java.lang`
+     * imports are skipped, generated code in `com.example` that references `java.lang.String` will
+     * get `com.example.String` instead.
      */
     fun skipJavaLangImports(skipJavaLangImports: Boolean): Builder {
       this.skipJavaLangImports = skipJavaLangImports
@@ -246,6 +267,12 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   }
 
   companion object {
-    @JvmStatic fun builder(packageName: String, typeSpec: TypeSpec) = Builder(packageName, typeSpec)
+    @JvmStatic fun get(packageName: String, typeSpec: TypeSpec): KotlinFile {
+      val fileName = typeSpec.name
+          ?: throw IllegalArgumentException("file name required but type has no name")
+      return builder(packageName, fileName).addType(typeSpec).build()
+    }
+
+    @JvmStatic fun builder(packageName: String, fileName: String) = Builder(packageName, fileName)
   }
 }
