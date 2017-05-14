@@ -19,31 +19,34 @@ import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Modifier
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec private constructor(builder: PropertySpec.Builder) {
-  val type: TypeName = builder.type
-  val name: String = builder.name
-  val kdoc: CodeBlock = builder.kdoc.build()
-  val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
-  val modifiers: Set<Modifier> = Util.immutableSet(builder.modifiers)
-  val initializer: CodeBlock? = builder.initializer
+class PropertySpec constructor(
+    val mutable: Boolean,
+    val type: TypeName,
+    val name: String,
+    val kdoc: CodeBlock,
+    annotations: Collection<AnnotationSpec>,
+    modifiers: Collection<KModifier>,
+    val initializer: CodeBlock?) {
+  val annotations = annotations.toList()
+  val modifiers = modifiers.toSet()
 
-  fun hasModifier(modifier: Modifier) = modifiers.contains(modifier)
+  fun hasModifier(modifier: KModifier) = modifiers.contains(modifier)
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<Modifier>) {
+  internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
+    codeWriter.emit(if (mutable) "var " else "val ")
     codeWriter.emit("%L: %T", name, type)
     if (initializer != null) {
       codeWriter.emit(" = ")
       codeWriter.emit(initializer)
     }
-    codeWriter.emit(";\n")
+    codeWriter.emit("\n")
   }
 
   override fun equals(other: Any?): Boolean {
@@ -59,7 +62,7 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      emit(codeWriter, emptySet<Modifier>())
+      emit(codeWriter, emptySet<KModifier>())
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
@@ -76,10 +79,16 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
   }
 
   class Builder internal constructor(internal val type: TypeName, internal val name: String) {
+    internal var mutable = false
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<Modifier>()
+    internal val modifiers = mutableListOf<KModifier>()
     internal var initializer: CodeBlock? = null
+
+    fun mutable(mutable: Boolean): Builder {
+      this.mutable = mutable
+      return this
+    }
 
     fun addKdoc(format: String, vararg args: Any): Builder {
       kdoc.add(format, *args)
@@ -108,7 +117,10 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: Modifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier): Builder {
+      for (modifier in modifiers) {
+        modifier.checkTarget(KModifier.Target.PROPERTY)
+      }
       this.modifiers += modifiers
       return this
     }
@@ -121,20 +133,34 @@ class PropertySpec private constructor(builder: PropertySpec.Builder) {
       return this
     }
 
-    fun build() = PropertySpec(this)
+    fun build() = PropertySpec(
+        mutable, type, name, kdoc.build(), annotations, modifiers, initializer)
   }
 
   companion object {
-    @JvmStatic fun builder(type: TypeName, name: String, vararg modifiers: Modifier): Builder {
+    @JvmStatic fun builder(type: TypeName, name: String, vararg modifiers: KModifier): Builder {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
       return Builder(type, name)
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(type: Type, name: String, vararg modifiers: Modifier)
+    @JvmStatic fun builder(type: Type, name: String, vararg modifiers: KModifier)
         = builder(TypeName.get(type), name, *modifiers)
 
-    @JvmStatic fun builder(type: KClass<*>, name: String, vararg modifiers: Modifier)
+    @JvmStatic fun builder(type: KClass<*>, name: String, vararg modifiers: KModifier)
         = builder(TypeName.get(type), name, *modifiers)
+
+    @JvmStatic fun varBuilder(type: TypeName, name: String, vararg modifiers: KModifier): Builder {
+      require(SourceVersion.isName(name)) { "not a valid name: $name" }
+      return Builder(type, name)
+          .mutable(true)
+          .addModifiers(*modifiers)
+    }
+
+    @JvmStatic fun varBuilder(type: Type, name: String, vararg modifiers: KModifier)
+        = varBuilder(TypeName.get(type), name, *modifiers)
+
+    @JvmStatic fun varBuilder(type: KClass<*>, name: String, vararg modifiers: KModifier)
+        = varBuilder(TypeName.get(type), name, *modifiers)
   }
 }

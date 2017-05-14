@@ -73,7 +73,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       implicitModifiers: Set<Modifier>) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitModifiers(modifiers, implicitModifiers)
+    codeWriter.emitJavaModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor) {
       codeWriter.emit("fun ")
