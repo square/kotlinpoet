@@ -147,7 +147,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     for ((i, member) in members.withIndex()) {
       if (i > 0) codeWriter.emit("\n")
       when (member) {
-        is TypeSpec -> member.emit(codeWriter, null, emptySet<Modifier>())
+        is TypeSpec -> member.emit(codeWriter, null, emptySet<KModifier>())
         else -> throw AssertionError()
       }
     }

@@ -28,12 +28,8 @@ import kotlin.reflect.KClass
 class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val name: String = builder.name
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
-  val modifiers: Set<Modifier> = Util.immutableSet(builder.modifiers)
+  val modifiers: Set<KModifier> = Util.immutableSet(builder.modifiers)
   val type: TypeName = builder.type
-
-  fun hasModifier(modifier: Modifier): Boolean {
-    return modifiers.contains(modifier)
-  }
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, varargs: Boolean) {
@@ -78,7 +74,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       internal val type: TypeName,
       internal val name: String) {
     internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<Modifier>()
+    internal val modifiers = mutableListOf<KModifier>()
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
       annotations += annotationSpecs
@@ -97,13 +93,23 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: Modifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier): Builder {
       this.modifiers += modifiers
       return this
     }
 
-    fun addModifiers(modifiers: Iterable<Modifier>): Builder {
+    fun addModifiers(modifiers: Iterable<KModifier>): Builder {
       this.modifiers += modifiers
+      return this
+    }
+
+    fun jvmModifiers(modifiers: Iterable<Modifier>): Builder {
+      for (modifier in modifiers) {
+        when (modifier) {
+          Modifier.FINAL -> this.modifiers += KModifier.FINAL
+          else -> throw IllegalArgumentException("unexpected parameter modifier $modifier")
+        }
+      }
       return this
     }
 
@@ -115,22 +121,22 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       val type = TypeName.get(element.asType())
       val name = element.simpleName.toString()
       return ParameterSpec.builder(type, name)
-          .addModifiers(element.modifiers)
+          .jvmModifiers(element.modifiers)
           .build()
     }
 
     @JvmStatic fun parametersOf(method: ExecutableElement)
         = method.parameters.map { ParameterSpec.get(it) }
 
-    @JvmStatic fun builder(type: TypeName, name: String, vararg modifiers: Modifier): Builder {
+    @JvmStatic fun builder(type: TypeName, name: String, vararg modifiers: KModifier): Builder {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
       return Builder(type, name).addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(type: Type, name: String, vararg modifiers: Modifier)
+    @JvmStatic fun builder(type: Type, name: String, vararg modifiers: KModifier)
         = builder(TypeName.get(type), name, *modifiers)
 
-    @JvmStatic fun builder(type: KClass<*>, name: String, vararg modifiers: Modifier)
+    @JvmStatic fun builder(type: KClass<*>, name: String, vararg modifiers: KModifier)
         = builder(TypeName.get(type), name, *modifiers)
   }
 }

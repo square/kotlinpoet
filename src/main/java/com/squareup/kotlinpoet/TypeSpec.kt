@@ -22,7 +22,6 @@ import java.lang.reflect.Type
 import java.util.Locale
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
@@ -32,7 +31,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val anonymousTypeArguments = builder.anonymousTypeArguments
   val kdoc = builder.kdoc.build()
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
-  val modifiers: Set<Modifier> = Util.immutableSet(builder.modifiers)
+  val modifiers: Set<KModifier> = Util.immutableSet(builder.modifiers)
   val typeVariables: List<TypeVariableName> = Util.immutableList(builder.typeVariables)
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
@@ -53,8 +52,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     this.originatingElements = Util.immutableList(originatingElementsMutable)
   }
 
-  fun hasModifier(modifier: Modifier) = modifiers.contains(modifier)
-
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, anonymousTypeArguments)
     builder.kdoc.add(kdoc)
@@ -72,7 +69,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, enumName: String?, implicitModifiers: Set<Modifier>) {
+  internal fun emit(codeWriter: CodeWriter, enumName: String?, implicitModifiers: Set<KModifier>) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -100,7 +97,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitJavaModifiers(modifiers, implicitModifiers + kind.asMemberModifiers)
+        codeWriter.emitJavaModifiers(modifiers, implicitModifiers)
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("%L %L", "@interface", name)
         } else {
@@ -151,7 +148,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         val enumConstant = i.next()
         if (!firstMember) codeWriter.emit("\n")
         enumConstant.value
-            .emit(codeWriter, enumConstant.key, emptySet<Modifier>())
+            .emit(codeWriter, enumConstant.key, emptySet<KModifier>())
         firstMember = false
         if (i.hasNext()) {
           codeWriter.emit(",\n")
@@ -203,7 +200,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       // Types.
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null, kind.implicitTypeModifiers)
+        typeSpec.emit(codeWriter, null, setOf())
         firstMember = false
       }
 
@@ -234,7 +231,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      emit(codeWriter, null, emptySet<Modifier>())
+      emit(codeWriter, null, emptySet<KModifier>())
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
@@ -243,32 +240,22 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   enum class Kind(
       internal val implicitPropertyModifiers: Set<KModifier>,
-      internal val implicitFunctionModifiers: Set<KModifier>,
-      internal val implicitTypeModifiers: Set<Modifier>,
-      internal val asMemberModifiers: Set<Modifier>) {
+      internal val implicitFunctionModifiers: Set<KModifier>) {
     CLASS(
         setOf(KModifier.PUBLIC),
-        setOf(KModifier.PUBLIC),
-        emptySet<Modifier>(),
-        emptySet<Modifier>()),
+        setOf(KModifier.PUBLIC)),
 
     INTERFACE(
         setOf(KModifier.PUBLIC),
-        setOf(KModifier.PUBLIC, KModifier.ABSTRACT),
-        setOf(Modifier.PUBLIC, Modifier.STATIC),
-        setOf(Modifier.STATIC)),
+        setOf(KModifier.PUBLIC, KModifier.ABSTRACT)),
 
     ENUM(
         setOf(KModifier.PUBLIC),
-        setOf(KModifier.PUBLIC),
-        emptySet<Modifier>(),
-        setOf(Modifier.STATIC)),
+        setOf(KModifier.PUBLIC)),
 
     ANNOTATION(
         emptySet(),
-        setOf(KModifier.PUBLIC, KModifier.ABSTRACT),
-        setOf(Modifier.PUBLIC, Modifier.STATIC),
-        setOf(Modifier.STATIC))
+        setOf(KModifier.PUBLIC, KModifier.ABSTRACT))
   }
 
   class Builder internal constructor(
@@ -277,7 +264,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       internal val anonymousTypeArguments: CodeBlock?) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<Modifier>()
+    internal val modifiers = mutableListOf<KModifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var primaryConstructor : FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -320,7 +307,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: Modifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier): Builder {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       this.modifiers += modifiers
       return this
@@ -446,8 +433,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addType(typeSpec: TypeSpec): Builder {
-      require(typeSpec.modifiers.containsAll(kind.implicitTypeModifiers)) {
-          "$kind $name.${typeSpec.name} requires modifiers ${kind.implicitTypeModifiers}" }
       typeSpecs += typeSpec
       return this
     }
@@ -461,7 +446,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       require(kind != Kind.ENUM || !enumConstants.isEmpty()) {
           "at least one enum constant is required for $name" }
 
-      val isAbstract = modifiers.contains(Modifier.ABSTRACT) || kind != Kind.CLASS
+      val isAbstract = modifiers.contains(KModifier.ABSTRACT) || kind != Kind.CLASS
       for (funSpec in funSpecs) {
         require(isAbstract || !funSpec.modifiers.contains(KModifier.ABSTRACT)) {
             "non-abstract type $name cannot declare abstract function ${funSpec.name}" }

@@ -147,8 +147,8 @@ internal class CodeWriter @JvmOverloads constructor(
    */
   @Throws(IOException::class)
   @JvmOverloads fun emitJavaModifiers(
-      modifiers: Set<Modifier>,
-      implicitModifiers: Set<Modifier> = emptySet<Modifier>()) {
+      modifiers: Set<KModifier>,
+      implicitModifiers: Set<KModifier> = emptySet<KModifier>()) {
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
@@ -313,7 +313,7 @@ internal class CodeWriter @JvmOverloads constructor(
   @Throws(IOException::class)
   private fun emitLiteral(o: Any?) {
     if (o is TypeSpec) {
-      o.emit(this, null, emptySet<Modifier>())
+      o.emit(this, null, emptySet<KModifier>())
     } else if (o is AnnotationSpec) {
       o.emit(this, true)
     } else if (o is CodeBlock) {
