@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.hasDefaultModifier
 import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
 import java.io.StringWriter
@@ -244,30 +243,30 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   enum class Kind(
       internal val implicitPropertyModifiers: Set<KModifier>,
-      internal val implicitFunctionModifiers: Set<Modifier>,
+      internal val implicitFunctionModifiers: Set<KModifier>,
       internal val implicitTypeModifiers: Set<Modifier>,
       internal val asMemberModifiers: Set<Modifier>) {
     CLASS(
         setOf(KModifier.PUBLIC),
-        emptySet<Modifier>(),
+        setOf(KModifier.PUBLIC),
         emptySet<Modifier>(),
         emptySet<Modifier>()),
 
     INTERFACE(
         setOf(KModifier.PUBLIC),
-        setOf(Modifier.PUBLIC, Modifier.ABSTRACT),
+        setOf(KModifier.PUBLIC, KModifier.ABSTRACT),
         setOf(Modifier.PUBLIC, Modifier.STATIC),
         setOf(Modifier.STATIC)),
 
     ENUM(
         setOf(KModifier.PUBLIC),
-        emptySet<Modifier>(),
+        setOf(KModifier.PUBLIC),
         emptySet<Modifier>(),
         setOf(Modifier.STATIC)),
 
     ANNOTATION(
         emptySet(),
-        setOf(Modifier.PUBLIC, Modifier.ABSTRACT),
+        setOf(KModifier.PUBLIC, KModifier.ABSTRACT),
         setOf(Modifier.PUBLIC, Modifier.STATIC),
         setOf(Modifier.STATIC))
   }
@@ -427,8 +426,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addFun(funSpec: FunSpec): Builder {
       if (kind == Kind.INTERFACE) {
-        requireExactlyOneOf(funSpec.modifiers, Modifier.ABSTRACT, Modifier.STATIC, Util.DEFAULT)
-        requireExactlyOneOf(funSpec.modifiers, Modifier.PUBLIC, Modifier.PRIVATE)
+        requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
+        requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
       } else if (kind == Kind.ANNOTATION) {
         check(funSpec.modifiers == kind.implicitFunctionModifiers) {
             "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}" }
@@ -436,10 +435,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (kind != Kind.ANNOTATION) {
         check(funSpec.defaultValue == null) {
           "$kind $name.${funSpec.name} cannot have a default value" }
-      }
-      if (kind != Kind.INTERFACE) {
-        check(!hasDefaultModifier(funSpec.modifiers)) {
-          "$kind $name.${funSpec.name} cannot be default" }
       }
       funSpecs += funSpec
       return this
@@ -468,7 +463,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       val isAbstract = modifiers.contains(Modifier.ABSTRACT) || kind != Kind.CLASS
       for (funSpec in funSpecs) {
-        require(isAbstract || !funSpec.hasModifier(Modifier.ABSTRACT)) {
+        require(isAbstract || !funSpec.modifiers.contains(KModifier.ABSTRACT)) {
             "non-abstract type $name cannot declare abstract function ${funSpec.name}" }
       }
 

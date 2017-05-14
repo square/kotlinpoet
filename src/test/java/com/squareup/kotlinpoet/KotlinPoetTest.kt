@@ -76,4 +76,30 @@ class KotlinPoetTest {
     } catch(expected: IllegalArgumentException) {
     }
   }
+
+  @Test fun visibilityModifiers() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
+        .addFun(FunSpec.builder("b").addModifiers(KModifier.PROTECTED).build())
+        .addFun(FunSpec.builder("c").addModifiers(KModifier.INTERNAL).build())
+        .addFun(FunSpec.builder("d").addModifiers(KModifier.PRIVATE).build())
+        .build())
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class Taco {
+        |  fun a() {
+        |  }
+        |
+        |  protected fun b() {
+        |  }
+        |
+        |  internal fun c() {
+        |  }
+        |
+        |  private fun d() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
 }

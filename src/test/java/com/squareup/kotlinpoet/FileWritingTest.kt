@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.util.Date
 import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
 
 class FileWritingTest {
   // Used for testing java.io File behavior.
@@ -165,7 +164,7 @@ class FileWritingTest {
     val test = TypeSpec.classBuilder("Test")
         .addProperty(Date::class, "madeFreshDate")
         .addFun(FunSpec.builder("main")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addModifiers(KModifier.PUBLIC)
             .addParameter(Array<String>::class, "args")
             .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
             .build())
@@ -191,7 +190,7 @@ class FileWritingTest {
         |class Test {
         |${"\t"}val madeFreshDate: Date
         |
-        |${"\t"}public static fun main(args: Array<String>) {
+        |${"\t"}fun main(args: Array<String>) {
         |${"\t\t"}System.out.println("Hello World!");
         |${"\t"}}
         |}

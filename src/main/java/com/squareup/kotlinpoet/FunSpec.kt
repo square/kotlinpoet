@@ -32,7 +32,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   val name: String
   val kdoc: CodeBlock
   val annotations: List<AnnotationSpec>
-  val modifiers: Set<Modifier>
+  val modifiers: Set<KModifier>
   val typeVariables: List<TypeVariableName>
   val returnType: TypeName?
   val parameters: List<ParameterSpec>
@@ -43,7 +43,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
   init {
     val code = builder.code.build()
-    require(code.isEmpty() || !builder.modifiers.contains(Modifier.ABSTRACT)) {
+    require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
       "abstract function ${builder.name} cannot have code"
     }
     require(!builder.varargs || lastParameterIsArray(builder.parameters)) {
@@ -63,17 +63,18 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   }
 
   private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
-    return !parameters.isEmpty() && TypeName.arrayComponent(parameters[parameters.size - 1].type) != null
+    return !parameters.isEmpty()
+        && TypeName.arrayComponent(parameters[parameters.size - 1].type) != null
   }
 
   @Throws(IOException::class)
   internal fun emit(
       codeWriter: CodeWriter,
       enclosingName: String?,
-      implicitModifiers: Set<Modifier>) {
+      implicitModifiers: Set<KModifier>) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitJavaModifiers(modifiers, implicitModifiers)
+    codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor) {
       codeWriter.emit("fun ")
@@ -111,12 +112,8 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       }
     }
 
-    if (hasModifier(Modifier.ABSTRACT)) {
-      codeWriter.emit(";\n")
-    } else if (hasModifier(Modifier.NATIVE)) {
-      // Code is allowed to support stuff like GWT JSNI.
-      codeWriter.emit(code)
-      codeWriter.emit(";\n")
+    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
+      codeWriter.emit("\n")
     } else {
       codeWriter.emit(" {\n")
 
@@ -142,8 +139,6 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     codeWriter.emit(")")
   }
 
-  fun hasModifier(modifier: Modifier) = modifiers.contains(modifier)
-
   val isConstructor: Boolean
     get() = name == CONSTRUCTOR
 
@@ -160,7 +155,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      emit(codeWriter, "Constructor", emptySet<Modifier>())
+      emit(codeWriter, "Constructor", TypeSpec.Kind.CLASS.implicitFunctionModifiers)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
@@ -186,7 +181,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<Modifier>()
+    internal val modifiers = mutableListOf<KModifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
@@ -228,14 +223,35 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: Modifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier): Builder {
       this.modifiers += modifiers
       return this
     }
 
-    fun addModifiers(modifiers: Iterable<Modifier>): Builder {
+    fun addModifiers(modifiers: Iterable<KModifier>): Builder {
       this.modifiers += modifiers
       return this
+    }
+
+    fun jvmModifiers(modifiers: Iterable<Modifier>) {
+      var visibility = KModifier.INTERNAL
+      for (modifier in modifiers) {
+        when (modifier) {
+          Modifier.PUBLIC -> visibility = KModifier.PUBLIC
+          Modifier.PROTECTED -> visibility = KModifier.PROTECTED
+          Modifier.PRIVATE -> visibility = KModifier.PRIVATE
+          Modifier.ABSTRACT -> this.modifiers += KModifier.ABSTRACT
+          Modifier.FINAL -> this.modifiers += KModifier.FINAL
+          Modifier.NATIVE -> this.modifiers += KModifier.EXTERNAL
+          Modifier.DEFAULT -> {}
+          Modifier.STATIC -> addAnnotation(JvmStatic::class)
+          Modifier.TRANSIENT -> addAnnotation(Transient::class)
+          Modifier.VOLATILE -> addAnnotation(Volatile::class)
+          Modifier.SYNCHRONIZED -> addAnnotation(Synchronized::class)
+          Modifier.STRICTFP -> addAnnotation(Strictfp::class)
+        }
+      }
+      this.modifiers += visibility
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
@@ -390,8 +406,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
       modifiers = modifiers.toMutableSet()
       modifiers.remove(Modifier.ABSTRACT)
-      modifiers.remove(Util.DEFAULT) // LinkedHashSet permits null as element for Java 7
-      funBuilder.addModifiers(modifiers)
+      funBuilder.jvmModifiers(modifiers)
 
       for (typeParameterElement in method.typeParameters) {
         val typeVariable = typeParameterElement.asType() as TypeVariable
