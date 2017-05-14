@@ -21,7 +21,6 @@ import org.junit.Test
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import javax.lang.model.element.Modifier
 
 class KotlinFileTest {
   @Test fun importStaticReadmeExample() {
@@ -169,7 +168,7 @@ class KotlinFileTest {
         |import kotlin.Long
         |
         |class Util {
-        |  public static fun minutesToSeconds(minutes: Long): Long {
+        |  fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
@@ -190,7 +189,7 @@ class KotlinFileTest {
         |import kotlin.Long
         |
         |class Util {
-        |  public static fun minutesToSeconds(minutes: Long): Long {
+        |  fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
@@ -213,7 +212,7 @@ class KotlinFileTest {
         |import kotlin.Long
         |
         |class Util {
-        |  public static fun minutesToSeconds(minutes: Long): Long {
+        |  fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return SECONDS.convert(minutes, MINUTES)
         |  }
@@ -235,7 +234,7 @@ class KotlinFileTest {
         |import kotlin.Long
         |
         |class Util {
-        |  public static fun minutesToSeconds(minutes: Long): Long {
+        |  fun minutesToSeconds(minutes: Long): Long {
         |    gc()
         |    return SECONDS.convert(minutes, MINUTES)
         |  }
@@ -245,9 +244,9 @@ class KotlinFileTest {
 
   private fun importStaticTypeSpec(name: String): TypeSpec {
     val funSpec = FunSpec.builder("minutesToSeconds")
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-        .returns(Long::class.javaPrimitiveType!!)
-        .addParameter(Long::class.javaPrimitiveType!!, "minutes")
+        .addModifiers(KModifier.PUBLIC)
+        .returns(Long::class)
+        .addParameter(Long::class, "minutes")
         .addStatement("%T.gc()", System::class)
         .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
         .build()
@@ -507,7 +506,7 @@ class KotlinFileTest {
     val source = KotlinFile.builder("", "HelloWorld")
         .addType(TypeSpec.classBuilder("HelloWorld")
             .addFun(FunSpec.builder("main")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addModifiers(KModifier.PUBLIC)
                 .addParameter(Array<String>::class, "args")
                 .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
                 .build())
@@ -519,7 +518,7 @@ class KotlinFileTest {
         |import kotlin.Array
         |
         |class HelloWorld {
-        |  public static fun main(args: Array<String>) {
+        |  fun main(args: Array<String>) {
         |    System.out.println("Hello World!");
         |  }
         |}

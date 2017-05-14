@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.compile.CompilationRule
 import org.junit.Assert.fail
 import org.junit.Before
@@ -100,22 +99,7 @@ class FunSpecTest {
     val funSpec = FunSpec.overriding(exec).build()
     assertThat(funSpec.toString()).isEqualTo("""
         |@java.lang.Override
-        |public fun toString(): java.lang.String {
-        |}
-        |""".trimMargin())
-  }
-
-  @Test fun overrideDoesNotCopyDefaultModifier() {
-    val classElement = getElement(ExtendsIterableWithDefaultMethods::class.java)
-    val classType = classElement.asType() as DeclaredType
-    val methods = methodsIn(elements.getAllMembers(classElement))
-    var exec = findFirst(methods, "iterator")
-    assume().that(Util.DEFAULT).isNotNull()
-    exec = findFirst(methods, "spliterator")
-    val funSpec = FunSpec.overriding(exec, classType, types).build()
-    assertThat(funSpec.toString()).isEqualTo("""
-        |@java.lang.Override
-        |public fun spliterator(): java.util.Spliterator<java.lang.Object> {
+        |fun toString(): java.lang.String {
         |}
         |""".trimMargin())
   }
@@ -128,14 +112,14 @@ class FunSpecTest {
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
         |@java.lang.Override
-        |public fun call(): java.lang.Integer throws java.lang.Exception {
+        |fun call(): java.lang.Integer throws java.lang.Exception {
         |}
         |""".trimMargin())
     exec = findFirst(methods, "compareTo")
     funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
         |@java.lang.Override
-        |public fun compareTo(arg0: java.lang.Long): kotlin.Int {
+        |fun compareTo(arg0: java.lang.Long): kotlin.Int {
         |}
         |""".trimMargin())
   }

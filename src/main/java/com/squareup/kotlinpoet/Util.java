@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.lang.model.element.Modifier;
 
 import static java.lang.Character.isISOControl;
 
@@ -34,17 +33,6 @@ import static java.lang.Character.isISOControl;
  */
 final class Util {
   private Util() {
-  }
-
-  /** Modifier.DEFAULT doesn't exist until Java 8, but we want to run on earlier releases. */
-  static final Modifier DEFAULT;
-  static {
-    Modifier def = null;
-    try {
-      def = Modifier.valueOf("DEFAULT");
-    } catch (IllegalArgumentException ignored) {
-    }
-    DEFAULT = def;
   }
 
   static <K, V> Map<K, List<V>> immutableMultimap(Map<K, List<V>> multimap) {
@@ -68,10 +56,9 @@ final class Util {
     return Collections.unmodifiableSet(new LinkedHashSet<>(set));
   }
 
-  static void requireExactlyOneOf(Set<Modifier> modifiers, Modifier... mutuallyExclusive) {
+  static void requireExactlyOneOf(Set<KModifier> modifiers, KModifier... mutuallyExclusive) {
     int count = 0;
-    for (Modifier modifier : mutuallyExclusive) {
-      if (modifier == null && Util.DEFAULT == null) continue; // Skip 'DEFAULT' if it doesn't exist!
+    for (KModifier modifier : mutuallyExclusive) {
       if (modifiers.contains(modifier)) count++;
     }
     if (count != 1) {
@@ -79,10 +66,6 @@ final class Util {
           String.format("modifiers %s must contain one of %s", modifiers,
               Arrays.toString(mutuallyExclusive)));
     }
-  }
-
-  static boolean hasDefaultModifier(Collection<Modifier> modifiers) {
-    return DEFAULT != null && modifiers.contains(DEFAULT);
   }
 
   static String characterLiteralWithoutSingleQuotes(char c) {

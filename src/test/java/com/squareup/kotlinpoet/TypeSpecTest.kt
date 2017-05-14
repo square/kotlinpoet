@@ -20,7 +20,6 @@ import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
-import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito
@@ -53,14 +52,11 @@ class TypeSpecTest {
     return getElement(clazz.java)
   }
 
-  private val isJava8: Boolean
-    get() = Util.DEFAULT != null
-
   @Test fun basic() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            .addModifiers(KModifier.PUBLIC, KModifier.FINAL)
             .returns(String::class)
             .addCode("return %S;\n", "taco")
             .build())
@@ -73,12 +69,12 @@ class TypeSpecTest {
         |
         |class Taco {
         |  @Override
-        |  public final fun toString(): String {
+        |  final fun toString(): String {
         |    return "taco";
         |  }
         |}
         |""".trimMargin())
-    assertEquals(-708668397, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(-544506260, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
@@ -128,7 +124,7 @@ class TypeSpecTest {
         .superclass(simpleThungOfBar)
         .addFun(FunSpec.builder("doSomething")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .addParameter(bar, "bar")
             .addCode("/* code snippets */\n")
             .build())
@@ -137,7 +133,7 @@ class TypeSpecTest {
         .superclass(thingThangOfFooBar)
         .addFun(FunSpec.builder("call")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(thungOfSuperBar)
             .addParameter(thungParameter)
             .addCode("return %L;\n", aSimpleThung)
@@ -157,10 +153,10 @@ class TypeSpecTest {
         |class Taco {
         |  val NAME: Thing.Thang<Foo, Bar> = new Thing.Thang<Foo, Bar>() {
         |    @Override
-        |    public fun call(final thung: Thung<in Foo>): Thung<in Bar> {
+        |    fun call(final thung: Thung<in Foo>): Thung<in Bar> {
         |      return new SimpleThung<Bar>(thung) {
         |        @Override
-        |        public fun doSomething(bar: Bar) {
+        |        fun doSomething(bar: Bar) {
         |          /* code snippets */
         |        }
         |      };
@@ -173,7 +169,7 @@ class TypeSpecTest {
   @Test fun annotatedParameters() {
     val service = TypeSpec.classBuilder("Foo")
         .addFun(FunSpec.constructorBuilder()
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .addParameter(Long::class.javaPrimitiveType!!, "id")
             .addParameter(ParameterSpec.builder(String::class, "one")
                 .addAnnotation(ClassName.get(tacosPackage, "Ping"))
@@ -200,7 +196,7 @@ class TypeSpecTest {
         |import kotlin.Long
         |
         |class Foo {
-        |  public constructor(id: Long, @Ping one: String, @Ping two: String, @Pong("pong") three: String,
+        |  constructor(id: Long, @Ping one: String, @Ping two: String, @Pong("pong") three: String,
         |      @Ping four: String) {
         |    /* code snippets */
         |  }
@@ -245,7 +241,7 @@ class TypeSpecTest {
     val header = ClassName.get(tacosPackage, "Header")
     val service = TypeSpec.interfaceBuilder("Service")
         .addFun(FunSpec.builder("fooBar")
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(headers)
                 .addMember("value", "%S", "Accept: application/json")
                 .addMember("value", "%S", "User-Agent: foobar")
@@ -285,7 +281,7 @@ class TypeSpecTest {
         |  @POST("/foo/bar")
         |  fun fooBar(@Body things: Things<Thing>,
         |      @QueryMap(encodeValues = false) query: Map<String, String>,
-        |      @Header("Authorization") authorization: String): Observable<FooBar>;
+        |      @Header("Authorization") authorization: String): Observable<FooBar>
         |}
         |""".trimMargin())
   }
@@ -342,7 +338,7 @@ class TypeSpecTest {
         .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
             .addFun(FunSpec.builder("toString")
                 .addAnnotation(Override::class)
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC)
                 .returns(String::class)
                 .addCode("return %S;\n", "paper airplane!")
                 .build())
@@ -372,7 +368,7 @@ class TypeSpecTest {
         |
         |  PAPER("flat") {
         |    @Override
-        |    public fun toString(): String {
+        |    fun toString(): String {
         |      return "paper airplane!";
         |    }
         |  },
@@ -399,11 +395,11 @@ class TypeSpecTest {
         .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder("")
             .addFun(FunSpec.builder("fold")
                 .addAnnotation(Override::class)
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC)
                 .build())
             .build())
         .addFun(FunSpec.builder("fold")
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .build())
         .build()
     assertThat(toString(roshambo)).isEqualTo("""
@@ -414,11 +410,11 @@ class TypeSpecTest {
         |public enum Tortilla {
         |  CORN {
         |    @Override
-        |    public fun fold() {
+        |    fun fold() {
         |    }
         |  };
         |
-        |  public abstract fun fold();
+        |  abstract fun fold()
         |}
         |""".trimMargin())
   }
@@ -449,7 +445,7 @@ class TypeSpecTest {
         .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder("")
             .addFun(FunSpec.builder("toString")
                 .addAnnotation(Override::class)
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC)
                 .returns(String::class)
                 .addCode("return %S;\n", "west side")
                 .build())
@@ -464,7 +460,7 @@ class TypeSpecTest {
         |enum Roshambo {
         |  SPOCK {
         |    @Override
-        |    public fun toString(): String {
+        |    fun toString(): String {
         |      return "west side";
         |    }
         |  }
@@ -509,11 +505,11 @@ class TypeSpecTest {
             .addException(ClassName.get(tacosPackage, "SourCreamException"))
             .build())
         .addFun(FunSpec.builder("abstractThrow")
-            .addModifiers(Modifier.ABSTRACT)
+            .addModifiers(KModifier.ABSTRACT)
             .addException(IOException::class)
             .build())
         .addFun(FunSpec.builder("nativeThrow")
-            .addModifiers(Modifier.NATIVE)
+            .addModifiers(KModifier.EXTERNAL)
             .addException(IOException::class)
             .build())
         .build()
@@ -529,9 +525,9 @@ class TypeSpecTest {
         |  fun throwTwo() throws IOException, SourCreamException {
         |  }
         |
-        |  abstract fun abstractThrow() throws IOException;
+        |  abstract fun abstractThrow() throws IOException
         |
-        |  native fun nativeThrow() throws IOException;
+        |  external fun nativeThrow() throws IOException
         |}
         |""".trimMargin())
   }
@@ -549,13 +545,13 @@ class TypeSpecTest {
         .addProperty(p, "y")
         .addFun(FunSpec.builder("compareTo")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(Int::class.javaPrimitiveType!!)
             .addParameter(p, "p")
             .addStatement("return 0")
             .build())
         .addFun(FunSpec.builder("of")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addModifiers(KModifier.PUBLIC)
             .addTypeVariable(t)
             .addTypeVariable(p)
             .returns(ParameterizedTypeName.get(location, t, p))
@@ -582,11 +578,11 @@ class TypeSpecTest {
         |  val y: P
         |
         |  @Override
-        |  public fun compareTo(p: P): Int {
+        |  fun compareTo(p: P): Int {
         |    return 0
         |  }
         |
-        |  public static fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
+        |  fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
         |    throw new UnsupportedOperationException("TODO")
         |  }
         |}
@@ -797,7 +793,7 @@ class TypeSpecTest {
     val annotation = TypeSpec.annotationBuilder("MyAnnotation")
         .addModifiers(Modifier.PUBLIC)
         .addFun(FunSpec.builder("test")
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .defaultValue("%L", 0)
             .returns(Int::class.javaPrimitiveType!!)
             .build())
@@ -809,7 +805,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |public @interface MyAnnotation {
-        |  fun test(): Int default 0;
+        |  fun test(): Int default 0
         |}
         |""".trimMargin())
   }
@@ -817,7 +813,7 @@ class TypeSpecTest {
   @Test fun innerAnnotationInAnnotationDeclaration() {
     val bar = TypeSpec.annotationBuilder("Bar")
         .addFun(FunSpec.builder("value")
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .defaultValue("@%T", java.lang.Deprecated::class)
             .returns(java.lang.Deprecated::class)
             .build())
@@ -829,7 +825,7 @@ class TypeSpecTest {
         |import java.lang.Deprecated
         |
         |@interface Bar {
-        |  fun value(): Deprecated default @Deprecated;
+        |  fun value(): Deprecated default @Deprecated
         |}
         |""".trimMargin())
   }
@@ -856,76 +852,15 @@ class TypeSpecTest {
     try {
       TypeSpec.classBuilder("Tacos")
           .addFun(FunSpec.builder("test")
-              .addModifiers(Modifier.PUBLIC)
+              .addModifiers(KModifier.PUBLIC)
               .defaultValue("0")
-              .returns(Int::class.javaPrimitiveType!!)
+              .returns(Int::class)
               .build())
           .build()
       fail()
     } catch (expected: IllegalStateException) {
     }
 
-  }
-
-  @Test fun classCannotHaveDefaultFunctions() {
-    assumeTrue(isJava8)
-    try {
-      TypeSpec.classBuilder("Tacos")
-          .addFun(FunSpec.builder("test")
-              .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
-              .returns(Int::class.javaPrimitiveType!!)
-              .addCode(CodeBlock.builder().addStatement("return 0").build())
-              .build())
-          .build()
-      fail()
-    } catch (expected: IllegalStateException) {
-    }
-
-  }
-
-  @Test fun interfaceStaticFunctions() {
-    val bar = TypeSpec.interfaceBuilder("Tacos")
-        .addFun(FunSpec.builder("test")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .returns(Int::class.javaPrimitiveType!!)
-            .addCode(CodeBlock.builder().addStatement("return 0").build())
-            .build())
-        .build()
-
-    assertThat(toString(bar)).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import kotlin.Int
-        |
-        |interface Tacos {
-        |  static fun test(): Int {
-        |    return 0
-        |  }
-        |}
-        |""".trimMargin())
-  }
-
-  @Test fun interfaceDefaultFunctions() {
-    assumeTrue(isJava8)
-    val bar = TypeSpec.interfaceBuilder("Tacos")
-        .addFun(FunSpec.builder("test")
-            .addModifiers(Modifier.PUBLIC, Modifier.valueOf("DEFAULT"))
-            .returns(Int::class.javaPrimitiveType!!)
-            .addCode(CodeBlock.builder().addStatement("return 0").build())
-            .build())
-        .build()
-
-    assertThat(toString(bar)).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import kotlin.Int
-        |
-        |interface Tacos {
-        |  default fun test(): Int {
-        |    return 0
-        |  }
-        |}
-        |""".trimMargin())
   }
 
   @Test fun referencedAndDeclaredSimpleNamesConflict() {
@@ -1346,9 +1281,9 @@ class TypeSpecTest {
         .addType(TypeSpec.classBuilder("Y").build())
         .addProperty(String::class, "W")
         .addProperty(String::class, "U")
-        .addFun(FunSpec.builder("T").addModifiers(Modifier.STATIC).build())
+        .addFun(FunSpec.builder("T").build())
         .addFun(FunSpec.builder("S").build())
-        .addFun(FunSpec.builder("R").addModifiers(Modifier.STATIC).build())
+        .addFun(FunSpec.builder("R").build())
         .addFun(FunSpec.builder("Q").build())
         .addFun(FunSpec.constructorBuilder()
             .addParameter(Int::class.javaPrimitiveType!!, "p")
@@ -1376,13 +1311,13 @@ class TypeSpecTest {
         |  constructor(o: Long) {
         |  }
         |
-        |  static fun T() {
+        |  fun T() {
         |  }
         |
         |  fun S() {
         |  }
         |
-        |  static fun R() {
+        |  fun R() {
         |  }
         |
         |  fun Q() {
@@ -1400,34 +1335,17 @@ class TypeSpecTest {
   @Test fun nativeFunctions() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("nativeInt")
-            .addModifiers(Modifier.NATIVE)
-            .returns(Int::class.javaPrimitiveType!!)
-            .build())
-        // GWT JSNI
-        .addFun(FunSpec.builder("alert")
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.NATIVE)
-            .addParameter(String::class, "msg")
-            .addCode(CodeBlock.builder()
-                .add(" /*-{\n")
-                .indent()
-                .addStatement("\$wnd.alert(msg);")
-                .unindent()
-                .add("}-*/")
-                .build())
+            .addModifiers(KModifier.EXTERNAL)
+            .returns(Int::class)
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import kotlin.Int
         |
         |class Taco {
-        |  native fun nativeInt(): Int;
-        |
-        |  public static native fun alert(msg: String) /*-{
-        |    ${"$"}wnd.alert(msg);
-        |  }-*/;
+        |  external fun nativeInt(): Int
         |}
         |""".trimMargin())
   }
@@ -1474,25 +1392,25 @@ class TypeSpecTest {
   @Test fun functionToString() {
     val funSpec = FunSpec.builder("toString")
         .addAnnotation(Override::class)
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .returns(String::class)
         .addStatement("return %S", "taco")
         .build()
     assertThat(funSpec.toString()).isEqualTo(""
         + "@java.lang.Override\n"
-        + "public fun toString(): java.lang.String {\n"
+        + "fun toString(): java.lang.String {\n"
         + "  return \"taco\"\n"
         + "}\n")
   }
 
   @Test fun constructorToString() {
     val constructor = FunSpec.constructorBuilder()
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .addParameter(ClassName.get(tacosPackage, "Taco"), "taco")
         .addStatement("this.%N = %N", "taco", "taco")
         .build()
     assertThat(constructor.toString()).isEqualTo(""
-        + "public constructor(taco: com.squareup.tacos.Taco) {\n"
+        + "constructor(taco: com.squareup.tacos.Taco) {\n"
         + "  this.taco = taco\n"
         + "}\n")
   }
@@ -1519,13 +1437,13 @@ class TypeSpecTest {
         .addSuperinterface(Runnable::class)
         .addFun(FunSpec.builder("run")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .build())
         .build()
     assertThat(type.toString()).isEqualTo("""
         |new java.lang.Runnable() {
         |  @java.lang.Override
-        |  public fun run() {
+        |  fun run() {
         |  }
         |}""".trimMargin())
   }
@@ -1556,7 +1474,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(String::class)
             .addStatement("return %S\n+ %S\n+ %S\n+ %S\n+ %S",
                 "Taco(", "beef,", "lettuce,", "cheese", ")")
@@ -1570,7 +1488,7 @@ class TypeSpecTest {
         |
         |class Taco {
         |  @Override
-        |  public fun toString(): String {
+        |  fun toString(): String {
         |    return "Taco("
         |        + "beef,"
         |        + "lettuce,"
@@ -1588,7 +1506,7 @@ class TypeSpecTest {
         .addSuperinterface(stringComparator)
         .addFun(FunSpec.builder("compare")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(Int::class.javaPrimitiveType!!)
             .addParameter(String::class, "a")
             .addParameter(String::class, "b")
@@ -1621,7 +1539,7 @@ class TypeSpecTest {
         |  fun comparePrefix(final length: Int): Comparator<String> {
         |    return new Comparator<String>() {
         |      @Override
-        |      public fun compare(a: String, b: String): Int {
+        |      fun compare(a: String, b: String): Int {
         |        return a.substring(0, length)
         |            .compareTo(b.substring(0, length))
         |      }
@@ -1633,7 +1551,7 @@ class TypeSpecTest {
         |        list,
         |        new Comparator<String>() {
         |          @Override
-        |          public fun compare(a: String, b: String): Int {
+        |          fun compare(a: String, b: String): Int {
         |            return a.substring(0, length)
         |                .compareTo(b.substring(0, length))
         |          }
@@ -1729,14 +1647,14 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFunctions(Arrays.asList(
             FunSpec.builder("getAnswer")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addModifiers(KModifier.PUBLIC)
                 .returns(Int::class.javaPrimitiveType!!)
                 .addStatement("return %L", 42)
                 .build(),
             FunSpec.builder("getRandomQuantity")
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC)
                 .returns(Int::class.javaPrimitiveType!!)
-                .addKdoc("chosen by fair dice roll ;)")
+                .addKdoc("chosen by fair dice roll ;)\n")
                 .addStatement("return %L", 4)
                 .build()))
         .build()
@@ -1746,13 +1664,14 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |  public static fun getAnswer(): Int {
+        |  fun getAnswer(): Int {
         |    return 42
         |  }
         |
         |  /**
-        |   * chosen by fair dice roll ;) */
-        |  public fun getRandomQuantity(): Int {
+        |   * chosen by fair dice roll ;)
+        |   */
+        |  fun getRandomQuantity(): Int {
         |    return 4
         |  }
         |}
@@ -1891,7 +1810,7 @@ class TypeSpecTest {
 
   @Test fun nameFromFunction() {
     val funSpec = FunSpec.builder("method")
-        .addModifiers(Modifier.ABSTRACT)
+        .addModifiers(KModifier.ABSTRACT)
         .returns(String::class)
         .build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("method")
@@ -2038,7 +1957,7 @@ class TypeSpecTest {
             .build())
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -2055,7 +1974,7 @@ class TypeSpecTest {
         |  private const val FOO: String = "FOO"
         |
         |  @Override
-        |  public fun toString(): String {
+        |  fun toString(): String {
         |    return FOO
         |  }
         |}
@@ -2071,7 +1990,7 @@ class TypeSpecTest {
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -2098,7 +2017,7 @@ class TypeSpecTest {
         |  }
         |
         |  @Override
-        |  public fun toString(): String {
+        |  fun toString(): String {
         |    return FOO
         |  }
         |}
@@ -2115,7 +2034,7 @@ class TypeSpecTest {
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
             .addAnnotation(Override::class)
-            .addModifiers(Modifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -2149,7 +2068,7 @@ class TypeSpecTest {
         |  }
         |
         |  @Override
-        |  public fun toString(): String {
+        |  fun toString(): String {
         |    return FOO
         |  }
         |}
