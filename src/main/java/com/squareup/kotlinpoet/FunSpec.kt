@@ -245,10 +245,9 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
           Modifier.NATIVE -> this.modifiers += KModifier.EXTERNAL
           Modifier.DEFAULT -> {}
           Modifier.STATIC -> addAnnotation(JvmStatic::class)
-          Modifier.TRANSIENT -> addAnnotation(Transient::class)
-          Modifier.VOLATILE -> addAnnotation(Volatile::class)
           Modifier.SYNCHRONIZED -> addAnnotation(Synchronized::class)
           Modifier.STRICTFP -> addAnnotation(Strictfp::class)
+          else -> throw IllegalArgumentException("unexpected fun modifier $modifier")
         }
       }
       this.modifiers += visibility
@@ -284,13 +283,13 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       return this
     }
 
-    fun addParameter(type: TypeName, name: String, vararg modifiers: Modifier)
+    fun addParameter(type: TypeName, name: String, vararg modifiers: KModifier)
         = addParameter(ParameterSpec.builder(type, name, *modifiers).build())
 
-    fun addParameter(type: Type, name: String, vararg modifiers: Modifier)
+    fun addParameter(type: Type, name: String, vararg modifiers: KModifier)
         = addParameter(TypeName.get(type), name, *modifiers)
 
-    fun addParameter(type: KClass<*>, name: String, vararg modifiers: Modifier)
+    fun addParameter(type: KClass<*>, name: String, vararg modifiers: KModifier)
         = addParameter(TypeName.get(type), name, *modifiers)
 
     @JvmOverloads fun varargs(varargs: Boolean = true): Builder {

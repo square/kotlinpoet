@@ -15,24 +15,22 @@
  */
 package com.squareup.kotlinpoet
 
-import javax.lang.model.element.Modifier
-import org.junit.Test
-
 import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
 class ParameterSpecTest {
   @Test fun equalsAndHashCode() {
-    var a = ParameterSpec.builder(Int::class.javaPrimitiveType!!, "foo")
+    var a = ParameterSpec.builder(Int::class, "foo")
         .build()
-    var b = ParameterSpec.builder(Int::class.javaPrimitiveType!!, "foo")
+    var b = ParameterSpec.builder(Int::class, "foo")
         .build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
-    a = ParameterSpec.builder(Int::class.javaPrimitiveType!!, "i")
-        .addModifiers(Modifier.STATIC)
+    a = ParameterSpec.builder(Int::class, "i")
+        .addModifiers(KModifier.FINAL)
         .build()
-    b = ParameterSpec.builder(Int::class.javaPrimitiveType!!, "i")
-        .addModifiers(Modifier.STATIC)
+    b = ParameterSpec.builder(Int::class, "i")
+        .addModifiers(KModifier.FINAL)
         .build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())

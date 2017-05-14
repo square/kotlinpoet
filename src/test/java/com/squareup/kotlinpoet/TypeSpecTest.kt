@@ -35,7 +35,6 @@ import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
 import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
@@ -118,7 +117,7 @@ class TypeSpecTest {
     val simpleThungOfBar = ParameterizedTypeName.get(simpleThung, bar)
 
     val thungParameter = ParameterSpec.builder(thungOfSuperFoo, "thung")
-        .addModifiers(Modifier.FINAL)
+        .addModifiers(KModifier.FINAL)
         .build()
     val aSimpleThung = TypeSpec.anonymousClassBuilder("%N", thungParameter)
         .superclass(simpleThungOfBar)
@@ -170,7 +169,7 @@ class TypeSpecTest {
     val service = TypeSpec.classBuilder("Foo")
         .addFun(FunSpec.constructorBuilder()
             .addModifiers(KModifier.PUBLIC)
-            .addParameter(Long::class.javaPrimitiveType!!, "id")
+            .addParameter(Long::class, "id")
             .addParameter(ParameterSpec.builder(String::class, "one")
                 .addAnnotation(ClassName.get(tacosPackage, "Ping"))
                 .build())
@@ -314,7 +313,7 @@ class TypeSpecTest {
             .addMember("hey", "%L", 12)
             .addMember("hello", "%S", "goodbye")
             .build())
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
@@ -331,7 +330,7 @@ class TypeSpecTest {
 
   @Test fun enumWithSubclassing() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("")
             .addKdoc("Avalanche!\n")
             .build())
@@ -391,7 +390,7 @@ class TypeSpecTest {
   /** https://github.com/square/javapoet/issues/193  */
   @Test fun enumsMayDefineAbstractFunctions() {
     val roshambo = TypeSpec.enumBuilder("Tortilla")
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder("")
             .addFun(FunSpec.builder("fold")
                 .addAnnotation(Override::class)
@@ -471,7 +470,7 @@ class TypeSpecTest {
   /** https://github.com/square/javapoet/issues/253  */
   @Test fun enumWithAnnotatedValues() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("")
             .addAnnotation(java.lang.Deprecated::class)
             .build())
@@ -496,7 +495,7 @@ class TypeSpecTest {
 
   @Test fun funThrows() {
     val taco = TypeSpec.classBuilder("Taco")
-        .addModifiers(Modifier.ABSTRACT)
+        .addModifiers(KModifier.ABSTRACT)
         .addFun(FunSpec.builder("throwOne")
             .addException(IOException::class)
             .build())
@@ -546,7 +545,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("compareTo")
             .addAnnotation(Override::class)
             .addModifiers(KModifier.PUBLIC)
-            .returns(Int::class.javaPrimitiveType!!)
+            .returns(Int::class)
             .addParameter(p, "p")
             .addStatement("return 0")
             .build())
@@ -617,7 +616,7 @@ class TypeSpecTest {
     val taco = ClassName.get(tacosPackage, "Taco")
     val food = ClassName.get("com.squareup.tacos", "Food")
     val typeSpec = TypeSpec.classBuilder("Taco")
-        .addModifiers(Modifier.ABSTRACT)
+        .addModifiers(KModifier.ABSTRACT)
         .superclass(ParameterizedTypeName.get(ClassName.get(AbstractSet::class), food))
         .addSuperinterface(Serializable::class)
         .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable::class), taco))
@@ -653,7 +652,7 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun classImplementsNestedClass() {
+  @Test fun classImplementsInnerClass() {
     val outer = ClassName.get(tacosPackage, "Outer")
     val inner = outer.nestedClass("Inner")
     val callable = ClassName.get(Callable::class)
@@ -661,7 +660,7 @@ class TypeSpecTest {
         .superclass(ParameterizedTypeName.get(callable,
             inner))
         .addType(TypeSpec.classBuilder("Inner")
-            .addModifiers(Modifier.STATIC)
+            .addModifiers(KModifier.INNER)
             .build())
         .build()
 
@@ -671,7 +670,7 @@ class TypeSpecTest {
         |import java.util.concurrent.Callable
         |
         |class Outer extends Callable<Outer.Inner> {
-        |  static class Inner {
+        |  inner class Inner {
         |  }
         |}
         |""".trimMargin())
@@ -724,7 +723,6 @@ class TypeSpecTest {
         .addProperty(taco, "taco")
         .addProperty(chips, "chips")
         .addType(TypeSpec.classBuilder(taco.simpleName())
-            .addModifiers(Modifier.STATIC)
             .addProperty(ParameterizedTypeName.get(ClassName.get(List::class), topping), "toppings")
             .addProperty(sauce, "sauce")
             .addType(TypeSpec.enumBuilder(topping.simpleName())
@@ -733,7 +731,6 @@ class TypeSpecTest {
                 .build())
             .build())
         .addType(TypeSpec.classBuilder(chips.simpleName())
-            .addModifiers(Modifier.STATIC)
             .addProperty(topping, "topping")
             .addProperty(sauce, "dippingSauce")
             .build())
@@ -756,7 +753,7 @@ class TypeSpecTest {
         |
         |  val chips: Chips
         |
-        |  static class Taco {
+        |  class Taco {
         |    val toppings: List<Topping>
         |
         |    val sauce: Sauce
@@ -768,7 +765,7 @@ class TypeSpecTest {
         |    }
         |  }
         |
-        |  static class Chips {
+        |  class Chips {
         |    val topping: Taco.Topping
         |
         |    val dippingSauce: Sauce
@@ -791,11 +788,11 @@ class TypeSpecTest {
 
   @Test fun annotation() {
     val annotation = TypeSpec.annotationBuilder("MyAnnotation")
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .addFun(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .defaultValue("%L", 0)
-            .returns(Int::class.javaPrimitiveType!!)
+            .returns(Int::class)
             .build())
         .build()
 
@@ -1003,7 +1000,7 @@ class TypeSpecTest {
         .addKdoc("A hard or soft tortilla, loosely folded and filled with whatever\n")
         .addKdoc("[random][%T] tex-mex stuff we could find in the pantry\n", Random::class)
         .addKdoc(CodeBlock.of("and some [%T] cheese.\n", String::class))
-        .addProperty(PropertySpec.builder(Boolean::class.javaPrimitiveType!!, "soft")
+        .addProperty(PropertySpec.builder(Boolean::class, "soft")
             .addKdoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
             .build())
         .addFun(FunSpec.builder("refold")
@@ -1079,7 +1076,7 @@ class TypeSpecTest {
   @Test fun varargs() {
     val taqueria = TypeSpec.classBuilder("Taqueria")
         .addFun(FunSpec.builder("prepare")
-            .addParameter(Int::class.javaPrimitiveType!!, "workers")
+            .addParameter(Int::class, "workers")
             .addParameter(Array<Runnable>::class, "jobs")
             .varargs()
             .build())
@@ -1130,7 +1127,7 @@ class TypeSpecTest {
     val util = TypeSpec.classBuilder("Util")
         .addProperty(escapeHtml)
         .addFun(FunSpec.builder("commonPrefixLength")
-            .returns(Int::class.javaPrimitiveType!!)
+            .returns(Int::class)
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listA")
             .addParameter(ParameterizedTypeName.get(List::class, String::class), "listB")
             .addCode(funBody)
@@ -1247,13 +1244,10 @@ class TypeSpecTest {
   @Test fun defaultModifiersForMemberInterfacesAndEnums() {
     val taco = TypeSpec.classBuilder("Taco")
         .addType(TypeSpec.classBuilder("Meat")
-            .addModifiers(Modifier.STATIC)
             .build())
         .addType(TypeSpec.interfaceBuilder("Tortilla")
-            .addModifiers(Modifier.STATIC)
             .build())
         .addType(TypeSpec.enumBuilder("Topping")
-            .addModifiers(Modifier.STATIC)
             .addEnumConstant("SALSA")
             .build())
         .build()
@@ -1261,7 +1255,7 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  static class Meat {
+        |  class Meat {
         |  }
         |
         |  interface Tortilla {
@@ -1286,10 +1280,10 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("R").build())
         .addFun(FunSpec.builder("Q").build())
         .addFun(FunSpec.constructorBuilder()
-            .addParameter(Int::class.javaPrimitiveType!!, "p")
+            .addParameter(Int::class, "p")
             .build())
         .addFun(FunSpec.constructorBuilder()
-            .addParameter(Long::class.javaPrimitiveType!!, "o")
+            .addParameter(Long::class, "o")
             .build())
         .build()
     // Static properties, instance properties, constructors, functions, classes.
@@ -1417,7 +1411,7 @@ class TypeSpecTest {
 
   @Test fun parameterToString() {
     val parameter = ParameterSpec.builder(ClassName.get(tacosPackage, "Taco"), "taco")
-        .addModifiers(Modifier.FINAL)
+        .addModifiers(KModifier.FINAL)
         .addAnnotation(ClassName.get("javax.annotation", "Nullable"))
         .build()
     assertThat(parameter.toString())
@@ -1507,7 +1501,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("compare")
             .addAnnotation(Override::class)
             .addModifiers(KModifier.PUBLIC)
-            .returns(Int::class.javaPrimitiveType!!)
+            .returns(Int::class)
             .addParameter(String::class, "a")
             .addParameter(String::class, "b")
             .addStatement("return a.substring(0, length)\n" + ".compareTo(b.substring(0, length))")
@@ -1516,12 +1510,12 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
-            .addParameter(Int::class.javaPrimitiveType!!, "length", Modifier.FINAL)
+            .addParameter(Int::class, "length", KModifier.FINAL)
             .addStatement("return %L", prefixComparator)
             .build())
         .addFun(FunSpec.builder("sortPrefix")
             .addParameter(listOfString, "list")
-            .addParameter(Int::class.javaPrimitiveType!!, "length", Modifier.FINAL)
+            .addParameter(Int::class, "length", KModifier.FINAL)
             .addStatement("%T.sort(\nlist,\n%L)", Collections::class, prefixComparator)
             .build())
         .build()
@@ -1648,12 +1642,12 @@ class TypeSpecTest {
         .addFunctions(Arrays.asList(
             FunSpec.builder("getAnswer")
                 .addModifiers(KModifier.PUBLIC)
-                .returns(Int::class.javaPrimitiveType!!)
+                .returns(Int::class)
                 .addStatement("return %L", 42)
                 .build(),
             FunSpec.builder("getRandomQuantity")
                 .addModifiers(KModifier.PUBLIC)
-                .returns(Int::class.javaPrimitiveType!!)
+                .returns(Int::class)
                 .addKdoc("chosen by fair dice roll ;)\n")
                 .addStatement("return %L", 4)
                 .build()))

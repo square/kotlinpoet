@@ -26,6 +26,7 @@ enum class KModifier(vararg targets: Target) {
   CONST(Target.PROPERTY),
   CROSSINLINE(Target.PARAMETER),
   DATA(Target.CLASS),
+  INNER(Target.CLASS),
   ENUM(Target.CLASS),
   EXTERNAL(Target.FUNCTION),
   FINAL(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
