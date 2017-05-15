@@ -801,7 +801,7 @@ class TypeSpecTest {
         |
         |import kotlin.Int
         |
-        |public @interface MyAnnotation {
+        |public annotation class MyAnnotation {
         |  fun test(): Int default 0
         |}
         |""".trimMargin())
@@ -821,7 +821,7 @@ class TypeSpecTest {
         |
         |import java.lang.Deprecated
         |
-        |@interface Bar {
+        |annotation class Bar {
         |  fun value(): Deprecated default @Deprecated
         |}
         |""".trimMargin())
@@ -1455,7 +1455,7 @@ class TypeSpecTest {
     val type = TypeSpec.annotationBuilder("Taco")
         .build()
     assertThat(type.toString()).isEqualTo("""
-        |@interface Taco {
+        |annotation class Taco {
         |}
         |""".trimMargin())
   }
