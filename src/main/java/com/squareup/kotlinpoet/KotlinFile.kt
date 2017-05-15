@@ -27,7 +27,6 @@ import java.nio.file.Path
 import javax.annotation.processing.Filer
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
@@ -147,7 +146,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     for ((i, member) in members.withIndex()) {
       if (i > 0) codeWriter.emit("\n")
       when (member) {
-        is TypeSpec -> member.emit(codeWriter, null, emptySet<KModifier>())
+        is TypeSpec -> member.emit(codeWriter, null)
         else -> throw AssertionError()
       }
     }

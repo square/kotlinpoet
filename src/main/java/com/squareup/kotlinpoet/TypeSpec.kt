@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
 import java.io.StringWriter
@@ -69,7 +70,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, enumName: String?, implicitModifiers: Set<KModifier>) {
+  internal fun emit(codeWriter: CodeWriter, enumName: String?) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -97,7 +98,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitJavaModifiers(modifiers, implicitModifiers)
+        codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("annotation class %L", name)
         } else {
@@ -148,7 +149,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         val enumConstant = i.next()
         if (!firstMember) codeWriter.emit("\n")
         enumConstant.value
-            .emit(codeWriter, enumConstant.key, emptySet<KModifier>())
+            .emit(codeWriter, enumConstant.key)
         firstMember = false
         if (i.hasNext()) {
           codeWriter.emit(",\n")
@@ -200,7 +201,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       // Types.
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null, setOf())
+        typeSpec.emit(codeWriter, null)
         firstMember = false
       }
 
@@ -231,7 +232,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      emit(codeWriter, null, emptySet<KModifier>())
+      emit(codeWriter, null)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
