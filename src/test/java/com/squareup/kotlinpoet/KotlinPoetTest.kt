@@ -102,4 +102,94 @@ class KotlinPoetTest {
         |}
         |""".trimMargin())
   }
+
+  @Test fun strings() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("strings")
+            .addStatement("val a = %S", "basic string")
+            .addStatement("val b = %S", "string with a \$ dollar sign")
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("" +
+        "package com.squareup.tacos\n" +
+        "\n" +
+        "class Taco {\n" +
+        "  fun strings() {\n" +
+        "    val a = \"basic string\"\n" +
+        "    val b = \"string with a \$ dollar sign\"\n" +
+        "  }\n" +
+        "}\n")
+  }
+
+  /** When emitting a triple quote, KotlinPoet escapes the 3rd quote in the triplet. */
+  @Test fun rawStrings() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("strings")
+            .addStatement("val a = %S", "\"\n")
+            .addStatement("val b = %S", "a\"\"\"b\"\"\"\"\"\"c\n")
+            .addStatement("val c = %S", """
+            |whoa
+            |"raw"
+            |string
+            """.trimMargin())
+            .addStatement("val d = %S", """
+            |"raw"
+            |string
+            |with
+            |${'$'}a interpolated value
+            """.trimMargin())
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("" +
+        "package com.squareup.tacos\n" +
+        "\n" +
+        "class Taco {\n" +
+        "  fun strings() {\n" +
+        "    val a = \"\"\"\n" +
+        "        |\"\n" +
+        "        |\"\"\".trimMargin()\n" +
+        "    val b = \"\"\"\n" +
+        "        |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
+        "        |\"\"\".trimMargin()\n" +
+        "    val c = \"\"\"\n" +
+        "        |whoa\n" +
+        "        |\"raw\"\n" +
+        "        |string\n" +
+        "        \"\"\".trimMargin()\n" +
+        "    val d = \"\"\"\n" +
+        "        |\"raw\"\n" +
+        "        |string\n" +
+        "        |with\n" +
+        "        |\$a interpolated value\n" +
+        "        \"\"\".trimMargin()\n" +
+        "  }\n" +
+        "}\n")
+  }
+
+  /**
+   * When a string literal ends in a newline, there's a pipe `|` immediately preceding the closing
+   * triple quote. Otherwise the closing triple quote has no preceding `|`.
+   */
+  @Test fun edgeCaseStrings() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("strings")
+            .addStatement("val a = %S", "\n")
+            .addStatement("val b = %S", " \n ")
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("" +
+        "package com.squareup.tacos\n" +
+        "\n" +
+        "class Taco {\n" +
+        "  fun strings() {\n" +
+        "    val a = \"\"\"\n" +
+        "        |\n" +
+        "        |\"\"\".trimMargin()\n" +
+        "    val b = \"\"\"\n" +
+        "        | \n" +
+        "        | \n" +
+        "        \"\"\".trimMargin()\n" +
+        "  }\n" +
+        "}\n")
+  }
 }

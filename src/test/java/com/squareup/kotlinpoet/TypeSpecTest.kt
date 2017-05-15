@@ -1110,14 +1110,12 @@ class TypeSpecTest {
         .addStatement("return size")
         .build()
     val propertyBlock = CodeBlock.builder()
-        .add("%>%>")
-        .add("%T.<%T, %T>builder()%>%>", ImmutableMap::class, String::class, String::class)
+        .add("%T.<%T, %T>builder()", ImmutableMap::class, String::class, String::class)
         .add("\n.add(%S, %S)", '\'', "&#39;")
         .add("\n.add(%S, %S)", '&', "&amp;")
         .add("\n.add(%S, %S)", '<', "&lt;")
         .add("\n.add(%S, %S)", '>', "&gt;")
-        .add("\n.build()%<%<")
-        .add("%<%<")
+        .add("\n.build()")
         .build()
     val escapeHtml = PropertySpec.builder(ParameterizedTypeName.get(
         Map::class, String::class, String::class), "ESCAPE_HTML")
@@ -1145,11 +1143,11 @@ class TypeSpecTest {
         |
         |class Util {
         |  private val ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
-        |          .add("'", "&#39;")
-        |          .add("&", "&amp;")
-        |          .add("<", "&lt;")
-        |          .add(">", "&gt;")
-        |          .build()
+        |      .add("'", "&#39;")
+        |      .add("&", "&amp;")
+        |      .add("<", "&lt;")
+        |      .add(">", "&gt;")
+        |      .build()
         |
         |  fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
         |    Int size = Math.min(listA.size(), listB.size())
@@ -1567,10 +1565,12 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  val toppings: String = "shell\n"
-        |      + "beef\n"
-        |      + "lettuce\n"
-        |      + "cheese\n"
+        |  val toppings: String = ${"\"\"\""}
+        |      |shell
+        |      |beef
+        |      |lettuce
+        |      |cheese
+        |      |${"\"\"\""}.trimMargin()
         |}
         |""".trimMargin())
   }

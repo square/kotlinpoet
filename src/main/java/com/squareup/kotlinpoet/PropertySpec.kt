@@ -43,8 +43,7 @@ class PropertySpec constructor(
     codeWriter.emit(if (mutable) "var " else "val ")
     codeWriter.emit("%L: %T", name, type)
     if (initializer != null) {
-      codeWriter.emit(" = ")
-      codeWriter.emit(initializer)
+      codeWriter.emit(" = %[%L%]", initializer)
     }
     codeWriter.emit("\n")
   }
