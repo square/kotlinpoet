@@ -323,7 +323,7 @@ class TypeSpecTest {
         |    hey = 12,
         |    hello = "goodbye"
         |)
-        |public class Foo {
+        |class Foo {
         |}
         |""".trimMargin())
   }
@@ -359,7 +359,7 @@ class TypeSpecTest {
         |import java.lang.Override
         |import java.lang.String
         |
-        |public enum Roshambo {
+        |enum Roshambo {
         |  /**
         |   * Avalanche!
         |   */
@@ -406,7 +406,7 @@ class TypeSpecTest {
         |
         |import java.lang.Override
         |
-        |public enum Tortilla {
+        |enum Tortilla {
         |  CORN {
         |    @Override
         |    fun fold() {
@@ -482,7 +482,7 @@ class TypeSpecTest {
         |
         |import java.lang.Deprecated
         |
-        |public enum Roshambo {
+        |enum Roshambo {
         |  @Deprecated
         |  ROCK,
         |
@@ -801,7 +801,7 @@ class TypeSpecTest {
         |
         |import kotlin.Int
         |
-        |public annotation class MyAnnotation {
+        |annotation class MyAnnotation {
         |  fun test(): Int default 0
         |}
         |""".trimMargin())

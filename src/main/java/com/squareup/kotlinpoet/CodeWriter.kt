@@ -312,7 +312,7 @@ internal class CodeWriter @JvmOverloads constructor(
   @Throws(IOException::class)
   private fun emitLiteral(o: Any?) {
     if (o is TypeSpec) {
-      o.emit(this, null, emptySet<KModifier>())
+      o.emit(this, null)
     } else if (o is AnnotationSpec) {
       o.emit(this, true)
     } else if (o is CodeBlock) {
