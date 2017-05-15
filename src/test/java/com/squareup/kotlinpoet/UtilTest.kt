@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 
 import org.junit.Test
@@ -60,7 +61,8 @@ class UtilTest {
     stringLiteral("abc")
     stringLiteral("♦♥♠♣")
     stringLiteral("€\\t@\\t$", "€\t@\t$", " ")
-    stringLiteral("abc();\\n\"\n  + \"def();", "abc();\ndef();", " ")
+    assertThat(Util.stringLiteralWithQuotes("abc();\ndef();", " "))
+        .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
     stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!", " ")
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0", " ")
   }
@@ -70,6 +72,6 @@ class UtilTest {
   }
 
   internal fun stringLiteral(expected: String, value: String, indent: String) {
-    assertEquals("\"" + expected + "\"", Util.stringLiteralWithDoubleQuotes(value, indent))
+    assertEquals("\"" + expected + "\"", Util.stringLiteralWithQuotes(value, indent))
   }
 }

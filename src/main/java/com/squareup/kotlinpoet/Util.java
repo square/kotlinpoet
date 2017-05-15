@@ -85,29 +85,49 @@ final class Util {
   }
 
   /** Returns the string literal representing {@code value}, including wrapping double quotes. */
-  static String stringLiteralWithDoubleQuotes(String value, String indent) {
-    StringBuilder result = new StringBuilder(value.length() + 2);
-    result.append('"');
-    for (int i = 0; i < value.length(); i++) {
-      char c = value.charAt(i);
-      // trivial case: single quote must not be escaped
-      if (c == '\'') {
-        result.append("'");
-        continue;
+  static String stringLiteralWithQuotes(String value, String indent) {
+    if (value.contains("\n")) {
+      StringBuilder result = new StringBuilder(value.length() + 32);
+      result.append("\"\"\"\n|");
+      for (int i = 0; i < value.length(); i++) {
+        char c = value.charAt(i);
+        if (value.regionMatches(i, "\"\"\"", 0, 3)) {
+          // Don't inadvertently end the raw string too early
+          result.append("\"\"${'\"'}");
+          i += 2;
+        } else if (c == '\n') {
+          // Add a '|' after newlines. This pipe will be removed by trimMargin().
+          result.append("\n|");
+        } else {
+          result.append(c);
+        }
       }
-      // trivial case: double quotes must be escaped
-      if (c == '\"') {
-        result.append("\\\"");
-        continue;
+      // If the last-emitted character wasn't a margin '|', add a blank line. This will get removed
+      // by trimMargin().
+      if (!value.endsWith("\n")) result.append("\n");
+      result.append("\"\"\".trimMargin()");
+      return result.toString();
+    } else {
+      StringBuilder result = new StringBuilder(value.length() + 32);
+      result.append('"');
+      for (int i = 0; i < value.length(); i++) {
+        char c = value.charAt(i);
+        // Trivial case: single quote must not be escaped.
+        if (c == '\'') {
+          result.append("'");
+          continue;
+        }
+        // Trivial case: double quotes must be escaped.
+        if (c == '\"') {
+          result.append("\\\"");
+          continue;
+        }
+        // Default case: just let character literal do its work.
+        result.append(characterLiteralWithoutSingleQuotes(c));
+        // Need to append indent after linefeed?
       }
-      // default case: just let character literal do its work
-      result.append(characterLiteralWithoutSingleQuotes(c));
-      // need to append indent after linefeed?
-      if (c == '\n' && i + 1 < value.length()) {
-        result.append("\"\n").append(indent).append(indent).append("+ \"");
-      }
+      result.append('"');
+      return result.toString();
     }
-    result.append('"');
-    return result.toString();
   }
 }
