@@ -30,6 +30,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
   val modifiers: Set<KModifier> = Util.immutableSet(builder.modifiers)
   val type: TypeName = builder.type
+  val defaultValue = builder.defaultValue
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, varargs: Boolean) {
@@ -39,6 +40,9 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       codeWriter.emit("vararg %L: %T", name, TypeName.arrayComponent(type))
     } else {
       codeWriter.emit("%L: %T", name, type)
+    }
+    if (defaultValue != null) {
+      codeWriter.emit(" = %[%L%]", defaultValue)
     }
   }
 
@@ -75,6 +79,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       internal val name: String) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
+    internal var defaultValue: CodeBlock? = null
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
       annotations += annotationSpecs
@@ -110,6 +115,14 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
           else -> throw IllegalArgumentException("unexpected parameter modifier $modifier")
         }
       }
+      return this
+    }
+
+    fun defaultValue(format: String, vararg args: Any?) = defaultValue(CodeBlock.of(format, *args))
+
+    fun defaultValue(codeBlock: CodeBlock): Builder {
+      check(this.defaultValue == null) { "initializer was already set" }
+      this.defaultValue = codeBlock
       return this
     }
 
