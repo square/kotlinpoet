@@ -22,7 +22,7 @@ import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec constructor(
+class PropertySpec private constructor(
     val mutable: Boolean,
     val type: TypeName,
     val name: String,
