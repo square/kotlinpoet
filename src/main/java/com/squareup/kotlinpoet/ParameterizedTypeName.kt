@@ -28,7 +28,7 @@ class ParameterizedTypeName internal constructor(
     annotations: List<AnnotationSpec> = emptyList())
   : TypeName(annotations) {
 
-  val typeArguments: List<TypeName> = Util.immutableList(typeArguments)
+  val typeArguments: List<TypeName> = typeArguments.toImmutableList()
 
   init {
     require(!this.typeArguments.isEmpty() || enclosingType != null) {

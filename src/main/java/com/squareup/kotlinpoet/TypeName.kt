@@ -60,7 +60,7 @@ import kotlin.reflect.KClass
  * and [WildcardTypeName].
  */
 abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) {
-  val annotations: List<AnnotationSpec> = Util.immutableList(annotations)
+  val annotations: List<AnnotationSpec> = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */
   val cachedString: String by lazy {

@@ -51,13 +51,13 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
     this.name = builder.name
     this.kdoc = builder.kdoc.build()
-    this.annotations = Util.immutableList(builder.annotations)
-    this.modifiers = Util.immutableSet(builder.modifiers)
-    this.typeVariables = Util.immutableList(builder.typeVariables)
+    this.annotations = builder.annotations.toImmutableList()
+    this.modifiers = builder.modifiers.toImmutableSet()
+    this.typeVariables = builder.typeVariables.toImmutableList()
     this.returnType = builder.returnType
-    this.parameters = Util.immutableList(builder.parameters)
+    this.parameters = builder.parameters.toImmutableList()
     this.varargs = builder.varargs
-    this.exceptions = Util.immutableList(builder.exceptions)
+    this.exceptions = builder.exceptions.toImmutableList()
     this.defaultValue = builder.defaultValue
     this.code = code
   }

@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.characterLiteralWithoutSingleQuotes
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Array
@@ -32,7 +31,7 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val type: TypeName = builder.type
-  val members: Map<String, List<CodeBlock>> = Util.immutableMultimap(builder.members)
+  val members: Map<String, List<CodeBlock>> = builder.members.toImmutableMultimap()
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, inline: Boolean) {

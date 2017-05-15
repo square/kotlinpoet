@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.requireExactlyOneOf
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -30,17 +29,17 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val name = builder.name
   val anonymousTypeArguments = builder.anonymousTypeArguments
   val kdoc = builder.kdoc.build()
-  val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
-  val modifiers: Set<KModifier> = Util.immutableSet(builder.modifiers)
-  val typeVariables: List<TypeVariableName> = Util.immutableList(builder.typeVariables)
+  val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
-  val superinterfaces: List<TypeName> = Util.immutableList(builder.superinterfaces)
-  val enumConstants: Map<String, TypeSpec> = Util.immutableMap(builder.enumConstants)
-  val propertySpecs: List<PropertySpec> = Util.immutableList(builder.propertySpecs)
+  val superinterfaces: List<TypeName> = builder.superinterfaces.toImmutableList()
+  val enumConstants: Map<String, TypeSpec> = builder.enumConstants.toImmutableMap()
+  val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
-  val funSpecs: List<FunSpec> = Util.immutableList(builder.funSpecs)
-  val typeSpecs: List<TypeSpec> = Util.immutableList(builder.typeSpecs)
+  val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
+  val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   val originatingElements: List<Element>
 
   init {
@@ -49,7 +48,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     for (typeSpec in builder.typeSpecs) {
       originatingElementsMutable += typeSpec.originatingElements
     }
-    this.originatingElements = Util.immutableList(originatingElementsMutable)
+    this.originatingElements = originatingElementsMutable.toImmutableList()
   }
 
   fun toBuilder(): Builder {

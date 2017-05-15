@@ -54,8 +54,8 @@ import kotlin.reflect.KClass
  */
 class CodeBlock private constructor(builder: CodeBlock.Builder) {
   /** A heterogeneous list containing string literals and value placeholders.  */
-  internal val formatParts: List<String> = Util.immutableList(builder.formatParts)
-  internal val args: List<Any?> = Util.immutableList(builder.args)
+  internal val formatParts: List<String> = builder.formatParts.toImmutableList()
+  internal val args: List<Any?> = builder.args.toImmutableList()
 
   fun isEmpty() = formatParts.isEmpty()
 
