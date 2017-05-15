@@ -150,10 +150,10 @@ class TypeSpecTest {
         |import java.lang.Override
         |
         |class Taco {
-        |  val NAME: Thing.Thang<Foo, Bar> = new Thing.Thang<Foo, Bar>() {
+        |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
         |    @Override
         |    fun call(final thung: Thung<in Foo>): Thung<in Bar> {
-        |      return new SimpleThung<Bar>(thung) {
+        |      return object : SimpleThung<Bar>(thung) {
         |        @Override
         |        fun doSomething(bar: Bar) {
         |          /* code snippets */
@@ -1435,7 +1435,7 @@ class TypeSpecTest {
             .build())
         .build()
     assertThat(type.toString()).isEqualTo("""
-        |new java.lang.Runnable() {
+        |object : java.lang.Runnable() {
         |  @java.lang.Override
         |  fun run() {
         |  }
@@ -1531,7 +1531,7 @@ class TypeSpecTest {
         |
         |class Taco {
         |  fun comparePrefix(final length: Int): Comparator<String> {
-        |    return new Comparator<String>() {
+        |    return object : Comparator<String>() {
         |      @Override
         |      fun compare(a: String, b: String): Int {
         |        return a.substring(0, length)
@@ -1543,7 +1543,7 @@ class TypeSpecTest {
         |  fun sortPrefix(list: List<String>, final length: Int) {
         |    Collections.sort(
         |        list,
-        |        new Comparator<String>() {
+        |        object : Comparator<String>() {
         |          @Override
         |          fun compare(a: String, b: String): Int {
         |            return a.substring(0, length)

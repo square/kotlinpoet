@@ -91,7 +91,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
         val supertype = if (!superinterfaces.isEmpty()) superinterfaces[0] else superclass
-        codeWriter.emit("new %T(", supertype)
+        codeWriter.emit("object : %T(", supertype)
         codeWriter.emit(anonymousTypeArguments)
         codeWriter.emit(") {\n")
       } else {
