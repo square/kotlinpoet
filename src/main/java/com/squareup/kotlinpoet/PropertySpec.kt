@@ -33,8 +33,6 @@ class PropertySpec constructor(
   val annotations = annotations.toList()
   val modifiers = modifiers.toSet()
 
-  fun hasModifier(modifier: KModifier) = modifiers.contains(modifier)
-
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>) {
     codeWriter.emitKdoc(kdoc)
