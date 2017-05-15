@@ -192,4 +192,24 @@ class KotlinPoetTest {
         "  }\n" +
         "}\n")
   }
+
+  @Test fun parameterDefaultValue() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("addCheese")
+            .addParameter(ParameterSpec.builder(String::class, "kind")
+                .defaultValue("%S", "monterey jack")
+                .build())
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |class Taco {
+        |  fun addCheese(kind: String = "monterey jack") {
+        |  }
+        |}
+        |""".trimMargin())
+  }
 }
