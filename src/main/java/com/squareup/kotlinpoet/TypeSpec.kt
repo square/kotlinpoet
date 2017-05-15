@@ -99,7 +99,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitJavaModifiers(modifiers, implicitModifiers)
         if (kind == Kind.ANNOTATION) {
-          codeWriter.emit("%L %L", "@interface", name)
+          codeWriter.emit("annotation class %L", name)
         } else {
           codeWriter.emit("%L %L", kind.name.toLowerCase(Locale.US), name)
         }
