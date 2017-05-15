@@ -22,6 +22,39 @@ import kotlin.test.fail
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
 
+  @Test fun topLevelMembersRetainOrder() {
+    val source = KotlinFile.builder(tacosPackage, "Taco")
+        .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
+        .addType(TypeSpec.classBuilder("B").build())
+        .addFun(FunSpec.builder("c").build())
+        .addType(TypeSpec.classBuilder("D").build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |fun a() {
+        |}
+        |
+        |class B {
+        |}
+        |
+        |fun c() {
+        |}
+        |
+        |class D {
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun noTopLevelConstructor() {
+    try {
+      KotlinFile.builder(tacosPackage, "Taco")
+          .addFun(FunSpec.constructorBuilder().build())
+      fail()
+    } catch(expected: IllegalArgumentException) {
+    }
+  }
+
   @Test fun primaryConstructor() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
