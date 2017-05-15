@@ -58,7 +58,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   val fileName: String = builder.fileName
   val members: List<Any> = builder.members.toList()
   val skipJavaLangImports: Boolean = builder.skipJavaLangImports
-  private val memberImports = Util.immutableSet(builder.memberImports)
+  private val memberImports = builder.memberImports.toImmutableSet()
   private val indent = builder.indent
 
   @Throws(IOException::class)

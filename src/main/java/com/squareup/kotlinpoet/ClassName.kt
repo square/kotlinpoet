@@ -32,7 +32,7 @@ class ClassName private constructor(
   : TypeName(annotations), Comparable<ClassName> {
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
-  internal val names = Util.immutableList(names)
+  internal val names = names.toImmutableList()
   val canonicalName = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
     names.joinToString(".")

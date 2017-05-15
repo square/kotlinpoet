@@ -15,12 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.stringLiteralWithDoubleQuotes
 import java.io.IOException
 import java.util.EnumSet
 import java.util.Locale
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Modifier
 
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()

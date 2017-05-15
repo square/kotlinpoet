@@ -19,7 +19,6 @@ import java.io.OutputStream
 import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Arrays
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Element
 import javax.tools.FileObject
@@ -50,7 +49,7 @@ internal class TestFiler(
       name: CharSequence, vararg originatingElements: Element): JavaFileObject {
     val relative = name.toString().replace(".", separator) + ".java" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap.put(path, Util.immutableSet(Arrays.asList(*originatingElements)))
+    originatingElementsMap.put(path, originatingElements.toSet())
     return Source(path)
   }
 
@@ -61,7 +60,7 @@ internal class TestFiler(
       relativeName: CharSequence, vararg originatingElements: Element): FileObject {
     val relative = pkg.toString().replace(".", separator) + separator + relativeName
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap.put(path, Util.immutableSet(Arrays.asList(*originatingElements)))
+    originatingElementsMap.put(path, originatingElements.toSet())
     return Source(path)
   }
 
