@@ -2003,7 +2003,7 @@ class TypeSpecTest {
         |
         |  private const val FOO: String = "FOO"
         |
-        |  {
+        |  init {
         |    foo = "FOO"
         |  }
         |
@@ -2054,7 +2054,7 @@ class TypeSpecTest {
         |
         |  private const val FOO: String = "FOO"
         |
-        |  {
+        |  init {
         |    foo = "instanceFoo"
         |  }
         |

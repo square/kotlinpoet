@@ -399,7 +399,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addInitializerBlock(block: CodeBlock): Builder {
       check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
-      initializerBlock.add("{\n")
+      initializerBlock.add("init {\n")
           .indent()
           .add(block)
           .unindent()
