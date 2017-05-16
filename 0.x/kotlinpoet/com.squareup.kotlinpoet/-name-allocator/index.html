@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NameAllocator - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href=".">NameAllocator</a><br/>
+<br/>
+<h1>NameAllocator</h1>
+<code><span class="keyword">class </span><span class="identifier">NameAllocator</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Cloneable</span></code>
+<p>Assigns Kotlin identifier names to avoid collisions, keywords, and invalid characters. To use,
+first create an instance and allocate all of the names that you need. Typically this is a
+mix of user-supplied names and constants:</p>
+<pre><code>NameAllocator nameAllocator = new NameAllocator();
+for (MyProperty property : properties) {
+  nameAllocator.newName(property.name(), property);
+}
+nameAllocator.newName("sb", "string builder");</code></pre>
+<p>Pass a unique tag object to each allocation. The tag scopes the name, and can be used to look up
+the allocated name later. Typically the tag is the object that is being named. In the above
+example we use <code>property</code> for the user-supplied property names, and <code>"string builder"</code> for our
+constant string builder.</p>
+<p>Once we've allocated names we can use them when generating code:</p>
+<pre><code>FunSpec.Builder builder = FunSpec.builder("toString")
+    .addAnnotation(Override.class)
+    .addModifiers(Modifier.PUBLIC)
+    .returns(String.class);
+builder.addStatement("%1T %2N = new %1T()",
+    StringBuilder.class, nameAllocator.get("string builder"));
+for (MyProperty property : properties) {
+  builder.addStatement("%N.append(%N)",
+      nameAllocator.get("string builder"), nameAllocator.get(property));
+}
+builder.addStatement("return %N", nameAllocator.get("string builder"));
+return builder.build();</code></pre>
+<p>The above code generates unique names if presented with conflicts. Given user-supplied properties
+with names <code>ab</code> and <code>sb</code> this generates the following:</p>
+<pre><code>@Override public String toString() {
+  StringBuilder sb_ = new StringBuilder();
+  sb_.append(ab);
+  sb_.append(sb);
+  return sb_.toString();
+}</code></pre>
+<p>The underscore is appended to <code>sb</code> to avoid conflicting with the user-supplied <code>sb</code> property.
+Underscores are also prefixed for names that start with a digit, and used to replace name-unsafe
+characters like space or dash.</p>
+<p>When dealing with multiple independent inner scopes, use a <a href="clone.html">clone</a> of the
+NameAllocator used for the outer scope to further refine name allocation for a specific inner
+scope.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-init-.html">&lt;init&gt;</a></td>
+<td>
+<code><span class="identifier">NameAllocator</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="clone.html">clone</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clone</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">NameAllocator</span></code>
+<p>Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
+of a NameAllocator to be used in the respective definition of multiples, independently-scoped,
+inner code blocks.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="get.html">get</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.NameAllocator$get(kotlin.Any)/tag">tag</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code>
+<p>Retrieve a name created with <a href="new-name.html">NameAllocator.newName</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="new-name.html">newName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">newName</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.NameAllocator$newName(kotlin.String, kotlin.Any)/suggestion">suggestion</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.NameAllocator$newName(kotlin.String, kotlin.Any)/tag">tag</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span>&nbsp;<span class="symbol">=</span>&nbsp;UUID.randomUUID().toString()<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code>
+<p>Return a new name using <code>suggestion</code> that will not be a Java identifier or clash with other
+names. The returned value can be queried multiple times by passing <code>tag</code> to
+<a href="get.html">NameAllocator.get</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

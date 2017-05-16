@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ClassName - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href=".">ClassName</a><br/>
+<br/>
+<h1>ClassName</h1>
+<code><span class="keyword">class </span><span class="identifier">ClassName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier">Comparable</span><span class="symbol">&lt;</span><span class="identifier">ClassName</span><span class="symbol">&gt;</span></code>
+<p>A fully-qualified class name for top-level and member classes.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="canonical-name.html">canonicalName</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">canonicalName</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-type-name/annotations.html">annotations</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">annotations</span><span class="symbol">: </span><span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/is-annotated.html">isAnnotated</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isAnnotated</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="annotated.html">annotated</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">annotated</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName$annotated(kotlin.collections.List((com.squareup.kotlinpoet.AnnotationSpec)))/annotations">annotations</span><span class="symbol">:</span>&nbsp;<span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="compare-to.html">compareTo</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">compareTo</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName$compareTo(com.squareup.kotlinpoet.ClassName)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClassName</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="enclosing-class-name.html">enclosingClassName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">enclosingClassName</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span><span class="symbol">?</span></code>
+<p>Returns the enclosing class, like <a href="#">Map</a> for <code>Map.Entry</code>. Returns null if this class
+is not nested in another class.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="nested-class.html">nestedClass</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">nestedClass</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName$nestedClass(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns a new ClassName instance for the specified <code>name</code> as nested inside this
+class.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="package-name.html">packageName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">packageName</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code>
+<p>Returns the package name, like <code>"java.util"</code> for <code>Map.Entry</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="peer-class.html">peerClass</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">peerClass</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName$peerClass(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns a class that shares the same enclosing package or class. If this class is enclosed by
+another class, this is equivalent to <code>enclosingClassName().nestedClass(name)</code>. Otherwise
+it is equivalent to <code>get(packageName(), name)</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="reflection-name.html">reflectionName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">reflectionName</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="simple-name.html">simpleName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">simpleName</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code>
+<p>Returns the simple name of this class, like <code>"Entry"</code> for <a href="#">Map.Entry</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="simple-names.html">simpleNames</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">simpleNames</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MutableList</span><span class="symbol">&lt;</span><span class="identifier">String</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="top-level-class-name.html">topLevelClassName</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">topLevelClassName</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns the top class in this nesting group. Equivalent to chained calls to
+<a href="enclosing-class-name.html">ClassName.enclosingClassName</a> until the result's enclosing class is null.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="without-annotations.html">withoutAnnotations</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">withoutAnnotations</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-type-name/annotated.html">annotated</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">annotated</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeName$annotated(kotlin.Array((com.squareup.kotlinpoet.AnnotationSpec)))/annotations">annotations</span><span class="symbol">:</span>&nbsp;<a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/equals.html">equals</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeName$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/hash-code.html">hashCode</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/to-string.html">toString</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="best-guess.html">bestGuess</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">bestGuess</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$bestGuess(kotlin.String)/classNameString">classNameString</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns a new ClassName instance for the given fully-qualified class name string. This
+method assumes that the input is ASCII and follows typical Java style (lowercase package
+names, UpperCamelCase class names) and may produce incorrect results or throw
+<a href="#">IllegalArgumentException</a> otherwise. For that reason, <a href="#">.get</a> and
+<a href="#">.get</a> should be preferred as they can correctly create ClassName
+instances without such restrictions.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="get.html">get</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(java.lang.Class((kotlin.Any)))/clazz">clazz</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(kotlin.reflect.KClass((kotlin.Any)))/clazz">clazz</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code><code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(kotlin.String, kotlin.String, kotlin.Array((kotlin.String)))/packageName">packageName</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(kotlin.String, kotlin.String, kotlin.Array((kotlin.String)))/simpleName">simpleName</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(kotlin.String, kotlin.String, kotlin.Array((kotlin.String)))/simpleNames">simpleNames</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns a class name created from the given parts. For example, calling this with package name
+<code>"java.util"</code> and simple names <code>"Map"</code>, <code>"Entry"</code> yields <a href="#">Map.Entry</a>.</p>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ClassName.Companion$get(javax.lang.model.element.TypeElement)/element">element</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/TypeElement.html"><span class="identifier">TypeElement</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClassName</span></code>
+<p>Returns the class name for <code>element</code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ParameterSpec.Builder - kotlinpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">ParameterSpec</a>&nbsp;/&nbsp;<a href=".">Builder</a><br/>
+<br/>
+<h1>Builder</h1>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="add-annotation.html">addAnnotation</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addAnnotation(com.squareup.kotlinpoet.AnnotationSpec)/annotationSpec">annotationSpec</span><span class="symbol">:</span>&nbsp;<a href="../../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addAnnotation(com.squareup.kotlinpoet.ClassName)/annotation">annotation</span><span class="symbol">:</span>&nbsp;<a href="../../-class-name/index.html"><span class="identifier">ClassName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addAnnotation(java.lang.Class((kotlin.Any)))/annotation">annotation</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-annotations.html">addAnnotations</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotations</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addAnnotations(kotlin.collections.Iterable((com.squareup.kotlinpoet.AnnotationSpec)))/annotationSpecs">annotationSpecs</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-modifiers.html">addModifiers</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addModifiers</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addModifiers(kotlin.Array((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addModifiers</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$addModifiers(kotlin.collections.Iterable((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="build.html">build</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">build</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../index.html"><span class="identifier">ParameterSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="default-value.html">defaultValue</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">defaultValue</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$defaultValue(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$defaultValue(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">defaultValue</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$defaultValue(com.squareup.kotlinpoet.CodeBlock)/codeBlock">codeBlock</span><span class="symbol">:</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="jvm-modifiers.html">jvmModifiers</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">jvmModifiers</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.ParameterSpec.Builder$jvmModifiers(kotlin.collections.Iterable((javax.lang.model.element.Modifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/Modifier.html"><span class="identifier">Modifier</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

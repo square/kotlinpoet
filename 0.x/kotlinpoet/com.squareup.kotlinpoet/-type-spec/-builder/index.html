@@ -1,0 +1,148 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TypeSpec.Builder - kotlinpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">TypeSpec</a>&nbsp;/&nbsp;<a href=".">Builder</a><br/>
+<br/>
+<h1>Builder</h1>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="add-annotation.html">addAnnotation</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addAnnotation(com.squareup.kotlinpoet.AnnotationSpec)/annotationSpec">annotationSpec</span><span class="symbol">:</span>&nbsp;<a href="../../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addAnnotation(com.squareup.kotlinpoet.ClassName)/annotation">annotation</span><span class="symbol">:</span>&nbsp;<a href="../../-class-name/index.html"><span class="identifier">ClassName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addAnnotation(java.lang.Class((kotlin.Any)))/annotation">annotation</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotation</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addAnnotation(kotlin.reflect.KClass((kotlin.Any)))/annotation">annotation</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-annotations.html">addAnnotations</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addAnnotations</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addAnnotations(kotlin.collections.Iterable((com.squareup.kotlinpoet.AnnotationSpec)))/annotationSpecs">annotationSpecs</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-enum-constant.html">addEnumConstant</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addEnumConstant</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addEnumConstant(kotlin.String, com.squareup.kotlinpoet.TypeSpec)/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addEnumConstant(kotlin.String, com.squareup.kotlinpoet.TypeSpec)/typeSpec">typeSpec</span><span class="symbol">:</span>&nbsp;<a href="../index.html"><span class="identifier">TypeSpec</span></a>&nbsp;<span class="symbol">=</span>&nbsp;anonymousClassBuilder("").build()<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-fun.html">addFun</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addFun</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addFun(com.squareup.kotlinpoet.FunSpec)/funSpec">funSpec</span><span class="symbol">:</span>&nbsp;<a href="../../-fun-spec/index.html"><span class="identifier">FunSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-functions.html">addFunctions</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addFunctions</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addFunctions(kotlin.collections.Iterable((com.squareup.kotlinpoet.FunSpec)))/funSpecs">funSpecs</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-fun-spec/index.html"><span class="identifier">FunSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-initializer-block.html">addInitializerBlock</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addInitializerBlock</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addInitializerBlock(com.squareup.kotlinpoet.CodeBlock)/block">block</span><span class="symbol">:</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-kdoc.html">addKdoc</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addKdoc</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addKdoc(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addKdoc(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addKdoc</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addKdoc(com.squareup.kotlinpoet.CodeBlock)/block">block</span><span class="symbol">:</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-modifiers.html">addModifiers</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addModifiers</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addModifiers(kotlin.Array((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-originating-element.html">addOriginatingElement</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addOriginatingElement</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addOriginatingElement(javax.lang.model.element.Element)/originatingElement">originatingElement</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/Element.html"><span class="identifier">Element</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-properties.html">addProperties</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addProperties</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperties(kotlin.collections.Iterable((com.squareup.kotlinpoet.PropertySpec)))/propertySpecs">propertySpecs</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-property-spec/index.html"><span class="identifier">PropertySpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-property.html">addProperty</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addProperty</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(com.squareup.kotlinpoet.PropertySpec)/propertySpec">propertySpec</span><span class="symbol">:</span>&nbsp;<a href="../../-property-spec/index.html"><span class="identifier">PropertySpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addProperty</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(com.squareup.kotlinpoet.TypeName, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="../../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(com.squareup.kotlinpoet.TypeName, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(com.squareup.kotlinpoet.TypeName, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addProperty</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(java.lang.reflect.Type, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(java.lang.reflect.Type, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(java.lang.reflect.Type, kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addProperty</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(kotlin.reflect.KClass((kotlin.Any)), kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/type">type</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(kotlin.reflect.KClass((kotlin.Any)), kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/name">name</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addProperty(kotlin.reflect.KClass((kotlin.Any)), kotlin.String, kotlin.Array((com.squareup.kotlinpoet.KModifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-k-modifier/index.html"><span class="identifier">KModifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-superinterface.html">addSuperinterface</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addSuperinterface</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addSuperinterface(com.squareup.kotlinpoet.TypeName)/superinterface">superinterface</span><span class="symbol">:</span>&nbsp;<a href="../../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addSuperinterface</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addSuperinterface(java.lang.reflect.Type)/superinterface">superinterface</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addSuperinterface</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addSuperinterface(kotlin.reflect.KClass((kotlin.Any)))/superinterface">superinterface</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-superinterfaces.html">addSuperinterfaces</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addSuperinterfaces</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addSuperinterfaces(kotlin.collections.Iterable((com.squareup.kotlinpoet.TypeName)))/superinterfaces">superinterfaces</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-type.html">addType</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addType</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addType(com.squareup.kotlinpoet.TypeSpec)/typeSpec">typeSpec</span><span class="symbol">:</span>&nbsp;<a href="../index.html"><span class="identifier">TypeSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-type-variable.html">addTypeVariable</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addTypeVariable</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addTypeVariable(com.squareup.kotlinpoet.TypeVariableName)/typeVariable">typeVariable</span><span class="symbol">:</span>&nbsp;<a href="../../-type-variable-name/index.html"><span class="identifier">TypeVariableName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-type-variables.html">addTypeVariables</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addTypeVariables</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addTypeVariables(kotlin.collections.Iterable((com.squareup.kotlinpoet.TypeVariableName)))/typeVariables">typeVariables</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../../-type-variable-name/index.html"><span class="identifier">TypeVariableName</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-types.html">addTypes</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addTypes</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$addTypes(kotlin.collections.Iterable((com.squareup.kotlinpoet.TypeSpec)))/typeSpecs">typeSpecs</span><span class="symbol">:</span>&nbsp;<span class="identifier">Iterable</span><span class="symbol">&lt;</span><a href="../index.html"><span class="identifier">TypeSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="build.html">build</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">build</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../index.html"><span class="identifier">TypeSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="primary-constructor.html">primaryConstructor</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">primaryConstructor</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$primaryConstructor(com.squareup.kotlinpoet.FunSpec)/primaryConstructor">primaryConstructor</span><span class="symbol">:</span>&nbsp;<a href="../../-fun-spec/index.html"><span class="identifier">FunSpec</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="superclass.html">superclass</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">superclass</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$superclass(com.squareup.kotlinpoet.TypeName)/superclass">superclass</span><span class="symbol">:</span>&nbsp;<a href="../../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">superclass</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeSpec.Builder$superclass(java.lang.reflect.Type)/superclass">superclass</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

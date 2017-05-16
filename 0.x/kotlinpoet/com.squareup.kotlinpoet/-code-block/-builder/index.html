@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CodeBlock.Builder - kotlinpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">CodeBlock</a>&nbsp;/&nbsp;<a href=".">Builder</a><br/>
+<br/>
+<h1>Builder</h1>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-init-.html">&lt;init&gt;</a></td>
+<td>
+<code><span class="identifier">Builder</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="add.html">add</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$add(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$add(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code>
+<p>Add code with positional or relative arguments.</p>
+<code><span class="keyword">fun </span><span class="identifier">add</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$add(com.squareup.kotlinpoet.CodeBlock)/codeBlock">codeBlock</span><span class="symbol">:</span>&nbsp;<a href="../index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-named.html">addNamed</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addNamed</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$addNamed(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$addNamed(kotlin.String, kotlin.collections.Map((kotlin.String, kotlin.Any)))/arguments">arguments</span><span class="symbol">:</span>&nbsp;<span class="identifier">Map</span><span class="symbol">&lt;</span><span class="identifier">String</span><span class="symbol">,</span>&nbsp;<span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code>
+<p>Adds code using named arguments.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="add-statement.html">addStatement</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addStatement</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$addStatement(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$addStatement(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="begin-control-flow.html">beginControlFlow</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">beginControlFlow</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$beginControlFlow(kotlin.String, kotlin.Array((kotlin.Any)))/controlFlow">controlFlow</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$beginControlFlow(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="build.html">build</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">build</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../index.html"><span class="identifier">CodeBlock</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="end-control-flow.html">endControlFlow</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">endControlFlow</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="indent.html">indent</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">indent</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="next-control-flow.html">nextControlFlow</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">nextControlFlow</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$nextControlFlow(kotlin.String, kotlin.Array((kotlin.Any)))/controlFlow">controlFlow</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Builder$nextControlFlow(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="unindent.html">unindent</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">unindent</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

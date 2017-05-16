@@ -1,0 +1,199 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>com.squareup.kotlinpoet - kotlinpoet</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href=".">com.squareup.kotlinpoet</a><br/>
+<br/>
+<h2>Package com.squareup.kotlinpoet</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-annotation-spec/index.html">AnnotationSpec</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">AnnotationSpec</span></code>
+<p>A generated annotation on a declaration.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-array-type-name/index.html">ArrayTypeName</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ArrayTypeName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-class-name/index.html">ClassName</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ClassName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier">Comparable</span><span class="symbol">&lt;</span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a><span class="symbol">&gt;</span></code>
+<p>A fully-qualified class name for top-level and member classes.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-code-block/index.html">CodeBlock</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CodeBlock</span></code>
+<p>A fragment of a .kt file, potentially containing declarations, statements, and documentation.
+Code blocks are not necessarily well-formed Kotlin code, and are not validated. This class
+assumes kotlinc will check correctness later!</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-fun-spec/index.html">FunSpec</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FunSpec</span></code>
+<p>A generated function declaration.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-k-modifier/index.html">KModifier</a></td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">KModifier</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="-kotlin-file/index.html">KotlinFile</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">KotlinFile</span></code>
+<p>A Kotlin file containing top level objects like classes, objects, functions, properties, and type
+aliases.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-name-allocator/index.html">NameAllocator</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">NameAllocator</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Cloneable</span></code>
+<p>Assigns Kotlin identifier names to avoid collisions, keywords, and invalid characters. To use,
+first create an instance and allocate all of the names that you need. Typically this is a
+mix of user-supplied names and constants:</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-parameter-spec/index.html">ParameterSpec</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ParameterSpec</span></code>
+<p>A generated parameter declaration.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-parameterized-type-name/index.html">ParameterizedTypeName</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ParameterizedTypeName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-property-spec/index.html">PropertySpec</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PropertySpec</span></code>
+<p>A generated property declaration.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-type-name/index.html">TypeName</a></td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">TypeName</span></code>
+<p>Any type in Kotlin's type system. This class identifies simple types like <code>Int</code> and <code>String</code>,
+nullable types like <code>Int?</code>, composite types like <code>Array&lt;String&gt;</code> and <code>Set&lt;String&gt;</code>, and
+unassignable types like <code>Unit</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-type-spec/index.html">TypeSpec</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TypeSpec</span></code>
+<p>A generated class, interface, or enum declaration.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="-type-variable-name/index.html">TypeVariableName</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TypeVariableName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-wildcard-type-name/index.html">WildcardTypeName</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WildcardTypeName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-a-n-y.html">ANY</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ANY</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-b-o-o-l-e-a-n.html">BOOLEAN</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BOOLEAN</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-b-y-t-e.html">BYTE</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BYTE</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-c-h-a-r.html">CHAR</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">CHAR</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-d-o-u-b-l-e.html">DOUBLE</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DOUBLE</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-f-l-o-a-t.html">FLOAT</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">FLOAT</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-i-n-t.html">INT</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">INT</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-l-o-n-g.html">LONG</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">LONG</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-s-h-o-r-t.html">SHORT</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">SHORT</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="-u-n-i-t.html">UNIT</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">UNIT</span><span class="symbol">: </span><a href="-class-name/index.html"><span class="identifier">ClassName</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

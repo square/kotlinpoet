@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CodeBlock - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href=".">CodeBlock</a><br/>
+<br/>
+<h1>CodeBlock</h1>
+<code><span class="keyword">class </span><span class="identifier">CodeBlock</span></code>
+<p>A fragment of a .kt file, potentially containing declarations, statements, and documentation.
+Code blocks are not necessarily well-formed Kotlin code, and are not validated. This class
+assumes kotlinc will check correctness later!</p>
+<p>Code blocks support placeholders like <a href="http://docs.oracle.com/javase/6/docs/api/java/text/Format.html">java.text.Format</a>. This class uses a percent sign
+<code>%</code> but has its own set of permitted placeholders:</p>
+<ul><li><code>%L</code> emits a <emph>literal</emph> value with no escaping. Arguments for literals may be strings,
+    primitives, <a href="../-type-spec/index.html">type declarations</a>, <a href="../-annotation-spec/index.html">annotations</a> and even other code
+    blocks.</li>
+<li><code>%N</code> emits a <emph>name</emph>, using name collision avoidance where necessary. Arguments for names may
+    be strings (actually any <a href="#">character sequence</a>), <a href="../-parameter-spec/index.html">parameters</a>,
+    <a href="../-property-spec/index.html">properties</a>, <a href="../-fun-spec/index.html">functions</a>, and <a href="../-type-spec/index.html">types</a>.</li>
+<li><code>%S</code> escapes the value as a <emph>string</emph>, wraps it with double quotes, and emits that. For
+    example, <code>6" sandwich</code> is emitted <code>"6\" sandwich"</code>.</li>
+<li><code>%T</code> emits a <emph>type</emph> reference. Types will be imported if possible. Arguments for types may be
+    <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html">classes</a>, <a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/type/TypeMirror.html">type mirrors</a>, and
+    <a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/Element.html">elements</a>.</li>
+<li><code>%%</code> emits a percent sign.</li>
+<li><code>%W</code> emits a space or a newline, depending on its position on the line. This prefers to wrap
+    lines before 100 columns.</li>
+<li><code>%&gt;</code> increases the indentation level.</li>
+<li><code>%&lt;</code> decreases the indentation level.</li>
+<li><code>%[</code> begins a statement. For multiline statements, every line after the first line is
+    double-indented.</li>
+<li><code>%]</code> ends a statement.</li>
+</ul>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-builder/index.html">Builder</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="equals.html">equals</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="hash-code.html">hashCode</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="is-empty.html">isEmpty</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isEmpty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="to-builder.html">toBuilder</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toBuilder</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="to-string.html">toString</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="builder.html">builder</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">builder</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="of.html">of</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">of</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Companion$of(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.CodeBlock.Companion$of(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CodeBlock</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

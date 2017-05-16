@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>FunSpec.overriding - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="index.html">FunSpec</a>&nbsp;/&nbsp;<a href=".">overriding</a><br/>
+<br/>
+<h1>overriding</h1>
+
+<p><a name="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement)"></a>
+<code><span class="identifier">@JvmStatic</span> <span class="keyword">fun </span><span class="identifier">overriding</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement)/method">method</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/ExecutableElement.html"><span class="identifier">ExecutableElement</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code>
+<p>Returns a new fun spec builder that overrides <code>method</code>.</p>
+<p>This will copy its visibility modifiers, type parameters, return type, name, parameters, and
+throws declarations. An <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Override.html">Override</a> annotation will be added.</p>
+
+<p><a name="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement, javax.lang.model.type.DeclaredType, javax.lang.model.util.Types)"></a>
+<code><span class="identifier">@JvmStatic</span> <span class="keyword">fun </span><span class="identifier">overriding</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement, javax.lang.model.type.DeclaredType, javax.lang.model.util.Types)/method">method</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/ExecutableElement.html"><span class="identifier">ExecutableElement</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement, javax.lang.model.type.DeclaredType, javax.lang.model.util.Types)/enclosing">enclosing</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/type/DeclaredType.html"><span class="identifier">DeclaredType</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.FunSpec.Companion$overriding(javax.lang.model.element.ExecutableElement, javax.lang.model.type.DeclaredType, javax.lang.model.util.Types)/types">types</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/util/Types.html"><span class="identifier">Types</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code>
+<p>Returns a new function spec builder that overrides <code>method</code> as a member of <code>enclosing</code>. This
+will resolve type parameters: for example overriding <a href="#">Comparable.compareTo</a> in a type that
+implements <code>Comparable&lt;Movie&gt;</code>, the <code>T</code> parameter will be resolved to <code>Movie</code>.</p>
+<p>This will copy its visibility modifiers, type parameters, return type, name, parameters, and
+throws declarations. An <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Override.html">Override</a> annotation will be added.</p>
+</BODY>
+</HTML>

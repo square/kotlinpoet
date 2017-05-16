@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>KotlinFile.Builder - kotlinpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">KotlinFile</a>&nbsp;/&nbsp;<a href=".">Builder</a><br/>
+<br/>
+<h1>Builder</h1>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="add-file-comment.html">addFileComment</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addFileComment</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addFileComment(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addFileComment(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-fun.html">addFun</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addFun</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addFun(com.squareup.kotlinpoet.FunSpec)/funSpec">funSpec</span><span class="symbol">:</span>&nbsp;<a href="../../-fun-spec/index.html"><span class="identifier">FunSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-static-import.html">addStaticImport</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addStaticImport</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(kotlin.Enum(()))/constant">constant</span><span class="symbol">:</span>&nbsp;<span class="identifier">Enum</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addStaticImport</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(java.lang.Class((kotlin.Any)), kotlin.Array((kotlin.String)))/clazz">clazz</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(java.lang.Class((kotlin.Any)), kotlin.Array((kotlin.String)))/names">names</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addStaticImport</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(kotlin.reflect.KClass((kotlin.Any)), kotlin.Array((kotlin.String)))/clazz">clazz</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(kotlin.reflect.KClass((kotlin.Any)), kotlin.Array((kotlin.String)))/names">names</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addStaticImport</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(com.squareup.kotlinpoet.ClassName, kotlin.Array((kotlin.String)))/className">className</span><span class="symbol">:</span>&nbsp;<a href="../../-class-name/index.html"><span class="identifier">ClassName</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addStaticImport(com.squareup.kotlinpoet.ClassName, kotlin.Array((kotlin.String)))/names">names</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="add-type.html">addType</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addType</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$addType(com.squareup.kotlinpoet.TypeSpec)/typeSpec">typeSpec</span><span class="symbol">:</span>&nbsp;<a href="../../-type-spec/index.html"><span class="identifier">TypeSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="build.html">build</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">build</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../index.html"><span class="identifier">KotlinFile</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="indent.html">indent</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">indent</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$indent(kotlin.String)/indent">indent</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="skip-java-lang-imports.html">skipJavaLangImports</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">skipJavaLangImports</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$skipJavaLangImports(kotlin.Boolean)/skipJavaLangImports">skipJavaLangImports</span><span class="symbol">:</span>&nbsp;<span class="identifier">Boolean</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code>
+<p>Call this to omit imports for classes in <code>java.lang</code>, such as <code>java.lang.String</code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,126 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>WildcardTypeName - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href=".">WildcardTypeName</a><br/>
+<br/>
+<h1>WildcardTypeName</h1>
+<code><span class="keyword">class </span><span class="identifier">WildcardTypeName</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="lower-bounds.html">lowerBounds</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">lowerBounds</span><span class="symbol">: </span><span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="upper-bounds.html">upperBounds</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">upperBounds</span><span class="symbol">: </span><span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-type-name/annotations.html">annotations</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">annotations</span><span class="symbol">: </span><span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/is-annotated.html">isAnnotated</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">isAnnotated</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="annotated.html">annotated</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">annotated</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName$annotated(kotlin.collections.List((com.squareup.kotlinpoet.AnnotationSpec)))/annotations">annotations</span><span class="symbol">:</span>&nbsp;<span class="identifier">List</span><span class="symbol">&lt;</span><a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="without-annotations.html">withoutAnnotations</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">withoutAnnotations</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-type-name/annotated.html">annotated</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">annotated</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="com.squareup.kotlinpoet.TypeName$annotated(kotlin.Array((com.squareup.kotlinpoet.AnnotationSpec)))/annotations">annotations</span><span class="symbol">:</span>&nbsp;<a href="../-annotation-spec/index.html"><span class="identifier">AnnotationSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/equals.html">equals</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.TypeName$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/hash-code.html">hashCode</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="../-type-name/to-string.html">toString</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="get.html">get</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$get(javax.lang.model.type.WildcardType, kotlin.collections.MutableMap((javax.lang.model.element.TypeParameterElement, com.squareup.kotlinpoet.TypeVariableName)))/mirror">mirror</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/type/WildcardType.html"><span class="identifier">WildcardType</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$get(javax.lang.model.type.WildcardType, kotlin.collections.MutableMap((javax.lang.model.element.TypeParameterElement, com.squareup.kotlinpoet.TypeVariableName)))/typeVariables">typeVariables</span><span class="symbol">:</span>&nbsp;<span class="identifier">MutableMap</span><span class="symbol">&lt;</span><a href="http://docs.oracle.com/javase/6/docs/api/javax/lang/model/element/TypeParameterElement.html"><span class="identifier">TypeParameterElement</span></a><span class="symbol">,</span>&nbsp;<a href="../-type-variable-name/index.html"><span class="identifier">TypeVariableName</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;mutableMapOf()<span class="symbol">)</span><span class="symbol">: </span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$get(java.lang.reflect.WildcardType, kotlin.collections.MutableMap((java.lang.reflect.Type, com.squareup.kotlinpoet.TypeVariableName)))/wildcardName">wildcardName</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/WildcardType.html"><span class="identifier">WildcardType</span></a><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$get(java.lang.reflect.WildcardType, kotlin.collections.MutableMap((java.lang.reflect.Type, com.squareup.kotlinpoet.TypeVariableName)))/map">map</span><span class="symbol">:</span>&nbsp;<span class="identifier">MutableMap</span><span class="symbol">&lt;</span><a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">,</span>&nbsp;<a href="../-type-variable-name/index.html"><span class="identifier">TypeVariableName</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;mutableMapOf()<span class="symbol">)</span><span class="symbol">: </span><a href="../-type-name/index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="subtype-of.html">subtypeOf</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">subtypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$subtypeOf(com.squareup.kotlinpoet.TypeName)/upperBound">upperBound</span><span class="symbol">:</span>&nbsp;<a href="../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code>
+<p>Returns a type that represents an unknown type that extends <code>bound</code>. For example, if <code>bound</code>
+is <code>CharSequence.class</code>, this returns <code>? extends CharSequence</code>. If <code>bound</code> is <code>Object.class</code>,
+this returns <code>?</code>, which is shorthand for <code>? extends Object</code>.</p>
+<code><span class="keyword">fun </span><span class="identifier">subtypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$subtypeOf(java.lang.reflect.Type)/upperBound">upperBound</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">subtypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$subtypeOf(kotlin.reflect.KClass((kotlin.Any)))/upperBound">upperBound</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="supertype-of.html">supertypeOf</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">supertypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$supertypeOf(com.squareup.kotlinpoet.TypeName)/lowerBound">lowerBound</span><span class="symbol">:</span>&nbsp;<a href="../-type-name/index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code>
+<p>Returns a type that represents an unknown supertype of <code>bound</code>. For example, if <code>bound</code> is
+<code>String.class</code>, this returns <code>? super String</code>.</p>
+<code><span class="keyword">fun </span><span class="identifier">supertypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$supertypeOf(java.lang.reflect.Type)/lowerBound">lowerBound</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Type.html"><span class="identifier">Type</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">supertypeOf</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.WildcardTypeName.Companion$supertypeOf(kotlin.reflect.KClass((kotlin.Any)))/lowerBound">lowerBound</span><span class="symbol">:</span>&nbsp;<span class="identifier">KClass</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">WildcardTypeName</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

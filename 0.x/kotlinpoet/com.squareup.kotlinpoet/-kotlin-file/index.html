@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>KotlinFile - kotlinpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href=".">KotlinFile</a><br/>
+<br/>
+<h1>KotlinFile</h1>
+<code><span class="keyword">class </span><span class="identifier">KotlinFile</span></code>
+<p>A Kotlin file containing top level objects like classes, objects, functions, properties, and type
+aliases.</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-builder/index.html">Builder</a></td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Builder</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="file-comment.html">fileComment</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">fileComment</span><span class="symbol">: </span><a href="../-code-block/index.html"><span class="identifier">CodeBlock</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="file-name.html">fileName</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">fileName</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="members.html">members</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">members</span><span class="symbol">: </span><span class="identifier">List</span><span class="symbol">&lt;</span><span class="identifier">Any</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="package-name.html">packageName</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">packageName</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="skip-java-lang-imports.html">skipJavaLangImports</a></td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">skipJavaLangImports</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="equals.html">equals</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">equals</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile$equals(kotlin.Any)/other">other</span><span class="symbol">:</span>&nbsp;<span class="identifier">Any</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Boolean</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="hash-code.html">hashCode</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hashCode</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Int</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="to-builder.html">toBuilder</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toBuilder</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="to-java-file-object.html">toJavaFileObject</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toJavaFileObject</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="http://docs.oracle.com/javase/6/docs/api/javax/tools/JavaFileObject.html"><span class="identifier">JavaFileObject</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="to-string.html">toString</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="write-to.html">writeTo</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">writeTo</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile$writeTo(java.lang.Appendable)/out">out</span><span class="symbol">:</span>&nbsp;<span class="identifier">Appendable</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Unit</span></code><code><span class="keyword">fun </span><span class="identifier">writeTo</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile$writeTo(java.nio.file.Path)/directory">directory</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/nio/file/Path.html"><span class="identifier">Path</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Unit</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">writeTo</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile$writeTo(java.io.File)/directory">directory</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/io/File.html"><span class="identifier">File</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Unit</span></code>
+<p>Writes this to <code>directory</code> as UTF-8 using the standard directory structure.</p>
+<code><span class="keyword">fun </span><span class="identifier">writeTo</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile$writeTo(javax.annotation.processing.Filer)/filer">filer</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/javax/annotation/processing/Filer.html"><span class="identifier">Filer</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Unit</span></code>
+<p>Writes this to <code>filer</code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="builder.html">builder</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">builder</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Companion$builder(kotlin.String, kotlin.String)/packageName">packageName</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Companion$builder(kotlin.String, kotlin.String)/fileName">fileName</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><a href="-builder/index.html"><span class="identifier">Builder</span></a></code></td>
+</tr>
+<tr>
+<td>
+<a href="get.html">get</a></td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">get</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Companion$get(kotlin.String, com.squareup.kotlinpoet.TypeSpec)/packageName">packageName</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Companion$get(kotlin.String, com.squareup.kotlinpoet.TypeSpec)/typeSpec">typeSpec</span><span class="symbol">:</span>&nbsp;<a href="../-type-spec/index.html"><span class="identifier">TypeSpec</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">KotlinFile</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

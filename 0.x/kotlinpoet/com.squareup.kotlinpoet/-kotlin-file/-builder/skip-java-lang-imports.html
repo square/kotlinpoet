@@ -1,0 +1,19 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>KotlinFile.Builder.skipJavaLangImports - kotlinpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">kotlinpoet</a>&nbsp;/&nbsp;<a href="../../index.html">com.squareup.kotlinpoet</a>&nbsp;/&nbsp;<a href="../index.html">KotlinFile</a>&nbsp;/&nbsp;<a href="index.html">Builder</a>&nbsp;/&nbsp;<a href=".">skipJavaLangImports</a><br/>
+<br/>
+<h1>skipJavaLangImports</h1>
+<a name="com.squareup.kotlinpoet.KotlinFile.Builder$skipJavaLangImports(kotlin.Boolean)"></a>
+<code><span class="keyword">fun </span><span class="identifier">skipJavaLangImports</span><span class="symbol">(</span><span class="identifier" id="com.squareup.kotlinpoet.KotlinFile.Builder$skipJavaLangImports(kotlin.Boolean)/skipJavaLangImports">skipJavaLangImports</span><span class="symbol">:</span>&nbsp;<span class="identifier">Boolean</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">Builder</span></a></code>
+<p>Call this to omit imports for classes in <code>java.lang</code>, such as <code>java.lang.String</code>.</p>
+<p>By default, JavaPoet explicitly imports types in <code>java.lang</code> to defend against naming
+conflicts. Suppose an (ill-advised) class is named <code>com.example.String</code>. When <code>java.lang</code>
+imports are skipped, generated code in <code>com.example</code> that references <code>java.lang.String</code> will
+get <code>com.example.String</code> instead.</p>
+</BODY>
+</HTML>
