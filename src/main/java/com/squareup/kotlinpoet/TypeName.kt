@@ -63,7 +63,7 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
   val annotations: List<AnnotationSpec> = Util.immutableList(annotations)
 
   /** Lazily-initialized toString of this type name.  */
-  val cachedString: String by lazy {
+  internal val cachedString: String by lazy {
     val resultBuilder = StringBuilder()
     val codeWriter = CodeWriter(resultBuilder)
     emitAnnotations(codeWriter)

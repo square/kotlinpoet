@@ -45,9 +45,9 @@ enum class KModifier(vararg targets: Target) {
   TAILREC(Target.FUNCTION),
   VARARG(Target.PARAMETER);
 
-  val targets = targets.toList()
+  internal val targets = targets.toList()
 
-  enum class Target {
+  internal enum class Target {
     CLASS,
     VARIANCE_ANNOTATION,
     PARAMETER,
@@ -56,7 +56,7 @@ enum class KModifier(vararg targets: Target) {
     PROPERTY,
   }
 
-  fun checkTarget(target: Target) {
+  internal fun checkTarget(target: Target) {
     require(targets.contains(target)) { "unexpected modifier $this for $target" }
   }
 }
