@@ -9,7 +9,8 @@
   <baseDirectory>/</baseDirectory>
   <fileSets>
     <fileSet>
-      <directory>target/dokka</directory>
+      <directory>target/dokka/kotlinpoet</directory>
+      <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
 </assembly>
