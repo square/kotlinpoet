@@ -120,7 +120,7 @@ class KotlinFileTest {
         |import java.lang.Thread.State.valueOf
         |
         |class Taco {
-        |  {
+        |  init {
         |    assert valueOf("BLOCKED") == BLOCKED
         |    gc()
         |    out.println(nanoTime())
