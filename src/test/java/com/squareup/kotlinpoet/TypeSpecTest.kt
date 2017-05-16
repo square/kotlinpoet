@@ -2143,6 +2143,54 @@ class TypeSpecTest {
     assertThat(TypeSpec.annotationBuilder(className).build().name).isEqualTo("Example")
   }
 
+  @Test fun objectClass() {
+    val type = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |object class MyObject {
+        |  init {
+        |  }
+        |
+        |  fun test() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun objectClassWithSupertype() {
+    val superclass = ClassName.get("com.squareup.wire", "Message")
+    val type = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+        .superclass(superclass)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.wire.Message
+        |
+        |object class MyObject extends Message {
+        |  init {
+        |  }
+        |
+        |  fun test() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

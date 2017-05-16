@@ -101,6 +101,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("annotation class %L", name)
+        } else if (kind == Kind.OBJECT) {
+          codeWriter.emit("object class %L", name)
         } else {
           codeWriter.emit("%L %L", kind.name.toLowerCase(Locale.US), name)
         }
@@ -231,6 +233,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
+    OBJECT(
+        setOf(KModifier.PUBLIC),
+        setOf(KModifier.PUBLIC)),
+
     INTERFACE(
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC, KModifier.ABSTRACT)),
@@ -323,7 +329,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun superclass(superclass: TypeName): Builder {
-      check(kind == Kind.CLASS) { "only classes have super classes, not $kind" }
+      check(kind == Kind.CLASS || kind == Kind.OBJECT) { "only classes have super classes, not $kind" }
       check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
       return this
@@ -383,7 +389,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, TypeName.get(type), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock): Builder {
-      check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
@@ -451,6 +457,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun classBuilder(name: String) = Builder(Kind.CLASS, name, null)
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
+
+    @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name, null)
+
+    @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, null)
 
