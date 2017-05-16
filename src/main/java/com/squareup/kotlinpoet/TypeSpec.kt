@@ -118,24 +118,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           implementsTypes = superinterfaces
         }
 
-        if (!extendsTypes.isEmpty()) {
-          codeWriter.emit(" extends")
-          var firstType = true
-          for (type in extendsTypes) {
-            if (!firstType) codeWriter.emit(",")
-            codeWriter.emit(" %T", type)
-            firstType = false
-          }
-        }
-
-        if (!implementsTypes.isEmpty()) {
-          codeWriter.emit(" implements")
-          var firstType = true
-          for (type in implementsTypes) {
-            if (!firstType) codeWriter.emit(",")
-            codeWriter.emit(" %T", type)
-            firstType = false
-          }
+        (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
+          codeWriter.emit(if (i == 0)  " :" else ",")
+          codeWriter.emit(" %T", typeName)
         }
 
         codeWriter.emit(" {\n")

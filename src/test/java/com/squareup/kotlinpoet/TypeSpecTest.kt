@@ -569,7 +569,7 @@ class TypeSpecTest {
         |import java.lang.UnsupportedOperationException
         |import kotlin.Int
         |
-        |class Location<T, P : Number> implements Comparable<P> {
+        |class Location<T, P : Number> : Comparable<P> {
         |  val label: T
         |
         |  val x: P
@@ -628,7 +628,7 @@ class TypeSpecTest {
         |import java.lang.Comparable
         |import java.util.AbstractSet
         |
-        |abstract class Taco extends AbstractSet<Food> implements Serializable, Comparable<Taco> {
+        |abstract class Taco : AbstractSet<Food>, Serializable, Comparable<Taco> {
         |}
         |""".trimMargin())
   }
@@ -647,7 +647,7 @@ class TypeSpecTest {
         |
         |import java.lang.Comparable
         |
-        |class Taco extends org.fish.taco.Taco implements Comparable<Taco>, com.taco.bell.Taco {
+        |class Taco : org.fish.taco.Taco, Comparable<Taco>, com.taco.bell.Taco {
         |}
         |""".trimMargin())
   }
@@ -669,7 +669,7 @@ class TypeSpecTest {
         |
         |import java.util.concurrent.Callable
         |
-        |class Outer extends Callable<Outer.Inner> {
+        |class Outer : Callable<Outer.Inner> {
         |  inner class Inner {
         |  }
         |}
@@ -689,7 +689,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import java.lang.Cloneable
         |
-        |enum Food implements Serializable, Cloneable {
+        |enum Food : Serializable, Cloneable {
         |  LEAN_GROUND_BEEF,
         |
         |  SHREDDED_CHEESE
@@ -709,7 +709,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import java.lang.Comparable
         |
-        |interface Taco extends Serializable, Comparable<Taco> {
+        |interface Taco : Serializable, Comparable<Taco> {
         |}
         |""".trimMargin())
   }
@@ -1684,7 +1684,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import java.util.EventListener
         |
-        |class Taco implements Serializable, EventListener {
+        |class Taco : Serializable, EventListener {
         |}
         |""".trimMargin())
   }

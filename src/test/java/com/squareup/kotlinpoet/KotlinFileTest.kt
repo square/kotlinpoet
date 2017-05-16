@@ -471,8 +471,8 @@ class KotlinFileTest {
         |
         |import com.squareup.wire.Message
         |
-        |class Taco extends Message {
-        |  class Builder extends Message.Builder {
+        |class Taco : Message {
+        |  class Builder : Message.Builder {
         |  }
         |}
         |""".trimMargin())
@@ -534,7 +534,7 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package hello
         |
-        |class World implements Test {
+        |class World : Test {
         |}
         |""".trimMargin())
   }
