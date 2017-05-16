@@ -118,7 +118,7 @@ class NameAllocator private constructor(
   }
 }
 
-fun toJavaIdentifier(suggestion: String): String {
+internal fun toJavaIdentifier(suggestion: String): String {
   val result = StringBuilder()
   var i = 0
   while (i < suggestion.length) {

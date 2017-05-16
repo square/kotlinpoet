@@ -22,6 +22,7 @@
 
     <java.version>1.7</java.version>
     <kotlin.version>1.1.2-3</kotlin.version>
+    <dokka.version>0.9.13</dokka.version>
     <junit.version>4.12</junit.version>
     <truth.version>0.28</truth.version>
     <compile-testing.version>0.9</compile-testing.version>
@@ -102,6 +103,14 @@
     </dependency>
   </dependencies>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jcenter</id>
+      <name>JCenter</name>
+      <url>https://jcenter.bintray.com/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <build>
     <plugins>
       <plugin>
@@ -156,6 +165,37 @@
             <version>2.0.16</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.jetbrains.dokka</groupId>
+        <artifactId>dokka-maven-plugin</artifactId>
+        <version>${dokka.version}</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>dokka</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/dokka.xml</descriptor>
+          </descriptors>
+        </configuration>
       </plugin>
     </plugins>
   </build>
