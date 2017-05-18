@@ -122,6 +122,17 @@ class KotlinPoetTest {
     }
   }
 
+  @Test fun nullable() {
+    val type = TypeName.get(String::class).nullable()
+    assertThat(type.toString()).isEqualTo("java.lang.String?")
+
+    val parameters = ParameterizedTypeName.get(MutableMap::class, String::class, Int::class).nullable()
+    assertThat(parameters.toString()).isEqualTo("java.util.Map<java.lang.String, kotlin.Int>?")
+
+    val array = ArrayTypeName.of(String::class).nullable()
+    assertThat(array.toString()).isEqualTo("kotlin.Array<java.lang.String>?")
+  }
+
   @Test fun visibilityModifiers() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
