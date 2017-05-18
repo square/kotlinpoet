@@ -156,7 +156,7 @@ class FunSpecTest {
 
   @Test fun nullableParam() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder(TypeName.get(String::class).asNullable(), "string")
+        .addParameter(ParameterSpec.builder("string", TypeName.get(String::class).asNullable())
             .build())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""

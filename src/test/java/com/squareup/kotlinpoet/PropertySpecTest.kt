@@ -21,12 +21,12 @@ import org.junit.Test
 class PropertySpecTest {
   @Test fun nullable() {
     val type = TypeName.get(String::class).asNullable()
-    val a = PropertySpec.builder(type, "foo").build()
+    val a = PropertySpec.builder("foo", type).build()
     assertThat(a.toString()).isEqualTo("val foo: java.lang.String?\n")
   }
 
   @Test fun delegated() {
-    val prop = PropertySpec.builder(String::class, "foo")
+    val prop = PropertySpec.builder("foo", String::class)
         .delegate("Delegates.notNull()")
         .build()
     assertThat(prop.toString()).isEqualTo("val foo: java.lang.String by Delegates.notNull()\n")
