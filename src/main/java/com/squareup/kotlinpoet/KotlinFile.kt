@@ -148,6 +148,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       when (member) {
         is TypeSpec -> member.emit(codeWriter, null)
         is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC))
+        is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
         else -> throw AssertionError()
       }
     }
@@ -230,6 +231,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     fun addFun(funSpec: FunSpec): Builder {
       require(!funSpec.isConstructor) { "cannot add a constructor to file $fileName" }
       members += funSpec
+      return this
+    }
+
+    fun addProperty(propertySpec: PropertySpec): Builder {
+      members += propertySpec
       return this
     }
 
