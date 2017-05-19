@@ -298,7 +298,25 @@ class CodeBlockTest {
 
   @Test fun nullableType() {
     val type = TypeName.get(String::class).asNullable()
-    val typeBlock = CodeBlock.builder().add("%T", type).build()
+    val typeBlock = CodeBlock.of("%T", type)
     assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
+
+    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(), TypeName.get(Int::class).asNullable()).asNullable()
+    val listBlock = CodeBlock.of("%T", list)
+    assertThat(listBlock.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+
+    val map = ParameterizedTypeName.get(ClassName.get(Map::class).asNullable(),
+        TypeName.get(String::class).asNullable(), list).asNullable()
+    val mapBlock = CodeBlock.of("%T", map)
+    assertThat(mapBlock.toString()).isEqualTo("java.util.Map<java.lang.String?, java.util.List<kotlin.Int?>?>?")
+
+    val array = ArrayTypeName.of(TypeName.get(String::class).asNullable()).asNullable()
+    val arrayBlock = CodeBlock.of("%T", array)
+    assertThat(arrayBlock.toString()).isEqualTo("kotlin.Array<java.lang.String?>?")
+
+    val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
+    val rarrBlock = CodeBlock.of("%T", rarr)
+    assertThat(rarrBlock.toString()).isEqualTo("out java.lang.String?")
+
   }
 }

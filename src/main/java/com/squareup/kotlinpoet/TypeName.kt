@@ -117,6 +117,13 @@ abstract class TypeName internal constructor(val nullable: Boolean, annotations:
     }
   }
 
+  @Throws(IOException::class)
+  @JvmName("emitNullable") internal fun emitNullable(out: CodeWriter) {
+    if (nullable) {
+      out.emit("?")
+    }
+  }
+
   companion object {
     /** Returns a type name equivalent to `mirror`.  */
     @JvmOverloads @JvmStatic fun get(

@@ -63,6 +63,7 @@ class ParameterizedTypeName internal constructor(
         if (!firstParameter) out.emitAndIndent(", ")
         parameter.emitAnnotations(out)
         parameter.abstractEmit(out)
+        parameter.emitNullable(out)
         firstParameter = false
       }
       out.emitAndIndent(">")
