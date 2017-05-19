@@ -26,11 +26,19 @@ class KotlinPoetTest {
     val source = KotlinFile.builder(tacosPackage, "Taco")
         .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
         .addType(TypeSpec.classBuilder("B").build())
-        .addFun(FunSpec.builder("c").build())
-        .addType(TypeSpec.classBuilder("D").build())
+        .addProperty(PropertySpec.builder(String::class, "c", KModifier.PUBLIC)
+            .initializer("%S", "C")
+            .build())
+        .addFun(FunSpec.builder("d").build())
+        .addType(TypeSpec.classBuilder("E").build())
+        .addProperty(PropertySpec.builder(String::class, "f", KModifier.PUBLIC)
+            .initializer("%S", "F")
+            .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
+        |
+        |import java.lang.String
         |
         |fun a() {
         |}
@@ -38,11 +46,15 @@ class KotlinPoetTest {
         |class B {
         |}
         |
-        |fun c() {
+        |val c: String = "C"
+        |
+        |fun d() {
         |}
         |
-        |class D {
+        |class E {
         |}
+        |
+        |val f: String = "F"
         |""".trimMargin())
   }
 
