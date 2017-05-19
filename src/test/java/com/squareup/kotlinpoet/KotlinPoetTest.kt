@@ -257,4 +257,23 @@ class KotlinPoetTest {
         |}
         |""".trimMargin())
   }
+
+  @Test fun extensionFunction() {
+    val source = KotlinFile.builder(tacosPackage, "Taco")
+        .addFun(FunSpec.builder("shrink")
+            .returns(String::class)
+            .receiver(String::class)
+            .addStatement("return substring(0, length - 1)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |fun String.shrink(): String {
+        |  return substring(0, length - 1)
+        |}
+        |""".trimMargin())
+  }
 }
