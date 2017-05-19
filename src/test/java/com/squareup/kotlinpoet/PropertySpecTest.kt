@@ -19,6 +19,15 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class PropertySpecTest {
+
+  @Test fun delegated() {
+    val prop = PropertySpec.builder(String::class, "foo")
+        .delegated(true)
+        .initializer("Delegates.notNull()")
+        .build()
+    assertThat(prop.toString()).isEqualTo("val foo: java.lang.String by Delegates.notNull()\n")
+  }
+
   @Test fun equalsAndHashCode() {
     val type = Int::class
     var a = PropertySpec.builder(type, "foo").build()
