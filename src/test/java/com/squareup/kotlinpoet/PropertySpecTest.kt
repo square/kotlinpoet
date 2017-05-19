@@ -20,7 +20,7 @@ import org.junit.Test
 
 class PropertySpecTest {
   @Test fun nullable() {
-    val type = TypeName.get(String::class).nullable()
+    val type = TypeName.get(String::class).asNullable()
     var a = PropertySpec.builder(type, "foo").build()
     assertThat(a.toString()).isEqualTo("val foo: java.lang.String?\n")
   }

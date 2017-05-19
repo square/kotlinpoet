@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
 
 /**
  * Any type in Kotlin's type system. This class identifies simple types like `Int` and `String`,
- * nullable types like `Int?`, composite types like `Array<String>` and `Set<String>`, and
+ * asNullable types like `Int?`, composite types like `Array<String>` and `Set<String>`, and
  * unassignable types like `Unit`.
  *
  * Type names are dumb identifiers only and do not model the values they name. For example, the
@@ -75,9 +75,9 @@ abstract class TypeName internal constructor(val nullable: Boolean, annotations:
     return annotated(annotations.toList())
   }
 
-  abstract fun nullable(): TypeName
+  abstract fun asNullable(): TypeName
 
-  abstract fun nonNull(): TypeName
+  abstract fun asNonNullable(): TypeName
 
   abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
 

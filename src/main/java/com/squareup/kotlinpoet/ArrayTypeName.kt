@@ -27,9 +27,9 @@ class ArrayTypeName private constructor(
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
 
-  override fun nullable() = ArrayTypeName(componentType, true, annotations)
+  override fun asNullable() = ArrayTypeName(componentType, true, annotations)
 
-  override fun nonNull() = ArrayTypeName(componentType, false, annotations)
+  override fun asNonNullable() = ArrayTypeName(componentType, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): ArrayTypeName {
     return ArrayTypeName(componentType, nullable, this.annotations + annotations)

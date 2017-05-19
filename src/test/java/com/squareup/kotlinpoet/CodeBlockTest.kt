@@ -297,7 +297,7 @@ class CodeBlockTest {
   }
 
   @Test fun nullableType() {
-    val type = TypeName.get(String::class).nullable()
+    val type = TypeName.get(String::class).asNullable()
     val typeBlock = CodeBlock.builder().add("%T", type).build()
     assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
   }

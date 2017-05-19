@@ -44,9 +44,9 @@ class ClassName private constructor(
     }
   }
 
-  override fun nullable() = ClassName(names, true, annotations)
+  override fun asNullable() = ClassName(names, true, annotations)
 
-  override fun nonNull() = ClassName(names, false, annotations)
+  override fun asNonNullable() = ClassName(names, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>)
       = ClassName(names, nullable, this.annotations + annotations)

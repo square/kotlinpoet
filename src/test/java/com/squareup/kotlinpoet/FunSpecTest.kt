@@ -156,7 +156,7 @@ class FunSpecTest {
 
   @Test fun nullableParam() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder(TypeName.get(String::class).nullable(), "string").build())
+        .addParameter(ParameterSpec.builder(TypeName.get(String::class).asNullable(), "string").build())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |fun foo(string: java.lang.String?) {
@@ -166,7 +166,7 @@ class FunSpecTest {
 
   @Test fun nullableReturnType() {
     val funSpec = FunSpec.builder("foo")
-        .returns(TypeName.get(String::class).nullable())
+        .returns(TypeName.get(String::class).asNullable())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |fun foo(): java.lang.String? {

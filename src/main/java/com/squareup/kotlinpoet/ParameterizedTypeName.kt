@@ -37,9 +37,9 @@ class ParameterizedTypeName internal constructor(
     }
   }
 
-  override fun nullable() = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
+  override fun asNullable() = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
 
-  override fun nonNull() = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
+  override fun asNonNullable() = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>)
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)

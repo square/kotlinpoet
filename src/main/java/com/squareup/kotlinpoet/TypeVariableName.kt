@@ -29,9 +29,9 @@ class TypeVariableName private constructor(
     annotations: List<AnnotationSpec> = emptyList())
   : TypeName(nullable, annotations) {
 
-  override fun nullable() = TypeVariableName(name, bounds, true, annotations)
+  override fun asNullable() = TypeVariableName(name, bounds, true, annotations)
 
-  override fun nonNull() = TypeVariableName(name, bounds, false, annotations)
+  override fun asNonNullable() = TypeVariableName(name, bounds, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): TypeVariableName {
     return TypeVariableName(name, bounds, nullable, annotations)

@@ -34,9 +34,9 @@ class WildcardTypeName private constructor(
     require(this.upperBounds.size == 1) { "unexpected extends bounds: $upperBounds" }
   }
 
-  override fun nullable() = WildcardTypeName(upperBounds, lowerBounds, true, annotations)
+  override fun asNullable() = WildcardTypeName(upperBounds, lowerBounds, true, annotations)
 
-  override fun nonNull() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
+  override fun asNonNullable() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
     return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)
