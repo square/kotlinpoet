@@ -68,6 +68,7 @@ abstract class TypeName internal constructor(val nullable: Boolean, annotations:
     val codeWriter = CodeWriter(resultBuilder)
     emitAnnotations(codeWriter)
     abstractEmit(codeWriter)
+    if (nullable) resultBuilder.append("?")
     resultBuilder.toString()
   }
 
