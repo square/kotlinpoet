@@ -25,6 +25,13 @@ class PropertySpecTest {
     assertThat(a.toString()).isEqualTo("val foo: java.lang.String?\n")
   }
 
+  @Test fun delegated() {
+    val prop = PropertySpec.builder(String::class, "foo")
+        .delegate("Delegates.notNull()")
+        .build()
+    assertThat(prop.toString()).isEqualTo("val foo: java.lang.String by Delegates.notNull()\n")
+  }
+
   @Test fun equalsAndHashCode() {
     val type = Int::class
     var a = PropertySpec.builder(type, "foo").build()
