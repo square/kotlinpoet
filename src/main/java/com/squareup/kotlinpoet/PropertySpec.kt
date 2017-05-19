@@ -29,7 +29,8 @@ class PropertySpec private constructor(
     val kdoc: CodeBlock,
     annotations: Collection<AnnotationSpec>,
     modifiers: Collection<KModifier>,
-    val initializer: CodeBlock?) {
+    val initializer: CodeBlock?,
+    val delegated: Boolean = false) {
   val annotations = annotations.toList()
   val modifiers = modifiers.toSet()
 
@@ -41,7 +42,12 @@ class PropertySpec private constructor(
     codeWriter.emit(if (mutable) "var " else "val ")
     codeWriter.emit("%L: %T", name, type)
     if (initializer != null) {
-      codeWriter.emit(" = %[%L%]", initializer)
+      if (delegated) {
+        codeWriter.emit(" by ")
+      } else {
+        codeWriter.emit(" = ")
+      }
+      codeWriter.emit("%[%L%]", initializer)
     }
     codeWriter.emit("\n")
   }
@@ -72,6 +78,7 @@ class PropertySpec private constructor(
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.initializer = initializer
+    builder.delegated = delegated
     return builder
   }
 
@@ -81,6 +88,7 @@ class PropertySpec private constructor(
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
     internal var initializer: CodeBlock? = null
+    internal var delegated = false
 
     fun mutable(mutable: Boolean): Builder {
       this.mutable = mutable
@@ -130,8 +138,13 @@ class PropertySpec private constructor(
       return this
     }
 
+    fun delegated(delegated: Boolean): Builder {
+      this.delegated = delegated
+      return this
+    }
+
     fun build() = PropertySpec(
-        mutable, type, name, kdoc.build(), annotations, modifiers, initializer)
+        mutable, type, name, kdoc.build(), annotations, modifiers, initializer, delegated)
   }
 
   companion object {
