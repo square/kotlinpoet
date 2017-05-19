@@ -34,6 +34,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   val annotations: List<AnnotationSpec>
   val modifiers: Set<KModifier>
   val typeVariables: List<TypeVariableName>
+  val receiverType: TypeName?
   val returnType: TypeName?
   val parameters: List<ParameterSpec>
   val varargs: Boolean
@@ -55,11 +56,12 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     this.modifiers = Util.immutableSet(builder.modifiers)
     this.typeVariables = Util.immutableList(builder.typeVariables)
     this.returnType = builder.returnType
+    this.receiverType = builder.receiverType
     this.parameters = Util.immutableList(builder.parameters)
     this.varargs = builder.varargs
     this.exceptions = Util.immutableList(builder.exceptions)
-    this.defaultValue = builder.defaultValue
     this.code = code
+    this.defaultValue = builder.defaultValue
   }
 
   private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
@@ -88,6 +90,9 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     if (isConstructor) {
       codeWriter.emit("constructor", enclosingName)
     } else {
+      if (receiverType != null) {
+        codeWriter.emit("%T.", receiverType)
+      }
       codeWriter.emit("%L", name)
     }
 
@@ -184,6 +189,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     internal val modifiers = mutableListOf<KModifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var returnType: TypeName? = null
+    internal var receiverType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
@@ -272,6 +278,16 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     fun returns(returnType: Type) = returns(TypeName.get(returnType))
 
     fun returns(returnType: KClass<*>) = returns(TypeName.get(returnType))
+
+    fun receiver(receiverType: TypeName): Builder {
+      check(name != CONSTRUCTOR) { "constructor cannot have return type." }
+      this.receiverType = receiverType
+      return this
+    }
+
+    fun receiver(receiverType: Type) = receiver(TypeName.get(receiverType))
+
+    fun receiver(receiverType: KClass<*>) = receiver(TypeName.get(receiverType))
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder {
       parameters += parameterSpecs
