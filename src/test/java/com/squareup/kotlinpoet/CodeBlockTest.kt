@@ -18,7 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
-import java.util.LinkedHashMap
+import java.util.*
 
 class CodeBlockTest {
   @Test fun equalsAndHashCode() {
@@ -295,5 +295,11 @@ class CodeBlockTest {
     } catch (expected: IllegalStateException) {
       assertThat(expected).hasMessage("statement exit %] has no matching statement enter %[")
     }
+  }
+
+  @Test fun nullableType() {
+    val type = TypeName.get(String::class).nullable()
+    val typeBlock = CodeBlock.builder().add("%T", type).build()
+    assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
   }
 }

@@ -24,10 +24,15 @@ import kotlin.reflect.KClass
 
 class ArrayTypeName private constructor(
     val componentType: TypeName,
-    annotations: List<AnnotationSpec> = emptyList()) : TypeName(annotations) {
+    nullable: Boolean = false,
+    annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
+
+  override fun nullable() = ArrayTypeName(componentType, true, annotations)
+
+  override fun nonNull() = ArrayTypeName(componentType, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): ArrayTypeName {
-    return ArrayTypeName(componentType, this.annotations + annotations)
+    return ArrayTypeName(componentType, nullable, this.annotations + annotations)
   }
 
   override fun withoutAnnotations(): TypeName {

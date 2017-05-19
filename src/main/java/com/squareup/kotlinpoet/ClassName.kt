@@ -28,8 +28,9 @@ import kotlin.reflect.KClass
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName private constructor(
     names: List<String>,
+    nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(annotations), Comparable<ClassName> {
+  : TypeName(nullable, annotations), Comparable<ClassName> {
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
   internal val names = Util.immutableList(names)
@@ -43,10 +44,14 @@ class ClassName private constructor(
     }
   }
 
-  override fun annotated(annotations: List<AnnotationSpec>)
-      = ClassName(names, this.annotations + annotations)
+  override fun nullable() = ClassName(names, true, annotations)
 
-  override fun withoutAnnotations() = ClassName(names)
+  override fun nonNull() = ClassName(names, false, annotations)
+
+  override fun annotated(annotations: List<AnnotationSpec>)
+      = ClassName(names, nullable, this.annotations + annotations)
+
+  override fun withoutAnnotations() = ClassName(names, nullable)
 
   /** Returns the package name, like `"java.util"` for `Map.Entry`.  */
   fun packageName() = names[0]

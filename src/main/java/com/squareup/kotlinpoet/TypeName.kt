@@ -16,21 +16,13 @@
 package com.squareup.kotlinpoet
 
 import java.io.IOException
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
+import java.lang.reflect.*
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
-import javax.lang.model.type.ArrayType
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.ErrorType
-import javax.lang.model.type.NoType
-import javax.lang.model.type.PrimitiveType
-import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
+import javax.lang.model.type.*
 import javax.lang.model.util.SimpleTypeVisitor7
 import kotlin.reflect.KClass
 
@@ -59,7 +51,7 @@ import kotlin.reflect.KClass
  * types like `Set<Long>`, use the factory methods on [ParameterizedTypeName], [TypeVariableName],
  * and [WildcardTypeName].
  */
-abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) {
+abstract class TypeName internal constructor(val nullable: Boolean, annotations: List<AnnotationSpec>) {
   val annotations: List<AnnotationSpec> = Util.immutableList(annotations)
 
   /** Lazily-initialized toString of this type name.  */
@@ -74,6 +66,10 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
   fun annotated(vararg annotations: AnnotationSpec): TypeName {
     return annotated(annotations.toList())
   }
+
+  abstract fun nullable(): TypeName
+
+  abstract fun nonNull(): TypeName
 
   abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
 

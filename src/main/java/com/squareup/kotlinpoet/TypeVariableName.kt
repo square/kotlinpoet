@@ -17,7 +17,7 @@ package com.squareup.kotlinpoet
 
 import java.io.IOException
 import java.lang.reflect.Type
-import java.util.Collections
+import java.util.*
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
@@ -25,15 +25,20 @@ import kotlin.reflect.KClass
 class TypeVariableName private constructor(
     val name: String,
     val bounds: List<TypeName>,
+    nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(annotations) {
+  : TypeName(nullable, annotations) {
+
+  override fun nullable() = TypeVariableName(name, bounds, true, annotations)
+
+  override fun nonNull() = TypeVariableName(name, bounds, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): TypeVariableName {
-    return TypeVariableName(name, bounds, annotations)
+    return TypeVariableName(name, bounds, nullable, annotations)
   }
 
   override fun withoutAnnotations(): TypeName {
-    return TypeVariableName(name, bounds)
+    return TypeVariableName(name, bounds, nullable)
   }
 
   fun withBounds(vararg bounds: Type): TypeVariableName {
@@ -49,7 +54,7 @@ class TypeVariableName private constructor(
   }
 
   fun withBounds(bounds: List<TypeName>): TypeVariableName {
-    return TypeVariableName(name, this.bounds + bounds, annotations)
+    return TypeVariableName(name, this.bounds + bounds, nullable, annotations)
   }
 
   @Throws(IOException::class)

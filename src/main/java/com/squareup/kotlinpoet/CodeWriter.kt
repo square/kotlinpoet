@@ -17,8 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.Util.stringLiteralWithQuotes
 import java.io.IOException
-import java.util.EnumSet
-import java.util.Locale
+import java.util.*
 import javax.lang.model.SourceVersion
 
 /** Sentinel value that indicates that no user-provided package has been set.  */
@@ -240,6 +239,7 @@ internal class CodeWriter @JvmOverloads constructor(
             }
           }
           if (!defer) typeName.emit(this)
+          if (typeName.nullable) emit("?")
         }
 
         "%%" -> emitAndIndent("%")

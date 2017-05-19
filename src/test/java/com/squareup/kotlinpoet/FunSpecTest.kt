@@ -27,7 +27,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.io.Closeable
 import java.io.IOException
-import java.util.Arrays
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeoutException
 import javax.lang.model.element.Element
@@ -152,6 +152,26 @@ class FunSpecTest {
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("cannot override method with modifiers: [static]")
     }
+  }
+
+  @Test fun nullableParam() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder(TypeName.get(String::class).nullable(), "string").build())
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(string: java.lang.String?) {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun nullableReturnType() {
+    val funSpec = FunSpec.builder("foo")
+        .returns(TypeName.get(String::class).nullable())
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(): java.lang.String? {
+      |}
+      |""".trimMargin())
   }
 
   @Test fun equalsAndHashCode() {
