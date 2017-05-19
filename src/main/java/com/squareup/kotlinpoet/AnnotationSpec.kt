@@ -48,12 +48,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       codeWriter.emit(")")
     } else {
       // Inline:
-      //   @Column(name = "updated_at", asNullable = false)
+      //   @Column(name = "updated_at", nullable = false)
       //
       // Not inline:
       //   @Column(
       //       name = "updated_at",
-      //       asNullable = false
+      //       nullable = false
       //   )
       codeWriter.emit("@%T(" + whitespace, type)
       codeWriter.indent(2)

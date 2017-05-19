@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
 
 /**
  * Any type in Kotlin's type system. This class identifies simple types like `Int` and `String`,
- * asNullable types like `Int?`, composite types like `Array<String>` and `Set<String>`, and
+ * nullable types like `Int?`, composite types like `Array<String>` and `Set<String>`, and
  * unassignable types like `Unit`.
  *
  * Type names are dumb identifiers only and do not model the values they name. For example, the
