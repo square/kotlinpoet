@@ -17,7 +17,8 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.Util.stringLiteralWithQuotes
 import java.io.IOException
-import java.util.*
+import java.util.EnumSet
+import java.util.Locale
 import javax.lang.model.SourceVersion
 
 /** Sentinel value that indicates that no user-provided package has been set.  */

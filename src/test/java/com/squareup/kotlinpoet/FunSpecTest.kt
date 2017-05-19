@@ -27,7 +27,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.io.Closeable
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeoutException
 import javax.lang.model.element.Element

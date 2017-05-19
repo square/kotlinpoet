@@ -17,7 +17,7 @@ package com.squareup.kotlinpoet
 
 import java.io.IOException
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Collections
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass

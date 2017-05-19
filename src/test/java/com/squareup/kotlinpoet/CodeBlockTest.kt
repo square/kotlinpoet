@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
-import java.util.*
 
 class CodeBlockTest {
   @Test fun equalsAndHashCode() {
