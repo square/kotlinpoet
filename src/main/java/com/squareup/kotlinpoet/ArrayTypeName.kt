@@ -36,7 +36,7 @@ class ArrayTypeName private constructor(
   }
 
   override fun withoutAnnotations(): TypeName {
-    return ArrayTypeName(componentType)
+    return ArrayTypeName(componentType, nullable)
   }
 
   @Throws(IOException::class)
