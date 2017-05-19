@@ -19,6 +19,12 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class PropertySpecTest {
+  @Test fun nullable() {
+    val type = TypeName.get(String::class).asNullable()
+    var a = PropertySpec.builder(type, "foo").build()
+    assertThat(a.toString()).isEqualTo("val foo: java.lang.String?\n")
+  }
+
   @Test fun equalsAndHashCode() {
     val type = Int::class
     var a = PropertySpec.builder(type, "foo").build()

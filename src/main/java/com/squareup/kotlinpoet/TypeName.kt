@@ -59,7 +59,7 @@ import kotlin.reflect.KClass
  * types like `Set<Long>`, use the factory methods on [ParameterizedTypeName], [TypeVariableName],
  * and [WildcardTypeName].
  */
-abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) {
+abstract class TypeName internal constructor(val nullable: Boolean, annotations: List<AnnotationSpec>) {
   val annotations: List<AnnotationSpec> = Util.immutableList(annotations)
 
   /** Lazily-initialized toString of this type name.  */
@@ -68,12 +68,17 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
     val codeWriter = CodeWriter(resultBuilder)
     emitAnnotations(codeWriter)
     abstractEmit(codeWriter)
+    if (nullable) resultBuilder.append("?")
     resultBuilder.toString()
   }
 
   fun annotated(vararg annotations: AnnotationSpec): TypeName {
     return annotated(annotations.toList())
   }
+
+  abstract fun asNullable(): TypeName
+
+  abstract fun asNonNullable(): TypeName
 
   abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
 
@@ -113,6 +118,13 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
     }
   }
 
+  @Throws(IOException::class)
+  @JvmName("emitNullable") internal fun emitNullable(out: CodeWriter) {
+    if (nullable) {
+      out.emit("?")
+    }
+  }
+
   companion object {
     /** Returns a type name equivalent to `mirror`.  */
     @JvmOverloads @JvmStatic fun get(
@@ -135,7 +147,7 @@ abstract class TypeName internal constructor(annotations: List<AnnotationSpec>) 
         }
 
         override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
-          val rawType : ClassName = ClassName.get(t.asElement() as TypeElement)
+          val rawType: ClassName = ClassName.get(t.asElement() as TypeElement)
           val enclosingType = t.enclosingType
           val enclosing = if (enclosingType.kind != TypeKind.NONE
               && !t.asElement().modifiers.contains(Modifier.STATIC))

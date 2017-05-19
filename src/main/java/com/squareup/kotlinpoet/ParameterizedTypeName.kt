@@ -25,8 +25,9 @@ class ParameterizedTypeName internal constructor(
     private val enclosingType: ParameterizedTypeName?,
     val rawType: ClassName,
     typeArguments: List<TypeName>,
+    nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(annotations) {
+  : TypeName(nullable, annotations) {
 
   val typeArguments: List<TypeName> = Util.immutableList(typeArguments)
 
@@ -36,10 +37,14 @@ class ParameterizedTypeName internal constructor(
     }
   }
 
-  override fun annotated(annotations: List<AnnotationSpec>)
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, this.annotations + annotations)
+  override fun asNullable() = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
 
-  override fun withoutAnnotations() = ParameterizedTypeName(enclosingType, rawType, typeArguments)
+  override fun asNonNullable() = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
+
+  override fun annotated(annotations: List<AnnotationSpec>)
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)
+
+  override fun withoutAnnotations() = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
@@ -58,6 +63,7 @@ class ParameterizedTypeName internal constructor(
         if (!firstParameter) out.emitAndIndent(", ")
         parameter.emitAnnotations(out)
         parameter.abstractEmit(out)
+        parameter.emitNullable(out)
         firstParameter = false
       }
       out.emitAndIndent(">")

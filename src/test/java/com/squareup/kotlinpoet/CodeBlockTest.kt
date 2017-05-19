@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
-import java.util.LinkedHashMap
 
 class CodeBlockTest {
   @Test fun equalsAndHashCode() {
@@ -295,5 +294,29 @@ class CodeBlockTest {
     } catch (expected: IllegalStateException) {
       assertThat(expected).hasMessage("statement exit %] has no matching statement enter %[")
     }
+  }
+
+  @Test fun nullableType() {
+    val type = TypeName.get(String::class).asNullable()
+    val typeBlock = CodeBlock.of("%T", type)
+    assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
+
+    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(), TypeName.get(Int::class).asNullable()).asNullable()
+    val listBlock = CodeBlock.of("%T", list)
+    assertThat(listBlock.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+
+    val map = ParameterizedTypeName.get(ClassName.get(Map::class).asNullable(),
+        TypeName.get(String::class).asNullable(), list).asNullable()
+    val mapBlock = CodeBlock.of("%T", map)
+    assertThat(mapBlock.toString()).isEqualTo("java.util.Map<java.lang.String?, java.util.List<kotlin.Int?>?>?")
+
+    val array = ArrayTypeName.of(TypeName.get(String::class).asNullable()).asNullable()
+    val arrayBlock = CodeBlock.of("%T", array)
+    assertThat(arrayBlock.toString()).isEqualTo("kotlin.Array<java.lang.String?>?")
+
+    val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
+    val rarrBlock = CodeBlock.of("%T", rarr)
+    assertThat(rarrBlock.toString()).isEqualTo("out java.lang.String?")
+
   }
 }

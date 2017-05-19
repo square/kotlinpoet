@@ -240,6 +240,7 @@ internal class CodeWriter @JvmOverloads constructor(
             }
           }
           if (!defer) typeName.emit(this)
+          typeName.emitNullable(this)
         }
 
         "%%" -> emitAndIndent("%")

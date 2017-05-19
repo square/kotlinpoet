@@ -276,4 +276,9 @@ class KotlinPoetTest {
         |}
         |""".trimMargin())
   }
+
+  @Test fun nullableTypes() {
+    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(), TypeName.get(Int::class).asNullable()).asNullable()
+    assertThat(list.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+  }
 }
