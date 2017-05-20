@@ -24,8 +24,8 @@ import kotlin.reflect.KClass
 /** A generated property declaration.  */
 class PropertySpec private constructor(
     val mutable: Boolean,
-    val type: TypeName,
     val name: String,
+    val type: TypeName,
     val kdoc: CodeBlock,
     annotations: Collection<AnnotationSpec>,
     modifiers: Collection<KModifier>,
@@ -73,7 +73,7 @@ class PropertySpec private constructor(
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(type, name)
+    val builder = Builder(name, type)
     builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.modifiers += modifiers
@@ -82,7 +82,7 @@ class PropertySpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(internal val type: TypeName, internal val name: String) {
+  class Builder internal constructor(internal val name: String, internal val type: TypeName) {
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
@@ -148,33 +148,33 @@ class PropertySpec private constructor(
     }
 
     fun build() = PropertySpec(
-        mutable, type, name, kdoc.build(), annotations, modifiers, initializer, delegated)
+        mutable, name, type, kdoc.build(), annotations, modifiers, initializer, delegated)
   }
 
   companion object {
-    @JvmStatic fun builder(type: TypeName, name: String, vararg modifiers: KModifier): Builder {
+    @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
-      return Builder(type, name)
+      return Builder(name, type)
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(type: Type, name: String, vararg modifiers: KModifier)
-        = builder(TypeName.get(type), name, *modifiers)
+    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
+        = builder(name, TypeName.get(type), *modifiers)
 
-    @JvmStatic fun builder(type: KClass<*>, name: String, vararg modifiers: KModifier)
-        = builder(TypeName.get(type), name, *modifiers)
+    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
+        = builder(name, TypeName.get(type), *modifiers)
 
-    @JvmStatic fun varBuilder(type: TypeName, name: String, vararg modifiers: KModifier): Builder {
+    @JvmStatic fun varBuilder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
-      return Builder(type, name)
+      return Builder(name, type)
           .mutable(true)
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun varBuilder(type: Type, name: String, vararg modifiers: KModifier)
-        = varBuilder(TypeName.get(type), name, *modifiers)
+    @JvmStatic fun varBuilder(name: String, type: Type, vararg modifiers: KModifier)
+        = varBuilder(name, TypeName.get(type), *modifiers)
 
-    @JvmStatic fun varBuilder(type: KClass<*>, name: String, vararg modifiers: KModifier)
-        = varBuilder(TypeName.get(type), name, *modifiers)
+    @JvmStatic fun varBuilder(name: String, type: KClass<*>, vararg modifiers: KModifier)
+        = varBuilder(name, TypeName.get(type), *modifiers)
   }
 }
