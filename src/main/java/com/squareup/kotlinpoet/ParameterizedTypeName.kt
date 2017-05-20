@@ -25,8 +25,9 @@ class ParameterizedTypeName internal constructor(
     private val enclosingType: ParameterizedTypeName?,
     val rawType: ClassName,
     typeArguments: List<TypeName>,
+    nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(annotations) {
+  : TypeName(nullable, annotations) {
 
   val typeArguments: List<TypeName> = Util.immutableList(typeArguments)
 
@@ -36,10 +37,17 @@ class ParameterizedTypeName internal constructor(
     }
   }
 
-  override fun annotated(annotations: List<AnnotationSpec>)
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, this.annotations + annotations)
+  override fun asNullable()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
 
-  override fun withoutAnnotations() = ParameterizedTypeName(enclosingType, rawType, typeArguments)
+  override fun asNonNullable()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
+
+  override fun annotated(annotations: List<AnnotationSpec>) = ParameterizedTypeName(
+      enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)
+
+  override fun withoutAnnotations()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
@@ -58,6 +66,7 @@ class ParameterizedTypeName internal constructor(
         if (!firstParameter) out.emitAndIndent(", ")
         parameter.emitAnnotations(out)
         parameter.abstractEmit(out)
+        parameter.emitNullable(out)
         firstParameter = false
       }
       out.emitAndIndent(">")
@@ -83,8 +92,8 @@ class ParameterizedTypeName internal constructor(
         typeArguments.map { TypeName.get(it) })
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type)
-        = ParameterizedTypeName(null, ClassName.get(rawType), typeArguments.map { TypeName.get(it) })
+    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
+        null, ClassName.get(rawType), typeArguments.map { TypeName.get(it) })
 
     /** Returns a parameterized type equivalent to `type`.  */
     @JvmStatic fun get(type: ParameterizedType) = get(type, mutableMapOf())

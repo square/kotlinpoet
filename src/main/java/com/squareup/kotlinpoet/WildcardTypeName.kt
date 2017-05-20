@@ -24,7 +24,8 @@ import kotlin.reflect.KClass
 class WildcardTypeName private constructor(
     upperBounds: List<TypeName>,
     lowerBounds: List<TypeName>,
-    annotations: List<AnnotationSpec> = emptyList()) : TypeName(annotations) {
+    nullable: Boolean = false,
+    annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
 
   val upperBounds: List<TypeName> = Util.immutableList(upperBounds)
   val lowerBounds: List<TypeName> = Util.immutableList(lowerBounds)
@@ -33,12 +34,16 @@ class WildcardTypeName private constructor(
     require(this.upperBounds.size == 1) { "unexpected extends bounds: $upperBounds" }
   }
 
+  override fun asNullable() = WildcardTypeName(upperBounds, lowerBounds, true, annotations)
+
+  override fun asNonNullable() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
+
   override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
-    return WildcardTypeName(upperBounds, lowerBounds, this.annotations + annotations)
+    return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)
   }
 
   override fun withoutAnnotations(): TypeName {
-    return WildcardTypeName(upperBounds, lowerBounds)
+    return WildcardTypeName(upperBounds, lowerBounds, nullable)
   }
 
   @Throws(IOException::class)
