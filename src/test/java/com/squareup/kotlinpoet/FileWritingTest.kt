@@ -162,10 +162,10 @@ class FileWritingTest {
 
   @Test fun filerClassesWithTabIndent() {
     val test = TypeSpec.classBuilder("Test")
-        .addProperty(Date::class, "madeFreshDate")
+        .addProperty("madeFreshDate", Date::class)
         .addFun(FunSpec.builder("main")
             .addModifiers(KModifier.PUBLIC)
-            .addParameter(Array<String>::class, "args")
+            .addParameter("args", Array<String>::class)
             .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
             .build())
         .build()

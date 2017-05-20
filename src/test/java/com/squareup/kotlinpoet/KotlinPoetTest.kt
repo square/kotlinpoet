@@ -26,12 +26,12 @@ class KotlinPoetTest {
     val source = KotlinFile.builder(tacosPackage, "Taco")
         .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
         .addType(TypeSpec.classBuilder("B").build())
-        .addProperty(PropertySpec.builder(String::class, "c", KModifier.PUBLIC)
+        .addProperty(PropertySpec.builder("c", String::class, KModifier.PUBLIC)
             .initializer("%S", "C")
             .build())
         .addFun(FunSpec.builder("d").build())
         .addType(TypeSpec.classBuilder("E").build())
-        .addProperty(PropertySpec.builder(String::class, "f", KModifier.PUBLIC)
+        .addProperty(PropertySpec.builder("f", String::class, KModifier.PUBLIC)
             .initializer("%S", "F")
             .build())
         .build()
@@ -70,7 +70,7 @@ class KotlinPoetTest {
   @Test fun primaryConstructor() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter(String::class, "cheese")
+            .addParameter("cheese", String::class)
             .beginControlFlow("require (!cheese.isEmpty())")
             .addStatement("%S", "cheese cannot be empty")
             .endControlFlow()
@@ -93,11 +93,10 @@ class KotlinPoetTest {
 
   @Test fun propertyModifiers() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addProperty(PropertySpec.builder(
-            String::class, "CHEESE", KModifier.PRIVATE, KModifier.CONST)
+        .addProperty(PropertySpec.builder("CHEESE", String::class, KModifier.PRIVATE, KModifier.CONST)
             .initializer("%S", "monterey jack")
             .build())
-        .addProperty(PropertySpec.varBuilder(String::class, "sauce", KModifier.PUBLIC)
+        .addProperty(PropertySpec.varBuilder("sauce", String::class, KModifier.PUBLIC)
             .initializer("%S", "chipotle mayo")
             .build())
         .build())
@@ -116,7 +115,7 @@ class KotlinPoetTest {
 
   @Test fun mistargetedModifier() {
     try {
-      PropertySpec.builder(String::class, "CHEESE", KModifier.DATA)
+      PropertySpec.builder("CHEESE", String::class, KModifier.DATA)
       fail()
     } catch(expected: IllegalArgumentException) {
     }
@@ -241,7 +240,7 @@ class KotlinPoetTest {
   @Test fun parameterDefaultValue() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("addCheese")
-            .addParameter(ParameterSpec.builder(String::class, "kind")
+            .addParameter(ParameterSpec.builder("kind", String::class)
                 .defaultValue("%S", "monterey jack")
                 .build())
             .build())
