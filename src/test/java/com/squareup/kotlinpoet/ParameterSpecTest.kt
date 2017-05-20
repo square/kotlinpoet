@@ -20,16 +20,16 @@ import org.junit.Test
 
 class ParameterSpecTest {
   @Test fun equalsAndHashCode() {
-    var a = ParameterSpec.builder(Int::class, "foo")
+    var a = ParameterSpec.builder("foo", Int::class)
         .build()
-    var b = ParameterSpec.builder(Int::class, "foo")
+    var b = ParameterSpec.builder("foo", Int::class)
         .build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
-    a = ParameterSpec.builder(Int::class, "i")
+    a = ParameterSpec.builder("i", Int::class)
         .addModifiers(KModifier.FINAL)
         .build()
-    b = ParameterSpec.builder(Int::class, "i")
+    b = ParameterSpec.builder("i", Int::class)
         .addModifiers(KModifier.FINAL)
         .build()
     assertThat(a == b).isTrue()

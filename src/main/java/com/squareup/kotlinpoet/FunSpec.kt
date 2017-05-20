@@ -299,14 +299,14 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       return this
     }
 
-    fun addParameter(type: TypeName, name: String, vararg modifiers: KModifier)
-        = addParameter(ParameterSpec.builder(type, name, *modifiers).build())
+    fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
+        = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
-    fun addParameter(type: Type, name: String, vararg modifiers: KModifier)
-        = addParameter(TypeName.get(type), name, *modifiers)
+    fun addParameter(name: String, type: Type, vararg modifiers: KModifier)
+        = addParameter(name, TypeName.get(type), *modifiers)
 
-    fun addParameter(type: KClass<*>, name: String, vararg modifiers: KModifier)
-        = addParameter(TypeName.get(type), name, *modifiers)
+    fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
+        = addParameter(name, TypeName.get(type), *modifiers)
 
     @JvmOverloads fun varargs(varargs: Boolean = true): Builder {
       this.varargs = varargs
@@ -460,7 +460,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       while (i < size) {
         val parameter = builder.parameters[i]
         val type = TypeName.get(resolvedParameterTypes[i])
-        builder.parameters[i] = parameter.toBuilder(type, parameter.name).build()
+        builder.parameters[i] = parameter.toBuilder(parameter.name, type).build()
         i++
       }
 

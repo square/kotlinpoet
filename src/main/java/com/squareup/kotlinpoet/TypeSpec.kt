@@ -373,14 +373,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       return this
     }
 
-    fun addProperty(type: TypeName, name: String, vararg modifiers: KModifier)
-        = addProperty(PropertySpec.builder(type, name, *modifiers).build())
+    fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier)
+        = addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
-    fun addProperty(type: Type, name: String, vararg modifiers: KModifier)
-        = addProperty(TypeName.get(type), name, *modifiers)
+    fun addProperty(name: String, type: Type, vararg modifiers: KModifier)
+        = addProperty(name, TypeName.get(type), *modifiers)
 
-    fun addProperty(type: KClass<*>, name: String, vararg modifiers: KModifier)
-        = addProperty(TypeName.get(type), name, *modifiers)
+    fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier)
+        = addProperty(name, TypeName.get(type), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock): Builder {
       check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
