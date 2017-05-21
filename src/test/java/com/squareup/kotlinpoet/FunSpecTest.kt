@@ -175,6 +175,80 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionParamNoLambdaParam() {
+    val unitType = ClassName.get(Unit::class)
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType)).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: () -> kotlin.Unit): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionParamSingleLambdaParam() {
+    val unitType = ClassName.get(Unit::class)
+    val booleanType = ClassName.get(Boolean::class)
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType, booleanType)).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: (kotlin.Boolean) -> kotlin.Unit): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionParamMultipleLambdaParam() {
+    val unitType = ClassName.get(Unit::class)
+    val booleanType = ClassName.get(Boolean::class)
+    val stringType = ClassName.get(String::class)
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType, booleanType, stringType)).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: (kotlin.Boolean, java.lang.String) -> kotlin.Unit): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionParamMultipleLambdaParamNullableLambda() {
+    val unitType = ClassName.get(Unit::class)
+    val booleanType = ClassName.get(Boolean::class)
+    val stringType = ClassName.get(String::class)
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f",
+            LambdaTypeName.get(unitType, booleanType, stringType).asNullable()).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: ((kotlin.Boolean, java.lang.String) -> kotlin.Unit)?): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionParamMultipleNullableLambdaParam() {
+    val unitType = ClassName.get(Unit::class)
+    val booleanType = ClassName.get(Boolean::class)
+    val stringType = ClassName.get(String::class).asNullable()
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f",
+            LambdaTypeName.get(unitType, booleanType, stringType).asNullable()).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: ((kotlin.Boolean, java.lang.String?) -> kotlin.Unit)?): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun equalsAndHashCode() {
     var a = FunSpec.constructorBuilder().build()
     var b = FunSpec.constructorBuilder().build()

@@ -15,17 +15,33 @@ class LambdaTypeName internal constructor(
 
   override fun withoutAnnotations(): TypeName = LambdaTypeName(parameters, returnType, nullable)
 
-  override fun abstractEmit(out: CodeWriter): CodeWriter = out.apply {
+  override fun abstractEmit(out: CodeWriter): CodeWriter {
     annotations.forEach { it.emit(out, true) }
-    emit("(")
-    parameters.forEach { it.emit(out) }
-    emit(") -> (${returnType.emit(out)})")
+    if (nullable) {
+      out.emit("(")
+    }
+    out.emit("(")
+    if (!parameters.isEmpty()) {
+      parameters.forEachIndexed { i, it ->
+        if (i != 0) {
+          out.emit(", ")
+        }
+        out.emit("%T", it)
+      }
+    }
+    out.emit(") -> %T", returnType)
+    if (nullable) {
+      out.emit(")")
+    }
+    return out
   }
 
   companion object {
+    /** Returns a lambda type with `returnType` and parameters of listed in `parameters` **/
     @JvmStatic fun get(returnType: TypeName, parameters: List<TypeName>)
         = LambdaTypeName(parameters, returnType)
 
+    /** Returns a lambda type with `returnType` and parameters of listed in `parameters` **/
     @JvmStatic fun get(returnType: TypeName, vararg parameters: TypeName)
         = LambdaTypeName(parameters.toList(), returnType)
   }
