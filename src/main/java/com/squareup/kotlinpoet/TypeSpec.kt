@@ -34,6 +34,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val annotations: List<AnnotationSpec> = Util.immutableList(builder.annotations)
   val modifiers: Set<KModifier> = Util.immutableSet(builder.modifiers)
   val typeVariables: List<TypeVariableName> = Util.immutableList(builder.typeVariables)
+  val companionObject: TypeSpec? = builder.companionObject
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superinterfaces: List<TypeName> = Util.immutableList(builder.superinterfaces)
@@ -101,6 +102,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         if (kind == Kind.ANNOTATION) {
           codeWriter.emit("annotation class %L", name)
+        } else if (kind == Kind.OBJECT) {
+          codeWriter.emit("object %L", name)
+        } else if (kind == Kind.COMPANION) {
+          codeWriter.emit("companion object")
         } else {
           codeWriter.emit("%L %L", kind.name.toLowerCase(Locale.US), name)
         }
@@ -190,6 +195,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
+      companionObject?.let {
+        it.emit(codeWriter, null)
+      }
+
       codeWriter.unindent()
       codeWriter.popType()
 
@@ -231,6 +240,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
+    OBJECT(
+        setOf(KModifier.PUBLIC),
+        setOf(KModifier.PUBLIC)),
+
+    COMPANION(
+        setOf(KModifier.PUBLIC),
+        setOf(KModifier.PUBLIC)),
+
     INTERFACE(
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC, KModifier.ABSTRACT)),
@@ -253,6 +270,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val modifiers = mutableListOf<KModifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var primaryConstructor : FunSpec? = null
+    internal var companionObject : TypeSpec? = null
     internal var superclass: TypeName = ANY
     internal val superinterfaces = mutableListOf<TypeName>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
@@ -311,6 +329,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       return this
     }
 
+    fun companionObject(companionObject: TypeSpec): Builder {
+      check(kind == Kind.CLASS || kind == Kind.INTERFACE) { "$kind can't have a companion object" }
+      require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind "}
+      this.companionObject = companionObject
+      return this
+    }
+
     fun primaryConstructor(primaryConstructor: FunSpec?): Builder {
       check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       if (primaryConstructor != null) {
@@ -323,7 +348,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun superclass(superclass: TypeName): Builder {
-      check(kind == Kind.CLASS) { "only classes have super classes, not $kind" }
+      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.COMPANION) {
+        "only classes can have super classes, not $kind"
+      }
       check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
       return this
@@ -383,7 +410,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, TypeName.get(type), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock): Builder {
-      check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
@@ -451,6 +478,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun classBuilder(name: String) = Builder(Kind.CLASS, name, null)
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
+
+    @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name, null)
+
+    @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
+
+    @JvmStatic fun companionObjectBuilder() = Builder(Kind.COMPANION, null, null)
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, null)
 

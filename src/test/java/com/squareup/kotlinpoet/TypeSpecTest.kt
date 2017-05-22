@@ -1507,7 +1507,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
-            .addParameter("length", Int::class,  KModifier.FINAL)
+            .addParameter("length", Int::class, KModifier.FINAL)
             .addStatement("return %L", prefixComparator)
             .build())
         .addFun(FunSpec.builder("sortPrefix")
@@ -2141,6 +2141,181 @@ class TypeSpecTest {
     assertThat(TypeSpec.interfaceBuilder(className).build().name).isEqualTo("Example")
     assertThat(TypeSpec.enumBuilder(className).addEnumConstant("A").build().name).isEqualTo("Example")
     assertThat(TypeSpec.annotationBuilder(className).build().name).isEqualTo("Example")
+  }
+
+  @Test fun objectType() {
+    val type = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |object MyObject {
+        |  init {
+        |  }
+        |
+        |  fun test() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun objectClassWithSupertype() {
+    val superclass = ClassName.get("com.squareup.wire", "Message")
+    val type = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+        .superclass(superclass)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.wire.Message
+        |
+        |object MyObject : Message {
+        |  init {
+        |  }
+        |
+        |  fun test() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun companionObject() {
+    val companion = TypeSpec.companionObjectBuilder()
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val type = TypeSpec.classBuilder("MyClass")
+        .addModifiers(KModifier.PUBLIC)
+        .companionObject(companion)
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class MyClass {
+        |  companion object {
+        |    fun test() {
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun companionObjectOnInterface() {
+    val companion = TypeSpec.companionObjectBuilder()
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val type = TypeSpec.interfaceBuilder("MyInterface")
+        .addModifiers(KModifier.PUBLIC)
+        .companionObject(companion)
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |interface MyInterface {
+        |  companion object {
+        |    fun test() {
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun companionObjectOnEnumNotAlowed() {
+    val companion = TypeSpec.companionObjectBuilder()
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val enumBuilder = TypeSpec.enumBuilder("MyEnum")
+        .addModifiers(KModifier.PUBLIC)
+
+    try {
+      enumBuilder.companionObject(companion)
+      fail("Exception expected")
+    } catch (expected: IllegalStateException) {
+    }
+  }
+
+  @Test fun companionObjectOnObjectNotAlowed() {
+    val companion = TypeSpec.companionObjectBuilder()
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val objectBuilder = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+
+    try {
+      objectBuilder.companionObject(companion)
+      fail("Exception expected")
+    } catch (expected: IllegalStateException) {
+    }
+  }
+
+  @Test fun companionObjectIsCompanionObjectKind() {
+    val companion = TypeSpec.objectBuilder("Companion")
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val typeBuilder = TypeSpec.classBuilder("MyClass")
+        .addModifiers(KModifier.PUBLIC)
+
+    try {
+      typeBuilder.companionObject(companion)
+      fail("Exception expected")
+    } catch (expected: IllegalArgumentException) {
+    }
+  }
+
+  @Test fun companionObjectSuper() {
+    val superclass = ClassName.get("com.squareup.wire", "Message")
+    val companion = TypeSpec.companionObjectBuilder()
+        .superclass(superclass)
+        .addFun(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+
+    val type = TypeSpec.classBuilder("MyClass")
+        .addModifiers(KModifier.PUBLIC)
+        .companionObject(companion)
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.wire.Message
+        |
+        |class MyClass {
+        |  companion object : Message {
+        |    fun test() {
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
   }
 
   companion object {
