@@ -49,7 +49,6 @@ class PropertySpec private constructor(
       }
       codeWriter.emit("%[%L%]", initializer)
     }
-    codeWriter.emit("\n")
   }
 
   override fun equals(other: Any?): Boolean {
@@ -66,6 +65,7 @@ class PropertySpec private constructor(
     try {
       val codeWriter = CodeWriter(out)
       emit(codeWriter, emptySet<KModifier>())
+      codeWriter.emit("\n")
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()

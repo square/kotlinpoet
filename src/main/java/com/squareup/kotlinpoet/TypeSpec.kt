@@ -110,7 +110,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emitTypeVariables(typeVariables)
 
-        primaryConstructor?.emitParameterList(codeWriter)
+        primaryConstructor?.let {
+          codeWriter.emit("(")
+          var firstParameter = true
+          it.parameters.forEachIndexed { index, param ->
+            if (!firstParameter) codeWriter.emit(",").emitWrappingSpace()
+            val property = propertySpecs.find { it.name == param.name && it.type == param.type }
+            if (property != null) {
+              property.emit(codeWriter, setOf(PUBLIC))
+            } else {
+              param.emit(codeWriter, index == it.parameters.lastIndex && primaryConstructor.varargs)
+            }
+            firstParameter = false
+          }
+          codeWriter.emit(")")
+        }
 
         val extendsTypes: List<TypeName>
         val implementsTypes: List<TypeName>
@@ -151,8 +165,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       // Non-static properties.
       for (propertySpec in propertySpecs) {
+        if (primaryConstructor?.parameters?.find { it.name == propertySpec.name && it.type == propertySpec.type } != null) {
+          continue
+        }
         if (!firstMember) codeWriter.emit("\n")
         propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
+        codeWriter.emit("\n")
         firstMember = false
       }
 
