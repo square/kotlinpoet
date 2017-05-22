@@ -176,9 +176,9 @@ class FunSpecTest {
   }
 
   @Test fun functionParamNoLambdaParam() {
-    val unitType = ClassName.get(Unit::class)
+    val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType)).build())
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = unitType)).build())
         .returns(TypeName.Companion.get(String::class))
         .build()
 
@@ -188,11 +188,26 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
-  @Test fun functionParamSingleLambdaParam() {
-    val unitType = ClassName.get(Unit::class)
-    val booleanType = ClassName.get(Boolean::class)
+  @Test fun functionParamNoLambdaParamWithReceiver() {
+    val unitType = UNIT
+    val lambdaTypeName = LambdaTypeName.get(receiver = INT, returnType = unitType)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType, booleanType)).build())
+        .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
+        .returns(TypeName.Companion.get(String::class))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: kotlin.Int.() -> kotlin.Unit): java.lang.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionParamSingleLambdaParam() {
+    val unitType = UNIT
+    val booleanType = BOOLEAN
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(parameters = booleanType, returnType = unitType))
+            .build())
         .returns(TypeName.Companion.get(String::class))
         .build()
 
@@ -203,11 +218,12 @@ class FunSpecTest {
   }
 
   @Test fun functionParamMultipleLambdaParam() {
-    val unitType = ClassName.get(Unit::class)
-    val booleanType = ClassName.get(Boolean::class)
+    val unitType = UNIT
+    val booleanType = BOOLEAN
     val stringType = ClassName.get(String::class)
+    val lambdaType = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(unitType, booleanType, stringType)).build())
+        .addParameter(ParameterSpec.builder("f", lambdaType).build())
         .returns(TypeName.Companion.get(String::class))
         .build()
 
@@ -221,9 +237,10 @@ class FunSpecTest {
     val unitType = ClassName.get(Unit::class)
     val booleanType = ClassName.get(Boolean::class)
     val stringType = ClassName.get(String::class)
+    val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+        .asNullable()
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f",
-            LambdaTypeName.get(unitType, booleanType, stringType).asNullable()).build())
+        .addParameter(ParameterSpec.builder("f", lambdaTypeName) .build())
         .returns(TypeName.Companion.get(String::class))
         .build()
 
@@ -237,9 +254,9 @@ class FunSpecTest {
     val unitType = ClassName.get(Unit::class)
     val booleanType = ClassName.get(Boolean::class)
     val stringType = ClassName.get(String::class).asNullable()
+    val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType).asNullable()
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f",
-            LambdaTypeName.get(unitType, booleanType, stringType).asNullable()).build())
+        .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
         .returns(TypeName.Companion.get(String::class))
         .build()
 
