@@ -50,7 +50,7 @@ internal class TestFiler(
       name: CharSequence, vararg originatingElements: Element): JavaFileObject {
     val relative = name.toString().replace(".", separator) + ".java" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap.put(path, Util.immutableSet(Arrays.asList(*originatingElements)))
+    originatingElementsMap.put(path, Arrays.asList(*originatingElements).toImmutableSet())
     return Source(path)
   }
 
@@ -61,7 +61,7 @@ internal class TestFiler(
       relativeName: CharSequence, vararg originatingElements: Element): FileObject {
     val relative = pkg.toString().replace(".", separator) + separator + relativeName
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap.put(path, Util.immutableSet(Arrays.asList(*originatingElements)))
+    originatingElementsMap.put(path, Arrays.asList(*originatingElements).toImmutableSet())
     return Source(path)
   }
 

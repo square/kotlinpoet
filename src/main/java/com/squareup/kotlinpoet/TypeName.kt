@@ -61,7 +61,7 @@ import kotlin.reflect.KClass
  */
 abstract class TypeName internal constructor(
     val nullable: Boolean, annotations: List<AnnotationSpec>) {
-  val annotations: List<AnnotationSpec> = Util.immutableList(annotations)
+  val annotations: List<AnnotationSpec> = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */
   internal val cachedString: String by lazy {
