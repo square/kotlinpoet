@@ -49,11 +49,11 @@ class WildcardTypeName private constructor(
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
     if (lowerBounds.size == 1) {
-      return out.emit("in %T", lowerBounds[0])
+      return out.emitCode("in %T", lowerBounds[0])
     }
     return if (upperBounds[0] == ANY)
       out.emit("*") else
-      out.emit("out %T", upperBounds[0])
+      out.emitCode("out %T", upperBounds[0])
   }
 
   companion object {

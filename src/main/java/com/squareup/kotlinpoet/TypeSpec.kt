@@ -80,10 +80,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (enumName != null) {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emit("%L", enumName)
+        codeWriter.emitCode("%L", enumName)
         if (!anonymousTypeArguments!!.formatParts.isEmpty()) {
           codeWriter.emit("(")
-          codeWriter.emit(anonymousTypeArguments)
+          codeWriter.emitCode(anonymousTypeArguments)
           codeWriter.emit(")")
         }
         if (propertySpecs.isEmpty() && funSpecs.isEmpty() && typeSpecs.isEmpty()) {
@@ -92,21 +92,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
         val supertype = if (!superinterfaces.isEmpty()) superinterfaces[0] else superclass
-        codeWriter.emit("object : %T(", supertype)
-        codeWriter.emit(anonymousTypeArguments)
+        codeWriter.emitCode("object : %T(", supertype)
+        codeWriter.emitCode(anonymousTypeArguments)
         codeWriter.emit(") {\n")
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         if (kind == Kind.ANNOTATION) {
-          codeWriter.emit("annotation class %L", name)
+          codeWriter.emitCode("annotation class %L", name)
         } else if (kind == Kind.OBJECT) {
-          codeWriter.emit("object %L", name)
+          codeWriter.emitCode("object %L", name)
         } else if (kind == Kind.COMPANION) {
           codeWriter.emit("companion object")
         } else {
-          codeWriter.emit("%L %L", kind.name.toLowerCase(Locale.US), name)
+          codeWriter.emitCode("%L %L", kind.name.toLowerCase(Locale.US), name)
         }
         codeWriter.emitTypeVariables(typeVariables)
 
@@ -124,7 +124,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
           codeWriter.emit(if (i == 0)  " :" else ",")
-          codeWriter.emit(" %T", typeName)
+          codeWriter.emitCode(" %T", typeName)
         }
 
         codeWriter.emit(" {\n")
@@ -159,7 +159,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (primaryConstructor != null && !primaryConstructor.code.isEmpty()) {
         codeWriter.emit("init {\n")
         codeWriter.indent()
-        codeWriter.emit(primaryConstructor.code)
+        codeWriter.emitCode(primaryConstructor.code)
         codeWriter.unindent()
         codeWriter.emit("}\n")
       }
@@ -167,7 +167,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       // Initializer block.
       if (!initializerBlock.isEmpty()) {
         if (!firstMember) codeWriter.emit("\n")
-        codeWriter.emit(initializerBlock)
+        codeWriter.emitCode(initializerBlock)
         firstMember = false
       }
 

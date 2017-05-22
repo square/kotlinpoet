@@ -15,6 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
+import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
+import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -28,40 +31,30 @@ import javax.lang.model.util.Types
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
-class FunSpec private constructor(builder: FunSpec.Builder) {
-  val name: String
-  val kdoc: CodeBlock
-  val annotations: List<AnnotationSpec>
-  val modifiers: Set<KModifier>
-  val typeVariables: List<TypeVariableName>
-  val receiverType: TypeName?
-  val returnType: TypeName?
-  val parameters: List<ParameterSpec>
-  val varargs: Boolean
-  val exceptions: List<TypeName>
-  val code: CodeBlock
-  val defaultValue: CodeBlock?
+class FunSpec private constructor(builder: Builder) {
+  val name = builder.name
+  val kdoc = builder.kdoc.build()
+  val annotations = builder.annotations.toImmutableList()
+  val modifiers = builder.modifiers.toImmutableSet()
+  val typeVariables = builder.typeVariables.toImmutableList()
+  val receiverType = builder.receiverType
+  val returnType = builder.returnType
+  val parameters = builder.parameters.toImmutableList()
+  val varargs = builder.varargs
+  val exceptions = builder.exceptions.toImmutableList()
+  val code = builder.code.build()
+  val defaultValue = builder.defaultValue
 
   init {
-    val code = builder.code.build()
     require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
       "abstract function ${builder.name} cannot have code"
     }
     require(!builder.varargs || lastParameterIsArray(builder.parameters)) {
       "last parameter of varargs function ${builder.name} must be an array"
     }
-    this.name = builder.name
-    this.kdoc = builder.kdoc.build()
-    this.annotations = builder.annotations.toImmutableList()
-    this.modifiers = builder.modifiers.toImmutableSet()
-    this.typeVariables = builder.typeVariables.toImmutableList()
-    this.returnType = builder.returnType
-    this.receiverType = builder.receiverType
-    this.parameters = builder.parameters.toImmutableList()
-    this.varargs = builder.varargs
-    this.exceptions = builder.exceptions.toImmutableList()
-    this.code = code
-    this.defaultValue = builder.defaultValue
+    require(name != SETTER || parameters.size == 1) {
+      "$name must have exactly one parameter"
+    }
   }
 
   private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
@@ -78,7 +71,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
-    if (!isConstructor) {
+    if (!isConstructor && !name.isAccessor) {
       codeWriter.emit("fun ")
     }
 
@@ -88,23 +81,27 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     if (isConstructor) {
-      codeWriter.emit("constructor", enclosingName)
+      codeWriter.emitCode("constructor", enclosingName)
+    } else if (name == GETTER) {
+      codeWriter.emitCode("get")
+    } else if (name == SETTER) {
+      codeWriter.emitCode("set")
     } else {
       if (receiverType != null) {
-        codeWriter.emit("%T.", receiverType)
+        codeWriter.emitCode("%T.", receiverType)
       }
-      codeWriter.emit("%L", name)
+      codeWriter.emitCode("%L", name)
     }
 
     emitParameterList(codeWriter)
 
     if (returnType != null) {
-      codeWriter.emit(": %T", returnType)
+      codeWriter.emitCode(": %T", returnType)
     }
 
     if (defaultValue != null && !defaultValue.isEmpty()) {
       codeWriter.emit(" default ")
-      codeWriter.emit(defaultValue)
+      codeWriter.emitCode(defaultValue)
     }
 
     if (!exceptions.isEmpty()) {
@@ -112,7 +109,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       var firstException = true
       for (exception in exceptions) {
         if (!firstException) codeWriter.emit(",")
-        codeWriter.emitWrappingSpace().emit("%T", exception)
+        codeWriter.emitWrappingSpace().emitCode("%T", exception)
         firstException = false
       }
     }
@@ -123,7 +120,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
       codeWriter.emit(" {\n")
 
       codeWriter.indent()
-      codeWriter.emit(code)
+      codeWriter.emitCode(code)
       codeWriter.unindent()
 
       codeWriter.emit("}\n")
@@ -145,7 +142,10 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   }
 
   val isConstructor: Boolean
-    get() = name == CONSTRUCTOR
+    get() = name.isConstructor
+
+  val isAccessor: Boolean
+    get() = name.isAccessor
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -188,8 +188,8 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
-    internal var returnType: TypeName? = null
     internal var receiverType: TypeName? = null
+    internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
@@ -197,7 +197,9 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     internal var defaultValue: CodeBlock? = null
 
     init {
-      require(name == CONSTRUCTOR || SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(name.isConstructor || name.isAccessor || SourceVersion.isName(name)) {
+        "not a valid name: $name"
+      }
     }
 
     fun addKdoc(format: String, vararg args: Any): Builder {
@@ -260,27 +262,19 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
+      check(!name.isAccessor) { "$name cannot have type variables" }
       this.typeVariables += typeVariables
       return this
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName): Builder {
+      check(!name.isAccessor) { "$name cannot have type variables" }
       typeVariables += typeVariable
       return this
     }
 
-    fun returns(returnType: TypeName): Builder {
-      check(name != CONSTRUCTOR) { "constructor cannot have return type." }
-      this.returnType = returnType
-      return this
-    }
-
-    fun returns(returnType: Type) = returns(TypeName.get(returnType))
-
-    fun returns(returnType: KClass<*>) = returns(TypeName.get(returnType))
-
     fun receiver(receiverType: TypeName): Builder {
-      check(name != CONSTRUCTOR) { "constructor cannot have return type." }
+      check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
       return this
     }
@@ -289,12 +283,26 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
     fun receiver(receiverType: KClass<*>) = receiver(TypeName.get(receiverType))
 
+    fun returns(returnType: TypeName): Builder {
+      check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
+      this.returnType = returnType
+      return this
+    }
+
+    fun returns(returnType: Type) = returns(TypeName.get(returnType))
+
+    fun returns(returnType: KClass<*>) = returns(TypeName.get(returnType))
+
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder {
-      parameters += parameterSpecs
+      for (parameterSpec in parameterSpecs) {
+        addParameter(parameterSpec)
+      }
       return this
     }
 
     fun addParameter(parameterSpec: ParameterSpec): Builder {
+      check(name != GETTER) { "$name cannot have parameters" }
+      check(name != SETTER || parameters.size == 0) { "$name can have only one parameter" }
       parameters += parameterSpec
       return this
     }
@@ -309,6 +317,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
         = addParameter(name, TypeName.get(type), *modifiers)
 
     @JvmOverloads fun varargs(varargs: Boolean = true): Builder {
+      check(!name.isAccessor) { "$name cannot have varargs" }
       this.varargs = varargs
       return this
     }
@@ -352,6 +361,7 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
 
     fun defaultValue(codeBlock: CodeBlock): Builder {
+      check(!name.isAccessor && !name.isConstructor) { "$name cannot have a default value" }
       check(this.defaultValue == null) { "defaultValue was already set" }
       this.defaultValue = codeBlock
       return this
@@ -389,7 +399,9 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
   }
 
   companion object {
-    const internal val CONSTRUCTOR = "<init>"
+    const internal val CONSTRUCTOR = "constructor()"
+    const internal val GETTER = "get()"
+    const internal val SETTER = "set()"
 
     @JvmStatic fun builder(name: String): Builder {
       return Builder(name)
@@ -397,6 +409,14 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
 
     @JvmStatic fun constructorBuilder(): Builder {
       return Builder(CONSTRUCTOR)
+    }
+
+    @JvmStatic fun getterBuilder(): Builder {
+      return Builder(GETTER)
+    }
+
+    @JvmStatic fun setterBuilder(): Builder {
+      return Builder(SETTER)
     }
 
     /**
@@ -468,3 +488,9 @@ class FunSpec private constructor(builder: FunSpec.Builder) {
     }
   }
 }
+
+internal val String.isConstructor: Boolean
+  get() = this == CONSTRUCTOR
+
+internal val String.isAccessor: Boolean
+  get() = this == GETTER || this == SETTER

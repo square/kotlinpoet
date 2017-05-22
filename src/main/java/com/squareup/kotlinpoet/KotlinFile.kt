@@ -125,7 +125,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     }
 
     if (!packageName.isEmpty()) {
-      codeWriter.emit("package %L\n", packageName)
+      codeWriter.emitCode("package %L\n", packageName)
       codeWriter.emit("\n")
     }
 
@@ -136,7 +136,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
     var importedTypesCount = 0
     for (className in imports.toSortedSet()) {
-      codeWriter.emit("import %L\n", className)
+      codeWriter.emitCode("import %L\n", className)
       importedTypesCount++
     }
     if (importedTypesCount > 0) {
@@ -229,7 +229,9 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     }
 
     fun addFun(funSpec: FunSpec): Builder {
-      require(!funSpec.isConstructor) { "cannot add a constructor to file $fileName" }
+      require(!funSpec.isConstructor && !funSpec.isAccessor) {
+        "cannot add ${funSpec.name} to file $fileName"
+      }
       members += funSpec
       return this
     }

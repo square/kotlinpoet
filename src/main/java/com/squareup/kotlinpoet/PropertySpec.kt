@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
+import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -22,17 +24,17 @@ import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec private constructor(
-    val mutable: Boolean,
-    val name: String,
-    val type: TypeName,
-    val kdoc: CodeBlock,
-    annotations: Collection<AnnotationSpec>,
-    modifiers: Collection<KModifier>,
-    val initializer: CodeBlock?,
-    val delegated: Boolean = false) {
-  val annotations = annotations.toList()
-  val modifiers = modifiers.toSet()
+class PropertySpec private constructor(builder: Builder) {
+  val mutable: Boolean = builder.mutable
+  val name: String = builder.name
+  val type: TypeName = builder.type
+  val kdoc: CodeBlock = builder.kdoc.build()
+  val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  val initializer: CodeBlock? = builder.initializer
+  val delegated: Boolean = builder.delegated
+  val getter: FunSpec? = builder.getter
+  val setter: FunSpec? = builder.setter
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>) {
@@ -40,16 +42,26 @@ class PropertySpec private constructor(
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
-    codeWriter.emit("%L: %T", name, type)
+    codeWriter.emitCode("%L: %T", name, type)
     if (initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")
       } else {
         codeWriter.emit(" = ")
       }
-      codeWriter.emit("%[%L%]", initializer)
+      codeWriter.emitCode("%[%L%]", initializer)
     }
     codeWriter.emit("\n")
+    if (getter != null) {
+      codeWriter.emitCode("%>")
+      getter.emit(codeWriter, null, implicitModifiers)
+      codeWriter.emitCode("%<")
+    }
+    if (setter != null) {
+      codeWriter.emitCode("%>")
+      setter.emit(codeWriter, null, implicitModifiers)
+      codeWriter.emitCode("%<")
+    }
   }
 
   override fun equals(other: Any?): Boolean {
@@ -89,6 +101,8 @@ class PropertySpec private constructor(
     internal val modifiers = mutableListOf<KModifier>()
     internal var initializer: CodeBlock? = null
     internal var delegated = false
+    internal var getter : FunSpec? = null
+    internal var setter : FunSpec? = null
 
     fun mutable(mutable: Boolean): Builder {
       this.mutable = mutable
@@ -147,8 +161,21 @@ class PropertySpec private constructor(
       return this
     }
 
-    fun build() = PropertySpec(
-        mutable, name, type, kdoc.build(), annotations, modifiers, initializer, delegated)
+    fun getter(getter: FunSpec): Builder {
+      require(getter.name == GETTER) { "${getter.name} is not a getter" }
+      check(this.getter == null ) { "getter was already set" }
+      this.getter = getter
+      return this
+    }
+
+    fun setter(setter: FunSpec): Builder {
+      require(setter.name == SETTER) { "${setter.name} is not a setter" }
+      check(this.setter == null ) { "setter was already set" }
+      this.setter = setter
+      return this
+    }
+
+    fun build() = PropertySpec(this)
   }
 
   companion object {

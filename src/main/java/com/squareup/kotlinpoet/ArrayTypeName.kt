@@ -41,7 +41,7 @@ class ArrayTypeName private constructor(
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
-    return out.emit("%T<%T>", ARRAY_TYPE, componentType)
+    return out.emitCode("%T<%T>", ARRAY_TYPE, componentType)
   }
 
   companion object {
