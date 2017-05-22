@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.Util.stringLiteralWithQuotes
 import java.io.IOException
 import java.util.EnumSet
 import java.util.Locale
@@ -217,7 +216,7 @@ internal class CodeWriter @JvmOverloads constructor(
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
           emitAndIndent(if (string != null)
-            stringLiteralWithQuotes(string, indent) else
+            stringLiteralWithQuotes(string) else
             "null")
         }
 
