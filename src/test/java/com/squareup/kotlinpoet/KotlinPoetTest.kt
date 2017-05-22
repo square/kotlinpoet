@@ -91,6 +91,40 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun primaryConstructorProperties() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("cheese", String::class)
+            .addParameter("cilantro", String::class)
+            .addParameter("lettuce", String::class)
+            .beginControlFlow("require(!cheese.isEmpty())")
+            .addStatement("%S", "cheese cannot be empty")
+            .endControlFlow()
+            .build())
+        .addProperty(PropertySpec.builder("cheese", String::class).initializer("cheese").build())
+        .addProperty(PropertySpec.varBuilder("cilantro", String::class).initializer("cilantro").build())
+        .addProperty(PropertySpec.builder("lettuce", String::class).initializer("lettuce.trim()").build())
+        .addProperty(PropertySpec.builder("onion", Boolean::class).initializer("true").build())
+        .build())
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |import kotlin.Boolean
+        |
+        |class Taco(val cheese: String, var cilantro: String, lettuce: String) {
+        |  val lettuce: String = lettuce.trim()
+        |
+        |  val onion: Boolean = true
+        |  init {
+        |    require(!cheese.isEmpty()) {
+        |      "cheese cannot be empty"
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun propertyModifiers() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("CHEESE", String::class, KModifier.PRIVATE, KModifier.CONST)

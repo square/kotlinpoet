@@ -64,6 +64,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     val previousStatementLine = codeWriter.statementLine
     codeWriter.statementLine = -1
 
+    val constructorProperties: Map<String, PropertySpec> = constructorProperties()
+
     try {
       if (enumName != null) {
         codeWriter.emitKdoc(kdoc)
@@ -93,7 +95,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emitTypeVariables(typeVariables)
 
-        primaryConstructor?.emitParameterList(codeWriter)
+        primaryConstructor?.let {
+          codeWriter.emit("(")
+          it.parameters.forEachIndexed { index, param ->
+            if (index > 0) codeWriter.emit(",").emitWrappingSpace()
+            val property = constructorProperties[param.name]
+            if (property != null) {
+              property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
+            } else {
+              param.emit(codeWriter, index == it.parameters.lastIndex && primaryConstructor.varargs)
+            }
+          }
+          codeWriter.emit(")")
+        }
 
         val extendsTypes: List<TypeName>
         val implementsTypes: List<TypeName>
@@ -109,7 +123,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(if (i == 0)  " :" else ",")
           codeWriter.emitCode(" %T", typeName)
         }
-
         codeWriter.emit(" {\n")
       }
 
@@ -134,6 +147,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       // Non-static properties.
       for (propertySpec in propertySpecs) {
+        if (constructorProperties.containsKey(propertySpec.name)) {
+          continue
+        }
         if (!firstMember) codeWriter.emit("\n")
         propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
         firstMember = false
@@ -191,6 +207,20 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     } finally {
       codeWriter.statementLine = previousStatementLine
     }
+  }
+
+  /** Returns the properties that can be declared inline as constructor parameters. */
+  private fun constructorProperties(): Map<String, PropertySpec> {
+    if (primaryConstructor == null) return emptyMap()
+
+    val result: MutableMap<String, PropertySpec> = LinkedHashMap()
+    for (property in propertySpecs) {
+      val parameter = primaryConstructor.parameter(property.name) ?: continue
+      if (parameter.type != property.type) continue
+      if (CodeBlock.of("%N", parameter) != property.initializer) continue
+      result[property.name] = property
+    }
+    return result
   }
 
   override fun equals(other: Any?): Boolean {

@@ -62,6 +62,13 @@ class FunSpec private constructor(builder: Builder) {
         && TypeName.arrayComponent(parameters[parameters.size - 1].type) != null
   }
 
+  internal fun parameter(name: String): ParameterSpec? {
+    for (parameter in parameters) {
+      if (parameter.name == name) return parameter
+    }
+    return null
+  }
+
   @Throws(IOException::class)
   internal fun emit(
       codeWriter: CodeWriter,
