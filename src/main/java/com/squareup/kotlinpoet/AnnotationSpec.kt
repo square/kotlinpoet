@@ -39,10 +39,10 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val memberSeparator = if (inline) ", " else ",\n"
     if (members.isEmpty()) {
       // @Singleton
-      codeWriter.emit("@%T", type)
+      codeWriter.emitCode("@%T", type)
     } else if (members.size == 1 && members.containsKey("value")) {
       // @Named("foo")
-      codeWriter.emit("@%T(", type)
+      codeWriter.emitCode("@%T(", type)
       emitAnnotationValues(codeWriter, whitespace, memberSeparator, members["value"]!!)
       codeWriter.emit(")")
     } else {
@@ -54,12 +54,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       //       name = "updated_at",
       //       nullable = false
       //   )
-      codeWriter.emit("@%T(" + whitespace, type)
+      codeWriter.emitCode("@%T(" + whitespace, type)
       codeWriter.indent(2)
       val i = members.entries.iterator()
       while (i.hasNext()) {
         val entry = i.next()
-        codeWriter.emit("%L = ", entry.key)
+        codeWriter.emitCode("%L = ", entry.key)
         emitAnnotationValues(codeWriter, whitespace, memberSeparator, entry.value)
         if (i.hasNext()) codeWriter.emit(memberSeparator)
       }
@@ -76,7 +76,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       values: List<CodeBlock>) {
     if (values.size == 1) {
       codeWriter.indent(2)
-      codeWriter.emit(values[0])
+      codeWriter.emitCode(values[0])
       codeWriter.unindent(2)
       return
     }
@@ -86,7 +86,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     var first = true
     for (codeBlock in values) {
       if (!first) codeWriter.emit(memberSeparator)
-      codeWriter.emit(codeBlock)
+      codeWriter.emitCode(codeBlock)
       first = false
     }
     codeWriter.unindent(2)
@@ -116,7 +116,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      codeWriter.emit("%L", this)
+      codeWriter.emitCode("%L", this)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()

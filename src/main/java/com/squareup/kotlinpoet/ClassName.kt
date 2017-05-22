@@ -115,7 +115,7 @@ class ClassName private constructor(
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
-    return out.emitAndIndent(out.lookupName(this))
+    return out.emit(out.lookupName(this))
   }
 
   companion object {

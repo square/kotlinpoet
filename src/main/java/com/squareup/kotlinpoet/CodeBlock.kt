@@ -71,7 +71,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
   override fun toString(): String {
     val out = StringWriter()
     try {
-      CodeWriter(out).emit(this)
+      CodeWriter(out).emitCode(this)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
