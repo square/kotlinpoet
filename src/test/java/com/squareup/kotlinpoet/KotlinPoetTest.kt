@@ -113,8 +113,8 @@ class KotlinPoetTest {
         |import kotlin.Boolean
         |
         |class Taco(val cheese: String, var cilantro: String, lettuce: String) {
-        |
         |  val lettuce: String = lettuce.trim()
+        |
         |  val onion: Boolean = true
         |  init {
         |    require(!cheese.isEmpty()) {

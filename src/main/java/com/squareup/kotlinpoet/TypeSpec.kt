@@ -153,7 +153,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(if (i == 0)  " :" else ",")
           codeWriter.emitCode(" %T", typeName)
         }
-
         codeWriter.emit(" {\n")
       }
 

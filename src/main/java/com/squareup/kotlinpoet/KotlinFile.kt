@@ -148,10 +148,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       when (member) {
         is TypeSpec -> member.emit(codeWriter, null)
         is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC))
-        is PropertySpec -> {
-          member.emit(codeWriter, setOf(KModifier.PUBLIC))
-          codeWriter.emit("\n")
-        }
+        is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
         else -> throw AssertionError()
       }
     }
