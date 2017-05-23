@@ -125,16 +125,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         primaryConstructor?.let {
           codeWriter.emit("(")
-          var firstParameter = true
           it.parameters.forEachIndexed { index, param ->
-            if (!firstParameter) codeWriter.emit(",").emitWrappingSpace()
+            if (index > 0) codeWriter.emit(",").emitWrappingSpace()
             val property = ctorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
             } else {
               param.emit(codeWriter, index == it.parameters.lastIndex && primaryConstructor.varargs)
             }
-            firstParameter = false
           }
           codeWriter.emit(")")
         }
