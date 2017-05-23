@@ -69,21 +69,6 @@ class TypeAliasSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun forbiddenModifiers() {
-    val test = { modifier: KModifier ->
-      try {
-        TypeAliasSpec
-            .builder("Word", String::class)
-            .visibility(modifier)
-        fail()
-      } catch (expected: IllegalArgumentException) {
-      }
-    }
-    KModifier.values()
-        .filter { it !in setOf(KModifier.PUBLIC, KModifier.INTERNAL, KModifier.PRIVATE) }
-        .forEach { test(it) }
-  }
-
   @Test fun equalsAndHashCode() {
     val a = TypeAliasSpec.builder("Word", String::class).visibility(KModifier.PUBLIC).build()
     val b = TypeAliasSpec.builder("Word", String::class).visibility(KModifier.PUBLIC).build()
