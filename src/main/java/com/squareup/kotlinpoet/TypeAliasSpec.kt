@@ -30,7 +30,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emit("typealias %L = %T", name, type)
+    codeWriter.emitCode("typealias %L = %T", name, type)
     codeWriter.emit("\n")
   }
 
