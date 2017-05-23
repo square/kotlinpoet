@@ -37,13 +37,15 @@ class PropertySpec private constructor(builder: Builder) {
   val setter: FunSpec? = builder.setter
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>) {
+  internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>,
+                    withInitializer: Boolean = true,
+                    inline: Boolean = false) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
     codeWriter.emitCode("%L: %T", name, type)
-    if (initializer != null) {
+    if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")
       } else {
@@ -51,7 +53,7 @@ class PropertySpec private constructor(builder: Builder) {
       }
       codeWriter.emitCode("%[%L%]", initializer)
     }
-    codeWriter.emit("\n")
+    if (!inline) codeWriter.emit("\n")
     if (getter != null) {
       codeWriter.emitCode("%>")
       getter.emit(codeWriter, null, implicitModifiers)
@@ -78,7 +80,6 @@ class PropertySpec private constructor(builder: Builder) {
     try {
       val codeWriter = CodeWriter(out)
       emit(codeWriter, emptySet<KModifier>())
-      codeWriter.emit("\n")
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
