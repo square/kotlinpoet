@@ -37,12 +37,12 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitJavaModifiers(modifiers)
     if (varargs) {
-      codeWriter.emit("vararg %L: %T", name, TypeName.arrayComponent(type))
+      codeWriter.emitCode("vararg %L: %T", name, TypeName.arrayComponent(type))
     } else {
-      codeWriter.emit("%L: %T", name, type)
+      codeWriter.emitCode("%L: %T", name, type)
     }
     if (defaultValue != null) {
-      codeWriter.emit(" = %[%L%]", defaultValue)
+      codeWriter.emitCode(" = %[%L%]", defaultValue)
     }
   }
 

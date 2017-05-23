@@ -60,16 +60,16 @@ class ParameterizedTypeName internal constructor(
       rawType.emit(out)
     }
     if (!typeArguments.isEmpty()) {
-      out.emitAndIndent("<")
+      out.emit("<")
       var firstParameter = true
       for (parameter in typeArguments) {
-        if (!firstParameter) out.emitAndIndent(", ")
+        if (!firstParameter) out.emit(", ")
         parameter.emitAnnotations(out)
         parameter.abstractEmit(out)
         parameter.emitNullable(out)
         firstParameter = false
       }
-      out.emitAndIndent(">")
+      out.emit(">")
     }
     return out
   }

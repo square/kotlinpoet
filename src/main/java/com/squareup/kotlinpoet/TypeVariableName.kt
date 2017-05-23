@@ -59,7 +59,7 @@ class TypeVariableName private constructor(
 
   @Throws(IOException::class)
   override fun abstractEmit(out: CodeWriter): CodeWriter {
-    return out.emitAndIndent(name)
+    return out.emit(name)
   }
 
   companion object {

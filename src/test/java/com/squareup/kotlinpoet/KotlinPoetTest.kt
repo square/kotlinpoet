@@ -311,4 +311,36 @@ class KotlinPoetTest {
         TypeName.get(Int::class).asNullable()).asNullable()
     assertThat(list.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
   }
+
+  @Test fun getAndSet() {
+    val source = KotlinFile.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.varBuilder("propertyWithCustomAccessors", Int::class)
+            .initializer("%L", 1)
+            .getter(FunSpec.getterBuilder()
+                .addStatement("println(%S)", "getter")
+                .addStatement("return field")
+                .build())
+            .setter(FunSpec.setterBuilder()
+                .addParameter("value", Int::class)
+                .addStatement("println(%S)", "setter")
+                .addStatement("field = value")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |var propertyWithCustomAccessors: Int = 1
+        |  get() {
+        |    println("getter")
+        |    return field
+        |  }
+        |  set(value: Int) {
+        |    println("setter")
+        |    field = value
+        |  }
+        |""".trimMargin())
+  }
 }

@@ -108,7 +108,7 @@ internal class CodeWriter @JvmOverloads constructor(
     trailingNewline = true // Force the '//' prefix for the comment.
     comment = true
     try {
-      emit(codeBlock)
+      emitCode(codeBlock)
       emit("\n")
     } finally {
       comment = false
@@ -122,7 +122,7 @@ internal class CodeWriter @JvmOverloads constructor(
     emit("/**\n")
     kdoc = true
     try {
-      emit(kdocCodeBlock)
+      emitCode(kdocCodeBlock)
     } finally {
       kdoc = false
     }
@@ -150,8 +150,8 @@ internal class CodeWriter @JvmOverloads constructor(
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
-      emitAndIndent(modifier.name.toLowerCase(Locale.US))
-      emitAndIndent(" ")
+      emit(modifier.name.toLowerCase(Locale.US))
+      emit(" ")
     }
   }
 
@@ -166,8 +166,8 @@ internal class CodeWriter @JvmOverloads constructor(
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
-      emitAndIndent(modifier.name.toLowerCase(Locale.US))
-      emitAndIndent(" ")
+      emit(modifier.name.toLowerCase(Locale.US))
+      emit(" ")
     }
   }
 
@@ -183,10 +183,10 @@ internal class CodeWriter @JvmOverloads constructor(
     var firstTypeVariable = true
     for (typeVariable in typeVariables) {
       if (!firstTypeVariable) emit(", ")
-      emit("%L", typeVariable.name)
+      emitCode("%L", typeVariable.name)
       var firstBound = true
       for (bound in typeVariable.bounds) {
-        emit(if (firstBound) " : %T" else " & %T", bound)
+        emitCode(if (firstBound) " : %T" else " & %T", bound)
         firstBound = false
       }
       firstTypeVariable = false
@@ -195,13 +195,13 @@ internal class CodeWriter @JvmOverloads constructor(
   }
 
   @Throws(IOException::class)
-  fun emit(s: String): CodeWriter = emitAndIndent(s)
+  fun emitCode(s: String) = emitCode(CodeBlock.of(s))
 
   @Throws(IOException::class)
-  fun emit(format: String, vararg args: Any?): CodeWriter = emit(CodeBlock.of(format, *args))
+  fun emitCode(format: String, vararg args: Any?) = emitCode(CodeBlock.of(format, *args))
 
   @Throws(IOException::class)
-  fun emit(codeBlock: CodeBlock): CodeWriter {
+  fun emitCode(codeBlock: CodeBlock): CodeWriter {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
@@ -210,12 +210,12 @@ internal class CodeWriter @JvmOverloads constructor(
       when (part) {
         "%L" -> emitLiteral(codeBlock.args[a++])
 
-        "%N" -> emitAndIndent(codeBlock.args[a++] as String)
+        "%N" -> emit(codeBlock.args[a++] as String)
 
         "%S" -> {
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
-          emitAndIndent(if (string != null)
+          emit(if (string != null)
             stringLiteralWithQuotes(string) else
             "null")
         }
@@ -242,7 +242,7 @@ internal class CodeWriter @JvmOverloads constructor(
           typeName.emitNullable(this)
         }
 
-        "%%" -> emitAndIndent("%")
+        "%%" -> emit("%")
 
         "%>" -> indent()
 
@@ -280,7 +280,7 @@ internal class CodeWriter @JvmOverloads constructor(
             }
           }
           if (!doBreak) {
-            emitAndIndent(part)
+            emit(part)
           }
         }
       }
@@ -303,7 +303,7 @@ internal class CodeWriter @JvmOverloads constructor(
     val explicit = canonical + "." + extractMemberName(partWithoutLeadingDot)
     val wildcard = canonical + ".*"
     if (memberImports.contains(explicit) || memberImports.contains(wildcard)) {
-      emitAndIndent(partWithoutLeadingDot)
+      emit(partWithoutLeadingDot)
       return true
     }
     return false
@@ -316,9 +316,9 @@ internal class CodeWriter @JvmOverloads constructor(
     } else if (o is AnnotationSpec) {
       o.emit(this, true)
     } else if (o is CodeBlock) {
-      emit(o)
+      emitCode(o)
     } else {
-      emitAndIndent(o.toString())
+      emit(o.toString())
     }
   }
 
@@ -419,7 +419,7 @@ internal class CodeWriter @JvmOverloads constructor(
    * unnecessary trailing whitespace.
    */
   @Throws(IOException::class)
-  fun emitAndIndent(s: String): CodeWriter {
+  fun emit(s: String): CodeWriter {
     var first = true
     for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
