@@ -18,8 +18,6 @@ package com.squareup.kotlinpoet
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
@@ -105,7 +103,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       var p = 0
 
       for (argument in arguments.keys) {
-        require(LOWERCASE.matcher(argument).matches()) {
+        require(LOWERCASE matches argument) {
             "argument '$argument' must start with a lowercase character" }
       }
 
@@ -121,20 +119,20 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
           p = nextP
         }
 
-        var matcher: Matcher? = null
+        var matchResult: MatchResult? = null
         val colon = format.indexOf(':', p)
         if (colon != -1) {
           val endIndex = Math.min(colon + 2, format.length)
-          matcher = NAMED_ARGUMENT.matcher(format.substring(p, endIndex))
+          matchResult = NAMED_ARGUMENT.matchEntire(format.substring(p, endIndex))
         }
-        if (matcher != null && matcher.lookingAt()) {
-          val argumentName = matcher.group("argumentName")
+        if (matchResult != null) {
+          val argumentName = matchResult.groupValues[ARG_NAME]
           require(arguments.containsKey(argumentName)) {
             "Missing named argument for %$argumentName" }
-          val formatChar = matcher.group("typeChar")[0]
+          val formatChar = matchResult.groupValues[TYPE_NAME].first()
           addArgument(format, formatChar, arguments[argumentName])
           formatParts += "%" + formatChar
-          p += matcher.regionEnd()
+          p += matchResult.range.endInclusive + 1
         } else {
           require(p < format.length - 1) { "dangling % at end" }
           require(isNoArgPlaceholder(format[p + 1])) {
@@ -330,10 +328,10 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
   }
 
   companion object {
-    @JvmField internal val NAMED_ARGUMENT
-        = Pattern.compile("%(?<argumentName>[\\w_]+):(?<typeChar>[\\w]).*")
-    @JvmField internal val LOWERCASE
-        = Pattern.compile("[a-z]+[\\w_]*")
+    @JvmField internal val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
+    @JvmField internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
+    @JvmField internal val ARG_NAME = 1
+    @JvmField internal val TYPE_NAME = 2
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
   }
