@@ -54,8 +54,7 @@ class TypeSpecTest {
   @Test fun basic() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("toString")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC, KModifier.FINAL)
+            .addModifiers(KModifier.PUBLIC, KModifier.FINAL, KModifier.OVERRIDE)
             .returns(String::class)
             .addCode("return %S;\n", "taco")
             .build())
@@ -63,17 +62,15 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
         |class Taco {
-        |  @Override
-        |  final fun toString(): String {
+        |  final override fun toString(): String {
         |    return "taco";
         |  }
         |}
         |""".trimMargin())
-    assertEquals(-544506260, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(1344447270, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
@@ -122,8 +119,7 @@ class TypeSpecTest {
     val aSimpleThung = TypeSpec.anonymousClassBuilder("%N", thungParameter)
         .superclass(simpleThungOfBar)
         .addFun(FunSpec.builder("doSomething")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .addParameter("bar", bar)
             .addCode("/* code snippets */\n")
             .build())
@@ -131,8 +127,7 @@ class TypeSpecTest {
     val aThingThang = TypeSpec.anonymousClassBuilder("")
         .superclass(thingThangOfFooBar)
         .addFun(FunSpec.builder("call")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(thungOfSuperBar)
             .addParameter(thungParameter)
             .addCode("return %L;\n", aSimpleThung)
@@ -147,15 +142,11 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
-        |
         |class Taco {
         |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    @Override
-        |    fun call(final thung: Thung<in Foo>): Thung<in Bar> {
+        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> {
         |      return object : SimpleThung<Bar>(thung) {
-        |        @Override
-        |        fun doSomething(bar: Bar) {
+        |        override fun doSomething(bar: Bar) {
         |          /* code snippets */
         |        }
         |      };
@@ -335,52 +326,46 @@ class TypeSpecTest {
             .build())
         .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
             .addFun(FunSpec.builder("toString")
-                .addAnnotation(Override::class)
-                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE, KModifier.OVERRIDE)
                 .returns(String::class)
-                .addCode("return %S;\n", "paper airplane!")
+                .addCode("return %S\n", "paper airplane!")
                 .build())
             .build())
         .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("%S", "peace sign")
             .build())
-        .addProperty("handPosition", String::class, KModifier.PRIVATE)
-        .addFun(FunSpec.constructorBuilder()
+        .addProperty(PropertySpec.builder("handPosition", String::class, KModifier.PRIVATE)
+            .initializer("handPosition")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("handPosition", String::class)
-            .addCode("this.handPosition = handPosition;\n")
             .build())
         .addFun(FunSpec.constructorBuilder()
-            .addCode("this(%S);\n", "fist")
+            .addCode("this(%S)\n", "fist")
             .build())
         .build()
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
-        |enum Roshambo {
+        |enum class Roshambo(handPosition: String) {
         |  /**
         |   * Avalanche!
         |   */
         |  ROCK,
         |
         |  PAPER("flat") {
-        |    @Override
-        |    fun toString(): String {
-        |      return "paper airplane!";
+        |    override fun toString(): String {
+        |      return "paper airplane!"
         |    }
         |  },
         |
         |  SCISSORS("peace sign");
         |
-        |  private val handPosition: String
-        |
-        |  constructor(handPosition: String) {
-        |    this.handPosition = handPosition;
-        |  }
+        |  private val handPosition: String = handPosition
         |
         |  constructor() {
-        |    this("fist");
+        |    this("fist")
         |  }
         |}
         |""".trimMargin())
@@ -392,8 +377,7 @@ class TypeSpecTest {
         .addModifiers(KModifier.PUBLIC)
         .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder("")
             .addFun(FunSpec.builder("fold")
-                .addAnnotation(Override::class)
-                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
                 .build())
             .build())
         .addFun(FunSpec.builder("fold")
@@ -403,12 +387,9 @@ class TypeSpecTest {
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
-        |
-        |enum Tortilla {
+        |enum class Tortilla {
         |  CORN {
-        |    @Override
-        |    fun fold() {
+        |    override fun fold() {
         |    }
         |  };
         |
@@ -442,8 +423,7 @@ class TypeSpecTest {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
         .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder("")
             .addFun(FunSpec.builder("toString")
-                .addAnnotation(Override::class)
-                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
                 .returns(String::class)
                 .addCode("return %S;\n", "west side")
                 .build())
@@ -452,13 +432,11 @@ class TypeSpecTest {
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
-        |enum Roshambo {
+        |enum class Roshambo {
         |  SPOCK {
-        |    @Override
-        |    fun toString(): String {
+        |    override fun toString(): String {
         |      return "west side";
         |    }
         |  }
@@ -481,7 +459,7 @@ class TypeSpecTest {
         |
         |import java.lang.Deprecated
         |
-        |enum Roshambo {
+        |enum class Roshambo {
         |  @Deprecated
         |  ROCK,
         |
@@ -542,8 +520,7 @@ class TypeSpecTest {
         .addProperty("x", p)
         .addProperty("y", p)
         .addFun(FunSpec.builder("compareTo")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(Int::class)
             .addParameter("p", p)
             .addStatement("return 0")
@@ -564,7 +541,6 @@ class TypeSpecTest {
         |
         |import java.lang.Comparable
         |import java.lang.Number
-        |import java.lang.Override
         |import java.lang.UnsupportedOperationException
         |import kotlin.Int
         |
@@ -575,8 +551,7 @@ class TypeSpecTest {
         |
         |  val y: P
         |
-        |  @Override
-        |  fun compareTo(p: P): Int {
+        |  override fun compareTo(p: P): Int {
         |    return 0
         |  }
         |
@@ -688,7 +663,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import java.lang.Cloneable
         |
-        |enum Food : Serializable, Cloneable {
+        |enum class Food : Serializable, Cloneable {
         |  LEAN_GROUND_BEEF,
         |
         |  SHREDDED_CHEESE
@@ -757,7 +732,7 @@ class TypeSpecTest {
         |
         |    val sauce: Sauce
         |
-        |    enum Topping {
+        |    enum class Topping {
         |      SHREDDED_CHEESE,
         |
         |      LEAN_GROUND_BEEF
@@ -770,7 +745,7 @@ class TypeSpecTest {
         |    val dippingSauce: Sauce
         |  }
         |
-        |  enum Sauce {
+        |  enum class Sauce {
         |    SOUR_CREAM,
         |
         |    SALSA,
@@ -1258,7 +1233,7 @@ class TypeSpecTest {
         |  interface Tortilla {
         |  }
         |
-        |  enum Topping {
+        |  enum class Topping {
         |    SALSA
         |  }
         |}
@@ -1382,14 +1357,12 @@ class TypeSpecTest {
 
   @Test fun functionToString() {
     val funSpec = FunSpec.builder("toString")
-        .addAnnotation(Override::class)
-        .addModifiers(KModifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
         .returns(String::class)
         .addStatement("return %S", "taco")
         .build()
     assertThat(funSpec.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "fun toString(): java.lang.String {\n"
+        + "override fun toString(): java.lang.String {\n"
         + "  return \"taco\"\n"
         + "}\n")
   }
@@ -1427,14 +1400,12 @@ class TypeSpecTest {
     val type = TypeSpec.anonymousClassBuilder("")
         .addSuperinterface(Runnable::class)
         .addFun(FunSpec.builder("run")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .build())
         .build()
     assertThat(type.toString()).isEqualTo("""
         |object : java.lang.Runnable() {
-        |  @java.lang.Override
-        |  fun run() {
+        |  override fun run() {
         |  }
         |}""".trimMargin())
   }
@@ -1464,8 +1435,7 @@ class TypeSpecTest {
   @Test fun multilineStatement() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("toString")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
             .addStatement("return %S\n+ %S\n+ %S\n+ %S\n+ %S",
                 "Taco(", "beef,", "lettuce,", "cheese", ")")
@@ -1474,12 +1444,10 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
         |class Taco {
-        |  @Override
-        |  fun toString(): String {
+        |  override fun toString(): String {
         |    return "Taco("
         |        + "beef,"
         |        + "lettuce,"
@@ -1496,8 +1464,7 @@ class TypeSpecTest {
     val prefixComparator = TypeSpec.anonymousClassBuilder("")
         .addSuperinterface(stringComparator)
         .addFun(FunSpec.builder("compare")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(Int::class)
             .addParameter("a", String::class)
             .addParameter("b", String::class)
@@ -1519,7 +1486,6 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |import java.util.Collections
         |import java.util.Comparator
@@ -1529,8 +1495,7 @@ class TypeSpecTest {
         |class Taco {
         |  fun comparePrefix(final length: Int): Comparator<String> {
         |    return object : Comparator<String>() {
-        |      @Override
-        |      fun compare(a: String, b: String): Int {
+        |      override fun compare(a: String, b: String): Int {
         |        return a.substring(0, length)
         |            .compareTo(b.substring(0, length))
         |      }
@@ -1541,8 +1506,7 @@ class TypeSpecTest {
         |    Collections.sort(
         |        list,
         |        object : Comparator<String>() {
-        |          @Override
-        |          fun compare(a: String, b: String): Int {
+        |          override fun compare(a: String, b: String): Int {
         |            return a.substring(0, length)
         |                .compareTo(b.substring(0, length))
         |          }
@@ -1949,8 +1913,7 @@ class TypeSpecTest {
             .initializer("%S", "FOO")
             .build())
         .addFun(FunSpec.builder("toString")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -1958,7 +1921,6 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
         |class Taco {
@@ -1966,8 +1928,7 @@ class TypeSpecTest {
         |
         |  private const val FOO: String = "FOO"
         |
-        |  @Override
-        |  fun toString(): String {
+        |  override fun toString(): String {
         |    return FOO
         |  }
         |}
@@ -1982,8 +1943,7 @@ class TypeSpecTest {
             .build())
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -1994,7 +1954,6 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
         |class Taco {
@@ -2009,8 +1968,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  @Override
-        |  fun toString(): String {
+        |  override fun toString(): String {
         |    return FOO
         |  }
         |}
@@ -2026,8 +1984,7 @@ class TypeSpecTest {
             .build())
         .addFun(FunSpec.constructorBuilder().build())
         .addFun(FunSpec.builder("toString")
-            .addAnnotation(Override::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
             .addStatement("return FOO")
             .build())
@@ -2045,7 +2002,6 @@ class TypeSpecTest {
     assertThat(toString(initializersAdded)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Override
         |import java.lang.String
         |
         |class Taco {
@@ -2060,8 +2016,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  @Override
-        |  fun toString(): String {
+        |  override fun toString(): String {
         |    return FOO
         |  }
         |}
