@@ -330,8 +330,8 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
   companion object {
     @JvmField internal val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
     @JvmField internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
-    @JvmField internal val ARG_NAME = 1
-    @JvmField internal val TYPE_NAME = 2
+    internal const val ARG_NAME = 1
+    internal const val TYPE_NAME = 2
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
   }
