@@ -424,7 +424,7 @@ class FunSpec private constructor(builder: Builder) {
 
      *
      * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An [Override] annotation will be added.
+     * throws declarations. An `override` modifier will be added.
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
       var modifiers: MutableSet<Modifier> = method.modifiers
@@ -437,7 +437,7 @@ class FunSpec private constructor(builder: Builder) {
       val methodName = method.simpleName.toString()
       val funBuilder = FunSpec.builder(methodName)
 
-      funBuilder.addAnnotation(Override::class)
+      funBuilder.addModifiers(KModifier.OVERRIDE)
 
       modifiers = modifiers.toMutableSet()
       modifiers.remove(Modifier.ABSTRACT)
@@ -465,7 +465,7 @@ class FunSpec private constructor(builder: Builder) {
      * implements `Comparable<Movie>`, the `T` parameter will be resolved to `Movie`.
      *
      * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An [Override] annotation will be added.
+     * throws declarations. An `override` modifier will be added.
      */
     @JvmStatic fun overriding(
         method: ExecutableElement, enclosing: DeclaredType, types: Types): Builder {

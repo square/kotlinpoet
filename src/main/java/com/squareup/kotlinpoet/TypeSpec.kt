@@ -19,7 +19,6 @@ import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.util.Locale
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
@@ -99,14 +98,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
-        if (kind == Kind.ANNOTATION) {
-          codeWriter.emitCode("annotation class %L", name)
-        } else if (kind == Kind.OBJECT) {
-          codeWriter.emitCode("object %L", name)
-        } else if (kind == Kind.COMPANION) {
-          codeWriter.emit("companion object")
-        } else {
-          codeWriter.emitCode("%L %L", kind.name.toLowerCase(Locale.US), name)
+        codeWriter.emit(kind.declarationKeyword)
+        if (kind != Kind.COMPANION) {
+          codeWriter.emitCode(" %L", name)
         }
         codeWriter.emitTypeVariables(typeVariables)
 
@@ -233,31 +227,38 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   enum class Kind(
+      internal val declarationKeyword: String,
       internal val implicitPropertyModifiers: Set<KModifier>,
       internal val implicitFunctionModifiers: Set<KModifier>) {
     CLASS(
+        "class",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
     OBJECT(
+        "object",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
     COMPANION(
+        "companion object",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
     INTERFACE(
+        "interface",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC, KModifier.ABSTRACT)),
 
     ENUM(
+        "enum class",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
     ANNOTATION(
+        "annotation class",
         emptySet(),
-        setOf(KModifier.PUBLIC, KModifier.ABSTRACT))
+        setOf(KModifier.PUBLIC, KModifier.ABSTRACT));
   }
 
   class Builder internal constructor(
