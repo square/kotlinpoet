@@ -149,6 +149,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
         is TypeSpec -> member.emit(codeWriter, null)
         is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC))
         is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
+        is TypeAliasSpec -> member.emit(codeWriter)
         else -> throw AssertionError()
       }
     }
@@ -238,6 +239,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
     fun addProperty(propertySpec: PropertySpec): Builder {
       members += propertySpec
+      return this
+    }
+
+    fun addTypeAlias(typeAliasSpec: TypeAliasSpec): Builder {
+      members += typeAliasSpec
       return this
     }
 

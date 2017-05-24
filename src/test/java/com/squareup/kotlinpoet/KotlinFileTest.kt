@@ -605,4 +605,24 @@ class KotlinFileTest {
         |}
         |""".trimMargin())
   }
+
+  @Test fun simpleTypeAliases() {
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
+        .addTypeAlias(TypeAliasSpec.builder("FileTable",
+            ParameterizedTypeName.get(Map::class, String::class, Int::class)).build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |import java.util.Map
+        |import kotlin.Byte
+        |import kotlin.Int
+        |
+        |typealias Int8 = Byte
+        |
+        |typealias FileTable = Map<String, Int>
+        |""".trimMargin())
+  }
 }
