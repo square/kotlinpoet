@@ -16,33 +16,45 @@
 package com.squareup.kotlinpoet
 
 enum class KModifier(vararg targets: Target) {
-  // TODO: sort these in source code order, fix targets.
-  PRIVATE(Target.PROPERTY),
-  PROTECTED(Target.PROPERTY),
+  // Access.
   PUBLIC(Target.PROPERTY),
+  PROTECTED(Target.PROPERTY),
   INTERNAL(Target.PROPERTY),
-  ABSTRACT(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  ANNOTATION(Target.CLASS),
-  CONST(Target.PROPERTY),
-  CROSSINLINE(Target.PARAMETER),
-  DATA(Target.CLASS),
-  INNER(Target.CLASS),
-  ENUM(Target.CLASS),
-  EXTERNAL(Target.FUNCTION),
-  FINAL(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  IN(Target.VARIANCE_ANNOTATION),
-  INFIX(Target.FUNCTION),
-  INLINE(Target.FUNCTION),
-  LATEINIT(Target.PROPERTY),
-  NOINLINE(Target.PARAMETER),
-  OPEN(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  PRIVATE(Target.PROPERTY),
+
+  // Call-site syntax.
   OPERATOR(Target.FUNCTION),
-  OUT(Target.VARIANCE_ANNOTATION),
+  INFIX(Target.FUNCTION),
+
+  // Inheritance.
+  ABSTRACT(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  OPEN(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  FINAL(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OVERRIDE(Target.FUNCTION, Target.PROPERTY),
+
+  // Call-site compiler tips.
+  INLINE(Target.FUNCTION),
+  NOINLINE(Target.PARAMETER),
+  CROSSINLINE(Target.PARAMETER),
   REIFIED(Target.TYPE_PARAMETER),
+
+  // Type declarations.
+  ANNOTATION(Target.CLASS),
+  INNER(Target.CLASS),
+  DATA(Target.CLASS),
+  ENUM(Target.CLASS),
   SEALED(Target.CLASS),
+
+  // Implementation details.
+  LATEINIT(Target.PROPERTY),
+  CONST(Target.PROPERTY),
+  EXTERNAL(Target.FUNCTION),
   SUSPEND(Target.FUNCTION),
   TAILREC(Target.FUNCTION),
+
+  // Type modifiers.
+  IN(Target.VARIANCE_ANNOTATION),
+  OUT(Target.VARIANCE_ANNOTATION),
   VARARG(Target.PARAMETER);
 
   internal val targets = targets.toList()

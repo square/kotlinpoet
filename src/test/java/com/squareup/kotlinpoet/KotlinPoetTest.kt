@@ -313,4 +313,72 @@ class KotlinPoetTest {
         |  }
         |""".trimMargin())
   }
+
+  @Test fun stackedPropertyModifiers() {
+    val source = KotlinFile.builder(tacosPackage, "Taco")
+        .addType(TypeSpec.classBuilder("A")
+            .addModifiers(KModifier.ABSTRACT)
+            .addProperty(PropertySpec.varBuilder("q", String::class)
+                .addModifiers(KModifier.ABSTRACT, KModifier.PROTECTED)
+                .build())
+            .build())
+        .addProperty(PropertySpec.builder("p", String::class)
+            .addModifiers(KModifier.CONST, KModifier.INTERNAL)
+            .initializer("%S", "a")
+            .build())
+        .addType(TypeSpec.classBuilder("B")
+            .superclass(ClassName.get("", "A"))
+            .addModifiers(KModifier.ABSTRACT)
+            .addProperty(PropertySpec.varBuilder("q", String::class)
+                .addModifiers(
+                    KModifier.FINAL, KModifier.LATEINIT, KModifier.OVERRIDE, KModifier.PUBLIC)
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |abstract class A {
+        |  protected abstract var q: String
+        |}
+        |
+        |internal const val p: String = "a"
+        |
+        |abstract class B : A {
+        |  final override lateinit var q: String
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun stackedFunModifiers() {
+    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("A")
+        .addModifiers(KModifier.OPEN)
+        .addFun(FunSpec.builder("get")
+            .addModifiers(KModifier.EXTERNAL, KModifier.INFIX, KModifier.OPEN, KModifier.OPERATOR,
+                KModifier.PROTECTED)
+            .addParameter("v", String::class)
+            .returns(String::class)
+            .build())
+        .addFun(FunSpec.builder("loop")
+            .addModifiers(KModifier.FINAL, KModifier.INLINE, KModifier.INTERNAL, KModifier.TAILREC)
+            .returns(String::class)
+            .addStatement("return %S", "a")
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |open class A {
+        |  protected operator infix open external fun get(v: String): String
+        |
+        |  internal final inline tailrec fun loop(): String {
+        |    return "a"
+        |  }
+        |}
+        |""".trimMargin())
+  }
 }
