@@ -198,7 +198,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
             }
           }
           if (value.javaClass.isArray) {
-            for (i in 0..Array.getLength(value) - 1) {
+            for (i in 0 until Array.getLength(value)) {
               builder.addMemberForValue(method.name, Array.get(value, i))
             }
             continue

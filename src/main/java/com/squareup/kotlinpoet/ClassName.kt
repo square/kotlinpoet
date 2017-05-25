@@ -39,7 +39,7 @@ class ClassName private constructor(
     names.joinToString(".")
 
   init {
-    for (i in 1..names.size - 1) {
+    for (i in 1 until names.size) {
       require(SourceVersion.isName(names[i])) { "part ${names[i]} is keyword" }
     }
   }

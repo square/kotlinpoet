@@ -86,7 +86,7 @@ internal class LineWrapper(
   private fun flush(wrap: Boolean) {
     if (wrap) {
       out.append('\n')
-      for (i in 0..indentLevel - 1) {
+      for (i in 0 until indentLevel) {
         out.append(indent)
       }
       column = indentLevel * indent.length
