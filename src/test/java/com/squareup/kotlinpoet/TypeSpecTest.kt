@@ -22,7 +22,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito
 import java.io.IOException
 import java.io.Serializable
 import java.math.BigDecimal
@@ -34,7 +33,6 @@ import java.util.EventListener
 import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
@@ -916,18 +914,6 @@ class TypeSpecTest {
         |  val externalOther: com.squareup.donuts.Other
         |}
         |""".trimMargin())
-  }
-
-  @Test fun originatingElementsIncludesThoseOfNestedTypes() {
-    val outerElement = Mockito.mock(Element::class.java)
-    val innerElement = Mockito.mock(Element::class.java)
-    val outer = TypeSpec.classBuilder("Outer")
-        .addOriginatingElement(outerElement)
-        .addType(TypeSpec.classBuilder("Inner")
-            .addOriginatingElement(innerElement)
-            .build())
-        .build()
-    assertThat(outer.originatingElements).containsExactly(outerElement, innerElement)
   }
 
   @Test fun intersectionType() {

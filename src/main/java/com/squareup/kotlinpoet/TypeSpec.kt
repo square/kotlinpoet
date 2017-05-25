@@ -20,7 +20,6 @@ import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
@@ -41,16 +40,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val initializerBlock = builder.initializerBlock.build()
   val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
   val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
-  val originatingElements: List<Element>
-
-  init {
-    val originatingElementsMutable = mutableListOf<Element>()
-    originatingElementsMutable += builder.originatingElements
-    for (typeSpec in builder.typeSpecs) {
-      originatingElementsMutable += typeSpec.originatingElements
-    }
-    this.originatingElements = originatingElementsMutable.toImmutableList()
-  }
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, anonymousTypeArguments)
@@ -278,7 +267,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val initializerBlock = CodeBlock.builder()
     internal val funSpecs = mutableListOf<FunSpec>()
     internal val typeSpecs = mutableListOf<TypeSpec>()
-    internal val originatingElements = mutableListOf<Element>()
 
     init {
       require(name == null || SourceVersion.isName(name)) { "not a valid name: $name" }
@@ -447,11 +435,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addType(typeSpec: TypeSpec): Builder {
       typeSpecs += typeSpec
-      return this
-    }
-
-    fun addOriginatingElement(originatingElement: Element): Builder {
-      originatingElements += originatingElement
       return this
     }
 
