@@ -71,7 +71,7 @@ class KotlinPoetTest {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("cheese", String::class)
-            .beginControlFlow("require (!cheese.isEmpty())")
+            .beginControlFlow("require(cheese.isNotEmpty())")
             .addStatement("%S", "cheese cannot be empty")
             .endControlFlow()
             .build())
@@ -83,7 +83,7 @@ class KotlinPoetTest {
         |
         |class Taco(cheese: String) {
         |  init {
-        |    require (!cheese.isEmpty()) {
+        |    require(cheese.isNotEmpty()) {
         |      "cheese cannot be empty"
         |    }
         |  }

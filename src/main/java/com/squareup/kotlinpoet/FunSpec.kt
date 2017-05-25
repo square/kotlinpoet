@@ -58,7 +58,7 @@ class FunSpec private constructor(builder: Builder) {
   }
 
   private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
-    return !parameters.isEmpty()
+    return parameters.isNotEmpty()
         && TypeName.arrayComponent(parameters[parameters.size - 1].type) != null
   }
 
@@ -75,7 +75,7 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emit("fun ")
     }
 
-    if (!typeVariables.isEmpty()) {
+    if (typeVariables.isNotEmpty()) {
       codeWriter.emitTypeVariables(typeVariables)
       codeWriter.emit(" ")
     }
@@ -104,7 +104,7 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode(defaultValue)
     }
 
-    if (!exceptions.isEmpty()) {
+    if (exceptions.isNotEmpty()) {
       codeWriter.emitWrappingSpace().emit("throws")
       var firstException = true
       for (exception in exceptions) {

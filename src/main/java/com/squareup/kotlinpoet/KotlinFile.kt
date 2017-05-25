@@ -78,7 +78,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     require(Files.notExists(directory) || Files.isDirectory(directory)) {
         "path $directory exists but is not a directory." }
     var outputDirectory = directory
-    if (!packageName.isEmpty()) {
+    if (packageName.isNotEmpty()) {
       for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
         outputDirectory = outputDirectory.resolve(packageComponent)
       }
@@ -124,7 +124,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       codeWriter.emitComment(fileComment)
     }
 
-    if (!packageName.isEmpty()) {
+    if (packageName.isNotEmpty()) {
       codeWriter.emitCode("package %L\n", packageName)
       codeWriter.emit("\n")
     }

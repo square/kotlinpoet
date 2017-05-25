@@ -164,7 +164,7 @@ class ClassName private constructor(
 
       // Add the class names, like "Map" and "Entry".
       for (part in classNameString.substring(p).split('.')) {
-        require(!part.isEmpty() && Character.isUpperCase(part.codePointAt(0))) {
+        require(part.isNotEmpty() && Character.isUpperCase(part.codePointAt(0))) {
           "couldn't make a guess for $classNameString"
         }
 
