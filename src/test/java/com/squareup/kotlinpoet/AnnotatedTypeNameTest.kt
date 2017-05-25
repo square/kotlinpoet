@@ -84,7 +84,6 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedEquivalence() {
     annotatedEquivalence(UNIT)
-    annotatedEquivalence(ArrayTypeName.of(Object::class))
     annotatedEquivalence(ClassName.get(Any::class))
     annotatedEquivalence(ParameterizedTypeName.get(List::class, Any::class))
     annotatedEquivalence(TypeVariableName.get("A"))
