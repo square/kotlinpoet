@@ -80,7 +80,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitCode("%L", enumName)
-        if (!anonymousTypeArguments!!.formatParts.isEmpty()) {
+        if (anonymousTypeArguments!!.formatParts.isNotEmpty()) {
           codeWriter.emit("(")
           codeWriter.emitCode(anonymousTypeArguments)
           codeWriter.emit(")")
@@ -90,7 +90,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
-        val supertype = if (!superinterfaces.isEmpty()) superinterfaces[0] else superclass
+        val supertype = if (superinterfaces.isNotEmpty()) superinterfaces[0] else superclass
         codeWriter.emitCode("object : %T(", supertype)
         codeWriter.emitCode(anonymousTypeArguments)
         codeWriter.emit(") {\n")
@@ -136,7 +136,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
         if (i.hasNext()) {
           codeWriter.emit(",\n")
-        } else if (!propertySpecs.isEmpty() || !funSpecs.isEmpty() || !typeSpecs.isEmpty()) {
+        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
           codeWriter.emit(";\n")
         } else {
           codeWriter.emit("\n")
@@ -456,7 +456,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun build(): TypeSpec {
-      require(kind != Kind.ENUM || !enumConstants.isEmpty()) {
+      require(kind != Kind.ENUM || enumConstants.isNotEmpty()) {
           "at least one enum constant is required for $name" }
 
       val isAbstract = modifiers.contains(KModifier.ABSTRACT) || kind != Kind.CLASS

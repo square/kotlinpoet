@@ -86,7 +86,7 @@ abstract class TypeName internal constructor(
   abstract fun withoutAnnotations(): TypeName
 
   val isAnnotated: Boolean
-    get() = !annotations.isEmpty()
+    get() = annotations.isNotEmpty()
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

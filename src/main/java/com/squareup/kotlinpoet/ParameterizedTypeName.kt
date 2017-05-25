@@ -32,7 +32,7 @@ class ParameterizedTypeName internal constructor(
   val typeArguments: List<TypeName> = typeArguments.toImmutableList()
 
   init {
-    require(!this.typeArguments.isEmpty() || enclosingType != null) {
+    require(typeArguments.isNotEmpty() || enclosingType != null) {
       "no type arguments: $rawType"
     }
   }
@@ -59,7 +59,7 @@ class ParameterizedTypeName internal constructor(
       rawType.emitAnnotations(out)
       rawType.emit(out)
     }
-    if (!typeArguments.isEmpty()) {
+    if (typeArguments.isNotEmpty()) {
       out.emit("<")
       var firstParameter = true
       for (parameter in typeArguments) {
