@@ -24,13 +24,10 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
-import javax.annotation.processing.Filer
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
-import javax.tools.StandardLocation
 import kotlin.reflect.KClass
 
 private val NULL_APPENDABLE = object : Appendable {
@@ -92,29 +89,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
   fun writeTo(directory: File) = writeTo(directory.toPath())
-
-  /** Writes this to `filer`.  */
-  @Throws(IOException::class)
-  fun writeTo(filer: Filer) {
-    val originatingElements = mutableListOf<Element>()
-    for (member in members) {
-      when (member) {
-        is TypeSpec -> originatingElements += member.originatingElements
-        else -> throw AssertionError()
-      }
-    }
-    val filerSourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT,
-        packageName, "$fileName.kt", *originatingElements.toTypedArray())
-    try {
-      filerSourceFile.openWriter().use { writer -> writeTo(writer) }
-    } catch (e: Exception) {
-      try {
-        filerSourceFile.delete()
-      } catch (ignored: Exception) {
-      }
-      throw e
-    }
-  }
 
   @Throws(IOException::class)
   private fun emit(codeWriter: CodeWriter) {
