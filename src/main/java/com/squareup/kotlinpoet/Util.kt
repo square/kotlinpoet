@@ -93,7 +93,7 @@ internal fun stringLiteralWithQuotes(value: String): String {
   } else {
     val result = StringBuilder(value.length + 32)
     result.append('"')
-    for (i in 0..value.length - 1) {
+    for (i in 0 until value.length) {
       val c = value[i]
       // Trivial case: single quote must not be escaped.
       if (c == '\'') {
