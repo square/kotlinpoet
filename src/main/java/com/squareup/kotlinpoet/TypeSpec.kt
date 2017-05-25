@@ -75,6 +75,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     val previousStatementLine = codeWriter.statementLine
     codeWriter.statementLine = -1
 
+    val ctorProperties: Map<String, PropertySpec> =
+        if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
+          emptyMap<String, PropertySpec>()
+        } else {
+          propertySpecs
+              .filter { it.initializer != null }
+              .filter { prop ->
+                primaryConstructor.parameters.find { it.name == prop.name && it.type == prop.type && CodeBlock.of("%N", it) == prop.initializer } != null
+              }
+              .map { Pair(it.name, it) }
+              .toMap()
+        }
+
     try {
       if (enumName != null) {
         codeWriter.emitKdoc(kdoc)
@@ -104,7 +117,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emitTypeVariables(typeVariables)
 
-        primaryConstructor?.emitParameterList(codeWriter)
+        primaryConstructor?.let {
+          codeWriter.emit("(")
+          it.parameters.forEachIndexed { index, param ->
+            if (index > 0) codeWriter.emit(",").emitWrappingSpace()
+            val property = ctorProperties[param.name]
+            if (property != null) {
+              property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
+            } else {
+              param.emit(codeWriter, index == it.parameters.lastIndex && primaryConstructor.varargs)
+            }
+          }
+          codeWriter.emit(")")
+        }
 
         val extendsTypes: List<TypeName>
         val implementsTypes: List<TypeName>
@@ -120,7 +145,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(if (i == 0)  " :" else ",")
           codeWriter.emitCode(" %T", typeName)
         }
-
         codeWriter.emit(" {\n")
       }
 
@@ -145,6 +169,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       // Non-static properties.
       for (propertySpec in propertySpecs) {
+        if (ctorProperties.containsKey(propertySpec.name)) {
+          continue
+        }
         if (!firstMember) codeWriter.emit("\n")
         propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
         firstMember = false
