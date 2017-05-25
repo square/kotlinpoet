@@ -117,7 +117,7 @@ abstract class AbstractTypesTest {
 
   @Test fun getArrayTypeMirror() {
     assertThat(TypeName.get(types.getArrayType(getMirror(String::class.java))))
-        .isEqualTo(ArrayTypeName.of(ClassName.get(String::class)))
+        .isEqualTo(ParameterizedTypeName.get(ARRAY, ClassName.get(String::class)))
   }
 
   @Test fun getVoidTypeMirror() {
@@ -135,11 +135,6 @@ abstract class AbstractTypesTest {
   @Test fun parameterizedType() {
     val type = ParameterizedTypeName.get(Map::class, String::class, Long::class)
     assertThat(type.toString()).isEqualTo("java.util.Map<java.lang.String, kotlin.Long>")
-  }
-
-  @Test fun arrayType() {
-    val type = ArrayTypeName.of(String::class)
-    assertThat(type.toString()).isEqualTo("kotlin.Array<java.lang.String>")
   }
 
   @Test fun starProjection() {

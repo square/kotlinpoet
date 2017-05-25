@@ -119,13 +119,6 @@ public class TypeNameTest {
     assertEqualsHashCodeAndToString(TypeNameKt.UNIT, TypeNameKt.UNIT);
   }
 
-  @Test public void equalsAndHashCodeArrayTypeName() {
-    assertEqualsHashCodeAndToString(ArrayTypeName.of(Object.class),
-        ArrayTypeName.of(Object.class));
-    assertEqualsHashCodeAndToString(TypeName.get(Object[].class),
-        ArrayTypeName.of(Object.class));
-  }
-
   @Test public void equalsAndHashCodeClassName() {
     assertEqualsHashCodeAndToString(ClassName.get(Object.class), ClassName.get(Object.class));
     assertEqualsHashCodeAndToString(TypeName.get(Object.class), ClassName.get(Object.class));

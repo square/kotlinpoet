@@ -171,8 +171,8 @@ abstract class TypeName internal constructor(
           return visitDeclared(t, p)
         }
 
-        override fun visitArray(t: ArrayType, p: Void?): ArrayTypeName {
-          return ArrayTypeName.get(t, typeVariables)
+        override fun visitArray(t: ArrayType, p: Void?): ParameterizedTypeName {
+          return ParameterizedTypeName.get(ARRAY, TypeName.get(t.componentType, typeVariables))
         }
 
         override fun visitTypeVariable(t: javax.lang.model.type.TypeVariable, p: Void?): TypeName {
@@ -215,28 +215,30 @@ abstract class TypeName internal constructor(
             type === Char::class.javaPrimitiveType -> return CHAR
             type === Float::class.javaPrimitiveType -> return FLOAT
             type === Double::class.javaPrimitiveType -> return DOUBLE
-            type.isArray -> return ArrayTypeName.of(get(type.componentType, map))
+            type.isArray -> return ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
             else -> return ClassName.get(type)
           }
         }
         is ParameterizedType -> return ParameterizedTypeName.get(type, map)
         is WildcardType -> return WildcardTypeName.get(type, map)
         is TypeVariable<*> -> return TypeVariableName.get(type, map)
-        is GenericArrayType -> return ArrayTypeName.get(type, map)
+        is GenericArrayType -> return ParameterizedTypeName.get(ARRAY,
+            get(type.genericComponentType, map))
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
     }
 
     /** Returns the array component of `type`, or null if `type` is not an array.  */
     @JvmStatic fun arrayComponent(type: TypeName): TypeName? {
-      return if (type is ArrayTypeName)
-        type.componentType else
+      return if (type is ParameterizedTypeName && type.rawType == ARRAY)
+        type.typeArguments.single() else
         null
     }
   }
 }
 
 @JvmField val ANY = ClassName.get("kotlin", "Any")
+@JvmField val ARRAY = ClassName.get("kotlin", "Array")
 @JvmField val UNIT = ClassName.get(Unit::class)
 @JvmField val BOOLEAN = ClassName.get("kotlin", "Boolean")
 @JvmField val BYTE = ClassName.get("kotlin", "Byte")
