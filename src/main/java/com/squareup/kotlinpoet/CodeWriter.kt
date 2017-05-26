@@ -140,24 +140,6 @@ internal class CodeWriter @JvmOverloads constructor(
   /**
    * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
    * be emitted.
-   *
-   * TODO: migrate all callers to [CodeWriter.emitModifiers].
-   */
-  @Throws(IOException::class)
-  @JvmOverloads fun emitJavaModifiers(
-      modifiers: Set<KModifier>,
-      implicitModifiers: Set<KModifier> = emptySet<KModifier>()) {
-    if (modifiers.isEmpty()) return
-    for (modifier in EnumSet.copyOf(modifiers)) {
-      if (implicitModifiers.contains(modifier)) continue
-      emit(modifier.name.toLowerCase(Locale.US))
-      emit(" ")
-    }
-  }
-
-  /**
-   * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
-   * be emitted.
    */
   @Throws(IOException::class)
   @JvmOverloads fun emitModifiers(
