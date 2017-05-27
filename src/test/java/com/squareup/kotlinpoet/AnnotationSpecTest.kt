@@ -113,12 +113,12 @@ class AnnotationSpecTest {
         |        8,
         |        1
         |    },
-        |    l = Override.class,
+        |    l = Override::class,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
         |    r = {
-        |        Float.class,
-        |        Double.class
+        |        Float::class,
+        |        Double::class
         |    }
         |)
         |class Taco {
@@ -149,12 +149,12 @@ class AnnotationSpecTest {
         |        8,
         |        1
         |    },
-        |    l = Override.class,
+        |    l = Override::class,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
         |    r = {
-        |        Float.class,
-        |        Double.class
+        |        Float::class,
+        |        Double::class
         |    }
         |)
         |class IsAnnotated {
@@ -228,10 +228,10 @@ class AnnotationSpecTest {
         ", p = 1701" +
         ", f = 11.1" +
         ", m = {9, 8, 1, 123}" +
-        ", l = java.lang.Override.class" +
+        ", l = java.lang.Override::class" +
         ", j = @com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA" +
         ", q = @com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationC(\"bar\")" +
-        ", r = {kotlin.Float.class, kotlin.Double.class}" +
+        ", r = {kotlin.Float::class, kotlin.Double::class}" +
         ")")
   }
 
@@ -251,7 +251,7 @@ class AnnotationSpecTest {
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
         |    f = 11.1,
-        |    l = Override.class,
+        |    l = Override::class,
         |    m = {
         |        9,
         |        8,
@@ -261,8 +261,8 @@ class AnnotationSpecTest {
         |    p = 1701,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
         |    r = {
-        |        Float.class,
-        |        Double.class
+        |        Float::class,
+        |        Double::class
         |    }
         |)
         |class Taco {
@@ -306,7 +306,7 @@ class AnnotationSpecTest {
         |    i = AnnotationSpecTest.Breakfast.WAFFLES,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    k = "maple",
-        |    l = Override.class,
+        |    l = Override::class,
         |    m = {
         |        9,
         |        8,
@@ -320,8 +320,8 @@ class AnnotationSpecTest {
         |    p = 1701,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
         |    r = {
-        |        Float.class,
-        |        Double.class
+        |        Float::class,
+        |        Double::class
         |    }
         |)
         |class Taco {

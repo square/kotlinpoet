@@ -277,7 +277,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("thing", String::class, KModifier.PRIVATE)
             .addAnnotation(AnnotationSpec.builder(ClassName.get(tacosPackage, "JsonAdapter"))
-                .addMember("value", "%T.class", ClassName.get(tacosPackage, "Foo"))
+                .addMember("value", "%T::class", ClassName.get(tacosPackage, "Foo"))
                 .build())
             .build())
         .build()
@@ -287,7 +287,7 @@ class TypeSpecTest {
         |import java.lang.String
         |
         |class Taco {
-        |  @JsonAdapter(Foo.class)
+        |  @JsonAdapter(Foo::class)
         |  private val thing: String
         |}
         |""".trimMargin())
@@ -1010,11 +1010,11 @@ class TypeSpecTest {
             .addMember("price", "%L", 500)
             .addMember("options", "%L", AnnotationSpec.builder(option)
                 .addMember("name", "%S", "taco")
-                .addMember("meat", "%T.class", beef)
+                .addMember("meat", "%T::class", beef)
                 .build())
             .addMember("options", "%L", AnnotationSpec.builder(option)
                 .addMember("name", "%S", "quesadilla")
-                .addMember("meat", "%T.class", chicken)
+                .addMember("meat", "%T::class", chicken)
                 .build())
             .build())
         .build()
@@ -1024,8 +1024,8 @@ class TypeSpecTest {
         |@MealDeal(
         |    price = 500,
         |    options = {
-        |        @Option(name = "taco", meat = Beef.class),
-        |        @Option(name = "quesadilla", meat = Chicken.class)
+        |        @Option(name = "taco", meat = Beef::class),
+        |        @Option(name = "quesadilla", meat = Chicken::class)
         |    }
         |)
         |class Menu {
