@@ -143,7 +143,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
      */
     internal fun addMemberForValue(memberName: String, value: Any): Builder {
       return when (value) {
-        is Class<*> -> addMember(memberName, "%T.class", value)
+        is Class<*> -> addMember(memberName, "%T::class", value)
         is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name)
         is String -> addMember(memberName, "%S", value)
         is Float -> addMember(memberName, "%Lf", value)
@@ -171,7 +171,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
         = builder.addMember(name, "%T.%L", c.asType(), c.simpleName)
 
     override fun visitType(t: TypeMirror, name: String)
-        = builder.addMember(name, "%T.class", t)
+        = builder.addMember(name, "%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): Builder {
       for (value in values) {
