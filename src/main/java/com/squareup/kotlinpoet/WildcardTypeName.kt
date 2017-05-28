@@ -47,7 +47,7 @@ class WildcardTypeName private constructor(
   }
 
   @Throws(IOException::class)
-  override fun abstractEmit(out: CodeWriter): CodeWriter {
+  override fun emit(out: CodeWriter): CodeWriter {
     if (lowerBounds.size == 1) {
       return out.emitCode("in %T", lowerBounds[0])
     }

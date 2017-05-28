@@ -32,7 +32,7 @@ class LambdaTypeName internal constructor(
   override fun withoutAnnotations()
       = LambdaTypeName(receiver, parameters, returnType, nullable)
 
-  override fun abstractEmit(out: CodeWriter): CodeWriter {
+  override fun emit(out: CodeWriter): CodeWriter {
     emitAnnotations(out)
     if (nullable) {
       out.emit("(")

@@ -50,7 +50,7 @@ class ParameterizedTypeName internal constructor(
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
 
   @Throws(IOException::class)
-  override fun abstractEmit(out: CodeWriter): CodeWriter {
+  override fun emit(out: CodeWriter): CodeWriter {
     if (enclosingType != null) {
       enclosingType.emitAnnotations(out)
       enclosingType.emit(out)
@@ -65,7 +65,7 @@ class ParameterizedTypeName internal constructor(
       for (parameter in typeArguments) {
         if (!firstParameter) out.emit(", ")
         parameter.emitAnnotations(out)
-        parameter.abstractEmit(out)
+        parameter.emit(out)
         parameter.emitNullable(out)
         firstParameter = false
       }

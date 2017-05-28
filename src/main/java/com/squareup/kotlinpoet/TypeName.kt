@@ -68,7 +68,7 @@ abstract class TypeName internal constructor(
     val resultBuilder = StringBuilder()
     val codeWriter = CodeWriter(resultBuilder)
     emitAnnotations(codeWriter)
-    abstractEmit(codeWriter)
+    emit(codeWriter)
     if (nullable) resultBuilder.append("?")
     resultBuilder.toString()
   }
@@ -104,12 +104,7 @@ abstract class TypeName internal constructor(
   }
 
   @Throws(IOException::class)
-  internal abstract fun abstractEmit(out: CodeWriter): CodeWriter
-
-  // TODO(jwilson): once the calling site is Kotlin, rename abstractEmit to emit.
-  @JvmName("emit") internal fun emit(out: CodeWriter) {
-    abstractEmit(out)
-  }
+  internal abstract fun emit(out: CodeWriter): CodeWriter
 
   @Throws(IOException::class)
   @JvmName("emitAnnotations") internal fun emitAnnotations(out: CodeWriter) {

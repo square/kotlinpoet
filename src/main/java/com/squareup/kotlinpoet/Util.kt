@@ -34,7 +34,7 @@ internal fun <K, V> Map<K, List<V>>.toImmutableMultimap(): Map<K, List<V>> {
 internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
     = Collections.unmodifiableMap(LinkedHashMap(this))
 
-internal fun <T> Collection<T>.toImmutableList()
+internal fun <T> Collection<T>.toImmutableList() : List<T>
     = Collections.unmodifiableList(ArrayList(this))
 
 internal fun <T> Collection<T>.toImmutableSet(): Set<T>

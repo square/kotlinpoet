@@ -58,7 +58,7 @@ class TypeVariableName private constructor(
   }
 
   @Throws(IOException::class)
-  override fun abstractEmit(out: CodeWriter): CodeWriter {
+  override fun emit(out: CodeWriter): CodeWriter {
     return out.emit(name)
   }
 
