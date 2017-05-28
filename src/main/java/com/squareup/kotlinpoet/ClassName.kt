@@ -114,7 +114,7 @@ class ClassName private constructor(
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
   @Throws(IOException::class)
-  override fun abstractEmit(out: CodeWriter): CodeWriter {
+  override fun emit(out: CodeWriter): CodeWriter {
     return out.emit(out.lookupName(this))
   }
 
