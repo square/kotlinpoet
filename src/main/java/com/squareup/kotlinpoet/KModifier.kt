@@ -16,21 +16,28 @@
 package com.squareup.kotlinpoet
 
 enum class KModifier(vararg targets: Target) {
+  // Modifier order defined here:
+  // https://github.com/yole/kotlin-style-guide/issues/3.
+
   // Access.
   PUBLIC(Target.PROPERTY),
   PROTECTED(Target.PROPERTY),
-  INTERNAL(Target.PROPERTY),
   PRIVATE(Target.PROPERTY),
-
-  // Call-site syntax.
-  OPERATOR(Target.FUNCTION),
-  INFIX(Target.FUNCTION),
+  INTERNAL(Target.PROPERTY),
 
   // Inheritance.
-  ABSTRACT(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OPEN(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   FINAL(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  OPEN(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  ABSTRACT(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OVERRIDE(Target.FUNCTION, Target.PROPERTY),
+
+  // Type declarations.
+  INNER(Target.CLASS),
+  ENUM(Target.CLASS),
+  ANNOTATION(Target.CLASS),
+  DATA(Target.CLASS),
+  SEALED(Target.CLASS),
+  // TODO: should COMPANION be a modifier? If so, it goes here.
 
   // Call-site compiler tips.
   INLINE(Target.FUNCTION),
@@ -38,12 +45,9 @@ enum class KModifier(vararg targets: Target) {
   CROSSINLINE(Target.PARAMETER),
   REIFIED(Target.TYPE_PARAMETER),
 
-  // Type declarations.
-  ANNOTATION(Target.CLASS),
-  INNER(Target.CLASS),
-  DATA(Target.CLASS),
-  ENUM(Target.CLASS),
-  SEALED(Target.CLASS),
+  // Call-site syntax.
+  INFIX(Target.FUNCTION),
+  OPERATOR(Target.FUNCTION),
 
   // Implementation details.
   LATEINIT(Target.PROPERTY),

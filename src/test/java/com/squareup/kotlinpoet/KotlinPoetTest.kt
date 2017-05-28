@@ -373,7 +373,7 @@ class KotlinPoetTest {
         |import java.lang.String
         |
         |open class A {
-        |  protected operator infix open external fun get(v: String): String
+        |  protected open infix operator external fun get(v: String): String
         |
         |  internal final inline tailrec fun loop(): String {
         |    return "a"
