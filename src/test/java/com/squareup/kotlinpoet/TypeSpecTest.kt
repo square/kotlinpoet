@@ -346,7 +346,7 @@ class TypeSpecTest {
         |
         |import java.lang.String
         |
-        |enum class Roshambo(handPosition: String) {
+        |enum class Roshambo(private val handPosition: String) {
         |  /**
         |   * Avalanche!
         |   */
@@ -359,8 +359,6 @@ class TypeSpecTest {
         |  },
         |
         |  SCISSORS("peace sign");
-        |
-        |  private val handPosition: String = handPosition
         |
         |  constructor() {
         |    this("fist")
