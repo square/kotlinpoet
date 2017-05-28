@@ -123,13 +123,21 @@ class FunSpec private constructor(builder: Builder) {
 
     if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
       codeWriter.emit("\n")
+      return
+    }
+
+    val asExpressionBody = code.withoutPrefix(EXPRESSION_BODY_PREFIX)
+
+    if (asExpressionBody != null) {
+      codeWriter.indent()
+      codeWriter.emitCode(" =%W%[")
+      codeWriter.emitCode(asExpressionBody)
+      codeWriter.unindent()
     } else {
       codeWriter.emit(" {\n")
-
       codeWriter.indent()
       codeWriter.emitCode(code)
       codeWriter.unindent()
-
       codeWriter.emit("}\n")
     }
   }
@@ -501,3 +509,5 @@ internal val String.isConstructor: Boolean
 
 internal val String.isAccessor: Boolean
   get() = this == GETTER || this == SETTER
+
+internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("%[return ")

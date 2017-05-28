@@ -547,9 +547,7 @@ class TypeSpecTest {
         |
         |  val y: P
         |
-        |  override fun compareTo(p: P): Int {
-        |    return 0
-        |  }
+        |  override fun compareTo(p: P): Int = 0
         |
         |  fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
         |    throw new UnsupportedOperationException("TODO")
@@ -1345,10 +1343,8 @@ class TypeSpecTest {
         .returns(String::class)
         .addStatement("return %S", "taco")
         .build()
-    assertThat(funSpec.toString()).isEqualTo(""
-        + "override fun toString(): java.lang.String {\n"
-        + "  return \"taco\"\n"
-        + "}\n")
+    assertThat(funSpec.toString())
+        .isEqualTo("override fun toString(): java.lang.String = \"taco\"\n")
   }
 
   @Test fun constructorToString() {
@@ -1421,8 +1417,9 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("toString")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
-            .addStatement("return %S\n+ %S\n+ %S\n+ %S\n+ %S",
+            .addStatement("val result = %S\n+ %S\n+ %S\n+ %S\n+ %S",
                 "Taco(", "beef,", "lettuce,", "cheese", ")")
+            .addStatement("return result")
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -1432,11 +1429,12 @@ class TypeSpecTest {
         |
         |class Taco {
         |  override fun toString(): String {
-        |    return "Taco("
+        |    val result = "Taco("
         |        + "beef,"
         |        + "lettuce,"
         |        + "cheese"
         |        + ")"
+        |    return result
         |  }
         |}
         |""".trimMargin())
@@ -1452,6 +1450,7 @@ class TypeSpecTest {
             .returns(Int::class)
             .addParameter("a", String::class)
             .addParameter("b", String::class)
+            .addComment("Prefix the strings and compare them")
             .addStatement("return a.substring(0, length)\n" + ".compareTo(b.substring(0, length))")
             .build())
         .build()
@@ -1459,6 +1458,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
             .addParameter("length", Int::class, KModifier.FINAL)
+            .addComment("Return a new comparator for the target length.")
             .addStatement("return %L", prefixComparator)
             .build())
         .addFun(FunSpec.builder("sortPrefix")
@@ -1478,8 +1478,10 @@ class TypeSpecTest {
         |
         |class Taco {
         |  fun comparePrefix(final length: Int): Comparator<String> {
+        |    // Return a new comparator for the target length.
         |    return object : Comparator<String>() {
         |      override fun compare(a: String, b: String): Int {
+        |        // Prefix the strings and compare them
         |        return a.substring(0, length)
         |            .compareTo(b.substring(0, length))
         |      }
@@ -1491,6 +1493,7 @@ class TypeSpecTest {
         |        list,
         |        object : Comparator<String>() {
         |          override fun compare(a: String, b: String): Int {
+        |            // Prefix the strings and compare them
         |            return a.substring(0, length)
         |                .compareTo(b.substring(0, length))
         |          }
@@ -1605,16 +1608,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |  fun getAnswer(): Int {
-        |    return 42
-        |  }
+        |  fun getAnswer(): Int = 42
         |
         |  /**
         |   * chosen by fair dice roll ;)
         |   */
-        |  fun getRandomQuantity(): Int {
-        |    return 4
-        |  }
+        |  fun getRandomQuantity(): Int = 4
         |}
         |""".trimMargin())
   }
@@ -1912,9 +1911,7 @@ class TypeSpecTest {
         |
         |  private const val FOO: String = "FOO"
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -1952,9 +1949,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -2000,9 +1995,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
