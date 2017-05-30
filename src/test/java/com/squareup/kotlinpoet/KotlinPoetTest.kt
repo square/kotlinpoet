@@ -63,7 +63,7 @@ class KotlinPoetTest {
       KotlinFile.builder(tacosPackage, "Taco")
           .addFun(FunSpec.constructorBuilder().build())
       fail()
-    } catch(expected: IllegalArgumentException) {
+    } catch (expected: IllegalArgumentException) {
     }
   }
 
@@ -151,7 +151,7 @@ class KotlinPoetTest {
     try {
       PropertySpec.builder("CHEESE", String::class, KModifier.DATA)
       fail()
-    } catch(expected: IllegalArgumentException) {
+    } catch (expected: IllegalArgumentException) {
     }
   }
 

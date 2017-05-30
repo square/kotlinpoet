@@ -189,7 +189,6 @@ abstract class TypeName internal constructor(
       }, null)
     }
 
-
     /** Returns a type name equivalent to `type`.  */
     @JvmStatic fun get(type: KClass<*>) = get(type.java)
 
