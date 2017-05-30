@@ -77,7 +77,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
         if (propertySpecs.isEmpty() && funSpecs.isEmpty() && typeSpecs.isEmpty()) {
-          return  // Avoid unnecessary braces "{}".
+          return // Avoid unnecessary braces "{}".
         }
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
@@ -120,7 +120,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
-          codeWriter.emit(if (i == 0)  " :" else ",")
+          codeWriter.emit(if (i == 0) " :" else ",")
           codeWriter.emitCode(" %T", typeName)
         }
         codeWriter.emit(" {\n")
@@ -349,7 +349,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun companionObject(companionObject: TypeSpec): Builder {
       check(kind == Kind.CLASS || kind == Kind.INTERFACE) { "$kind can't have a companion object" }
-      require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind "}
+      require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind " }
       this.companionObject = companionObject
       return this
     }

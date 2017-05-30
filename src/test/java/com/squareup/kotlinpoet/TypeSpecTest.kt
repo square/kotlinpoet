@@ -802,7 +802,7 @@ class TypeSpecTest {
       TypeSpec.annotationBuilder("Taco")
           .addProperty("v", Int::class)
       fail()
-    } catch(expected: IllegalStateException) {
+    } catch (expected: IllegalStateException) {
     }
   }
 
@@ -811,7 +811,7 @@ class TypeSpecTest {
       TypeSpec.interfaceBuilder("Taco")
           .addProperty("v", Int::class)
       fail()
-    } catch(expected: IllegalStateException) {
+    } catch (expected: IllegalStateException) {
     }
   }
 

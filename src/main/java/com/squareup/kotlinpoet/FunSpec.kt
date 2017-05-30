@@ -406,9 +406,9 @@ class FunSpec private constructor(builder: Builder) {
   }
 
   companion object {
-    const internal val CONSTRUCTOR = "constructor()"
-    const internal val GETTER = "get()"
-    const internal val SETTER = "set()"
+    internal const val CONSTRUCTOR = "constructor()"
+    internal const val GETTER = "get()"
+    internal const val SETTER = "set()"
 
     @JvmStatic fun builder(name: String): Builder {
       return Builder(name)
