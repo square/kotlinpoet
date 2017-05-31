@@ -156,7 +156,7 @@ class FunSpecTest {
             .build())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(string: java.lang.String?) {
+      |fun foo(string: kotlin.String?) {
       |}
       |""".trimMargin())
   }
@@ -166,7 +166,7 @@ class FunSpecTest {
         .returns(TypeName.get(String::class).asNullable())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(): java.lang.String? {
+      |fun foo(): kotlin.String? {
       |}
       |""".trimMargin())
   }
@@ -179,7 +179,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: () -> kotlin.Unit): java.lang.String {
+      |fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -193,7 +193,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: kotlin.Int.() -> kotlin.Unit): java.lang.String {
+      |fun foo(f: kotlin.Int.() -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -208,7 +208,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: (kotlin.Boolean) -> kotlin.Unit): java.lang.String {
+      |fun foo(f: (kotlin.Boolean) -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -224,7 +224,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: (kotlin.Boolean, java.lang.String) -> kotlin.Unit): java.lang.String {
+      |fun foo(f: (kotlin.Boolean, kotlin.String) -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -241,7 +241,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: ((kotlin.Boolean, java.lang.String) -> kotlin.Unit)?): java.lang.String {
+      |fun foo(f: ((kotlin.Boolean, kotlin.String) -> kotlin.Unit)?): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -257,7 +257,7 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: ((kotlin.Boolean, java.lang.String?) -> kotlin.Unit)?): java.lang.String {
+      |fun foo(f: ((kotlin.Boolean, kotlin.String?) -> kotlin.Unit)?): kotlin.String {
       |}
       |""".trimMargin())
   }
