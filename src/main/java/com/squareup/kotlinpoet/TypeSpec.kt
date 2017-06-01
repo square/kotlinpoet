@@ -302,24 +302,20 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       require(name == null || SourceVersion.isName(name)) { "not a valid name: $name" }
     }
 
-    fun addKdoc(format: String, vararg args: Any): Builder {
+    fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
-      return this
     }
 
-    fun addKdoc(block: CodeBlock): Builder {
+    fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
-      return this
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
+    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       annotations += annotationSpecs
-      return this
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
       annotations += annotationSpec
-      return this
     }
 
     fun addAnnotation(annotation: ClassName)
@@ -329,32 +325,28 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: KModifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       this.modifiers += modifiers
-      return this
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
+    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       this.typeVariables += typeVariables
-      return this
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName): Builder {
+    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       typeVariables += typeVariable
-      return this
     }
 
-    fun companionObject(companionObject: TypeSpec): Builder {
+    fun companionObject(companionObject: TypeSpec) = apply {
       check(kind == Kind.CLASS || kind == Kind.INTERFACE) { "$kind can't have a companion object" }
       require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind " }
       this.companionObject = companionObject
-      return this
     }
 
-    fun primaryConstructor(primaryConstructor: FunSpec?): Builder {
+    fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
       check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       if (primaryConstructor != null) {
         require (primaryConstructor.isConstructor) {
@@ -362,30 +354,24 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
       this.primaryConstructor = primaryConstructor
-      return this
     }
 
-    fun superclass(superclass: TypeName): Builder {
+    fun superclass(superclass: TypeName) = apply {
       check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.COMPANION) {
         "only classes can have super classes, not $kind"
       }
       check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
-      return this
     }
 
-    fun superclass(superclass: Type): Builder {
-      return superclass(TypeName.get(superclass))
-    }
+    fun superclass(superclass: Type) = superclass(TypeName.get(superclass))
 
-    fun addSuperinterfaces(superinterfaces: Iterable<TypeName>): Builder {
+    fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
       this.superinterfaces += superinterfaces
-      return this
     }
 
-    fun addSuperinterface(superinterface: TypeName): Builder {
+    fun addSuperinterface(superinterface: TypeName) = apply {
       superinterfaces += superinterface
-      return this
     }
 
     fun addSuperinterface(superinterface: Type)
@@ -396,26 +382,23 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmOverloads fun addEnumConstant(
         name: String,
-        typeSpec: TypeSpec = anonymousClassBuilder("").build()): Builder {
+        typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
           "enum constants must have anonymous type arguments" }
       require(SourceVersion.isName(name)) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
-      return this
     }
 
-    fun addProperties(propertySpecs: Iterable<PropertySpec>): Builder {
+    fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
       this.propertySpecs += propertySpecs
-      return this
     }
 
-    fun addProperty(propertySpec: PropertySpec): Builder {
+    fun addProperty(propertySpec: PropertySpec) = apply {
       check(kind == Kind.CLASS || kind == Kind.ENUM) {
         "cannot add property $propertySpec to $kind"
       }
       propertySpecs += propertySpec
-      return this
     }
 
     fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier)
@@ -427,22 +410,20 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addProperty(name, TypeName.get(type), *modifiers)
 
-    fun addInitializerBlock(block: CodeBlock): Builder {
+    fun addInitializerBlock(block: CodeBlock) = apply {
       check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
           .unindent()
           .add("}\n")
-      return this
     }
 
-    fun addFunctions(funSpecs: Iterable<FunSpec>): Builder {
+    fun addFunctions(funSpecs: Iterable<FunSpec>) = apply {
       this.funSpecs += funSpecs
-      return this
     }
 
-    fun addFun(funSpec: FunSpec): Builder {
+    fun addFun(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
         requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
         requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
@@ -455,17 +436,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           "$kind $name.${funSpec.name} cannot have a default value" }
       }
       funSpecs += funSpec
-      return this
     }
 
-    fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder {
+    fun addTypes(typeSpecs: Iterable<TypeSpec>) = apply {
       this.typeSpecs += typeSpecs
-      return this
     }
 
-    fun addType(typeSpec: TypeSpec): Builder {
+    fun addType(typeSpec: TypeSpec) = apply {
       typeSpecs += typeSpec
-      return this
     }
 
     fun build(): TypeSpec {

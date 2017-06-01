@@ -127,13 +127,11 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   class Builder internal constructor(internal val type: TypeName) {
     internal val members = mutableMapOf<String, MutableList<CodeBlock>>()
 
-    fun addMember(name: String, format: String, vararg args: Any): Builder {
-      return addMember(name, CodeBlock.of(format, *args))
-    }
+    fun addMember(name: String, format: String, vararg args: Any) =
+        addMember(name, CodeBlock.of(format, *args))
 
-    fun addMember(name: String, codeBlock: CodeBlock): Builder {
+    fun addMember(name: String, codeBlock: CodeBlock) = apply {
       members.getOrPut(name, { mutableListOf() }).add(codeBlock)
-      return this
     }
 
     /**
@@ -141,15 +139,13 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
      * Falls back to `"%L"` literal format if the class of the given `value` object is not
      * supported.
      */
-    internal fun addMemberForValue(memberName: String, value: Any): Builder {
-      return when (value) {
-        is Class<*> -> addMember(memberName, "%T::class", value)
-        is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name)
-        is String -> addMember(memberName, "%S", value)
-        is Float -> addMember(memberName, "%Lf", value)
-        is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value))
-        else -> addMember(memberName, "%L", value)
-      }
+    internal fun addMemberForValue(memberName: String, value: Any) = when (value) {
+      is Class<*> -> addMember(memberName, "%T::class", value)
+      is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name)
+      is String -> addMember(memberName, "%S", value)
+      is Float -> addMember(memberName, "%Lf", value)
+      is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value))
+      else -> addMember(memberName, "%L", value)
     }
 
     fun build() = AnnotationSpec(this)

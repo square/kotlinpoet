@@ -106,75 +106,64 @@ class PropertySpec private constructor(builder: Builder) {
     internal var getter : FunSpec? = null
     internal var setter : FunSpec? = null
 
-    fun mutable(mutable: Boolean): Builder {
+    fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
-      return this
     }
 
-    fun addKdoc(format: String, vararg args: Any): Builder {
+    fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
-      return this
     }
 
-    fun addKdoc(block: CodeBlock): Builder {
+    fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
-      return this
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
+    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       annotations += annotationSpecs
-      return this
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
       annotations += annotationSpec
-      return this
     }
 
-    fun addAnnotation(annotation: ClassName): Builder {
+    fun addAnnotation(annotation: ClassName) = apply {
       annotations += AnnotationSpec.builder(annotation).build()
-      return this
     }
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
 
-    fun addModifiers(vararg modifiers: KModifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
       for (modifier in modifiers) {
         modifier.checkTarget(KModifier.Target.PROPERTY)
       }
       this.modifiers += modifiers
-      return this
     }
 
     fun initializer(format: String, vararg args: Any?) = initializer(CodeBlock.of(format, *args))
 
-    fun initializer(codeBlock: CodeBlock): Builder {
+    fun initializer(codeBlock: CodeBlock) = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
-      return this
     }
 
     fun delegate(format: String, vararg args: Any?): Builder = delegate(CodeBlock.of(format, *args))
 
-    fun delegate(codeBlock: CodeBlock): Builder {
+    fun delegate(codeBlock: CodeBlock) = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
       this.delegated = true
-      return this
     }
 
-    fun getter(getter: FunSpec): Builder {
+    fun getter(getter: FunSpec) = apply {
       require(getter.name == GETTER) { "${getter.name} is not a getter" }
       check(this.getter == null ) { "getter was already set" }
       this.getter = getter
-      return this
     }
 
-    fun setter(setter: FunSpec): Builder {
+    fun setter(setter: FunSpec) = apply {
       require(setter.name == SETTER) { "${setter.name} is not a setter" }
       check(this.setter == null ) { "setter was already set" }
       this.setter = setter
-      return this
     }
 
     fun build() = PropertySpec(this)
