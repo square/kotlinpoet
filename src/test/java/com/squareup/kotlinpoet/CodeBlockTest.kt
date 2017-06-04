@@ -315,6 +315,92 @@ class CodeBlockTest {
     val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
     val rarrBlock = CodeBlock.of("%T", rarr)
     assertThat(rarrBlock.toString()).isEqualTo("out java.lang.String?")
+  }
 
+  @Test fun withoutPrefixMatching() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("")))
+        .isEqualTo(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("ab")))
+        .isEqualTo(CodeBlock.of("cd %S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd ")))
+        .isEqualTo(CodeBlock.of("%S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S", "x")))
+        .isEqualTo(CodeBlock.of(" efgh %S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S ef", "x")))
+        .isEqualTo(CodeBlock.of("gh %S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x")))
+        .isEqualTo(CodeBlock.of("%S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y")))
+        .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y")))
+        .isEqualTo(CodeBlock.of("kl"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isEqualTo(CodeBlock.of(""))
+  }
+
+  @Test fun withoutPrefixNoArgs() {
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("")))
+        .isEqualTo(CodeBlock.of("abcd %% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("ab")))
+        .isEqualTo(CodeBlock.of("cd %% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd ")))
+        .isEqualTo(CodeBlock.of("%% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %%")))
+        .isEqualTo(CodeBlock.of(" efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% ef")))
+        .isEqualTo(CodeBlock.of("gh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh ")))
+        .isEqualTo(CodeBlock.of("%% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %%")))
+        .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij")))
+        .isEqualTo(CodeBlock.of("kl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl")))
+        .isEqualTo(CodeBlock.of(""))
+  }
+
+  @Test fun withoutPrefixArgMismatch() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y")))
+        .isNull()
+  }
+
+  @Test fun withoutPrefixFormatPartMismatch() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh %% ijkl", "x")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x")))
+        .isNull()
+  }
+
+  @Test fun withoutPrefixTooShort() {
+    assertThat(CodeBlock.of("abcd %S efgh %S", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh", "x")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isNull()
   }
 }

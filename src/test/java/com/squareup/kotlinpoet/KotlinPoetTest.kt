@@ -304,9 +304,7 @@ class KotlinPoetTest {
         |
         |import java.lang.String
         |
-        |fun String.shrink(): String {
-        |  return substring(0, length - 1)
-        |}
+        |fun String.shrink(): String = substring(0, length - 1)
         |""".trimMargin())
   }
 
@@ -409,10 +407,25 @@ class KotlinPoetTest {
         |open class A {
         |  protected open infix operator external fun get(v: String): String
         |
-        |  internal final inline tailrec fun loop(): String {
-        |    return "a"
-        |  }
+        |  internal final inline tailrec fun loop(): String = "a"
         |}
+        |""".trimMargin())
+  }
+
+  @Test fun basicExpressionBody() {
+    val source = KotlinFile.builder(tacosPackage, "Taco")
+        .addFun(FunSpec.builder("addA")
+            .addParameter("s", String::class)
+            .returns(String::class)
+            .addStatement("return s + %S", "a")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.String
+        |
+        |fun addA(s: String): String = s + "a"
         |""".trimMargin())
   }
 }
