@@ -16,11 +16,12 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Test
 
 class PropertySpecTest {
   @Test fun nullable() {
-    val type = TypeName.get(String::class).asNullable()
+    val type = String::class.asClassName().asNullable()
     val a = PropertySpec.builder("foo", type).build()
     assertThat(a.toString()).isEqualTo("val foo: kotlin.String?\n")
   }

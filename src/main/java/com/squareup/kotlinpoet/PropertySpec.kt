@@ -15,8 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -136,7 +138,9 @@ class PropertySpec private constructor(builder: Builder) {
       return this
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier): Builder {
       for (modifier in modifiers) {
@@ -188,10 +192,10 @@ class PropertySpec private constructor(builder: Builder) {
     }
 
     @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, TypeName.get(type), *modifiers)
+        = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = builder(name, TypeName.get(type), *modifiers)
+        = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun varBuilder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
@@ -201,9 +205,9 @@ class PropertySpec private constructor(builder: Builder) {
     }
 
     @JvmStatic fun varBuilder(name: String, type: Type, vararg modifiers: KModifier)
-        = varBuilder(name, TypeName.get(type), *modifiers)
+        = varBuilder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun varBuilder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = varBuilder(name, TypeName.get(type), *modifiers)
+        = varBuilder(name, type.asTypeName(), *modifiers)
   }
 }

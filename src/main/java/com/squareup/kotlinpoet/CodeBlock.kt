@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -315,10 +316,10 @@ class CodeBlock private constructor(
     private fun argToType(o: Any?): TypeName {
       when (o) {
         is TypeName -> return o
-        is TypeMirror -> return TypeName.get(o)
-        is Element -> return TypeName.get(o.asType())
-        is Type -> return TypeName.get(o)
-        is KClass<*> -> return TypeName.get(o)
+        is TypeMirror -> return o.asTypeName()
+        is Element -> return o.asType().asTypeName()
+        is Type -> return o.asTypeName()
+        is KClass<*> -> return o.asTypeName()
         else -> throw IllegalArgumentException("expected type but was " + o)
       }
     }

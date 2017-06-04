@@ -15,9 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
+import com.squareup.kotlinpoet.TypeVariableName.Companion.asTypeVariableName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -242,9 +245,9 @@ class FunSpec private constructor(builder: Builder) {
       return this
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier): Builder {
       this.modifiers += modifiers
@@ -294,9 +297,9 @@ class FunSpec private constructor(builder: Builder) {
       return this
     }
 
-    fun receiver(receiverType: Type) = receiver(TypeName.get(receiverType))
+    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
 
-    fun receiver(receiverType: KClass<*>) = receiver(TypeName.get(receiverType))
+    fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun returns(returnType: TypeName): Builder {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
@@ -304,9 +307,9 @@ class FunSpec private constructor(builder: Builder) {
       return this
     }
 
-    fun returns(returnType: Type) = returns(TypeName.get(returnType))
+    fun returns(returnType: Type) = returns(returnType.asTypeName())
 
-    fun returns(returnType: KClass<*>) = returns(TypeName.get(returnType))
+    fun returns(returnType: KClass<*>) = returns(returnType.asTypeName())
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder {
       for (parameterSpec in parameterSpecs) {
@@ -326,10 +329,10 @@ class FunSpec private constructor(builder: Builder) {
         = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
     fun addParameter(name: String, type: Type, vararg modifiers: KModifier)
-        = addParameter(name, TypeName.get(type), *modifiers)
+        = addParameter(name, type.asTypeName(), *modifiers)
 
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = addParameter(name, TypeName.get(type), *modifiers)
+        = addParameter(name, type.asTypeName(), *modifiers)
 
     @JvmOverloads fun varargs(varargs: Boolean = true): Builder {
       check(!name.isAccessor) { "$name cannot have varargs" }
@@ -347,9 +350,9 @@ class FunSpec private constructor(builder: Builder) {
       return this
     }
 
-    fun addException(exception: Type) = addException(TypeName.get(exception))
+    fun addException(exception: Type) = addException(exception.asTypeName())
 
-    fun addException(exception: KClass<*>) = addException(TypeName.get(exception))
+    fun addException(exception: KClass<*>) = addException(exception.asTypeName())
 
     fun addCode(format: String, vararg args: Any): Builder {
       code.add(format, *args)
@@ -460,15 +463,15 @@ class FunSpec private constructor(builder: Builder) {
 
       for (typeParameterElement in method.typeParameters) {
         val typeVariable = typeParameterElement.asType() as TypeVariable
-        funBuilder.addTypeVariable(TypeVariableName.get(typeVariable))
+        funBuilder.addTypeVariable(typeVariable.asTypeVariableName())
       }
 
-      funBuilder.returns(TypeName.get(method.returnType))
+      funBuilder.returns(method.returnType.asTypeName())
       funBuilder.addParameters(ParameterSpec.parametersOf(method))
       funBuilder.varargs(method.isVarArgs)
 
       for (thrownType in method.thrownTypes) {
-        funBuilder.addException(TypeName.get(thrownType))
+        funBuilder.addException(thrownType.asTypeName())
       }
 
       return funBuilder
@@ -489,12 +492,12 @@ class FunSpec private constructor(builder: Builder) {
       val resolvedReturnType = executableType.returnType
 
       val builder = overriding(method)
-      builder.returns(TypeName.get(resolvedReturnType))
+      builder.returns(resolvedReturnType.asTypeName())
       var i = 0
       val size = builder.parameters.size
       while (i < size) {
         val parameter = builder.parameters[i]
-        val type = TypeName.get(resolvedParameterTypes[i])
+        val type = resolvedParameterTypes[i].asTypeName()
         builder.parameters[i] = parameter.toBuilder(parameter.name, type).build()
         i++
       }

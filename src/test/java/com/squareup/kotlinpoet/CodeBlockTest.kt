@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.fail
 import org.junit.Test
 
@@ -268,7 +270,7 @@ class CodeBlockTest {
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
     val block = CodeBlock.builder()
-        .add("%1T.out.println(%1S)", ClassName.get(System::class))
+        .add("%1T.out.println(%1S)", System::class.asClassName())
         .build()
     assertThat(block.toString()).isEqualTo("java.lang.System.out.println(\"java.lang.System\")")
   }
@@ -297,22 +299,22 @@ class CodeBlockTest {
   }
 
   @Test fun nullableType() {
-    val type = TypeName.get(String::class).asNullable()
+    val type = String::class.asTypeName().asNullable()
     val typeBlock = CodeBlock.of("%T", type)
     assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
-    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(),
-        TypeName.get(Int::class).asNullable()).asNullable()
+    val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
+        Int::class.asTypeName().asNullable()).asNullable()
     val listBlock = CodeBlock.of("%T", list)
     assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
-    val map = ParameterizedTypeName.get(ClassName.get(Map::class).asNullable(),
-        TypeName.get(String::class).asNullable(), list).asNullable()
+    val map = ParameterizedTypeName.get(Map::class.asClassName().asNullable(),
+        String::class.asTypeName().asNullable(), list).asNullable()
     val mapBlock = CodeBlock.of("%T", map)
     assertThat(mapBlock.toString())
         .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
-    val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
+    val rarr = WildcardTypeName.subtypeOf(String::class.asTypeName().asNullable())
     val rarrBlock = CodeBlock.of("%T", rarr)
     assertThat(rarrBlock.toString()).isEqualTo("out kotlin.String?")
   }

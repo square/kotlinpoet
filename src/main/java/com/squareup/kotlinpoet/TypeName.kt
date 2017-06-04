@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
@@ -122,10 +123,13 @@ abstract class TypeName internal constructor(
   }
 
   companion object {
-    /** Returns a type name equivalent to `mirror`.  */
-    @JvmOverloads @JvmStatic fun get(
+    /** Returns a [TypeName] equivalent to this [TypeMirror]. */
+    @JvmStatic @JvmName("get")
+    fun TypeMirror.asTypeName() = get(this, mutableMapOf())
+
+    internal fun get(
         mirror: TypeMirror,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName> = mutableMapOf())
+        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
         : TypeName {
       return mirror.accept(object : SimpleTypeVisitor7<TypeName, Void?>() {
         override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
@@ -143,7 +147,7 @@ abstract class TypeName internal constructor(
         }
 
         override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
-          val rawType: ClassName = ClassName.get(t.asElement() as TypeElement)
+          val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
           val enclosingType = t.enclosingType
           val enclosing = if (enclosingType.kind != TypeKind.NONE
               && !t.asElement().modifiers.contains(Modifier.STATIC))
@@ -189,14 +193,15 @@ abstract class TypeName internal constructor(
       }, null)
     }
 
-    /** Returns a type name equivalent to `type`.  */
-    @JvmStatic fun get(type: KClass<*>) = ClassName.get(type)
+    /** Returns a [TypeName] equivalent to this [KClass].  */
+    @JvmStatic @JvmName("get")
+    fun KClass<*>.asTypeName() = asClassName()
 
-    /** Returns a type name equivalent to `type`.  */
-    @JvmOverloads @JvmStatic fun get(
-        type: Type,
-        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
-        : TypeName {
+    /** Returns a [TypeName] equivalent to this [Type].  */
+    @JvmStatic @JvmName("get")
+    fun Type.asTypeName() = get(this, mutableMapOf())
+
+    internal fun get(type: Type,map: MutableMap<Type, TypeVariableName>): TypeName {
       when (type) {
         is Class<*> -> {
           when {
@@ -210,7 +215,7 @@ abstract class TypeName internal constructor(
             type === Float::class.javaPrimitiveType -> return FLOAT
             type === Double::class.javaPrimitiveType -> return DOUBLE
             type.isArray -> return ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
-            else -> return ClassName.get(type)
+            else -> return type.asClassName()
           }
         }
         is ParameterizedType -> return ParameterizedTypeName.get(type, map)
@@ -231,14 +236,14 @@ abstract class TypeName internal constructor(
   }
 }
 
-@JvmField val ANY = ClassName.get("kotlin", "Any")
-@JvmField val ARRAY = ClassName.get("kotlin", "Array")
-@JvmField val UNIT = ClassName.get(Unit::class)
-@JvmField val BOOLEAN = ClassName.get("kotlin", "Boolean")
-@JvmField val BYTE = ClassName.get("kotlin", "Byte")
-@JvmField val SHORT = ClassName.get("kotlin", "Short")
-@JvmField val INT = ClassName.get("kotlin", "Int")
-@JvmField val LONG = ClassName.get("kotlin", "Long")
-@JvmField val CHAR = ClassName.get("kotlin", "Char")
-@JvmField val FLOAT = ClassName.get("kotlin", "Float")
-@JvmField val DOUBLE = ClassName.get("kotlin", "Double")
+@JvmField val ANY = ClassName("kotlin", "Any")
+@JvmField val ARRAY = ClassName("kotlin", "Array")
+@JvmField val UNIT = Unit::class.asClassName()
+@JvmField val BOOLEAN = ClassName("kotlin", "Boolean")
+@JvmField val BYTE = ClassName("kotlin", "Byte")
+@JvmField val SHORT = ClassName("kotlin", "Short")
+@JvmField val INT = ClassName("kotlin", "Int")
+@JvmField val LONG = ClassName("kotlin", "Long")
+@JvmField val CHAR = ClassName("kotlin", "Char")
+@JvmField val FLOAT = ClassName("kotlin", "Float")
+@JvmField val DOUBLE = ClassName("kotlin", "Double")
