@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -84,8 +85,8 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
 
     @JvmStatic fun builder(name: String, type: TypeName) = Builder(name, type)
 
-    @JvmStatic fun builder(name: String, type: Type) = builder(name, TypeName.get(type))
+    @JvmStatic fun builder(name: String, type: Type) = builder(name, type.asTypeName())
 
-    @JvmStatic fun builder(name: String, type: KClass<*>) = builder(name, TypeName.get(type))
+    @JvmStatic fun builder(name: String, type: KClass<*>) = builder(name, type.asTypeName())
   }
 }

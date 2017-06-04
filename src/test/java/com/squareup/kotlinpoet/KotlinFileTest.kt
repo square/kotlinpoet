@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Ignore
 import org.junit.Test
 import java.util.Collections
@@ -24,10 +25,10 @@ import java.util.concurrent.TimeUnit
 
 class KotlinFileTest {
   @Test fun importStaticReadmeExample() {
-    val hoverboard = ClassName.get("com.mattel", "Hoverboard")
-    val namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards")
-    val list = ClassName.get(List::class)
-    val arrayList = ClassName.get("java.util", "ArrayList")
+    val hoverboard = ClassName("com.mattel", "Hoverboard")
+    val namedBoards = ClassName("com.mattel", "Hoverboard", "Boards")
+    val list = List::class.asClassName()
+    val arrayList = ClassName("java.util", "ArrayList")
     val listOfHoverboards = ParameterizedTypeName.get(list, hoverboard)
     val beyond = FunSpec.builder("beyond")
         .returns(listOfHoverboards)
@@ -103,7 +104,7 @@ class KotlinFileTest {
                 .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
                 .build())
             .addFun(FunSpec.constructorBuilder()
-                .addParameter("states", ParameterizedTypeName.get(ARRAY, ClassName.get(Thread.State::class)))
+                .addParameter("states", ParameterizedTypeName.get(ARRAY, Thread.State::class.asClassName()))
                 .varargs(true)
                 .build())
             .build())
@@ -287,7 +288,7 @@ class KotlinFileTest {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
             .addProperty("madeFreshDate", Date::class)
-            .addProperty("madeFreshDatabaseDate", ClassName.get("java.sql", "Date"))
+            .addProperty("madeFreshDatabaseDate", ClassName("java.sql", "Date"))
             .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
@@ -307,8 +308,8 @@ class KotlinFileTest {
     // Whatever is used first wins! In this case the Float in java.lang is imported.
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("litres", ClassName.get("java.lang", "Float"))
-            .addProperty("beverage", ClassName.get("com.squareup.soda", "Float"))
+            .addProperty("litres", ClassName("java.lang", "Float"))
+            .addProperty("beverage", ClassName("com.squareup.soda", "Float"))
             .build())
         .skipJavaLangImports(true)
         .build()
@@ -327,8 +328,8 @@ class KotlinFileTest {
     // Whatever is used first wins! In this case the Float in com.squareup.soda is imported.
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("beverage", ClassName.get("com.squareup.soda", "Float"))
-            .addProperty("litres", ClassName.get("java.lang", "Float"))
+            .addProperty("beverage", ClassName("com.squareup.soda", "Float"))
+            .addProperty("litres", ClassName("java.lang", "Float"))
             .build())
         .skipJavaLangImports(true)
         .build()
@@ -351,7 +352,7 @@ class KotlinFileTest {
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("Twin").build())
                 .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName.get("com.squareup.tacos", "A", "Twin", "D"))
+                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
                     .build())
                 .build())
             .addType(TypeSpec.classBuilder("Twin")
@@ -386,7 +387,7 @@ class KotlinFileTest {
         .addType(TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName.get("com.squareup.tacos", "A", "Twin", "D"))
+                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
                     .addType(TypeSpec.classBuilder("Twin").build())
                     .build())
                 .build())
@@ -422,7 +423,7 @@ class KotlinFileTest {
         .addType(TypeSpec.classBuilder("A")
             .addType(TypeSpec.classBuilder("B")
                 .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName.get("com.squareup.tacos", "A", "Twin", "D"))
+                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
                     .addType(TypeSpec.classBuilder("Nested")
                         .addType(TypeSpec.classBuilder("Twin").build())
                         .build())
@@ -460,9 +461,9 @@ class KotlinFileTest {
   @Test fun nestedClassAndSuperclassShareName() {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .superclass(ClassName.get("com.squareup.wire", "Message"))
+            .superclass(ClassName("com.squareup.wire", "Message"))
             .addType(TypeSpec.classBuilder("Builder")
-                .superclass(ClassName.get("com.squareup.wire", "Message", "Builder"))
+                .superclass(ClassName("com.squareup.wire", "Message", "Builder"))
                 .build())
             .build())
         .build()
@@ -482,9 +483,9 @@ class KotlinFileTest {
   @Test fun annotationIsNestedClass() {
     val source = KotlinFile.builder("com.squareup.tacos", "TestComponent")
         .addType(TypeSpec.classBuilder("TestComponent")
-            .addAnnotation(ClassName.get("dagger", "Component"))
+            .addAnnotation(ClassName("dagger", "Component"))
             .addType(TypeSpec.classBuilder("Builder")
-                .addAnnotation(ClassName.get("dagger", "Component", "Builder"))
+                .addAnnotation(ClassName("dagger", "Component", "Builder"))
                 .build())
             .build())
         .build()
@@ -507,7 +508,7 @@ class KotlinFileTest {
         .addType(TypeSpec.classBuilder("HelloWorld")
             .addFun(FunSpec.builder("main")
                 .addModifiers(KModifier.PUBLIC)
-                .addParameter("args", ParameterizedTypeName.get(ARRAY, ClassName.get(String::class)))
+                .addParameter("args", ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
                 .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
                 .build())
             .build())
@@ -528,7 +529,7 @@ class KotlinFileTest {
   @Test fun defaultPackageTypesAreNotImported() {
     val source = KotlinFile.builder("hello", "World")
         .addType(TypeSpec.classBuilder("World")
-            .addSuperinterface(ClassName.get("", "Test"))
+            .addSuperinterface(ClassName("", "Test"))
             .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
@@ -574,7 +575,7 @@ class KotlinFileTest {
   @Test fun packageClassConflictsWithNestedClass() {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("a", ClassName.get("com.squareup.tacos", "A"))
+            .addProperty("a", ClassName("com.squareup.tacos", "A"))
             .addType(TypeSpec.classBuilder("A").build())
             .build())
         .build()

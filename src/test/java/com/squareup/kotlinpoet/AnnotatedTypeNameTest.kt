@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -29,9 +31,9 @@ class AnnotatedTypeNameTest {
   annotation class NeverNull
 
   @Test fun annotated() {
-    val simpleString = TypeName.get(String::class)
+    val simpleString = String::class.asTypeName()
     assertFalse(simpleString.isAnnotated)
-    assertEquals(simpleString, TypeName.get(String::class))
+    assertEquals(simpleString, String::class.asTypeName())
     val annotated = simpleString.annotated(NEVER_NULL)
     assertTrue(annotated.isAnnotated)
     assertEquals(annotated, annotated.annotated())
@@ -39,14 +41,14 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedType() {
     val expected = "@$NN kotlin.String"
-    val type = TypeName.get(String::class)
+    val type = String::class.asTypeName()
     val actual = type.annotated(NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedTwice() {
     val expected = "@$NN @java.lang.Override kotlin.String"
-    val type = TypeName.get(String::class)
+    val type = String::class.asTypeName()
     val actual = type.annotated(NEVER_NULL)
         .annotated(AnnotationSpec.builder(Override::class).build())
         .toString()
@@ -62,31 +64,31 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedArgumentOfParameterizedType() {
     val expected = "kotlin.collections.List<@$NN kotlin.String>"
-    val type = TypeName.get(String::class).annotated(NEVER_NULL)
-    val list = ClassName.get(List::class)
+    val type = String::class.asTypeName().annotated(NEVER_NULL)
+    val list = List::class.asClassName()
     val actual = ParameterizedTypeName.get(list, type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithSuper() {
     val expected = "in @$NN kotlin.String"
-    val type = TypeName.get(String::class).annotated(NEVER_NULL)
+    val type = String::class.asTypeName().annotated(NEVER_NULL)
     val actual = WildcardTypeName.supertypeOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithExtends() {
     val expected = "out @$NN kotlin.String"
-    val type = TypeName.get(String::class).annotated(NEVER_NULL)
+    val type = String::class.asTypeName().annotated(NEVER_NULL)
     val actual = WildcardTypeName.subtypeOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedEquivalence() {
     annotatedEquivalence(UNIT)
-    annotatedEquivalence(ClassName.get(Any::class))
+    annotatedEquivalence(Any::class.asClassName())
     annotatedEquivalence(ParameterizedTypeName.get(List::class, Any::class))
-    annotatedEquivalence(TypeVariableName.get("A"))
+    annotatedEquivalence(TypeVariableName("A"))
     annotatedEquivalence(WildcardTypeName.subtypeOf(Object::class))
   }
 
@@ -108,7 +110,7 @@ class AnnotatedTypeNameTest {
   @Ignore @Test fun annotatedNestedType() {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName + " Entry"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
-    val type = TypeName.get(Map.Entry::class).annotated(typeUseAnnotation)
+    val type = Map.Entry::class.asTypeName().annotated(typeUseAnnotation)
     val actual = type.toString()
     assertEquals(expected, actual)
   }

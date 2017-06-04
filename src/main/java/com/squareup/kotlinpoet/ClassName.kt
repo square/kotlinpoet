@@ -119,12 +119,13 @@ class ClassName private constructor(
   }
 
   companion object {
-    @JvmStatic fun get(clazz: Class<*>): ClassName {
-      require(!clazz.isPrimitive) { "primitive types cannot be represented as a ClassName" }
-      require(Void.TYPE != clazz) { "'void' type cannot be represented as a ClassName" }
-      require(!clazz.isArray) { "array types cannot be represented as a ClassName" }
+    @JvmStatic @JvmName("get")
+    fun Class<*>.asClassName(): ClassName {
+      require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
+      require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
+      require(!isArray) { "array types cannot be represented as a ClassName" }
       val names = mutableListOf<String>()
-      var c = clazz
+      var c = this
       while (true) {
         names += c.simpleName
         val enclosing = c.enclosingClass ?: break
@@ -137,12 +138,10 @@ class ClassName private constructor(
       return ClassName(names)
     }
 
-    @JvmStatic fun get(clazz: KClass<*>): ClassName {
-      val qualifiedName = clazz.qualifiedName
-      if (qualifiedName == null) {
-        throw IllegalArgumentException("$clazz cannot be represented as a TypeName")
-      }
-      return ClassName.bestGuess(qualifiedName)
+    @JvmStatic @JvmName("get")
+    fun KClass<*>.asClassName(): ClassName {
+      qualifiedName?.let { return bestGuess(it) }
+      throw IllegalArgumentException("$this cannot be represented as a TypeName")
     }
 
     /**
@@ -181,7 +180,8 @@ class ClassName private constructor(
      * Returns a class name created from the given parts. For example, calling this with package name
      * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
      */
-    @JvmStatic fun get(
+    @JvmStatic @JvmName("get")
+    operator fun invoke(
         packageName: String,
         simpleName: String,
         vararg simpleNames: String): ClassName {
@@ -189,17 +189,19 @@ class ClassName private constructor(
     }
 
     /** Returns the class name for `element`.  */
-    @JvmStatic fun get(element: TypeElement): ClassName {
+    @JvmStatic @JvmName("get")
+    fun TypeElement.asClassName(): ClassName {
       val names = mutableListOf<String>()
-      var e: Element = element
+      var e: Element = this
       while (isClassOrInterface(e)) {
-        require(element.nestingKind == TOP_LEVEL || element.nestingKind == MEMBER) {
+        val eType = e as TypeElement
+        require(eType.nestingKind == TOP_LEVEL || eType.nestingKind == MEMBER) {
           "unexpected type testing"
         }
-        names += e.simpleName.toString()
-        e = e.enclosingElement
+        names += eType.simpleName.toString()
+        e = eType.enclosingElement
       }
-      names += getPackage(element).qualifiedName.toString()
+      names += getPackage(this).qualifiedName.toString()
       names.reverse()
       return ClassName(names)
     }

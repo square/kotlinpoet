@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Test
 import kotlin.test.fail
 
@@ -309,8 +310,8 @@ class KotlinPoetTest {
   }
 
   @Test fun nullableTypes() {
-    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(),
-        TypeName.get(Int::class).asNullable()).asNullable()
+    val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
+        Int::class.asClassName().asNullable()).asNullable()
     assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
   }
 
@@ -359,7 +360,7 @@ class KotlinPoetTest {
             .initializer("%S", "a")
             .build())
         .addType(TypeSpec.classBuilder("B")
-            .superclass(ClassName.get("", "A"))
+            .superclass(ClassName("", "A"))
             .addModifiers(KModifier.ABSTRACT)
             .addProperty(PropertySpec.varBuilder("q", String::class)
                 .addModifiers(
