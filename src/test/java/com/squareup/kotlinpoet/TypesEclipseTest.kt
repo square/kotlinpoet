@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.base.Charsets.UTF_8
 import com.google.common.collect.ImmutableSet
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -36,6 +37,7 @@ import javax.lang.model.util.Types
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 
+@Ignore("Not clear this test is useful to retain in the Kotlin world")
 class TypesEclipseTest : AbstractTypesTest() {
   /**
    * A [JUnit4] [Rule] that executes tests such that a instances of [Elements] and [Types] are

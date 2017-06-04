@@ -26,7 +26,7 @@ class TypeAliasSpecTest {
         .builder("Word", String::class)
         .build()
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |typealias Word = java.lang.String
+        |typealias Word = kotlin.String
         |""".trimMargin())
   }
 
@@ -45,7 +45,7 @@ class TypeAliasSpecTest {
         .visibility(KModifier.PUBLIC)
         .build()
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |public typealias Word = java.lang.String
+        |public typealias Word = kotlin.String
         |""".trimMargin())
   }
 
@@ -55,7 +55,7 @@ class TypeAliasSpecTest {
         .visibility(KModifier.INTERNAL)
         .build()
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |internal typealias Word = java.lang.String
+        |internal typealias Word = kotlin.String
         |""".trimMargin())
   }
 
@@ -65,7 +65,7 @@ class TypeAliasSpecTest {
         .visibility(KModifier.PRIVATE)
         .build()
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |private typealias Word = java.lang.String
+        |private typealias Word = kotlin.String
         |""".trimMargin())
   }
 

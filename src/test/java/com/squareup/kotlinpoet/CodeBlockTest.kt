@@ -103,7 +103,7 @@ class CodeBlockTest {
 
   @Test fun typeFormatCanBeIndexed() {
     val block = CodeBlock.builder().add("%1T", String::class).build()
-    assertThat(block.toString()).isEqualTo("java.lang.String")
+    assertThat(block.toString()).isEqualTo("kotlin.String")
   }
 
   @Test fun simpleNamedArgument() {
@@ -171,7 +171,7 @@ class CodeBlockTest {
     val map = LinkedHashMap<String, Any>()
     map.put("clazz", java.lang.Integer::class)
     val block = CodeBlock.builder().addNamed("%clazz:T\n", map).build()
-    assertThat(block.toString()).isEqualTo("java.lang.Integer\n")
+    assertThat(block.toString()).isEqualTo("kotlin.Int\n")
   }
 
   @Test fun danglingNamed() {
@@ -299,22 +299,22 @@ class CodeBlockTest {
   @Test fun nullableType() {
     val type = TypeName.get(String::class).asNullable()
     val typeBlock = CodeBlock.of("%T", type)
-    assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
+    assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
     val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(),
         TypeName.get(Int::class).asNullable()).asNullable()
     val listBlock = CodeBlock.of("%T", list)
-    assertThat(listBlock.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+    assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
     val map = ParameterizedTypeName.get(ClassName.get(Map::class).asNullable(),
         TypeName.get(String::class).asNullable(), list).asNullable()
     val mapBlock = CodeBlock.of("%T", map)
     assertThat(mapBlock.toString())
-        .isEqualTo("java.util.Map<java.lang.String?, java.util.List<kotlin.Int?>?>?")
+        .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
     val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
     val rarrBlock = CodeBlock.of("%T", rarr)
-    assertThat(rarrBlock.toString()).isEqualTo("out java.lang.String?")
+    assertThat(rarrBlock.toString()).isEqualTo("out kotlin.String?")
   }
 
   @Test fun withoutPrefixMatching() {

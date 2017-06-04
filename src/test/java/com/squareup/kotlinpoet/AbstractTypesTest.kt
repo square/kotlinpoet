@@ -101,7 +101,7 @@ abstract class AbstractTypesTest {
     val typeVariableName = typeName.typeArguments[0] as TypeVariableName
     assertThat(typeVariableName.toString()).isEqualTo("T")
     assertThat(typeVariableName.bounds.toString())
-        .isEqualTo("[java.util.Map<java.util.List<out T>, out java.util.Set<out kotlin.Array<T>>>]")
+        .isEqualTo("[kotlin.collections.Map<kotlin.collections.List<out T>, out kotlin.collections.Set<out kotlin.Array<T>>>]")
   }
 
   @Test fun getPrimitiveTypeMirror() {
@@ -134,7 +134,7 @@ abstract class AbstractTypesTest {
 
   @Test fun parameterizedType() {
     val type = ParameterizedTypeName.get(Map::class, String::class, Long::class)
-    assertThat(type.toString()).isEqualTo("java.util.Map<java.lang.String, kotlin.Long>")
+    assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Long>")
   }
 
   @Test fun starProjection() {
@@ -165,7 +165,7 @@ abstract class AbstractTypesTest {
 
   @Test fun varianceInType() {
     val type = WildcardTypeName.supertypeOf(String::class)
-    assertThat(type.toString()).isEqualTo("in java.lang.String")
+    assertThat(type.toString()).isEqualTo("in kotlin.String")
   }
 
   @Test fun varianceInTypeFromMirror() {
@@ -174,7 +174,7 @@ abstract class AbstractTypesTest {
     val string = elements.getTypeElement(String::class.java.name).asType()
     val wildcard = types.getWildcardType(null, string)
     val type = TypeName.get(wildcard)
-    assertThat(type.toString()).isEqualTo("in java.lang.String")
+    assertThat(type.toString()).isEqualTo("in kotlin.String")
   }
 
   @Test fun typeVariable() {

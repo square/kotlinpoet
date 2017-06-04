@@ -138,9 +138,11 @@ class ClassName private constructor(
     }
 
     @JvmStatic fun get(clazz: KClass<*>): ClassName {
-      val typeName = TypeName.get(clazz)
-      if (typeName is ClassName) return typeName
-      throw IllegalArgumentException("$clazz cannot be represented as a ClassName")
+      val qualifiedName = clazz.qualifiedName
+      if (qualifiedName == null) {
+        throw IllegalArgumentException("$clazz cannot be represented as a TypeName")
+      }
+      return ClassName.bestGuess(qualifiedName)
     }
 
     /**

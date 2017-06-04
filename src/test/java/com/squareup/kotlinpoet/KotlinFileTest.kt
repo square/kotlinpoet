@@ -26,7 +26,7 @@ class KotlinFileTest {
   @Test fun importStaticReadmeExample() {
     val hoverboard = ClassName.get("com.mattel", "Hoverboard")
     val namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards")
-    val list = ClassName.get("java.util", "List")
+    val list = ClassName.get(List::class)
     val arrayList = ClassName.get("java.util", "ArrayList")
     val listOfHoverboards = ParameterizedTypeName.get(list, hoverboard)
     val beyond = FunSpec.builder("beyond")
@@ -55,7 +55,7 @@ class KotlinFileTest {
         |import com.mattel.Hoverboard.createNimbus
         |import java.util.ArrayList
         |import java.util.Collections.*
-        |import java.util.List
+        |import kotlin.collections.List
         |
         |class HelloWorld {
         |  fun beyond(): List<Hoverboard> {
@@ -103,7 +103,7 @@ class KotlinFileTest {
                 .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
                 .build())
             .addFun(FunSpec.constructorBuilder()
-                .addParameter("states", Array<Thread.State>::class)
+                .addParameter("states", ParameterizedTypeName.get(ARRAY, ClassName.get(Thread.State::class)))
                 .varargs(true)
                 .build())
             .build())
@@ -507,15 +507,15 @@ class KotlinFileTest {
         .addType(TypeSpec.classBuilder("HelloWorld")
             .addFun(FunSpec.builder("main")
                 .addModifiers(KModifier.PUBLIC)
-                .addParameter("args", Array<String>::class)
+                .addParameter("args", ParameterizedTypeName.get(ARRAY, ClassName.get(String::class)))
                 .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
                 .build())
             .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
-        |import java.lang.String
         |import java.lang.System
         |import kotlin.Array
+        |import kotlin.String
         |
         |class HelloWorld {
         |  fun main(args: Array<String>) {
@@ -615,10 +615,10 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
-        |import java.util.Map
         |import kotlin.Byte
         |import kotlin.Int
+        |import kotlin.String
+        |import kotlin.collections.Map
         |
         |typealias Int8 = Byte
         |

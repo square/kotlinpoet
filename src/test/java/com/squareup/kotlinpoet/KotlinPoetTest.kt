@@ -38,7 +38,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |fun a() {
         |}
@@ -79,7 +79,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco(cheese: String) {
         |  init {
@@ -109,8 +109,8 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import kotlin.Boolean
+        |import kotlin.String
         |
         |class Taco(val cheese: String, var cilantro: String, lettuce: String) {
         |  val lettuce: String = lettuce.trim()
@@ -137,7 +137,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  private const val CHEESE: String = "monterey jack"
@@ -282,7 +282,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  fun addCheese(kind: String = "monterey jack") {
@@ -302,7 +302,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |fun String.shrink(): String = substring(0, length - 1)
         |""".trimMargin())
@@ -311,7 +311,7 @@ class KotlinPoetTest {
   @Test fun nullableTypes() {
     val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(),
         TypeName.get(Int::class).asNullable()).asNullable()
-    assertThat(list.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+    assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
   }
 
   @Test fun getAndSet() {
@@ -370,7 +370,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |abstract class A {
         |  protected abstract var q: String
@@ -402,7 +402,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |open class A {
         |  protected open infix operator external fun get(v: String): String
@@ -423,7 +423,7 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |fun addA(s: String): String = s + "a"
         |""".trimMargin())
