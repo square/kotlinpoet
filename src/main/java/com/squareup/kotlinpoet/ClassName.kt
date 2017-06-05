@@ -146,7 +146,7 @@ class ClassName private constructor(
 
     /**
      * Returns a new [ClassName] instance for the given fully-qualified class name string. This
-     * method assumes that the input is ASCII and follows typical Java style (lowercase package
+     * method assumes that the input follows typical Java style (lowercase package
      * names, UpperCamelCase class names) and may produce incorrect results or throw
      * [IllegalArgumentException] otherwise. For that reason, [.get] and
      * [.get] should be preferred as they can correctly create [ClassName]
