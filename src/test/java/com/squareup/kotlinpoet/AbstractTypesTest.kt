@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Test
@@ -37,24 +39,24 @@ abstract class AbstractTypesTest {
   private fun getMirror(clazz: Class<*>) = getElement(clazz).asType()
 
   @Test fun getBasicTypeMirror() {
-    assertThat(TypeName.get(getMirror(Any::class.java)))
-        .isEqualTo(ClassName.get(Any::class.java))
-    assertThat(TypeName.get(getMirror(Charset::class.java)))
-        .isEqualTo(ClassName.get(Charset::class))
-    assertThat(TypeName.get(getMirror(AbstractTypesTest::class.java)))
-        .isEqualTo(ClassName.get(AbstractTypesTest::class))
+    assertThat(getMirror(Any::class.java).asTypeName())
+        .isEqualTo(Any::class.java.asClassName())
+    assertThat(getMirror(Charset::class.java).asTypeName())
+        .isEqualTo(Charset::class.asClassName())
+    assertThat(getMirror(AbstractTypesTest::class.java).asTypeName())
+        .isEqualTo(AbstractTypesTest::class.asClassName())
   }
 
   @Test fun getParameterizedTypeMirror() {
     val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(String::class.java))
-    assertThat(TypeName.get(setType))
+    assertThat(setType.asTypeName())
         .isEqualTo(
-            ParameterizedTypeName.get(ClassName.get(Set::class), ClassName.get(String::class)))
+            ParameterizedTypeName.get(Set::class.asClassName(), String::class.asClassName()))
   }
 
   @Test fun getErrorType() {
     val errorType = DeclaredTypeAsErrorType(types.getDeclaredType(getElement(Set::class.java)))
-    assertThat(TypeName.get(errorType)).isEqualTo(ClassName.get(Set::class))
+    assertThat(errorType.asTypeName()).isEqualTo(Set::class.asClassName())
   }
 
   internal class Parameterized<
@@ -70,23 +72,23 @@ abstract class AbstractTypesTest {
     val typeVariables = getElement(Parameterized::class.java).typeParameters
 
     // Members of converted types use ClassName and not Class<?>.
-    val number = ClassName.get(Number::class)
-    val runnable = ClassName.get(Runnable::class)
-    val serializable = ClassName.get(Serializable::class)
+    val number = Number::class.asClassName()
+    val runnable = Runnable::class.asClassName()
+    val serializable = Serializable::class.asClassName()
 
-    assertThat(TypeName.get(typeVariables[0].asType()))
-        .isEqualTo(TypeVariableName.get("Simple"))
-    assertThat(TypeName.get(typeVariables[1].asType()))
-        .isEqualTo(TypeVariableName.get("ExtendsClass", number))
-    assertThat(TypeName.get(typeVariables[2].asType()))
-        .isEqualTo(TypeVariableName.get("ExtendsInterface", runnable))
-    assertThat(TypeName.get(typeVariables[3].asType()))
-        .isEqualTo(TypeVariableName.get("ExtendsTypeVariable", TypeVariableName.get("Simple")))
-    assertThat(TypeName.get(typeVariables[4].asType()))
-        .isEqualTo(TypeVariableName.get("Intersection", number, runnable))
-    assertThat(TypeName.get(typeVariables[5].asType()))
-        .isEqualTo(TypeVariableName.get("IntersectionOfInterfaces", runnable, serializable))
-    assertThat((TypeName.get(typeVariables[4].asType()) as TypeVariableName).bounds)
+    assertThat(typeVariables[0].asType().asTypeName())
+        .isEqualTo(TypeVariableName("Simple"))
+    assertThat(typeVariables[1].asType().asTypeName())
+        .isEqualTo(TypeVariableName("ExtendsClass", number))
+    assertThat(typeVariables[2].asType().asTypeName())
+        .isEqualTo(TypeVariableName("ExtendsInterface", runnable))
+    assertThat(typeVariables[3].asType().asTypeName())
+        .isEqualTo(TypeVariableName("ExtendsTypeVariable", TypeVariableName("Simple")))
+    assertThat(typeVariables[4].asType().asTypeName())
+        .isEqualTo(TypeVariableName("Intersection", number, runnable))
+    assertThat(typeVariables[5].asType().asTypeName())
+        .isEqualTo(TypeVariableName("IntersectionOfInterfaces", runnable, serializable))
+    assertThat((typeVariables[4].asType().asTypeName() as TypeVariableName).bounds)
         .containsExactly(number, runnable)
   }
 
@@ -94,39 +96,39 @@ abstract class AbstractTypesTest {
 
   @Test fun getTypeVariableTypeMirrorRecursive() {
     val typeMirror = getElement(Recursive::class.java).asType()
-    val typeName = TypeName.get(typeMirror) as ParameterizedTypeName
+    val typeName = typeMirror.asTypeName() as ParameterizedTypeName
     val className = Recursive::class.java.canonicalName
     assertThat(typeName.toString()).isEqualTo(className + "<T>")
 
     val typeVariableName = typeName.typeArguments[0] as TypeVariableName
     assertThat(typeVariableName.toString()).isEqualTo("T")
     assertThat(typeVariableName.bounds.toString())
-        .isEqualTo("[java.util.Map<java.util.List<out T>, out java.util.Set<out kotlin.Array<T>>>]")
+        .isEqualTo("[kotlin.collections.Map<kotlin.collections.List<out T>, out kotlin.collections.Set<out kotlin.Array<T>>>]")
   }
 
   @Test fun getPrimitiveTypeMirror() {
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.BOOLEAN))).isEqualTo(BOOLEAN)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.BYTE))).isEqualTo(BYTE)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.SHORT))).isEqualTo(SHORT)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.INT))).isEqualTo(INT)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.LONG))).isEqualTo(LONG)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.CHAR))).isEqualTo(CHAR)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.FLOAT))).isEqualTo(FLOAT)
-    assertThat(TypeName.get(types.getPrimitiveType(TypeKind.DOUBLE))).isEqualTo(DOUBLE)
+    assertThat(types.getPrimitiveType(TypeKind.BOOLEAN).asTypeName()).isEqualTo(BOOLEAN)
+    assertThat(types.getPrimitiveType(TypeKind.BYTE).asTypeName()).isEqualTo(BYTE)
+    assertThat(types.getPrimitiveType(TypeKind.SHORT).asTypeName()).isEqualTo(SHORT)
+    assertThat(types.getPrimitiveType(TypeKind.INT).asTypeName()).isEqualTo(INT)
+    assertThat(types.getPrimitiveType(TypeKind.LONG).asTypeName()).isEqualTo(LONG)
+    assertThat(types.getPrimitiveType(TypeKind.CHAR).asTypeName()).isEqualTo(CHAR)
+    assertThat(types.getPrimitiveType(TypeKind.FLOAT).asTypeName()).isEqualTo(FLOAT)
+    assertThat(types.getPrimitiveType(TypeKind.DOUBLE).asTypeName()).isEqualTo(DOUBLE)
   }
 
   @Test fun getArrayTypeMirror() {
-    assertThat(TypeName.get(types.getArrayType(getMirror(String::class.java))))
-        .isEqualTo(ParameterizedTypeName.get(ARRAY, ClassName.get(String::class)))
+    assertThat(types.getArrayType(getMirror(String::class.java)).asTypeName())
+        .isEqualTo(ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
   }
 
   @Test fun getVoidTypeMirror() {
-    assertThat(TypeName.get(types.getNoType(TypeKind.VOID))).isEqualTo(UNIT)
+    assertThat(types.getNoType(TypeKind.VOID).asTypeName()).isEqualTo(UNIT)
   }
 
   @Test fun getNullTypeMirror() {
     try {
-      TypeName.get(types.nullType)
+      types.nullType.asTypeName()
       fail()
     } catch (expected: IllegalArgumentException) {
     }
@@ -134,7 +136,7 @@ abstract class AbstractTypesTest {
 
   @Test fun parameterizedType() {
     val type = ParameterizedTypeName.get(Map::class, String::class, Long::class)
-    assertThat(type.toString()).isEqualTo("java.util.Map<java.lang.String, kotlin.Long>")
+    assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Long>")
   }
 
   @Test fun starProjection() {
@@ -145,7 +147,7 @@ abstract class AbstractTypesTest {
   @Ignore("Figure out what this maps to in Kotlin.")
   @Test fun starProjectionFromMirror() {
     val wildcard = types.getWildcardType(null, null)
-    val type = TypeName.get(wildcard)
+    val type = wildcard.asTypeName()
     assertThat(type.toString()).isEqualTo("*")
   }
 
@@ -159,13 +161,13 @@ abstract class AbstractTypesTest {
     val elements = elements
     val charSequence = elements.getTypeElement(CharSequence::class.java.name).asType()
     val wildcard = types.getWildcardType(charSequence, null)
-    val type = TypeName.get(wildcard)
+    val type = wildcard.asTypeName()
     assertThat(type.toString()).isEqualTo("out java.lang.CharSequence")
   }
 
   @Test fun varianceInType() {
     val type = WildcardTypeName.supertypeOf(String::class)
-    assertThat(type.toString()).isEqualTo("in java.lang.String")
+    assertThat(type.toString()).isEqualTo("in kotlin.String")
   }
 
   @Test fun varianceInTypeFromMirror() {
@@ -173,12 +175,12 @@ abstract class AbstractTypesTest {
     val elements = elements
     val string = elements.getTypeElement(String::class.java.name).asType()
     val wildcard = types.getWildcardType(null, string)
-    val type = TypeName.get(wildcard)
-    assertThat(type.toString()).isEqualTo("in java.lang.String")
+    val type = wildcard.asTypeName()
+    assertThat(type.toString()).isEqualTo("in kotlin.String")
   }
 
   @Test fun typeVariable() {
-    val type = TypeVariableName.get("T", CharSequence::class)
+    val type = TypeVariableName("T", CharSequence::class)
     assertThat(type.toString()).isEqualTo("T") // (Bounds are only emitted in declaration.)
   }
 

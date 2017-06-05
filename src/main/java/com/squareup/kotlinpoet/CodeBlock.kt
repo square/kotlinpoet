@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -50,12 +51,64 @@ import kotlin.reflect.KClass
  *    double-indented.
  *  * `%]` ends a statement.
  */
-class CodeBlock private constructor(builder: CodeBlock.Builder) {
+class CodeBlock private constructor(
+    internal val formatParts: List<String>,
+    internal val args: List<Any?>) {
   /** A heterogeneous list containing string literals and value placeholders.  */
-  internal val formatParts: List<String> = builder.formatParts.toImmutableList()
-  internal val args: List<Any?> = builder.args.toImmutableList()
 
   fun isEmpty() = formatParts.isEmpty()
+
+  /**
+   * Returns a code block with `prefix` stripped off, or null if this code block doesn't start with
+   * `prefix`.
+   *
+   * This is a pretty basic implementation that might not cover cases like mismatched whitespace. We
+   * could offer something more lenient if necessary.
+   */
+  internal fun withoutPrefix(prefix: CodeBlock): CodeBlock? {
+    if (formatParts.size < prefix.formatParts.size) return null
+    if (args.size < prefix.args.size) return null
+
+    var prefixArgCount = 0
+    var firstFormatPart: String? = null
+
+    // Walk through the formatParts of prefix to confirm that it's a of this.
+    prefix.formatParts.forEachIndexed { index, formatPart ->
+      if (formatParts[index] != formatPart) {
+        // We've found a format part that doesn't match. If this is the very last format part check
+        // for a string prefix match. If that doesn't match, we're done.
+        if (index == prefix.formatParts.size - 1 && formatParts[index].startsWith(formatPart)) {
+          firstFormatPart = formatParts[index].substring(formatPart.length)
+        } else {
+          return null
+        }
+      }
+
+      // If the matching format part has an argument, check that too.
+      if (formatPart.startsWith("%") && !isNoArgPlaceholder(formatPart[1])) {
+        if (args[prefixArgCount] != prefix.args[prefixArgCount]) {
+          return null // Argument doesn't match.
+        }
+        prefixArgCount++
+      }
+    }
+
+    // We found a prefix. Prepare the suffix as a result.
+    val resultFormatParts = ArrayList<String>()
+    firstFormatPart?.let {
+      resultFormatParts.add(it)
+    }
+    for (i in prefix.formatParts.size until formatParts.size) {
+      resultFormatParts.add(formatParts[i])
+    }
+
+    val resultArgs = ArrayList<Any?>()
+    for (i in prefix.args.size until args.size) {
+      resultArgs.add(args[i])
+    }
+
+    return CodeBlock(resultFormatParts, resultArgs)
+  }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -231,9 +284,6 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       }
     }
 
-    private fun isNoArgPlaceholder(c: Char)
-        = c == '%' || c == '>' || c == '<' || c == '[' || c == ']' || c == 'W'
-
     private fun addArgument(format: String, c: Char, arg: Any?) {
       when (c) {
         'N' -> this.args += argToName(arg)
@@ -263,10 +313,10 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
     private fun argToType(o: Any?): TypeName {
       when (o) {
         is TypeName -> return o
-        is TypeMirror -> return TypeName.get(o)
-        is Element -> return TypeName.get(o.asType())
-        is Type -> return TypeName.get(o)
-        is KClass<*> -> return TypeName.get(o)
+        is TypeMirror -> return o.asTypeName()
+        is Element -> return o.asType().asTypeName()
+        is Type -> return o.asTypeName()
+        is KClass<*> -> return o.asTypeName()
         else -> throw IllegalArgumentException("expected type but was " + o)
       }
     }
@@ -314,7 +364,7 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
       formatParts += "%<"
     }
 
-    fun build() = CodeBlock(this)
+    fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
   }
 
   companion object {
@@ -324,5 +374,8 @@ class CodeBlock private constructor(builder: CodeBlock.Builder) {
     internal const val TYPE_NAME = 2
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
+
+    internal fun isNoArgPlaceholder(c: Char)
+        = c == '%' || c == '>' || c == '<' || c == '[' || c == ']' || c == 'W'
   }
 }

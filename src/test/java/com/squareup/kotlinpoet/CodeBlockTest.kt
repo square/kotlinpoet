@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.fail
 import org.junit.Test
 
@@ -103,7 +105,7 @@ class CodeBlockTest {
 
   @Test fun typeFormatCanBeIndexed() {
     val block = CodeBlock.builder().add("%1T", String::class).build()
-    assertThat(block.toString()).isEqualTo("java.lang.String")
+    assertThat(block.toString()).isEqualTo("kotlin.String")
   }
 
   @Test fun simpleNamedArgument() {
@@ -171,7 +173,7 @@ class CodeBlockTest {
     val map = LinkedHashMap<String, Any>()
     map.put("clazz", java.lang.Integer::class)
     val block = CodeBlock.builder().addNamed("%clazz:T\n", map).build()
-    assertThat(block.toString()).isEqualTo("java.lang.Integer\n")
+    assertThat(block.toString()).isEqualTo("kotlin.Int\n")
   }
 
   @Test fun danglingNamed() {
@@ -268,7 +270,7 @@ class CodeBlockTest {
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
     val block = CodeBlock.builder()
-        .add("%1T.out.println(%1S)", ClassName.get(System::class))
+        .add("%1T.out.println(%1S)", System::class.asClassName())
         .build()
     assertThat(block.toString()).isEqualTo("java.lang.System.out.println(\"java.lang.System\")")
   }
@@ -297,24 +299,110 @@ class CodeBlockTest {
   }
 
   @Test fun nullableType() {
-    val type = TypeName.get(String::class).asNullable()
+    val type = String::class.asTypeName().asNullable()
     val typeBlock = CodeBlock.of("%T", type)
-    assertThat(typeBlock.toString()).isEqualTo("java.lang.String?")
+    assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
-    val list = ParameterizedTypeName.get(ClassName.get(List::class).asNullable(),
-        TypeName.get(Int::class).asNullable()).asNullable()
+    val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
+        Int::class.asTypeName().asNullable()).asNullable()
     val listBlock = CodeBlock.of("%T", list)
-    assertThat(listBlock.toString()).isEqualTo("java.util.List<kotlin.Int?>?")
+    assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
-    val map = ParameterizedTypeName.get(ClassName.get(Map::class).asNullable(),
-        TypeName.get(String::class).asNullable(), list).asNullable()
+    val map = ParameterizedTypeName.get(Map::class.asClassName().asNullable(),
+        String::class.asTypeName().asNullable(), list).asNullable()
     val mapBlock = CodeBlock.of("%T", map)
     assertThat(mapBlock.toString())
-        .isEqualTo("java.util.Map<java.lang.String?, java.util.List<kotlin.Int?>?>?")
+        .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
-    val rarr = WildcardTypeName.subtypeOf(TypeName.get(String::class).asNullable())
+    val rarr = WildcardTypeName.subtypeOf(String::class.asTypeName().asNullable())
     val rarrBlock = CodeBlock.of("%T", rarr)
-    assertThat(rarrBlock.toString()).isEqualTo("out java.lang.String?")
+    assertThat(rarrBlock.toString()).isEqualTo("out kotlin.String?")
+  }
 
+  @Test fun withoutPrefixMatching() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("")))
+        .isEqualTo(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("ab")))
+        .isEqualTo(CodeBlock.of("cd %S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd ")))
+        .isEqualTo(CodeBlock.of("%S efgh %S ijkl", "x", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S", "x")))
+        .isEqualTo(CodeBlock.of(" efgh %S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S ef", "x")))
+        .isEqualTo(CodeBlock.of("gh %S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x")))
+        .isEqualTo(CodeBlock.of("%S ijkl", "y"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y")))
+        .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y")))
+        .isEqualTo(CodeBlock.of("kl"))
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isEqualTo(CodeBlock.of(""))
+  }
+
+  @Test fun withoutPrefixNoArgs() {
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("")))
+        .isEqualTo(CodeBlock.of("abcd %% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("ab")))
+        .isEqualTo(CodeBlock.of("cd %% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd ")))
+        .isEqualTo(CodeBlock.of("%% efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %%")))
+        .isEqualTo(CodeBlock.of(" efgh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% ef")))
+        .isEqualTo(CodeBlock.of("gh %% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh ")))
+        .isEqualTo(CodeBlock.of("%% ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %%")))
+        .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij")))
+        .isEqualTo(CodeBlock.of("kl"))
+    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl")))
+        .isEqualTo(CodeBlock.of(""))
+  }
+
+  @Test fun withoutPrefixArgMismatch() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y")))
+        .isNull()
+  }
+
+  @Test fun withoutPrefixFormatPartMismatch() {
+    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh %% ijkl", "x")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x")))
+        .isNull()
+  }
+
+  @Test fun withoutPrefixTooShort() {
+    assertThat(CodeBlock.of("abcd %S efgh %S", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isNull()
+    assertThat(CodeBlock.of("abcd %S efgh", "x")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
+        .isNull()
   }
 }

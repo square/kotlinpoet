@@ -15,7 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -321,9 +323,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addAnnotation(annotation: ClassName)
         = addAnnotation(AnnotationSpec.builder(annotation).build())
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
       check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
@@ -364,7 +366,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       this.superclass = superclass
     }
 
-    fun superclass(superclass: Type) = superclass(TypeName.get(superclass))
+    fun superclass(superclass: Type) = superclass(superclass.asTypeName())
+
+    fun superclass(superclass: KClass<*>) = superclass(superclass.asTypeName())
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
       this.superinterfaces += superinterfaces
@@ -375,10 +379,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterface(superinterface: Type)
-        = addSuperinterface(TypeName.get(superinterface))
+        = addSuperinterface(superinterface.asTypeName())
 
     fun addSuperinterface(superinterface: KClass<*>)
-        = addSuperinterface(TypeName.get(superinterface))
+        = addSuperinterface(superinterface.asTypeName())
 
     @JvmOverloads fun addEnumConstant(
         name: String,
@@ -405,10 +409,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
     fun addProperty(name: String, type: Type, vararg modifiers: KModifier)
-        = addProperty(name, TypeName.get(type), *modifiers)
+        = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = addProperty(name, TypeName.get(type), *modifiers)
+        = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
       check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }

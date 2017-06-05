@@ -42,11 +42,11 @@ class TypeVariableName private constructor(
   }
 
   fun withBounds(vararg bounds: Type): TypeVariableName {
-    return withBounds(bounds.map { get(it) })
+    return withBounds(bounds.map { it.asTypeName() })
   }
 
   fun withBounds(vararg bounds: KClass<*>): TypeVariableName {
-    return withBounds(bounds.map { TypeName.get(it) })
+    return withBounds(bounds.map { it.asTypeName() })
   }
 
   fun withBounds(vararg bounds: TypeName): TypeVariableName {
@@ -69,29 +69,30 @@ class TypeVariableName private constructor(
     }
 
     /** Returns type variable named `name` without bounds.  */
-    @JvmStatic fun get(name: String): TypeVariableName {
-      return TypeVariableName.of(name, emptyList())
-    }
+    @JvmStatic @JvmName("get")
+    operator fun invoke(name: String) = TypeVariableName.of(name, emptyList())
 
     /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic fun get(name: String, vararg bounds: TypeName): TypeVariableName {
+    @JvmStatic @JvmName("get")
+    operator fun invoke(name: String, vararg bounds: TypeName): TypeVariableName {
       return TypeVariableName.of(name, bounds.toList())
     }
 
     /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic fun get(name: String, vararg bounds: KClass<*>): TypeVariableName {
-      return TypeVariableName.of(name, bounds.map { TypeName.get(it) })
+    @JvmStatic @JvmName("get")
+    operator fun invoke(name: String, vararg bounds: KClass<*>): TypeVariableName {
+      return TypeVariableName.of(name, bounds.map { it.asTypeName() })
     }
 
     /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic fun get(name: String, vararg bounds: Type): TypeVariableName {
-      return TypeVariableName.of(name, bounds.map { get(it) })
+    @JvmStatic @JvmName("get")
+    operator fun invoke(name: String, vararg bounds: Type): TypeVariableName {
+      return TypeVariableName.of(name, bounds.map { it.asTypeName() })
     }
 
     /** Returns type variable equivalent to `mirror`.  */
-    @JvmStatic fun get(mirror: TypeVariable): TypeVariableName {
-      return get(mirror.asElement() as TypeParameterElement)
-    }
+    @JvmStatic @JvmName("get")
+    fun TypeVariable.asTypeVariableName() = get(asElement() as TypeParameterElement)
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
@@ -101,7 +102,7 @@ class TypeVariableName private constructor(
      * constructing the bounds, we can just return it from the map. And, the code that put the entry
      * in `variables` will make sure that the bounds are filled in before returning.
      */
-    @JvmStatic internal fun get(
+    internal fun get(
         mirror: TypeVariable,
         typeVariables: MutableMap<TypeParameterElement, TypeVariableName>): TypeVariableName {
       val element = mirror.asElement() as TypeParameterElement
@@ -124,13 +125,7 @@ class TypeVariableName private constructor(
     /** Returns type variable equivalent to `element`.  */
     @JvmStatic fun get(element: TypeParameterElement): TypeVariableName {
       val name = element.simpleName.toString()
-      val boundsMirrors = element.bounds
-
-      val boundsTypeNames = mutableListOf<TypeName>()
-      for (typeMirror in boundsMirrors) {
-        boundsTypeNames += TypeName.get(typeMirror)
-      }
-
+      val boundsTypeNames = element.bounds.map { it.asTypeName() }
       return TypeVariableName.of(name, boundsTypeNames)
     }
 

@@ -15,6 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.arrayComponent
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -37,7 +40,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     if (varargs) {
-      codeWriter.emitCode("vararg %L: %T", name, TypeName.arrayComponent(type))
+      codeWriter.emitCode("vararg %L: %T", name, type.arrayComponent())
     } else {
       codeWriter.emitCode("%L: %T", name, type)
     }
@@ -93,7 +96,9 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(ClassName.get(annotation))
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
       this.modifiers += modifiers
@@ -125,7 +130,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   companion object {
     @JvmStatic fun get(element: VariableElement): ParameterSpec {
       val name = element.simpleName.toString()
-      val type = TypeName.get(element.asType())
+      val type = element.asType().asTypeName()
       return ParameterSpec.builder(name, type)
           .jvmModifiers(element.modifiers)
           .build()
@@ -140,9 +145,9 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     }
 
     @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, TypeName.get(type), *modifiers)
+        = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = builder(name, TypeName.get(type), *modifiers)
+        = builder(name, type.asTypeName(), *modifiers)
   }
 }

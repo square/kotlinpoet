@@ -19,6 +19,8 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -152,21 +154,21 @@ class FunSpecTest {
 
   @Test fun nullableParam() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("string", TypeName.get(String::class).asNullable())
+        .addParameter(ParameterSpec.builder("string", String::class.asTypeName().asNullable())
             .build())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(string: java.lang.String?) {
+      |fun foo(string: kotlin.String?) {
       |}
       |""".trimMargin())
   }
 
   @Test fun nullableReturnType() {
     val funSpec = FunSpec.builder("foo")
-        .returns(TypeName.get(String::class).asNullable())
+        .returns(String::class.asTypeName().asNullable())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(): java.lang.String? {
+      |fun foo(): kotlin.String? {
       |}
       |""".trimMargin())
   }
@@ -175,11 +177,11 @@ class FunSpecTest {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = unitType)).build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: () -> kotlin.Unit): java.lang.String {
+      |fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -189,11 +191,11 @@ class FunSpecTest {
     val lambdaTypeName = LambdaTypeName.get(receiver = INT, returnType = unitType)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: kotlin.Int.() -> kotlin.Unit): java.lang.String {
+      |fun foo(f: kotlin.Int.() -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -204,11 +206,11 @@ class FunSpecTest {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(parameters = booleanType, returnType = unitType))
             .build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: (kotlin.Boolean) -> kotlin.Unit): java.lang.String {
+      |fun foo(f: (kotlin.Boolean) -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -216,48 +218,48 @@ class FunSpecTest {
   @Test fun functionParamMultipleLambdaParam() {
     val unitType = UNIT
     val booleanType = BOOLEAN
-    val stringType = ClassName.get(String::class)
+    val stringType = String::class.asClassName()
     val lambdaType = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaType).build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: (kotlin.Boolean, java.lang.String) -> kotlin.Unit): java.lang.String {
+      |fun foo(f: (kotlin.Boolean, kotlin.String) -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())
   }
 
   @Test fun functionParamMultipleLambdaParamNullableLambda() {
-    val unitType = ClassName.get(Unit::class)
-    val booleanType = ClassName.get(Boolean::class)
-    val stringType = ClassName.get(String::class)
+    val unitType = Unit::class.asClassName()
+    val booleanType = Boolean::class.asClassName()
+    val stringType = String::class.asClassName()
     val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
         .asNullable()
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName) .build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: ((kotlin.Boolean, java.lang.String) -> kotlin.Unit)?): java.lang.String {
+      |fun foo(f: ((kotlin.Boolean, kotlin.String) -> kotlin.Unit)?): kotlin.String {
       |}
       |""".trimMargin())
   }
 
   @Test fun functionParamMultipleNullableLambdaParam() {
-    val unitType = ClassName.get(Unit::class)
-    val booleanType = ClassName.get(Boolean::class)
-    val stringType = ClassName.get(String::class).asNullable()
+    val unitType = Unit::class.asClassName()
+    val booleanType = Boolean::class.asClassName()
+    val stringType = String::class.asClassName().asNullable()
     val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType).asNullable()
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
-        .returns(TypeName.Companion.get(String::class))
+        .returns(String::class)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun foo(f: ((kotlin.Boolean, java.lang.String?) -> kotlin.Unit)?): java.lang.String {
+      |fun foo(f: ((kotlin.Boolean, kotlin.String?) -> kotlin.Unit)?): kotlin.String {
       |}
       |""".trimMargin())
   }
@@ -280,8 +282,8 @@ class FunSpecTest {
   }
 
   @Test fun duplicateExceptionsIgnored() {
-    val ioException = ClassName.get(IOException::class)
-    val timeoutException = ClassName.get(TimeoutException::class)
+    val ioException = IOException::class.asClassName()
+    val timeoutException = TimeoutException::class.asClassName()
     val funSpec = FunSpec.builder("duplicateExceptions")
         .addException(ioException)
         .addException(timeoutException)

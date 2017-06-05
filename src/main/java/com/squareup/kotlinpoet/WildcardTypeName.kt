@@ -67,11 +67,11 @@ class WildcardTypeName private constructor(
     }
 
     @JvmStatic fun subtypeOf(upperBound: Type): WildcardTypeName {
-      return subtypeOf(TypeName.get(upperBound))
+      return subtypeOf(upperBound.asTypeName())
     }
 
     @JvmStatic fun subtypeOf(upperBound: KClass<*>): WildcardTypeName {
-      return subtypeOf(TypeName.get(upperBound))
+      return subtypeOf(upperBound.asTypeName())
     }
 
     /**
@@ -83,16 +83,19 @@ class WildcardTypeName private constructor(
     }
 
     @JvmStatic fun supertypeOf(lowerBound: Type): WildcardTypeName {
-      return supertypeOf(TypeName.get(lowerBound))
+      return supertypeOf(lowerBound.asTypeName())
     }
 
     @JvmStatic fun supertypeOf(lowerBound: KClass<*>): WildcardTypeName {
-      return supertypeOf(TypeName.get(lowerBound))
+      return supertypeOf(lowerBound.asTypeName())
     }
 
-    @JvmOverloads @JvmStatic fun get(
+    @JvmStatic @JvmName("get")
+    fun javax.lang.model.type.WildcardType.asWildcardTypeName() = get(this, mutableMapOf())
+
+    internal fun get(
         mirror: javax.lang.model.type.WildcardType,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName> = mutableMapOf())
+        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
         : TypeName {
       val extendsBound = mirror.extendsBound
       if (extendsBound == null) {
@@ -105,9 +108,12 @@ class WildcardTypeName private constructor(
       }
     }
 
-    @JvmStatic fun get(
+    @JvmStatic @JvmName("get")
+    fun WildcardType.asWildcardTypeName() = get(this, mutableMapOf())
+
+    internal fun get(
         wildcardName: WildcardType,
-        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
+        map: MutableMap<Type, TypeVariableName>)
         : TypeName {
       return WildcardTypeName(
           wildcardName.upperBounds.map { TypeName.get(it, map = map) },

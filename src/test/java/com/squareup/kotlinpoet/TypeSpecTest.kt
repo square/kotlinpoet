@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
@@ -60,7 +62,7 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  final override fun toString(): String {
@@ -68,15 +70,15 @@ class TypeSpecTest {
         |  }
         |}
         |""".trimMargin())
-    assertEquals(1344447270, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(2095734687, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
     val listOfAny = ParameterizedTypeName.get(
-        ClassName.get(List::class), WildcardTypeName.subtypeOf(ANY))
+        List::class.asClassName(), WildcardTypeName.subtypeOf(ANY))
     val listOfExtends = ParameterizedTypeName.get(
-        ClassName.get(List::class), WildcardTypeName.subtypeOf(Serializable::class))
-    val listOfSuper = ParameterizedTypeName.get(ClassName.get(List::class),
+        List::class.asClassName(), WildcardTypeName.subtypeOf(Serializable::class))
+    val listOfSuper = ParameterizedTypeName.get(List::class.asClassName(),
         WildcardTypeName.supertypeOf(String::class))
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty("star", listOfAny)
@@ -87,8 +89,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.io.Serializable
-        |import java.lang.String
-        |import java.util.List
+        |import kotlin.String
+        |import kotlin.collections.List
         |
         |class Taco {
         |  val star: List<*>
@@ -101,12 +103,12 @@ class TypeSpecTest {
   }
 
   @Test fun anonymousInnerClass() {
-    val foo = ClassName.get(tacosPackage, "Foo")
-    val bar = ClassName.get(tacosPackage, "Bar")
-    val thingThang = ClassName.get(tacosPackage, "Thing", "Thang")
+    val foo = ClassName(tacosPackage, "Foo")
+    val bar = ClassName(tacosPackage, "Bar")
+    val thingThang = ClassName(tacosPackage, "Thing", "Thang")
     val thingThangOfFooBar = ParameterizedTypeName.get(thingThang, foo, bar)
-    val thung = ClassName.get(tacosPackage, "Thung")
-    val simpleThung = ClassName.get(tacosPackage, "SimpleThung")
+    val thung = ClassName(tacosPackage, "Thung")
+    val simpleThung = ClassName(tacosPackage, "SimpleThung")
     val thungOfSuperBar = ParameterizedTypeName.get(thung, WildcardTypeName.supertypeOf(bar))
     val thungOfSuperFoo = ParameterizedTypeName.get(thung, WildcardTypeName.supertypeOf(foo))
     val simpleThungOfBar = ParameterizedTypeName.get(simpleThung, bar)
@@ -160,18 +162,18 @@ class TypeSpecTest {
             .addModifiers(KModifier.PUBLIC)
             .addParameter("id", Long::class)
             .addParameter(ParameterSpec.builder("one", String::class)
-                .addAnnotation(ClassName.get(tacosPackage, "Ping"))
+                .addAnnotation(ClassName(tacosPackage, "Ping"))
                 .build())
             .addParameter(ParameterSpec.builder("two", String::class)
-                .addAnnotation(ClassName.get(tacosPackage, "Ping"))
+                .addAnnotation(ClassName(tacosPackage, "Ping"))
                 .build())
             .addParameter(ParameterSpec.builder("three", String::class)
-                .addAnnotation(AnnotationSpec.builder(ClassName.get(tacosPackage, "Pong"))
+                .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "Pong"))
                     .addMember("value", "%S", "pong")
                     .build())
                 .build())
             .addParameter(ParameterSpec.builder("four", String::class)
-                .addAnnotation(ClassName.get(tacosPackage, "Ping"))
+                .addAnnotation(ClassName(tacosPackage, "Ping"))
                 .build())
             .addCode("/* code snippets */\n")
             .build())
@@ -180,8 +182,8 @@ class TypeSpecTest {
     assertThat(toString(service)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import kotlin.Long
+        |import kotlin.String
         |
         |class Foo {
         |  constructor(id: Long, @Ping one: String, @Ping two: String, @Pong("pong") three: String,
@@ -197,17 +199,17 @@ class TypeSpecTest {
    * imports. https://github.com/square/javapoet/issues/422
    */
   @Test fun annotationsAndJavaLangTypes() {
-    val freeRange = ClassName.get("javax.annotation", "FreeRange")
+    val freeRange = ClassName("javax.annotation", "FreeRange")
     val taco = TypeSpec.classBuilder("EthicalTaco")
-        .addProperty("meat", ClassName.get(String::class)
+        .addProperty("meat", String::class.asClassName()
             .annotated(AnnotationSpec.builder(freeRange).build()))
         .build()
 
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import javax.annotation.FreeRange
+        |import kotlin.String
         |
         |class EthicalTaco {
         |  val meat: @FreeRange String
@@ -216,17 +218,17 @@ class TypeSpecTest {
   }
 
   @Test fun retrofitStyleInterface() {
-    val observable = ClassName.get(tacosPackage, "Observable")
-    val fooBar = ClassName.get(tacosPackage, "FooBar")
-    val thing = ClassName.get(tacosPackage, "Thing")
-    val things = ClassName.get(tacosPackage, "Things")
-    val map = ClassName.get("java.util", "Map")
-    val string = ClassName.get("java.lang", "String")
-    val headers = ClassName.get(tacosPackage, "Headers")
-    val post = ClassName.get(tacosPackage, "POST")
-    val body = ClassName.get(tacosPackage, "Body")
-    val queryMap = ClassName.get(tacosPackage, "QueryMap")
-    val header = ClassName.get(tacosPackage, "Header")
+    val observable = ClassName(tacosPackage, "Observable")
+    val fooBar = ClassName(tacosPackage, "FooBar")
+    val thing = ClassName(tacosPackage, "Thing")
+    val things = ClassName(tacosPackage, "Things")
+    val map = Map::class.asClassName()
+    val string = String::class.asClassName()
+    val headers = ClassName(tacosPackage, "Headers")
+    val post = ClassName(tacosPackage, "POST")
+    val body = ClassName(tacosPackage, "Body")
+    val queryMap = ClassName(tacosPackage, "QueryMap")
+    val header = ClassName(tacosPackage, "Header")
     val service = TypeSpec.interfaceBuilder("Service")
         .addFun(FunSpec.builder("fooBar")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
@@ -257,8 +259,8 @@ class TypeSpecTest {
     assertThat(toString(service)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
-        |import java.util.Map
+        |import kotlin.String
+        |import kotlin.collections.Map
         |
         |interface Service {
         |  @Headers({
@@ -276,15 +278,15 @@ class TypeSpecTest {
   @Test fun annotatedProperty() {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("thing", String::class, KModifier.PRIVATE)
-            .addAnnotation(AnnotationSpec.builder(ClassName.get(tacosPackage, "JsonAdapter"))
-                .addMember("value", "%T::class", ClassName.get(tacosPackage, "Foo"))
+            .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "JsonAdapter"))
+                .addMember("value", "%T::class", ClassName(tacosPackage, "Foo"))
                 .build())
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  @JsonAdapter(Foo::class)
@@ -294,9 +296,9 @@ class TypeSpecTest {
   }
 
   @Test fun annotatedClass() {
-    val someType = ClassName.get(tacosPackage, "SomeType")
+    val someType = ClassName(tacosPackage, "SomeType")
     val taco = TypeSpec.classBuilder("Foo")
-        .addAnnotation(AnnotationSpec.builder(ClassName.get(tacosPackage, "Something"))
+        .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "Something"))
             .addMember("hi", "%T.%N", someType, "PROPERTY")
             .addMember("hey", "%L", 12)
             .addMember("hello", "%S", "goodbye")
@@ -344,7 +346,7 @@ class TypeSpecTest {
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |enum class Roshambo(private val handPosition: String) {
         |  /**
@@ -428,7 +430,7 @@ class TypeSpecTest {
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |enum class Roshambo {
         |  SPOCK {
@@ -474,7 +476,7 @@ class TypeSpecTest {
             .build())
         .addFun(FunSpec.builder("throwTwo")
             .addException(IOException::class)
-            .addException(ClassName.get(tacosPackage, "SourCreamException"))
+            .addException(ClassName(tacosPackage, "SourCreamException"))
             .build())
         .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
@@ -505,13 +507,13 @@ class TypeSpecTest {
   }
 
   @Test fun typeVariables() {
-    val t = TypeVariableName.get("T")
-    val p = TypeVariableName.get("P", Number::class)
-    val location = ClassName.get(tacosPackage, "Location")
+    val t = TypeVariableName("T")
+    val p = TypeVariableName("P", Number::class)
+    val location = ClassName(tacosPackage, "Location")
     val typeSpec = TypeSpec.classBuilder("Location")
         .addTypeVariable(t)
         .addTypeVariable(p)
-        .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable::class), p))
+        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), p))
         .addProperty("label", t)
         .addProperty("x", p)
         .addProperty("y", p)
@@ -535,10 +537,10 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Comparable
-        |import java.lang.Number
         |import java.lang.UnsupportedOperationException
+        |import kotlin.Comparable
         |import kotlin.Int
+        |import kotlin.Number
         |
         |class Location<T, P : Number> : Comparable<P> {
         |  val label: T
@@ -547,9 +549,7 @@ class TypeSpecTest {
         |
         |  val y: P
         |
-        |  override fun compareTo(p: P): Int {
-        |    return 0
-        |  }
+        |  override fun compareTo(p: P): Int = 0
         |
         |  fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
         |    throw new UnsupportedOperationException("TODO")
@@ -559,9 +559,9 @@ class TypeSpecTest {
   }
 
   @Test fun typeVariableWithBounds() {
-    val a = AnnotationSpec.builder(ClassName.get("com.squareup.tacos", "A")).build()
-    val p = TypeVariableName.get("P", Number::class)
-    val q = TypeVariableName.get("Q", Number::class).annotated(a) as TypeVariableName
+    val a = AnnotationSpec.builder(ClassName("com.squareup.tacos", "A")).build()
+    val p = TypeVariableName("P", Number::class)
+    val q = TypeVariableName("Q", Number::class).annotated(a) as TypeVariableName
     val typeSpec = TypeSpec.classBuilder("Location")
         .addTypeVariable(p.withBounds(Comparable::class))
         .addTypeVariable(q.withBounds(Comparable::class))
@@ -571,8 +571,8 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Comparable
-        |import java.lang.Number
+        |import kotlin.Comparable
+        |import kotlin.Number
         |
         |class Location<P : Number & Comparable, Q : Number & Comparable> {
         |  val x: P
@@ -583,20 +583,20 @@ class TypeSpecTest {
   }
 
   @Test fun classImplementsExtends() {
-    val taco = ClassName.get(tacosPackage, "Taco")
-    val food = ClassName.get("com.squareup.tacos", "Food")
+    val taco = ClassName(tacosPackage, "Taco")
+    val food = ClassName("com.squareup.tacos", "Food")
     val typeSpec = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
-        .superclass(ParameterizedTypeName.get(ClassName.get(AbstractSet::class), food))
+        .superclass(ParameterizedTypeName.get(AbstractSet::class.asClassName(), food))
         .addSuperinterface(Serializable::class)
-        .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable::class), taco))
+        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), taco))
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import java.io.Serializable
-        |import java.lang.Comparable
         |import java.util.AbstractSet
+        |import kotlin.Comparable
         |
         |abstract class Taco : AbstractSet<Food>, Serializable, Comparable<Taco> {
         |}
@@ -604,18 +604,18 @@ class TypeSpecTest {
   }
 
   @Test fun classImplementsExtendsSameName() {
-    val javapoetTaco = ClassName.get(tacosPackage, "Taco")
-    val tacoBellTaco = ClassName.get("com.taco.bell", "Taco")
-    val fishTaco = ClassName.get("org.fish.taco", "Taco")
+    val javapoetTaco = ClassName(tacosPackage, "Taco")
+    val tacoBellTaco = ClassName("com.taco.bell", "Taco")
+    val fishTaco = ClassName("org.fish.taco", "Taco")
     val typeSpec = TypeSpec.classBuilder("Taco")
         .superclass(fishTaco)
-        .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable::class), javapoetTaco))
+        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), javapoetTaco))
         .addSuperinterface(tacoBellTaco)
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Comparable
+        |import kotlin.Comparable
         |
         |class Taco : org.fish.taco.Taco, Comparable<Taco>, com.taco.bell.Taco {
         |}
@@ -623,9 +623,9 @@ class TypeSpecTest {
   }
 
   @Test fun classImplementsInnerClass() {
-    val outer = ClassName.get(tacosPackage, "Outer")
+    val outer = ClassName(tacosPackage, "Outer")
     val inner = outer.nestedClass("Inner")
-    val callable = ClassName.get(Callable::class)
+    val callable = Callable::class.asClassName()
     val typeSpec = TypeSpec.classBuilder("Outer")
         .superclass(ParameterizedTypeName.get(callable,
             inner))
@@ -657,7 +657,7 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.io.Serializable
-        |import java.lang.Cloneable
+        |import kotlin.Cloneable
         |
         |enum class Food : Serializable, Cloneable {
         |  LEAN_GROUND_BEEF,
@@ -668,16 +668,16 @@ class TypeSpecTest {
   }
 
   @Test fun interfaceExtends() {
-    val taco = ClassName.get(tacosPackage, "Taco")
+    val taco = ClassName(tacosPackage, "Taco")
     val typeSpec = TypeSpec.interfaceBuilder("Taco")
         .addSuperinterface(Serializable::class)
-        .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Comparable::class), taco))
+        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), taco))
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import java.io.Serializable
-        |import java.lang.Comparable
+        |import kotlin.Comparable
         |
         |interface Taco : Serializable, Comparable<Taco> {
         |}
@@ -685,15 +685,15 @@ class TypeSpecTest {
   }
 
   @Test fun nestedClasses() {
-    val taco = ClassName.get(tacosPackage, "Combo", "Taco")
-    val topping = ClassName.get(tacosPackage, "Combo", "Taco", "Topping")
-    val chips = ClassName.get(tacosPackage, "Combo", "Chips")
-    val sauce = ClassName.get(tacosPackage, "Combo", "Sauce")
+    val taco = ClassName(tacosPackage, "Combo", "Taco")
+    val topping = ClassName(tacosPackage, "Combo", "Taco", "Topping")
+    val chips = ClassName(tacosPackage, "Combo", "Chips")
+    val sauce = ClassName(tacosPackage, "Combo", "Sauce")
     val typeSpec = TypeSpec.classBuilder("Combo")
         .addProperty("taco", taco)
         .addProperty("chips", chips)
         .addType(TypeSpec.classBuilder(taco.simpleName())
-            .addProperty("toppings", ParameterizedTypeName.get(ClassName.get(List::class), topping))
+            .addProperty("toppings", ParameterizedTypeName.get(List::class.asClassName(), topping))
             .addProperty("sauce", sauce)
             .addType(TypeSpec.enumBuilder(topping.simpleName())
                 .addEnumConstant("SHREDDED_CHEESE")
@@ -716,7 +716,7 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.util.List
+        |import kotlin.collections.List
         |
         |class Combo {
         |  val taco: Taco
@@ -832,13 +832,13 @@ class TypeSpecTest {
 
   @Test fun referencedAndDeclaredSimpleNamesConflict() {
     val internalTop = PropertySpec.builder(
-        "internalTop", ClassName.get(tacosPackage, "Top")).build()
+        "internalTop", ClassName(tacosPackage, "Top")).build()
     val internalBottom = PropertySpec.builder(
-        "internalBottom", ClassName.get(tacosPackage, "Top", "Middle", "Bottom")).build()
+        "internalBottom", ClassName(tacosPackage, "Top", "Middle", "Bottom")).build()
     val externalTop = PropertySpec.builder(
-        "externalTop", ClassName.get(donutsPackage, "Top")).build()
+        "externalTop", ClassName(donutsPackage, "Top")).build()
     val externalBottom = PropertySpec.builder(
-        "externalBottom", ClassName.get(donutsPackage, "Bottom")).build()
+        "externalBottom", ClassName(donutsPackage, "Bottom")).build()
     val top = TypeSpec.classBuilder("Top")
         .addProperty(internalTop)
         .addProperty(internalBottom)
@@ -896,9 +896,9 @@ class TypeSpecTest {
 
   @Test fun simpleNamesConflictInThisAndOtherPackage() {
     val internalOther = PropertySpec.builder(
-        "internalOther", ClassName.get(tacosPackage, "Other")).build()
+        "internalOther", ClassName(tacosPackage, "Other")).build()
     val externalOther = PropertySpec.builder(
-        "externalOther", ClassName.get(donutsPackage, "Other")).build()
+        "externalOther", ClassName(donutsPackage, "Other")).build()
     val gen = TypeSpec.classBuilder("Gen")
         .addProperty(internalOther)
         .addProperty(externalOther)
@@ -915,7 +915,7 @@ class TypeSpecTest {
   }
 
   @Test fun intersectionType() {
-    val typeVariable = TypeVariableName.get("T", Comparator::class, Serializable::class)
+    val typeVariable = TypeVariableName("T", Comparator::class, Serializable::class)
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("getComparator")
             .addTypeVariable(typeVariable)
@@ -937,18 +937,17 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun arrayType() {
+  @Test fun primitiveArrayType() {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty("ints", IntArray::class)
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import kotlin.Array
-        |import kotlin.Int
+        |import kotlin.IntArray
         |
         |class Taco {
-        |  val ints: Array<Int>
+        |  val ints: IntArray
         |}
         |""".trimMargin())
   }
@@ -979,7 +978,7 @@ class TypeSpecTest {
         |/**
         | * A hard or soft tortilla, loosely folded and filled with whatever
         | * [random][java.util.Random] tex-mex stuff we could find in the pantry
-        | * and some [java.lang.String] cheese.
+        | * and some [kotlin.String] cheese.
         | */
         |class Taco {
         |  /**
@@ -999,10 +998,10 @@ class TypeSpecTest {
   }
 
   @Test fun annotationsInAnnotations() {
-    val beef = ClassName.get(tacosPackage, "Beef")
-    val chicken = ClassName.get(tacosPackage, "Chicken")
-    val option = ClassName.get(tacosPackage, "Option")
-    val mealDeal = ClassName.get(tacosPackage, "MealDeal")
+    val beef = ClassName(tacosPackage, "Beef")
+    val chicken = ClassName(tacosPackage, "Chicken")
+    val option = ClassName(tacosPackage, "Option")
+    val mealDeal = ClassName(tacosPackage, "MealDeal")
     val menu = TypeSpec.classBuilder("Menu")
         .addAnnotation(AnnotationSpec.builder(mealDeal)
             .addMember("price", "%L", 500)
@@ -1035,7 +1034,7 @@ class TypeSpecTest {
     val taqueria = TypeSpec.classBuilder("Taqueria")
         .addFun(FunSpec.builder("prepare")
             .addParameter("workers", Int::class)
-            .addParameter("jobs", Array<Runnable>::class)
+            .addParameter("jobs", ParameterizedTypeName.get(ARRAY, Runnable::class.asClassName()))
             .varargs()
             .build())
         .build()
@@ -1094,10 +1093,10 @@ class TypeSpecTest {
         |
         |import com.google.common.collect.ImmutableMap
         |import java.lang.Math
-        |import java.lang.String
-        |import java.util.List
-        |import java.util.Map
         |import kotlin.Int
+        |import kotlin.String
+        |import kotlin.collections.List
+        |import kotlin.collections.Map
         |
         |class Util {
         |  private val ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
@@ -1246,9 +1245,9 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import kotlin.Int
         |import kotlin.Long
+        |import kotlin.String
         |
         |class Members {
         |  val W: String
@@ -1309,7 +1308,7 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  val NULL: String = null
@@ -1328,7 +1327,7 @@ class TypeSpecTest {
     val codeBlock = CodeBlock.builder()
         .addStatement("%T %N = %S.substring(0, 3)", String::class, "s", "taco")
         .build()
-    assertThat(codeBlock.toString()).isEqualTo("java.lang.String s = \"taco\".substring(0, 3)\n")
+    assertThat(codeBlock.toString()).isEqualTo("kotlin.String s = \"taco\".substring(0, 3)\n")
   }
 
   @Test fun propertyToString() {
@@ -1336,7 +1335,7 @@ class TypeSpecTest {
         .initializer("%S.substring(0, 3)", "taco")
         .build()
     assertThat(property.toString())
-        .isEqualTo("val s: java.lang.String = \"taco\".substring(0, 3)\n")
+        .isEqualTo("val s: kotlin.String = \"taco\".substring(0, 3)\n")
   }
 
   @Test fun functionToString() {
@@ -1345,16 +1344,14 @@ class TypeSpecTest {
         .returns(String::class)
         .addStatement("return %S", "taco")
         .build()
-    assertThat(funSpec.toString()).isEqualTo(""
-        + "override fun toString(): java.lang.String {\n"
-        + "  return \"taco\"\n"
-        + "}\n")
+    assertThat(funSpec.toString())
+        .isEqualTo("override fun toString(): kotlin.String = \"taco\"\n")
   }
 
   @Test fun constructorToString() {
     val constructor = FunSpec.constructorBuilder()
         .addModifiers(KModifier.PUBLIC)
-        .addParameter("taco", ClassName.get(tacosPackage, "Taco"))
+        .addParameter("taco", ClassName(tacosPackage, "Taco"))
         .addStatement("this.%N = %N", "taco", "taco")
         .build()
     assertThat(constructor.toString()).isEqualTo(""
@@ -1364,9 +1361,9 @@ class TypeSpecTest {
   }
 
   @Test fun parameterToString() {
-    val parameter = ParameterSpec.builder("taco", ClassName.get(tacosPackage, "Taco"))
+    val parameter = ParameterSpec.builder("taco", ClassName(tacosPackage, "Taco"))
         .addModifiers(KModifier.FINAL)
-        .addAnnotation(ClassName.get("javax.annotation", "Nullable"))
+        .addAnnotation(ClassName("javax.annotation", "Nullable"))
         .build()
     assertThat(parameter.toString())
         .isEqualTo("@javax.annotation.Nullable final taco: com.squareup.tacos.Taco")
@@ -1421,22 +1418,24 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("toString")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(String::class)
-            .addStatement("return %S\n+ %S\n+ %S\n+ %S\n+ %S",
+            .addStatement("val result = %S\n+ %S\n+ %S\n+ %S\n+ %S",
                 "Taco(", "beef,", "lettuce,", "cheese", ")")
+            .addStatement("return result")
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  override fun toString(): String {
-        |    return "Taco("
+        |    val result = "Taco("
         |        + "beef,"
         |        + "lettuce,"
         |        + "cheese"
         |        + ")"
+        |    return result
         |  }
         |}
         |""".trimMargin())
@@ -1452,6 +1451,7 @@ class TypeSpecTest {
             .returns(Int::class)
             .addParameter("a", String::class)
             .addParameter("b", String::class)
+            .addComment("Prefix the strings and compare them")
             .addStatement("return a.substring(0, length)\n" + ".compareTo(b.substring(0, length))")
             .build())
         .build()
@@ -1459,6 +1459,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
             .addParameter("length", Int::class, KModifier.FINAL)
+            .addComment("Return a new comparator for the target length.")
             .addStatement("return %L", prefixComparator)
             .build())
         .addFun(FunSpec.builder("sortPrefix")
@@ -1470,16 +1471,18 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
         |import java.util.Collections
         |import java.util.Comparator
-        |import java.util.List
         |import kotlin.Int
+        |import kotlin.String
+        |import kotlin.collections.List
         |
         |class Taco {
         |  fun comparePrefix(final length: Int): Comparator<String> {
+        |    // Return a new comparator for the target length.
         |    return object : Comparator<String>() {
         |      override fun compare(a: String, b: String): Int {
+        |        // Prefix the strings and compare them
         |        return a.substring(0, length)
         |            .compareTo(b.substring(0, length))
         |      }
@@ -1491,6 +1494,7 @@ class TypeSpecTest {
         |        list,
         |        object : Comparator<String>() {
         |          override fun compare(a: String, b: String): Int {
+        |            // Prefix the strings and compare them
         |            return a.substring(0, length)
         |                .compareTo(b.substring(0, length))
         |          }
@@ -1509,7 +1513,7 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  val toppings: String = ${"\"\"\""}
@@ -1605,16 +1609,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |  fun getAnswer(): Int {
-        |    return 42
-        |  }
+        |  fun getAnswer(): Int = 42
         |
         |  /**
         |   * chosen by fair dice roll ;)
         |   */
-        |  fun getRandomQuantity(): Int {
-        |    return 4
-        |  }
+        |  fun getRandomQuantity(): Int = 4
         |}
         |""".trimMargin())
   }
@@ -1622,8 +1622,8 @@ class TypeSpecTest {
   @Test fun multipleSuperinterfaceAddition() {
     val taco = TypeSpec.classBuilder("Taco")
         .addSuperinterfaces(Arrays.asList(
-            TypeName.get(Serializable::class),
-            TypeName.get(EventListener::class)))
+            Serializable::class.asTypeName(),
+            EventListener::class.asTypeName()))
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
@@ -1639,13 +1639,13 @@ class TypeSpecTest {
   @Test fun multipleTypeVariableAddition() {
     val location = TypeSpec.classBuilder("Location")
         .addTypeVariables(Arrays.asList(
-            TypeVariableName.get("T"),
-            TypeVariableName.get("P", Number::class)))
+            TypeVariableName("T"),
+            TypeVariableName("P", Number::class)))
         .build()
     assertThat(toString(location)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.Number
+        |import kotlin.Number
         |
         |class Location<T, P : Number> {
         |}
@@ -1674,11 +1674,11 @@ class TypeSpecTest {
   @Test fun tryCatch() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFun(FunSpec.builder("addTopping")
-            .addParameter("topping", ClassName.get("com.squareup.tacos", "Topping"))
+            .addParameter("topping", ClassName("com.squareup.tacos", "Topping"))
             .beginControlFlow("try")
             .addCode("/* do something tricky with the topping */\n")
             .nextControlFlow("catch (e: %T)",
-                ClassName.get("com.squareup.tacos", "IllegalToppingException"))
+                ClassName("com.squareup.tacos", "IllegalToppingException"))
             .endControlFlow()
             .build())
         .build()
@@ -1786,8 +1786,8 @@ class TypeSpecTest {
   }
 
   @Test fun typeFromTypeName() {
-    val typeName = TypeName.get(String::class)
-    assertThat(CodeBlock.of("%T", typeName).toString()).isEqualTo("java.lang.String")
+    val typeName = String::class.asTypeName()
+    assertThat(CodeBlock.of("%T", typeName).toString()).isEqualTo("kotlin.String")
   }
 
   @Test fun typeFromTypeMirror() {
@@ -1801,15 +1801,15 @@ class TypeSpecTest {
   }
 
   @Test fun typeFromReflectType() {
-    assertThat(CodeBlock.of("%T", String::class).toString()).isEqualTo("java.lang.String")
+    assertThat(CodeBlock.of("%T", String::class).toString()).isEqualTo("kotlin.String")
   }
 
   @Test fun typeFromUnsupportedType() {
     try {
-      CodeBlock.builder().add("%T", "java.lang.String")
+      CodeBlock.builder().add("%T", "kotlin.String")
       fail()
     } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("expected type but was java.lang.String")
+      assertThat(expected).hasMessage("expected type but was kotlin.String")
     }
 
   }
@@ -1860,19 +1860,19 @@ class TypeSpecTest {
 
   @Test fun superClassOnlyValidForClasses() {
     try {
-      TypeSpec.annotationBuilder("A").superclass(ClassName.get(Any::class))
+      TypeSpec.annotationBuilder("A").superclass(Any::class.asClassName())
       fail()
     } catch (expected: IllegalStateException) {
     }
 
     try {
-      TypeSpec.enumBuilder("E").superclass(ClassName.get(Any::class))
+      TypeSpec.enumBuilder("E").superclass(Any::class.asClassName())
       fail()
     } catch (expected: IllegalStateException) {
     }
 
     try {
-      TypeSpec.interfaceBuilder("I").superclass(ClassName.get(Any::class))
+      TypeSpec.interfaceBuilder("I").superclass(Any::class.asClassName())
       fail()
     } catch (expected: IllegalStateException) {
     }
@@ -1882,8 +1882,8 @@ class TypeSpecTest {
   @Test fun invalidSuperClass() {
     try {
       TypeSpec.classBuilder("foo")
-          .superclass(ClassName.get(List::class))
-          .superclass(ClassName.get(Map::class))
+          .superclass(List::class)
+          .superclass(Map::class)
       fail()
     } catch (expected: IllegalStateException) {
     }
@@ -1905,16 +1905,14 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  private val foo: String
         |
         |  private const val FOO: String = "FOO"
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -1938,7 +1936,7 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  private val foo: String
@@ -1952,9 +1950,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -1986,7 +1982,7 @@ class TypeSpecTest {
     assertThat(toString(initializersAdded)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  private val foo: String
@@ -2000,9 +1996,7 @@ class TypeSpecTest {
         |  constructor() {
         |  }
         |
-        |  override fun toString(): String {
-        |    return FOO
-        |  }
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -2040,7 +2034,7 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.String
+        |import kotlin.String
         |
         |class Taco {
         |  fun call(s0: String, s1: String, s2: String, s3: String, s4: String, s5: String, s6: String,
@@ -2075,7 +2069,7 @@ class TypeSpecTest {
   }
 
   @Test fun classNameFactories() {
-    val className = ClassName.get("com.example", "Example")
+    val className = ClassName("com.example", "Example")
     assertThat(TypeSpec.classBuilder(className).build().name).isEqualTo("Example")
     assertThat(TypeSpec.interfaceBuilder(className).build().name).isEqualTo("Example")
     assertThat(TypeSpec.enumBuilder(className).addEnumConstant("A").build().name).isEqualTo("Example")
@@ -2105,7 +2099,7 @@ class TypeSpecTest {
   }
 
   @Test fun objectClassWithSupertype() {
-    val superclass = ClassName.get("com.squareup.wire", "Message")
+    val superclass = ClassName("com.squareup.wire", "Message")
     val type = TypeSpec.objectBuilder("MyObject")
         .addModifiers(KModifier.PUBLIC)
         .superclass(superclass)
@@ -2230,7 +2224,7 @@ class TypeSpecTest {
   }
 
   @Test fun companionObjectSuper() {
-    val superclass = ClassName.get("com.squareup.wire", "Message")
+    val superclass = ClassName("com.squareup.wire", "Message")
     val companion = TypeSpec.companionObjectBuilder()
         .superclass(superclass)
         .addFun(FunSpec.builder("test")

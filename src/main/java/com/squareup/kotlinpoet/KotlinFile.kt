@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
@@ -217,14 +218,14 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     }
 
     fun addStaticImport(constant: Enum<*>)
-        = addStaticImport(ClassName.get(
-        (constant as java.lang.Enum<*>).getDeclaringClass()), constant.name)
+        = addStaticImport(
+        (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
     fun addStaticImport(clazz: Class<*>, vararg names: String)
-        = addStaticImport(ClassName.get(clazz), *names)
+        = addStaticImport(clazz.asClassName(), *names)
 
     fun addStaticImport(clazz: KClass<*>, vararg names: String)
-        = addStaticImport(ClassName.get(clazz), *names)
+        = addStaticImport(clazz.asClassName(), *names)
 
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }

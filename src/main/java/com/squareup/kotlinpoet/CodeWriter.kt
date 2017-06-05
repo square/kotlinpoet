@@ -375,7 +375,7 @@ internal class CodeWriter @JvmOverloads constructor(
 
     // Match the top-level class.
     if (typeSpecStack.size > 0 && typeSpecStack[0].name == simpleName) {
-      return ClassName.get(packageName, simpleName)
+      return ClassName(packageName, simpleName)
     }
 
     // Match an imported type.
@@ -388,7 +388,7 @@ internal class CodeWriter @JvmOverloads constructor(
 
   /** Returns the class named `simpleName` when nested in the class at `stackDepth`.  */
   private fun stackClassName(stackDepth: Int, simpleName: String): ClassName {
-    var className = ClassName.get(packageName, typeSpecStack[0].name!!)
+    var className = ClassName(packageName, typeSpecStack[0].name!!)
     for (i in 1..stackDepth) {
       className = className.nestedClass(typeSpecStack[i].name!!)
     }

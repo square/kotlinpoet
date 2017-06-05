@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
@@ -88,21 +89,22 @@ class ParameterizedTypeName internal constructor(
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
     @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
-        = ParameterizedTypeName(null, ClassName.get(rawType),
-        typeArguments.map { TypeName.get(it) })
+        = ParameterizedTypeName(null, rawType.asClassName(),
+        typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
     @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
-        null, ClassName.get(rawType), typeArguments.map { TypeName.get(it) })
+        null, rawType.asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type equivalent to `type`.  */
-    @JvmStatic fun get(type: ParameterizedType) = get(type, mutableMapOf())
+    @JvmStatic @JvmName("get")
+    fun ParameterizedType.asParameterizedTypeName() = get(this, mutableMapOf())
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(
         type: ParameterizedType,
         map: MutableMap<Type, TypeVariableName>): ParameterizedTypeName {
-      val rawType = ClassName.get(type.rawType as Class<*>)
+      val rawType = (type.rawType as Class<*>).asClassName()
       val ownerType = if (type.ownerType is ParameterizedType
           && !Modifier.isStatic((type.rawType as Class<*>).modifiers))
         type.ownerType as ParameterizedType else

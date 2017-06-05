@@ -16,20 +16,21 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Test
 
 class PropertySpecTest {
   @Test fun nullable() {
-    val type = TypeName.get(String::class).asNullable()
+    val type = String::class.asClassName().asNullable()
     val a = PropertySpec.builder("foo", type).build()
-    assertThat(a.toString()).isEqualTo("val foo: java.lang.String?\n")
+    assertThat(a.toString()).isEqualTo("val foo: kotlin.String?\n")
   }
 
   @Test fun delegated() {
     val prop = PropertySpec.builder("foo", String::class)
         .delegate("Delegates.notNull()")
         .build()
-    assertThat(prop.toString()).isEqualTo("val foo: java.lang.String by Delegates.notNull()\n")
+    assertThat(prop.toString()).isEqualTo("val foo: kotlin.String by Delegates.notNull()\n")
   }
 
   @Test fun equalsAndHashCode() {

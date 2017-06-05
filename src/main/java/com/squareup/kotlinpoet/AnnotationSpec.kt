@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Array
@@ -213,7 +214,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
     @JvmStatic fun get(annotation: AnnotationMirror): AnnotationSpec {
       val element = annotation.annotationType.asElement() as TypeElement
-      val builder = AnnotationSpec.builder(ClassName.get(element))
+      val builder = AnnotationSpec.builder(element.asClassName())
       val visitor = Visitor(builder)
       for (executableElement in annotation.elementValues.keys) {
         val name = executableElement.simpleName.toString()
@@ -228,11 +229,11 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     }
 
     @JvmStatic fun builder(type: Class<*>): Builder {
-      return builder(ClassName.get(type))
+      return builder(type.asClassName())
     }
 
     @JvmStatic fun builder(type: KClass<*>): Builder {
-      return builder(ClassName.get(type))
+      return builder(type.asClassName())
     }
   }
 }

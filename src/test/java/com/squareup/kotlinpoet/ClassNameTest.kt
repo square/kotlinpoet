@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
@@ -27,7 +28,7 @@ class ClassNameTest {
 
   @Test fun bestGuessForString_simpleClass() {
     assertThat(ClassName.bestGuess(String::class.java.name))
-        .isEqualTo(ClassName.get("java.lang", "String"))
+        .isEqualTo(ClassName("java.lang", "String"))
   }
 
   @Test fun bestGuessNonAscii() {
@@ -43,19 +44,19 @@ class ClassNameTest {
 
   @Test fun bestGuessForString_nestedClass() {
     assertThat(ClassName.bestGuess(Map.Entry::class.java.canonicalName))
-        .isEqualTo(ClassName.get("java.util", "Map", "Entry"))
+        .isEqualTo(ClassName("java.util", "Map", "Entry"))
     assertThat(ClassName.bestGuess(OuterClass.InnerClass::class.java.canonicalName))
-        .isEqualTo(ClassName.get("com.squareup.kotlinpoet",
+        .isEqualTo(ClassName("com.squareup.kotlinpoet",
             "ClassNameTest", "OuterClass", "InnerClass"))
   }
 
   @Test fun bestGuessForString_defaultPackage() {
     assertThat(ClassName.bestGuess("SomeClass"))
-        .isEqualTo(ClassName.get("", "SomeClass"))
+        .isEqualTo(ClassName("", "SomeClass"))
     assertThat(ClassName.bestGuess("SomeClass.Nested"))
-        .isEqualTo(ClassName.get("", "SomeClass", "Nested"))
+        .isEqualTo(ClassName("", "SomeClass", "Nested"))
     assertThat(ClassName.bestGuess("SomeClass.Nested.EvenMore"))
-        .isEqualTo(ClassName.get("", "SomeClass", "Nested", "EvenMore"))
+        .isEqualTo(ClassName("", "SomeClass", "Nested", "EvenMore"))
   }
 
   @Test fun bestGuessForString_confusingInput() {
@@ -67,7 +68,7 @@ class ClassNameTest {
     assertBestGuessThrows("java.util.")
     assertBestGuessThrows("java..util.Map.Entry")
     assertBestGuessThrows("java.util..Map.Entry")
-    assertBestGuessThrows("java.util.Map..Entry")
+    assertBestGuessThrows("kotlin.collections.Map..Entry")
     assertBestGuessThrows("com.test.$")
     assertBestGuessThrows("com.test.LooksLikeAClass.pkg")
     assertBestGuessThrows("!@#\$gibberish%^&*")
@@ -82,81 +83,81 @@ class ClassNameTest {
   }
 
   @Test fun createNestedClass() {
-    val foo = ClassName.get("com.example", "Foo")
+    val foo = ClassName("com.example", "Foo")
     val bar = foo.nestedClass("Bar")
-    assertThat(bar).isEqualTo(ClassName.get("com.example", "Foo", "Bar"))
+    assertThat(bar).isEqualTo(ClassName("com.example", "Foo", "Bar"))
     val baz = bar.nestedClass("Baz")
-    assertThat(baz).isEqualTo(ClassName.get("com.example", "Foo", "Bar", "Baz"))
+    assertThat(baz).isEqualTo(ClassName("com.example", "Foo", "Bar", "Baz"))
   }
 
   @Test fun classNameFromTypeElement() {
     val elements = compilationRule.elements
     val element = elements.getTypeElement(Any::class.java.canonicalName)
-    assertThat(ClassName.get(element).toString()).isEqualTo("java.lang.Object")
+    assertThat(element.asClassName().toString()).isEqualTo("java.lang.Object")
   }
 
   @Test fun classNameFromClass() {
-    assertThat(ClassName.get(Any::class.java).toString())
+    assertThat(Any::class.java.asClassName().toString())
         .isEqualTo("java.lang.Object")
-    assertThat(ClassName.get(OuterClass.InnerClass::class.java).toString())
+    assertThat(OuterClass.InnerClass::class.java.asClassName().toString())
         .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
   }
 
   @Test fun classNameFromKClass() {
-    assertThat(ClassName.get(Any::class).toString())
-        .isEqualTo("java.lang.Object")
-    assertThat(ClassName.get(OuterClass.InnerClass::class).toString())
+    assertThat(Any::class.asClassName().toString())
+        .isEqualTo("kotlin.Any")
+    assertThat(OuterClass.InnerClass::class.asClassName().toString())
         .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
   }
 
   @Test fun peerClass() {
-    assertThat(ClassName.get(java.lang.Double::class).peerClass("Short"))
-        .isEqualTo(ClassName.get(java.lang.Short::class))
-    assertThat(ClassName.get("", "Double").peerClass("Short"))
-        .isEqualTo(ClassName.get("", "Short"))
-    assertThat(ClassName.get("a.b", "Combo", "Taco").peerClass("Burrito"))
-        .isEqualTo(ClassName.get("a.b", "Combo", "Burrito"))
+    assertThat(java.lang.Double::class.asClassName().peerClass("Short"))
+        .isEqualTo(java.lang.Short::class.asClassName())
+    assertThat(ClassName("", "Double").peerClass("Short"))
+        .isEqualTo(ClassName("", "Short"))
+    assertThat(ClassName("a.b", "Combo", "Taco").peerClass("Burrito"))
+        .isEqualTo(ClassName("a.b", "Combo", "Burrito"))
   }
 
   @Test fun fromClassRejectionTypes() {
     try {
-      ClassName.get(java.lang.Integer.TYPE)
+      java.lang.Integer.TYPE.asClassName()
       fail()
     } catch (expected: IllegalArgumentException) {
     }
 
     try {
-      ClassName.get(Void.TYPE)
+      Void.TYPE.asClassName()
       fail()
     } catch (expected: IllegalArgumentException) {
     }
 
     try {
-      ClassName.get(Array<Any>::class.java)
+      Array<Any>::class.java.asClassName()
       fail()
     } catch (expected: IllegalArgumentException) {
     }
 
-    try {
-      ClassName.get(Array<Any>::class)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-    }
-
+    // TODO
+    //try {
+    //  Array<Int>::class.asClassName()
+    //  fail()
+    //} catch (expected: IllegalArgumentException) {
+    //}
   }
 
   @Test fun reflectionName() {
     assertThat(ANY.reflectionName())
         .isEqualTo("kotlin.Any")
-    assertThat(ClassName.get(Thread.State::class).reflectionName())
+    assertThat(Thread.State::class.asClassName().reflectionName())
         .isEqualTo("java.lang.Thread\$State")
-    assertThat(ClassName.get(Map.Entry::class).reflectionName())
-        .isEqualTo("java.util.Map\$Entry")
-    assertThat(ClassName.get("", "Foo").reflectionName())
+    assertThat(Map.Entry::class.asClassName().reflectionName())
+        .isEqualTo("kotlin.collections.Map\$Entry")
+    assertThat(ClassName("", "Foo").reflectionName())
         .isEqualTo("Foo")
-    assertThat(ClassName.get("", "Foo", "Bar", "Baz").reflectionName())
+    assertThat(ClassName("", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("Foo\$Bar\$Baz")
-    assertThat(ClassName.get("a.b.c", "Foo", "Bar", "Baz").reflectionName())
+    assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("a.b.c.Foo\$Bar\$Baz")
   }
 }
