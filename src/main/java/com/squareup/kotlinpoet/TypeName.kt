@@ -89,6 +89,13 @@ abstract class TypeName internal constructor(
   val isAnnotated: Boolean
     get() = annotations.isNotEmpty()
 
+  /** Returns the array component of this [TypeName], or null if it is not an array.  */
+  fun arrayComponent(): TypeName? {
+    return if (this is ParameterizedTypeName && rawType == ARRAY)
+      typeArguments.single() else
+      null
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
@@ -225,13 +232,6 @@ abstract class TypeName internal constructor(
             get(type.genericComponentType, map))
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
-    }
-
-    /** Returns the array component of this [TypeName], or null if it is not an array.  */
-    @JvmStatic fun TypeName.arrayComponent(): TypeName? {
-      return if (this is ParameterizedTypeName && rawType == ARRAY)
-        typeArguments.single() else
-        null
     }
   }
 }
