@@ -221,43 +221,36 @@ class FunSpec private constructor(builder: Builder) {
       }
     }
 
-    fun addKdoc(format: String, vararg args: Any): Builder {
+    fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
-      return this
     }
 
-    fun addKdoc(block: CodeBlock): Builder {
+    fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
-      return this
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
+    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       this.annotations += annotationSpecs
-      return this
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
       annotations += annotationSpec
-      return this
     }
 
-    fun addAnnotation(annotation: ClassName): Builder {
+    fun addAnnotation(annotation: ClassName) = apply {
       annotations += AnnotationSpec.builder(annotation).build()
-      return this
     }
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
-    fun addModifiers(vararg modifiers: KModifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
       this.modifiers += modifiers
-      return this
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>): Builder {
+    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
       this.modifiers += modifiers
-      return this
     }
 
     fun jvmModifiers(modifiers: Iterable<Modifier>) {
@@ -280,50 +273,44 @@ class FunSpec private constructor(builder: Builder) {
       this.modifiers += visibility
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder {
+    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
       check(!name.isAccessor) { "$name cannot have type variables" }
       this.typeVariables += typeVariables
-      return this
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName): Builder {
+    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
       check(!name.isAccessor) { "$name cannot have type variables" }
       typeVariables += typeVariable
-      return this
     }
 
-    fun receiver(receiverType: TypeName): Builder {
+    fun receiver(receiverType: TypeName) = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
-      return this
     }
 
     fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
 
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
-    fun returns(returnType: TypeName): Builder {
+    fun returns(returnType: TypeName) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
-      return this
     }
 
     fun returns(returnType: Type) = returns(returnType.asTypeName())
 
     fun returns(returnType: KClass<*>) = returns(returnType.asTypeName())
 
-    fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder {
+    fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
       for (parameterSpec in parameterSpecs) {
         addParameter(parameterSpec)
       }
-      return this
     }
 
-    fun addParameter(parameterSpec: ParameterSpec): Builder {
+    fun addParameter(parameterSpec: ParameterSpec) = apply {
       check(name != GETTER) { "$name cannot have parameters" }
       check(name != SETTER || parameters.size == 0) { "$name can have only one parameter" }
       parameters += parameterSpec
-      return this
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
@@ -335,83 +322,70 @@ class FunSpec private constructor(builder: Builder) {
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addParameter(name, type.asTypeName(), *modifiers)
 
-    @JvmOverloads fun varargs(varargs: Boolean = true): Builder {
+    @JvmOverloads fun varargs(varargs: Boolean = true) = apply {
       check(!name.isAccessor) { "$name cannot have varargs" }
       this.varargs = varargs
-      return this
     }
 
-    fun addExceptions(exceptions: Iterable<TypeName>): Builder {
+    fun addExceptions(exceptions: Iterable<TypeName>) = apply {
       this.exceptions += exceptions
-      return this
     }
 
-    fun addException(exception: TypeName): Builder {
+    fun addException(exception: TypeName) = apply {
       exceptions += exception
-      return this
     }
 
     fun addException(exception: Type) = addException(exception.asTypeName())
 
     fun addException(exception: KClass<*>) = addException(exception.asTypeName())
 
-    fun addCode(format: String, vararg args: Any): Builder {
+    fun addCode(format: String, vararg args: Any) = apply {
       code.add(format, *args)
-      return this
     }
 
-    fun addNamedCode(format: String, args: Map<String, *>): Builder {
+    fun addNamedCode(format: String, args: Map<String, *>) = apply {
       code.addNamed(format, args)
-      return this
     }
 
-    fun addCode(codeBlock: CodeBlock): Builder {
+    fun addCode(codeBlock: CodeBlock) = apply {
       code.add(codeBlock)
-      return this
     }
 
-    fun addComment(format: String, vararg args: Any): Builder {
+    fun addComment(format: String, vararg args: Any) = apply {
       code.add("// " + format + "\n", *args)
-      return this
     }
 
-    fun defaultValue(format: String, vararg args: Any): Builder {
-      return defaultValue(CodeBlock.of(format, *args))
-    }
+    fun defaultValue(format: String, vararg args: Any) =
+        defaultValue(CodeBlock.of(format, *args))
 
-    fun defaultValue(codeBlock: CodeBlock): Builder {
+    fun defaultValue(codeBlock: CodeBlock) = apply {
       check(!name.isAccessor && !name.isConstructor) { "$name cannot have a default value" }
       check(this.defaultValue == null) { "defaultValue was already set" }
       this.defaultValue = codeBlock
-      return this
     }
 
     /**
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      * * Shouldn't contain braces or newline characters.
      */
-    fun beginControlFlow(controlFlow: String, vararg args: Any): Builder {
+    fun beginControlFlow(controlFlow: String, vararg args: Any) = apply {
       code.beginControlFlow(controlFlow, *args)
-      return this
     }
 
     /**
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      * *     Shouldn't contain braces or newline characters.
      */
-    fun nextControlFlow(controlFlow: String, vararg args: Any): Builder {
+    fun nextControlFlow(controlFlow: String, vararg args: Any) = apply {
       code.nextControlFlow(controlFlow, *args)
-      return this
     }
 
-    fun endControlFlow(): Builder {
+    fun endControlFlow() = apply {
       code.endControlFlow()
-      return this
     }
 
-    fun addStatement(format: String, vararg args: Any): Builder {
+    fun addStatement(format: String, vararg args: Any) = apply {
       code.addStatement(format, *args)
-      return this
     }
 
     fun build() = FunSpec(this)

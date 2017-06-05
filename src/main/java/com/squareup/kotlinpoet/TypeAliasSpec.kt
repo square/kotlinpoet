@@ -70,7 +70,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
       require(SourceVersion.isName(name)) { "not a valid name: $name" }
     }
 
-    fun visibility(modifier: KModifier): Builder = apply {
+    fun visibility(modifier: KModifier) = apply {
       require(modifier == KModifier.PUBLIC || modifier == KModifier.INTERNAL
           || modifier == KModifier.PRIVATE) {
         "unexpected typealias modifier $modifier"

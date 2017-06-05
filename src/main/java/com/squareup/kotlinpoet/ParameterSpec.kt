@@ -84,51 +84,44 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     internal val modifiers = mutableListOf<KModifier>()
     internal var defaultValue: CodeBlock? = null
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder {
+    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       annotations += annotationSpecs
-      return this
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec): Builder {
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
       annotations += annotationSpec
-      return this
     }
 
-    fun addAnnotation(annotation: ClassName): Builder {
+    fun addAnnotation(annotation: ClassName) = apply {
       annotations += AnnotationSpec.builder(annotation).build()
-      return this
     }
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
-    fun addModifiers(vararg modifiers: KModifier): Builder {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
       this.modifiers += modifiers
-      return this
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>): Builder {
+    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
       this.modifiers += modifiers
-      return this
     }
 
-    fun jvmModifiers(modifiers: Iterable<Modifier>): Builder {
+    fun jvmModifiers(modifiers: Iterable<Modifier>) = apply {
       for (modifier in modifiers) {
         when (modifier) {
           Modifier.FINAL -> this.modifiers += KModifier.FINAL
           else -> throw IllegalArgumentException("unexpected parameter modifier $modifier")
         }
       }
-      return this
     }
 
     fun defaultValue(format: String, vararg args: Any?) = defaultValue(CodeBlock.of(format, *args))
 
-    fun defaultValue(codeBlock: CodeBlock): Builder {
+    fun defaultValue(codeBlock: CodeBlock) = apply {
       check(this.defaultValue == null) { "initializer was already set" }
       this.defaultValue = codeBlock
-      return this
     }
 
     fun build() = ParameterSpec(this)

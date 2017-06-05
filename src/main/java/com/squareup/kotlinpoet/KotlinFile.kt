@@ -194,32 +194,27 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       require(SourceVersion.isName(fileName)) { "not a valid file name: $fileName" }
     }
 
-    fun addFileComment(format: String, vararg args: Any): Builder {
+    fun addFileComment(format: String, vararg args: Any) = apply {
       this.fileComment.add(format, *args)
-      return this
     }
 
-    fun addType(typeSpec: TypeSpec): Builder {
+    fun addType(typeSpec: TypeSpec) = apply {
       members += typeSpec
-      return this
     }
 
-    fun addFun(funSpec: FunSpec): Builder {
+    fun addFun(funSpec: FunSpec) = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
         "cannot add ${funSpec.name} to file $fileName"
       }
       members += funSpec
-      return this
     }
 
-    fun addProperty(propertySpec: PropertySpec): Builder {
+    fun addProperty(propertySpec: PropertySpec) = apply {
       members += propertySpec
-      return this
     }
 
-    fun addTypeAlias(typeAliasSpec: TypeAliasSpec): Builder {
+    fun addTypeAlias(typeAliasSpec: TypeAliasSpec) = apply {
       members += typeAliasSpec
-      return this
     }
 
     fun addStaticImport(constant: Enum<*>)
@@ -232,12 +227,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     fun addStaticImport(clazz: KClass<*>, vararg names: String)
         = addStaticImport(clazz.asClassName(), *names)
 
-    fun addStaticImport(className: ClassName, vararg names: String): Builder {
+    fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
         memberImports += className.canonicalName + "." + name
       }
-      return this
     }
 
     /**
@@ -248,14 +242,12 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
      * imports are skipped, generated code in `com.example` that references `java.lang.String` will
      * get `com.example.String` instead.
      */
-    fun skipJavaLangImports(skipJavaLangImports: Boolean): Builder {
+    fun skipJavaLangImports(skipJavaLangImports: Boolean) = apply {
       this.skipJavaLangImports = skipJavaLangImports
-      return this
     }
 
-    fun indent(indent: String): Builder {
+    fun indent(indent: String) = apply {
       this.indent = indent
-      return this
     }
 
     fun build() = KotlinFile(this)

@@ -152,7 +152,7 @@ class CodeBlock private constructor(
      * format string containing `%clazz:T` and include the key `clazz` with value
      * `java.lang.Integer.class` in the argument map.
      */
-    fun addNamed(format: String, arguments: Map<String, *>): Builder {
+    fun addNamed(format: String, arguments: Map<String, *>) = apply {
       var p = 0
 
       for (argument in arguments.keys) {
@@ -194,8 +194,6 @@ class CodeBlock private constructor(
           p += 2
         }
       }
-
-      return this
     }
 
     /**
@@ -209,7 +207,7 @@ class CodeBlock private constructor(
      * Mixing relative and positional arguments in a call to add is invalid and will result in an
      * error.
      */
-    fun add(format: String, vararg args: Any?): Builder {
+    fun add(format: String, vararg args: Any?) = apply {
       var hasRelative = false
       var hasIndexed = false
 
@@ -284,7 +282,6 @@ class CodeBlock private constructor(
         val s = if (unused.size == 1) "" else "s"
         require(unused.isEmpty()) { "unused argument$s: ${unused.joinToString(", ")}" }
       }
-      return this
     }
 
     private fun addArgument(format: String, c: Char, arg: Any?) {
@@ -328,50 +325,43 @@ class CodeBlock private constructor(
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      *     Shouldn't contain braces or newline characters.
      */
-    fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder {
+    fun beginControlFlow(controlFlow: String, vararg args: Any?) = apply {
       add(controlFlow + " {\n", *args)
       indent()
-      return this
     }
 
     /**
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      *     Shouldn't contain braces or newline characters.
      */
-    fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder {
+    fun nextControlFlow(controlFlow: String, vararg args: Any?) = apply {
       unindent()
       add("} $controlFlow {\n", *args)
       indent()
-      return this
     }
 
-    fun endControlFlow(): Builder {
+    fun endControlFlow() = apply {
       unindent()
       add("}\n")
-      return this
     }
 
-    fun addStatement(format: String, vararg args: Any?): Builder {
+    fun addStatement(format: String, vararg args: Any?) = apply {
       add("%[")
       add(format, *args)
       add("\n%]")
-      return this
     }
 
-    fun add(codeBlock: CodeBlock): Builder {
+    fun add(codeBlock: CodeBlock) = apply {
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
-      return this
     }
 
-    fun indent(): Builder {
+    fun indent() = apply {
       formatParts += "%>"
-      return this
     }
 
-    fun unindent(): Builder {
+    fun unindent() = apply {
       formatParts += "%<"
-      return this
     }
 
     fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
