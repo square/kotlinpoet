@@ -19,7 +19,7 @@ import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
-import com.squareup.kotlinpoet.TypeName.Companion.arrayComponent
+import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import com.squareup.kotlinpoet.TypeVariableName.Companion.asTypeVariableName
 import java.io.IOException
@@ -44,7 +44,6 @@ class FunSpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
-  val varargs = builder.varargs
   val exceptions = builder.exceptions.toImmutableList()
   val code = builder.code.build()
   val defaultValue = builder.defaultValue
@@ -53,17 +52,9 @@ class FunSpec private constructor(builder: Builder) {
     require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
       "abstract function ${builder.name} cannot have code"
     }
-    require(!builder.varargs || lastParameterIsArray(builder.parameters)) {
-      "last parameter of varargs function ${builder.name} must be an array"
-    }
     require(name != SETTER || parameters.size == 1) {
       "$name must have exactly one parameter"
     }
-  }
-
-  private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
-    return parameters.isNotEmpty()
-        && parameters[parameters.size - 1].type.arrayComponent() != null
   }
 
   internal fun parameter(name: String): ParameterSpec? {
@@ -149,13 +140,9 @@ class FunSpec private constructor(builder: Builder) {
   @Throws(IOException::class)
   internal fun emitParameterList(codeWriter: CodeWriter) {
     codeWriter.emit("(")
-    var firstParameter = true
-    val i = parameters.iterator()
-    while (i.hasNext()) {
-      val parameter = i.next()
-      if (!firstParameter) codeWriter.emit(",").emitWrappingSpace()
-      parameter.emit(codeWriter, !i.hasNext() && varargs)
-      firstParameter = false
+    parameters.forEachIndexed { index, parameter ->
+      if (index > 0) codeWriter.emit(",").emitWrappingSpace()
+      parameter.emit(codeWriter)
     }
     codeWriter.emit(")")
   }
@@ -197,7 +184,6 @@ class FunSpec private constructor(builder: Builder) {
     builder.parameters += parameters
     builder.exceptions += exceptions
     builder.code.add(code)
-    builder.varargs = varargs
     builder.defaultValue = defaultValue
     return builder
   }
@@ -212,7 +198,6 @@ class FunSpec private constructor(builder: Builder) {
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
-    internal var varargs: Boolean = false
     internal var defaultValue: CodeBlock? = null
 
     init {
@@ -321,11 +306,6 @@ class FunSpec private constructor(builder: Builder) {
 
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addParameter(name, type.asTypeName(), *modifiers)
-
-    @JvmOverloads fun varargs(varargs: Boolean = true) = apply {
-      check(!name.isAccessor) { "$name cannot have varargs" }
-      this.varargs = varargs
-    }
 
     fun addExceptions(exceptions: Iterable<TypeName>) = apply {
       this.exceptions += exceptions
@@ -443,7 +423,12 @@ class FunSpec private constructor(builder: Builder) {
 
       funBuilder.returns(method.returnType.asTypeName())
       funBuilder.addParameters(ParameterSpec.parametersOf(method))
-      funBuilder.varargs(method.isVarArgs)
+      if (method.isVarArgs) {
+        funBuilder.parameters[funBuilder.parameters.lastIndex] = funBuilder.parameters.last()
+            .toBuilder()
+            .addModifiers(VARARG)
+            .build()
+      }
 
       for (thrownType in method.thrownTypes) {
         funBuilder.addException(thrownType.asTypeName())

@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Ignore
 import org.junit.Test
 import java.util.Collections
@@ -104,8 +105,7 @@ class KotlinFileTest {
                 .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
                 .build())
             .addFun(FunSpec.constructorBuilder()
-                .addParameter("states", ParameterizedTypeName.get(ARRAY, Thread.State::class.asClassName()))
-                .varargs(true)
+                .addParameter("states", Thread.State::class.asClassName(), VARARG)
                 .build())
             .build())
         .addStaticImport(Thread.State.BLOCKED)

@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
-import com.squareup.kotlinpoet.TypeName.Companion.arrayComponent
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
@@ -36,14 +35,10 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val defaultValue = builder.defaultValue
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, varargs: Boolean) {
+  internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    if (varargs) {
-      codeWriter.emitCode("vararg %L: %T", name, type.arrayComponent())
-    } else {
-      codeWriter.emitCode("%L: %T", name, type)
-    }
+    codeWriter.emitCode("%L: %T", name, type)
     if (defaultValue != null) {
       codeWriter.emitCode(" = %[%L%]", defaultValue)
     }
@@ -61,8 +56,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   override fun toString(): String {
     val out = StringWriter()
     try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, false)
+      emit(CodeWriter(out))
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()

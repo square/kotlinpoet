@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
@@ -1034,8 +1035,7 @@ class TypeSpecTest {
     val taqueria = TypeSpec.classBuilder("Taqueria")
         .addFun(FunSpec.builder("prepare")
             .addParameter("workers", Int::class)
-            .addParameter("jobs", ParameterizedTypeName.get(ARRAY, Runnable::class.asClassName()))
-            .varargs()
+            .addParameter("jobs", Runnable::class.asClassName(), VARARG)
             .build())
         .build()
     assertThat(toString(taqueria)).isEqualTo("""
@@ -1046,6 +1046,28 @@ class TypeSpecTest {
         |
         |class Taqueria {
         |  fun prepare(workers: Int, vararg jobs: Runnable) {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun varargsNotLast() {
+    val taqueria = TypeSpec.classBuilder("Taqueria")
+        .addFun(FunSpec.builder("prepare")
+            .addParameter("workers", Int::class)
+            .addParameter("jobs", Runnable::class.asClassName(), VARARG)
+            .addParameter("start", Boolean::class.asClassName())
+            .build())
+        .build()
+    assertThat(toString(taqueria)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.lang.Runnable
+        |import kotlin.Boolean
+        |import kotlin.Int
+        |
+        |class Taqueria {
+        |  fun prepare(workers: Int, vararg jobs: Runnable, start: Boolean) {
         |  }
         |}
         |""".trimMargin())

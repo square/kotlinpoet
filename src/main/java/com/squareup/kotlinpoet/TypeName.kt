@@ -226,13 +226,6 @@ abstract class TypeName internal constructor(
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
     }
-
-    /** Returns the array component of this [TypeName], or null if it is not an array.  */
-    internal fun TypeName.arrayComponent(): TypeName? {
-      return if (this is ParameterizedTypeName && rawType == ARRAY)
-        typeArguments.single() else
-        null
-    }
   }
 }
 
