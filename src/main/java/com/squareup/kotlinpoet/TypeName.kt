@@ -227,10 +227,10 @@ abstract class TypeName internal constructor(
       }
     }
 
-    /** Returns the array component of `type`, or null if `type` is not an array.  */
-    @JvmStatic fun arrayComponent(type: TypeName): TypeName? {
-      return if (type is ParameterizedTypeName && type.rawType == ARRAY)
-        type.typeArguments.single() else
+    /** Returns the array component of this [TypeName], or null if it is not an array.  */
+    @JvmStatic fun TypeName.arrayComponent(): TypeName? {
+      return if (this is ParameterizedTypeName && rawType == ARRAY)
+        typeArguments.single() else
         null
     }
   }

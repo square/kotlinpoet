@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.TypeName.Companion.arrayComponent
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import com.squareup.kotlinpoet.TypeVariableName.Companion.asTypeVariableName
 import java.io.IOException
@@ -62,7 +63,7 @@ class FunSpec private constructor(builder: Builder) {
 
   private fun lastParameterIsArray(parameters: List<ParameterSpec>): Boolean {
     return parameters.isNotEmpty()
-        && TypeName.arrayComponent(parameters[parameters.size - 1].type) != null
+        && parameters[parameters.size - 1].type.arrayComponent() != null
   }
 
   internal fun parameter(name: String): ParameterSpec? {
