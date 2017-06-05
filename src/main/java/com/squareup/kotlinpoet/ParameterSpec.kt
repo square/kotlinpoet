@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.arrayComponent
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
@@ -39,7 +40,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     if (varargs) {
-      codeWriter.emitCode("vararg %L: %T", name, TypeName.arrayComponent(type))
+      codeWriter.emitCode("vararg %L: %T", name, type.arrayComponent())
     } else {
       codeWriter.emitCode("%L: %T", name, type)
     }
