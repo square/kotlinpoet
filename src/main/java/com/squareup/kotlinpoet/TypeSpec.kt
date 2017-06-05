@@ -105,7 +105,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
             } else {
-              param.emit(codeWriter, index == it.parameters.lastIndex && primaryConstructor.varargs)
+              param.emit(codeWriter)
             }
           }
           codeWriter.emit(")")
