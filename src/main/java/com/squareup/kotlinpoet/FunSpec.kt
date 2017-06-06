@@ -46,7 +46,6 @@ class FunSpec private constructor(builder: Builder) {
   val parameters = builder.parameters.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
   val code = builder.code.build()
-  val defaultValue = builder.defaultValue
 
   init {
     require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
@@ -99,11 +98,6 @@ class FunSpec private constructor(builder: Builder) {
 
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
-    }
-
-    if (defaultValue != null && !defaultValue.isEmpty()) {
-      codeWriter.emit(" default ")
-      codeWriter.emitCode(defaultValue)
     }
 
     if (exceptions.isNotEmpty()) {
@@ -184,7 +178,6 @@ class FunSpec private constructor(builder: Builder) {
     builder.parameters += parameters
     builder.exceptions += exceptions
     builder.code.add(code)
-    builder.defaultValue = defaultValue
     return builder
   }
 
@@ -198,7 +191,6 @@ class FunSpec private constructor(builder: Builder) {
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
-    internal var defaultValue: CodeBlock? = null
 
     init {
       require(name.isConstructor || name.isAccessor || SourceVersion.isName(name)) {
@@ -333,15 +325,6 @@ class FunSpec private constructor(builder: Builder) {
 
     fun addComment(format: String, vararg args: Any) = apply {
       code.add("// " + format + "\n", *args)
-    }
-
-    fun defaultValue(format: String, vararg args: Any) =
-        defaultValue(CodeBlock.of(format, *args))
-
-    fun defaultValue(codeBlock: CodeBlock) = apply {
-      check(!name.isAccessor && !name.isConstructor) { "$name cannot have a default value" }
-      check(this.defaultValue == null) { "defaultValue was already set" }
-      this.defaultValue = codeBlock
     }
 
     /**

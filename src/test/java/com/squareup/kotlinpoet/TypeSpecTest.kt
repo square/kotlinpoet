@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
@@ -760,11 +761,13 @@ class TypeSpecTest {
   @Test fun annotation() {
     val annotation = TypeSpec.annotationBuilder("MyAnnotation")
         .addModifiers(KModifier.PUBLIC)
-        .addFun(FunSpec.builder("test")
-            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-            .defaultValue("%L", 0)
-            .returns(Int::class)
-            .build())
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter(ParameterSpec.builder("test", Int::class)
+                    .build())
+                .build())
+            .addProperty(PropertySpec.builder("test", Int::class)
+                    .initializer("test")
+                .build())
         .build()
 
     assertThat(toString(annotation)).isEqualTo("""
@@ -772,18 +775,18 @@ class TypeSpecTest {
         |
         |import kotlin.Int
         |
-        |annotation class MyAnnotation {
-        |  fun test(): Int default 0
-        |}
+        |annotation class MyAnnotation(val test: Int)
         |""".trimMargin())
   }
 
-  @Test fun innerAnnotationInAnnotationDeclaration() {
+  @Ignore @Test fun innerAnnotationInAnnotationDeclaration() {
     val bar = TypeSpec.annotationBuilder("Bar")
-        .addFun(FunSpec.builder("value")
-            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-            .defaultValue("@%T", java.lang.Deprecated::class)
-            .returns(java.lang.Deprecated::class)
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("value", java.lang.Deprecated::class)
+                .build())
+            .build())
+        .addProperty(PropertySpec.builder("value", java.lang.Deprecated::class)
+            .initializer("value")
             .build())
         .build()
 
@@ -798,15 +801,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun annotationForbidsProperties() {
-    try {
-      TypeSpec.annotationBuilder("Taco")
-          .addProperty("v", Int::class)
-      fail()
-    } catch (expected: IllegalStateException) {
-    }
-  }
-
   @Test fun interfaceForbidsProperties() {
     try {
       TypeSpec.interfaceBuilder("Taco")
@@ -814,21 +808,6 @@ class TypeSpecTest {
       fail()
     } catch (expected: IllegalStateException) {
     }
-  }
-
-  @Test fun classCannotHaveDefaultValueForFunction() {
-    try {
-      TypeSpec.classBuilder("Tacos")
-          .addFun(FunSpec.builder("test")
-              .addModifiers(KModifier.PUBLIC)
-              .defaultValue("0")
-              .returns(Int::class)
-              .build())
-          .build()
-      fail()
-    } catch (expected: IllegalStateException) {
-    }
-
   }
 
   @Test fun referencedAndDeclaredSimpleNamesConflict() {
@@ -1426,8 +1405,7 @@ class TypeSpecTest {
     val type = TypeSpec.annotationBuilder("Taco")
         .build()
     assertThat(type.toString()).isEqualTo("""
-        |annotation class Taco {
-        |}
+        |annotation class Taco
         |""".trimMargin())
   }
 
