@@ -13,9 +13,7 @@ the need to write boilerplate while also keeping a single source of truth for th
 Here's a `HelloWorld` class:
 
 ```kotlin
-class Greeter(name: String) {
-  val name: String = name
-
+class Greeter(val name: String) {
   fun greet() {
     println("Hello, $name")
   }
@@ -29,7 +27,7 @@ fun main(args: Array<String>) {
 And this is the code to generate it with KotlinPoet:
 
 ```java
-val greeterClass = ClassName.get("", "Greeter")
+val greeterClass = ClassName("", "Greeter")
 val kotlinFile = KotlinFile.builder("", "HelloWorld")
     .addType(TypeSpec.classBuilder("Greeter")
         .primaryConstructor(FunSpec.constructorBuilder()
@@ -43,7 +41,7 @@ val kotlinFile = KotlinFile.builder("", "HelloWorld")
             .build())
         .build())
     .addFun(FunSpec.builder("main")
-        .addParameter("args", TypeName.get(Array<String>::class))
+        .addParameter("args", ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
         .addStatement("%T(args[0]).greet()", greeterClass)
         .build())
     .build()
