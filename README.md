@@ -19,7 +19,7 @@ class Greeter(val name: String) {
   }
 }
 
-fun main(args: Array<String>) {
+fun main(vararg args: String) {
   Greeter(args[0]).greet()
 }
 ```
@@ -41,7 +41,7 @@ val kotlinFile = KotlinFile.builder("", "HelloWorld")
             .build())
         .build())
     .addFun(FunSpec.builder("main")
-        .addParameter("args", ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
+        .addParameter("args", String::class, VARARG)
         .addStatement("%T(args[0]).greet()", greeterClass)
         .build())
     .build()
