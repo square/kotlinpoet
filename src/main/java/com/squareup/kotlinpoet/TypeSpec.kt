@@ -125,7 +125,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(if (i == 0) " :" else ",")
           codeWriter.emitCode(" %T", typeName)
         }
-        codeWriter.emit(" {\n")
+        if (kind != Kind.ANNOTATION) {
+          codeWriter.emit(" {\n")
+        }
       }
 
       codeWriter.pushType(this)
@@ -202,7 +204,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       codeWriter.unindent()
       codeWriter.popType()
 
-      codeWriter.emit("}")
+      if (kind != Kind.ANNOTATION) {
+        codeWriter.emit("}")
+      }
       if (enumName == null && anonymousTypeArguments == null) {
         codeWriter.emit("\n") // If this type isn't also a value, include a trailing newline.
       }
@@ -349,9 +353,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind == Kind.CLASS || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      check(kind == Kind.CLASS || kind == Kind.ENUM || kind == Kind.ANNOTATION) {
+        "$kind can't have initializer blocks"
+      }
       if (primaryConstructor != null) {
-        require (primaryConstructor.isConstructor) {
+        require(primaryConstructor.isConstructor) {
           "expected a constructor but was ${primaryConstructor.name}"
         }
       }
@@ -399,7 +405,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      check(kind == Kind.CLASS || kind == Kind.ENUM) {
+      check(kind == Kind.CLASS || kind == Kind.ENUM || kind == Kind.ANNOTATION) {
         "cannot add property $propertySpec to $kind"
       }
       propertySpecs += propertySpec
@@ -434,10 +440,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else if (kind == Kind.ANNOTATION) {
         check(funSpec.modifiers == kind.implicitFunctionModifiers) {
             "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}" }
-      }
-      if (kind != Kind.ANNOTATION) {
-        check(funSpec.defaultValue == null) {
-          "$kind $name.${funSpec.name} cannot have a default value" }
       }
       funSpecs += funSpec
     }
