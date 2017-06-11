@@ -474,26 +474,26 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
         .addFun(FunSpec.builder("throwOne")
-            .addAnnotation(AnnotationSpec.throwsBuilder()
-                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .addFun(FunSpec.builder("throwTwo")
-            .addAnnotation(AnnotationSpec.throwsBuilder()
-                .addMember("exceptionClasses", "*arrayOf(%T::class, %T::class)",
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class, %T::class",
                     IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
                 .build())
             .build())
         .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
-            .addAnnotation(AnnotationSpec.throwsBuilder()
-                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .addFun(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
-            .addAnnotation(AnnotationSpec.throwsBuilder()
-                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .build()
@@ -504,30 +504,21 @@ class TypeSpecTest {
         |import kotlin.jvm.Throws
         |
         |abstract class Taco {
-        |  @Throws(
-        |      exceptionClasses = IOException::class
-        |  )
+        |  @Throws(IOException::class)
         |  fun throwOne() {
         |  }
         |
-        |  @Throws(
-        |      exceptionClasses = *arrayOf(IOException::class, SourCreamException::class)
-        |  )
+        |  @Throws(IOException::class, SourCreamException::class)
         |  fun throwTwo() {
         |  }
         |
-        |  @Throws(
-        |      exceptionClasses = IOException::class
-        |  )
+        |  @Throws(IOException::class)
         |  abstract fun abstractThrow()
         |
-        |  @Throws(
-        |      exceptionClasses = IOException::class
-        |  )
+        |  @Throws(IOException::class)
         |  external fun nativeThrow()
         |}
         |""".trimMargin())
-
   }
 
   @Test fun typeVariables() {
