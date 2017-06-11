@@ -235,5 +235,9 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     @JvmStatic fun builder(type: KClass<*>): Builder {
       return builder(type.asClassName())
     }
+
+    @JvmStatic fun throwsBuilder(): Builder {
+      return builder(Throws::class)
+    }
   }
 }

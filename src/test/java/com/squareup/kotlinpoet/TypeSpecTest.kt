@@ -474,30 +474,56 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
         .addFun(FunSpec.builder("throwOne")
+            .addAnnotation(AnnotationSpec.throwsBuilder()
+                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .addFun(FunSpec.builder("throwTwo")
+            .addAnnotation(AnnotationSpec.throwsBuilder()
+                .addMember("exceptionClasses", "*arrayOf(%T::class, %T::class)",
+                    IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
+                .build())
             .build())
         .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
+            .addAnnotation(AnnotationSpec.throwsBuilder()
+                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .addFun(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
+            .addAnnotation(AnnotationSpec.throwsBuilder()
+                .addMember("exceptionClasses", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import java.io.IOException
+        |import kotlin.jvm.Throws
         |
         |abstract class Taco {
+        |  @Throws(
+        |      exceptionClasses = IOException::class
+        |  )
         |  fun throwOne() {
         |  }
         |
+        |  @Throws(
+        |      exceptionClasses = *arrayOf(IOException::class, SourCreamException::class)
+        |  )
         |  fun throwTwo() {
         |  }
         |
+        |  @Throws(
+        |      exceptionClasses = IOException::class
+        |  )
         |  abstract fun abstractThrow()
         |
+        |  @Throws(
+        |      exceptionClasses = IOException::class
+        |  )
         |  external fun nativeThrow()
         |}
         |""".trimMargin())
