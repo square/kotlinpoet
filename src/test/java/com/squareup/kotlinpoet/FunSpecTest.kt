@@ -281,19 +281,5 @@ class FunSpecTest {
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
 
-  @Test fun duplicateExceptionsIgnored() {
-    val ioException = IOException::class.asClassName()
-    val timeoutException = TimeoutException::class.asClassName()
-    val funSpec = FunSpec.builder("duplicateExceptions")
-        .addException(ioException)
-        .addException(timeoutException)
-        .addException(timeoutException)
-        .addException(ioException)
-        .build()
-    assertThat(funSpec.exceptions).isEqualTo(Arrays.asList(ioException, timeoutException))
-    assertThat(funSpec.toBuilder().addException(ioException).build().exceptions)
-        .isEqualTo(Arrays.asList(ioException, timeoutException))
-  }
-
   private fun whenMock(any: Any?) = Mockito.`when`(any)
 }

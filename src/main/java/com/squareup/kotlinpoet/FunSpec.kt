@@ -299,18 +299,6 @@ class FunSpec private constructor(builder: Builder) {
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addParameter(name, type.asTypeName(), *modifiers)
 
-    fun addExceptions(exceptions: Iterable<TypeName>) = apply {
-      this.exceptions += exceptions
-    }
-
-    fun addException(exception: TypeName) = apply {
-      exceptions += exception
-    }
-
-    fun addException(exception: Type) = addException(exception.asTypeName())
-
-    fun addException(exception: KClass<*>) = addException(exception.asTypeName())
-
     fun addCode(format: String, vararg args: Any) = apply {
       code.add(format, *args)
     }
@@ -411,10 +399,6 @@ class FunSpec private constructor(builder: Builder) {
             .toBuilder()
             .addModifiers(VARARG)
             .build()
-      }
-
-      for (thrownType in method.thrownTypes) {
-        funBuilder.addException(thrownType.asTypeName())
       }
 
       return funBuilder

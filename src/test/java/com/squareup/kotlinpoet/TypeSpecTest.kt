@@ -474,19 +474,14 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
         .addFun(FunSpec.builder("throwOne")
-            .addException(IOException::class)
             .build())
         .addFun(FunSpec.builder("throwTwo")
-            .addException(IOException::class)
-            .addException(ClassName(tacosPackage, "SourCreamException"))
             .build())
         .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
-            .addException(IOException::class)
             .build())
         .addFun(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
-            .addException(IOException::class)
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -495,17 +490,18 @@ class TypeSpecTest {
         |import java.io.IOException
         |
         |abstract class Taco {
-        |  fun throwOne() throws IOException {
+        |  fun throwOne() {
         |  }
         |
-        |  fun throwTwo() throws IOException, SourCreamException {
+        |  fun throwTwo() {
         |  }
         |
-        |  abstract fun abstractThrow() throws IOException
+        |  abstract fun abstractThrow()
         |
-        |  external fun nativeThrow() throws IOException
+        |  external fun nativeThrow()
         |}
         |""".trimMargin())
+
   }
 
   @Test fun typeVariables() {
