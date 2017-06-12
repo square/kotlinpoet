@@ -99,6 +99,26 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitWhereBlock(typeVariables)
 
         primaryConstructor?.let {
+          var useKeyword = false
+          var emittedAnnotations = false
+
+          if (it.annotations.isNotEmpty()) {
+            codeWriter.emit(" ")
+            codeWriter.emitAnnotations(it.annotations, true)
+            useKeyword = true
+            emittedAnnotations = true
+          }
+
+          if (it.modifiers.isNotEmpty()) {
+            if (!emittedAnnotations) codeWriter.emit(" ")
+            codeWriter.emitModifiers(it.modifiers)
+            useKeyword = true
+          }
+
+          if (useKeyword) {
+            codeWriter.emit("constructor")
+          }
+
           codeWriter.emit("(")
           it.parameters.forEachIndexed { index, param ->
             if (index > 0) codeWriter.emit(",").emitWrappingSpace()
