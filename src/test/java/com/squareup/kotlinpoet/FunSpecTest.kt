@@ -87,9 +87,9 @@ class FunSpecTest {
     val methodElement = getOnlyElement(methodsIn(classElement.enclosedElements))
     val funSpec = FunSpec.overriding(methodElement).build()
     assertThat(funSpec.toString()).isEqualTo("""
+        |@kotlin.jvm.Throws(java.io.IOException::class, java.lang.SecurityException::class)
         |protected override fun <T : java.lang.Runnable & java.io.Closeable> everything(arg0: java.lang.String,
-        |    arg1: java.util.List<out T>): java.lang.Runnable throws java.io.IOException,
-        |    java.lang.SecurityException {
+        |    arg1: java.util.List<out T>): java.lang.Runnable {
         |}
         |""".trimMargin())
   }
@@ -111,7 +111,8 @@ class FunSpecTest {
     var exec = findFirst(methods, "call")
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
-        |override fun call(): java.lang.Integer throws java.lang.Exception {
+        |@kotlin.jvm.Throws(java.lang.Exception::class)
+        |override fun call(): java.lang.Integer {
         |}
         |""".trimMargin())
     exec = findFirst(methods, "compareTo")
