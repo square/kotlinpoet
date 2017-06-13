@@ -474,36 +474,49 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
         .addFun(FunSpec.builder("throwOne")
-            .addException(IOException::class)
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .addFun(FunSpec.builder("throwTwo")
-            .addException(IOException::class)
-            .addException(ClassName(tacosPackage, "SourCreamException"))
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class, %T::class",
+                    IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
+                .build())
             .build())
         .addFun(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
-            .addException(IOException::class)
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .addFun(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
-            .addException(IOException::class)
+            .addAnnotation(AnnotationSpec.builder(Throws::class)
+                .addMember("value", "%T::class", IOException::class.asClassName())
+                .build())
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import java.io.IOException
+        |import kotlin.jvm.Throws
         |
         |abstract class Taco {
-        |  fun throwOne() throws IOException {
+        |  @Throws(IOException::class)
+        |  fun throwOne() {
         |  }
         |
-        |  fun throwTwo() throws IOException, SourCreamException {
+        |  @Throws(IOException::class, SourCreamException::class)
+        |  fun throwTwo() {
         |  }
         |
-        |  abstract fun abstractThrow() throws IOException
+        |  @Throws(IOException::class)
+        |  abstract fun abstractThrow()
         |
-        |  external fun nativeThrow() throws IOException
+        |  @Throws(IOException::class)
+        |  external fun nativeThrow()
         |}
         |""".trimMargin())
   }

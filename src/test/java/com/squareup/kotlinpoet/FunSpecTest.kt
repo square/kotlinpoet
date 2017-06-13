@@ -87,9 +87,9 @@ class FunSpecTest {
     val methodElement = getOnlyElement(methodsIn(classElement.enclosedElements))
     val funSpec = FunSpec.overriding(methodElement).build()
     assertThat(funSpec.toString()).isEqualTo("""
+        |@kotlin.jvm.Throws(java.io.IOException::class, java.lang.SecurityException::class)
         |protected override fun <T : java.lang.Runnable & java.io.Closeable> everything(arg0: java.lang.String,
-        |    arg1: java.util.List<out T>): java.lang.Runnable throws java.io.IOException,
-        |    java.lang.SecurityException {
+        |    arg1: java.util.List<out T>): java.lang.Runnable {
         |}
         |""".trimMargin())
   }
@@ -111,7 +111,8 @@ class FunSpecTest {
     var exec = findFirst(methods, "call")
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
-        |override fun call(): java.lang.Integer throws java.lang.Exception {
+        |@kotlin.jvm.Throws(java.lang.Exception::class)
+        |override fun call(): java.lang.Integer {
         |}
         |""".trimMargin())
     exec = findFirst(methods, "compareTo")
@@ -279,20 +280,6 @@ class FunSpecTest {
     b = FunSpec.overriding(methodElement).build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
-  }
-
-  @Test fun duplicateExceptionsIgnored() {
-    val ioException = IOException::class.asClassName()
-    val timeoutException = TimeoutException::class.asClassName()
-    val funSpec = FunSpec.builder("duplicateExceptions")
-        .addException(ioException)
-        .addException(timeoutException)
-        .addException(timeoutException)
-        .addException(ioException)
-        .build()
-    assertThat(funSpec.exceptions).isEqualTo(Arrays.asList(ioException, timeoutException))
-    assertThat(funSpec.toBuilder().addException(ioException).build().exceptions)
-        .isEqualTo(Arrays.asList(ioException, timeoutException))
   }
 
   private fun whenMock(any: Any?) = Mockito.`when`(any)
