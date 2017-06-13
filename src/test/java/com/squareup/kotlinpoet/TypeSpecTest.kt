@@ -814,13 +814,20 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun interfaceForbidsProperties() {
-    try {
-      TypeSpec.interfaceBuilder("Taco")
-          .addProperty("v", Int::class)
-      fail()
-    } catch (expected: IllegalStateException) {
-    }
+  @Test fun interfaceWithProperties() {
+    val taco = TypeSpec.interfaceBuilder("Taco")
+            .addProperty("v", Int::class)
+            .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |interface Taco {
+        |  val v: Int
+        |}
+        |""".trimMargin())
   }
 
   @Test fun referencedAndDeclaredSimpleNamesConflict() {
@@ -2092,6 +2099,7 @@ class TypeSpecTest {
   @Test fun objectType() {
     val type = TypeSpec.objectBuilder("MyObject")
         .addModifiers(KModifier.PUBLIC)
+        .addProperty("tacos", Int::class)
         .addInitializerBlock(CodeBlock.builder().build())
         .addFun(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC)
@@ -2101,7 +2109,11 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Int
+        |
         |object MyObject {
+        |  val tacos: Int
+        |
         |  init {
         |  }
         |
@@ -2139,6 +2151,9 @@ class TypeSpecTest {
 
   @Test fun companionObject() {
     val companion = TypeSpec.companionObjectBuilder()
+        .addProperty(PropertySpec.builder("tacos", Int::class)
+                .initializer("%L", 42)
+                .build())
         .addFun(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC)
             .build())
@@ -2152,8 +2167,12 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Int
+        |
         |class MyClass {
         |  companion object {
+        |    val tacos: Int = 42
+        |
         |    fun test() {
         |    }
         |  }

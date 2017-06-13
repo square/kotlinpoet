@@ -405,9 +405,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      check(kind == Kind.CLASS || kind == Kind.ENUM || kind == Kind.ANNOTATION) {
-        "cannot add property $propertySpec to $kind"
-      }
       propertySpecs += propertySpec
     }
 
