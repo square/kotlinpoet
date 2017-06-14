@@ -613,7 +613,7 @@ class TypeSpecTest {
         |import java.util.AbstractSet
         |import kotlin.Comparable
         |
-        |abstract class Taco : AbstractSet<Food>, Serializable, Comparable<Taco> {
+        |abstract class Taco : AbstractSet<Food>(), Serializable, Comparable<Taco> {
         |}
         |""".trimMargin())
   }
@@ -632,7 +632,7 @@ class TypeSpecTest {
         |
         |import kotlin.Comparable
         |
-        |class Taco : org.fish.taco.Taco, Comparable<Taco>, com.taco.bell.Taco {
+        |class Taco : org.fish.taco.Taco(), Comparable<Taco>, com.taco.bell.Taco {
         |}
         |""".trimMargin())
   }
@@ -654,7 +654,7 @@ class TypeSpecTest {
         |
         |import java.util.concurrent.Callable
         |
-        |class Outer : Callable<Outer.Inner> {
+        |class Outer : Callable<Outer.Inner>() {
         |  inner class Inner {
         |  }
         |}
@@ -2139,7 +2139,7 @@ class TypeSpecTest {
         |
         |import com.squareup.wire.Message
         |
-        |object MyObject : Message {
+        |object MyObject : Message() {
         |  init {
         |  }
         |
@@ -2275,7 +2275,7 @@ class TypeSpecTest {
         |import com.squareup.wire.Message
         |
         |class MyClass {
-        |  companion object : Message {
+        |  companion object : Message() {
         |    fun test() {
         |    }
         |  }

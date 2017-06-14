@@ -113,6 +113,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         val extendsTypes: List<TypeName>
         val implementsTypes: List<TypeName>
+
         if (kind == Kind.INTERFACE) {
           extendsTypes = superinterfaces
           implementsTypes = emptyList()
@@ -121,10 +122,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           implementsTypes = superinterfaces
         }
 
-        (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
-          codeWriter.emit(if (i == 0) " :" else ",")
-          codeWriter.emitCode(" %T", typeName)
+        val extendsTypesInitializer = if (kind == Kind.INTERFACE) "" else "()"
+        var separatorCount = 0
+
+        extendsTypes.forEach {
+          codeWriter.emit(if (separatorCount++ == 0) " :" else ",")
+          codeWriter.emitCode(" %T$extendsTypesInitializer", it)
         }
+
+        implementsTypes.forEach {
+          codeWriter.emit(if (separatorCount++ == 0) " :" else ",")
+          codeWriter.emitCode(" %T", it)
+        }
+
         if (kind != Kind.ANNOTATION) {
           codeWriter.emit(" {\n")
         }

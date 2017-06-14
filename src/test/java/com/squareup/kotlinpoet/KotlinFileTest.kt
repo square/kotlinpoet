@@ -472,8 +472,8 @@ class KotlinFileTest {
         |
         |import com.squareup.wire.Message
         |
-        |class Taco : Message {
-        |  class Builder : Message.Builder {
+        |class Taco : Message() {
+        |  class Builder : Message.Builder() {
         |  }
         |}
         |""".trimMargin())
