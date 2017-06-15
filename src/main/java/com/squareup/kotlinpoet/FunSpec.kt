@@ -77,10 +77,39 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     if (typeVariables.isNotEmpty()) {
-      codeWriter.emitTypeVariables(typeVariables)
-      codeWriter.emit(" ")
+      codeWriter.emitTypeVariables(typeVariables) {
+        codeWriter.emit(" ")
+        emitSignature(codeWriter, enclosingName)
+      }
+    } else {
+      emitSignature(codeWriter, enclosingName)
     }
 
+    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
+      codeWriter.emit("\n")
+      return
+    }
+
+    val asExpressionBody = code.withoutPrefix(EXPRESSION_BODY_PREFIX)
+
+    if (asExpressionBody != null) {
+      codeWriter.indent()
+      codeWriter.emitCode(" =%W%[")
+      codeWriter.emitCode(asExpressionBody)
+      codeWriter.unindent()
+    } else {
+      codeWriter.emit(" {\n")
+      codeWriter.indent()
+      codeWriter.emitCode(code)
+      codeWriter.unindent()
+      codeWriter.emit("}\n")
+    }
+  }
+
+  @Throws(IOException::class)
+  internal fun emitSignature(
+      codeWriter: CodeWriter,
+      enclosingName: String?) {
     if (isConstructor) {
       codeWriter.emitCode("constructor", enclosingName)
     } else if (name == GETTER) {
@@ -108,26 +137,6 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter.emitWrappingSpace().emitCode("%T", exception)
         firstException = false
       }
-    }
-
-    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
-      codeWriter.emit("\n")
-      return
-    }
-
-    val asExpressionBody = code.withoutPrefix(EXPRESSION_BODY_PREFIX)
-
-    if (asExpressionBody != null) {
-      codeWriter.indent()
-      codeWriter.emitCode(" =%W%[")
-      codeWriter.emitCode(asExpressionBody)
-      codeWriter.unindent()
-    } else {
-      codeWriter.emit(" {\n")
-      codeWriter.indent()
-      codeWriter.emitCode(code)
-      codeWriter.unindent()
-      codeWriter.emit("}\n")
     }
   }
 
