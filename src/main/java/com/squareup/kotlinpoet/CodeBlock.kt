@@ -380,6 +380,7 @@ class CodeBlock private constructor(
   }
 }
 
+@JvmOverloads
 fun Iterable<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
                                    suffix: CharSequence = "" ): CodeBlock {
   val builder = StringBuilder()
