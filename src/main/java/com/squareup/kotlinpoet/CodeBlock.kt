@@ -383,4 +383,4 @@ class CodeBlock private constructor(
 @JvmOverloads
 fun Iterable<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
                                    suffix: CharSequence = "" ) =
-    CodeBlock.of(map { it.toString() }.joinToString(separator, prefix, suffix))
+    CodeBlock.of(joinToString(separator, prefix, suffix))
