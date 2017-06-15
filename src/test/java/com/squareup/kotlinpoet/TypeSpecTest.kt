@@ -315,8 +315,7 @@ class TypeSpecTest {
         |    hey = 12,
         |    hello = "goodbye"
         |)
-        |class Foo {
-        |}
+        |class Foo
         |""".trimMargin())
   }
 
@@ -613,8 +612,7 @@ class TypeSpecTest {
         |import java.util.AbstractSet
         |import kotlin.Comparable
         |
-        |abstract class Taco : AbstractSet<Food>, Serializable, Comparable<Taco> {
-        |}
+        |abstract class Taco : AbstractSet<Food>, Serializable, Comparable<Taco>
         |""".trimMargin())
   }
 
@@ -632,8 +630,7 @@ class TypeSpecTest {
         |
         |import kotlin.Comparable
         |
-        |class Taco : org.fish.taco.Taco, Comparable<Taco>, com.taco.bell.Taco {
-        |}
+        |class Taco : org.fish.taco.Taco, Comparable<Taco>, com.taco.bell.Taco
         |""".trimMargin())
   }
 
@@ -655,8 +652,7 @@ class TypeSpecTest {
         |import java.util.concurrent.Callable
         |
         |class Outer : Callable<Outer.Inner> {
-        |  inner class Inner {
-        |  }
+        |  inner class Inner
         |}
         |""".trimMargin())
   }
@@ -694,8 +690,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import kotlin.Comparable
         |
-        |interface Taco : Serializable, Comparable<Taco> {
-        |}
+        |interface Taco : Serializable, Comparable<Taco>
         |""".trimMargin())
   }
 
@@ -1025,8 +1020,7 @@ class TypeSpecTest {
         |        @Option(name = "quesadilla", meat = Chicken::class)
         |    }
         |)
-        |class Menu {
-        |}
+        |class Menu
         |""".trimMargin())
   }
 
@@ -1231,11 +1225,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  class Meat {
-        |  }
+        |  class Meat
         |
-        |  interface Tortilla {
-        |  }
+        |  interface Tortilla
         |
         |  enum class Topping {
         |    SALSA
@@ -1293,11 +1285,9 @@ class TypeSpecTest {
         |  fun Q() {
         |  }
         |
-        |  class Z {
-        |  }
+        |  class Z
         |
-        |  class Y {
-        |  }
+        |  class Y
         |}
         |""".trimMargin())
   }
@@ -1394,8 +1384,7 @@ class TypeSpecTest {
     val type = TypeSpec.classBuilder("Taco")
         .build()
     assertThat(type.toString()).isEqualTo(""
-        + "class Taco {\n"
-        + "}\n")
+        + "class Taco\n")
   }
 
   @Test fun anonymousClassToString() {
@@ -1416,8 +1405,7 @@ class TypeSpecTest {
     val type = TypeSpec.interfaceBuilder("Taco")
         .build()
     assertThat(type.toString()).isEqualTo("""
-        |interface Taco {
-        |}
+        |interface Taco
         |""".trimMargin())
   }
 
@@ -1583,8 +1571,7 @@ class TypeSpecTest {
         |
         |@SuppressWarnings("unchecked")
         |@Deprecated
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -1651,8 +1638,7 @@ class TypeSpecTest {
         |import java.io.Serializable
         |import java.util.EventListener
         |
-        |class Taco : Serializable, EventListener {
-        |}
+        |class Taco : Serializable, EventListener
         |""".trimMargin())
   }
 
@@ -1667,8 +1653,7 @@ class TypeSpecTest {
         |
         |import kotlin.Number
         |
-        |class Location<T, P : Number> {
-        |}
+        |class Location<T, P : Number>
         |""".trimMargin())
   }
 
@@ -1682,11 +1667,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  class Topping {
-        |  }
+        |  class Topping
         |
-        |  class Sauce {
-        |  }
+        |  class Sauce
         |}
         |""".trimMargin())
   }
