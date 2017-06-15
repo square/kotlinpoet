@@ -262,8 +262,7 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -366,8 +365,7 @@ class KotlinFileTest {
         |
         |class A {
         |  class B {
-        |    class Twin {
-        |    }
+        |    class Twin
         |
         |    class C {
         |      val d: A.Twin.D
@@ -375,8 +373,7 @@ class KotlinFileTest {
         |  }
         |
         |  class Twin {
-        |    class D {
-        |    }
+        |    class D
         |  }
         |}
         |""".trimMargin())
@@ -405,14 +402,12 @@ class KotlinFileTest {
         |    class C {
         |      val d: A.Twin.D
         |
-        |      class Twin {
-        |      }
+        |      class Twin
         |    }
         |  }
         |
         |  class Twin {
-        |    class D {
-        |    }
+        |    class D
         |  }
         |}
         |""".trimMargin())
@@ -444,15 +439,13 @@ class KotlinFileTest {
         |      val d: Twin.D
         |
         |      class Nested {
-        |        class Twin {
-        |        }
+        |        class Twin
         |      }
         |    }
         |  }
         |
         |  class Twin {
-        |    class D {
-        |    }
+        |    class D
         |  }
         |}
         |""".trimMargin())
@@ -473,8 +466,7 @@ class KotlinFileTest {
         |import com.squareup.wire.Message
         |
         |class Taco : Message() {
-        |  class Builder : Message.Builder() {
-        |  }
+        |  class Builder : Message.Builder()
         |}
         |""".trimMargin())
   }
@@ -497,8 +489,7 @@ class KotlinFileTest {
         |@Component
         |class TestComponent {
         |  @Component.Builder
-        |  class Builder {
-        |  }
+        |  class Builder
         |}
         |""".trimMargin())
   }
@@ -535,8 +526,7 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package hello
         |
-        |class World : Test {
-        |}
+        |class World : Test
         |""".trimMargin())
   }
 
@@ -549,8 +539,7 @@ class KotlinFileTest {
         |// Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!
         |package com.squareup.tacos
         |
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -567,8 +556,7 @@ class KotlinFileTest {
         |//
         |package com.squareup.tacos
         |
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -585,8 +573,7 @@ class KotlinFileTest {
         |class Taco {
         |  val a: com.squareup.tacos.A
         |
-        |  class A {
-        |  }
+        |  class A
         |}
         |""".trimMargin())
   }
@@ -599,11 +586,9 @@ class KotlinFileTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class A {
-        |}
+        |class A
         |
-        |class B {
-        |}
+        |class B
         |""".trimMargin())
   }
 

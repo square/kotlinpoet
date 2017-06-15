@@ -44,16 +44,14 @@ class KotlinPoetTest {
         |fun a() {
         |}
         |
-        |class B {
-        |}
+        |class B
         |
         |val c: String = "C"
         |
         |fun d() {
         |}
         |
-        |class E {
-        |}
+        |class E
         |
         |val f: String = "F"
         |""".trimMargin())
