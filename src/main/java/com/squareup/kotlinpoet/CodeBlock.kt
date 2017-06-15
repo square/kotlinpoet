@@ -382,17 +382,5 @@ class CodeBlock private constructor(
 
 @JvmOverloads
 fun Iterable<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
-                                   suffix: CharSequence = "" ): CodeBlock {
-  val builder = StringBuilder()
-
-  builder.append(prefix)
-  forEachIndexed { index, block ->
-    if (index != 0) {
-      builder.append(separator)
-    }
-    builder.append(block.toString())
-  }
-  builder.append(suffix)
-
-  return CodeBlock.of(builder.toString())
-}
+                                   suffix: CharSequence = "" ) =
+    CodeBlock.of(map { it.toString() }.joinToString(separator, prefix, suffix))
