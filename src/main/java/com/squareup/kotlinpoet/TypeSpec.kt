@@ -111,28 +111,18 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
 
-        val extendsTypes: List<TypeName>
-        val implementsTypes: List<TypeName>
+        val superTypes: List<Pair<TypeName, String>>
 
         if (kind == Kind.INTERFACE) {
-          extendsTypes = superinterfaces
-          implementsTypes = emptyList()
+          superTypes = superinterfaces.map { Pair(it, "") }
         } else {
-          extendsTypes = if (superclass == ANY) emptyList() else listOf(superclass)
-          implementsTypes = superinterfaces
+          val types = if (superclass == ANY) emptyList() else listOf(superclass).map { Pair(it, "()") }
+          superTypes = types + superinterfaces.map { Pair(it, "") }
         }
 
-        val extendsTypesInitializer = if (kind == Kind.INTERFACE) "" else "()"
-        var separatorCount = 0
-
-        extendsTypes.forEach {
-          codeWriter.emit(if (separatorCount++ == 0) " :" else ",")
-          codeWriter.emitCode(" %T$extendsTypesInitializer", it)
-        }
-
-        implementsTypes.forEach {
-          codeWriter.emit(if (separatorCount++ == 0) " :" else ",")
-          codeWriter.emitCode(" %T", it)
+        superTypes.forEachIndexed { i, (typeName, initializer) ->
+          codeWriter.emit(if (i == 0) " :" else ",")
+          codeWriter.emitCode(" %T$initializer", typeName)
         }
 
         if (kind != Kind.ANNOTATION) {
