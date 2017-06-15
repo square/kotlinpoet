@@ -121,8 +121,7 @@ class AnnotationSpecTest {
         |        Double::class
         |    }
         |)
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -157,8 +156,7 @@ class AnnotationSpecTest {
         |        Double::class
         |    }
         |)
-        |class IsAnnotated {
-        |}
+        |class IsAnnotated
         |""".trimMargin())
   }
 
@@ -265,8 +263,7 @@ class AnnotationSpecTest {
         |        Double::class
         |    }
         |)
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 
@@ -324,8 +321,7 @@ class AnnotationSpecTest {
         |        Double::class
         |    }
         |)
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 

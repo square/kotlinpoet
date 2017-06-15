@@ -78,7 +78,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emitCode(anonymousTypeArguments)
           codeWriter.emit(")")
         }
-        if (propertySpecs.isEmpty() && funSpecs.isEmpty() && typeSpecs.isEmpty()) {
+        if (hasNoBody) {
           return // Avoid unnecessary braces "{}".
         }
         codeWriter.emit(" {\n")
@@ -124,6 +124,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
           codeWriter.emit(if (i == 0) " :" else ",")
           codeWriter.emitCode(" %T", typeName)
+        }
+        if (hasNoBody) {
+          codeWriter.emit("\n")
+          return // Avoid unnecessary braces "{}".
         }
         if (kind != Kind.ANNOTATION) {
           codeWriter.emit(" {\n")
@@ -228,6 +232,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
     return result
   }
+
+  private val hasNoBody: Boolean
+    get() = kind == Kind.ANNOTATION ||
+        (companionObject == null &&
+            enumConstants.isEmpty() &&
+            propertySpecs.isEmpty() &&
+            initializerBlock.isEmpty() &&
+            (primaryConstructor?.code?.isEmpty() ?: true) &&
+            funSpecs.isEmpty() &&
+            typeSpecs.isEmpty())
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

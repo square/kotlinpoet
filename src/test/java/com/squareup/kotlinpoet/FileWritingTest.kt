@@ -126,8 +126,7 @@ class FileWritingTest {
         |// Piñata¡
         |package foo
         |
-        |class Taco {
-        |}
+        |class Taco
         |""".trimMargin())
   }
 }
