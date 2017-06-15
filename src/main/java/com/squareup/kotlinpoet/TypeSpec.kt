@@ -111,18 +111,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
 
-        val superTypes: List<Pair<TypeName, String>>
+        val types = if (superclass == ANY) emptyList() else listOf(superclass).map { CodeBlock.of("%T()", it) }
+        val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
 
-        if (kind == Kind.INTERFACE) {
-          superTypes = superinterfaces.map { Pair(it, "") }
-        } else {
-          val types = if (superclass == ANY) emptyList() else listOf(superclass).map { Pair(it, "()") }
-          superTypes = types + superinterfaces.map { Pair(it, "") }
-        }
-
-        superTypes.forEachIndexed { i, (typeName, initializer) ->
+        superTypes.forEachIndexed { i, codeBlock ->
           codeWriter.emit(if (i == 0) " :" else ",")
-          codeWriter.emitCode(" %T$initializer", typeName)
+          codeWriter.emit(" ")
+          codeWriter.emitCode(codeBlock)
         }
 
         if (kind != Kind.ANNOTATION) {
