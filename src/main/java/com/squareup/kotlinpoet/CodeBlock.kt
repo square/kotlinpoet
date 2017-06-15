@@ -381,6 +381,9 @@ class CodeBlock private constructor(
 }
 
 @JvmOverloads
-fun Iterable<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
-                                   suffix: CharSequence = "" ) =
-    CodeBlock.of(joinToString(separator, prefix, suffix))
+fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
+                                   suffix: CharSequence = "" ): CodeBlock {
+  val blocks = toTypedArray()
+  val placeholders = Array(blocks.size, { "%L" })
+  return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
+}
