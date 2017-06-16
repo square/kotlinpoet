@@ -111,14 +111,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
 
-        val types = if (superclass == ANY) emptyList() else listOf(superclass).map { CodeBlock.of("%T()", it) }
+        val types = listOf(superclass).filter { it != ANY }.map { CodeBlock.of("%T()", it) }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
-
-        superTypes.forEachIndexed { i, codeBlock ->
-          codeWriter.emit(if (i == 0) " :" else ",")
-          codeWriter.emit(" ")
-          codeWriter.emitCode(codeBlock)
+        if (superTypes.isNotEmpty()) {
+          codeWriter.emitCode(superTypes.joinToCode(prefix = " : "))
         }
+
         if (hasNoBody) {
           codeWriter.emit("\n")
           return // Avoid unnecessary braces "{}".
