@@ -111,19 +111,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
 
-        val extendsTypes: List<TypeName>
-        val implementsTypes: List<TypeName>
-        if (kind == Kind.INTERFACE) {
-          extendsTypes = superinterfaces
-          implementsTypes = emptyList()
-        } else {
-          extendsTypes = if (superclass == ANY) emptyList() else listOf(superclass)
-          implementsTypes = superinterfaces
-        }
+        val types = if (superclass == ANY) emptyList() else listOf(superclass).map { CodeBlock.of("%T()", it) }
+        val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
 
-        (extendsTypes + implementsTypes).forEachIndexed { i, typeName ->
+        superTypes.forEachIndexed { i, codeBlock ->
           codeWriter.emit(if (i == 0) " :" else ",")
-          codeWriter.emitCode(" %T", typeName)
+          codeWriter.emit(" ")
+          codeWriter.emitCode(codeBlock)
         }
         if (hasNoBody) {
           codeWriter.emit("\n")

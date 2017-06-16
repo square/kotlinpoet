@@ -377,7 +377,7 @@ class KotlinPoetTest {
         |
         |internal const val p: String = "a"
         |
-        |abstract class B : A {
+        |abstract class B : A() {
         |  final override lateinit var q: String
         |}
         |""".trimMargin())
