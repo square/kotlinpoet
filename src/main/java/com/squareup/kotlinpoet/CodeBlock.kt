@@ -379,3 +379,11 @@ class CodeBlock private constructor(
         = c == '%' || c == '>' || c == '<' || c == '[' || c == ']' || c == 'W'
   }
 }
+
+@JvmOverloads
+fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
+                                   suffix: CharSequence = "" ): CodeBlock {
+  val blocks = toTypedArray()
+  val placeholders = Array(blocks.size, { "%L" })
+  return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
+}
