@@ -226,14 +226,25 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   private val hasNoBody: Boolean
-    get() = kind == Kind.ANNOTATION ||
-        (companionObject == null &&
-            enumConstants.isEmpty() &&
-            propertySpecs.isEmpty() &&
-            initializerBlock.isEmpty() &&
-            (primaryConstructor?.code?.isEmpty() ?: true) &&
-            funSpecs.isEmpty() &&
-            typeSpecs.isEmpty())
+    get() {
+      if (kind == Kind.ANNOTATION) {
+        return true
+      }
+      if (propertySpecs.isNotEmpty()) {
+        val constructorProperties = constructorProperties()
+        for (propertySpec in propertySpecs) {
+          if (!constructorProperties.containsKey(propertySpec.name)) {
+            return false
+          }
+        }
+      }
+      return companionObject == null &&
+          enumConstants.isEmpty() &&
+          initializerBlock.isEmpty() &&
+          (primaryConstructor?.code?.isEmpty() ?: true) &&
+          funSpecs.isEmpty() &&
+          typeSpecs.isEmpty()
+    }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

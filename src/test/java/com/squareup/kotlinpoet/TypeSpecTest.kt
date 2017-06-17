@@ -2266,6 +2266,30 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun propertyInPrimaryConstructor() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("a", Int::class)
+            .addParameter("b", String::class)
+            .build())
+        .addProperty(PropertySpec.builder("a", Int::class)
+            .initializer("a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class)
+            .initializer("b")
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |class Taco(val a: Int, val b: String)
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
