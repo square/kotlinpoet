@@ -588,7 +588,7 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |class Location<P : Number & Comparable, Q : Number & Comparable> {
+        |class Location<P, Q> where P : Number, P : Comparable, Q : Number, Q : Comparable {
         |  val x: P
         |
         |  val y: @A Q
@@ -925,7 +925,7 @@ class TypeSpecTest {
         |import java.util.Comparator
         |
         |class Taco {
-        |  fun <T : Comparator & Serializable> getComparator(): T {
+        |  fun <T> getComparator(): T where T : Comparator, T : Serializable {
         |    return null;
         |  }
         |}

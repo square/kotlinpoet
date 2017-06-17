@@ -154,8 +154,10 @@ internal class CodeWriter @JvmOverloads constructor(
   }
 
   /**
-   * Emit type variables with their bounds. This should only be used when declaring type variables;
-   * everywhere else bounds are omitted.
+   * Emit type variables with their bounds. If a type variable has more than a single bound - call
+   * [emitWhereBlock] with same input to produce an additional `where` block.
+   *
+   * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
   @Throws(IOException::class)
   fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
@@ -166,14 +168,33 @@ internal class CodeWriter @JvmOverloads constructor(
     for (typeVariable in typeVariables) {
       if (!firstTypeVariable) emit(", ")
       emitCode("%L", typeVariable.name)
-      var firstBound = true
-      for (bound in typeVariable.bounds) {
-        emitCode(if (firstBound) " : %T" else " & %T", bound)
-        firstBound = false
+      if (typeVariable.bounds.size == 1) {
+        emitCode(" : %T", typeVariable.bounds[0])
       }
       firstTypeVariable = false
     }
     emit(">")
+  }
+
+  /**
+   * Emit a `where` block containing type bounds for each type variable that has at least two
+   * bounds.
+   */
+  @Throws(IOException::class)
+  fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
+    if (typeVariables.isEmpty()) return
+
+    var firstBound = true
+    for (typeVariable in typeVariables) {
+      if (typeVariable.bounds.size > 1) {
+        for (bound in typeVariable.bounds) {
+          if (!firstBound) emit(", ") else emit(" where ")
+          emitCode("%L", typeVariable.name)
+          emitCode(" : %T", bound)
+          firstBound = false
+        }
+      }
+    }
   }
 
   @Throws(IOException::class)
