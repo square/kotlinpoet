@@ -154,46 +154,45 @@ internal class CodeWriter @JvmOverloads constructor(
   }
 
   /**
-   * Emit type variables with their bounds. This should only be used when declaring type variables;
-   * everywhere else bounds are omitted.
+   * Emit type variables with their bounds. If a type variable has more than a single bound - call
+   * [emitWhereBlock] with same input to produce an additional `where` block.
+   *
+   * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
   @Throws(IOException::class)
-  fun emitTypeVariables(
-      typeVariables: List<TypeVariableName>,
-      emitSignature: (() -> Unit)? = null) {
+  fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
     if (typeVariables.isEmpty()) return
 
     emit("<")
-    val withMultipleBounds = mutableListOf<TypeVariableName>()
     var firstTypeVariable = true
     for (typeVariable in typeVariables) {
       if (!firstTypeVariable) emit(", ")
       emitCode("%L", typeVariable.name)
-      if (typeVariable.bounds.size > 1) {
-        withMultipleBounds += typeVariable
-      } else if (typeVariable.bounds.size == 1) {
+      if (typeVariable.bounds.size == 1) {
         emitCode(" : %T", typeVariable.bounds[0])
       }
       firstTypeVariable = false
     }
     emit(">")
-    emitSignature?.invoke()
-    if (withMultipleBounds.isNotEmpty()) {
-      emit(" ")
-      emitWhereBlock(withMultipleBounds)
-    }
   }
 
+  /**
+   * Emit a `where` block containing type bounds for each type variable that has at least two
+   * bounds.
+   */
   @Throws(IOException::class)
-  internal fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
-    emit("where ")
+  fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
+    if (typeVariables.isEmpty()) return
+
     var firstBound = true
     for (typeVariable in typeVariables) {
-      for (bound in typeVariable.bounds) {
-        if (!firstBound) emit(", ")
-        emitCode("%L", typeVariable.name)
-        emitCode(" : %T", bound)
-        firstBound = false
+      if (typeVariable.bounds.size > 1) {
+        for (bound in typeVariable.bounds) {
+          if (!firstBound) emit(", ") else emit(" where ")
+          emitCode("%L", typeVariable.name)
+          emitCode(" : %T", bound)
+          firstBound = false
+        }
       }
     }
   }

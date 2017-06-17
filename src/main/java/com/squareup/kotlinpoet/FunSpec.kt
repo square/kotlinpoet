@@ -77,13 +77,11 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     if (typeVariables.isNotEmpty()) {
-      codeWriter.emitTypeVariables(typeVariables) {
-        codeWriter.emit(" ")
-        emitSignature(codeWriter, enclosingName)
-      }
-    } else {
-      emitSignature(codeWriter, enclosingName)
+      codeWriter.emitTypeVariables(typeVariables)
+      codeWriter.emit(" ")
     }
+    emitSignature(codeWriter, enclosingName)
+    codeWriter.emitWhereBlock(typeVariables)
 
     if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
       codeWriter.emit("\n")

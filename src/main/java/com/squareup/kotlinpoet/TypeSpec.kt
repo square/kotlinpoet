@@ -96,6 +96,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emitCode(" %L", name)
         }
         codeWriter.emitTypeVariables(typeVariables)
+        codeWriter.emitWhereBlock(typeVariables)
 
         primaryConstructor?.let {
           codeWriter.emit("(")
