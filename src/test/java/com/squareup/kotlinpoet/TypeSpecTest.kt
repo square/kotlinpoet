@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import org.junit.Assert.assertEquals
@@ -2288,6 +2289,80 @@ class TypeSpecTest {
         |
         |class Taco(val a: Int, val b: String)
         |""".trimMargin())
+  }
+
+  @Test fun annotatedConstructor() {
+    val injectAnnotation = ClassName("javax.inject", "Inject")
+    val taco = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addAnnotation(AnnotationSpec.builder(injectAnnotation).build())
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |import javax.inject.Inject
+    |
+    |class Taco @Inject constructor()
+    |
+    """.trimMargin())
+  }
+
+  @Test fun internalConstructor() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addModifiers(INTERNAL)
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |class Taco internal constructor()
+    |
+    """.trimMargin())
+  }
+
+  @Test fun annotatedInternalConstructor() {
+    val injectAnnotation = ClassName("javax.inject", "Inject")
+    val taco = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addAnnotation(AnnotationSpec.builder(injectAnnotation).build())
+            .addModifiers(INTERNAL)
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |import javax.inject.Inject
+    |
+    |class Taco @Inject internal constructor()
+    |
+    """.trimMargin())
+  }
+
+  @Test fun multipleAnnotationsInternalConstructor() {
+    val injectAnnotation = ClassName("javax.inject", "Inject")
+    val namedAnnotation = ClassName("javax.inject", "Named")
+    val taco = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addAnnotation(AnnotationSpec.builder(injectAnnotation).build())
+            .addAnnotation(AnnotationSpec.builder(namedAnnotation).build())
+            .addModifiers(INTERNAL)
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |import javax.inject.Inject
+    |import javax.inject.Named
+    |
+    |class Taco @Inject @Named internal constructor()
+    |
+    """.trimMargin())
   }
 
   companion object {
