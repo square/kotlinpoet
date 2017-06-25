@@ -87,11 +87,9 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     codeWriter.emit(whitespace)
     if (values.size > 1) {
       codeWriter.indent(2)
-      var first = true
       for (i in 1 until values.size) {
-        if (!first) codeWriter.emit(memberSeparator)
+        if (i > 1) codeWriter.emit(memberSeparator)
         codeWriter.emitCode(values[i])
-        first = false
       }
       codeWriter.unindent(2)
       codeWriter.emit(whitespace + ")")
@@ -227,7 +225,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       is Int -> IntArray::class.asTypeName()
       is Long -> LongArray::class.asTypeName()
       is Short -> ShortArray::class.asTypeName()
-      else -> kotlin.Array<Any>::class.asTypeName()
+      else -> ParameterizedTypeName.get(ARRAY, ANY)
     }
   }
 
