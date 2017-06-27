@@ -266,10 +266,10 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |interface Service {
-        |  @Headers({
+        |  @Headers([
         |      "Accept: application/json",
         |      "User-Agent: foobar"
-        |  })
+        |  ])
         |  @POST("/foo/bar")
         |  fun fooBar(@Body things: Things<Thing>,
         |      @QueryMap(encodeValues = false) query: Map<String, String>,
@@ -1016,10 +1016,10 @@ class TypeSpecTest {
         |
         |@MealDeal(
         |    price = 500,
-        |    options = {
+        |    options = [
         |        @Option(name = "taco", meat = Beef::class),
         |        @Option(name = "quesadilla", meat = Chicken::class)
-        |    }
+        |    ]
         |)
         |class Menu
         |""".trimMargin())

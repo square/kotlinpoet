@@ -82,7 +82,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       return
     }
 
-    codeWriter.emit("{" + whitespace)
+    codeWriter.emit("[" + whitespace)
     codeWriter.indent(2)
     var first = true
     for (codeBlock in values) {
@@ -91,7 +91,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       first = false
     }
     codeWriter.unindent(2)
-    codeWriter.emit(whitespace + "}")
+    codeWriter.emit(whitespace + "]")
   }
 
   fun toBuilder(): Builder {
