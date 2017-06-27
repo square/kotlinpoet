@@ -339,7 +339,8 @@ internal class CodeWriter @JvmOverloads constructor(
       val resolved = resolve(c.simpleName())
       nameResolved = resolved != null
 
-      if (resolved == c) {
+      // we don't care about nullability here, as it's irrelevant for imports
+      if (resolved == c.asNonNullable()) {
         val suffixOffset = c.simpleNames().size - 1
         return className.simpleNames().subList(suffixOffset,
             className.simpleNames().size).joinToString(".")

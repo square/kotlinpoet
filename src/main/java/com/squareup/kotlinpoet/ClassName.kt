@@ -70,7 +70,7 @@ class ClassName private constructor(
    * Returns the top class in this nesting group. Equivalent to chained calls to
    * [ClassName.enclosingClassName] until the result's enclosing class is null.
    */
-  fun topLevelClassName() = ClassName(names.subList(0, 2), names.size == 2 && nullable)
+  fun topLevelClassName() = ClassName(names.subList(0, 2))
 
   fun reflectionName(): String {
     // trivial case: no nested names
@@ -109,7 +109,7 @@ class ClassName private constructor(
   }
 
   /** Returns the simple name of this class, like `"Entry"` for [Map.Entry].  */
-  fun simpleName() = names[names.size - 1].let { if (nullable) "$it?" else it }
+  fun simpleName() = names[names.size - 1]
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
