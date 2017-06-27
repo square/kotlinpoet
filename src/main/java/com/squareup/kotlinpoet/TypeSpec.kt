@@ -36,6 +36,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val companionObject: TypeSpec? = builder.companionObject
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
+  val superclassConstructorParameters: List<CodeBlock> =
+      builder.superclassConstructorParameters.toImmutableList()
   val superinterfaces: List<TypeName> = builder.superinterfaces.toImmutableList()
   val enumConstants: Map<String, TypeSpec> = builder.enumConstants.toImmutableMap()
   val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
@@ -50,6 +52,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     builder.superclass = superclass
+    builder.superclassConstructorParameters += superclassConstructorParameters
     builder.superinterfaces += superinterfaces
     builder.enumConstants += enumConstants
     builder.propertySpecs += propertySpecs
@@ -132,7 +135,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit(")")
         }
 
-        val types = listOf(superclass).filter { it != ANY }.map { CodeBlock.of("%T()", it) }
+        val types = listOf(superclass).filter { it != ANY }.map {
+          val builder = CodeBlock.builder().add("%T(", it)
+          for ((index, param) in superclassConstructorParameters.withIndex()) {
+            if (index > 0) {
+              builder.add(", ")
+            }
+            builder.add(param)
+          }
+          builder.add(")").build()
+        }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
         if (superTypes.isNotEmpty()) {
           codeWriter.emitCode(superTypes.joinToCode(prefix = " : "))
@@ -335,6 +347,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal var primaryConstructor : FunSpec? = null
     internal var companionObject : TypeSpec? = null
     internal var superclass: TypeName = ANY
+    internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
     internal val superinterfaces = mutableListOf<TypeName>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
@@ -403,16 +416,29 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun superclass(superclass: TypeName) = apply {
+      ensureCanHaveSuperclass()
+      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
+      this.superclass = superclass
+    }
+
+    private fun ensureCanHaveSuperclass() {
       check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.COMPANION) {
         "only classes can have super classes, not $kind"
       }
-      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
-      this.superclass = superclass
     }
 
     fun superclass(superclass: Type) = superclass(superclass.asTypeName())
 
     fun superclass(superclass: KClass<*>) = superclass(superclass.asTypeName())
+
+    fun addSuperclassConstructorParameter(format: String, vararg args: Any) = apply {
+      addSuperclassConstructorParameter(CodeBlock.of(format, *args))
+    }
+
+    fun addSuperclassConstructorParameter(codeBlock: CodeBlock) = apply {
+      ensureCanHaveSuperclass()
+      this.superclassConstructorParameters += codeBlock
+    }
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
       this.superinterfaces += superinterfaces

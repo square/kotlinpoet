@@ -2389,6 +2389,29 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun superclassConstructorParams() {
+    val taco = TypeSpec.classBuilder("Foo")
+        .superclass(ClassName(tacosPackage, "Bar"))
+        .addSuperclassConstructorParameter("%S", "foo")
+        .addSuperclassConstructorParameter(CodeBlock.of("%L", 42))
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class Foo : Bar("foo", 42)
+        |""".trimMargin())
+  }
+
+  @Test fun superclassConstructorParamsForbiddenForAnnotation() {
+    try {
+      TypeSpec.annotationBuilder("Taco")
+          .addSuperclassConstructorParameter("%S", "foo")
+      fail("Exception expected")
+    } catch (expected: IllegalStateException) {
+    }
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
