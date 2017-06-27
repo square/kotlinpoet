@@ -2365,6 +2365,30 @@ class TypeSpecTest {
     """.trimMargin())
   }
 
+  @Test fun importNonNullableProperty() {
+    val type = String::class.asTypeName()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("taco", type.asNonNullable())
+            .initializer("%S", "taco")
+            .build())
+        .addProperty(PropertySpec.builder("nullTaco", type.asNullable())
+            .initializer("null")
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Taco {
+        |  val taco: String = "taco"
+        |
+        |  val nullTaco: String? = null
+        |}
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
