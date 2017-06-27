@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
+import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Array
@@ -82,16 +83,17 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       return
     }
 
-    codeWriter.emit("{" + whitespace)
-    codeWriter.indent(2)
-    var first = true
-    for (codeBlock in values) {
-      if (!first) codeWriter.emit(memberSeparator)
-      codeWriter.emitCode(codeBlock)
-      first = false
+    codeWriter.emitCode(values[0])
+    codeWriter.emit(whitespace)
+    if (values.size > 1) {
+      codeWriter.indent(2)
+      for (i in 1 until values.size) {
+        if (i > 1) codeWriter.emit(memberSeparator)
+        codeWriter.emitCode(values[i])
+      }
+      codeWriter.unindent(2)
+      codeWriter.emit(whitespace + ")")
     }
-    codeWriter.unindent(2)
-    codeWriter.emit(whitespace + "}")
   }
 
   fun toBuilder(): Builder {
@@ -129,10 +131,41 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     internal val members = mutableMapOf<String, MutableList<CodeBlock>>()
 
     fun addMember(name: String, format: String, vararg args: Any) =
-        addMember(name, CodeBlock.of(format, *args))
+        addMember(name, null, CodeBlock.of(format, *args))
 
-    fun addMember(name: String, codeBlock: CodeBlock) = apply {
-      members.getOrPut(name, { mutableListOf() }).add(codeBlock)
+    fun addMemberArrayElement(name: String, arrayType: KClass<*>, format: String,
+                              vararg args: Any) =
+        addMember(name, arrayType.asTypeName(), CodeBlock.of(format, *args))
+
+    fun addMemberArrayElement(name: String, arrayType: TypeName, format: String, vararg args: Any) =
+        addMember(name, arrayType, CodeBlock.of(format, *args))
+
+    private fun addMember(name: String, arrayType: TypeName?, format: String, vararg args: Any) =
+        addMember(name, arrayType, CodeBlock.of(format, *args))
+
+    private fun addMember(name: String, arrayType: TypeName?, codeBlock: CodeBlock): Builder {
+      var codeBlocks = members[name]
+      if (codeBlocks == null) {
+        codeBlocks = mutableListOf()
+        if (arrayType != null) {
+          codeBlocks.add(arrayType.toCreateCodeBlock())
+        }
+        members[name] = codeBlocks
+      }
+      codeBlocks.add(codeBlock)
+      return this
+    }
+
+    private fun TypeName.toCreateCodeBlock() = when (this) {
+      BooleanArray::class.asTypeName() -> CodeBlock.of("booleanArrayOf(")
+      ByteArray::class.asTypeName() -> CodeBlock.of("byteArrayOf(")
+      CharArray::class.asTypeName() -> CodeBlock.of("charArrayOf(")
+      DoubleArray::class.asTypeName() -> CodeBlock.of("doubleArrayOf(")
+      FloatArray::class.asTypeName() -> CodeBlock.of("floatArrayOf(")
+      IntArray::class.asTypeName() -> CodeBlock.of("intArrayOf(")
+      LongArray::class.asTypeName() -> CodeBlock.of("longArrayOf(")
+      ShortArray::class.asTypeName() -> CodeBlock.of("shortArrayOf(")
+      else -> CodeBlock.of("arrayOf(")
     }
 
     /**
@@ -140,14 +173,16 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
      * Falls back to `"%L"` literal format if the class of the given `value` object is not
      * supported.
      */
-    internal fun addMemberForValue(memberName: String, value: Any) = when (value) {
-      is Class<*> -> addMember(memberName, "%T::class", value)
-      is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name)
-      is String -> addMember(memberName, "%S", value)
-      is Float -> addMember(memberName, "%Lf", value)
-      is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value))
-      else -> addMember(memberName, "%L", value)
-    }
+    internal fun addMemberForValue(memberName: String, value: Any, arrayType: TypeName? = null) =
+        when (value) {
+          is Class<*> -> addMember(memberName, arrayType, "%T::class", value)
+          is Enum<*> -> addMember(memberName, arrayType, "%T.%L", value.javaClass, value.name)
+          is String -> addMember(memberName, arrayType, "%S", value)
+          is Float -> addMember(memberName, arrayType, "%Lf", value)
+          is Char -> addMember(memberName, arrayType, "'%L'",
+              characterLiteralWithoutSingleQuotes(value))
+          else -> addMember(memberName, arrayType, "%L", value)
+        }
 
     fun build() = AnnotationSpec(this)
   }
@@ -171,9 +206,49 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
         = builder.addMember(name, "%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): Builder {
+      var arrayElementsVisitor: ArrayElementsVisitor? = null
       for (value in values) {
-        value.accept(this, name)
+        if (arrayElementsVisitor == null) {
+          arrayElementsVisitor = ArrayElementsVisitor(builder, value.value.toArrayTypeName())
+        }
+        value.accept(arrayElementsVisitor, name)
       }
+      return builder
+    }
+
+    private fun Any.toArrayTypeName() = when (this) {
+      is Boolean -> BooleanArray::class.asTypeName()
+      is Byte -> ByteArray::class.asTypeName()
+      is Char -> CharArray::class.asTypeName()
+      is Double -> DoubleArray::class.asTypeName()
+      is Float -> FloatArray::class.asTypeName()
+      is Int -> IntArray::class.asTypeName()
+      is Long -> LongArray::class.asTypeName()
+      is Short -> ShortArray::class.asTypeName()
+      else -> ParameterizedTypeName.get(ARRAY, ANY)
+    }
+  }
+
+  private class ArrayElementsVisitor internal constructor(
+      internal val builder: Builder,
+      private val arrayType: TypeName)
+    : SimpleAnnotationValueVisitor7<Builder, String>(builder) {
+
+    override fun defaultAction(o: Any, name: String)
+        = builder.addMemberForValue(name, o, arrayType)
+
+    override fun visitAnnotation(a: AnnotationMirror, name: String)
+        = builder.addMemberArrayElement(name, arrayType, "%L", get(a))
+
+    override fun visitEnumConstant(c: VariableElement, name: String)
+        = builder.addMemberArrayElement(name, arrayType, "%T.%L", c.asType(),
+        c.simpleName)
+
+    override fun visitType(t: TypeMirror, name: String)
+        = builder.addMemberArrayElement(name, arrayType, "%T::class", t)
+
+    override fun visitArray(values: List<AnnotationValue>, name: String): Builder {
+      // never happens, since multidimensional arrays are not supported
       return builder
     }
   }
@@ -196,7 +271,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
           }
           if (value.javaClass.isArray) {
             for (i in 0 until Array.getLength(value)) {
-              builder.addMemberForValue(method.name, Array.get(value, i))
+              builder.addMemberForValue(method.name, Array.get(value, i), value::class.asTypeName())
             }
             continue
           }

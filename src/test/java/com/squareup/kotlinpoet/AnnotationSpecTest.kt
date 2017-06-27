@@ -75,6 +75,21 @@ class AnnotationSpecTest {
       r = arrayOf(Float::class, Double::class))
   inner class IsAnnotated
 
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class ArrayParams(
+      val a: BooleanArray = booleanArrayOf(true, false),
+      val b: ByteArray = byteArrayOf(1, 2, 3),
+      val c: CharArray = charArrayOf('1', '2', '3'),
+      val d: FloatArray = floatArrayOf(1f, 2f, 3f),
+      val e: DoubleArray = doubleArrayOf(1.0, 2.0, 3.0),
+      val f: IntArray = intArrayOf(1, 2, 3),
+      val g: LongArray = longArrayOf(1L, 2L, 3L),
+      val h: ShortArray = shortArrayOf(1, 2, 3),
+      val i: Array<String> = arrayOf("1", "2", "3"))
+
+  @ArrayParams
+  inner class IsAnnotatedArrayParams
+
   @Rule @JvmField val compilation = CompilationRule()
 
   @Test fun equalsAndHashCode() {
@@ -108,18 +123,18 @@ class AnnotationSpecTest {
         |    o = AnnotationSpecTest.Breakfast.PANCAKES,
         |    p = 1701,
         |    f = 11.1,
-        |    m = {
+        |    m = intArrayOf(
         |        9,
         |        8,
         |        1
-        |    },
+        |    ),
         |    l = Override::class,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
-        |    r = {
+        |    r = arrayOf(
         |        Float::class,
         |        Double::class
-        |    }
+        |    )
         |)
         |class Taco
         |""".trimMargin())
@@ -143,18 +158,18 @@ class AnnotationSpecTest {
         |    o = AnnotationSpecTest.Breakfast.PANCAKES,
         |    p = 1701,
         |    f = 11.1,
-        |    m = {
+        |    m = intArrayOf(
         |        9,
         |        8,
         |        1
-        |    },
+        |    ),
         |    l = Override::class,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
-        |    r = {
+        |    r = arrayOf(
         |        Float::class,
         |        Double::class
-        |    }
+        |    )
         |)
         |class IsAnnotated
         |""".trimMargin())
@@ -162,56 +177,60 @@ class AnnotationSpecTest {
 
   @Test fun emptyArray() {
     val builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%L", "{}")
+    builder.addMember("n", "%L", "arrayOf()")
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}" +
+        "n = arrayOf()" +
         ")")
-    builder.addMember("m", "%L", "{}")
+    builder.addMember("m", "%L", "intArrayOf()")
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}, " +
-        "m = {}" +
+        "n = arrayOf(), " +
+        "m = intArrayOf()" +
         ")")
   }
 
   @Test fun dynamicArrayOfEnumConstants() {
     var builder: AnnotationSpec.Builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name)
+    builder.addMemberArrayElement("n", Array<Breakfast>::class, "%T.%L", Breakfast::class.java,
+        Breakfast.PANCAKES.name)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
+        "n = arrayOf(com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES)" +
         ")")
 
     // builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.WAFFLES.name)
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name)
+    builder.addMemberArrayElement("n", Array<Breakfast>::class, "%T.%L", Breakfast::class.java,
+        Breakfast.WAFFLES.name)
+    builder.addMemberArrayElement("n", Array<Breakfast>::class, "%T.%L", Breakfast::class.java,
+        Breakfast.PANCAKES.name)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {" +
+        "n = arrayOf(" +
         "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES, " +
         "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES, " +
         "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        "})")
+        "))")
 
     builder = builder.build().toBuilder() // idempotent
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {" +
+        "n = arrayOf(" +
         "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
         ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
         ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        "})")
+        "))")
 
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.WAFFLES.name)
+    builder.addMemberArrayElement("n", Array<Breakfast>::class, "%T.%L", Breakfast::class.java,
+        Breakfast.WAFFLES.name)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {" +
+        "n = arrayOf(" +
         "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
         ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
         ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
         ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
-        "})")
+        "))")
   }
 
   @Test fun defaultAnnotationToBuilder() {
@@ -219,17 +238,17 @@ class AnnotationSpecTest {
     val element = compilation.elements.getTypeElement(name)
     val builder = AnnotationSpec.get(element.annotationMirrors[0])
         .toBuilder()
-    builder.addMember("m", "%L", 123)
+    builder.addMemberArrayElement("m", IntArray::class, "%L", 123)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
         "o = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
         ", p = 1701" +
         ", f = 11.1" +
-        ", m = {9, 8, 1, 123}" +
+        ", m = intArrayOf(9, 8, 1, 123)" +
         ", l = java.lang.Override::class" +
         ", j = @com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA" +
         ", q = @com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationC(\"bar\")" +
-        ", r = {kotlin.Float::class, kotlin.Double::class}" +
+        ", r = arrayOf(kotlin.Float::class, kotlin.Double::class)" +
         ")")
   }
 
@@ -250,18 +269,18 @@ class AnnotationSpecTest {
         |@AnnotationSpecTest.HasDefaultsAnnotation(
         |    f = 11.1,
         |    l = Override::class,
-        |    m = {
+        |    m = intArrayOf(
         |        9,
         |        8,
         |        1
-        |    },
+        |    ),
         |    o = AnnotationSpecTest.Breakfast.PANCAKES,
         |    p = 1701,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
-        |    r = {
+        |    r = arrayOf(
         |        Float::class,
         |        Double::class
-        |    }
+        |    )
         |)
         |class Taco
         |""".trimMargin())
@@ -288,7 +307,7 @@ class AnnotationSpecTest {
         |    d = 8,
         |    e = 9.0f,
         |    f = 11.1,
-        |    g = {
+        |    g = charArrayOf(
         |        '\u0000',
         |        '쫾',
         |        'z',
@@ -298,28 +317,89 @@ class AnnotationSpecTest {
         |        '\'',
         |        '\t',
         |        '\n'
-        |    },
+        |    ),
         |    h = true,
         |    i = AnnotationSpecTest.Breakfast.WAFFLES,
         |    j = @AnnotationSpecTest.AnnotationA,
         |    k = "maple",
         |    l = Override::class,
-        |    m = {
+        |    m = intArrayOf(
         |        9,
         |        8,
         |        1
-        |    },
-        |    n = {
+        |    ),
+        |    n = arrayOf(
         |        AnnotationSpecTest.Breakfast.WAFFLES,
         |        AnnotationSpecTest.Breakfast.PANCAKES
-        |    },
+        |    ),
         |    o = AnnotationSpecTest.Breakfast.PANCAKES,
         |    p = 1701,
         |    q = @AnnotationSpecTest.AnnotationC("bar"),
-        |    r = {
+        |    r = arrayOf(
         |        Float::class,
         |        Double::class
-        |    }
+        |    )
+        |)
+        |class Taco
+        |""".trimMargin())
+  }
+
+  @Test fun arrayParams() {
+    val annotation = IsAnnotatedArrayParams::class.java.getAnnotation(ArrayParams::class.java)
+    val spec = AnnotationSpec.get(annotation, true)
+    val taco = TypeSpec.classBuilder("Taco")
+        .addAnnotation(spec)
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.AnnotationSpecTest
+        |
+        |@AnnotationSpecTest.ArrayParams(
+        |    a = booleanArrayOf(
+        |        true,
+        |        false
+        |    ),
+        |    b = byteArrayOf(
+        |        1,
+        |        2,
+        |        3
+        |    ),
+        |    c = charArrayOf(
+        |        '1',
+        |        '2',
+        |        '3'
+        |    ),
+        |    d = floatArrayOf(
+        |        1.0f,
+        |        2.0f,
+        |        3.0f
+        |    ),
+        |    e = doubleArrayOf(
+        |        1.0,
+        |        2.0,
+        |        3.0
+        |    ),
+        |    f = intArrayOf(
+        |        1,
+        |        2,
+        |        3
+        |    ),
+        |    g = longArrayOf(
+        |        1,
+        |        2,
+        |        3
+        |    ),
+        |    h = shortArrayOf(
+        |        1,
+        |        2,
+        |        3
+        |    ),
+        |    i = arrayOf(
+        |        "1",
+        |        "2",
+        |        "3"
+        |    )
         |)
         |class Taco
         |""".trimMargin())

@@ -236,8 +236,9 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("fooBar")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(headers)
-                .addMember("value", "%S", "Accept: application/json")
-                .addMember("value", "%S", "User-Agent: foobar")
+                .addMemberArrayElement("value", Array<String>::class, "%S",
+                    "Accept: application/json")
+                .addMemberArrayElement("value", Array<String>::class, "%S", "User-Agent: foobar")
                 .build())
             .addAnnotation(AnnotationSpec.builder(post)
                 .addMember("value", "%S", "/foo/bar")
@@ -266,10 +267,10 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |interface Service {
-        |  @Headers({
+        |  @Headers(arrayOf(
         |      "Accept: application/json",
         |      "User-Agent: foobar"
-        |  })
+        |  ))
         |  @POST("/foo/bar")
         |  fun fooBar(@Body things: Things<Thing>,
         |      @QueryMap(encodeValues = false) query: Map<String, String>,
@@ -1001,11 +1002,13 @@ class TypeSpecTest {
     val menu = TypeSpec.classBuilder("Menu")
         .addAnnotation(AnnotationSpec.builder(mealDeal)
             .addMember("price", "%L", 500)
-            .addMember("options", "%L", AnnotationSpec.builder(option)
+            .addMemberArrayElement("options", Array<AnnotationSpec>::class, "%L",
+                AnnotationSpec.builder(option)
                 .addMember("name", "%S", "taco")
                 .addMember("meat", "%T::class", beef)
                 .build())
-            .addMember("options", "%L", AnnotationSpec.builder(option)
+            .addMemberArrayElement("options", Array<AnnotationSpec>::class, "%L",
+                AnnotationSpec.builder(option)
                 .addMember("name", "%S", "quesadilla")
                 .addMember("meat", "%T::class", chicken)
                 .build())
@@ -1016,10 +1019,10 @@ class TypeSpecTest {
         |
         |@MealDeal(
         |    price = 500,
-        |    options = {
+        |    options = arrayOf(
         |        @Option(name = "taco", meat = Beef::class),
         |        @Option(name = "quesadilla", meat = Chicken::class)
-        |    }
+        |    )
         |)
         |class Menu
         |""".trimMargin())
