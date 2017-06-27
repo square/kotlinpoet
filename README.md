@@ -10,7 +10,7 @@ the need to write boilerplate while also keeping a single source of truth for th
 
 ### Example
 
-Here's a `HelloWorld` class:
+Here's a `HelloWorld` file:
 
 ```kotlin
 class Greeter(val name: String) {
