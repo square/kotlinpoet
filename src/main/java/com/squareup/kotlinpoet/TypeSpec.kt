@@ -136,14 +136,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
-          val builder = CodeBlock.builder().add("%T(", it)
-          for ((index, param) in superclassConstructorParameters.withIndex()) {
-            if (index > 0) {
-              builder.add(", ")
-            }
-            builder.add(param)
-          }
-          builder.add(")").build()
+          listOf(CodeBlock.of("%T(", it), superclassConstructorParameters.joinToCode())
+              .joinToCode(separator = "", suffix = ")")
         }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
         if (superTypes.isNotEmpty()) {
