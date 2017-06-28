@@ -27,8 +27,8 @@ class WildcardTypeName private constructor(
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
 
-  val upperBounds: List<TypeName> = upperBounds.toImmutableList()
-  val lowerBounds: List<TypeName> = lowerBounds.toImmutableList()
+  val upperBounds = upperBounds.toImmutableList()
+  val lowerBounds = lowerBounds.toImmutableList()
 
   init {
     require(this.upperBounds.size == 1) { "unexpected extends bounds: $upperBounds" }

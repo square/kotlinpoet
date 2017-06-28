@@ -30,20 +30,19 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val name = builder.name
   val anonymousTypeArguments = builder.anonymousTypeArguments
   val kdoc = builder.kdoc.build()
-  val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
-  val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
-  val companionObject: TypeSpec? = builder.companionObject
+  val annotations = builder.annotations.toImmutableList()
+  val modifiers = builder.modifiers.toImmutableSet()
+  val typeVariables = builder.typeVariables.toImmutableList()
+  val companionObject = builder.companionObject
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
-  val superclassConstructorParameters: List<CodeBlock> =
-      builder.superclassConstructorParameters.toImmutableList()
-  val superinterfaces: List<TypeName> = builder.superinterfaces.toImmutableList()
-  val enumConstants: Map<String, TypeSpec> = builder.enumConstants.toImmutableMap()
-  val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
+  val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+  val superinterfaces = builder.superinterfaces.toImmutableList()
+  val enumConstants = builder.enumConstants.toImmutableMap()
+  val propertySpecs = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
-  val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
-  val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
+  val funSpecs = builder.funSpecs.toImmutableList()
+  val typeSpecs = builder.typeSpecs.toImmutableList()
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, anonymousTypeArguments)

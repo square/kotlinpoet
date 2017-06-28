@@ -42,8 +42,8 @@ internal class CodeWriter @JvmOverloads constructor(
     private val memberImports: Set<String> = emptySet(),
     private val importedTypes: Map<String, ClassName> = emptyMap()) {
 
-  private val out: LineWrapper = LineWrapper(out, indent, 100)
-  private var indentLevel: Int = 0
+  private val out = LineWrapper(out, indent, 100)
+  private var indentLevel = 0
 
   private var kdoc = false
   private var comment = false
