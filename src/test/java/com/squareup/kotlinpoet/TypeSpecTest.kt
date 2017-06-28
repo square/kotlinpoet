@@ -1017,8 +1017,8 @@ class TypeSpecTest {
         |@MealDeal(
         |    price = 500,
         |    options = [
-        |        @Option(name = "taco", meat = Beef::class),
-        |        @Option(name = "quesadilla", meat = Chicken::class)
+        |        Option(name = "taco", meat = Beef::class),
+        |        Option(name = "quesadilla", meat = Chicken::class)
         |    ]
         |)
         |class Menu
