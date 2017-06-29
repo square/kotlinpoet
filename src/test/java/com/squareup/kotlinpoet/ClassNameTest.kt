@@ -22,6 +22,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
+import javax.lang.model.type.TypeMirror
 
 class ClassNameTest {
   @Rule @JvmField var compilationRule = CompilationRule()
@@ -159,5 +160,28 @@ class ClassNameTest {
         .isEqualTo("Foo\$Bar\$Baz")
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("a.b.c.Foo\$Bar\$Baz")
+  }
+
+
+  @Test fun boxedPrimitiveFromClass() {
+    assertThat(java.lang.Boolean::class.java.asClassName()).isEqualTo(BOOLEAN)
+    assertThat(java.lang.Byte::class.java.asClassName()).isEqualTo(BYTE)
+    assertThat(java.lang.Short::class.java.asClassName()).isEqualTo(SHORT)
+    assertThat(java.lang.Integer::class.java.asClassName()).isEqualTo(INT)
+    assertThat(java.lang.Long::class.java.asClassName()).isEqualTo(LONG)
+    assertThat(java.lang.Character::class.java.asClassName()).isEqualTo(CHAR)
+    assertThat(java.lang.Float::class.java.asClassName()).isEqualTo(FLOAT)
+    assertThat(java.lang.Double::class.java.asClassName()).isEqualTo(DOUBLE)
+  }
+
+  @Test fun boxedPrimitiveFromKClass() {
+    assertThat(java.lang.Boolean::class.asClassName()).isEqualTo(BOOLEAN)
+    assertThat(java.lang.Byte::class.asClassName()).isEqualTo(BYTE)
+    assertThat(java.lang.Short::class.asClassName()).isEqualTo(SHORT)
+    assertThat(java.lang.Integer::class.asClassName()).isEqualTo(INT)
+    assertThat(java.lang.Long::class.asClassName()).isEqualTo(LONG)
+    assertThat(java.lang.Character::class.asClassName()).isEqualTo(CHAR)
+    assertThat(java.lang.Float::class.asClassName()).isEqualTo(FLOAT)
+    assertThat(java.lang.Double::class.asClassName()).isEqualTo(DOUBLE)
   }
 }

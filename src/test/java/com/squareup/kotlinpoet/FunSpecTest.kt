@@ -112,13 +112,13 @@ class FunSpecTest {
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
         |@kotlin.jvm.Throws(java.lang.Exception::class)
-        |override fun call(): java.lang.Integer {
+        |override fun call(): kotlin.Int {
         |}
         |""".trimMargin())
     exec = findFirst(methods, "compareTo")
     funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo("""
-        |override fun compareTo(arg0: java.lang.Long): kotlin.Int {
+        |override fun compareTo(arg0: kotlin.Long): kotlin.Int {
         |}
         |""".trimMargin())
   }

@@ -206,14 +206,14 @@ abstract class TypeName internal constructor(
         is Class<*> -> {
           when {
             type === Void.TYPE -> return UNIT
-            type === Boolean::class.javaPrimitiveType -> return BOOLEAN
-            type === Byte::class.javaPrimitiveType -> return BYTE
-            type === Short::class.javaPrimitiveType -> return SHORT
-            type === Int::class.javaPrimitiveType -> return INT
-            type === Long::class.javaPrimitiveType -> return LONG
-            type === Char::class.javaPrimitiveType -> return CHAR
-            type === Float::class.javaPrimitiveType -> return FLOAT
-            type === Double::class.javaPrimitiveType -> return DOUBLE
+            type === Boolean::class.javaPrimitiveType || type === Boolean::class.javaObjectType -> return BOOLEAN
+            type === Byte::class.javaPrimitiveType || type === Byte::class.javaObjectType -> return BYTE
+            type === Short::class.javaPrimitiveType || type === Short::class.javaObjectType -> return SHORT
+            type === Int::class.javaPrimitiveType || type === Int::class.javaObjectType -> return INT
+            type === Long::class.javaPrimitiveType || type === Long::class.javaObjectType -> return LONG
+            type === Char::class.javaPrimitiveType || type === Char::class.javaObjectType -> return CHAR
+            type === Float::class.javaPrimitiveType || type === Float::class.javaObjectType -> return FLOAT
+            type === Double::class.javaPrimitiveType || type === Double::class.javaObjectType -> return DOUBLE
             type.isArray -> return ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
             else -> return type.asClassName()
           }

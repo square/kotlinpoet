@@ -21,14 +21,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import com.google.testing.compile.CompilationRule;
+import org.junit.Rule;
 import org.junit.Test;
 
+import javax.lang.model.type.TypeMirror;
+
 import static com.google.common.truth.Truth.assertThat;
+import static com.squareup.kotlinpoet.TypeNameKt.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public class TypeNameTest {
+  @Rule
+  public final CompilationRule compilation = new CompilationRule();
 
   protected <E extends Enum<E>> E generic(E[] values) {
     return values[0];
@@ -94,7 +102,7 @@ public class TypeNameTest {
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
-        TestGeneric.class.getCanonicalName() + "<java.lang.Short>.InnerGeneric<java.lang.Long>");
+        TestGeneric.class.getCanonicalName() + "<kotlin.Short>.InnerGeneric<kotlin.Long>");
   }
 
   @Test public void innerStaticInGenericType() throws Exception {
@@ -108,14 +116,14 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodePrimitive() {
-    assertEqualsHashCodeAndToString(TypeNameKt.BOOLEAN, TypeNameKt.BOOLEAN);
-    assertEqualsHashCodeAndToString(TypeNameKt.BYTE, TypeNameKt.BYTE);
+    assertEqualsHashCodeAndToString(BOOLEAN, BOOLEAN);
+    assertEqualsHashCodeAndToString(BYTE, BYTE);
     assertEqualsHashCodeAndToString(TypeNameKt.CHAR, TypeNameKt.CHAR);
     assertEqualsHashCodeAndToString(TypeNameKt.DOUBLE, TypeNameKt.DOUBLE);
     assertEqualsHashCodeAndToString(TypeNameKt.FLOAT, TypeNameKt.FLOAT);
-    assertEqualsHashCodeAndToString(TypeNameKt.INT, TypeNameKt.INT);
+    assertEqualsHashCodeAndToString(INT, INT);
     assertEqualsHashCodeAndToString(TypeNameKt.LONG, TypeNameKt.LONG);
-    assertEqualsHashCodeAndToString(TypeNameKt.SHORT, TypeNameKt.SHORT);
+    assertEqualsHashCodeAndToString(SHORT, SHORT);
     assertEqualsHashCodeAndToString(TypeNameKt.UNIT, TypeNameKt.UNIT);
   }
 
@@ -150,6 +158,21 @@ public class TypeNameTest {
         WildcardTypeName.subtypeOf(Serializable.class));
     assertEqualsHashCodeAndToString(WildcardTypeName.supertypeOf(String.class),
         WildcardTypeName.supertypeOf(String.class));
+  }
+
+  @Test public void boxedPrimitiveFromTypeMirror() {
+    assertThat(TypeName.get(getTypeMirror(Boolean.class))).isEqualTo(BOOLEAN);
+    assertThat(TypeName.get(getTypeMirror(Byte.class))).isEqualTo(BYTE);
+    assertThat(TypeName.get(getTypeMirror(Short.class))).isEqualTo(SHORT);
+    assertThat(TypeName.get(getTypeMirror(Integer.class))).isEqualTo(INT);
+    assertThat(TypeName.get(getTypeMirror(Long.class))).isEqualTo(LONG);
+    assertThat(TypeName.get(getTypeMirror(Character.class))).isEqualTo(CHAR);
+    assertThat(TypeName.get(getTypeMirror(Float.class))).isEqualTo(FLOAT);
+    assertThat(TypeName.get(getTypeMirror(Double.class))).isEqualTo(DOUBLE);
+  }
+
+  private TypeMirror getTypeMirror(Class<?> cls) {
+    return compilation.getElements().getTypeElement(cls.getCanonicalName()).asType();
   }
 
   private void assertEqualsHashCodeAndToString(TypeName a, TypeName b) {
