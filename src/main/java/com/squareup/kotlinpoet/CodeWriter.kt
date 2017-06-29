@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import java.io.IOException
 import java.util.EnumSet
-import java.util.Locale
 import javax.lang.model.SourceVersion
 
 /** Sentinel value that indicates that no user-provided package has been set.  */
@@ -148,7 +147,7 @@ internal class CodeWriter @JvmOverloads constructor(
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
-      emit(modifier.name.toLowerCase(Locale.US))
+      emit(modifier.keyword)
       emit(" ")
     }
   }
