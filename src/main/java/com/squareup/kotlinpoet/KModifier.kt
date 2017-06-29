@@ -15,51 +15,53 @@
  */
 package com.squareup.kotlinpoet
 
-enum class KModifier(vararg targets: Target) {
+enum class KModifier(
+    internal val keyword: String,
+    vararg targets: Target) {
   // Modifier order defined here:
   // https://github.com/yole/kotlin-style-guide/issues/3.
 
   // Access.
-  PUBLIC(Target.PROPERTY),
-  PROTECTED(Target.PROPERTY),
-  PRIVATE(Target.PROPERTY),
-  INTERNAL(Target.PROPERTY),
+  PUBLIC("public", Target.PROPERTY),
+  PROTECTED("protected", Target.PROPERTY),
+  PRIVATE("private", Target.PROPERTY),
+  INTERNAL("internal", Target.PROPERTY),
 
   // Inheritance.
-  FINAL(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OPEN(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  ABSTRACT(Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OVERRIDE(Target.FUNCTION, Target.PROPERTY),
+  FINAL("final", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  OPEN("open", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  ABSTRACT("abstract", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
 
   // Type declarations.
-  INNER(Target.CLASS),
-  ENUM(Target.CLASS),
-  ANNOTATION(Target.CLASS),
-  DATA(Target.CLASS),
-  SEALED(Target.CLASS),
+  INNER("inner", Target.CLASS),
+  ENUM("enum", Target.CLASS),
+  ANNOTATION("annotation", Target.CLASS),
+  DATA("data", Target.CLASS),
+  SEALED("sealed", Target.CLASS),
   // TODO: should COMPANION be a modifier? If so, it goes here.
 
   // Call-site compiler tips.
-  INLINE(Target.FUNCTION),
-  NOINLINE(Target.PARAMETER),
-  CROSSINLINE(Target.PARAMETER),
-  REIFIED(Target.TYPE_PARAMETER),
+  INLINE("inline", Target.FUNCTION),
+  NOINLINE("noinline", Target.PARAMETER),
+  CROSSINLINE("crossinline", Target.PARAMETER),
+  REIFIED("reified", Target.TYPE_PARAMETER),
 
   // Call-site syntax.
-  INFIX(Target.FUNCTION),
-  OPERATOR(Target.FUNCTION),
+  INFIX("infix", Target.FUNCTION),
+  OPERATOR("operator", Target.FUNCTION),
 
   // Implementation details.
-  LATEINIT(Target.PROPERTY),
-  CONST(Target.PROPERTY),
-  EXTERNAL(Target.FUNCTION),
-  SUSPEND(Target.FUNCTION),
-  TAILREC(Target.FUNCTION),
+  LATEINIT("lateinit", Target.PROPERTY),
+  CONST("const", Target.PROPERTY),
+  EXTERNAL("external", Target.FUNCTION),
+  SUSPEND("suspend", Target.FUNCTION),
+  TAILREC("tailrec", Target.FUNCTION),
 
   // Type modifiers.
-  IN(Target.VARIANCE_ANNOTATION),
-  OUT(Target.VARIANCE_ANNOTATION),
-  VARARG(Target.PARAMETER);
+  IN("in", Target.VARIANCE_ANNOTATION),
+  OUT("out", Target.VARIANCE_ANNOTATION),
+  VARARG("vararg", Target.PARAMETER);
 
   internal val targets = targets.toList()
 
