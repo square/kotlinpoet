@@ -20,7 +20,6 @@ import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Array
 import java.util.Arrays
-import java.util.Locale
 import java.util.Objects
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -40,7 +39,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     var typeFormat = if (asParameter) "" else "@"
     if (useSiteTarget != null) {
-      typeFormat += useSiteTarget.name.toLowerCase(Locale.US) + ":"
+      typeFormat += useSiteTarget.keyword + ":"
     }
     typeFormat += "%T"
     val whitespace = if (inline) "" else "\n"
@@ -134,16 +133,16 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
   }
 
-  enum class UseSiteTarget {
-    FILE,
-    PROPERTY,
-    FIELD,
-    GET,
-    SET,
-    RECEIVER,
-    PARAM,
-    SETPARAM,
-    DELEGATE
+  enum class UseSiteTarget(internal val keyword: String) {
+    FILE("file"),
+    PROPERTY("property"),
+    FIELD("field"),
+    GET("get"),
+    SET("set"),
+    RECEIVER("receiver"),
+    PARAM("param"),
+    SETPARAM("setparam"),
+    DELEGATE("delegate")
   }
 
   class Builder internal constructor(internal val type: TypeName) {
