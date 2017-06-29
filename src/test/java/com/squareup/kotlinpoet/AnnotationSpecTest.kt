@@ -325,6 +325,21 @@ class AnnotationSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun useSiteTarget() {
+    val builder = AnnotationSpec.builder(AnnotationA::class)
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
+    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD);
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@field:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
+    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.GET);
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@get:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
+    builder.useSiteTarget(null);
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
+  }
+
   private fun toString(typeSpec: TypeSpec): String {
     return KotlinFile.get("com.squareup.tacos", typeSpec).toString()
   }

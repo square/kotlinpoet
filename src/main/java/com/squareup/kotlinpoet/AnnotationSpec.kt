@@ -33,10 +33,15 @@ import kotlin.reflect.KClass
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val type: TypeName = builder.type
   val members: Map<String, List<CodeBlock>> = builder.members.toImmutableMultimap()
+  val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
-    val typeFormat = if (asParameter) "%T" else "@%T"
+    var typeFormat = if (asParameter) "" else "@"
+    if (useSiteTarget != null) {
+      typeFormat += useSiteTarget.keyword + ":"
+    }
+    typeFormat += "%T"
     val whitespace = if (inline) "" else "\n"
     val memberSeparator = if (inline) ", " else ",\n"
     if (members.isEmpty()) {
@@ -101,6 +106,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     for ((key, value) in members) {
       builder.members.put(key, value.toMutableList())
     }
+    builder.useSiteTarget = useSiteTarget
     return builder
   }
 
@@ -127,8 +133,21 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
   }
 
+  enum class UseSiteTarget(internal val keyword: String) {
+    FILE("file"),
+    PROPERTY("property"),
+    FIELD("field"),
+    GET("get"),
+    SET("set"),
+    RECEIVER("receiver"),
+    PARAM("param"),
+    SETPARAM("setparam"),
+    DELEGATE("delegate")
+  }
+
   class Builder internal constructor(internal val type: TypeName) {
     internal val members = mutableMapOf<String, MutableList<CodeBlock>>()
+    internal var useSiteTarget: UseSiteTarget? = null
 
     fun addMember(name: String, format: String, vararg args: Any) =
         addMember(name, CodeBlock.of(format, *args))
@@ -149,6 +168,10 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       is Float -> addMember(memberName, "%Lf", value)
       is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value))
       else -> addMember(memberName, "%L", value)
+    }
+
+    fun useSiteTarget(useSiteTarget: UseSiteTarget?) = apply {
+      this.useSiteTarget = useSiteTarget
     }
 
     fun build() = AnnotationSpec(this)
