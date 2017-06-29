@@ -298,6 +298,27 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun annotatedPropertyUseSiteTarget() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("thing", String::class, KModifier.PRIVATE)
+            .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "JsonAdapter"))
+                .addMember("value", "%T::class", ClassName(tacosPackage, "Foo"))
+                .useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD)
+                .build())
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Taco {
+        |  @field:JsonAdapter(Foo::class)
+        |  private val thing: String
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun annotatedClass() {
     val someType = ClassName(tacosPackage, "SomeType")
     val taco = TypeSpec.classBuilder("Foo")
