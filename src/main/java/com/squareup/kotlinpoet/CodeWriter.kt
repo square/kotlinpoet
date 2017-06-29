@@ -317,7 +317,7 @@ internal class CodeWriter @JvmOverloads constructor(
     if (o is TypeSpec) {
       o.emit(this, null)
     } else if (o is AnnotationSpec) {
-      o.emit(this, true)
+      o.emit(this, inline = true, asParameter = true)
     } else if (o is CodeBlock) {
       emitCode(o)
     } else {

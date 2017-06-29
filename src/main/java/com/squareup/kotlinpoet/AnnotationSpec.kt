@@ -35,15 +35,17 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val members: Map<String, List<CodeBlock>> = builder.members.toImmutableMultimap()
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, inline: Boolean) {
+  internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
+    val typeFormat = if (asParameter) "%T" else "@%T"
     val whitespace = if (inline) "" else "\n"
     val memberSeparator = if (inline) ", " else ",\n"
     if (members.isEmpty()) {
       // @Singleton
-      codeWriter.emitCode("@%T", type)
+      val format = if (asParameter) "$typeFormat()" else typeFormat
+      codeWriter.emitCode(format, type)
     } else if (members.size == 1 && members.containsKey("value")) {
       // @Named("foo")
-      codeWriter.emitCode("@%T(", type)
+      codeWriter.emitCode("$typeFormat(", type)
       emitAnnotationValues(codeWriter, whitespace, memberSeparator, members["value"]!!)
       codeWriter.emit(")")
     } else {
@@ -55,7 +57,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       //       name = "updated_at",
       //       nullable = false
       //   )
-      codeWriter.emitCode("@%T(" + whitespace, type)
+      codeWriter.emitCode("$typeFormat(" + whitespace, type)
       codeWriter.indent(2)
       val i = members.entries.iterator()
       while (i.hasNext()) {
@@ -117,7 +119,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val out = StringWriter()
     try {
       val codeWriter = CodeWriter(out)
-      codeWriter.emitCode("%L", this)
+      emit(codeWriter, inline = true, asParameter = false)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
