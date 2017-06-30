@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -50,6 +51,7 @@ private val NULL_APPENDABLE = object : Appendable {
  * aliases.
  */
 class KotlinFile private constructor(builder: KotlinFile.Builder) {
+  val fileAnnotations = builder.fileAnnotations.toImmutableList()
   val fileComment = builder.fileComment.build()
   val packageName = builder.packageName
   val fileName = builder.fileName
@@ -93,6 +95,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
   @Throws(IOException::class)
   private fun emit(codeWriter: CodeWriter) {
+    if (fileAnnotations.isNotEmpty()) {
+      codeWriter.emitAnnotations(fileAnnotations, inline = false)
+      codeWriter.emit("\n")
+    }
+
     codeWriter.pushPackage(packageName)
 
     if (!fileComment.isEmpty()) {
@@ -174,6 +181,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
 
   fun toBuilder(): Builder {
     val builder = Builder(packageName, fileName)
+    builder.fileAnnotations.addAll(fileAnnotations)
     builder.fileComment.add(fileComment)
     builder.members.addAll(this.members)
     builder.skipJavaLangImports = skipJavaLangImports
@@ -184,6 +192,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   class Builder internal constructor(
       internal val packageName: String,
       internal val fileName: String) {
+    internal val fileAnnotations = mutableListOf<AnnotationSpec>()
     internal val fileComment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
     internal var skipJavaLangImports: Boolean = false
@@ -193,6 +202,24 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     init {
       require(SourceVersion.isName(fileName)) { "not a valid file name: $fileName" }
     }
+
+    fun addFileAnnotation(annotationSpec: AnnotationSpec) = apply {
+      when (annotationSpec.useSiteTarget) {
+        FILE -> fileAnnotations += annotationSpec
+        null -> fileAnnotations += annotationSpec.toBuilder().useSiteTarget(FILE).build()
+        else -> error(
+            "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.")
+      }
+    }
+
+    fun addFileAnnotation(annotation: ClassName)
+        = addFileAnnotation(AnnotationSpec.builder(annotation).build())
+
+    fun addFileAnnotation(annotation: Class<*>) =
+        addFileAnnotation(annotation.asClassName())
+
+    fun addFileAnnotation(annotation: KClass<*>) =
+        addFileAnnotation(annotation.asClassName())
 
     fun addFileComment(format: String, vararg args: Any) = apply {
       this.fileComment.add(format, *args)

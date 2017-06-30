@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Ignore
@@ -23,6 +25,7 @@ import org.junit.Test
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.test.fail
 
 class KotlinFileTest {
   @Test fun importStaticReadmeExample() {
@@ -633,5 +636,39 @@ class KotlinFileTest {
         |
         |typealias FileTable = Map<String, Int>
         |""".trimMargin())
+  }
+
+  @Test fun fileAnnotations() {
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addFileAnnotation(AnnotationSpec.builder(JvmName::class)
+            .useSiteTarget(FILE)
+            .addMember("value", "%S", "TacoUtils")
+            .build())
+        .addFileAnnotation(JvmMultifileClass::class)
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |@file:JvmName("TacoUtils")
+        |@file:JvmMultifileClass
+        |
+        |package com.squareup.tacos
+        |
+        |import kotlin.jvm.JvmMultifileClass
+        |import kotlin.jvm.JvmName
+        |
+        |""".trimMargin())
+  }
+
+  @Test fun fileAnnotationMustHaveCorrectUseSiteTarget() {
+    val builder = KotlinFile.builder("com.squareup.tacos", "Taco")
+    val annotation = AnnotationSpec.builder(JvmName::class)
+        .useSiteTarget(SET)
+        .addMember("value", "%S", "TacoUtils")
+        .build()
+    try {
+      builder.addFileAnnotation(annotation)
+      fail()
+    } catch (e: IllegalStateException) {
+      assertThat(e).hasMessage("Use-site target SET not supported for file annotations.")
+    }
   }
 }
