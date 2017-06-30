@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
@@ -54,14 +53,13 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   override fun hashCode() = toString().hashCode()
 
   override fun toString(): String {
-    val out = StringWriter()
+    val out = StringBuilder()
     try {
       emit(CodeWriter(out))
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
     }
-
   }
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {

@@ -19,7 +19,6 @@ import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
@@ -283,7 +282,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   override fun toString(): String {
-    val out = StringWriter()
+    val out = StringBuilder()
     try {
       val codeWriter = CodeWriter(out)
       emit(codeWriter, null)

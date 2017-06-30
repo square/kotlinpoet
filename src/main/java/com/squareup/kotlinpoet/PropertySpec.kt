@@ -20,7 +20,6 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
@@ -78,7 +77,7 @@ class PropertySpec private constructor(builder: Builder) {
   override fun hashCode() = toString().hashCode()
 
   override fun toString(): String {
-    val out = StringWriter()
+    val out = StringBuilder()
     try {
       val codeWriter = CodeWriter(out)
       emit(codeWriter, emptySet<KModifier>())
