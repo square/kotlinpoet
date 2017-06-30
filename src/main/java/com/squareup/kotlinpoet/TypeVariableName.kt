@@ -92,7 +92,8 @@ class TypeVariableName private constructor(
 
     /** Returns type variable equivalent to `mirror`.  */
     @JvmStatic @JvmName("get")
-    fun TypeVariable.asTypeVariableName() = get(asElement() as TypeParameterElement)
+    fun TypeVariable.asTypeVariableName()
+        = (asElement() as TypeParameterElement).asTypeVariableName()
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
@@ -123,9 +124,10 @@ class TypeVariableName private constructor(
     }
 
     /** Returns type variable equivalent to `element`.  */
-    @JvmStatic fun get(element: TypeParameterElement): TypeVariableName {
-      val name = element.simpleName.toString()
-      val boundsTypeNames = element.bounds.map { it.asTypeName() }
+    @JvmStatic @JvmName("get")
+    fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
+      val name = simpleName.toString()
+      val boundsTypeNames = bounds.map { it.asTypeName() }
       return TypeVariableName.of(name, boundsTypeNames)
     }
 
