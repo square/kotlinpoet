@@ -91,11 +91,9 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
     codeWriter.emit("[" + whitespace)
     codeWriter.indent(2)
-    var first = true
-    for (codeBlock in values) {
-      if (!first) codeWriter.emit(memberSeparator)
-      codeWriter.emitCode(codeBlock)
-      first = false
+    values.forEachIndexed { index, value ->
+      if (index > 0) codeWriter.emit(memberSeparator)
+      codeWriter.emitCode(value)
     }
     codeWriter.unindent(2)
     codeWriter.emit(whitespace + "]")
