@@ -134,6 +134,28 @@ class KotlinFileTest {
         |""".trimMargin())
   }
 
+  @Test fun importTopLevel() {
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addStaticImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
+        .addFun(FunSpec.builder("prepareTacos")
+            .returns(ParameterizedTypeName.get(List::class.asClassName(),
+                ClassName("com.squareup.tacos", "Taco")))
+            .addCode("return wrap(INGREDIENTS)\n")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.tacos.internal.INGREDIENTS
+        |import com.squareup.tacos.internal.wrap
+        |import kotlin.collections.List
+        |
+        |fun prepareTacos(): List<Taco> {
+        |  return wrap(INGREDIENTS)
+        |}
+        |""".trimMargin())
+  }
+
   @Ignore("addStaticImport doesn't support members with %L")
   @Test
   fun importStaticDynamic() {

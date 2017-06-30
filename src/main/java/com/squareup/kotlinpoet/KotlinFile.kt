@@ -234,6 +234,13 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       }
     }
 
+    fun addStaticImport(packageName: String, vararg names: String) = apply {
+      check(names.isNotEmpty()) { "names array is empty" }
+      for (name in names) {
+        memberImports += packageName + "." + name
+      }
+    }
+
     /**
      * Call this to omit imports for classes in `java.lang`, such as `java.lang.String`.
      *
