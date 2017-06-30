@@ -634,4 +634,23 @@ class KotlinFileTest {
         |typealias FileTable = Map<String, Int>
         |""".trimMargin())
   }
+
+  @Test fun fileAnnotations() {
+    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
+        .addFileAnnotation(AnnotationSpec.builder(JvmName::class)
+            .addMember("value", "%S", "TacoUtils")
+            .build())
+        .addFileAnnotation(JvmMultifileClass::class)
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |@file:JvmName("TacoUtils")
+        |@file:JvmMultifileClass
+        |
+        |package com.squareup.tacos
+        |
+        |import kotlin.jvm.JvmMultifileClass
+        |import kotlin.jvm.JvmName
+        |
+        |""".trimMargin())
+  }
 }
