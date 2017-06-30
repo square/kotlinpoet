@@ -27,16 +27,16 @@ import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
 class PropertySpec private constructor(builder: Builder) {
-  val mutable: Boolean = builder.mutable
-  val name: String = builder.name
-  val type: TypeName = builder.type
-  val kdoc: CodeBlock = builder.kdoc.build()
-  val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
-  val initializer: CodeBlock? = builder.initializer
-  val delegated: Boolean = builder.delegated
-  val getter: FunSpec? = builder.getter
-  val setter: FunSpec? = builder.setter
+  val mutable = builder.mutable
+  val name = builder.name
+  val type = builder.type
+  val kdoc = builder.kdoc.build()
+  val annotations = builder.annotations.toImmutableList()
+  val modifiers = builder.modifiers.toImmutableSet()
+  val initializer = builder.initializer
+  val delegated = builder.delegated
+  val getter = builder.getter
+  val setter = builder.setter
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>,

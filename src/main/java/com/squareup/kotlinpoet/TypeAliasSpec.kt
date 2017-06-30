@@ -24,9 +24,9 @@ import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
 class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
-  val name: String = builder.name
-  val type: TypeName = builder.type
-  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  val name = builder.name
+  val type = builder.type
+  val modifiers = builder.modifiers.toImmutableSet()
 
   @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter) {

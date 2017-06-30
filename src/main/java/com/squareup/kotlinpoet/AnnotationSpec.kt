@@ -32,7 +32,7 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val type: TypeName = builder.type
-  val members: Map<String, List<CodeBlock>> = builder.members.toImmutableMultimap()
+  val members = builder.members.toImmutableMultimap()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   @Throws(IOException::class)

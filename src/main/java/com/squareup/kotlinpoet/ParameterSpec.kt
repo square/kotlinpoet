@@ -28,10 +28,10 @@ import kotlin.reflect.KClass
 
 /** A generated parameter declaration.  */
 class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
-  val name: String = builder.name
-  val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
-  val type: TypeName = builder.type
+  val name = builder.name
+  val annotations = builder.annotations.toImmutableList()
+  val modifiers = builder.modifiers.toImmutableSet()
+  val type = builder.type
   val defaultValue = builder.defaultValue
 
   @Throws(IOException::class)

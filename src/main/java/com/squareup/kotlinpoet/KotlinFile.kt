@@ -50,11 +50,11 @@ private val NULL_APPENDABLE = object : Appendable {
  * aliases.
  */
 class KotlinFile private constructor(builder: KotlinFile.Builder) {
-  val fileComment: CodeBlock = builder.fileComment.build()
-  val packageName: String = builder.packageName
-  val fileName: String = builder.fileName
-  val members: List<Any> = builder.members.toList()
-  val skipJavaLangImports: Boolean = builder.skipJavaLangImports
+  val fileComment = builder.fileComment.build()
+  val packageName = builder.packageName
+  val fileName = builder.fileName
+  val members = builder.members.toList()
+  val skipJavaLangImports = builder.skipJavaLangImports
   private val memberImports = builder.memberImports.toImmutableSet()
   private val indent = builder.indent
 
