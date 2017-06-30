@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import java.io.IOException
-import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.NestingKind.MEMBER
@@ -40,7 +39,7 @@ class ClassName private constructor(
 
   init {
     for (i in 1 until names.size) {
-      require(SourceVersion.isName(names[i])) { "part ${names[i]} is keyword" }
+      require(isName(names[i])) { "part ${names[i]} is keyword" }
     }
   }
 

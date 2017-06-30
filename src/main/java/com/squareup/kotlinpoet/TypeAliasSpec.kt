@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
 import java.lang.reflect.Type
-import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
@@ -66,7 +65,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     internal var modifiers: MutableSet<KModifier> = mutableSetOf()
 
     init {
-      require(SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(isName(name)) { "not a valid name: $name" }
     }
 
     fun visibility(modifier: KModifier) = apply {

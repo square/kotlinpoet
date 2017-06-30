@@ -114,3 +114,55 @@ internal fun stringLiteralWithQuotes(value: String): String {
     return result.toString()
   }
 }
+
+internal fun isIdentifier(name: String): Boolean {
+  return IDENTIFIER_REGEX.matches(name)
+}
+
+internal fun isKeyword(name: String): Boolean {
+  return KEYWORDS.contains(name)
+}
+
+internal fun isName(name: String): Boolean {
+  return name.split("\\.").none { isKeyword(name) }
+}
+
+private val IDENTIFIER_REGEX
+    = ("((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
+    "\\d*" +
+    "\\p{gc=Lu}*\\p{gc=Ll}*\\p{gc=Lt}*\\p{gc=Lm}*\\p{gc=Lo}*\\p{gc=Nl}*)" +
+    "|" +
+    "(`[^\n\r`]+`)")
+    .toRegex()
+
+// https://github.com/JetBrains/kotlin/blob/master/core/descriptors/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java
+private val KEYWORDS = setOf(
+    "package",
+    "as",
+    "typealias",
+    "class",
+    "this",
+    "super",
+    "val",
+    "var",
+    "fun",
+    "for",
+    "null",
+    "true",
+    "false",
+    "is",
+    "in",
+    "throw",
+    "return",
+    "break",
+    "continue",
+    "object",
+    "if",
+    "try",
+    "else",
+    "while",
+    "do",
+    "when",
+    "interface",
+    "typeof"
+)

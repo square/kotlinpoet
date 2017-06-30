@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import java.util.UUID
-import javax.lang.model.SourceVersion
 
 /**
  * Assigns Kotlin identifier names to avoid collisions, keywords, and invalid characters. To use,
@@ -88,7 +87,7 @@ class NameAllocator private constructor(
    */
   @JvmOverloads fun newName(suggestion: String, tag: Any = UUID.randomUUID().toString()): String {
     var result = toJavaIdentifier(suggestion)
-    while (SourceVersion.isKeyword(result) || !allocatedNames.add(result)) {
+    while (isKeyword(result) || !allocatedNames.add(result)) {
       result += "_"
     }
 
