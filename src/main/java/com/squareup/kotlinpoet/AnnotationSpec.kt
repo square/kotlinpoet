@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Array
 import java.util.Arrays
 import java.util.Objects
@@ -121,7 +120,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   }
 
   override fun toString(): String {
-    val out = StringWriter()
+    val out = StringBuilder()
     try {
       val codeWriter = CodeWriter(out)
       emit(codeWriter, inline = true, asParameter = false)
@@ -129,7 +128,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     } catch (e: IOException) {
       throw AssertionError()
     }
-
   }
 
   enum class UseSiteTarget(internal val keyword: String) {

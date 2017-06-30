@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.TypeName.Companion.asTypeName
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
@@ -120,14 +119,13 @@ class CodeBlock private constructor(
   override fun hashCode() = toString().hashCode()
 
   override fun toString(): String {
-    val out = StringWriter()
+    val out = StringBuilder()
     try {
       CodeWriter(out).emitCode(this)
       return out.toString()
     } catch (e: IOException) {
       throw AssertionError()
     }
-
   }
 
   fun toBuilder(): Builder {
