@@ -29,16 +29,17 @@ class KotlinFileTest {
     val hoverboard = ClassName("com.mattel", "Hoverboard")
     val namedBoards = ClassName("com.mattel", "Hoverboard", "Boards")
     val list = List::class.asClassName()
-    val arrayList = ClassName("java.util", "ArrayList")
+    val arrayList = ParameterizedTypeName.get(
+        ClassName("java.util", "ArrayList"), hoverboard)
     val listOfHoverboards = ParameterizedTypeName.get(list, hoverboard)
     val beyond = FunSpec.builder("beyond")
         .returns(listOfHoverboards)
-        .addStatement("%T result = new %T<>()", listOfHoverboards, arrayList)
+        .addStatement("val result = %T()", arrayList)
         .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
         .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
         .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
         .addStatement("%T.sort(result)", Collections::class)
-        .addStatement("return result.isEmpty() ? %T.emptyList() : result", Collections::class)
+        .addStatement("return if (result.isEmpty()) %T.emptyList() else result", Collections::class)
         .build()
     val hello = TypeSpec.classBuilder("HelloWorld")
         .addFun(beyond)
@@ -61,12 +62,12 @@ class KotlinFileTest {
         |
         |class HelloWorld {
         |  fun beyond(): List<Hoverboard> {
-        |    List<Hoverboard> result = new ArrayList<>()
+        |    val result = ArrayList<Hoverboard>()
         |    result.add(createNimbus(2000))
         |    result.add(createNimbus("2001"))
         |    result.add(createNimbus(THUNDERBOLT))
         |    sort(result)
-        |    return result.isEmpty() ? emptyList() : result
+        |    return if (result.isEmpty()) emptyList() else result
         |  }
         |}
         |""".trimMargin())
