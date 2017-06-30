@@ -38,6 +38,10 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("%L: %T", name, type)
+    emitDefaultValue(codeWriter)
+  }
+
+  internal fun emitDefaultValue(codeWriter: CodeWriter) {
     if (defaultValue != null) {
       codeWriter.emitCode(" = %[%L%]", defaultValue)
     }
