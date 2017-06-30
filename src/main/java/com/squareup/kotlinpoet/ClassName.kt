@@ -141,7 +141,7 @@ class ClassName private constructor(
     @JvmStatic @JvmName("get")
     fun KClass<*>.asClassName(): ClassName {
       qualifiedName?.let { return bestGuess(it) }
-      throw IllegalArgumentException("$this cannot be represented as a TypeName")
+      throw IllegalArgumentException("$this cannot be represented as a ClassName")
     }
 
     /**
