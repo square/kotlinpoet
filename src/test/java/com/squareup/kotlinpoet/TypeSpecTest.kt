@@ -46,12 +46,12 @@ class TypeSpecTest {
 
   @Rule @JvmField val compilation = CompilationRule()
 
-  private fun getElement(clazz: Class<*>): TypeElement {
-    return compilation.elements.getTypeElement(clazz.canonicalName)
+  private fun getElement(`class`: Class<*>): TypeElement {
+    return compilation.elements.getTypeElement(`class`.canonicalName)
   }
 
-  private fun getElement(clazz: KClass<*>): TypeElement {
-    return getElement(clazz.java)
+  private fun getElement(`class`: KClass<*>): TypeElement {
+    return getElement(`class`.java)
   }
 
   @Test fun basic() {
