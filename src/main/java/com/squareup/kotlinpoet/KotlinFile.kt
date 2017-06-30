@@ -221,11 +221,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
         = addStaticImport(
         (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
-    fun addStaticImport(clazz: Class<*>, vararg names: String)
-        = addStaticImport(clazz.asClassName(), *names)
+    fun addStaticImport(`class`: Class<*>, vararg names: String)
+        = addStaticImport(`class`.asClassName(), *names)
 
-    fun addStaticImport(clazz: KClass<*>, vararg names: String)
-        = addStaticImport(clazz.asClassName(), *names)
+    fun addStaticImport(`class`: KClass<*>, vararg names: String)
+        = addStaticImport(`class`.asClassName(), *names)
 
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }

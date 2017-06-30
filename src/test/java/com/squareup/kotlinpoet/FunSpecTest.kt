@@ -52,8 +52,8 @@ class FunSpecTest {
     types = compilation.types
   }
 
-  private fun getElement(clazz: Class<*>): TypeElement {
-    return elements.getTypeElement(clazz.canonicalName)
+  private fun getElement(`class`: Class<*>): TypeElement {
+    return elements.getTypeElement(`class`.canonicalName)
   }
 
   private fun findFirst(elements: Collection<ExecutableElement>, name: String): ExecutableElement {
