@@ -38,6 +38,9 @@ class WildcardTypeName private constructor(
 
   override fun asNonNullable() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
 
+  override fun toKotlinType() = WildcardTypeName(
+          upperBounds.map { it.toKotlinType() }, lowerBounds.map { it.toKotlinType() }, nullable, annotations)
+
   override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
     return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)
   }

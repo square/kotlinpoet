@@ -82,6 +82,8 @@ abstract class TypeName internal constructor(
 
   abstract fun asNonNullable(): TypeName
 
+  abstract fun toKotlinType(): TypeName
+
   abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
 
   abstract fun withoutAnnotations(): TypeName
@@ -232,6 +234,7 @@ abstract class TypeName internal constructor(
 @JvmField val ANY = ClassName("kotlin", "Any")
 @JvmField val ARRAY = ClassName("kotlin", "Array")
 @JvmField val UNIT = Unit::class.asClassName()
+@JvmField val STRING = ClassName("kotlin", "String")
 @JvmField val BOOLEAN = ClassName("kotlin", "Boolean")
 @JvmField val BYTE = ClassName("kotlin", "Byte")
 @JvmField val SHORT = ClassName("kotlin", "Short")

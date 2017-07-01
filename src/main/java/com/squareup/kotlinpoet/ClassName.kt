@@ -48,6 +48,23 @@ class ClassName private constructor(
 
   override fun asNonNullable() = ClassName(names, false, annotations)
 
+  override fun toKotlinType(): ClassName = when (packageName()) {
+    "java.lang" -> when (simpleName()) {
+      "String" -> STRING
+      "Void" -> UNIT
+      "Boolean" -> BOOLEAN
+      "Byte" -> BYTE
+      "Character" -> CHAR
+      "Short" -> SHORT
+      "Integer" -> INT
+      "Long" -> LONG
+      "Float" -> FLOAT
+      "Double" -> DOUBLE
+      else -> this
+    }
+    else -> this
+  }
+
   override fun annotated(annotations: List<AnnotationSpec>)
       = ClassName(names, nullable, this.annotations + annotations)
 
@@ -121,16 +138,6 @@ class ClassName private constructor(
   companion object {
     @JvmStatic @JvmName("get")
     fun Class<*>.asClassName(): ClassName {
-      when (this) {
-        java.lang.Boolean::class.java -> return BOOLEAN
-        java.lang.Byte::class.java -> return BYTE
-        java.lang.Character::class.java -> return CHAR
-        java.lang.Short::class.java -> return SHORT
-        java.lang.Integer::class.java -> return INT
-        java.lang.Long::class.java -> return LONG
-        java.lang.Float::class.java -> return FLOAT
-        java.lang.Double::class.java -> return DOUBLE
-      }
       require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
       require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
       require(!isArray) { "array types cannot be represented as a ClassName" }
@@ -213,18 +220,6 @@ class ClassName private constructor(
       }
       names += getPackage(this).qualifiedName.toString()
       names.reverse()
-      if (names.size == 2 && names[0] == "java.lang") {
-        when (names[1]) {
-          "Boolean" -> return BOOLEAN
-          "Byte" -> return BYTE
-          "Character" -> return CHAR
-          "Short" -> return SHORT
-          "Integer" -> return INT
-          "Long" -> return LONG
-          "Float" -> return FLOAT
-          "Double" -> return DOUBLE
-        }
-      }
       return ClassName(names)
     }
 

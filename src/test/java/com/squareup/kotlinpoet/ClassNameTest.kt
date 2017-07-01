@@ -163,25 +163,16 @@ class ClassNameTest {
   }
 
 
-  @Test fun boxedPrimitiveFromClass() {
-    assertThat(java.lang.Boolean::class.java.asClassName()).isEqualTo(BOOLEAN)
-    assertThat(java.lang.Byte::class.java.asClassName()).isEqualTo(BYTE)
-    assertThat(java.lang.Short::class.java.asClassName()).isEqualTo(SHORT)
-    assertThat(java.lang.Integer::class.java.asClassName()).isEqualTo(INT)
-    assertThat(java.lang.Long::class.java.asClassName()).isEqualTo(LONG)
-    assertThat(java.lang.Character::class.java.asClassName()).isEqualTo(CHAR)
-    assertThat(java.lang.Float::class.java.asClassName()).isEqualTo(FLOAT)
-    assertThat(java.lang.Double::class.java.asClassName()).isEqualTo(DOUBLE)
-  }
-
-  @Test fun boxedPrimitiveFromKClass() {
-    assertThat(java.lang.Boolean::class.asClassName()).isEqualTo(BOOLEAN)
-    assertThat(java.lang.Byte::class.asClassName()).isEqualTo(BYTE)
-    assertThat(java.lang.Short::class.asClassName()).isEqualTo(SHORT)
-    assertThat(java.lang.Integer::class.asClassName()).isEqualTo(INT)
-    assertThat(java.lang.Long::class.asClassName()).isEqualTo(LONG)
-    assertThat(java.lang.Character::class.asClassName()).isEqualTo(CHAR)
-    assertThat(java.lang.Float::class.asClassName()).isEqualTo(FLOAT)
-    assertThat(java.lang.Double::class.asClassName()).isEqualTo(DOUBLE)
+  @Test fun toKotlinClassName() {
+    assertThat(java.lang.Boolean::class.java.asClassName().toKotlinType()).isEqualTo(BOOLEAN)
+    assertThat(java.lang.Byte::class.java.asClassName().toKotlinType()).isEqualTo(BYTE)
+    assertThat(java.lang.Short::class.java.asClassName().toKotlinType()).isEqualTo(SHORT)
+    assertThat(java.lang.Integer::class.java.asClassName().toKotlinType()).isEqualTo(INT)
+    assertThat(java.lang.Long::class.java.asClassName().toKotlinType()).isEqualTo(LONG)
+    assertThat(java.lang.Character::class.java.asClassName().toKotlinType()).isEqualTo(CHAR)
+    assertThat(java.lang.Float::class.java.asClassName().toKotlinType()).isEqualTo(FLOAT)
+    assertThat(java.lang.Double::class.java.asClassName().toKotlinType()).isEqualTo(DOUBLE)
+    assertThat(java.lang.String::class.java.asClassName().toKotlinType()).isEqualTo(STRING)
+    assertThat(java.lang.Void::class.java.asClassName().toKotlinType()).isEqualTo(UNIT)
   }
 }

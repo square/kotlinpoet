@@ -44,6 +44,13 @@ class ParameterizedTypeName internal constructor(
   override fun asNonNullable()
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
 
+  override fun toKotlinType(): ParameterizedTypeName = ParameterizedTypeName(
+          enclosingType?.toKotlinType(),
+          rawType.toKotlinType(),
+          typeArguments.map { it.toKotlinType() },
+          nullable,
+          annotations)
+
   override fun annotated(annotations: List<AnnotationSpec>) = ParameterizedTypeName(
       enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)
 
