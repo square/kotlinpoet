@@ -95,7 +95,7 @@ public class TypeNameTest {
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
-        TestGeneric.class.getCanonicalName() + "<kotlin.Short>.InnerGeneric<kotlin.Long>");
+        TestGeneric.class.getCanonicalName() + "<java.lang.Short>.InnerGeneric<java.lang.Long>");
   }
 
   @Test public void innerStaticInGenericType() throws Exception {
@@ -109,14 +109,14 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodePrimitive() {
-    assertEqualsHashCodeAndToString(BOOLEAN, BOOLEAN);
-    assertEqualsHashCodeAndToString(BYTE, BYTE);
+    assertEqualsHashCodeAndToString(TypeNameKt.BOOLEAN, TypeNameKt.BOOLEAN);
+    assertEqualsHashCodeAndToString(TypeNameKt.BYTE, TypeNameKt.BYTE);
     assertEqualsHashCodeAndToString(TypeNameKt.CHAR, TypeNameKt.CHAR);
     assertEqualsHashCodeAndToString(TypeNameKt.DOUBLE, TypeNameKt.DOUBLE);
     assertEqualsHashCodeAndToString(TypeNameKt.FLOAT, TypeNameKt.FLOAT);
-    assertEqualsHashCodeAndToString(INT, INT);
+    assertEqualsHashCodeAndToString(TypeNameKt.INT, TypeNameKt.INT);
     assertEqualsHashCodeAndToString(TypeNameKt.LONG, TypeNameKt.LONG);
-    assertEqualsHashCodeAndToString(SHORT, SHORT);
+    assertEqualsHashCodeAndToString(TypeNameKt.SHORT, TypeNameKt.SHORT);
     assertEqualsHashCodeAndToString(TypeNameKt.UNIT, TypeNameKt.UNIT);
   }
 
