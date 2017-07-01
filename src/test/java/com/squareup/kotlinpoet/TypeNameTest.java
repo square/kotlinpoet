@@ -21,16 +21,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.squareup.kotlinpoet.TypeNameKt.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public class TypeNameTest {
+
   protected <E extends Enum<E>> E generic(E[] values) {
     return values[0];
   }
