@@ -32,20 +32,6 @@ import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
 import kotlin.reflect.KClass
 
-private val NULL_APPENDABLE = object : Appendable {
-  override fun append(charSequence: CharSequence): Appendable {
-    return this
-  }
-
-  override fun append(charSequence: CharSequence, start: Int, end: Int): Appendable {
-    return this
-  }
-
-  override fun append(c: Char): Appendable {
-    return this
-  }
-}
-
 /**
  * A Kotlin file containing top level objects like classes, objects, functions, properties, and type
  * aliases.
