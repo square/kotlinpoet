@@ -201,7 +201,7 @@ abstract class TypeName internal constructor(
     @JvmStatic @JvmName("get")
     fun Type.asTypeName() = get(this, mutableMapOf())
 
-    internal fun get(type: Type,map: MutableMap<Type, TypeVariableName>): TypeName {
+    internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
       when (type) {
         is Class<*> -> {
           when {

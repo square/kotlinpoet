@@ -15,9 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
-import org.junit.Test
-
 import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
 class LineWrapperTest {
   @Test fun wrap() {

@@ -34,18 +34,15 @@ internal fun <K, V> Map<K, List<V>>.toImmutableMultimap(): Map<K, List<V>> {
 internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
     = Collections.unmodifiableMap(LinkedHashMap(this))
 
-internal fun <T> Collection<T>.toImmutableList() : List<T>
+internal fun <T> Collection<T>.toImmutableList(): List<T>
     = Collections.unmodifiableList(ArrayList(this))
 
 internal fun <T> Collection<T>.toImmutableSet(): Set<T>
     = Collections.unmodifiableSet(LinkedHashSet(this))
 
 internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
-  var count = 0
-  for (modifier in mutuallyExclusive) {
-    if (modifiers.contains(modifier)) count++
-  }
-  require (count == 1) {
+  val count = mutuallyExclusive.count { modifiers.contains(it) }
+  require(count == 1) {
     "modifiers $modifiers must contain one of ${Arrays.toString(mutuallyExclusive)}"
   }
 }

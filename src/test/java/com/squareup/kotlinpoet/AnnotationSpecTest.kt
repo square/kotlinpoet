@@ -328,16 +328,16 @@ class AnnotationSpecTest {
   @Test fun useSiteTarget() {
     val builder = AnnotationSpec.builder(AnnotationA::class)
     assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
-    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD);
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD)
     assertThat(builder.build().toString()).isEqualTo("" +
-        "@field:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
-    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.GET);
+        "@field:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    builder.useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
     assertThat(builder.build().toString()).isEqualTo("" +
-        "@get:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
-    builder.useSiteTarget(null);
+        "@get:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    builder.useSiteTarget(null)
     assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA");
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
   }
 
   private fun toString(typeSpec: TypeSpec): String {

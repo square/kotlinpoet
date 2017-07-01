@@ -104,8 +104,8 @@ class PropertySpec private constructor(builder: Builder) {
     internal val modifiers = mutableListOf<KModifier>()
     internal var initializer: CodeBlock? = null
     internal var delegated = false
-    internal var getter : FunSpec? = null
-    internal var setter : FunSpec? = null
+    internal var getter: FunSpec? = null
+    internal var setter: FunSpec? = null
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -159,13 +159,13 @@ class PropertySpec private constructor(builder: Builder) {
 
     fun getter(getter: FunSpec) = apply {
       require(getter.name == GETTER) { "${getter.name} is not a getter" }
-      check(this.getter == null ) { "getter was already set" }
+      check(this.getter == null) { "getter was already set" }
       this.getter = getter
     }
 
     fun setter(setter: FunSpec) = apply {
       require(setter.name == SETTER) { "${setter.name} is not a setter" }
-      check(this.setter == null ) { "setter was already set" }
+      check(this.setter == null) { "setter was already set" }
       this.setter = setter
     }
 

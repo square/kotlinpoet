@@ -159,7 +159,7 @@ class ClassName private constructor(
       var p = 0
       while (p < classNameString.length && Character.isLowerCase(classNameString.codePointAt(p))) {
         p = classNameString.indexOf('.', p) + 1
-        require(p != 0) { "couldn't make a guess for ${classNameString}" }
+        require(p != 0) { "couldn't make a guess for $classNameString" }
       }
       names += if (p != 0) classNameString.substring(0, p - 1) else ""
 

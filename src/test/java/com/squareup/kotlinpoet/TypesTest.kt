@@ -25,9 +25,9 @@ import javax.lang.model.util.Types
 class TypesTest : AbstractTypesTest() {
   @JvmField @Rule val compilation = CompilationRule()
 
-  override val elements : Elements
+  override val elements: Elements
     get() = compilation.elements
 
-  override val types : Types
+  override val types: Types
     get() = compilation.types
 }
