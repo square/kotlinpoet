@@ -76,7 +76,8 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   @Throws(IOException::class)
   fun writeTo(directory: Path) {
     require(Files.notExists(directory) || Files.isDirectory(directory)) {
-        "path $directory exists but is not a directory." }
+      "path $directory exists but is not a directory."
+    }
     var outputDirectory = directory
     if (packageName.isNotEmpty()) {
       for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {

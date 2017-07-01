@@ -55,12 +55,8 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  internal fun parameter(name: String): ParameterSpec? {
-    for (parameter in parameters) {
-      if (parameter.name == name) return parameter
-    }
-    return null
-  }
+  internal fun parameter(name: String): ParameterSpec? =
+      parameters.firstOrNull { it.name == name }
 
   @Throws(IOException::class)
   internal fun emit(
@@ -392,10 +388,10 @@ class FunSpec private constructor(builder: Builder) {
       modifiers.remove(Modifier.ABSTRACT)
       funBuilder.jvmModifiers(modifiers)
 
-      for (typeParameterElement in method.typeParameters) {
-        val typeVariable = typeParameterElement.asType() as TypeVariable
-        funBuilder.addTypeVariable(typeVariable.asTypeVariableName())
-      }
+      method.typeParameters
+          .map { it.asType() as TypeVariable }
+          .map { it.asTypeVariableName() }
+          .forEach { funBuilder.addTypeVariable(it) }
 
       funBuilder.returns(method.returnType.asTypeName())
       funBuilder.addParameters(ParameterSpec.parametersOf(method))
@@ -406,7 +402,7 @@ class FunSpec private constructor(builder: Builder) {
             .build()
       }
 
-      if(method.thrownTypes.isNotEmpty()) {
+      if (method.thrownTypes.isNotEmpty()) {
         val throwsValueString = method.thrownTypes.joinToString { "%T::class" }
         funBuilder.addAnnotation(AnnotationSpec.builder(Throws::class)
             .addMember("value", throwsValueString, *method.thrownTypes.toTypedArray())

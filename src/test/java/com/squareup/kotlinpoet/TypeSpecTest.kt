@@ -833,8 +833,8 @@ class TypeSpecTest {
 
   @Test fun interfaceWithProperties() {
     val taco = TypeSpec.interfaceBuilder("Taco")
-            .addProperty("v", Int::class)
-            .build()
+        .addProperty("v", Int::class)
+        .build()
 
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
@@ -2157,8 +2157,8 @@ class TypeSpecTest {
   @Test fun companionObject() {
     val companion = TypeSpec.companionObjectBuilder()
         .addProperty(PropertySpec.builder("tacos", Int::class)
-                .initializer("%L", 42)
-                .build())
+            .initializer("%L", 42)
+            .build())
         .addFun(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC)
             .build())
