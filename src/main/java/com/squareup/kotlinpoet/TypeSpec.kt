@@ -126,6 +126,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
+              param.emitDefaultValue(codeWriter)
             } else {
               param.emit(codeWriter)
             }

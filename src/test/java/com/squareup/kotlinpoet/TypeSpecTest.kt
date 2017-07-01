@@ -2433,6 +2433,34 @@ class TypeSpecTest {
     }
   }
 
+  @Test fun constructorWithDefaultParamValue() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("a", Int::class)
+                .defaultValue("1")
+                .build())
+            .addParameter(ParameterSpec.builder("b", String::class.asTypeName().asNullable())
+                .defaultValue("null")
+                .build())
+            .build())
+        .addProperty(PropertySpec.builder("a", Int::class)
+            .initializer("a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class.asTypeName().asNullable())
+            .initializer("b")
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |class Taco(val a: Int = 1, val b: String? = null)
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
