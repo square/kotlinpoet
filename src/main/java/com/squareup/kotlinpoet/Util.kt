@@ -47,19 +47,17 @@ internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclu
   }
 }
 
-internal fun characterLiteralWithoutSingleQuotes(c: Char): String {
-  // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
-  return when {
-    c == '\b' -> "\\b"   // \u0008: backspace (BS)
-    c == '\t' -> "\\t"   // \u0009: horizontal tab (HT)
-    c == '\n' -> "\\n"   // \u000a: linefeed (LF)
-    c == '\r' -> "\\r"   // \u000d: carriage return (CR)
-    c == '\"' -> "\""    // \u0022: double quote (")
-    c == '\'' -> "\\'"   // \u0027: single quote (')
-    c == '\\' -> "\\\\"  // \u005c: backslash (\)
-    isISOControl(c) -> String.format("\\u%04x", c.toInt())
-    else -> Character.toString(c)
-  }
+// see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
+internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
+  c == '\b' -> "\\b"   // \u0008: backspace (BS)
+  c == '\t' -> "\\t"   // \u0009: horizontal tab (HT)
+  c == '\n' -> "\\n"   // \u000a: linefeed (LF)
+  c == '\r' -> "\\r"   // \u000d: carriage return (CR)
+  c == '\"' -> "\""    // \u0022: double quote (")
+  c == '\'' -> "\\'"   // \u0027: single quote (')
+  c == '\\' -> "\\\\"  // \u005c: backslash (\)
+  isISOControl(c) -> String.format("\\u%04x", c.toInt())
+  else -> Character.toString(c)
 }
 
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
