@@ -56,7 +56,7 @@ class FunSpecTest {
 
   private fun findFirst(elements: Collection<ExecutableElement>, name: String) =
       elements.firstOrNull { it.simpleName.toString() == name } ?:
-          throw IllegalArgumentException(name + " not found in " + elements)
+          throw IllegalArgumentException("$name not found in $elements")
 
   @Target(AnnotationTarget.VALUE_PARAMETER)
   internal annotation class Nullable

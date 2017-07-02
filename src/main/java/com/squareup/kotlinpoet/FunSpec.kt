@@ -55,8 +55,7 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  internal fun parameter(name: String): ParameterSpec? =
-      parameters.firstOrNull { it.name == name }
+  internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
   @Throws(IOException::class)
   internal fun emit(
