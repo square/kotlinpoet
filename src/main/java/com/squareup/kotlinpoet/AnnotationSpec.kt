@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
 import java.lang.reflect.Array
 import java.util.Arrays

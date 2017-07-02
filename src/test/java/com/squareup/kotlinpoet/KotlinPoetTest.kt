@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import org.junit.Test
 import kotlin.test.fail
 

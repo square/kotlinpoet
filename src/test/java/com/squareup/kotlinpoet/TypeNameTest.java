@@ -64,10 +64,10 @@ public class TypeNameTest {
 
   @Test public void genericType() throws Exception {
     Method recursiveEnum = getClass().getDeclaredMethod("generic", Enum[].class);
-    TypeName.get(recursiveEnum.getReturnType());
-    TypeName.get(recursiveEnum.getGenericReturnType());
-    TypeName genericTypeName = TypeName.get(recursiveEnum.getParameterTypes()[0]);
-    TypeName.get(recursiveEnum.getGenericParameterTypes()[0]);
+    TypeNames.get(recursiveEnum.getReturnType());
+    TypeNames.get(recursiveEnum.getGenericReturnType());
+    TypeName genericTypeName = TypeNames.get(recursiveEnum.getParameterTypes()[0]);
+    TypeNames.get(recursiveEnum.getGenericParameterTypes()[0]);
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).contains("Enum");
@@ -75,10 +75,10 @@ public class TypeNameTest {
 
   @Test public void innerClassInGenericType() throws Exception {
     Method genericStringInner = getClass().getDeclaredMethod("testGenericStringInner");
-    TypeName.get(genericStringInner.getReturnType());
-    TypeName genericTypeName = TypeName.get(genericStringInner.getGenericReturnType());
-    assertNotEquals(TypeName.get(genericStringInner.getGenericReturnType()),
-        TypeName.get(getClass().getDeclaredMethod("testGenericIntInner").getGenericReturnType()));
+    TypeNames.get(genericStringInner.getReturnType());
+    TypeName genericTypeName = TypeNames.get(genericStringInner.getGenericReturnType());
+    assertNotEquals(TypeNames.get(genericStringInner.getGenericReturnType()),
+        TypeNames.get(getClass().getDeclaredMethod("testGenericIntInner").getGenericReturnType()));
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
@@ -87,10 +87,10 @@ public class TypeNameTest {
 
   @Test public void innerGenericInGenericType() throws Exception {
     Method genericStringInner = getClass().getDeclaredMethod("testGenericInnerLong");
-    TypeName.get(genericStringInner.getReturnType());
-    TypeName genericTypeName = TypeName.get(genericStringInner.getGenericReturnType());
-    assertNotEquals(TypeName.get(genericStringInner.getGenericReturnType()),
-        TypeName.get(getClass().getDeclaredMethod("testGenericInnerInt").getGenericReturnType()));
+    TypeNames.get(genericStringInner.getReturnType());
+    TypeName genericTypeName = TypeNames.get(genericStringInner.getGenericReturnType());
+    assertNotEquals(TypeNames.get(genericStringInner.getGenericReturnType()),
+        TypeNames.get(getClass().getDeclaredMethod("testGenericInnerInt").getGenericReturnType()));
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
@@ -99,8 +99,8 @@ public class TypeNameTest {
 
   @Test public void innerStaticInGenericType() throws Exception {
     Method staticInGeneric = getClass().getDeclaredMethod("testNestedNonGeneric");
-    TypeName.get(staticInGeneric.getReturnType());
-    TypeName typeName = TypeName.get(staticInGeneric.getGenericReturnType());
+    TypeNames.get(staticInGeneric.getReturnType());
+    TypeName typeName = TypeNames.get(staticInGeneric.getGenericReturnType());
 
     // Make sure there are no generic arguments
     assertThat(typeName.toString()).isEqualTo(
@@ -108,22 +108,22 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodePrimitive() {
-    assertEqualsHashCodeAndToString(TypeNameKt.BOOLEAN, TypeNameKt.BOOLEAN);
-    assertEqualsHashCodeAndToString(TypeNameKt.BYTE, TypeNameKt.BYTE);
-    assertEqualsHashCodeAndToString(TypeNameKt.CHAR, TypeNameKt.CHAR);
-    assertEqualsHashCodeAndToString(TypeNameKt.DOUBLE, TypeNameKt.DOUBLE);
-    assertEqualsHashCodeAndToString(TypeNameKt.FLOAT, TypeNameKt.FLOAT);
-    assertEqualsHashCodeAndToString(TypeNameKt.INT, TypeNameKt.INT);
-    assertEqualsHashCodeAndToString(TypeNameKt.LONG, TypeNameKt.LONG);
-    assertEqualsHashCodeAndToString(TypeNameKt.SHORT, TypeNameKt.SHORT);
-    assertEqualsHashCodeAndToString(TypeNameKt.UNIT, TypeNameKt.UNIT);
+    assertEqualsHashCodeAndToString(TypeNames.BOOLEAN, TypeNames.BOOLEAN);
+    assertEqualsHashCodeAndToString(TypeNames.BYTE, TypeNames.BYTE);
+    assertEqualsHashCodeAndToString(TypeNames.CHAR, TypeNames.CHAR);
+    assertEqualsHashCodeAndToString(TypeNames.DOUBLE, TypeNames.DOUBLE);
+    assertEqualsHashCodeAndToString(TypeNames.FLOAT, TypeNames.FLOAT);
+    assertEqualsHashCodeAndToString(TypeNames.INT, TypeNames.INT);
+    assertEqualsHashCodeAndToString(TypeNames.LONG, TypeNames.LONG);
+    assertEqualsHashCodeAndToString(TypeNames.SHORT, TypeNames.SHORT);
+    assertEqualsHashCodeAndToString(TypeNames.UNIT, TypeNames.UNIT);
   }
 
   @Test public void equalsAndHashCodeClassName() {
-    assertEqualsHashCodeAndToString(ClassName.get(Object.class), ClassName.get(Object.class));
-    assertEqualsHashCodeAndToString(TypeName.get(Object.class), ClassName.get(Object.class));
+    assertEqualsHashCodeAndToString(ClassNames.get(Object.class), ClassNames.get(Object.class));
+    assertEqualsHashCodeAndToString(TypeNames.get(Object.class), ClassNames.get(Object.class));
     assertEqualsHashCodeAndToString(ClassName.bestGuess("java.lang.Object"),
-        ClassName.get(Object.class));
+        ClassNames.get(Object.class));
   }
 
   @Test public void equalsAndHashCodeParameterizedTypeName() {
@@ -131,7 +131,7 @@ public class TypeNameTest {
         ParameterizedTypeName.get(List.class, Object.class));
     assertEqualsHashCodeAndToString(ParameterizedTypeName.get(Set.class, UUID.class),
         ParameterizedTypeName.get(Set.class, UUID.class));
-    assertNotEquals(ClassName.get(List.class), ParameterizedTypeName.get(List.class,
+    assertNotEquals(ClassNames.get(List.class), ParameterizedTypeName.get(List.class,
         String.class));
   }
 
