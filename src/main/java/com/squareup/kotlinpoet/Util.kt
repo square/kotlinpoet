@@ -22,6 +22,12 @@ import java.util.Collections
 import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 
+internal val NULL_APPENDABLE = object : Appendable {
+  override fun append(charSequence: CharSequence) = this
+  override fun append(charSequence: CharSequence, start: Int, end: Int) = this
+  override fun append(c: Char) = this
+}
+
 internal fun <K, V> Map<K, List<V>>.toImmutableMultimap(): Map<K, List<V>> {
   val result = LinkedHashMap<K, List<V>>()
   for ((key, value) in this) {
