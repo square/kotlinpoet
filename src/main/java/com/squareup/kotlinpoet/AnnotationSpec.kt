@@ -91,10 +91,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
     codeWriter.emit("[" + whitespace)
     codeWriter.indent(2)
-    values.forEachIndexed { index, value ->
-      if (index > 0) codeWriter.emit(memberSeparator)
-      codeWriter.emitCode(value)
-    }
+    codeWriter.emitCode(values.joinToCode(separator = memberSeparator))
     codeWriter.unindent(2)
     codeWriter.emit(whitespace + "]")
   }

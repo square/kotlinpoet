@@ -42,14 +42,9 @@ class LambdaTypeName internal constructor(
       out.emitCode("%T.", it)
     }
 
-    out.emit("(")
-    parameters.forEachIndexed { i, it ->
-      if (i != 0) {
-        out.emit(", ")
-      }
-      out.emitCode("%T", it)
-    }
-    out.emitCode(") -> %T", returnType)
+    val params = parameters.map { CodeBlock.of("%T", it) }.joinToCode()
+    out.emitCode("(%L) -> %T", params, returnType)
+
     if (nullable) {
       out.emit(")")
     }
