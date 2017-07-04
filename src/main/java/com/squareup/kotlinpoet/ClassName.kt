@@ -32,6 +32,13 @@ class ClassName private constructor(
     annotations: List<AnnotationSpec> = emptyList())
   : TypeName(nullable, annotations), Comparable<ClassName> {
 
+  /**
+   * Returns a class name created from the given parts. For example, calling this with package name
+   * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
+   */
+  constructor(packageName: String, simpleName: String, vararg simpleNames: String)
+      : this(listOf(packageName, simpleName, *simpleNames))
+
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
   internal val names = names.toImmutableList()
   val canonicalName = if (names[0].isEmpty())
@@ -174,18 +181,6 @@ class ClassName private constructor(
 
       require(names.size >= 2) { "couldn't make a guess for $classNameString" }
       return ClassName(names)
-    }
-
-    /**
-     * Returns a class name created from the given parts. For example, calling this with package name
-     * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
-     */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(
-        packageName: String,
-        simpleName: String,
-        vararg simpleNames: String): ClassName {
-      return ClassName(listOf(packageName, simpleName, *simpleNames))
     }
 
     /** Returns the class name for `element`.  */
