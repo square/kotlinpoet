@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("TypeNames")
+
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.ClassName.Companion.asClassName
 import java.io.IOException
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
@@ -51,7 +52,7 @@ import kotlin.reflect.KClass
  * --------------------------
  *
  * In an annotation processor you can get a type name instance for a type mirror by calling
- * [TypeName.get]. In reflection code, you can use [TypeName.get].
+ * [asTypeName]. In reflection code, you can use [asTypeName].
 
  * Defining new types
  * ------------------
@@ -123,10 +124,6 @@ abstract class TypeName internal constructor(
   }
 
   companion object {
-    /** Returns a [TypeName] equivalent to this [TypeMirror]. */
-    @JvmStatic @JvmName("get")
-    fun TypeMirror.asTypeName() = get(this, mutableMapOf())
-
     internal fun get(
         mirror: TypeMirror,
         typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
@@ -193,14 +190,6 @@ abstract class TypeName internal constructor(
       }, null)
     }
 
-    /** Returns a [TypeName] equivalent to this [KClass].  */
-    @JvmStatic @JvmName("get")
-    fun KClass<*>.asTypeName() = asClassName()
-
-    /** Returns a [TypeName] equivalent to this [Type].  */
-    @JvmStatic @JvmName("get")
-    fun Type.asTypeName() = get(this, mutableMapOf())
-
     internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
       when (type) {
         is Class<*> -> {
@@ -240,3 +229,15 @@ abstract class TypeName internal constructor(
 @JvmField val CHAR = ClassName("kotlin", "Char")
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
+
+/** Returns a [TypeName] equivalent to this [TypeMirror]. */
+@JvmName("get")
+fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
+
+/** Returns a [TypeName] equivalent to this [KClass].  */
+@JvmName("get")
+fun KClass<*>.asTypeName() = asClassName()
+
+/** Returns a [TypeName] equivalent to this [Type].  */
+@JvmName("get")
+fun Type.asTypeName() = TypeName.get(this, mutableMapOf())

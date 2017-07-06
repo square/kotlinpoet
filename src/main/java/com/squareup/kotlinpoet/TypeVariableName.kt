@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("TypeVariableNames")
+
 package com.squareup.kotlinpoet
 
 import java.io.IOException
@@ -63,7 +65,7 @@ class TypeVariableName private constructor(
   }
 
   companion object {
-    private fun of(name: String, bounds: List<TypeName>): TypeVariableName {
+    internal fun of(name: String, bounds: List<TypeName>): TypeVariableName {
       // Strip java.lang.Object from bounds if it is present.
       return TypeVariableName(name, bounds.filter { it != ANY })
     }
@@ -89,11 +91,6 @@ class TypeVariableName private constructor(
     operator fun invoke(name: String, vararg bounds: Type): TypeVariableName {
       return TypeVariableName.of(name, bounds.map { it.asTypeName() })
     }
-
-    /** Returns type variable equivalent to `mirror`.  */
-    @JvmStatic @JvmName("get")
-    fun TypeVariable.asTypeVariableName()
-        = (asElement() as TypeParameterElement).asTypeVariableName()
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
@@ -123,16 +120,8 @@ class TypeVariableName private constructor(
       return typeVariableName
     }
 
-    /** Returns type variable equivalent to `element`.  */
-    @JvmStatic @JvmName("get")
-    fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
-      val name = simpleName.toString()
-      val boundsTypeNames = bounds.map { it.asTypeName() }
-      return TypeVariableName.of(name, boundsTypeNames)
-    }
-
     /** Returns type variable equivalent to `type`.  */
-    @JvmOverloads @JvmStatic internal fun get(
+    internal fun get(
         type: java.lang.reflect.TypeVariable<*>,
         map: MutableMap<Type, TypeVariableName> = mutableMapOf())
         : TypeVariableName {
@@ -150,4 +139,17 @@ class TypeVariableName private constructor(
       return result
     }
   }
+}
+
+/** Returns type variable equivalent to `mirror`.  */
+@JvmName("get")
+fun TypeVariable.asTypeVariableName()
+    = (asElement() as TypeParameterElement).asTypeVariableName()
+
+/** Returns type variable equivalent to `element`.  */
+@JvmName("get")
+fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
+  val name = simpleName.toString()
+  val boundsTypeNames = bounds.map { it.asTypeName() }
+  return TypeVariableName.of(name, boundsTypeNames)
 }
