@@ -2459,6 +2459,15 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun requiresNonKeywordName() {
+    try {
+      TypeSpec.enumBuilder("when")
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("not a valid name: when")
+    }
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

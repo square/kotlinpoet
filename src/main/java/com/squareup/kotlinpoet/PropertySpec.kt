@@ -19,7 +19,6 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import java.io.IOException
 import java.lang.reflect.Type
-import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
@@ -172,7 +171,7 @@ class PropertySpec private constructor(builder: Builder) {
 
   companion object {
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(isName(name)) { "not a valid name: $name" }
       return Builder(name, type)
           .addModifiers(*modifiers)
     }
@@ -184,7 +183,7 @@ class PropertySpec private constructor(builder: Builder) {
         = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun varBuilder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(isName(name)) { "not a valid name: $name" }
       return Builder(name, type)
           .mutable(true)
           .addModifiers(*modifiers)

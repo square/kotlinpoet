@@ -21,7 +21,6 @@ import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.io.IOException
 import java.lang.reflect.Type
-import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.DeclaredType
@@ -190,7 +189,7 @@ class FunSpec private constructor(builder: Builder) {
     internal val code = CodeBlock.builder()
 
     init {
-      require(name.isConstructor || name.isAccessor || SourceVersion.isName(name)) {
+      require(name.isConstructor || name.isAccessor || isName(name)) {
         "not a valid name: $name"
       }
     }

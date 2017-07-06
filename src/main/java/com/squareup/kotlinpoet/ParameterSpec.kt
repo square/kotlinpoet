@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import java.io.IOException
 import java.lang.reflect.Type
-import javax.lang.model.SourceVersion
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.VariableElement
@@ -134,7 +133,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
         = method.parameters.map { ParameterSpec.get(it) }
 
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(isName(name)) { "not a valid name: $name" }
       return Builder(name, type).addModifiers(*modifiers)
     }
 

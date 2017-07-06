@@ -65,10 +65,10 @@ class NameAllocatorTest {
     assertThat(nameAllocator.newName("&ab", 1)).isEqualTo("_ab")
   }
 
-  @Test fun javaKeyword() {
+  @Test fun kotlinKeyword() {
     val nameAllocator = NameAllocator()
-    assertThat(nameAllocator.newName("public", 1)).isEqualTo("public_")
-    assertThat(nameAllocator.get(1)).isEqualTo("public_")
+    assertThat(nameAllocator.newName("when", 1)).isEqualTo("when_")
+    assertThat(nameAllocator.get(1)).isEqualTo("when_")
   }
 
   @Test fun tagReuseForbidden() {

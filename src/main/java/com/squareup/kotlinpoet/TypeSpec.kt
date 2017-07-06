@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.io.IOException
 import java.lang.reflect.Type
-import javax.lang.model.SourceVersion
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
@@ -344,7 +343,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val typeSpecs = mutableListOf<TypeSpec>()
 
     init {
-      require(name == null || SourceVersion.isName(name)) { "not a valid name: $name" }
+      require(name == null || isName(name)) { "not a valid name: $name" }
     }
 
     fun addKdoc(format: String, vararg args: Any) = apply {
@@ -447,9 +446,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
-        "enum constants must have anonymous type arguments"
-      }
-      require(SourceVersion.isName(name)) { "not a valid enum constant: $name" }
+          "enum constants must have anonymous type arguments" }
+      require(isName(name)) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }
 

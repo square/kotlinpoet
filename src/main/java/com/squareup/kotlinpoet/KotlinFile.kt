@@ -25,7 +25,6 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
-import javax.lang.model.SourceVersion
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
@@ -186,7 +185,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     internal val members = mutableListOf<Any>()
 
     init {
-      require(SourceVersion.isName(fileName)) { "not a valid file name: $fileName" }
+      require(isName(fileName)) { "not a valid file name: $fileName" }
     }
 
     fun addFileAnnotation(annotationSpec: AnnotationSpec) = apply {

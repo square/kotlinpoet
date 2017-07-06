@@ -67,6 +67,27 @@ class UtilTest {
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0")
   }
 
+  @Test fun legalIdentifiers() {
+    assertThat(isIdentifier("foo")).isTrue()
+    assertThat(isIdentifier("bAr1")).isTrue()
+    assertThat(isIdentifier("1")).isFalse()
+    assertThat(isIdentifier("♦♥♠♣")).isFalse()
+    assertThat(isIdentifier("`♦♥♠♣`")).isTrue()
+    assertThat(isIdentifier("`  ♣ !`")).isTrue()
+    assertThat(isIdentifier("€")).isFalse()
+    assertThat(isIdentifier("`€`")).isTrue()
+    assertThat(isIdentifier("`1`")).isTrue()
+    assertThat(isIdentifier("```")).isFalse()
+    assertThat(isIdentifier("``")).isFalse()
+    assertThat(isIdentifier("\n")).isFalse()
+    assertThat(isIdentifier("`\n`")).isFalse()
+    assertThat(isIdentifier("\r")).isFalse()
+    assertThat(isIdentifier("`\r`")).isFalse()
+    assertThat(isIdentifier("when")).isTrue()
+    assertThat(isIdentifier("fun")).isTrue()
+    assertThat(isIdentifier("")).isFalse()
+  }
+
   internal fun stringLiteral(string: String) = stringLiteral(string, string)
 
   internal fun stringLiteral(expected: String, value: String)
