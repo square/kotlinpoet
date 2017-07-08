@@ -86,7 +86,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |fun <T, U> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable, U : java.util.Comparator, U : kotlin.Cloneable =
-      |      null
+      |    null
       |""".trimMargin())
   }
 
@@ -100,7 +100,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |fun <T, U : kotlin.Cloneable, V> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable =
-      |      null
+      |    null
       |""".trimMargin())
   }
 }

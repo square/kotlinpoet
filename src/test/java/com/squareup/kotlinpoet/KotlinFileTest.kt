@@ -152,9 +152,7 @@ class KotlinFileTest {
         |import com.squareup.tacos.internal.wrap
         |import kotlin.collections.List
         |
-        |fun prepareTacos(): List<Taco> {
-        |  return wrap(INGREDIENTS)
-        |}
+        |fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
         |""".trimMargin())
   }
 

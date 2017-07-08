@@ -41,6 +41,7 @@ class FunSpec private constructor(builder: Builder) {
   val parameters = builder.parameters.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
   val code = builder.code.build()
+  val isSingleExpression = builder.isSingleExpression
 
   init {
     require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
@@ -78,13 +79,8 @@ class FunSpec private constructor(builder: Builder) {
       return
     }
 
-    val asExpressionBody = code.withoutPrefix(EXPRESSION_BODY_PREFIX)
-
-    if (asExpressionBody != null) {
-      codeWriter.indent()
-      codeWriter.emitCode(" =%W%[")
-      codeWriter.emitCode(asExpressionBody)
-      codeWriter.unindent()
+    if (isSingleExpression) {
+      codeWriter.emitCode(" =%W%L", code)
     } else {
       codeWriter.emit(" {\n")
       codeWriter.indent()
@@ -174,6 +170,7 @@ class FunSpec private constructor(builder: Builder) {
     builder.parameters += parameters
     builder.exceptions += exceptions
     builder.code.add(code)
+    builder.isSingleExpression = isSingleExpression
     return builder
   }
 
@@ -187,6 +184,7 @@ class FunSpec private constructor(builder: Builder) {
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val code = CodeBlock.builder()
+    internal var isSingleExpression = false
 
     init {
       require(name.isConstructor || name.isAccessor || isName(name)) {
@@ -236,7 +234,7 @@ class FunSpec private constructor(builder: Builder) {
           Modifier.ABSTRACT -> this.modifiers += KModifier.ABSTRACT
           Modifier.FINAL -> this.modifiers += KModifier.FINAL
           Modifier.NATIVE -> this.modifiers += KModifier.EXTERNAL
-          Modifier.DEFAULT -> {}
+          Modifier.DEFAULT -> Unit
           Modifier.STATIC -> addAnnotation(JvmStatic::class)
           Modifier.SYNCHRONIZED -> addAnnotation(Synchronized::class)
           Modifier.STRICTFP -> addAnnotation(Strictfp::class)
@@ -296,15 +294,34 @@ class FunSpec private constructor(builder: Builder) {
         = addParameter(name, type.asTypeName(), *modifiers)
 
     fun addCode(format: String, vararg args: Any) = apply {
-      code.add(format, *args)
+      code.add(stripReturn(format), *args)
+    }
+
+    private fun stripReturn(format: String) = when {
+      code.isNotEmpty() -> format
+      else -> {
+        val withoutReturn = format.substringAfter(RETURN)
+        if (withoutReturn != format) {
+          isSingleExpression = true
+        }
+        withoutReturn
+      }
     }
 
     fun addNamedCode(format: String, args: Map<String, *>) = apply {
-      code.addNamed(format, args)
+      code.addNamed(stripReturn(format), args)
     }
 
     fun addCode(codeBlock: CodeBlock) = apply {
-      code.add(codeBlock)
+      if (code.isNotEmpty()) {
+        code.add(codeBlock)
+      } else {
+        val withoutReturn = codeBlock.withoutPrefix(RETURN_CODE_BLOCK)
+        if (withoutReturn != null) {
+          isSingleExpression = true
+        }
+        code.add(withoutReturn ?: codeBlock)
+      }
     }
 
     fun addComment(format: String, vararg args: Any) = apply {
@@ -316,7 +333,7 @@ class FunSpec private constructor(builder: Builder) {
      * * Shouldn't contain braces or newline characters.
      */
     fun beginControlFlow(controlFlow: String, vararg args: Any) = apply {
-      code.beginControlFlow(controlFlow, *args)
+      code.beginControlFlow(stripReturn(controlFlow), *args)
     }
 
     /**
@@ -332,7 +349,7 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     fun addStatement(format: String, vararg args: Any) = apply {
-      code.addStatement(format, *args)
+      code.addStatement(stripReturn(format), *args)
     }
 
     fun build() = FunSpec(this)
@@ -342,6 +359,8 @@ class FunSpec private constructor(builder: Builder) {
     internal const val CONSTRUCTOR = "constructor()"
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
+    internal const val RETURN = "return "
+    @JvmField internal val RETURN_CODE_BLOCK = CodeBlock.of(RETURN)
 
     @JvmStatic fun builder(name: String): Builder {
       return Builder(name)
@@ -442,5 +461,3 @@ internal val String.isConstructor: Boolean
 
 internal val String.isAccessor: Boolean
   get() = this == GETTER || this == SETTER
-
-internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("%[return ")

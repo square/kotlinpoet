@@ -57,7 +57,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("toString")
             .addModifiers(KModifier.PUBLIC, KModifier.FINAL, KModifier.OVERRIDE)
             .returns(String::class)
-            .addCode("return %S;\n", "taco")
+            .addCode("return %S\n", "taco")
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -66,12 +66,10 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |  final override fun toString(): String {
-        |    return "taco";
-        |  }
+        |  final override fun toString(): String = "taco"
         |}
         |""".trimMargin())
-    assertEquals(2095734687, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(2021168219, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
@@ -131,7 +129,7 @@ class TypeSpecTest {
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .returns(thungOfSuperBar)
             .addParameter(thungParameter)
-            .addCode("return %L;\n", aSimpleThung)
+            .addCode("return %L\n", aSimpleThung)
             .build())
         .build()
     val taco = TypeSpec.classBuilder("Taco")
@@ -140,17 +138,17 @@ class TypeSpecTest {
             .build())
         .build()
 
+    // FIXME broken formatting
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
         |class Taco {
         |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> {
-        |      return object : SimpleThung<Bar>(thung) {
-        |        override fun doSomething(bar: Bar) {
-        |          /* code snippets */
-        |        }
-        |      };
+        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> =
+        |        object : SimpleThung<Bar>(thung) {
+        |      override fun doSomething(bar: Bar) {
+        |        /* code snippets */
+        |      }
         |    }
         |  }
         |}
@@ -376,9 +374,7 @@ class TypeSpecTest {
         |  ROCK,
         |
         |  PAPER("flat") {
-        |    override fun toString(): String {
-        |      return "paper airplane!"
-        |    }
+        |    override fun toString(): String = "paper airplane!"
         |  },
         |
         |  SCISSORS("peace sign");
@@ -444,7 +440,7 @@ class TypeSpecTest {
             .addFun(FunSpec.builder("toString")
                 .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
                 .returns(String::class)
-                .addCode("return %S;\n", "west side")
+                .addCode("return %S\n", "west side")
                 .build())
             .build())
         .build()
@@ -455,9 +451,7 @@ class TypeSpecTest {
         |
         |enum class Roshambo {
         |  SPOCK {
-        |    override fun toString(): String {
-        |      return "west side";
-        |    }
+        |    override fun toString(): String = "west side"
         |  }
         |}
         |""".trimMargin())
@@ -935,7 +929,7 @@ class TypeSpecTest {
         .addFun(FunSpec.builder("getComparator")
             .addTypeVariable(typeVariable)
             .returns(typeVariable)
-            .addCode("return null;\n")
+            .addCode("return null\n")
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -945,9 +939,7 @@ class TypeSpecTest {
         |import java.util.Comparator
         |
         |class Taco {
-        |  fun <T> getComparator(): T where T : Comparator, T : Serializable {
-        |    return null;
-        |  }
+        |  fun <T> getComparator(): T where T : Comparator, T : Serializable = null
         |}
         |""".trimMargin())
   }
@@ -1744,6 +1736,34 @@ class TypeSpecTest {
         |    } else {
         |      return false
         |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun whenReturn() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .addFun(FunSpec.builder("toppingPrice")
+            .addParameter("topping", String::class)
+            .beginControlFlow("return when(topping)")
+            .addStatement("%S -> 1", "beef")
+            .addStatement("%S -> 2", "lettuce")
+            .addStatement("%S -> 3", "cheese")
+            .addStatement("else -> throw IllegalToppingException(topping)")
+            .endControlFlow()
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Taco {
+        |  fun toppingPrice(topping: String) = when(topping) {
+        |    "beef" -> 1
+        |    "lettuce" -> 2
+        |    "cheese" -> 3
+        |    else -> throw IllegalToppingException(topping)
         |  }
         |}
         |""".trimMargin())

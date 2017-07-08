@@ -138,6 +138,10 @@ class CodeBlock private constructor(
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
 
+    fun isEmpty() = formatParts.isEmpty()
+
+    fun isNotEmpty() = !isEmpty()
+
     /**
      * Adds code using named arguments.
      *
