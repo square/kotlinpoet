@@ -80,7 +80,7 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     if (isSingleExpression) {
-      codeWriter.emitCode(" =%W%L", code)
+      codeWriter.emitCode(" = %L", code)
     } else {
       codeWriter.emit(" {\n")
       codeWriter.indent()

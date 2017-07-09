@@ -138,14 +138,12 @@ class TypeSpecTest {
             .build())
         .build()
 
-    // FIXME broken formatting
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
         |class Taco {
         |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> =
-        |        object : SimpleThung<Bar>(thung) {
+        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung) {
         |      override fun doSomething(bar: Bar) {
         |        /* code snippets */
         |      }
