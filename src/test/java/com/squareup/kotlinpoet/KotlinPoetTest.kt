@@ -337,7 +337,7 @@ class KotlinPoetTest {
         |    println("getter")
         |    return field
         |  }
-        |  set(value: Int) {
+        |  set(value) {
         |    println("setter")
         |    field = value
         |  }

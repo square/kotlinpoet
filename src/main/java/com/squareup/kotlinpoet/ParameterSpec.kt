@@ -31,10 +31,13 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val defaultValue = builder.defaultValue
 
   @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter) {
+  internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emitCode("%L: %T", name, type)
+    codeWriter.emitCode("%L", name)
+    if (includeType) {
+      codeWriter.emitCode(": %T", type)
+    }
     emitDefaultValue(codeWriter)
   }
 
