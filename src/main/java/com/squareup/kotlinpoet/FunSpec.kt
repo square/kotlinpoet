@@ -40,11 +40,11 @@ class FunSpec private constructor(builder: Builder) {
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
-  val code = builder.code.build()
-  val isSingleExpression = builder.isSingleExpression
+  val body = builder.body.build()
+  val isExpressionBody = builder.isExpressionBody
 
   init {
-    require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
+    require(body.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
       "abstract function ${builder.name} cannot have code"
     }
     require(name != SETTER || parameters.size == 1) {
@@ -79,12 +79,12 @@ class FunSpec private constructor(builder: Builder) {
       return
     }
 
-    if (isSingleExpression) {
-      codeWriter.emitCode(" = %L", code)
+    if (isExpressionBody) {
+      codeWriter.emitCode(" = %L", body)
     } else {
       codeWriter.emit(" {\n")
       codeWriter.indent()
-      codeWriter.emitCode(code)
+      codeWriter.emitCode(body)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
@@ -169,8 +169,8 @@ class FunSpec private constructor(builder: Builder) {
     builder.returnType = returnType
     builder.parameters += parameters
     builder.exceptions += exceptions
-    builder.code.add(code)
-    builder.isSingleExpression = isSingleExpression
+    builder.body.add(body)
+    builder.isExpressionBody = isExpressionBody
     return builder
   }
 
@@ -183,8 +183,8 @@ class FunSpec private constructor(builder: Builder) {
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
-    internal val code = CodeBlock.builder()
-    internal var isSingleExpression = false
+    internal val body = CodeBlock.builder()
+    internal var isExpressionBody = false
 
     init {
       require(name.isConstructor || name.isAccessor || isName(name)) {
@@ -294,38 +294,38 @@ class FunSpec private constructor(builder: Builder) {
         = addParameter(name, type.asTypeName(), *modifiers)
 
     fun addCode(format: String, vararg args: Any) = apply {
-      code.add(stripReturn(format), *args)
+      body.add(stripReturn(format), *args)
     }
 
     private fun stripReturn(format: String) = when {
-      code.isNotEmpty() -> format
+      body.isNotEmpty() -> format
       else -> {
         val withoutReturn = format.substringAfter(RETURN)
         if (withoutReturn != format) {
-          isSingleExpression = true
+          isExpressionBody = true
         }
         withoutReturn
       }
     }
 
     fun addNamedCode(format: String, args: Map<String, *>) = apply {
-      code.addNamed(stripReturn(format), args)
+      body.addNamed(stripReturn(format), args)
     }
 
     fun addCode(codeBlock: CodeBlock) = apply {
-      if (code.isNotEmpty()) {
-        code.add(codeBlock)
+      if (body.isNotEmpty()) {
+        body.add(codeBlock)
       } else {
         val withoutReturn = codeBlock.withoutPrefix(RETURN_CODE_BLOCK)
         if (withoutReturn != null) {
-          isSingleExpression = true
+          isExpressionBody = true
         }
-        code.add(withoutReturn ?: codeBlock)
+        body.add(withoutReturn ?: codeBlock)
       }
     }
 
     fun addComment(format: String, vararg args: Any) = apply {
-      code.add("// " + format + "\n", *args)
+      body.add("// " + format + "\n", *args)
     }
 
     /**
@@ -333,7 +333,7 @@ class FunSpec private constructor(builder: Builder) {
      * * Shouldn't contain braces or newline characters.
      */
     fun beginControlFlow(controlFlow: String, vararg args: Any) = apply {
-      code.beginControlFlow(stripReturn(controlFlow), *args)
+      body.beginControlFlow(stripReturn(controlFlow), *args)
     }
 
     /**
@@ -341,15 +341,15 @@ class FunSpec private constructor(builder: Builder) {
      * *     Shouldn't contain braces or newline characters.
      */
     fun nextControlFlow(controlFlow: String, vararg args: Any) = apply {
-      code.nextControlFlow(controlFlow, *args)
+      body.nextControlFlow(controlFlow, *args)
     }
 
     fun endControlFlow() = apply {
-      code.endControlFlow()
+      body.endControlFlow()
     }
 
     fun addStatement(format: String, vararg args: Any) = apply {
-      code.addStatement(stripReturn(format), *args)
+      body.addStatement(stripReturn(format), *args)
     }
 
     fun build() = FunSpec(this)
@@ -360,7 +360,7 @@ class FunSpec private constructor(builder: Builder) {
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
     internal const val RETURN = "return "
-    @JvmField internal val RETURN_CODE_BLOCK = CodeBlock.of(RETURN)
+    internal val RETURN_CODE_BLOCK = CodeBlock.of(RETURN)
 
     @JvmStatic fun builder(name: String): Builder {
       return Builder(name)

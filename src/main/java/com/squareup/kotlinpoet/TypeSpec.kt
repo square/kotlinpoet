@@ -177,10 +177,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
-      if (primaryConstructor != null && !primaryConstructor.code.isEmpty()) {
+      if (primaryConstructor != null && !primaryConstructor.body.isEmpty()) {
         codeWriter.emit("init {\n")
         codeWriter.indent()
-        codeWriter.emitCode(primaryConstructor.code)
+        codeWriter.emitCode(primaryConstructor.body)
         codeWriter.unindent()
         codeWriter.emit("}\n")
       }
@@ -261,7 +261,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       return companionObject == null &&
           enumConstants.isEmpty() &&
           initializerBlock.isEmpty() &&
-          (primaryConstructor?.code?.isEmpty() ?: true) &&
+          (primaryConstructor?.body?.isEmpty() ?: true) &&
           funSpecs.isEmpty() &&
           typeSpecs.isEmpty()
     }
