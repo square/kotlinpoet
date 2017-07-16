@@ -133,7 +133,7 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emit("(")
     parameters.forEachIndexed { index, parameter ->
       if (index > 0) codeWriter.emit(",").emitWrappingSpace()
-      parameter.emit(codeWriter, emitType = name != SETTER)
+      parameter.emit(codeWriter, includeType = name != SETTER)
     }
     codeWriter.emit(")")
   }
