@@ -78,13 +78,10 @@ class FunSpec private constructor(builder: Builder) {
       return
     }
 
-    val asExpressionBody = body.withoutPrefix(EXPRESSION_BODY_PREFIX)
+    val asExpressionBody = body.trim().withoutPrefix(EXPRESSION_BODY_PREFIX)
 
     if (asExpressionBody != null) {
-      codeWriter.indent()
-      codeWriter.emitCode(" =%W%[")
-      codeWriter.emitCode(asExpressionBody)
-      codeWriter.unindent()
+      codeWriter.emitCode(" = %L", asExpressionBody)
     } else {
       codeWriter.emit(" {\n")
       codeWriter.indent()
@@ -443,4 +440,4 @@ internal val String.isConstructor: Boolean
 internal val String.isAccessor: Boolean
   get() = this == GETTER || this == SETTER
 
-internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("%[return ")
+internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")

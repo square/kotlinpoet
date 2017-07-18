@@ -404,6 +404,52 @@ class CodeBlockTest {
         .isNull()
   }
 
+  @Test fun trimEmpty() {
+    assertThat(CodeBlock.of("").trim())
+        .isEqualTo(CodeBlock.of(""))
+  }
+
+  @Test fun trimNoPlaceholders() {
+    assertThat(CodeBlock.of("return null").trim())
+        .isEqualTo(CodeBlock.of("return null"))
+  }
+
+  @Test fun trimPlaceholdersWithArgs() {
+    assertThat(CodeBlock.of("return %S", "taco").trim())
+        .isEqualTo(CodeBlock.of("return %S", "taco"))
+  }
+
+  @Test fun trimNoArgPlaceholderMiddle() {
+    assertThat(CodeBlock.of("this.taco =%W%S", "taco").trim())
+        .isEqualTo(CodeBlock.of("this.taco =%W%S", "taco"))
+  }
+
+  @Test fun trimNoArgPlaceholderStart() {
+    assertThat(CodeBlock.of("%>return ").trim())
+        .isEqualTo(CodeBlock.of("return "))
+  }
+
+  @Test fun trimNoArgPlaceholderEnd() {
+    assertThat(CodeBlock.of("return %W").trim())
+        .isEqualTo(CodeBlock.of("return "))
+  }
+
+  @Test fun trimNoArgPlaceholdersStartEnd() {
+    assertThat(CodeBlock.of("%[return this%]").trim())
+        .isEqualTo(CodeBlock.of("return this"))
+  }
+
+  @Test fun trimMultipleNoArgPlaceholders() {
+    assertThat(
+        CodeBlock.of("%[return if (x > %L) %S %Welse %S%]", 1, "a", "b").trim())
+        .isEqualTo(CodeBlock.of("return if (x > %L) %S %Welse %S", 1, "a", "b"))
+  }
+
+  @Test fun trimOnlyNoArgPlaceholders() {
+    assertThat(CodeBlock.of("%[%W%]%>%<").trim())
+        .isEqualTo(CodeBlock.of(""))
+  }
+
   @Test fun joinToCode() {
     val blocks = listOf(CodeBlock.of("%L", "taco1"), CodeBlock.of("%L", "taco2"), CodeBlock.of("%L", "taco3"))
     assertThat(blocks.joinToCode(prefix = "(", suffix = ")"))
