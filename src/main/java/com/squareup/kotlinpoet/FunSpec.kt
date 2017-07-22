@@ -40,10 +40,10 @@ class FunSpec private constructor(builder: Builder) {
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
-  val code = builder.code.build()
+  val body = builder.body.build()
 
   init {
-    require(code.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
+    require(body.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
       "abstract function ${builder.name} cannot have code"
     }
     require(name != SETTER || parameters.size == 1) {
@@ -78,17 +78,14 @@ class FunSpec private constructor(builder: Builder) {
       return
     }
 
-    val asExpressionBody = code.withoutPrefix(EXPRESSION_BODY_PREFIX)
+    val asExpressionBody = body.trim().withoutPrefix(EXPRESSION_BODY_PREFIX)
 
     if (asExpressionBody != null) {
-      codeWriter.indent()
-      codeWriter.emitCode(" =%W%[")
-      codeWriter.emitCode(asExpressionBody)
-      codeWriter.unindent()
+      codeWriter.emitCode(" = %L", asExpressionBody)
     } else {
       codeWriter.emit(" {\n")
       codeWriter.indent()
-      codeWriter.emitCode(code)
+      codeWriter.emitCode(body)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
@@ -173,7 +170,7 @@ class FunSpec private constructor(builder: Builder) {
     builder.returnType = returnType
     builder.parameters += parameters
     builder.exceptions += exceptions
-    builder.code.add(code)
+    builder.body.add(body)
     return builder
   }
 
@@ -186,7 +183,7 @@ class FunSpec private constructor(builder: Builder) {
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
     internal val exceptions = mutableSetOf<TypeName>()
-    internal val code = CodeBlock.builder()
+    internal val body = CodeBlock.builder()
 
     init {
       require(name.isConstructor || name.isAccessor || isName(name)) {
@@ -236,7 +233,7 @@ class FunSpec private constructor(builder: Builder) {
           Modifier.ABSTRACT -> this.modifiers += KModifier.ABSTRACT
           Modifier.FINAL -> this.modifiers += KModifier.FINAL
           Modifier.NATIVE -> this.modifiers += KModifier.EXTERNAL
-          Modifier.DEFAULT -> {}
+          Modifier.DEFAULT -> Unit
           Modifier.STATIC -> addAnnotation(JvmStatic::class)
           Modifier.SYNCHRONIZED -> addAnnotation(Synchronized::class)
           Modifier.STRICTFP -> addAnnotation(Strictfp::class)
@@ -296,19 +293,19 @@ class FunSpec private constructor(builder: Builder) {
         = addParameter(name, type.asTypeName(), *modifiers)
 
     fun addCode(format: String, vararg args: Any) = apply {
-      code.add(format, *args)
+      body.add(format, *args)
     }
 
     fun addNamedCode(format: String, args: Map<String, *>) = apply {
-      code.addNamed(format, args)
+      body.addNamed(format, args)
     }
 
     fun addCode(codeBlock: CodeBlock) = apply {
-      code.add(codeBlock)
+      body.add(codeBlock)
     }
 
     fun addComment(format: String, vararg args: Any) = apply {
-      code.add("// " + format + "\n", *args)
+      body.add("// " + format + "\n", *args)
     }
 
     /**
@@ -316,7 +313,7 @@ class FunSpec private constructor(builder: Builder) {
      * * Shouldn't contain braces or newline characters.
      */
     fun beginControlFlow(controlFlow: String, vararg args: Any) = apply {
-      code.beginControlFlow(controlFlow, *args)
+      body.beginControlFlow(controlFlow, *args)
     }
 
     /**
@@ -324,15 +321,15 @@ class FunSpec private constructor(builder: Builder) {
      * *     Shouldn't contain braces or newline characters.
      */
     fun nextControlFlow(controlFlow: String, vararg args: Any) = apply {
-      code.nextControlFlow(controlFlow, *args)
+      body.nextControlFlow(controlFlow, *args)
     }
 
     fun endControlFlow() = apply {
-      code.endControlFlow()
+      body.endControlFlow()
     }
 
     fun addStatement(format: String, vararg args: Any) = apply {
-      code.addStatement(format, *args)
+      body.addStatement(format, *args)
     }
 
     fun build() = FunSpec(this)
@@ -443,4 +440,4 @@ internal val String.isConstructor: Boolean
 internal val String.isAccessor: Boolean
   get() = this == GETTER || this == SETTER
 
-internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("%[return ")
+internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")

@@ -108,6 +108,25 @@ class CodeBlock private constructor(
     return CodeBlock(resultFormatParts, resultArgs)
   }
 
+  /**
+   * Returns a copy of the code block without leading and trailing no-arg placeholders
+   * (`%W`, `%<`, `%>`, `%[`, `%]`).
+   */
+  internal fun trim(): CodeBlock {
+    var start = 0
+    var end = formatParts.size
+    while (start < end && formatParts[start] in NO_ARG_PLACEHOLDERS) {
+      start++
+    }
+    while (start < end && formatParts[end - 1] in NO_ARG_PLACEHOLDERS) {
+      end--
+    }
+    return when {
+      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args)
+      else -> this
+    }
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
@@ -137,6 +156,10 @@ class CodeBlock private constructor(
   class Builder {
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
+
+    fun isEmpty() = formatParts.isEmpty()
+
+    fun isNotEmpty() = !isEmpty()
 
     /**
      * Adds code using named arguments.
@@ -374,6 +397,7 @@ class CodeBlock private constructor(
     @JvmField internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
     internal const val ARG_NAME = 1
     internal const val TYPE_NAME = 2
+    internal val NO_ARG_PLACEHOLDERS = setOf("%W", "%<", "%>", "%[", "%]")
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
 
