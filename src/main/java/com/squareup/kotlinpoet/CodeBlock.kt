@@ -393,8 +393,8 @@ class CodeBlock private constructor(
   }
 
   companion object {
-    @JvmField internal val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
-    @JvmField internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
+    internal val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
+    internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
     internal const val ARG_NAME = 1
     internal const val TYPE_NAME = 2
     internal val NO_ARG_PLACEHOLDERS = setOf("%W", "%<", "%>", "%[", "%]")
