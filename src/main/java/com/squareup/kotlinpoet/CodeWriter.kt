@@ -165,6 +165,9 @@ internal class CodeWriter @JvmOverloads constructor(
     var firstTypeVariable = true
     for (typeVariable in typeVariables) {
       if (!firstTypeVariable) emit(", ")
+      if (typeVariable.variance != null) {
+        emit("${typeVariable.variance.keyword} ")
+      }
       emitCode("%L", typeVariable.name)
       if (typeVariable.bounds.size == 1) {
         emitCode(" : %T", typeVariable.bounds[0])

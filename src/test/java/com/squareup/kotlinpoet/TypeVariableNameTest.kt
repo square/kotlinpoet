@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.io.Serializable
+import kotlin.test.fail
 
 class TypeVariableNameTest {
   @Test fun oneTypeVariableNoBounds() {
@@ -100,5 +101,31 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo("""
       |fun <T, U : kotlin.Cloneable, V> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable = null
       |""".trimMargin())
+  }
+
+  @Test fun inVariance() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(TypeVariableName("E", KModifier.IN, Number::class))
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<in E : kotlin.Number>
+      |""".trimMargin())
+  }
+
+  @Test fun outVariance() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(TypeVariableName("E", KModifier.OUT, Number::class))
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<out E : kotlin.Number>
+      |""".trimMargin())
+  }
+
+  @Test fun invalidVariance() {
+    try {
+      TypeVariableName("E", KModifier.FINAL)
+      fail()
+    } catch (e: IllegalArgumentException) {
+    }
   }
 }
