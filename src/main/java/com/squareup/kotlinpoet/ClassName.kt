@@ -56,6 +56,23 @@ class ClassName internal constructor(
 
   override fun asNonNullable() = ClassName(names, false, annotations)
 
+  override fun toKotlinType(): ClassName = when (packageName()) {
+    "java.lang" -> when (simpleName()) {
+      "String" -> STRING
+      "Void" -> UNIT
+      "Boolean" -> BOOLEAN
+      "Byte" -> BYTE
+      "Character" -> CHAR
+      "Short" -> SHORT
+      "Integer" -> INT
+      "Long" -> LONG
+      "Float" -> FLOAT
+      "Double" -> DOUBLE
+      else -> this
+    }
+    else -> this
+  }
+
   override fun annotated(annotations: List<AnnotationSpec>)
       = ClassName(names, nullable, this.annotations + annotations)
 

@@ -21,6 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
+import javax.lang.model.type.TypeMirror
 
 class ClassNameTest {
   @Rule @JvmField var compilationRule = CompilationRule()
@@ -158,5 +159,19 @@ class ClassNameTest {
         .isEqualTo("Foo\$Bar\$Baz")
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("a.b.c.Foo\$Bar\$Baz")
+  }
+
+
+  @Test fun toKotlinClassName() {
+    assertThat(java.lang.Boolean::class.java.asClassName().toKotlinType()).isEqualTo(BOOLEAN)
+    assertThat(java.lang.Byte::class.java.asClassName().toKotlinType()).isEqualTo(BYTE)
+    assertThat(java.lang.Short::class.java.asClassName().toKotlinType()).isEqualTo(SHORT)
+    assertThat(java.lang.Integer::class.java.asClassName().toKotlinType()).isEqualTo(INT)
+    assertThat(java.lang.Long::class.java.asClassName().toKotlinType()).isEqualTo(LONG)
+    assertThat(java.lang.Character::class.java.asClassName().toKotlinType()).isEqualTo(CHAR)
+    assertThat(java.lang.Float::class.java.asClassName().toKotlinType()).isEqualTo(FLOAT)
+    assertThat(java.lang.Double::class.java.asClassName().toKotlinType()).isEqualTo(DOUBLE)
+    assertThat(java.lang.String::class.java.asClassName().toKotlinType()).isEqualTo(STRING)
+    assertThat(java.lang.Void::class.java.asClassName().toKotlinType()).isEqualTo(UNIT)
   }
 }

@@ -36,6 +36,8 @@ class TypeVariableName private constructor(
 
   override fun asNonNullable() = TypeVariableName(name, bounds, variance, false, annotations)
 
+  override fun toKotlinType() = this
+
   override fun annotated(annotations: List<AnnotationSpec>): TypeVariableName {
     return TypeVariableName(name, bounds, variance, nullable, annotations)
   }

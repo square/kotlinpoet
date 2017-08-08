@@ -26,6 +26,9 @@ class LambdaTypeName internal constructor(
   override fun asNonNullable()
       = LambdaTypeName(receiver, parameters, returnType, false, annotations)
 
+  override fun toKotlinType()
+      = LambdaTypeName(receiver?.toKotlinType(), parameters.map { it.toKotlinType() }, returnType.toKotlinType())
+
   override fun annotated(annotations: List<AnnotationSpec>)
       = LambdaTypeName(receiver, parameters, returnType, nullable, annotations)
 
