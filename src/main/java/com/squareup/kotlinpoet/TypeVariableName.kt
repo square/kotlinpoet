@@ -74,43 +74,24 @@ class TypeVariableName private constructor(
       return TypeVariableName(name, bounds.filter { it != ANY }, variance)
     }
 
-    /** Returns type variable named `name` without bounds.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String) = TypeVariableName.of(name, emptyList(), variance = null)
-
     /** Returns type variable named `name` with `variance` and without bounds.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, variance: KModifier) =
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, variance: KModifier? = null) =
         TypeVariableName.of(name, emptyList(), variance)
 
-    /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: TypeName) =
-        TypeVariableName.of(name, bounds.toList(), variance = null)
-
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, variance: KModifier, vararg bounds: TypeName) =
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: TypeName, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.toList(), variance)
 
-    /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: KClass<*>) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance = null)
-
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, variance: KModifier, vararg bounds: KClass<*>) =
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: KClass<*>, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
-    /** Returns type variable named `name` with `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: Type) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance = null)
-
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, variance: KModifier, vararg bounds: Type) =
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
     /**
