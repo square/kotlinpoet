@@ -1,11 +1,35 @@
 Change Log
 ==========
 
+## Version 0.4.0
+
+_2017-08-08_
+
+ * New: Change KotlinPoet's extensions like `asClassName()` to be top-level functions.
+ * New: Add declaration-site variance support.
+ * New: Improve handling of single expression bodies.
+ * New: Support file annotations.
+ * New: Support imports from the top-level file.
+ * New: Accept superclass constructor parameters.
+ * New: Support primary constructors using the `constructor` keyword.
+ * Fix: Don't emit setter parameter types.
+ * Fix: Support Kotlin keywords in `NameAllocator`.
+ * Fix: Emit the right default parameters for primary constructors.
+ * Fix: Format annotations properly when used as parameters.
+ * Fix: Recognize imports when emitting nullable types.
+ * Fix: Call through to the superclass constructor when superclass has a no-args constructor.
+ * Fix: Omit class braces if all properties are declared in primary constructor.
+ * Fix: Don't emit empty class bodies.
+ * Fix: Emit the right syntax for declaring multiple generic type constraints.
+ * Fix: Support properties on objects, companions and interfaces.
+ * Fix: Use `AnnotationSpec` for throws.
+
+
 ## Version 0.3.0
 
 _2017-06-11_
 
- * New: Objects and companion objects
+ * New: Objects and companion objects.
  * New: `TypeAliasSpec` to create type aliases.
  * New: `LambdaTypeName` to create lambda types.
  * New: Collapse property declarations into constructor params.
