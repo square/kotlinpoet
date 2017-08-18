@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.io.IOException
 import java.lang.reflect.Type
@@ -484,12 +483,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addFun(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
-        if(funSpec.body.isEmpty()) {
-          require(funSpec.modifiers.contains(ABSTRACT) && !funSpec.modifiers.contains(KModifier.PRIVATE))
-          requireNotNull(funSpec.returnType)
-		} else {
-		  requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
-		}
+        requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
+        requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
       } else if (kind == Kind.ANNOTATION) {
         check(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
