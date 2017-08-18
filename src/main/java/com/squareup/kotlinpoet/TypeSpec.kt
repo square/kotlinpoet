@@ -485,22 +485,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addFun(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
         if(funSpec.body.isEmpty()) {
-<<<<<<< HEAD
           require(funSpec.modifiers.contains(KModifier.ABSTRACT) && !funSpec.modifiers.contains(KModifier.PRIVATE))
           requireNotNull(funSpec.returnType)
         } else {
           requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
         }
-=======
-          require(funSpec.modifiers.contains(ABSTRACT) && !funSpec.modifiers.contains(KModifier.PRIVATE))
-          requireNotNull(funSpec.returnType)
-		} else {
-		  requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
-		}
->>>>>>> parent of 4d2fd63... Revert "Fixed failure on adding default interface method"
       } else if (kind == Kind.ANNOTATION) {
         check(funSpec.modifiers == kind.implicitFunctionModifiers) {
-            "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
+          "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
       }
       funSpecs += funSpec
