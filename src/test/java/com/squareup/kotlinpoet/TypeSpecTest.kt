@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
@@ -2483,6 +2484,50 @@ class TypeSpecTest {
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("not a valid name: when")
+    }
+  }
+
+  @Test fun internalFunForbiddenInInterface() {
+    val type = TypeSpec.interfaceBuilder("ITaco")
+
+    try {
+      type.addFun(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, INTERNAL)
+          .build())
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+    }
+
+    try {
+      type.addFunctions(listOf(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, INTERNAL)
+          .build()))
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+    }
+  }
+
+  @Test fun internalFunForbiddenInAnnotation() {
+    val type = TypeSpec.annotationBuilder("Taco")
+
+    try {
+      type.addFun(FunSpec.builder("eat")
+          .addModifiers(INTERNAL)
+          .build())
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }
+
+    try {
+      type.addFunctions(listOf(FunSpec.builder("eat")
+          .addModifiers(INTERNAL)
+          .build()))
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
     }
   }
 

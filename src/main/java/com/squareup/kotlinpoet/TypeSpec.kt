@@ -478,7 +478,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunctions(funSpecs: Iterable<FunSpec>) = apply {
-      this.funSpecs += funSpecs
+      funSpecs.forEach { addFun(it) }
     }
 
     fun addFun(funSpec: FunSpec) = apply {
@@ -486,7 +486,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
         requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
       } else if (kind == Kind.ANNOTATION) {
-        check(funSpec.modifiers == kind.implicitFunctionModifiers) {
+        require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
       }
