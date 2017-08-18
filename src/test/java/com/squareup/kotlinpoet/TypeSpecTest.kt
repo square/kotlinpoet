@@ -36,8 +36,10 @@ import java.util.EventListener
 import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
+import java.util.function.Consumer
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
+import kotlin.test.assertFailsWith
 
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -835,6 +837,46 @@ class TypeSpecTest {
         |  val v: Int
         |}
         |""".trimMargin())
+  }
+
+  @Test
+  fun interfaceFunWithDefaultImpl() {
+    val exe = FunSpec.builder("eat")
+        .addModifiers(KModifier.PUBLIC)
+        .addParameter("muncher", ParameterizedTypeName.get(Consumer::class, Byte::class))
+        .addCode(CodeBlock.builder().addStatement("muncher.accept(taco)").build())
+        .build()
+
+    val taco = TypeSpec.interfaceBuilder("Me")
+        .addFun(exe)
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.util.function.Consumer
+      |import kotlin.Byte
+      |
+      |interface Me {
+      |  fun eat(muncher: Consumer<Byte>) {
+      |    muncher.accept(taco)
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test
+  fun interfaceFailMethodNoReturnType() {
+    val exe = FunSpec.builder("eat")
+        .addParameter("muncher", ParameterizedTypeName.get(Consumer::class, Byte::class))
+        .build()
+
+    assertFailsWith(IllegalArgumentException::class, {
+      TypeSpec.interfaceBuilder("Me")
+          .addFun(exe)
+    }).also {
+      assert(it.message!!.contains("return", ignoreCase = true) )
+    }
   }
 
   @Test fun referencedAndDeclaredSimpleNamesConflict() {
