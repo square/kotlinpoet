@@ -505,7 +505,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
       } else if (kind == Kind.ANNOTATION) {
-        check(funSpec.modifiers == kind.implicitFunctionModifiers) {
+        require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
       }
