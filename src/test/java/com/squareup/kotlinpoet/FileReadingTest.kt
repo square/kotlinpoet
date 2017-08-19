@@ -41,7 +41,7 @@ class FileReadingTest {
   @Test fun javaFileObjectCharacterContent() {
     val type = TypeSpec.classBuilder("Test")
         .addKdoc("Pi\u00f1ata\u00a1")
-        .addFun(FunSpec.builder("fooBar").build())
+        .addFunction(FunSpec.builder("fooBar").build())
         .build()
     val kotlinFile = KotlinFile.get("foo", type)
     val javaFileObject = kotlinFile.toJavaFileObject()
