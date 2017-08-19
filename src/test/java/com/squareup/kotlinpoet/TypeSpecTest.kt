@@ -2591,6 +2591,50 @@ class TypeSpecTest {
     }
   }
 
+  @Test fun internalFunForbiddenInInterface() {
+    val type = TypeSpec.interfaceBuilder("ITaco")
+
+    try {
+      type.addFun(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, INTERNAL)
+          .build())
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+    }
+
+    try {
+      type.addFunctions(listOf(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, INTERNAL)
+          .build()))
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+    }
+  }
+
+  @Test fun internalFunForbiddenInAnnotation() {
+    val type = TypeSpec.annotationBuilder("Taco")
+
+    try {
+      type.addFun(FunSpec.builder("eat")
+          .addModifiers(INTERNAL)
+          .build())
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }
+
+    try {
+      type.addFunctions(listOf(FunSpec.builder("eat")
+          .addModifiers(INTERNAL)
+          .build()))
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
