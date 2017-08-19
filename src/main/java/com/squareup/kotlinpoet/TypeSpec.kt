@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -88,7 +87,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
+        codeWriter.emitModifiers(modifiers, setOf(KModifier.PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
         if (kind != Kind.COMPANION) {
           codeWriter.emitCode(" %L", name)
@@ -122,7 +121,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             if (index > 0) codeWriter.emit(",").emitWrappingSpace()
             val property = constructorProperties[param.name]
             if (property != null) {
-              property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
+              property.emit(codeWriter, setOf(KModifier.PUBLIC), withInitializer = false, inline = true)
               param.emitDefaultValue(codeWriter)
             } else {
               param.emit(codeWriter)
@@ -446,7 +445,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
-          "enum constants must have anonymous type arguments" }
+        "enum constants must have anonymous type arguments"
+      }
       require(isName(name)) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }
@@ -483,8 +483,27 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addFunction(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
-        requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
-        requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
+        if (funSpec.body.isEmpty()) {
+          require(funSpec.modifiers.let { it.contains(KModifier.ABSTRACT) && !it.contains(KModifier.PRIVATE) }, {
+            "private function ${funSpec.name} can not be abstract"
+          })
+        } else {
+          requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
+          require(!funSpec.modifiers.contains(KModifier.ABSTRACT), {
+            "abstract function '${funSpec.name}' can not have a method body"
+          })
+        }
+
+        funSpec.modifiers.filter {
+          when (it) { KModifier.INTERNAL, KModifier.INLINE, KModifier.PROTECTED, KModifier.EXTERNAL -> true
+            else -> false
+          }
+        }.also {
+          require(it.isEmpty(), {
+            "$it modifier(s) not allowed on interface function '${funSpec.name}'"
+          })
+        }
+
       } else if (kind == Kind.ANNOTATION) {
         require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
