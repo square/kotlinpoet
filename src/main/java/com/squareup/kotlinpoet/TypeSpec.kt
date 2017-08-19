@@ -488,7 +488,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             "private function ${funSpec.name} can not be abstract"
           })
         } else {
-          requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE) // default to public like normal interface?
+          requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
           require(!funSpec.modifiers.contains(KModifier.ABSTRACT), {
             "abstract function '${funSpec.name}' can not have a method body"
           })
