@@ -478,10 +478,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunctions(funSpecs: Iterable<FunSpec>) = apply {
-      funSpecs.forEach { addFun(it) }
+      funSpecs.forEach { addFunction(it) }
     }
 
-    fun addFun(funSpec: FunSpec) = apply {
+    fun addFunction(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
         requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
         requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
