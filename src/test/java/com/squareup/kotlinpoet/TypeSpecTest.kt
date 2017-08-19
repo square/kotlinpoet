@@ -18,8 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.KModifier.INTERNAL
-import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
@@ -36,8 +34,10 @@ import java.util.EventListener
 import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
+import java.util.function.Consumer
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
+import kotlin.test.assertFailsWith
 
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -833,6 +833,109 @@ class TypeSpecTest {
         |
         |interface Taco {
         |  val v: Int
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun interfaceFunWithDefaultImpl() {
+    val exe = FunSpec.builder("eat")
+        .addModifiers(KModifier.PUBLIC)
+        .addParameter("muncher", ParameterizedTypeName.get(Consumer::class, Byte::class))
+        .addCode(CodeBlock.builder().addStatement("muncher.accept(taco)").build())
+        .build()
+
+    val taco = TypeSpec.interfaceBuilder("Me")
+        .addFun(exe)
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.util.function.Consumer
+      |import kotlin.Byte
+      |
+      |interface Me {
+      |  fun eat(muncher: Consumer<Byte>) {
+      |    muncher.accept(taco)
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun interfaceFailAbstractMethodWithImpl() {
+    val exe = FunSpec.builder("eat")
+        .addParameter("muncher", ParameterizedTypeName.get(Consumer::class, Byte::class))
+        .addCode(CodeBlock.of("\nmuncher.accept(Byte.MAX_VALUE)\n"))
+        .addModifiers(KModifier.ABSTRACT)
+
+    assertFailsWith(IllegalArgumentException::class, {
+      exe.build()
+    })
+  }
+
+  @Test fun abstractPrivateIfaceMethod() {
+    val notImpl = FunSpec.builder("secretFun")
+        .addParameter("gpa", Int::class)
+        .addModifiers(KModifier.ABSTRACT, KModifier.PRIVATE)
+        .build()
+    assertFailsWith(IllegalArgumentException::class, {
+      TypeSpec.interfaceBuilder("Foo")
+          .addFun(notImpl)
+          .build()
+    })
+  }
+
+  @Test fun explicitAbstractMethodWithImpl() {
+    FunSpec.builder("doo")
+        .addCode("val i = 1 + 1")
+        .addModifiers(KModifier.ABSTRACT)
+        .let {
+          assertFailsWith<IllegalArgumentException> {
+            it.build() // checks at both fun creation & also TypeSpec.Builder#addFun
+          }
+        }
+  }
+
+  @Test fun implicitNonAbstractFunWithPrivateIfaceImpl() {
+    val privateFun = FunSpec.builder("callMe")
+        .addModifiers(KModifier.PRIVATE)
+        .addCode(CodeBlock.builder()
+            .addStatement("return false")
+            .build())
+        .build()
+
+    val iface = TypeSpec.interfaceBuilder("DontFailMe")
+        .addFun(privateFun)
+        .build()
+    assertThat(toString(iface)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |interface DontFailMe {
+        |  private fun callMe() = false
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun implicitNonAbstractDefaultImpl() {
+    val method = FunSpec.builder("multiplyMe")
+        .addModifiers(PUBLIC)
+        .addParameter("value", Int::class)
+        .addCode(CodeBlock.builder()
+            .addStatement("return Math.exp(value)")
+            .build())
+        .build()
+
+    val iface = TypeSpec.interfaceBuilder("Euler")
+        .addFun(method)
+        .build()
+    assertThat(!method.modifiers.contains(ABSTRACT))
+    assertThat(toString(iface)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |interface Euler {
+        |  fun multiplyMe(value: Int) = Math.exp(value)
         |}
         |""".trimMargin())
   }
