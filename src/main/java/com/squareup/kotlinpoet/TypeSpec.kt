@@ -478,7 +478,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunctions(funSpecs: Iterable<FunSpec>) = apply {
-      this.funSpecs += funSpecs
+      funSpecs.forEach { addFun(it) }
     }
 
     fun addFun(funSpec: FunSpec) = apply {
@@ -493,6 +493,17 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             "abstract function '${funSpec.name}' can not have a method body"
           })
         }
+
+        funSpec.modifiers.filter {
+          when (it) { KModifier.INTERNAL, KModifier.INLINE, KModifier.PROTECTED, KModifier.EXTERNAL -> true
+            else -> false
+          }
+        }.also {
+          require(it.isEmpty(), {
+            "$it modifier(s) not allowed on interface function '${funSpec.name}'"
+          })
+        }
+
       } else if (kind == Kind.ANNOTATION) {
         check(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
