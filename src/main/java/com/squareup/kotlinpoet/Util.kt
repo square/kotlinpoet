@@ -47,9 +47,22 @@ internal fun <T> Collection<T>.toImmutableSet(): Set<T>
     = Collections.unmodifiableSet(LinkedHashSet(this))
 
 internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
-  val count = mutuallyExclusive.count { modifiers.contains(it) }
+  val count = mutuallyExclusive.count(modifiers::contains)
   require(count == 1) {
     "modifiers $modifiers must contain one of ${Arrays.toString(mutuallyExclusive)}"
+  }
+}
+
+internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
+  val count = mutuallyExclusive.count(modifiers::contains)
+  require(count <= 1) {
+    "modifiers $modifiers must contain none or only one of ${Arrays.toString(mutuallyExclusive)}"
+  }
+}
+
+internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifier) {
+  require(forbidden.none(modifiers::contains)) {
+    "modifiers $modifiers must contain none of ${Arrays.toString(forbidden)}"
   }
 }
 

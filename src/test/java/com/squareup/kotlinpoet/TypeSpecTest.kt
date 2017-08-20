@@ -20,6 +20,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
@@ -834,6 +835,32 @@ class TypeSpecTest {
         |
         |interface Taco {
         |  val v: Int
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun interfaceWithMethods() {
+    val taco = TypeSpec.interfaceBuilder("Taco")
+        .addFunction(FunSpec.builder("aMethod")
+            .addModifiers(KModifier.ABSTRACT)
+            .build())
+        .addFunction(FunSpec.builder("aDefaultMethod").build())
+        .addFunction(FunSpec.builder("aPrivateMethod")
+            .addModifiers(KModifier.PRIVATE)
+            .build())
+        .build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |interface Taco {
+        |  fun aMethod()
+        |
+        |  fun aDefaultMethod() {
+        |  }
+        |
+        |  private fun aPrivateMethod() {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2496,7 +2523,7 @@ class TypeSpecTest {
           .build())
       fail()
     } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
     }
 
     try {
@@ -2505,7 +2532,29 @@ class TypeSpecTest {
           .build()))
       fail()
     } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain one of [PUBLIC, PRIVATE]")
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
+    }
+  }
+
+  @Test fun privateAbstractFunForbiddenInInterface() {
+    val type = TypeSpec.interfaceBuilder("ITaco")
+
+    try {
+      type.addFunction(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, PRIVATE)
+          .build())
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
+    }
+
+    try {
+      type.addFunctions(listOf(FunSpec.builder("eat")
+          .addModifiers(ABSTRACT, PRIVATE)
+          .build()))
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
     }
   }
 
