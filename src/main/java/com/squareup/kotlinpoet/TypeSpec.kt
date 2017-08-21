@@ -483,8 +483,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addFunction(funSpec: FunSpec) = apply {
       if (kind == Kind.INTERFACE) {
-        requireExactlyOneOf(funSpec.modifiers, KModifier.ABSTRACT)
-        requireExactlyOneOf(funSpec.modifiers, KModifier.PUBLIC, KModifier.PRIVATE)
+        requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
+        requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
       } else if (kind == Kind.ANNOTATION) {
         require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
