@@ -18,10 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
-import com.squareup.kotlinpoet.KModifier.INTERNAL
-import com.squareup.kotlinpoet.KModifier.PRIVATE
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
@@ -38,6 +35,7 @@ import java.util.EventListener
 import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
+import java.util.function.Consumer
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
@@ -2579,6 +2577,63 @@ class TypeSpecTest {
       assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
     }
   }
+
+  @Test fun delegateByCtorParameter() {
+    val delegate = ParameterSpec.builder( "cheese",
+        ParameterizedTypeName.get(
+            ClassName.bestGuess("${Consumer::class.simpleName}"),
+            ClassName.bestGuess("${Byte::class.simpleName}")))
+
+    val type = TypeSpec.classBuilder("Guac")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("somethingElse", String::class)
+            .build())
+        .addSuperinterface(delegate.build())
+        .build()
+
+    // Don't know exactly how name resolving works for imports
+    val expect = """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Guac(somethingElse: String, cheese: Consumer<Byte>) : Consumer<Byte> by cheese
+        |""".trimMargin()
+    
+    assertThat(toString(type)).isEqualTo(expect)
+
+    // check that manually adding the ctor parameter doesn't duplicate result
+    val checkingDuplicates = type.toBuilder()
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("somethingElse", String::class)
+            .addParameter(delegate.build())
+            .build())
+        .build()
+
+    assertThat(toString(checkingDuplicates)).isEqualTo(expect)
+  }
+
+  @Test fun failDuplicateSuperifaceImplementation() {
+    val delegate = ParameterSpec.builder("cheese",
+        ParameterizedTypeName.get(
+            ClassName.bestGuess("${Consumer::class.simpleName}"),
+            ClassName.bestGuess("${Byte::class.simpleName}")))
+
+    try {
+      TypeSpec.classBuilder("Taco")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("somethingElse", String::class)
+              .build())
+          .addSuperinterface(delegate.build())
+          .addSuperinterface(delegate.type)
+          .build()
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("class 'Taco' already implements Consumer<Byte>, " +
+          "delegating to constructor parameter 'cheese' not allowed")
+    }
+  }
+
 
   companion object {
     private val donutsPackage = "com.squareup.donuts"

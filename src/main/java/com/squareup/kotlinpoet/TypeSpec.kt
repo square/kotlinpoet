@@ -34,6 +34,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
   val superinterfaces = builder.superinterfaces.toImmutableList()
+  val superinterfaceDelegates = builder.superinterfaceDelegates.toImmutableList()
   val enumConstants = builder.enumConstants.toImmutableMap()
   val propertySpecs = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
@@ -48,6 +49,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.typeVariables += typeVariables
     builder.superclass = superclass
     builder.superclassConstructorParameters += superclassConstructorParameters
+    builder.superinterfaceDelegates += superinterfaceDelegates
     builder.superinterfaces += superinterfaces
     builder.enumConstants += enumConstants
     builder.propertySpecs += propertySpecs
@@ -134,7 +136,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         val types = listOf(superclass).filter { it != ANY }.map {
           CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
         }
-        val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
+        val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) } + superinterfaceDelegates.map { CodeBlock.of("${it.type} by ${it.name}") }
         if (superTypes.isNotEmpty()) {
           codeWriter.emitCode(superTypes.joinToCode(prefix = " : "))
         }
@@ -336,6 +338,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal var superclass: TypeName = ANY
     internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
     internal val superinterfaces = mutableListOf<TypeName>()
+    internal val superinterfaceDelegates = mutableListOf<ParameterSpec>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
     internal val initializerBlock = CodeBlock.builder()
@@ -441,6 +444,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addSuperinterface(superinterface: KClass<*>)
         = addSuperinterface(superinterface.asTypeName())
 
+    fun addSuperinterface(superinterface: ParameterSpec) = apply {
+      require(kind == Kind.CLASS) {
+        "delegation by constructor argument not allowed for '$name' of type $kind" }
+      require(!superinterface.type.nullable) {
+        "expected non-nullable '${superinterface.type.asNonNullable()}' but was '${superinterface.type}'"}
+      superinterfaceDelegates += superinterface
+    }
+
     @JvmOverloads fun addEnumConstant(
         name: String,
         typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
@@ -517,6 +528,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
       require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
         "anonymous type has too many supertypes"
+      }
+
+      if (superinterfaceDelegates.isNotEmpty()) {
+        requireNotNull(primaryConstructor) {
+          "delegate superinterfaces $superinterfaceDelegates require a primary constructor" }
+
+        superinterfaceDelegates.forEach {
+          require(!superinterfaces.contains(it.type)) {
+            "class '$name' already implements ${it.type}, delegating to constructor parameter '${it.name}' not allowed" }
+        }
+
+        if(primaryConstructor?.parameters?.containsAll(superinterfaceDelegates) == false)
+            primaryConstructor = primaryConstructor!!.toBuilder()
+                .addParameters(superinterfaceDelegates)     // re-assigning this allowed??
+                .build()
       }
 
       return TypeSpec(this)
