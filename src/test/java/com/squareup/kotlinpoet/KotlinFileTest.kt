@@ -44,7 +44,7 @@ class KotlinFileTest {
         .addStatement("return if (result.isEmpty()) %T.emptyList() else result", Collections::class)
         .build()
     val hello = TypeSpec.classBuilder("HelloWorld")
-        .addFun(beyond)
+        .addFunction(beyond)
         .build()
     val source = KotlinFile.builder("com.example.helloworld", "HelloWorld")
         .addType(hello)
@@ -107,7 +107,7 @@ class KotlinFileTest {
                 .addStatement("%T.gc()", System::class)
                 .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
                 .build())
-            .addFun(FunSpec.constructorBuilder()
+            .addFunction(FunSpec.constructorBuilder()
                 .addParameter("states", Thread.State::class.asClassName(), VARARG)
                 .build())
             .build())
@@ -161,7 +161,7 @@ class KotlinFileTest {
   fun importStaticDynamic() {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
-            .addFun(FunSpec.builder("main")
+            .addFunction(FunSpec.builder("main")
                 .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
                 .build())
             .build())
@@ -274,7 +274,7 @@ class KotlinFileTest {
         .addStatement("%T.gc()", System::class)
         .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
         .build()
-    return TypeSpec.classBuilder(name).addFun(funSpec).build()
+    return TypeSpec.classBuilder(name).addFunction(funSpec).build()
 
   }
 
@@ -520,7 +520,7 @@ class KotlinFileTest {
   @Test fun defaultPackage() {
     val source = KotlinFile.builder("", "HelloWorld")
         .addType(TypeSpec.classBuilder("HelloWorld")
-            .addFun(FunSpec.builder("main")
+            .addFunction(FunSpec.builder("main")
                 .addModifiers(KModifier.PUBLIC)
                 .addParameter("args", ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
                 .addCode("%T.out.println(%S);\n", System::class, "Hello World!")

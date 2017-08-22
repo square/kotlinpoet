@@ -155,10 +155,10 @@ class KotlinPoetTest {
 
   @Test fun visibilityModifiers() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
-        .addFun(FunSpec.builder("b").addModifiers(KModifier.PROTECTED).build())
-        .addFun(FunSpec.builder("c").addModifiers(KModifier.INTERNAL).build())
-        .addFun(FunSpec.builder("d").addModifiers(KModifier.PRIVATE).build())
+        .addFunction(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
+        .addFunction(FunSpec.builder("b").addModifiers(KModifier.PROTECTED).build())
+        .addFunction(FunSpec.builder("c").addModifiers(KModifier.INTERNAL).build())
+        .addFunction(FunSpec.builder("d").addModifiers(KModifier.PRIVATE).build())
         .build())
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
@@ -181,7 +181,7 @@ class KotlinPoetTest {
 
   @Test fun strings() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addFun(FunSpec.builder("strings")
+        .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "basic string")
             .addStatement("val b = %S", "string with a \$ dollar sign")
             .build())
@@ -200,7 +200,7 @@ class KotlinPoetTest {
   /** When emitting a triple quote, KotlinPoet escapes the 3rd quote in the triplet. */
   @Test fun rawStrings() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addFun(FunSpec.builder("strings")
+        .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "\"\n")
             .addStatement("val b = %S", "a\"\"\"b\"\"\"\"\"\"c\n")
             .addStatement("val c = %S", """
@@ -248,7 +248,7 @@ class KotlinPoetTest {
    */
   @Test fun edgeCaseStrings() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addFun(FunSpec.builder("strings")
+        .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "\n")
             .addStatement("val b = %S", " \n ")
             .build())
@@ -271,7 +271,7 @@ class KotlinPoetTest {
 
   @Test fun parameterDefaultValue() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
-        .addFun(FunSpec.builder("addCheese")
+        .addFunction(FunSpec.builder("addCheese")
             .addParameter(ParameterSpec.builder("kind", String::class)
                 .defaultValue("%S", "monterey jack")
                 .build())
@@ -385,13 +385,13 @@ class KotlinPoetTest {
   @Test fun stackedFunModifiers() {
     val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("A")
         .addModifiers(KModifier.OPEN)
-        .addFun(FunSpec.builder("get")
+        .addFunction(FunSpec.builder("get")
             .addModifiers(KModifier.EXTERNAL, KModifier.INFIX, KModifier.OPEN, KModifier.OPERATOR,
                 KModifier.PROTECTED)
             .addParameter("v", String::class)
             .returns(String::class)
             .build())
-        .addFun(FunSpec.builder("loop")
+        .addFunction(FunSpec.builder("loop")
             .addModifiers(KModifier.FINAL, KModifier.INLINE, KModifier.INTERNAL, KModifier.TAILREC)
             .returns(String::class)
             .addStatement("return %S", "a")
