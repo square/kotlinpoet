@@ -532,7 +532,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       if (superinterfaceDelegates.isNotEmpty()) {
         requireNotNull(primaryConstructor) {
-          "delegate superinterfaces $superinterfaceDelegates require a primary constructor" }
+          "delegate superinterfaces ${superinterfaceDelegates.map { it.type }} " +
+              "require value parameters ${superinterfaceDelegates.map { it.name }} by primary constructor" }
 
         superinterfaceDelegates.forEach {
           require(!superinterfaces.contains(it.type)) {
@@ -541,8 +542,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         if(primaryConstructor?.parameters?.containsAll(superinterfaceDelegates) == false)
             primaryConstructor = primaryConstructor!!.toBuilder()
-                .addParameters(superinterfaceDelegates)     // re-assigning this allowed??
+                .addParameters(superinterfaceDelegates)
                 .build()
+        // re-assigning ^^^ allowed?? otherwise need to require non-null ctor at time of declaring delegate
+
       }
 
       return TypeSpec(this)

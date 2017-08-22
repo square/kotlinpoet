@@ -2583,6 +2583,7 @@ class TypeSpecTest {
         ParameterizedTypeName.get(
             ClassName.bestGuess("${Consumer::class.simpleName}"),
             ClassName.bestGuess("${Byte::class.simpleName}")))
+    // Don't know how name resolving works for imports ^^^here, adding type by string literal
 
     val type = TypeSpec.classBuilder("Guac")
         .primaryConstructor(FunSpec.constructorBuilder()
@@ -2591,7 +2592,6 @@ class TypeSpecTest {
         .addSuperinterface(delegate.build())
         .build()
 
-    // Don't know exactly how name resolving works for imports
     val expect = """
         |package com.squareup.tacos
         |
@@ -2634,6 +2634,19 @@ class TypeSpecTest {
     }
   }
 
+  @Test fun failDelegateWithNullPrimaryConstructor() {
+    val delegate = ParameterSpec.builder("cheese", String::class).build() // String isn't an interface but w/e
+
+    try {
+      TypeSpec.classBuilder("Taco")
+          .addSuperinterface(delegate)
+          .build()
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected)
+          .hasMessage("delegate superinterfaces [kotlin.String] require value parameters [cheese] by primary constructor")
+    }
+  }
 
   companion object {
     private val donutsPackage = "com.squareup.donuts"
