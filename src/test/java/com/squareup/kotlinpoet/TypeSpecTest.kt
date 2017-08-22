@@ -36,6 +36,7 @@ import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
 import java.util.function.Consumer
+import java.util.function.Supplier
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
@@ -2646,6 +2647,35 @@ class TypeSpecTest {
       assertThat(expected)
           .hasMessage("delegate superinterfaces [kotlin.String] require value parameters [cheese] by primary constructor")
     }
+  }
+  @Test fun testMultipleDelegates() {
+    val delegate = ParameterSpec.builder("cheese",
+        ParameterizedTypeName.get(Consumer::class, Byte::class))
+        .build()
+    val otherDelegate = ParameterSpec.builder("bean", Runnable::class)
+        .build()
+
+    val type = TypeSpec.classBuilder("Guac")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("somethingElse", String::class)
+            .build())
+        .addSuperinterface(delegate)
+        .addSuperinterface(otherDelegate)
+        .build()
+
+    val expect = """
+        |package com.squareup.tacos
+        |
+        |import java.lang.Runnable
+        |import java.util.function.Consumer
+        |import kotlin.Byte
+        |import kotlin.String
+        |
+        |class Guac(somethingElse: String, cheese: Consumer<Byte>,
+        |    bean: Runnable) : java.util.function.Consumer<kotlin.Byte> by cheese, java.lang.Runnable by bean
+        |""".trimMargin()
+
+    assertThat(toString(type)).isEqualTo(expect)
   }
 
   companion object {
