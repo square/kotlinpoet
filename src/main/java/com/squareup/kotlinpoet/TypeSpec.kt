@@ -445,6 +445,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           "delegation only allowed for classes (found $kind '$name')" }
         require(!superinterface.nullable) {
           "expected non-nullable type but was '${superinterface.asNonNullable()}'"}
+        require(delegatedSuperInterfaces[superinterface] == null) {
+          "'$name' can not delegate to $superinterface by $delegate with existing declaration by " +
+              "${delegatedSuperInterfaces[superinterface]}" }
         delegatedSuperInterfaces.put(superinterface, delegate)
       }
     }

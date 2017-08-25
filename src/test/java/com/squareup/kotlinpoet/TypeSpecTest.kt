@@ -2673,6 +2673,22 @@ class TypeSpecTest {
           |""".trimMargin())
   }
 
+  @Test fun failOnAddExistingDelegateType() {
+    try {
+      TypeSpec.classBuilder("Taco")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("superString", Function::class)
+              .build())
+          .addSuperinterface(Function::class, CodeBlock.of("{ print(Hello) }"))
+          .addSuperinterface("superString")
+          .build()
+      fail()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("'Taco' can not delegate to kotlin.Function by superString with " +
+          "existing declaration by { print(Hello) }")
+    }
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
