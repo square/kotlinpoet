@@ -18,7 +18,10 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.KModifier.*
+import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.PRIVATE
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
