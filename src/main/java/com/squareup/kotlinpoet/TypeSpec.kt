@@ -455,7 +455,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY)
         = addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(superinterface: KClass<*>, constructorParameterName: String) = apply {
+    fun addSuperinterface(constructorParameterName: String) = apply {
       requireNotNull(primaryConstructor) {
         "delegating to constructor parameter requires not-null constructor" }
       requireNotNull(primaryConstructor?.parameter(constructorParameterName)?.also {

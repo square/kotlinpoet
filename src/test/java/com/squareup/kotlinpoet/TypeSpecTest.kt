@@ -2633,30 +2633,48 @@ class TypeSpecTest {
 
     assertThat(toString(type)).isEqualTo(expect)
   }
+  @Test fun testNoSuchParameterDelegate() {
+    try {
+      TypeSpec.classBuilder("Taco")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("other", String::class)
+              .build())
+          .addSuperinterface("notOther")
+          .build()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
+    }
+  }
+
+  @Test fun failAddParamDelegateWhenNullCtor() {
+    try {
+      TypeSpec.classBuilder("Taco")
+          .addSuperinterface("etc")
+          .build()
+    } catch (expected: IllegalArgumentException) {
+      assertThat(expected).hasMessage("delegating to constructor parameter requires not-null constructor")
+    }
+  }
+
+  @Test fun testAddedDelegateByParamName() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("superString", Function::class)
+            .build())
+        .addSuperinterface("superString")
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+          |package com.squareup.tacos
+          |
+          |import kotlin.Function
+          |
+          |class Taco(superString: Function) : Function by superString
+          |""".trimMargin())
+  }
 
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
 }
-@Test fun testNoSuchParameterDelegate() {
-  try {
-    TypeSpec.classBuilder("Taco")
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("other", String::class)
-            .build())
-        .addSuperinterface(Runnable::class, "notOther")
-        .build()
-  } catch (expected: IllegalArgumentException) {
-    assertThat(expected).hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
-  }
-}
 
-@Test fun failAddParamDelegateWhenNullCtor() {
-  try {
-    TypeSpec.classBuilder("Taco")
-        .addSuperinterface(Runnable::class, "etc")
-        .build()
-  } catch (expected: IllegalArgumentException) {
-    assertThat(expected).hasMessage("delegating to constructor parameter requires not-null constructor")
-  }
-}
