@@ -397,6 +397,7 @@ class CodeBlock private constructor(
     internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
     internal const val ARG_NAME = 1
     internal const val TYPE_NAME = 2
+    internal val empty = of("")
     internal val NO_ARG_PLACEHOLDERS = setOf("%W", "%>", "%<", "%[", "%]")
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()

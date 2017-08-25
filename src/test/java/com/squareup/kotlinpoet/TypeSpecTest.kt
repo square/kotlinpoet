@@ -36,7 +36,6 @@ import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
 import java.util.function.Consumer
-import java.util.function.Supplier
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
@@ -2579,100 +2578,57 @@ class TypeSpecTest {
     }
   }
 
-  @Test fun delegateByCtorParameter() {
-    val delegate = ParameterSpec.builder( "cheese",
-        ParameterizedTypeName.get(
-            ClassName.bestGuess("${Consumer::class.simpleName}"),
-            ClassName.bestGuess("${Byte::class.simpleName}")))
-    // Don't know how name resolving works for imports ^^^here, adding type by string literal
-
+  @Test fun basicDelegateTest() {
     val type = TypeSpec.classBuilder("Guac")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("somethingElse", String::class)
             .build())
-        .addSuperinterface(delegate.build())
+        .addSuperinterface(ParameterizedTypeName.get(Consumer::class, String::class), CodeBlock.of("{ println(it) }"))
         .build()
 
     val expect = """
         |package com.squareup.tacos
         |
+        |import java.util.function.Consumer
         |import kotlin.String
         |
-        |class Guac(somethingElse: String, cheese: Consumer<Byte>) : Consumer<Byte> by cheese
+        |class Guac(somethingElse: String) : Consumer<String> by { println(it) }
         |""".trimMargin()
     
     assertThat(toString(type)).isEqualTo(expect)
-
-    // check that manually adding the ctor parameter doesn't duplicate result
-    val checkingDuplicates = type.toBuilder()
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("somethingElse", String::class)
-            .addParameter(delegate.build())
-            .build())
-        .build()
-
-    assertThat(toString(checkingDuplicates)).isEqualTo(expect)
   }
 
   @Test fun failDuplicateSuperifaceImplementation() {
-    val delegate = ParameterSpec.builder("cheese",
-        ParameterizedTypeName.get(
-            ClassName.bestGuess("${Consumer::class.simpleName}"),
-            ClassName.bestGuess("${Byte::class.simpleName}")))
-
     try {
       TypeSpec.classBuilder("Taco")
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("somethingElse", String::class)
               .build())
-          .addSuperinterface(delegate.build())
-          .addSuperinterface(delegate.type)
+          .addSuperinterface(Consumer::class)
+          .addSuperinterface(Consumer::class, CodeBlock.of(""))
           .build()
       fail()
     } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("class 'Taco' already implements Consumer<Byte>, " +
-          "delegating to constructor parameter 'cheese' not allowed")
+      assertThat(expected).hasMessage("class 'Taco' already implements java.util.function.Consumer directly")
     }
   }
 
-  @Test fun failDelegateWithNullPrimaryConstructor() {
-    val delegate = ParameterSpec.builder("cheese", String::class).build() // String isn't an interface but w/e
-
-    try {
-      TypeSpec.classBuilder("Taco")
-          .addSuperinterface(delegate)
-          .build()
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected)
-          .hasMessage("delegate superinterfaces [kotlin.String] require value parameters [cheese] by primary constructor")
-    }
-  }
   @Test fun testMultipleDelegates() {
-    val delegate = ParameterSpec.builder("cheese",
-        ParameterizedTypeName.get(Consumer::class, Byte::class))
-        .build()
-    val otherDelegate = ParameterSpec.builder("bean", Runnable::class)
-        .build()
-
     val type = TypeSpec.classBuilder("Guac")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("somethingElse", String::class)
             .build())
-        .addSuperinterface(delegate)
-        .addSuperinterface(otherDelegate)
+        .addSuperinterface(ClassName.bestGuess("RandomIface"), CodeBlock.of("Factory.byStrategy(FacadeImpl)"))
+        .addSuperinterface(Runnable::class, CodeBlock.of("{ Logger.debug(\"Hello world\") }"))
         .build()
 
     val expect = """
         |package com.squareup.tacos
         |
         |import java.lang.Runnable
-        |import java.util.function.Consumer
-        |import kotlin.Byte
         |import kotlin.String
         |
-        |class Guac(somethingElse: String, cheese: Consumer<Byte>,
-        |    bean: Runnable) : java.util.function.Consumer<kotlin.Byte> by cheese, java.lang.Runnable by bean
+        |class Guac(somethingElse: String) : RandomIface by Factory.byStrategy(FacadeImpl), Runnable by { Logger.debug("Hello world") }
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
