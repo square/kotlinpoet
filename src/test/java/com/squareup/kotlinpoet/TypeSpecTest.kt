@@ -2594,7 +2594,7 @@ class TypeSpecTest {
         |
         |class Guac(somethingElse: String) : Consumer<String> by { println(it) }
         |""".trimMargin()
-    
+
     assertThat(toString(type)).isEqualTo(expect)
   }
 
@@ -2605,7 +2605,7 @@ class TypeSpecTest {
               .addParameter("somethingElse", String::class)
               .build())
           .addSuperinterface(Consumer::class)
-          .addSuperinterface(Consumer::class, CodeBlock.of(""))
+          .addSuperinterface(Consumer::class, CodeBlock.of("HelloWorld.build()"))
           .build()
       fail()
     } catch (expected: IllegalArgumentException) {
@@ -2636,5 +2636,27 @@ class TypeSpecTest {
 
   companion object {
     private val donutsPackage = "com.squareup.donuts"
+  }
+}
+@Test fun testNoSuchParameterDelegate() {
+  try {
+    TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("other", String::class)
+            .build())
+        .addSuperinterface(Runnable::class, "notOther")
+        .build()
+  } catch (expected: IllegalArgumentException) {
+    assertThat(expected).hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
+  }
+}
+
+@Test fun failAddParamDelegateWhenNullCtor() {
+  try {
+    TypeSpec.classBuilder("Taco")
+        .addSuperinterface(Runnable::class, "etc")
+        .build()
+  } catch (expected: IllegalArgumentException) {
+    assertThat(expected).hasMessage("delegating to constructor parameter requires not-null constructor")
   }
 }

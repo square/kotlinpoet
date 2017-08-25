@@ -34,7 +34,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
   val superinterfaces = builder.superinterfaces.toImmutableList()
-  val delegateSuperInterfaces = builder.delegateSuperInterfaces.toImmutableMap()
+  val delegatedSuperInterfaces = builder.delegatedSuperInterfaces.toImmutableMap()
   val enumConstants = builder.enumConstants.toImmutableMap()
   val propertySpecs = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
@@ -55,7 +55,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.funSpecs += funSpecs
     builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
-    builder.delegateSuperInterfaces.putAll(delegateSuperInterfaces)
+    builder.delegatedSuperInterfaces.putAll(delegatedSuperInterfaces)
     return builder
   }
 
@@ -137,7 +137,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
         }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) } +
-            delegateSuperInterfaces.entries.map {
+            delegatedSuperInterfaces.entries.map {
               (type, init) -> CodeBlock.of("%T by $init", type) }
 
         if (superTypes.isNotEmpty()) {
@@ -341,7 +341,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal var superclass: TypeName = ANY
     internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
     internal val superinterfaces = mutableListOf<TypeName>()
-    internal val delegateSuperInterfaces = mutableMapOf<TypeName, CodeBlock>()
+    internal val delegatedSuperInterfaces = mutableMapOf<TypeName, CodeBlock>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
     internal val initializerBlock = CodeBlock.builder()
@@ -438,14 +438,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
-      if (delegate === CodeBlock.EMPTY)
+      if (delegate.isEmpty())
         superinterfaces += superinterface
       else {
         require(kind == Kind.CLASS) {
           "delegation only allowed for classes (found $kind '$name')" }
         require(!superinterface.nullable) {
           "expected non-nullable type but was '${superinterface.asNonNullable()}'"}
-        delegateSuperInterfaces.put(superinterface, delegate)
+        delegatedSuperInterfaces.put(superinterface, delegate)
       }
     }
 
@@ -454,6 +454,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY)
         = addSuperinterface(superinterface.asTypeName(), delegate)
+
+    fun addSuperinterface(superinterface: KClass<*>, constructorParameterName: String) = apply {
+      requireNotNull(primaryConstructor) {
+        "delegating to constructor parameter requires not-null constructor" }
+      requireNotNull(primaryConstructor?.parameter(constructorParameterName)?.also {
+        param -> addSuperinterface(param.type, CodeBlock.of(param.name))
+      }) { "no such constructor parameter '$constructorParameterName' to delegate to for type '$name'" }
+    }
 
     @JvmOverloads fun addEnumConstant(
         name: String,
@@ -533,9 +541,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         "anonymous type has too many supertypes"
       }
 
-      if (delegateSuperInterfaces.isNotEmpty()) {
+      if (delegatedSuperInterfaces.isNotEmpty()) {
         superinterfaces.forEach {
-          require(!delegateSuperInterfaces.contains(it)) {
+          require(!delegatedSuperInterfaces.contains(it)) {
             "class '$name' already implements $it directly" }
         }
       }
