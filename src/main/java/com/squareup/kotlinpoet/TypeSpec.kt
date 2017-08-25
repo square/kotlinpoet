@@ -437,8 +437,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       this.superinterfaces += superinterfaces
     }
 
-    fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.empty) = apply {
-      if (delegate === CodeBlock.empty)
+    fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
+      if (delegate === CodeBlock.EMPTY)
         superinterfaces += superinterface
       else {
         require(kind == Kind.CLASS) {
@@ -449,10 +449,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
     }
 
-    fun addSuperinterface(superinterface: Type, delegate: CodeBlock = CodeBlock.empty)
+    fun addSuperinterface(superinterface: Type, delegate: CodeBlock = CodeBlock.EMPTY)
         = addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.empty)
+    fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY)
         = addSuperinterface(superinterface.asTypeName(), delegate)
 
     @JvmOverloads fun addEnumConstant(
