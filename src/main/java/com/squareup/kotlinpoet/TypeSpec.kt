@@ -438,9 +438,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
-      if (delegate.isEmpty())
+      if (delegate.isEmpty()) {
         superinterfaces += superinterface
-      else {
+      } else {
         require(kind == Kind.CLASS) {
           "delegation only allowed for classes (found $kind '$name')" }
         require(!superinterface.nullable) {
@@ -458,12 +458,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY)
         = addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(constructorParameterName: String) = apply {
+    fun addSuperinterface(superinterface: KClass<*>, constructorParameterName: String) =
+        addSuperinterface(superinterface.asTypeName(), constructorParameterName)
+
+    fun addSuperinterface(superinterface: TypeName, constructorParameter: String) = apply {
       requireNotNull(primaryConstructor) {
         "delegating to constructor parameter requires not-null constructor" }
-      requireNotNull(primaryConstructor?.parameter(constructorParameterName)?.also {
-        param -> addSuperinterface(param.type, CodeBlock.of(param.name))
-      }) { "no such constructor parameter '$constructorParameterName' to delegate to for type '$name'" }
+      val parameter = primaryConstructor?.parameter(constructorParameter)
+      requireNotNull(parameter) {
+        "no such constructor parameter '$constructorParameter' to delegate to for type '$name'" }
+      addSuperinterface(parameter!!.type, CodeBlock.of(parameter.name))
     }
 
     @JvmOverloads fun addEnumConstant(

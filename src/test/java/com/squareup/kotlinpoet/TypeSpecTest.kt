@@ -18,10 +18,10 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Ignore
@@ -41,6 +41,7 @@ import java.util.concurrent.Callable
 import java.util.function.Consumer
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -2642,7 +2643,7 @@ class TypeSpecTest {
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("other", String::class)
               .build())
-          .addSuperinterface("notOther")
+          .addSuperinterface(KFunction::class, "notOther")
           .build()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
@@ -2652,7 +2653,7 @@ class TypeSpecTest {
   @Test fun failAddParamDelegateWhenNullCtor() {
     try {
       TypeSpec.classBuilder("Taco")
-          .addSuperinterface("etc")
+          .addSuperinterface(Runnable::class, "etc")
           .build()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected).hasMessage("delegating to constructor parameter requires not-null constructor")
@@ -2664,7 +2665,7 @@ class TypeSpecTest {
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("superString", Function::class)
             .build())
-        .addSuperinterface("superString")
+        .addSuperinterface(Function::class, "superString")
         .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -2683,7 +2684,7 @@ class TypeSpecTest {
               .addParameter("superString", Function::class)
               .build())
           .addSuperinterface(Function::class, CodeBlock.of("{ print(Hello) }"))
-          .addSuperinterface("superString")
+          .addSuperinterface(Function::class, "superString")
           .build()
       fail()
     } catch (expected: IllegalArgumentException) {
