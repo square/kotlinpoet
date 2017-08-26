@@ -75,6 +75,8 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
       this.modifiers.add(modifier)
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = TypeAliasSpec(this)
   }
 

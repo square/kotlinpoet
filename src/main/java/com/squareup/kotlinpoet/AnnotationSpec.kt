@@ -167,6 +167,8 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       this.useSiteTarget = useSiteTarget
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = AnnotationSpec(this)
   }
 

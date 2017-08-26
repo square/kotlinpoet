@@ -269,6 +269,8 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       this.indent = indent
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = KotlinFile(this)
   }
 
