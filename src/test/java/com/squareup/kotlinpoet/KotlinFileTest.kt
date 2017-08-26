@@ -139,7 +139,7 @@ class KotlinFileTest {
   @Test fun importTopLevel() {
     val source = KotlinFile.builder("com.squareup.tacos", "Taco")
         .addStaticImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
-        .addFun(FunSpec.builder("prepareTacos")
+        .addFunction(FunSpec.builder("prepareTacos")
             .returns(ParameterizedTypeName.get(List::class.asClassName(),
                 ClassName("com.squareup.tacos", "Taco")))
             .addCode("return wrap(INGREDIENTS)\n")
