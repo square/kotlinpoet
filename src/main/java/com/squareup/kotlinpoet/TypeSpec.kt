@@ -501,6 +501,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       typeSpecs += typeSpec
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build(): TypeSpec {
       require(kind != Kind.ENUM || enumConstants.isNotEmpty()) {
         "at least one enum constant is required for $name"

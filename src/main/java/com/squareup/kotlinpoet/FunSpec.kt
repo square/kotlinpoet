@@ -332,6 +332,8 @@ class FunSpec private constructor(builder: Builder) {
       body.addStatement(format, *args)
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = FunSpec(this)
   }
 

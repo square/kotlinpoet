@@ -166,6 +166,8 @@ class PropertySpec private constructor(builder: Builder) {
       this.setter = setter
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = PropertySpec(this)
   }
 

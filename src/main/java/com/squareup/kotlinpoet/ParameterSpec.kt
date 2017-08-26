@@ -120,6 +120,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       this.defaultValue = codeBlock
     }
 
+    fun init(block: Builder.() -> Builder) = block().build()
+
     fun build() = ParameterSpec(this)
   }
 
