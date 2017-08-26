@@ -214,7 +214,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       members += typeSpec
     }
 
-    fun addFun(funSpec: FunSpec) = apply {
+    fun addFunction(funSpec: FunSpec) = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
         "cannot add ${funSpec.name} to file $fileName"
       }

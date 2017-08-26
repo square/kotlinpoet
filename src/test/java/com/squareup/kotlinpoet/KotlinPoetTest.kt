@@ -24,12 +24,12 @@ class KotlinPoetTest {
 
   @Test fun topLevelMembersRetainOrder() {
     val source = KotlinFile.builder(tacosPackage, "Taco")
-        .addFun(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
+        .addFunction(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
         .addType(TypeSpec.classBuilder("B").build())
         .addProperty(PropertySpec.builder("c", String::class, KModifier.PUBLIC)
             .initializer("%S", "C")
             .build())
-        .addFun(FunSpec.builder("d").build())
+        .addFunction(FunSpec.builder("d").build())
         .addType(TypeSpec.classBuilder("E").build())
         .addProperty(PropertySpec.builder("f", String::class, KModifier.PUBLIC)
             .initializer("%S", "F")
@@ -59,7 +59,7 @@ class KotlinPoetTest {
   @Test fun noTopLevelConstructor() {
     try {
       KotlinFile.builder(tacosPackage, "Taco")
-          .addFun(FunSpec.constructorBuilder().build())
+          .addFunction(FunSpec.constructorBuilder().build())
       fail()
     } catch (expected: IllegalArgumentException) {
     }
@@ -291,7 +291,7 @@ class KotlinPoetTest {
 
   @Test fun extensionFunction() {
     val source = KotlinFile.builder(tacosPackage, "Taco")
-        .addFun(FunSpec.builder("shrink")
+        .addFunction(FunSpec.builder("shrink")
             .returns(String::class)
             .receiver(String::class)
             .addStatement("return substring(0, length - 1)")
@@ -412,7 +412,7 @@ class KotlinPoetTest {
 
   @Test fun basicExpressionBody() {
     val source = KotlinFile.builder(tacosPackage, "Taco")
-        .addFun(FunSpec.builder("addA")
+        .addFunction(FunSpec.builder("addA")
             .addParameter("s", String::class)
             .returns(String::class)
             .addStatement("return s + %S", "a")
