@@ -2229,6 +2229,27 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun companionObjectWithName() {
+    val companion = TypeSpec.companionObjectBuilder("Factory")
+        .addFunction(FunSpec.builder("tacos").build())
+        .build()
+
+    val type = TypeSpec.classBuilder("MyClass")
+        .companionObject(companion)
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class MyClass {
+        |  companion object Factory {
+        |    fun tacos() {
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun companionObjectOnInterface() {
     val companion = TypeSpec.companionObjectBuilder()
         .addFunction(FunSpec.builder("test")

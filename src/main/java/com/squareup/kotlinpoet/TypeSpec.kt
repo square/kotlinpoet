@@ -90,7 +90,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
-        if (kind != Kind.COMPANION) {
+        if (name != null) {
           codeWriter.emitCode(" %L", name)
         }
         codeWriter.emitTypeVariables(typeVariables)
@@ -532,7 +532,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
 
-    @JvmStatic fun companionObjectBuilder() = Builder(Kind.COMPANION, null, null)
+    @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
+        Builder(Kind.COMPANION, name, null)
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, null)
 
