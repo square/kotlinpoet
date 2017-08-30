@@ -2693,6 +2693,29 @@ class TypeSpecTest {
     }
   }
 
+  @Test
+  fun testDelegateIfaceWithOtherParamTypeName() {
+    val type = TypeSpec.classBuilder("EntityBuilder")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("argBuilder",
+                ParameterizedTypeName.get(ClassName.bestGuess("Payload"),
+                    ClassName.bestGuess("EntityBuilder"),
+                    ClassName.bestGuess("Entity")))
+                .defaultValue("Payload.create()")
+                .build())
+            .build())
+        .addSuperinterface(ParameterizedTypeName.get(ClassName.bestGuess("TypeBuilder"),
+            ClassName.bestGuess("EntityBuilder"),
+            ClassName.bestGuess("Entity")), "argBuilder")
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+          |package com.squareup.tacos
+          |
+          |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) : TypeBuilder<EntityBuilder, Entity> by argBuilder
+          |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
