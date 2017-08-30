@@ -448,7 +448,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         require(delegatedSuperInterfaces[superinterface] == null) {
           "'$name' can not delegate to $superinterface by $delegate with existing declaration by " +
               "${delegatedSuperInterfaces[superinterface]}" }
-        delegatedSuperInterfaces.put(superinterface, delegate)
+        delegatedSuperInterfaces[superinterface] = delegate
       }
     }
 
@@ -467,7 +467,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       val parameter = primaryConstructor?.parameter(constructorParameter)
       requireNotNull(parameter) {
         "no such constructor parameter '$constructorParameter' to delegate to for type '$name'" }
-      addSuperinterface(parameter!!.type, CodeBlock.of(parameter.name))
+      require(parameter!!.type == superinterface) {
+        "'$superinterface' != parameter type ${parameter.type}" }
+      addSuperinterface(superinterface, CodeBlock.of(parameter.name))
     }
 
     @JvmOverloads fun addEnumConstant(
