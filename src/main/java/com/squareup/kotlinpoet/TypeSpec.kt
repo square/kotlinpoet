@@ -467,9 +467,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       val parameter = primaryConstructor?.parameter(constructorParameter)
       requireNotNull(parameter) {
         "no such constructor parameter '$constructorParameter' to delegate to for type '$name'" }
-      require(parameter!!.type == superinterface) {
-        "'$superinterface' != parameter type ${parameter.type}" }
-      addSuperinterface(superinterface, CodeBlock.of(parameter.name))
+      addSuperinterface(superinterface, CodeBlock.of(constructorParameter))
     }
 
     @JvmOverloads fun addEnumConstant(
