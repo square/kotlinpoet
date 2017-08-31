@@ -39,6 +39,7 @@ class FunSpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
+  val delegateConstructorParameters = builder.delegateConstructorParameters.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
   val body = builder.body.build()
 
@@ -73,7 +74,10 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
+    val isEmptyConstructor = isConstructor && delegateConstructorParameters.isNotEmpty() &&
+        body.isEmpty()
+    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL) ||
+        isEmptyConstructor) {
       codeWriter.emit("\n")
       return
     }
@@ -112,6 +116,11 @@ class FunSpec private constructor(builder: Builder) {
 
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
+    }
+
+    if (delegateConstructorParameters.isNotEmpty()) {
+      codeWriter.emitCode(delegateConstructorParameters
+          .joinToCode(prefix = " : this(", suffix = ")"))
     }
 
     if (exceptions.isNotEmpty()) {
@@ -169,6 +178,7 @@ class FunSpec private constructor(builder: Builder) {
     builder.typeVariables += typeVariables
     builder.returnType = returnType
     builder.parameters += parameters
+    builder.delegateConstructorParameters += delegateConstructorParameters
     builder.exceptions += exceptions
     builder.body.add(body)
     return builder
@@ -182,6 +192,7 @@ class FunSpec private constructor(builder: Builder) {
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
+    internal val delegateConstructorParameters = mutableListOf<CodeBlock>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
 
@@ -281,6 +292,14 @@ class FunSpec private constructor(builder: Builder) {
       check(name != GETTER) { "$name cannot have parameters" }
       check(name != SETTER || parameters.size == 0) { "$name can have only one parameter" }
       parameters += parameterSpec
+    }
+
+    fun addDelegateParameters(vararg parameters: String) =
+        addDelegateParameters(*parameters.map { CodeBlock.of(it) }.toTypedArray())
+
+    fun addDelegateParameters(vararg parameters: CodeBlock) = apply {
+      check(name.isConstructor) { "only constructors can have delegate parameters!"}
+      delegateConstructorParameters += parameters
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
