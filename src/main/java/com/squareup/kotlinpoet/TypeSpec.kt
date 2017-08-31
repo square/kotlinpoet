@@ -141,7 +141,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
               (type, init) -> CodeBlock.of("%T by $init", type) }
 
         if (superTypes.isNotEmpty()) {
-          codeWriter.emitCode(superTypes.joinToCode(prefix = " : "))
+          codeWriter.emitCode(superTypes.joinToCode(separator = ",%W", prefix = " : "))
         }
 
         if (hasNoBody) {
