@@ -256,10 +256,10 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
-  @Test fun secondaryConstructorDelegate() {
+  @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
         .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
-        .addDelegateParameters("list[0]", "list[1]")
+        .callThisConstructorWithParameters("list[0]", "list[1]")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
@@ -267,10 +267,21 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun superConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .callSuperConstructorWithParameters("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
+      |""".trimMargin())
+  }
+
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
     try {
       FunSpec.builder("main")
-          .addDelegateParameters("a", "b", "c")
+          .callThisConstructorWithParameters("a", "b", "c")
       fail()
     } catch (expected: IllegalStateException) {
       assertThat(expected).hasMessage("only constructors can have delegate parameters!")

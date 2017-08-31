@@ -2546,7 +2546,7 @@ class TypeSpecTest {
             .addParameter(
                 "map",
                 ParameterizedTypeName.get(Map::class, String::class, String::class))
-            .addDelegateParameters(
+            .callThisConstructorWithParameters(
                 CodeBlock.of("map[%S]", "a"),
                 CodeBlock.of("map[%S]", "b"),
                 CodeBlock.of("map[%S]", "c"))
