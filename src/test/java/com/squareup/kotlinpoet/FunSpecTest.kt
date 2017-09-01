@@ -19,7 +19,8 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.FunSpec.Constructor.*
+import com.squareup.kotlinpoet.FunSpec.Constructor.THIS
+import com.squareup.kotlinpoet.FunSpec.Constructor.SUPER
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -282,7 +283,7 @@ class FunSpecTest {
   @Test fun emptyConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
         .addParameter("a", Int::class)
-        .delegateConstructor(THIS, *emptyArray<String>())
+        .delegateConstructor(THIS)
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""

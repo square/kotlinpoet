@@ -304,7 +304,9 @@ class FunSpec private constructor(builder: Builder) {
     fun delegateConstructor(constructor: Constructor, vararg parameters: String) =
         delegateConstructor(constructor, *parameters.map { CodeBlock.of(it) }.toTypedArray())
 
-    fun delegateConstructor(constructor: Constructor, vararg parameters: CodeBlock) = apply {
+    fun delegateConstructor(
+        constructor: Constructor,
+        vararg parameters: CodeBlock = emptyArray()) = apply {
       check(name.isConstructor) { "only constructors can have delegate parameters!" }
       delegateConstructor = constructor
       delegateConstructorParameters += parameters
