@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.io.IOException
 import java.lang.reflect.Type
@@ -45,7 +47,7 @@ class FunSpec private constructor(builder: Builder) {
   val body = builder.body.build()
 
   init {
-    require(body.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
+    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
       "abstract function ${builder.name} cannot have code"
     }
     require(name != SETTER || parameters.size == 1) {
@@ -77,8 +79,7 @@ class FunSpec private constructor(builder: Builder) {
 
     val isEmptyConstructor = isConstructor && delegateConstructorParameters.isNotEmpty() &&
         body.isEmpty()
-    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL) ||
-        isEmptyConstructor) {
+    if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
       codeWriter.emit("\n")
       return
     }
@@ -399,9 +400,9 @@ class FunSpec private constructor(builder: Builder) {
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
       var modifiers: MutableSet<Modifier> = method.modifiers
-      require(!modifiers.contains(Modifier.PRIVATE)
-          && !modifiers.contains(Modifier.FINAL)
-          && !modifiers.contains(Modifier.STATIC)) {
+      require(Modifier.PRIVATE !in modifiers
+          && Modifier.FINAL !in modifiers
+          && Modifier.STATIC !in modifiers) {
         "cannot override method with modifiers: $modifiers"
       }
 
