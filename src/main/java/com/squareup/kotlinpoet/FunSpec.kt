@@ -77,8 +77,7 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    val isEmptyConstructor = isConstructor && delegateConstructorParameters.isNotEmpty() &&
-        body.isEmpty()
+    val isEmptyConstructor = isConstructor && delegateConstructor != null && body.isEmpty()
     if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
       codeWriter.emit("\n")
       return
@@ -120,9 +119,9 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode(": %T", returnType)
     }
 
-    if (delegateConstructorParameters.isNotEmpty()) {
+    if (delegateConstructor != null) {
       codeWriter.emitCode(delegateConstructorParameters
-          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
+          .joinToCode(prefix = " : ${delegateConstructor.keyword}(", suffix = ")"))
     }
 
     if (exceptions.isNotEmpty()) {
@@ -187,6 +186,10 @@ class FunSpec private constructor(builder: Builder) {
     return builder
   }
 
+  enum class Constructor(internal val keyword: String) {
+    THIS("this"), SUPER("super")
+  }
+
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
@@ -195,7 +198,7 @@ class FunSpec private constructor(builder: Builder) {
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
-    internal var delegateConstructor: String? = null
+    internal var delegateConstructor: Constructor? = null
     internal val delegateConstructorParameters = mutableListOf<CodeBlock>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
@@ -298,24 +301,13 @@ class FunSpec private constructor(builder: Builder) {
       parameters += parameterSpec
     }
 
-    fun callThisConstructorWithParameters(vararg parameters: String) =
-        callThisConstructorWithParameters(*parameters.map { CodeBlock.of(it) }.toTypedArray())
+    fun delegateConstructor(constructor: Constructor, vararg parameters: String) =
+        delegateConstructor(constructor, *parameters.map { CodeBlock.of(it) }.toTypedArray())
 
-    fun callThisConstructorWithParameters(vararg parameters: CodeBlock) = apply {
-      addDelegateConstructorParameters("this", *parameters)
-    }
-
-    fun callSuperConstructorWithParameters(vararg parameters: String) =
-        callSuperConstructorWithParameters(*parameters.map { CodeBlock.of(it) }.toTypedArray())
-
-    fun callSuperConstructorWithParameters(vararg parameters: CodeBlock) = apply {
-      addDelegateConstructorParameters("super", *parameters)
-    }
-
-    private fun addDelegateConstructorParameters(constructor: String, vararg params: CodeBlock) {
+    fun delegateConstructor(constructor: Constructor, vararg parameters: CodeBlock) = apply {
       check(name.isConstructor) { "only constructors can have delegate parameters!" }
       delegateConstructor = constructor
-      delegateConstructorParameters += params
+      delegateConstructorParameters += parameters
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)

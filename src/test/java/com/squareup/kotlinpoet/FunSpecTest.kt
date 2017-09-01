@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.FunSpec.Constructor.*
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -259,7 +260,7 @@ class FunSpecTest {
   @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
         .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
-        .callThisConstructorWithParameters("list[0]", "list[1]")
+        .delegateConstructor(THIS, "list[0]", "list[1]")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
@@ -270,7 +271,7 @@ class FunSpecTest {
   @Test fun superConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
         .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
-        .callSuperConstructorWithParameters("list[0]", "list[1]")
+        .delegateConstructor(SUPER, "list[0]", "list[1]")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
@@ -278,10 +279,21 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun emptyConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("a", Int::class)
+        .delegateConstructor(THIS, *emptyArray<String>())
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(a: kotlin.Int) : this()
+      |""".trimMargin())
+  }
+
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
     try {
       FunSpec.builder("main")
-          .callThisConstructorWithParameters("a", "b", "c")
+          .delegateConstructor(THIS, "a", "b", "c")
       fail()
     } catch (expected: IllegalStateException) {
       assertThat(expected).hasMessage("only constructors can have delegate parameters!")
