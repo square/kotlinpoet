@@ -65,7 +65,7 @@ enum class KModifier(
 
   // Multiplatform modules.
   HEADER("header", Target.CLASS),
-  IMPL("impl", Target.CLASS);
+  IMPL("impl", Target.CLASS, Target.FUNCTION, Target.PROPERTY);
 
   internal val targets = targets.toList()
 
