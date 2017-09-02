@@ -61,7 +61,11 @@ enum class KModifier(
   // Type modifiers.
   IN("in", Target.VARIANCE_ANNOTATION),
   OUT("out", Target.VARIANCE_ANNOTATION),
-  VARARG("vararg", Target.PARAMETER);
+  VARARG("vararg", Target.PARAMETER),
+
+  // Multiplatform modules.
+  HEADER("header", Target.CLASS),
+  IMPL("impl", Target.CLASS);
 
   internal val targets = targets.toList()
 
