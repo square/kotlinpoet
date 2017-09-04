@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.fail
 
 class TypeAliasSpecTest {
@@ -25,6 +26,7 @@ class TypeAliasSpecTest {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
         .build()
+
     assertThat(typeAliasSpec.toString()).isEqualTo("""
         |typealias Word = kotlin.String
         |""".trimMargin())
@@ -42,8 +44,9 @@ class TypeAliasSpecTest {
   @Test fun publicVisibility() {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
-        .visibility(KModifier.PUBLIC)
+        .addModifiers(KModifier.PUBLIC)
         .build()
+
     assertThat(typeAliasSpec.toString()).isEqualTo("""
         |public typealias Word = kotlin.String
         |""".trimMargin())
@@ -52,8 +55,9 @@ class TypeAliasSpecTest {
   @Test fun internalVisibility() {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
-        .visibility(KModifier.INTERNAL)
+        .addModifiers(KModifier.INTERNAL)
         .build()
+
     assertThat(typeAliasSpec.toString()).isEqualTo("""
         |internal typealias Word = kotlin.String
         |""".trimMargin())
@@ -62,16 +66,32 @@ class TypeAliasSpecTest {
   @Test fun privateVisibility() {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
-        .visibility(KModifier.PRIVATE)
+        .addModifiers(KModifier.PRIVATE)
         .build()
+
     assertThat(typeAliasSpec.toString()).isEqualTo("""
         |private typealias Word = kotlin.String
         |""".trimMargin())
   }
 
+  @Test fun implTypeAlias() {
+    val typeName = ParameterizedTypeName.get(
+        AtomicReference::class.asClassName(),
+        TypeVariableName("V"))
+    val typeAliasSpec = TypeAliasSpec
+        .builder("AtomicRef<V>", typeName)
+        .addModifiers(KModifier.IMPL)
+        .build()
+
+    assertThat(typeAliasSpec.toString()).isEqualTo("""
+        |impl typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
+        |""".trimMargin())
+  }
+
   @Test fun equalsAndHashCode() {
-    val a = TypeAliasSpec.builder("Word", String::class).visibility(KModifier.PUBLIC).build()
-    val b = TypeAliasSpec.builder("Word", String::class).visibility(KModifier.PUBLIC).build()
+    val a = TypeAliasSpec.builder("Word", String::class).addModifiers(KModifier.PUBLIC).build()
+    val b = TypeAliasSpec.builder("Word", String::class).addModifiers(KModifier.PUBLIC).build()
+
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }

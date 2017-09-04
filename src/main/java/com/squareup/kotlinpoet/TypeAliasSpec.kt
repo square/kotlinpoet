@@ -15,6 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.IMPL
+import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -67,9 +71,12 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
       require(isName(name)) { "not a valid name: $name" }
     }
 
-    fun visibility(modifier: KModifier) = apply {
-      require(modifier == KModifier.PUBLIC || modifier == KModifier.INTERNAL
-          || modifier == KModifier.PRIVATE) {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
+      modifiers.forEach(this::addModifier)
+    }
+
+    private fun addModifier(modifier: KModifier) {
+      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, IMPL)) {
         "unexpected typealias modifier $modifier"
       }
       this.modifiers.add(modifier)
