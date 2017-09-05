@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.FunSpec.Constructor.THIS
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
@@ -2547,8 +2546,7 @@ class TypeSpecTest {
             .addParameter(
                 "map",
                 ParameterizedTypeName.get(Map::class, String::class, String::class))
-            .delegateConstructor(
-                THIS,
+            .callThisConstructor(
                 CodeBlock.of("map[%S]", "a"),
                 CodeBlock.of("map[%S]", "b"),
                 CodeBlock.of("map[%S]", "c"))
