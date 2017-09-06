@@ -405,3 +405,5 @@ fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: Cha
   val placeholders = Array(blocks.size, { "%L" })
   return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
 }
+
+internal fun CodeBlock?.isNullOrEmpty() = this == null || isEmpty()
