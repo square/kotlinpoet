@@ -17,12 +17,9 @@
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Type
-import java.lang.reflect.WildcardType
-import javax.lang.model.element.TypeParameterElement
 import kotlin.reflect.KClass
 
-class WildcardTypeName private constructor(
+class WildcardTypeName internal constructor(
     upperBounds: List<TypeName>,
     lowerBounds: List<TypeName>,
     nullable: Boolean = false,
@@ -66,10 +63,6 @@ class WildcardTypeName private constructor(
       return WildcardTypeName(listOf(upperBound), emptyList())
     }
 
-    @JvmStatic fun subtypeOf(upperBound: Type): WildcardTypeName {
-      return subtypeOf(upperBound.asTypeName())
-    }
-
     @JvmStatic fun subtypeOf(upperBound: KClass<*>): WildcardTypeName {
       return subtypeOf(upperBound.asTypeName())
     }
@@ -82,43 +75,8 @@ class WildcardTypeName private constructor(
       return WildcardTypeName(listOf(ANY), listOf(lowerBound))
     }
 
-    @JvmStatic fun supertypeOf(lowerBound: Type): WildcardTypeName {
-      return supertypeOf(lowerBound.asTypeName())
-    }
-
     @JvmStatic fun supertypeOf(lowerBound: KClass<*>): WildcardTypeName {
       return supertypeOf(lowerBound.asTypeName())
     }
-
-    internal fun get(
-        mirror: javax.lang.model.type.WildcardType,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
-        : TypeName {
-      val extendsBound = mirror.extendsBound
-      if (extendsBound == null) {
-        val superBound = mirror.superBound
-        return if (superBound == null)
-          subtypeOf(ANY) else
-          supertypeOf(TypeName.get(superBound, typeVariables))
-      } else {
-        return subtypeOf(TypeName.get(extendsBound, typeVariables))
-      }
-    }
-
-    internal fun get(
-        wildcardName: WildcardType,
-        map: MutableMap<Type, TypeVariableName>)
-        : TypeName {
-      return WildcardTypeName(
-          wildcardName.upperBounds.map { TypeName.get(it, map = map) },
-          wildcardName.lowerBounds.map { TypeName.get(it, map = map) })
-    }
   }
 }
-
-@JvmName("get")
-fun javax.lang.model.type.WildcardType.asWildcardTypeName()
-    = WildcardTypeName.get(this, mutableMapOf())
-
-@JvmName("get")
-fun WildcardType.asWildcardTypeName() = WildcardTypeName.get(this, mutableMapOf())

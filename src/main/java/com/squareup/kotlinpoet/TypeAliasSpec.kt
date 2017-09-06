@@ -19,7 +19,6 @@ import com.squareup.kotlinpoet.KModifier.IMPL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
@@ -77,8 +76,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   companion object {
 
     @JvmStatic fun builder(name: String, type: TypeName) = Builder(name, type)
-
-    @JvmStatic fun builder(name: String, type: Type) = builder(name, type.asTypeName())
 
     @JvmStatic fun builder(name: String, type: KClass<*>) = builder(name, type.asTypeName())
   }

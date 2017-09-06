@@ -17,13 +17,9 @@
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Type
-import java.util.Collections
-import javax.lang.model.element.TypeParameterElement
-import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
 
-class TypeVariableName private constructor(
+class TypeVariableName internal constructor(
     val name: String,
     val bounds: List<TypeName>,
     val variance: KModifier? = null,
@@ -41,10 +37,6 @@ class TypeVariableName private constructor(
 
   override fun withoutAnnotations(): TypeName {
     return TypeVariableName(name, bounds, variance, nullable)
-  }
-
-  fun withBounds(vararg bounds: Type): TypeVariableName {
-    return withBounds(bounds.map { it.asTypeName() })
   }
 
   fun withBounds(vararg bounds: KClass<*>): TypeVariableName {
@@ -86,70 +78,5 @@ class TypeVariableName private constructor(
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, vararg bounds: KClass<*>, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
-
-    /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get") @JvmOverloads
-    operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
-
-    /**
-     * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
-     * infinite recursion in cases like `Enum<E extends Enum<E>>`. When we encounter such a
-     * thing, we will make a TypeVariableName without bounds and add that to the `typeVariables`
-     * map before looking up the bounds. Then if we encounter this TypeVariable again while
-     * constructing the bounds, we can just return it from the map. And, the code that put the entry
-     * in `variables` will make sure that the bounds are filled in before returning.
-     */
-    internal fun get(
-        mirror: TypeVariable,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>): TypeVariableName {
-      val element = mirror.asElement() as TypeParameterElement
-      var typeVariableName: TypeVariableName? = typeVariables[element]
-      if (typeVariableName == null) {
-        // Since the bounds field is public, we need to make it an unmodifiableList. But we control
-        // the List that that wraps, which means we can change it before returning.
-        val bounds = mutableListOf<TypeName>()
-        val visibleBounds = Collections.unmodifiableList(bounds)
-        typeVariableName = TypeVariableName(element.simpleName.toString(), visibleBounds)
-        typeVariables.put(element, typeVariableName)
-        for (typeMirror in element.bounds) {
-          bounds += TypeName.get(typeMirror, typeVariables)
-        }
-        bounds.remove(ANY)
-      }
-      return typeVariableName
-    }
-
-    /** Returns type variable equivalent to `type`.  */
-    internal fun get(
-        type: java.lang.reflect.TypeVariable<*>,
-        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
-        : TypeVariableName {
-      var result: TypeVariableName? = map[type]
-      if (result == null) {
-        val bounds = mutableListOf<TypeName>()
-        val visibleBounds = Collections.unmodifiableList(bounds)
-        result = TypeVariableName(type.name, visibleBounds)
-        map.put(type, result)
-        for (bound in type.bounds) {
-          bounds += TypeName.get(bound, map)
-        }
-        bounds.remove(ANY)
-      }
-      return result
-    }
   }
-}
-
-/** Returns type variable equivalent to `mirror`.  */
-@JvmName("get")
-fun TypeVariable.asTypeVariableName()
-    = (asElement() as TypeParameterElement).asTypeVariableName()
-
-/** Returns type variable equivalent to `element`.  */
-@JvmName("get")
-fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
-  val name = simpleName.toString()
-  val boundsTypeNames = bounds.map { it.asTypeName() }
-  return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }

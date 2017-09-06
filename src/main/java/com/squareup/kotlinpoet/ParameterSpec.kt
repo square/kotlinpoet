@@ -15,10 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Type
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.VariableElement
 import kotlin.reflect.KClass
 
 /** A generated parameter declaration.  */
@@ -82,8 +78,6 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
-
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
@@ -92,15 +86,6 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
     fun addModifiers(modifiers: Iterable<KModifier>) = apply {
       this.modifiers += modifiers
-    }
-
-    fun jvmModifiers(modifiers: Iterable<Modifier>) = apply {
-      for (modifier in modifiers) {
-        when (modifier) {
-          Modifier.FINAL -> this.modifiers += KModifier.FINAL
-          else -> throw IllegalArgumentException("unexpected parameter modifier $modifier")
-        }
-      }
     }
 
     fun defaultValue(format: String, vararg args: Any?) = defaultValue(CodeBlock.of(format, *args))
@@ -114,24 +99,10 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   }
 
   companion object {
-    @JvmStatic fun get(element: VariableElement): ParameterSpec {
-      val name = element.simpleName.toString()
-      val type = element.asType().asTypeName()
-      return ParameterSpec.builder(name, type)
-          .jvmModifiers(element.modifiers)
-          .build()
-    }
-
-    @JvmStatic fun parametersOf(method: ExecutableElement)
-        = method.parameters.map { ParameterSpec.get(it) }
-
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       require(isName(name)) { "not a valid name: $name" }
       return Builder(name, type).addModifiers(*modifiers)
     }
-
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = builder(name, type.asTypeName(), *modifiers)

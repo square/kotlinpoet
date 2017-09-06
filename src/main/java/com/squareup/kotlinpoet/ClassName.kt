@@ -17,12 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.NestingKind.MEMBER
-import javax.lang.model.element.NestingKind.TOP_LEVEL
-import javax.lang.model.element.PackageElement
-import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
 /** A fully-qualified class name for top-level and member classes.  */
@@ -160,54 +154,7 @@ class ClassName internal constructor(
 }
 
 @JvmName("get")
-fun Class<*>.asClassName(): ClassName {
-  require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
-  require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
-  require(!isArray) { "array types cannot be represented as a ClassName" }
-  val names = mutableListOf<String>()
-  var c = this
-  while (true) {
-    names += c.simpleName
-    val enclosing = c.enclosingClass ?: break
-    c = enclosing
-  }
-  // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
-  val lastDot = c.name.lastIndexOf('.')
-  if (lastDot != -1) names += c.name.substring(0, lastDot)
-  names.reverse()
-  return ClassName(names)
-}
-
-@JvmName("get")
 fun KClass<*>.asClassName(): ClassName {
   qualifiedName?.let { return ClassName.bestGuess(it) }
   throw IllegalArgumentException("$this cannot be represented as a ClassName")
-}
-
-/** Returns the class name for `element`.  */
-@JvmName("get")
-fun TypeElement.asClassName(): ClassName {
-  val names = mutableListOf<String>()
-  var e: Element = this
-  while (isClassOrInterface(e)) {
-    val eType = e as TypeElement
-    require(eType.nestingKind == TOP_LEVEL || eType.nestingKind == MEMBER) {
-      "unexpected type testing"
-    }
-    names += eType.simpleName.toString()
-    e = eType.enclosingElement
-  }
-  names += getPackage(this).qualifiedName.toString()
-  names.reverse()
-  return ClassName(names)
-}
-
-private fun isClassOrInterface(e: Element): Boolean = e.kind.isClass || e.kind.isInterface
-
-private fun getPackage(type: Element): PackageElement {
-  var t = type
-  while (t.kind != ElementKind.PACKAGE) {
-    t = t.enclosingElement
-  }
-  return t as PackageElement
 }

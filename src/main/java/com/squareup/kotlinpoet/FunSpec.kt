@@ -20,14 +20,6 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.VARARG
-import java.lang.reflect.Type
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.Modifier
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.ExecutableType
-import javax.lang.model.type.TypeVariable
-import javax.lang.model.util.Types
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
@@ -214,8 +206,6 @@ class FunSpec private constructor(builder: Builder) {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
-
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
@@ -224,26 +214,6 @@ class FunSpec private constructor(builder: Builder) {
 
     fun addModifiers(modifiers: Iterable<KModifier>) = apply {
       this.modifiers += modifiers
-    }
-
-    fun jvmModifiers(modifiers: Iterable<Modifier>) {
-      var visibility = KModifier.INTERNAL
-      for (modifier in modifiers) {
-        when (modifier) {
-          Modifier.PUBLIC -> visibility = KModifier.PUBLIC
-          Modifier.PROTECTED -> visibility = KModifier.PROTECTED
-          Modifier.PRIVATE -> visibility = KModifier.PRIVATE
-          Modifier.ABSTRACT -> this.modifiers += KModifier.ABSTRACT
-          Modifier.FINAL -> this.modifiers += KModifier.FINAL
-          Modifier.NATIVE -> this.modifiers += KModifier.EXTERNAL
-          Modifier.DEFAULT -> Unit
-          Modifier.STATIC -> addAnnotation(JvmStatic::class)
-          Modifier.SYNCHRONIZED -> addAnnotation(Synchronized::class)
-          Modifier.STRICTFP -> addAnnotation(Strictfp::class)
-          else -> throw IllegalArgumentException("unexpected fun modifier $modifier")
-        }
-      }
-      this.modifiers += visibility
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
@@ -261,16 +231,12 @@ class FunSpec private constructor(builder: Builder) {
       this.receiverType = receiverType
     }
 
-    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
-
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun returns(returnType: TypeName) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
     }
-
-    fun returns(returnType: Type) = returns(returnType.asTypeName())
 
     fun returns(returnType: KClass<*>) = returns(returnType.asTypeName())
 
@@ -310,9 +276,6 @@ class FunSpec private constructor(builder: Builder) {
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
         = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
-
-    fun addParameter(name: String, type: Type, vararg modifiers: KModifier)
-        = addParameter(name, type.asTypeName(), *modifiers)
 
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addParameter(name, type.asTypeName(), *modifiers)
@@ -379,82 +342,6 @@ class FunSpec private constructor(builder: Builder) {
 
     @JvmStatic fun setterBuilder(): Builder {
       return Builder(SETTER)
-    }
-
-    /**
-     * Returns a new fun spec builder that overrides `method`.
-
-     *
-     * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An `override` modifier will be added.
-     */
-    @JvmStatic fun overriding(method: ExecutableElement): Builder {
-      var modifiers: MutableSet<Modifier> = method.modifiers
-      require(Modifier.PRIVATE !in modifiers
-          && Modifier.FINAL !in modifiers
-          && Modifier.STATIC !in modifiers) {
-        "cannot override method with modifiers: $modifiers"
-      }
-
-      val methodName = method.simpleName.toString()
-      val funBuilder = FunSpec.builder(methodName)
-
-      funBuilder.addModifiers(KModifier.OVERRIDE)
-
-      modifiers = modifiers.toMutableSet()
-      modifiers.remove(Modifier.ABSTRACT)
-      funBuilder.jvmModifiers(modifiers)
-
-      method.typeParameters
-          .map { it.asType() as TypeVariable }
-          .map { it.asTypeVariableName() }
-          .forEach { funBuilder.addTypeVariable(it) }
-
-      funBuilder.returns(method.returnType.asTypeName())
-      funBuilder.addParameters(ParameterSpec.parametersOf(method))
-      if (method.isVarArgs) {
-        funBuilder.parameters[funBuilder.parameters.lastIndex] = funBuilder.parameters.last()
-            .toBuilder()
-            .addModifiers(VARARG)
-            .build()
-      }
-
-      if (method.thrownTypes.isNotEmpty()) {
-        val throwsValueString = method.thrownTypes.joinToString { "%T::class" }
-        funBuilder.addAnnotation(AnnotationSpec.builder(Throws::class)
-            .addMember("value", throwsValueString, *method.thrownTypes.toTypedArray())
-            .build())
-      }
-
-      return funBuilder
-    }
-
-    /**
-     * Returns a new function spec builder that overrides `method` as a member of `enclosing`. This
-     * will resolve type parameters: for example overriding [Comparable.compareTo] in a type that
-     * implements `Comparable<Movie>`, the `T` parameter will be resolved to `Movie`.
-     *
-     * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An `override` modifier will be added.
-     */
-    @JvmStatic fun overriding(
-        method: ExecutableElement, enclosing: DeclaredType, types: Types): Builder {
-      val executableType = types.asMemberOf(enclosing, method) as ExecutableType
-      val resolvedParameterTypes = executableType.parameterTypes
-      val resolvedReturnType = executableType.returnType
-
-      val builder = overriding(method)
-      builder.returns(resolvedReturnType.asTypeName())
-      var i = 0
-      val size = builder.parameters.size
-      while (i < size) {
-        val parameter = builder.parameters[i]
-        val type = resolvedParameterTypes[i].asTypeName()
-        builder.parameters[i] = parameter.toBuilder(parameter.name, type).build()
-        i++
-      }
-
-      return builder
     }
   }
 }

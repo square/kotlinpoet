@@ -17,9 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Modifier
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 class ParameterizedTypeName internal constructor(
@@ -90,29 +87,5 @@ class ParameterizedTypeName internal constructor(
     @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
         = ParameterizedTypeName(null, rawType.asClassName(),
         typeArguments.map { it.asTypeName() })
-
-    /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
-        null, rawType.asClassName(), typeArguments.map { it.asTypeName() })
-
-    /** Returns a parameterized type equivalent to `type`.  */
-    internal fun get(
-        type: ParameterizedType,
-        map: MutableMap<Type, TypeVariableName>): ParameterizedTypeName {
-      val rawType = (type.rawType as Class<*>).asClassName()
-      val ownerType = if (type.ownerType is ParameterizedType
-          && !Modifier.isStatic((type.rawType as Class<*>).modifiers))
-        type.ownerType as ParameterizedType else
-        null
-
-      val typeArguments = type.actualTypeArguments.map { TypeName.get(it, map = map) }
-      return if (ownerType != null)
-        get(ownerType, map = map).nestedClass(rawType.simpleName(), typeArguments) else
-        ParameterizedTypeName(null, rawType, typeArguments)
-    }
   }
 }
-
-/** Returns a parameterized type equivalent to `type`.  */
-@JvmName("get")
-fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this, mutableMapOf())

@@ -17,22 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
-import java.lang.reflect.WildcardType
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.TypeParameterElement
-import javax.lang.model.type.ArrayType
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.ErrorType
-import javax.lang.model.type.NoType
-import javax.lang.model.type.PrimitiveType
-import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleTypeVisitor7
 import kotlin.reflect.KClass
 
 /**
@@ -118,100 +102,6 @@ abstract class TypeName internal constructor(
       out.emit("?")
     }
   }
-
-  companion object {
-    internal fun get(
-        mirror: TypeMirror,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
-        : TypeName {
-      return mirror.accept(object : SimpleTypeVisitor7<TypeName, Void?>() {
-        override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
-          return when (t.kind) {
-            TypeKind.BOOLEAN -> BOOLEAN
-            TypeKind.BYTE -> BYTE
-            TypeKind.SHORT -> SHORT
-            TypeKind.INT -> INT
-            TypeKind.LONG -> LONG
-            TypeKind.CHAR -> CHAR
-            TypeKind.FLOAT -> FLOAT
-            TypeKind.DOUBLE -> DOUBLE
-            else -> throw AssertionError()
-          }
-        }
-
-        override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
-          val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
-          val enclosingType = t.enclosingType
-          val enclosing = if (enclosingType.kind != TypeKind.NONE
-              && !t.asElement().modifiers.contains(Modifier.STATIC))
-            enclosingType.accept(this, null) else
-            null
-          if (t.typeArguments.isEmpty() && enclosing !is ParameterizedTypeName) {
-            return rawType
-          }
-
-          val typeArgumentNames = mutableListOf<TypeName>()
-          for (typeArgument in t.typeArguments) {
-            typeArgumentNames += get(typeArgument, typeVariables)
-          }
-          return if (enclosing is ParameterizedTypeName)
-            enclosing.nestedClass(rawType.simpleName(), typeArgumentNames) else
-            ParameterizedTypeName(null, rawType, typeArgumentNames)
-        }
-
-        override fun visitError(t: ErrorType, p: Void?): TypeName {
-          return visitDeclared(t, p)
-        }
-
-        override fun visitArray(t: ArrayType, p: Void?): ParameterizedTypeName {
-          return ParameterizedTypeName.get(ARRAY, TypeName.get(t.componentType, typeVariables))
-        }
-
-        override fun visitTypeVariable(t: javax.lang.model.type.TypeVariable, p: Void?): TypeName {
-          return TypeVariableName.get(t, typeVariables.toMutableMap())
-        }
-
-        override fun visitWildcard(t: javax.lang.model.type.WildcardType, p: Void?): TypeName {
-          return WildcardTypeName.get(t, typeVariables)
-        }
-
-        override fun visitNoType(t: NoType, p: Void?): TypeName {
-          if (t.kind == TypeKind.VOID) return UNIT
-          return super.visitUnknown(t, p)
-        }
-
-        override fun defaultAction(e: TypeMirror?, p: Void?): TypeName {
-          throw IllegalArgumentException("Unexpected type mirror: " + e!!)
-        }
-      }, null)
-    }
-
-    internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
-      when (type) {
-        is Class<*> -> {
-          when {
-            type === Void.TYPE -> return UNIT
-            type === Boolean::class.javaPrimitiveType -> return BOOLEAN
-            type === Byte::class.javaPrimitiveType -> return BYTE
-            type === Short::class.javaPrimitiveType -> return SHORT
-            type === Int::class.javaPrimitiveType -> return INT
-            type === Long::class.javaPrimitiveType -> return LONG
-            type === Char::class.javaPrimitiveType -> return CHAR
-            type === Float::class.javaPrimitiveType -> return FLOAT
-            type === Double::class.javaPrimitiveType -> return DOUBLE
-            type.isArray -> return ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
-            else -> return type.asClassName()
-          }
-        }
-        is ParameterizedType -> return ParameterizedTypeName.get(type, map)
-        is WildcardType -> return WildcardTypeName.get(type, map)
-        is TypeVariable<*> -> return TypeVariableName.get(type, map)
-        is GenericArrayType -> return ParameterizedTypeName.get(ARRAY,
-            get(type.genericComponentType, map))
-        else -> throw IllegalArgumentException("unexpected type: " + type)
-      }
-    }
-  }
 }
 
 @JvmField val ANY = ClassName("kotlin", "Any")
@@ -226,14 +116,6 @@ abstract class TypeName internal constructor(
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
-/** Returns a [TypeName] equivalent to this [TypeMirror]. */
-@JvmName("get")
-fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
-
 /** Returns a [TypeName] equivalent to this [KClass].  */
 @JvmName("get")
 fun KClass<*>.asTypeName() = asClassName()
-
-/** Returns a [TypeName] equivalent to this [Type].  */
-@JvmName("get")
-fun Type.asTypeName() = TypeName.get(this, mutableMapOf())

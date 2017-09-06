@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
-import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
@@ -117,8 +116,6 @@ class PropertySpec private constructor(builder: Builder) {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
-
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
@@ -165,9 +162,6 @@ class PropertySpec private constructor(builder: Builder) {
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
-
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = builder(name, type.asTypeName(), *modifiers)
 
@@ -177,9 +171,6 @@ class PropertySpec private constructor(builder: Builder) {
           .mutable(true)
           .addModifiers(*modifiers)
     }
-
-    @JvmStatic fun varBuilder(name: String, type: Type, vararg modifiers: KModifier)
-        = varBuilder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun varBuilder(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = varBuilder(name, type.asTypeName(), *modifiers)

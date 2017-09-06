@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
@@ -354,8 +353,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addAnnotation(annotation: ClassName)
         = addAnnotation(AnnotationSpec.builder(annotation).build())
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
-
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
@@ -403,8 +400,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
     }
 
-    fun superclass(superclass: Type) = superclass(superclass.asTypeName())
-
     fun superclass(superclass: KClass<*>) = superclass(superclass.asTypeName())
 
     fun addSuperclassConstructorParameter(format: String, vararg args: Any) = apply {
@@ -423,9 +418,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addSuperinterface(superinterface: TypeName) = apply {
       superinterfaces += superinterface
     }
-
-    fun addSuperinterface(superinterface: Type)
-        = addSuperinterface(superinterface.asTypeName())
 
     fun addSuperinterface(superinterface: KClass<*>)
         = addSuperinterface(superinterface.asTypeName())
@@ -450,9 +442,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier)
         = addProperty(PropertySpec.builder(name, type, *modifiers).build())
-
-    fun addProperty(name: String, type: Type, vararg modifiers: KModifier)
-        = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addProperty(name, type.asTypeName(), *modifiers)
