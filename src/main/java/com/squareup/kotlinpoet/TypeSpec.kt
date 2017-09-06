@@ -57,7 +57,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return builder
   }
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, enumName: String?) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.

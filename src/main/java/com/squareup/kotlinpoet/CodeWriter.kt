@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.util.EnumSet
 
 /** Sentinel value that indicates that no user-provided package has been set.  */
@@ -35,7 +34,7 @@ private fun extractMemberName(part: String): String {
  * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
-internal class CodeWriter @JvmOverloads constructor(
+internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
     private val memberImports: Set<String> = emptySet(),
@@ -68,12 +67,12 @@ internal class CodeWriter @JvmOverloads constructor(
 
   fun importedTypes() = importedTypes
 
-  @JvmOverloads fun indent(levels: Int = 1): CodeWriter {
+  fun indent(levels: Int = 1): CodeWriter {
     indentLevel += levels
     return this
   }
 
-  @JvmOverloads fun unindent(levels: Int = 1): CodeWriter {
+  fun unindent(levels: Int = 1): CodeWriter {
     require(indentLevel - levels >= 0) { "cannot unindent $levels from $indentLevel" }
     indentLevel -= levels
     return this
@@ -101,7 +100,6 @@ internal class CodeWriter @JvmOverloads constructor(
     return this
   }
 
-  @Throws(IOException::class)
   fun emitComment(codeBlock: CodeBlock) {
     trailingNewline = true // Force the '//' prefix for the comment.
     comment = true
@@ -113,7 +111,6 @@ internal class CodeWriter @JvmOverloads constructor(
     }
   }
 
-  @Throws(IOException::class)
   fun emitKdoc(kdocCodeBlock: CodeBlock) {
     if (kdocCodeBlock.isEmpty()) return
 
@@ -127,7 +124,6 @@ internal class CodeWriter @JvmOverloads constructor(
     emit(" */\n")
   }
 
-  @Throws(IOException::class)
   fun emitAnnotations(annotations: List<AnnotationSpec>, inline: Boolean) {
     for (annotationSpec in annotations) {
       annotationSpec.emit(this, inline)
@@ -139,8 +135,7 @@ internal class CodeWriter @JvmOverloads constructor(
    * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
    * be emitted.
    */
-  @Throws(IOException::class)
-  @JvmOverloads fun emitModifiers(
+  fun emitModifiers(
       modifiers: Set<KModifier>,
       implicitModifiers: Set<KModifier> = emptySet<KModifier>()) {
     if (modifiers.isEmpty()) return
@@ -157,7 +152,6 @@ internal class CodeWriter @JvmOverloads constructor(
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  @Throws(IOException::class)
   fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
     if (typeVariables.isEmpty()) return
 
@@ -181,7 +175,6 @@ internal class CodeWriter @JvmOverloads constructor(
    * Emit a `where` block containing type bounds for each type variable that has at least two
    * bounds.
    */
-  @Throws(IOException::class)
   fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
     if (typeVariables.isEmpty()) return
 
@@ -198,13 +191,10 @@ internal class CodeWriter @JvmOverloads constructor(
     }
   }
 
-  @Throws(IOException::class)
   fun emitCode(s: String) = emitCode(CodeBlock.of(s))
 
-  @Throws(IOException::class)
   fun emitCode(format: String, vararg args: Any?) = emitCode(CodeBlock.of(format, *args))
 
-  @Throws(IOException::class)
   fun emitCode(codeBlock: CodeBlock): CodeWriter {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
@@ -292,13 +282,11 @@ internal class CodeWriter @JvmOverloads constructor(
     return this
   }
 
-  @Throws(IOException::class)
   fun emitWrappingSpace(): CodeWriter {
     out.wrappingSpace(indentLevel + 2)
     return this
   }
 
-  @Throws(IOException::class)
   private fun emitStaticImportMember(canonical: String, part: String): Boolean {
     val partWithoutLeadingDot = part.substring(1)
     if (partWithoutLeadingDot.isEmpty()) return false
@@ -313,7 +301,6 @@ internal class CodeWriter @JvmOverloads constructor(
     return false
   }
 
-  @Throws(IOException::class)
   private fun emitLiteral(o: Any?) {
     if (o is TypeSpec) {
       o.emit(this, null)
@@ -423,7 +410,6 @@ internal class CodeWriter @JvmOverloads constructor(
    * [CodeWriter.out] does it through here, since we emit indentation lazily in order to avoid
    * unnecessary trailing whitespace.
    */
-  @Throws(IOException::class)
   fun emit(s: String): CodeWriter {
     var first = true
     for (line in s.split('\n')) {
@@ -462,7 +448,6 @@ internal class CodeWriter @JvmOverloads constructor(
     return this
   }
 
-  @Throws(IOException::class)
   private fun emitIndentation() {
     for (j in 0 until indentLevel) {
       out.append(indent)

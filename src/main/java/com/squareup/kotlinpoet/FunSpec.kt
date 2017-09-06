@@ -57,7 +57,6 @@ class FunSpec private constructor(builder: Builder) {
 
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
-  @Throws(IOException::class)
   internal fun emit(
       codeWriter: CodeWriter,
       enclosingName: String?,
@@ -96,7 +95,6 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  @Throws(IOException::class)
   internal fun emitSignature(
       codeWriter: CodeWriter,
       enclosingName: String?) {
@@ -135,7 +133,6 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  @Throws(IOException::class)
   internal fun emitParameterList(codeWriter: CodeWriter) {
     codeWriter.emit("(")
     parameters.forEachIndexed { index, parameter ->

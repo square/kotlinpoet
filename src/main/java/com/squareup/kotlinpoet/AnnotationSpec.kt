@@ -33,7 +33,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val members = builder.members.toImmutableMultimap()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
       codeWriter.emit("@")
@@ -75,7 +74,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     codeWriter.emit(")")
   }
 
-  @Throws(IOException::class)
   private fun emitAnnotationValues(
       codeWriter: CodeWriter,
       whitespace: String,

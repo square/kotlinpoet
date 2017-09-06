@@ -34,7 +34,6 @@ class PropertySpec private constructor(builder: Builder) {
   val getter = builder.getter
   val setter = builder.setter
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>,
                     withInitializer: Boolean = true,
                     inline: Boolean = false) {

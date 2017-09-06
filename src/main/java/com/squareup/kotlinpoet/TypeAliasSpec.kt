@@ -29,7 +29,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("typealias %L = %T", name, type)

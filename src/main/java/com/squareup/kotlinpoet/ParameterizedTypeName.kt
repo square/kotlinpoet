@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -51,7 +50,6 @@ class ParameterizedTypeName internal constructor(
   override fun withoutAnnotations()
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
 
-  @Throws(IOException::class)
   override fun emit(out: CodeWriter): CodeWriter {
     if (enclosingType != null) {
       enclosingType.emitAnnotations(out)

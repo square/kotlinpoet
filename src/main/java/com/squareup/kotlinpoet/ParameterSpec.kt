@@ -30,7 +30,6 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val type = builder.type
   val defaultValue = builder.defaultValue
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
