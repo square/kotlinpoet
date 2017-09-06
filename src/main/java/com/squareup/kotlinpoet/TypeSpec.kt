@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -276,16 +275,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return toString().hashCode()
   }
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, null)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this), null) }
 
   enum class Kind(
       internal val declarationKeyword: String,

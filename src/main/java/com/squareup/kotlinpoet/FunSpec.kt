@@ -21,7 +21,6 @@ import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
-import java.io.IOException
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -157,15 +156,8 @@ class FunSpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, "Constructor", TypeSpec.Kind.CLASS.implicitFunctionModifiers)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
+  override fun toString() = buildString {
+    emit(CodeWriter(this), "Constructor", TypeSpec.Kind.CLASS.implicitFunctionModifiers)
   }
 
   fun toBuilder(): Builder {

@@ -130,15 +130,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    try {
-      val result = StringBuilder()
-      writeTo(result)
-      return result.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { writeTo(this) }
 
   fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create((if (packageName.isEmpty())

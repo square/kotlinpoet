@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -55,15 +54,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      emit(CodeWriter(out))
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this)) }
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)

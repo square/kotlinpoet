@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
-import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -72,16 +71,7 @@ class PropertySpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, emptySet<KModifier>())
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this), emptySet()) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
