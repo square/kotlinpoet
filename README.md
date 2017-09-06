@@ -28,7 +28,7 @@ And this is the code to generate it with KotlinPoet:
 
 ```java
 val greeterClass = ClassName("", "Greeter")
-val kotlinFile = KotlinFile.builder("", "HelloWorld")
+val file = FileSpec.builder("", "HelloWorld")
     .addType(TypeSpec.classBuilder("Greeter")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("name", String::class)
@@ -46,7 +46,7 @@ val kotlinFile = KotlinFile.builder("", "HelloWorld")
         .build())
     .build()
 
-kotlinFile.writeTo(System.out)
+file.writeTo(System.out)
 ```
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].

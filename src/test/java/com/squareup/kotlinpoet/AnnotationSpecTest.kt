@@ -131,7 +131,7 @@ class AnnotationSpecTest {
     val annotation = AnnotationSpec.get(element.annotationMirrors[0])
     val typeBuilder = TypeSpec.classBuilder(IsAnnotated::class.java.simpleName)
     typeBuilder.addAnnotation(annotation)
-    val file = KotlinFile.get("com.squareup.kotlinpoet", typeBuilder.build())
+    val file = FileSpec.get("com.squareup.kotlinpoet", typeBuilder.build())
     assertThat(file.toString()).isEqualTo("""
         |package com.squareup.kotlinpoet
         |
@@ -341,6 +341,6 @@ class AnnotationSpecTest {
   }
 
   private fun toString(typeSpec: TypeSpec): String {
-    return KotlinFile.get("com.squareup.tacos", typeSpec).toString()
+    return FileSpec.get("com.squareup.tacos", typeSpec).toString()
   }
 }

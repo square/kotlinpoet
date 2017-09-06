@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
  * A Kotlin file containing top level objects like classes, objects, functions, properties, and type
  * aliases.
  */
-class KotlinFile private constructor(builder: KotlinFile.Builder) {
+class FileSpec private constructor(builder: FileSpec.Builder) {
   val fileAnnotations = builder.fileAnnotations.toImmutableList()
   val fileComment = builder.fileComment.build()
   val packageName = builder.packageName
@@ -148,7 +148,7 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
       override fun getCharContent(ignoreEncodingErrors: Boolean): String {
-        return this@KotlinFile.toString()
+        return this@FileSpec.toString()
       }
 
       @Throws(IOException::class)
@@ -253,11 +253,11 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       this.indent = indent
     }
 
-    fun build() = KotlinFile(this)
+    fun build() = FileSpec(this)
   }
 
   companion object {
-    @JvmStatic fun get(packageName: String, typeSpec: TypeSpec): KotlinFile {
+    @JvmStatic fun get(packageName: String, typeSpec: TypeSpec): FileSpec {
       val fileName = typeSpec.name
           ?: throw IllegalArgumentException("file name required but type has no name")
       return builder(packageName, fileName).addType(typeSpec).build()
