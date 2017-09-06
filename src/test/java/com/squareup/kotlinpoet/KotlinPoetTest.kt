@@ -23,7 +23,7 @@ class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
 
   @Test fun topLevelMembersRetainOrder() {
-    val source = KotlinFile.builder(tacosPackage, "Taco")
+    val source = FileSpec.builder(tacosPackage, "Taco")
         .addFunction(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
         .addType(TypeSpec.classBuilder("B").build())
         .addProperty(PropertySpec.builder("c", String::class, KModifier.PUBLIC)
@@ -58,7 +58,7 @@ class KotlinPoetTest {
 
   @Test fun noTopLevelConstructor() {
     try {
-      KotlinFile.builder(tacosPackage, "Taco")
+      FileSpec.builder(tacosPackage, "Taco")
           .addFunction(FunSpec.constructorBuilder().build())
       fail()
     } catch (expected: IllegalArgumentException) {
@@ -66,7 +66,7 @@ class KotlinPoetTest {
   }
 
   @Test fun primaryConstructor() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("cheese", String::class)
             .beginControlFlow("require(cheese.isNotEmpty())")
@@ -90,7 +90,7 @@ class KotlinPoetTest {
   }
 
   @Test fun primaryConstructorProperties() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("cheese", String::class)
             .addParameter("cilantro", String::class)
@@ -124,7 +124,7 @@ class KotlinPoetTest {
   }
 
   @Test fun propertyModifiers() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("CHEESE", String::class, KModifier.PRIVATE, KModifier.CONST)
             .initializer("%S", "monterey jack")
             .build())
@@ -154,7 +154,7 @@ class KotlinPoetTest {
   }
 
   @Test fun visibilityModifiers() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("a").addModifiers(KModifier.PUBLIC).build())
         .addFunction(FunSpec.builder("b").addModifiers(KModifier.PROTECTED).build())
         .addFunction(FunSpec.builder("c").addModifiers(KModifier.INTERNAL).build())
@@ -180,7 +180,7 @@ class KotlinPoetTest {
   }
 
   @Test fun strings() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "basic string")
             .addStatement("val b = %S", "string with a \$ dollar sign")
@@ -199,7 +199,7 @@ class KotlinPoetTest {
 
   /** When emitting a triple quote, KotlinPoet escapes the 3rd quote in the triplet. */
   @Test fun rawStrings() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "\"\n")
             .addStatement("val b = %S", "a\"\"\"b\"\"\"\"\"\"c\n")
@@ -247,7 +247,7 @@ class KotlinPoetTest {
    * triple quote. Otherwise the closing triple quote has no preceding `|`.
    */
   @Test fun edgeCaseStrings() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("strings")
             .addStatement("val a = %S", "\n")
             .addStatement("val b = %S", " \n ")
@@ -270,7 +270,7 @@ class KotlinPoetTest {
   }
 
   @Test fun parameterDefaultValue() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("Taco")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("addCheese")
             .addParameter(ParameterSpec.builder("kind", String::class)
                 .defaultValue("%S", "monterey jack")
@@ -290,7 +290,7 @@ class KotlinPoetTest {
   }
 
   @Test fun extensionFunction() {
-    val source = KotlinFile.builder(tacosPackage, "Taco")
+    val source = FileSpec.builder(tacosPackage, "Taco")
         .addFunction(FunSpec.builder("shrink")
             .returns(String::class)
             .receiver(String::class)
@@ -313,7 +313,7 @@ class KotlinPoetTest {
   }
 
   @Test fun getAndSet() {
-    val source = KotlinFile.builder(tacosPackage, "Taco")
+    val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.varBuilder("propertyWithCustomAccessors", Int::class)
             .initializer("%L", 1)
             .getter(FunSpec.getterBuilder()
@@ -345,7 +345,7 @@ class KotlinPoetTest {
   }
 
   @Test fun stackedPropertyModifiers() {
-    val source = KotlinFile.builder(tacosPackage, "Taco")
+    val source = FileSpec.builder(tacosPackage, "Taco")
         .addType(TypeSpec.classBuilder("A")
             .addModifiers(KModifier.ABSTRACT)
             .addProperty(PropertySpec.varBuilder("q", String::class)
@@ -383,7 +383,7 @@ class KotlinPoetTest {
   }
 
   @Test fun stackedFunModifiers() {
-    val source = KotlinFile.get(tacosPackage, TypeSpec.classBuilder("A")
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("A")
         .addModifiers(KModifier.OPEN)
         .addFunction(FunSpec.builder("get")
             .addModifiers(KModifier.EXTERNAL, KModifier.INFIX, KModifier.OPEN, KModifier.OPERATOR,
@@ -411,7 +411,7 @@ class KotlinPoetTest {
   }
 
   @Test fun basicExpressionBody() {
-    val source = KotlinFile.builder(tacosPackage, "Taco")
+    val source = FileSpec.builder(tacosPackage, "Taco")
         .addFunction(FunSpec.builder("addA")
             .addParameter("s", String::class)
             .returns(String::class)

@@ -32,7 +32,7 @@ private fun extractMemberName(part: String): String {
 }
 
 /**
- * Converts a [KotlinFile] to a string suitable to both human- and javac-consumption. This honors
+ * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
 internal class CodeWriter @JvmOverloads constructor(

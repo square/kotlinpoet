@@ -36,12 +36,12 @@ class FileWritingTest {
 
   @Test fun pathNotDirectory() {
     val type = TypeSpec.classBuilder("Test").build()
-    val kotlinFile = KotlinFile.get("example", type)
+    val source = FileSpec.get("example", type)
     val path = fs.getPath("/foo/bar")
     Files.createDirectories(path.parent)
     Files.createFile(path)
     try {
-      kotlinFile.writeTo(path)
+      source.writeTo(path)
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected.message).isEqualTo("path /foo/bar exists but is not a directory.")
@@ -50,11 +50,11 @@ class FileWritingTest {
 
   @Test fun fileNotDirectory() {
     val type = TypeSpec.classBuilder("Test").build()
-    val kotlinFile = KotlinFile.get("example", type)
+    val source = FileSpec.get("example", type)
     val file = File(tmp.newFolder("foo"), "bar")
     file.createNewFile()
     try {
-      kotlinFile.writeTo(file)
+      source.writeTo(file)
       fail()
     } catch (expected: IllegalArgumentException) {
       assertThat(expected.message).isEqualTo(
@@ -65,7 +65,7 @@ class FileWritingTest {
 
   @Test fun pathDefaultPackage() {
     val type = TypeSpec.classBuilder("Test").build()
-    KotlinFile.get("", type).writeTo(fsRoot)
+    FileSpec.get("", type).writeTo(fsRoot)
 
     val testPath = fsRoot.resolve("Test.kt")
     assertThat(Files.exists(testPath)).isTrue()
@@ -73,7 +73,7 @@ class FileWritingTest {
 
   @Test fun fileDefaultPackage() {
     val type = TypeSpec.classBuilder("Test").build()
-    KotlinFile.get("", type).writeTo(tmp.root)
+    FileSpec.get("", type).writeTo(tmp.root)
 
     val testFile = File(tmp.root, "Test.kt")
     assertThat(testFile.exists()).isTrue()
@@ -81,9 +81,9 @@ class FileWritingTest {
 
   @Test fun pathNestedClasses() {
     val type = TypeSpec.classBuilder("Test").build()
-    KotlinFile.get("foo", type).writeTo(fsRoot)
-    KotlinFile.get("foo.bar", type).writeTo(fsRoot)
-    KotlinFile.get("foo.bar.baz", type).writeTo(fsRoot)
+    FileSpec.get("foo", type).writeTo(fsRoot)
+    FileSpec.get("foo.bar", type).writeTo(fsRoot)
+    FileSpec.get("foo.bar.baz", type).writeTo(fsRoot)
 
     val fooPath = fsRoot.resolve(fs.getPath("foo", "Test.kt"))
     val barPath = fsRoot.resolve(fs.getPath("foo", "bar", "Test.kt"))
@@ -95,9 +95,9 @@ class FileWritingTest {
 
   @Test fun fileNestedClasses() {
     val type = TypeSpec.classBuilder("Test").build()
-    KotlinFile.get("foo", type).writeTo(tmp.root)
-    KotlinFile.get("foo.bar", type).writeTo(tmp.root)
-    KotlinFile.get("foo.bar.baz", type).writeTo(tmp.root)
+    FileSpec.get("foo", type).writeTo(tmp.root)
+    FileSpec.get("foo.bar", type).writeTo(tmp.root)
+    FileSpec.get("foo.bar.baz", type).writeTo(tmp.root)
 
     val fooDir = File(tmp.root, "foo")
     val fooFile = File(fooDir, "Test.kt")
@@ -115,11 +115,11 @@ class FileWritingTest {
    * charset is customized with `-Dfile.encoding=ISO-8859-1`.
    */
   @Test fun fileIsUtf8() {
-    val kotlinFile = KotlinFile.builder("foo", "Taco")
+    val source = FileSpec.builder("foo", "Taco")
         .addType(TypeSpec.classBuilder("Taco").build())
         .addFileComment("Pi\u00f1ata\u00a1")
         .build()
-    kotlinFile.writeTo(fsRoot)
+    source.writeTo(fsRoot)
 
     val fooPath = fsRoot.resolve(fs.getPath("foo", "Taco.kt"))
     assertThat(String(Files.readAllBytes(fooPath), UTF_8)).isEqualTo("""
