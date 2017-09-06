@@ -40,7 +40,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
   val packageName = builder.packageName
   val fileName = builder.fileName
   val members = builder.members.toList()
-  val skipJavaLangImports = builder.skipJavaLangImports
   private val memberImports = builder.memberImports.toImmutableSet()
   private val indent = builder.indent
 
@@ -97,7 +96,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     }
 
     val imports = codeWriter.importedTypes().values
-        .filterNot { skipJavaLangImports && it.packageName() == "java.lang" }
         .map { it.canonicalName }
         .plus(memberImports)
 
@@ -169,7 +167,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     builder.fileAnnotations.addAll(fileAnnotations)
     builder.fileComment.add(fileComment)
     builder.members.addAll(this.members)
-    builder.skipJavaLangImports = skipJavaLangImports
     builder.indent = indent
     return builder
   }
@@ -180,7 +177,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
     internal val fileAnnotations = mutableListOf<AnnotationSpec>()
     internal val fileComment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
-    internal var skipJavaLangImports: Boolean = false
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
@@ -251,18 +247,6 @@ class KotlinFile private constructor(builder: KotlinFile.Builder) {
       for (name in names) {
         memberImports += packageName + "." + name
       }
-    }
-
-    /**
-     * Call this to omit imports for classes in `java.lang`, such as `java.lang.String`.
-     *
-     * By default, JavaPoet explicitly imports types in `java.lang` to defend against naming
-     * conflicts. Suppose an (ill-advised) class is named `com.example.String`. When `java.lang`
-     * imports are skipped, generated code in `com.example` that references `java.lang.String` will
-     * get `com.example.String` instead.
-     */
-    fun skipJavaLangImports(skipJavaLangImports: Boolean) = apply {
-      this.skipJavaLangImports = skipJavaLangImports
     }
 
     fun indent(indent: String) = apply {

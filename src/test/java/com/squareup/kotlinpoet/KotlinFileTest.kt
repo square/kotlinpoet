@@ -326,48 +326,6 @@ class KotlinFileTest {
         |""".trimMargin())
   }
 
-  @Test fun skipJavaLangImportsWithConflictingClassLast() {
-    // Whatever is used first wins! In this case the Float in java.lang is imported.
-    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("litres", ClassName("java.lang", "Float"))
-            .addProperty("beverage", ClassName("com.squareup.soda", "Float"))
-            .build())
-        .skipJavaLangImports(true)
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |class Taco {
-        |  val litres: Float
-        |
-        |  val beverage: com.squareup.soda.Float
-        |}
-        |""".trimMargin())
-  }
-
-  @Test fun skipJavaLangImportsWithConflictingClassFirst() {
-    // Whatever is used first wins! In this case the Float in com.squareup.soda is imported.
-    val source = KotlinFile.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("beverage", ClassName("com.squareup.soda", "Float"))
-            .addProperty("litres", ClassName("java.lang", "Float"))
-            .build())
-        .skipJavaLangImports(true)
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import com.squareup.soda.Float
-        |
-        |class Taco {
-        |  val beverage: Float
-        |
-        |  val litres: java.lang.Float
-        |}
-        |""".trimMargin())
-  }
-
   @Test fun conflictingParentName() {
     val source = KotlinFile.builder("com.squareup.tacos", "A")
         .addType(TypeSpec.classBuilder("A")
