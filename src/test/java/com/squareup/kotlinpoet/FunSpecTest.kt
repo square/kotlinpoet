@@ -256,6 +256,49 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun thisConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .callThisConstructor("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(list: kotlin.collections.List<kotlin.Int>) : this(list[0], list[1])
+      |""".trimMargin())
+  }
+
+  @Test fun superConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .callSuperConstructor("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
+      |""".trimMargin())
+  }
+
+  @Test fun emptyConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("a", Int::class)
+        .callThisConstructor()
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(a: kotlin.Int) : this()
+      |""".trimMargin())
+  }
+
+  @Test fun addingDelegateParametersToNonConstructorForbidden() {
+    try {
+      FunSpec.builder("main")
+          .callThisConstructor("a", "b", "c")
+      fail()
+    } catch (expected: IllegalStateException) {
+      assertThat(expected).hasMessage("only constructors can delegate to other constructors!")
+    }
+  }
+
   @Test fun equalsAndHashCode() {
     var a = FunSpec.constructorBuilder().build()
     var b = FunSpec.constructorBuilder().build()

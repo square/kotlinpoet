@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.io.IOException
 import java.lang.reflect.Type
@@ -39,11 +41,13 @@ class FunSpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
+  val delegateConstructor = builder.delegateConstructor
+  val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
   val body = builder.body.build()
 
   init {
-    require(body.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
+    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
       "abstract function ${builder.name} cannot have code"
     }
     require(name != SETTER || parameters.size == 1) {
@@ -73,7 +77,8 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
+    val isEmptyConstructor = isConstructor && delegateConstructor != null && body.isEmpty()
+    if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
       codeWriter.emit("\n")
       return
     }
@@ -112,6 +117,11 @@ class FunSpec private constructor(builder: Builder) {
 
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
+    }
+
+    if (delegateConstructor != null) {
+      codeWriter.emitCode(delegateConstructorArguments
+          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
     }
 
     if (exceptions.isNotEmpty()) {
@@ -169,6 +179,8 @@ class FunSpec private constructor(builder: Builder) {
     builder.typeVariables += typeVariables
     builder.returnType = returnType
     builder.parameters += parameters
+    builder.delegateConstructor = delegateConstructor
+    builder.delegateConstructorArguments += delegateConstructorArguments
     builder.exceptions += exceptions
     builder.body.add(body)
     return builder
@@ -182,6 +194,8 @@ class FunSpec private constructor(builder: Builder) {
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
+    internal var delegateConstructor: String? = null
+    internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
 
@@ -283,6 +297,28 @@ class FunSpec private constructor(builder: Builder) {
       parameters += parameterSpec
     }
 
+    fun callThisConstructor(vararg args: String) = apply {
+      callConstructor("this", *args.map { CodeBlock.of(it) }.toTypedArray())
+    }
+
+    fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+      callConstructor("this", *args)
+    }
+
+    fun callSuperConstructor(vararg args: String) = apply {
+      callConstructor("super", *args.map { CodeBlock.of(it) }.toTypedArray())
+    }
+
+    fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+      callConstructor("super", *args)
+    }
+
+    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
+      check(name.isConstructor) { "only constructors can delegate to other constructors!" }
+      delegateConstructor = constructor
+      delegateConstructorArguments += args
+    }
+
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
         = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
@@ -365,9 +401,9 @@ class FunSpec private constructor(builder: Builder) {
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
       var modifiers: MutableSet<Modifier> = method.modifiers
-      require(!modifiers.contains(Modifier.PRIVATE)
-          && !modifiers.contains(Modifier.FINAL)
-          && !modifiers.contains(Modifier.STATIC)) {
+      require(Modifier.PRIVATE !in modifiers
+          && Modifier.FINAL !in modifiers
+          && Modifier.STATIC !in modifiers) {
         "cannot override method with modifiers: $modifiers"
       }
 

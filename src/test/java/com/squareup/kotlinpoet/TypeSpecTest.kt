@@ -2526,6 +2526,45 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun constructorDelegation() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("a", String::class.asTypeName().asNullable())
+            .addParameter("b", String::class.asTypeName().asNullable())
+            .addParameter("c", String::class.asTypeName().asNullable())
+            .build())
+        .addProperty(PropertySpec.builder("a", String::class.asTypeName().asNullable())
+            .initializer("a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class.asTypeName().asNullable())
+            .initializer("b")
+            .build())
+        .addProperty(PropertySpec.builder("c", String::class.asTypeName().asNullable())
+            .initializer("c")
+            .build())
+        .addFunction(FunSpec.constructorBuilder()
+            .addParameter(
+                "map",
+                ParameterizedTypeName.get(Map::class, String::class, String::class))
+            .callThisConstructor(
+                CodeBlock.of("map[%S]", "a"),
+                CodeBlock.of("map[%S]", "b"),
+                CodeBlock.of("map[%S]", "c"))
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |import kotlin.collections.Map
+        |
+        |class Taco(val a: String?, val b: String?, val c: String?) {
+        |  constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun requiresNonKeywordName() {
     try {
       TypeSpec.enumBuilder("when")
