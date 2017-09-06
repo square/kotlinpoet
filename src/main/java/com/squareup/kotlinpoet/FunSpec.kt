@@ -301,12 +301,6 @@ class FunSpec private constructor(builder: Builder) {
       callConstructor("this", *args.map { CodeBlock.of(it) }.toTypedArray())
     }
 
-    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
-      check(name.isConstructor) { "only constructors can delegate to other constructors!" }
-      delegateConstructor = constructor
-      delegateConstructorArguments += args
-    }
-
     fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
       callConstructor("this", *args)
     }
@@ -317,6 +311,12 @@ class FunSpec private constructor(builder: Builder) {
 
     fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
       callConstructor("super", *args)
+    }
+
+    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
+      check(name.isConstructor) { "only constructors can delegate to other constructors!" }
+      delegateConstructor = constructor
+      delegateConstructorArguments += args
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
