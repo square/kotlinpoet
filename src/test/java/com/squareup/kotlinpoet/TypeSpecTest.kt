@@ -2498,6 +2498,52 @@ class TypeSpecTest {
     }
   }
 
+  @Test fun classExtendsNoPrimaryConstructor() {
+    val typeSpec = TypeSpec.classBuilder("IoException")
+        .superclass(Exception::class)
+        .addFunction(FunSpec.constructorBuilder().build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.Exception
+      |
+      |class IoException : Exception {
+      |  constructor() {
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun classExtendsNoPrimaryOrSecondaryConstructor() {
+    val typeSpec = TypeSpec.classBuilder("IoException")
+        .superclass(Exception::class)
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.Exception
+      |
+      |class IoException : Exception()
+      |""".trimMargin())
+  }
+
+  @Test fun classExtendsNoPrimaryConstructorButSuperclassParams() {
+    try {
+      TypeSpec.classBuilder("IoException")
+          .superclass(Exception::class)
+          .addSuperclassConstructorParameter("%S", "hey")
+          .addFunction(FunSpec.constructorBuilder().build())
+          .build()
+      fail()
+    } catch (e: IllegalArgumentException) {
+      assertThat(e).hasMessage(
+          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters")
+    }
+  }
+
   @Test fun constructorWithDefaultParamValue() {
     val type = TypeSpec.classBuilder("Taco")
         .primaryConstructor(FunSpec.constructorBuilder()
