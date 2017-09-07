@@ -77,7 +77,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   @Throws(IOException::class)
   fun writeTo(directory: File) = writeTo(directory.toPath())
 
-  @Throws(IOException::class)
   private fun emit(codeWriter: CodeWriter) {
     if (fileAnnotations.isNotEmpty()) {
       codeWriter.emitAnnotations(fileAnnotations, inline = false)
@@ -131,15 +130,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    try {
-      val result = StringBuilder()
-      writeTo(result)
-      return result.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { writeTo(this) }
 
   fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create((if (packageName.isEmpty())
@@ -151,7 +142,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
         return this@FileSpec.toString()
       }
 
-      @Throws(IOException::class)
       override fun openInputStream(): InputStream {
         return ByteArrayInputStream(getCharContent(true).toByteArray(UTF_8))
       }

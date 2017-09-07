@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.NestingKind.MEMBER
@@ -121,7 +120,6 @@ class ClassName internal constructor(
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
-  @Throws(IOException::class)
   override fun emit(out: CodeWriter): CodeWriter {
     return out.emit(out.lookupName(this))
   }

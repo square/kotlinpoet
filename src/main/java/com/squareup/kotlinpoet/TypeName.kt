@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -105,10 +104,8 @@ abstract class TypeName internal constructor(
     return cachedString
   }
 
-  @Throws(IOException::class)
   internal abstract fun emit(out: CodeWriter): CodeWriter
 
-  @Throws(IOException::class)
   @JvmName("emitAnnotations") internal fun emitAnnotations(out: CodeWriter) {
     for (annotation in annotations) {
       annotation.emit(out, true)
@@ -116,7 +113,6 @@ abstract class TypeName internal constructor(
     }
   }
 
-  @Throws(IOException::class)
   @JvmName("emitNullable") internal fun emitNullable(out: CodeWriter) {
     if (nullable) {
       out.emit("?")

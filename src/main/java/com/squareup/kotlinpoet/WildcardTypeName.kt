@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import javax.lang.model.element.TypeParameterElement
@@ -48,7 +47,6 @@ class WildcardTypeName private constructor(
     return WildcardTypeName(upperBounds, lowerBounds, nullable)
   }
 
-  @Throws(IOException::class)
   override fun emit(out: CodeWriter): CodeWriter {
     if (lowerBounds.size == 1) {
       return out.emitCode("in %T", lowerBounds[0])

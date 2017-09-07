@@ -15,8 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
-
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
  * [LineWrapper.append] or soft-wrapping spaces using [LineWrapper.wrappingSpace].
@@ -37,7 +35,6 @@ internal class LineWrapper(
   private var indentLevel = -1
 
   /** Emit `s`. This may be buffered to permit line wraps to be inserted.  */
-  @Throws(IOException::class)
   fun append(s: String) {
     check(!closed) { "closed" }
 
@@ -65,7 +62,6 @@ internal class LineWrapper(
   }
 
   /** Emit either a space or a newline character.  */
-  @Throws(IOException::class)
   fun wrappingSpace(indentLevel: Int) {
     check(!closed) { "closed" }
 
@@ -75,14 +71,12 @@ internal class LineWrapper(
   }
 
   /** Flush any outstanding text and forbid future writes to this line wrapper.  */
-  @Throws(IOException::class)
   fun close() {
     if (indentLevel != -1) flush(false)
     closed = true
   }
 
   /** Write the space followed by any buffered text that follows it.  */
-  @Throws(IOException::class)
   private fun flush(wrap: Boolean) {
     if (wrap) {
       out.append('\n')

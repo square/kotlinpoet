@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Type
 import java.util.Collections
 import javax.lang.model.element.TypeParameterElement
@@ -60,7 +59,6 @@ class TypeVariableName private constructor(
     return TypeVariableName(name, this.bounds + bounds, variance, nullable, annotations)
   }
 
-  @Throws(IOException::class)
   override fun emit(out: CodeWriter): CodeWriter {
     return out.emit(name)
   }
