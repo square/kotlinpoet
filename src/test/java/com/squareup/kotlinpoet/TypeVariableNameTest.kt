@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.io.Serializable
-import kotlin.test.fail
 
 class TypeVariableNameTest {
   @Test fun oneTypeVariableNoBounds() {
@@ -122,10 +121,8 @@ class TypeVariableNameTest {
   }
 
   @Test fun invalidVariance() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeVariableName("E", KModifier.FINAL)
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
   }
 }

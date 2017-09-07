@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import kotlin.test.fail
 
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -57,11 +56,9 @@ class KotlinPoetTest {
   }
 
   @Test fun noTopLevelConstructor() {
-    try {
+    assertThrows<IllegalArgumentException> {
       FileSpec.builder(tacosPackage, "Taco")
           .addFunction(FunSpec.constructorBuilder().build())
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
   }
 
@@ -146,10 +143,8 @@ class KotlinPoetTest {
   }
 
   @Test fun mistargetedModifier() {
-    try {
+    assertThrows<IllegalArgumentException> {
       PropertySpec.builder("CHEESE", String::class, KModifier.DATA)
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
   }
 

@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.test.fail
 
 class TypeAliasSpecTest {
 
@@ -33,11 +32,8 @@ class TypeAliasSpecTest {
   }
 
   @Test fun keywordForbiddenAsTypeAliasName() {
-    try {
-      TypeAliasSpec
-          .builder("null", String::class)
-      fail()
-    } catch (expected: IllegalArgumentException) {
+    assertThrows<IllegalArgumentException> {
+      TypeAliasSpec.builder("null", String::class)
     }
   }
 
