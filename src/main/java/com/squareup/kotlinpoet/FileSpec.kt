@@ -46,7 +46,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
-    val importsCollector = CodeWriter(NULL_APPENDABLE, indent, memberImports)
+    val importsCollector = CodeWriter(NullAppendable, indent, memberImports)
     emit(importsCollector)
     val suggestedImports = importsCollector.suggestedImports()
 
@@ -85,7 +85,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     codeWriter.pushPackage(packageName)
 
-    if (!fileComment.isEmpty()) {
+    if (fileComment.isNotEmpty()) {
       codeWriter.emitComment(fileComment)
     }
 
@@ -98,17 +98,15 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
         .map { it.canonicalName }
         .plus(memberImports)
 
-    var importedTypesCount = 0
-    for (className in imports.toSortedSet()) {
-      codeWriter.emitCode("import %L\n", className)
-      importedTypesCount++
-    }
-    if (importedTypesCount > 0) {
+    if (imports.isNotEmpty()) {
+      for (className in imports.toSortedSet()) {
+        codeWriter.emitCode("import %L\n", className)
+      }
       codeWriter.emit("\n")
     }
 
-    for ((i, member) in members.withIndex()) {
-      if (i > 0) codeWriter.emit("\n")
+    members.forEachIndexed { index, member ->
+      if (index > 0) codeWriter.emit("\n")
       when (member) {
         is TypeSpec -> member.emit(codeWriter, null)
         is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC))
@@ -146,9 +144,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
         return ByteArrayInputStream(getCharContent(true).toByteArray(UTF_8))
       }
 
-      override fun getLastModified(): Long {
-        return lastModified
-      }
+      override fun getLastModified() = lastModified
     }
   }
 
@@ -171,7 +167,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     internal val members = mutableListOf<Any>()
 
     init {
-      require(isName(fileName)) { "not a valid file name: $fileName" }
+      require(fileName.isName) { "not a valid file name: $fileName" }
     }
 
     fun addFileAnnotation(annotationSpec: AnnotationSpec) = apply {

@@ -87,7 +87,7 @@ class NameAllocator private constructor(
    */
   @JvmOverloads fun newName(suggestion: String, tag: Any = UUID.randomUUID().toString()): String {
     var result = toJavaIdentifier(suggestion)
-    while (isKeyword(result) || !allocatedNames.add(result)) {
+    while (result.isKeyword || !allocatedNames.add(result)) {
       result += "_"
     }
 
@@ -117,22 +117,20 @@ class NameAllocator private constructor(
   }
 }
 
-internal fun toJavaIdentifier(suggestion: String): String {
-  val result = StringBuilder()
+private fun toJavaIdentifier(suggestion: String) = buildString {
   var i = 0
   while (i < suggestion.length) {
     val codePoint = suggestion.codePointAt(i)
     if (i == 0
         && !Character.isJavaIdentifierStart(codePoint)
         && Character.isJavaIdentifierPart(codePoint)) {
-      result.append("_")
+      append("_")
     }
 
     val validCodePoint: Int = if (Character.isJavaIdentifierPart(codePoint))
       codePoint else
       '_'.toInt()
-    result.appendCodePoint(validCodePoint)
+    appendCodePoint(validCodePoint)
     i += Character.charCount(codePoint)
   }
-  return result.toString()
 }

@@ -108,9 +108,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     return toString() == other.toString()
   }
 
-  override fun hashCode(): Int {
-    return toString().hashCode()
-  }
+  override fun hashCode() = toString().hashCode()
 
   override fun toString() = buildString {
     emit(CodeWriter(this), inline = true, asParameter = false)
@@ -232,16 +230,10 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       return builder.build()
     }
 
-    @JvmStatic fun builder(type: ClassName): Builder {
-      return Builder(type)
-    }
+    @JvmStatic fun builder(type: ClassName) = Builder(type)
 
-    @JvmStatic fun builder(type: Class<*>): Builder {
-      return builder(type.asClassName())
-    }
+    @JvmStatic fun builder(type: Class<*>) = builder(type.asClassName())
 
-    @JvmStatic fun builder(type: KClass<*>): Builder {
-      return builder(type.asClassName())
-    }
+    @JvmStatic fun builder(type: KClass<*>) = builder(type.asClassName())
   }
 }

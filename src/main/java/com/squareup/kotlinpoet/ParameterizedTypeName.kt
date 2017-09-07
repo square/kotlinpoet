@@ -61,13 +61,11 @@ class ParameterizedTypeName internal constructor(
     }
     if (typeArguments.isNotEmpty()) {
       out.emit("<")
-      var firstParameter = true
-      for (parameter in typeArguments) {
-        if (!firstParameter) out.emit(", ")
+      typeArguments.forEachIndexed { index, parameter ->
+        if (index > 0) out.emit(", ")
         parameter.emitAnnotations(out)
         parameter.emit(out)
         parameter.emitNullable(out)
-        firstParameter = false
       }
       out.emit(">")
     }

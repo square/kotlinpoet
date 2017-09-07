@@ -39,29 +39,19 @@ class TypeVariableName private constructor(
     return TypeVariableName(name, bounds, variance, nullable, annotations)
   }
 
-  override fun withoutAnnotations(): TypeName {
-    return TypeVariableName(name, bounds, variance, nullable)
-  }
+  override fun withoutAnnotations() = TypeVariableName(name, bounds, variance, nullable)
 
-  fun withBounds(vararg bounds: Type): TypeVariableName {
-    return withBounds(bounds.map { it.asTypeName() })
-  }
+  fun withBounds(vararg bounds: Type) = withBounds(bounds.map { it.asTypeName() })
 
-  fun withBounds(vararg bounds: KClass<*>): TypeVariableName {
-    return withBounds(bounds.map { it.asTypeName() })
-  }
+  fun withBounds(vararg bounds: KClass<*>) = withBounds(bounds.map { it.asTypeName() })
 
-  fun withBounds(vararg bounds: TypeName): TypeVariableName {
-    return withBounds(bounds.toList())
-  }
+  fun withBounds(vararg bounds: TypeName) = withBounds(bounds.toList())
 
   fun withBounds(bounds: List<TypeName>): TypeVariableName {
     return TypeVariableName(name, this.bounds + bounds, variance, nullable, annotations)
   }
 
-  override fun emit(out: CodeWriter): CodeWriter {
-    return out.emit(name)
-  }
+  override fun emit(out: CodeWriter) = out.emit(name)
 
   companion object {
     internal fun of(name: String, bounds: List<TypeName>, variance: KModifier?): TypeVariableName {

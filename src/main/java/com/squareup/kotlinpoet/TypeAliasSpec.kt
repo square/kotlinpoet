@@ -57,7 +57,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     internal var modifiers: MutableSet<KModifier> = mutableSetOf()
 
     init {
-      require(isName(name)) { "not a valid name: $name" }
+      require(name.isName) { "not a valid name: $name" }
     }
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
@@ -75,7 +75,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   }
 
   companion object {
-
     @JvmStatic fun builder(name: String, type: TypeName) = Builder(name, type)
 
     @JvmStatic fun builder(name: String, type: Type) = builder(name, type.asTypeName())

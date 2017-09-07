@@ -175,7 +175,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
-      if (primaryConstructor != null && !primaryConstructor.body.isEmpty()) {
+      if (primaryConstructor != null && primaryConstructor.body.isNotEmpty()) {
         codeWriter.emit("init {\n")
         codeWriter.indent()
         codeWriter.emitCode(primaryConstructor.body)
@@ -184,7 +184,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
 
       // Initializer block.
-      if (!initializerBlock.isEmpty()) {
+      if (initializerBlock.isNotEmpty()) {
         if (!firstMember) codeWriter.emit("\n")
         codeWriter.emitCode(initializerBlock)
         firstMember = false
@@ -271,9 +271,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return toString() == other.toString()
   }
 
-  override fun hashCode(): Int {
-    return toString().hashCode()
-  }
+  override fun hashCode() = toString().hashCode()
 
   override fun toString() = buildString { emit(CodeWriter(this), null) }
 
@@ -332,7 +330,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val typeSpecs = mutableListOf<TypeSpec>()
 
     init {
-      require(name == null || isName(name)) { "not a valid name: $name" }
+      require(name == null || name.isName) { "not a valid name: $name" }
     }
 
     fun addKdoc(format: String, vararg args: Any) = apply {
@@ -436,7 +434,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
           "enum constants must have anonymous type arguments" }
-      require(isName(name)) { "not a valid enum constant: $name" }
+      require(name.isName) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }
 
