@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("CodeBlocks")
+
 package com.squareup.kotlinpoet
 
 import java.lang.reflect.Type
@@ -54,6 +56,8 @@ class CodeBlock private constructor(
   /** A heterogeneous list containing string literals and value placeholders.  */
 
   fun isEmpty() = formatParts.isEmpty()
+
+  fun isNotEmpty() = !isEmpty()
 
   /**
    * Returns a code block with `prefix` stripped off, or null if this code block doesn't start with
@@ -311,30 +315,26 @@ class CodeBlock private constructor(
       }
     }
 
-    private fun argToName(o: Any?): String {
-      when (o) {
-        is CharSequence -> return o.toString()
-        is ParameterSpec -> return o.name
-        is PropertySpec -> return o.name
-        is FunSpec -> return o.name
-        is TypeSpec -> return o.name!!
-        else -> throw IllegalArgumentException("expected name but was " + o)
-      }
+    private fun argToName(o: Any?) = when (o) {
+      is CharSequence -> o.toString()
+      is ParameterSpec -> o.name
+      is PropertySpec -> o.name
+      is FunSpec -> o.name
+      is TypeSpec -> o.name!!
+      else -> throw IllegalArgumentException("expected name but was " + o)
     }
 
     private fun argToLiteral(o: Any?) = o
 
     private fun argToString(o: Any?) = o?.toString()
 
-    private fun argToType(o: Any?): TypeName {
-      when (o) {
-        is TypeName -> return o
-        is TypeMirror -> return o.asTypeName()
-        is Element -> return o.asType().asTypeName()
-        is Type -> return o.asTypeName()
-        is KClass<*> -> return o.asTypeName()
-        else -> throw IllegalArgumentException("expected type but was " + o)
-      }
+    private fun argToType(o: Any?) = when (o) {
+      is TypeName -> o
+      is TypeMirror -> o.asTypeName()
+      is Element -> o.asType().asTypeName()
+      is Type -> o.asTypeName()
+      is KClass<*> -> o.asTypeName()
+      else -> throw IllegalArgumentException("expected type but was " + o)
     }
 
     /**
@@ -384,11 +384,12 @@ class CodeBlock private constructor(
   }
 
   companion object {
-    internal val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
-    internal val LOWERCASE = Regex("[a-z]+[\\w_]*")
-    internal const val ARG_NAME = 1
-    internal const val TYPE_NAME = 2
-    internal val NO_ARG_PLACEHOLDERS = setOf("%W", "%>", "%<", "%[", "%]")
+    private val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
+    private val LOWERCASE = Regex("[a-z]+[\\w_]*")
+    private const val ARG_NAME = 1
+    private const val TYPE_NAME = 2
+    private val NO_ARG_PLACEHOLDERS = setOf("%W", "%>", "%<", "%[", "%]")
+
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
 

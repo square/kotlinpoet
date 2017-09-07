@@ -126,7 +126,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
         = method.parameters.map { ParameterSpec.get(it) }
 
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(isName(name)) { "not a valid name: $name" }
+      require(name.isName) { "not a valid name: $name" }
       return Builder(name, type).addModifiers(*modifiers)
     }
 

@@ -15,9 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
-import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
-import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
@@ -94,7 +91,7 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  internal fun emitSignature(
+  private fun emitSignature(
       codeWriter: CodeWriter,
       enclosingName: String?) {
     if (isConstructor) {
@@ -123,16 +120,14 @@ class FunSpec private constructor(builder: Builder) {
 
     if (exceptions.isNotEmpty()) {
       codeWriter.emitWrappingSpace().emit("throws")
-      var firstException = true
-      for (exception in exceptions) {
-        if (!firstException) codeWriter.emit(",")
+      exceptions.forEachIndexed { index, exception ->
+        if (index > 0) codeWriter.emit(",")
         codeWriter.emitWrappingSpace().emitCode("%T", exception)
-        firstException = false
       }
     }
   }
 
-  internal fun emitParameterList(codeWriter: CodeWriter) {
+  private fun emitParameterList(codeWriter: CodeWriter) {
     codeWriter.emit("(")
     parameters.forEachIndexed { index, parameter ->
       if (index > 0) codeWriter.emit(",").emitWrappingSpace()
@@ -141,11 +136,9 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emit(")")
   }
 
-  val isConstructor: Boolean
-    get() = name.isConstructor
+  val isConstructor get() = name.isConstructor
 
-  val isAccessor: Boolean
-    get() = name.isAccessor
+  val isAccessor get() = name.isAccessor
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -189,7 +182,7 @@ class FunSpec private constructor(builder: Builder) {
     internal val body = CodeBlock.builder()
 
     init {
-      require(name.isConstructor || name.isAccessor || isName(name)) {
+      require(name.isConstructor || name.isAccessor || name.isName) {
         "not a valid name: $name"
       }
     }
@@ -361,25 +354,22 @@ class FunSpec private constructor(builder: Builder) {
   }
 
   companion object {
-    internal const val CONSTRUCTOR = "constructor()"
+    private const val CONSTRUCTOR = "constructor()"
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
 
-    @JvmStatic fun builder(name: String): Builder {
-      return Builder(name)
-    }
+    private val String.isConstructor get() = this == CONSTRUCTOR
+    private val String.isAccessor get() = this == GETTER || this == SETTER
 
-    @JvmStatic fun constructorBuilder(): Builder {
-      return Builder(CONSTRUCTOR)
-    }
+    private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
 
-    @JvmStatic fun getterBuilder(): Builder {
-      return Builder(GETTER)
-    }
+    @JvmStatic fun builder(name: String) = Builder(name)
 
-    @JvmStatic fun setterBuilder(): Builder {
-      return Builder(SETTER)
-    }
+    @JvmStatic fun constructorBuilder() = Builder(CONSTRUCTOR)
+
+    @JvmStatic fun getterBuilder() = Builder(GETTER)
+
+    @JvmStatic fun setterBuilder() = Builder(SETTER)
 
     /**
      * Returns a new fun spec builder that overrides `method`.
@@ -458,11 +448,3 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 }
-
-internal val String.isConstructor: Boolean
-  get() = this == CONSTRUCTOR
-
-internal val String.isAccessor: Boolean
-  get() = this == GETTER || this == SETTER
-
-internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")

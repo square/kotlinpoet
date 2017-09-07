@@ -40,14 +40,14 @@ class ClassName internal constructor(
       : this(listOf(packageName, simpleName, *simpleNames))
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
-  internal val names = names.toImmutableList()
+  private val names = names.toImmutableList()
   val canonicalName = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
     names.joinToString(".")
 
   init {
     for (i in 1 until names.size) {
-      require(isName(names[i])) { "part ${names[i]} is keyword" }
+      require(names[i].isName) { "part ${names[i]} is keyword" }
     }
   }
 
@@ -88,12 +88,12 @@ class ClassName internal constructor(
         packageName + "." + names[1]
     }
     // concat top level class name and nested names
-    val builder = StringBuilder()
-    builder.append(topLevelClassName())
-    for (name in simpleNames().subList(1, simpleNames().size)) {
-      builder.append('$').append(name)
+    return buildString {
+      append(topLevelClassName())
+      for (name in simpleNames().subList(1, simpleNames().size)) {
+        append('$').append(name)
+      }
     }
-    return builder.toString()
   }
 
   /**
@@ -120,9 +120,7 @@ class ClassName internal constructor(
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
-  override fun emit(out: CodeWriter): CodeWriter {
-    return out.emit(out.lookupName(this))
-  }
+  override fun emit(out: CodeWriter) = out.emit(out.lookupName(this))
 
   companion object {
     /**
@@ -187,6 +185,16 @@ fun KClass<*>.asClassName(): ClassName {
 /** Returns the class name for `element`.  */
 @JvmName("get")
 fun TypeElement.asClassName(): ClassName {
+  fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface
+
+  fun getPackage(type: Element): PackageElement {
+    var t = type
+    while (t.kind != ElementKind.PACKAGE) {
+      t = t.enclosingElement
+    }
+    return t as PackageElement
+  }
+
   val names = mutableListOf<String>()
   var e: Element = this
   while (isClassOrInterface(e)) {
@@ -200,14 +208,4 @@ fun TypeElement.asClassName(): ClassName {
   names += getPackage(this).qualifiedName.toString()
   names.reverse()
   return ClassName(names)
-}
-
-private fun isClassOrInterface(e: Element): Boolean = e.kind.isClass || e.kind.isInterface
-
-private fun getPackage(type: Element): PackageElement {
-  var t = type
-  while (t.kind != ElementKind.PACKAGE) {
-    t = t.enclosingElement
-  }
-  return t as PackageElement
 }
