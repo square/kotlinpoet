@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
 
@@ -74,10 +73,8 @@ class ClassNameTest {
   }
 
   private fun assertBestGuessThrows(s: String) {
-    try {
+    assertThrows<IllegalArgumentException> {
       ClassName.bestGuess(s)
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
   }
 
@@ -119,29 +116,21 @@ class ClassNameTest {
   }
 
   @Test fun fromClassRejectionTypes() {
-    try {
+    assertThrows<IllegalArgumentException> {
       java.lang.Integer.TYPE.asClassName()
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
 
-    try {
+    assertThrows<IllegalArgumentException> {
       Void.TYPE.asClassName()
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
 
-    try {
+    assertThrows<IllegalArgumentException> {
       Array<Any>::class.java.asClassName()
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
 
     // TODO
-    //try {
+    //assertThrows<IllegalArgumentException> {
     //  Array<Int>::class.asClassName()
-    //  fail()
-    //} catch (expected: IllegalArgumentException) {
     //}
   }
 

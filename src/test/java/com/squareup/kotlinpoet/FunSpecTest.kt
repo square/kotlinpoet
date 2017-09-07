@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -120,28 +119,19 @@ class FunSpecTest {
     val element = mock(Element::class.java)
     whenMock(element.asType()).thenReturn(mock(DeclaredType::class.java))
     whenMock(method.enclosingElement).thenReturn(element)
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [final]")
-    }
+    }.hasMessage("cannot override method with modifiers: [final]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.PRIVATE))
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [private]")
-    }
+    }.hasMessage("cannot override method with modifiers: [private]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.STATIC))
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [static]")
-    }
+    }.hasMessage("cannot override method with modifiers: [static]")
   }
 
   @Test fun nullableParam() {
@@ -290,13 +280,10 @@ class FunSpecTest {
   }
 
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
-    try {
+    assertThrows<IllegalStateException> {
       FunSpec.builder("main")
           .callThisConstructor("a", "b", "c")
-      fail()
-    } catch (expected: IllegalStateException) {
-      assertThat(expected).hasMessage("only constructors can delegate to other constructors!")
-    }
+    }.hasMessage("only constructors can delegate to other constructors!")
   }
 
   @Test fun equalsAndHashCode() {

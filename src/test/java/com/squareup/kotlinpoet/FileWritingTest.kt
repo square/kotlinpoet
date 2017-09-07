@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -40,12 +39,9 @@ class FileWritingTest {
     val path = fs.getPath("/foo/bar")
     Files.createDirectories(path.parent)
     Files.createFile(path)
-    try {
+    assertThrows<IllegalArgumentException> {
       source.writeTo(path)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message).isEqualTo("path /foo/bar exists but is not a directory.")
-    }
+    }.hasMessage("path /foo/bar exists but is not a directory.")
   }
 
   @Test fun fileNotDirectory() {
@@ -53,14 +49,9 @@ class FileWritingTest {
     val source = FileSpec.get("example", type)
     val file = File(tmp.newFolder("foo"), "bar")
     file.createNewFile()
-    try {
+    assertThrows<IllegalArgumentException> {
       source.writeTo(file)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected.message).isEqualTo(
-          "path ${file.path} exists but is not a directory.")
-    }
-
+    }.hasMessage("path ${file.path} exists but is not a directory.")
   }
 
   @Test fun pathDefaultPackage() {

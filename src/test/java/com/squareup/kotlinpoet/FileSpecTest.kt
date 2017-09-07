@@ -24,7 +24,6 @@ import org.junit.Test
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import kotlin.test.fail
 
 class FileSpecTest {
   @Test fun importStaticReadmeExample() {
@@ -619,11 +618,8 @@ class FileSpecTest {
         .useSiteTarget(SET)
         .addMember("value", "%S", "TacoUtils")
         .build()
-    try {
+    assertThrows<IllegalStateException> {
       builder.addFileAnnotation(annotation)
-      fail()
-    } catch (e: IllegalStateException) {
-      assertThat(e).hasMessage("Use-site target SET not supported for file annotations.")
-    }
+    }.hasMessage("Use-site target SET not supported for file annotations.")
   }
 }
