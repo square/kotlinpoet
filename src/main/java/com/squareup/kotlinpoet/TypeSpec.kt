@@ -130,7 +130,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
-          CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
+          if (primaryConstructor != null || funSpecs.none { it.isConstructor }) {
+            CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
+          } else {
+            CodeBlock.of("%T", it)
+          }
         }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) }
         if (superTypes.isNotEmpty()) {
@@ -504,6 +508,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
       require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
         "anonymous type has too many supertypes"
+      }
+
+      if (primaryConstructor == null) {
+        require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
+          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
+        }
       }
 
       return TypeSpec(this)
