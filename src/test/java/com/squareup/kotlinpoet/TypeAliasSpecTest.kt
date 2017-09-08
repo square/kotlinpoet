@@ -37,6 +37,18 @@ class TypeAliasSpecTest {
     }
   }
 
+  @Test fun typeVariable() {
+    val v = TypeVariableName("V")
+    val typeAliasSpec = TypeAliasSpec
+        .builder("Word", ParameterizedTypeName.get(List::class.asClassName(), v))
+        .addTypeVariable(v)
+        .build()
+
+    assertThat(typeAliasSpec.toString()).isEqualTo("""
+        |typealias Word<V> = kotlin.collections.List<V>
+        |""".trimMargin())
+  }
+
   @Test fun publicVisibility() {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
