@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -66,18 +65,16 @@ abstract class TypeName internal constructor(
   val annotations = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */
-  internal val cachedString: String by lazy {
-    val resultBuilder = StringBuilder()
-    val codeWriter = CodeWriter(resultBuilder)
-    emitAnnotations(codeWriter)
-    emit(codeWriter)
-    if (nullable) resultBuilder.append("?")
-    resultBuilder.toString()
+  private val cachedString: String by lazy {
+    buildString {
+      val codeWriter = CodeWriter(this)
+      emitAnnotations(codeWriter)
+      emit(codeWriter)
+      if (nullable) append("?")
+    }
   }
 
-  fun annotated(vararg annotations: AnnotationSpec): TypeName {
-    return annotated(annotations.toList())
-  }
+  fun annotated(vararg annotations: AnnotationSpec) = annotated(annotations.toList())
 
   abstract fun asNullable(): TypeName
 
@@ -87,8 +84,7 @@ abstract class TypeName internal constructor(
 
   abstract fun withoutAnnotations(): TypeName
 
-  val isAnnotated: Boolean
-    get() = annotations.isNotEmpty()
+  val isAnnotated get() = annotations.isNotEmpty()
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -97,27 +93,20 @@ abstract class TypeName internal constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode(): Int {
-    return toString().hashCode()
-  }
+  override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    return cachedString
-  }
+  override fun toString() = cachedString
 
-  @Throws(IOException::class)
   internal abstract fun emit(out: CodeWriter): CodeWriter
 
-  @Throws(IOException::class)
-  @JvmName("emitAnnotations") internal fun emitAnnotations(out: CodeWriter) {
+  internal fun emitAnnotations(out: CodeWriter) {
     for (annotation in annotations) {
       annotation.emit(out, true)
       out.emit(" ")
     }
   }
 
-  @Throws(IOException::class)
-  @JvmName("emitNullable") internal fun emitNullable(out: CodeWriter) {
+  internal fun emitNullable(out: CodeWriter) {
     if (nullable) {
       out.emit("?")
     }
@@ -191,27 +180,24 @@ abstract class TypeName internal constructor(
     }
 
     internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
-      when (type) {
-        is Class<*> -> {
-          when {
-            type === Void.TYPE -> return UNIT
-            type === Boolean::class.javaPrimitiveType -> return BOOLEAN
-            type === Byte::class.javaPrimitiveType -> return BYTE
-            type === Short::class.javaPrimitiveType -> return SHORT
-            type === Int::class.javaPrimitiveType -> return INT
-            type === Long::class.javaPrimitiveType -> return LONG
-            type === Char::class.javaPrimitiveType -> return CHAR
-            type === Float::class.javaPrimitiveType -> return FLOAT
-            type === Double::class.javaPrimitiveType -> return DOUBLE
-            type.isArray -> return ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
-            else -> return type.asClassName()
-          }
+      return when (type) {
+        is Class<*> -> when {
+          type === Void.TYPE -> UNIT
+          type === Boolean::class.javaPrimitiveType -> BOOLEAN
+          type === Byte::class.javaPrimitiveType -> BYTE
+          type === Short::class.javaPrimitiveType -> SHORT
+          type === Int::class.javaPrimitiveType -> INT
+          type === Long::class.javaPrimitiveType -> LONG
+          type === Char::class.javaPrimitiveType -> CHAR
+          type === Float::class.javaPrimitiveType -> FLOAT
+          type === Double::class.javaPrimitiveType -> DOUBLE
+          type.isArray -> ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
+          else -> type.asClassName()
         }
-        is ParameterizedType -> return ParameterizedTypeName.get(type, map)
-        is WildcardType -> return WildcardTypeName.get(type, map)
-        is TypeVariable<*> -> return TypeVariableName.get(type, map)
-        is GenericArrayType -> return ParameterizedTypeName.get(ARRAY,
-            get(type.genericComponentType, map))
+        is ParameterizedType -> ParameterizedTypeName.get(type, map)
+        is WildcardType -> WildcardTypeName.get(type, map)
+        is TypeVariable<*> -> TypeVariableName.get(type, map)
+        is GenericArrayType -> ParameterizedTypeName.get(ARRAY, get(type.genericComponentType, map))
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
     }

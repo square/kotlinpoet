@@ -17,7 +17,6 @@
 
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import javax.lang.model.element.TypeParameterElement
@@ -44,11 +43,8 @@ class WildcardTypeName private constructor(
     return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)
   }
 
-  override fun withoutAnnotations(): TypeName {
-    return WildcardTypeName(upperBounds, lowerBounds, nullable)
-  }
+  override fun withoutAnnotations() = WildcardTypeName(upperBounds, lowerBounds, nullable)
 
-  @Throws(IOException::class)
   override fun emit(out: CodeWriter): CodeWriter {
     if (lowerBounds.size == 1) {
       return out.emitCode("in %T", lowerBounds[0])
@@ -68,13 +64,9 @@ class WildcardTypeName private constructor(
       return WildcardTypeName(listOf(upperBound), emptyList())
     }
 
-    @JvmStatic fun subtypeOf(upperBound: Type): WildcardTypeName {
-      return subtypeOf(upperBound.asTypeName())
-    }
+    @JvmStatic fun subtypeOf(upperBound: Type) = subtypeOf(upperBound.asTypeName())
 
-    @JvmStatic fun subtypeOf(upperBound: KClass<*>): WildcardTypeName {
-      return subtypeOf(upperBound.asTypeName())
-    }
+    @JvmStatic fun subtypeOf(upperBound: KClass<*>) = subtypeOf(upperBound.asTypeName())
 
     /**
      * Returns a type that represents an unknown supertype of `bound`. For example, if `bound` is
@@ -84,13 +76,9 @@ class WildcardTypeName private constructor(
       return WildcardTypeName(listOf(ANY), listOf(lowerBound))
     }
 
-    @JvmStatic fun supertypeOf(lowerBound: Type): WildcardTypeName {
-      return supertypeOf(lowerBound.asTypeName())
-    }
+    @JvmStatic fun supertypeOf(lowerBound: Type) = supertypeOf(lowerBound.asTypeName())
 
-    @JvmStatic fun supertypeOf(lowerBound: KClass<*>): WildcardTypeName {
-      return supertypeOf(lowerBound.asTypeName())
-    }
+    @JvmStatic fun supertypeOf(lowerBound: KClass<*>) = supertypeOf(lowerBound.asTypeName())
 
     internal fun get(
         mirror: javax.lang.model.type.WildcardType,

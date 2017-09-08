@@ -22,7 +22,7 @@ import java.util.Collections
 import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 
-internal val NULL_APPENDABLE = object : Appendable {
+internal object NullAppendable: Appendable {
   override fun append(charSequence: CharSequence) = this
   override fun append(charSequence: CharSequence, start: Int, end: Int) = this
   override fun append(c: Char) = this
@@ -128,17 +128,11 @@ internal fun stringLiteralWithQuotes(value: String): String {
   }
 }
 
-internal fun isIdentifier(name: String): Boolean {
-  return IDENTIFIER_REGEX.matches(name)
-}
+internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
-internal fun isKeyword(name: String): Boolean {
-  return KEYWORDS.contains(name)
-}
+internal val String.isKeyword get() = KEYWORDS.contains(this)
 
-internal fun isName(name: String): Boolean {
-  return name.split("\\.").none { isKeyword(name) }
-}
+internal val String.isName get() = split("\\.").none { it.isKeyword }
 
 private val IDENTIFIER_REGEX
     = ("((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +

@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -120,28 +119,19 @@ class FunSpecTest {
     val element = mock(Element::class.java)
     whenMock(element.asType()).thenReturn(mock(DeclaredType::class.java))
     whenMock(method.enclosingElement).thenReturn(element)
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [final]")
-    }
+    }.hasMessage("cannot override method with modifiers: [final]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.PRIVATE))
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [private]")
-    }
+    }.hasMessage("cannot override method with modifiers: [private]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.STATIC))
-    try {
+    assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("cannot override method with modifiers: [static]")
-    }
+    }.hasMessage("cannot override method with modifiers: [static]")
   }
 
   @Test fun nullableParam() {
@@ -254,6 +244,46 @@ class FunSpecTest {
       |fun foo(f: ((kotlin.Boolean, kotlin.String?) -> kotlin.Unit)?): kotlin.String {
       |}
       |""".trimMargin())
+  }
+
+  @Test fun thisConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .callThisConstructor("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(list: kotlin.collections.List<kotlin.Int>) : this(list[0], list[1])
+      |""".trimMargin())
+  }
+
+  @Test fun superConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .callSuperConstructor("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
+      |""".trimMargin())
+  }
+
+  @Test fun emptyConstructorDelegate() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("a", Int::class)
+        .callThisConstructor()
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(a: kotlin.Int) : this()
+      |""".trimMargin())
+  }
+
+  @Test fun addingDelegateParametersToNonConstructorForbidden() {
+    assertThrows<IllegalStateException> {
+      FunSpec.builder("main")
+          .callThisConstructor("a", "b", "c")
+    }.hasMessage("only constructors can delegate to other constructors!")
   }
 
   @Test fun equalsAndHashCode() {

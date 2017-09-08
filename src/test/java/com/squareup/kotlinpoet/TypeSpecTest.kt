@@ -23,7 +23,6 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -414,24 +413,18 @@ class TypeSpecTest {
   }
 
   @Test fun enumConstantsRequired() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("Roshambo")
           .build()
-      fail()
-    } catch (expected: IllegalArgumentException) {
     }
-
   }
 
   @Test fun onlyEnumsMayHaveEnumConstants() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.classBuilder("Roshambo")
           .addEnumConstant("ROCK")
           .build()
-      fail()
-    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun enumWithMembersButNoConstructorCall() {
@@ -1456,7 +1449,7 @@ class TypeSpecTest {
   }
 
   private fun toString(typeSpec: TypeSpec): String {
-    return KotlinFile.get(tacosPackage, typeSpec).toString()
+    return FileSpec.get(tacosPackage, typeSpec).toString()
   }
 
   @Test fun multilineStatement() {
@@ -1573,24 +1566,19 @@ class TypeSpecTest {
   }
 
   @Test fun doublePropertyInitialization() {
-    try {
+    assertThrows<IllegalStateException> {
       PropertySpec.builder("listA", String::class)
           .initializer("foo")
           .initializer("bar")
           .build()
-      fail()
-    } catch (expected: IllegalStateException) {
     }
 
-    try {
+    assertThrows<IllegalStateException> {
       PropertySpec.builder("listA", String::class)
           .initializer(CodeBlock.builder().add("foo").build())
           .initializer(CodeBlock.builder().add("bar").build())
           .build()
-      fail()
-    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun multipleAnnotationAddition() {
@@ -1832,13 +1820,9 @@ class TypeSpecTest {
   }
 
   @Test fun nameFromUnsupportedType() {
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%N", String::class)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("expected name but was " + String::class)
-    }
-
+    }.hasMessage("expected name but was " + String::class)
   }
 
   @Test fun stringFromAnything() {
@@ -1874,89 +1858,57 @@ class TypeSpecTest {
   }
 
   @Test fun typeFromUnsupportedType() {
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%T", "kotlin.String")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("expected type but was kotlin.String")
-    }
-
+    }.hasMessage("expected type but was kotlin.String")
   }
 
   @Test fun tooFewArguments() {
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%S")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("index 1 for '%S' not in range (received 0 arguments)")
-    }
-
+    }.hasMessage("index 1 for '%S' not in range (received 0 arguments)")
   }
 
   @Test fun unusedArgumentsRelative() {
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%L %L", "a", "b", "c")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("unused arguments: expected 2, received 3")
-    }
-
+    }.hasMessage("unused arguments: expected 2, received 3")
   }
 
   @Test fun unusedArgumentsIndexed() {
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1L %2L", "a", "b", "c")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("unused argument: %3")
-    }
+    }.hasMessage("unused argument: %3")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1L %1L %1L", "a", "b", "c")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("unused arguments: %2, %3")
-    }
+    }.hasMessage("unused arguments: %2, %3")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%3L %1L %3L %1L %3L", "a", "b", "c", "d")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("unused arguments: %2, %4")
-    }
-
+    }.hasMessage("unused arguments: %2, %4")
   }
 
   @Test fun superClassOnlyValidForClasses() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.annotationBuilder("A").superclass(Any::class.asClassName())
-      fail()
-    } catch (expected: IllegalStateException) {
     }
 
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.enumBuilder("E").superclass(Any::class.asClassName())
-      fail()
-    } catch (expected: IllegalStateException) {
     }
 
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.interfaceBuilder("I").superclass(Any::class.asClassName())
-      fail()
-    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun invalidSuperClass() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.classBuilder("foo")
           .superclass(List::class)
           .superclass(Map::class)
-      fail()
-    } catch (expected: IllegalStateException) {
     }
-
   }
 
   @Test fun staticCodeBlock() {
@@ -2072,19 +2024,15 @@ class TypeSpecTest {
 
   @Test fun initializerBlockUnsupportedExceptionOnInterface() {
     val interfaceBuilder = TypeSpec.interfaceBuilder("Taco")
-    try {
+    assertThrows<IllegalStateException> {
       interfaceBuilder.addInitializerBlock(CodeBlock.builder().build())
-      fail("Exception expected")
-    } catch (expected: IllegalStateException) {
     }
   }
 
   @Test fun initializerBlockUnsupportedExceptionOnAnnotation() {
     val annotationBuilder = TypeSpec.annotationBuilder("Taco")
-    try {
+    assertThrows<IllegalStateException> {
       annotationBuilder.addInitializerBlock(CodeBlock.builder().build())
-      fail("Exception expected")
-    } catch (expected: IllegalStateException) {
     }
   }
 
@@ -2229,6 +2177,27 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun companionObjectWithName() {
+    val companion = TypeSpec.companionObjectBuilder("Factory")
+        .addFunction(FunSpec.builder("tacos").build())
+        .build()
+
+    val type = TypeSpec.classBuilder("MyClass")
+        .companionObject(companion)
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |class MyClass {
+        |  companion object Factory {
+        |    fun tacos() {
+        |    }
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun companionObjectOnInterface() {
     val companion = TypeSpec.companionObjectBuilder()
         .addFunction(FunSpec.builder("test")
@@ -2263,10 +2232,8 @@ class TypeSpecTest {
     val enumBuilder = TypeSpec.enumBuilder("MyEnum")
         .addModifiers(KModifier.PUBLIC)
 
-    try {
+    assertThrows<IllegalStateException> {
       enumBuilder.companionObject(companion)
-      fail("Exception expected")
-    } catch (expected: IllegalStateException) {
     }
   }
 
@@ -2280,10 +2247,8 @@ class TypeSpecTest {
     val objectBuilder = TypeSpec.objectBuilder("MyObject")
         .addModifiers(KModifier.PUBLIC)
 
-    try {
+    assertThrows<IllegalStateException> {
       objectBuilder.companionObject(companion)
-      fail("Exception expected")
-    } catch (expected: IllegalStateException) {
     }
   }
 
@@ -2297,10 +2262,8 @@ class TypeSpecTest {
     val typeBuilder = TypeSpec.classBuilder("MyClass")
         .addModifiers(KModifier.PUBLIC)
 
-    try {
+    assertThrows<IllegalArgumentException> {
       typeBuilder.companionObject(companion)
-      fail("Exception expected")
-    } catch (expected: IllegalArgumentException) {
     }
   }
 
@@ -2469,12 +2432,53 @@ class TypeSpecTest {
   }
 
   @Test fun superclassConstructorParamsForbiddenForAnnotation() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.annotationBuilder("Taco")
           .addSuperclassConstructorParameter("%S", "foo")
-      fail("Exception expected")
-    } catch (expected: IllegalStateException) {
     }
+  }
+
+  @Test fun classExtendsNoPrimaryConstructor() {
+    val typeSpec = TypeSpec.classBuilder("IoException")
+        .superclass(Exception::class)
+        .addFunction(FunSpec.constructorBuilder().build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.Exception
+      |
+      |class IoException : Exception {
+      |  constructor() {
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun classExtendsNoPrimaryOrSecondaryConstructor() {
+    val typeSpec = TypeSpec.classBuilder("IoException")
+        .superclass(Exception::class)
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.Exception
+      |
+      |class IoException : Exception()
+      |""".trimMargin())
+  }
+
+  @Test fun classExtendsNoPrimaryConstructorButSuperclassParams() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("IoException")
+          .superclass(Exception::class)
+          .addSuperclassConstructorParameter("%S", "hey")
+          .addFunction(FunSpec.constructorBuilder().build())
+          .build()
+    }.hasMessage(
+          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters")
   }
 
   @Test fun constructorWithDefaultParamValue() {
@@ -2505,79 +2509,97 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun constructorDelegation() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("a", String::class.asTypeName().asNullable())
+            .addParameter("b", String::class.asTypeName().asNullable())
+            .addParameter("c", String::class.asTypeName().asNullable())
+            .build())
+        .addProperty(PropertySpec.builder("a", String::class.asTypeName().asNullable())
+            .initializer("a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class.asTypeName().asNullable())
+            .initializer("b")
+            .build())
+        .addProperty(PropertySpec.builder("c", String::class.asTypeName().asNullable())
+            .initializer("c")
+            .build())
+        .addFunction(FunSpec.constructorBuilder()
+            .addParameter(
+                "map",
+                ParameterizedTypeName.get(Map::class, String::class, String::class))
+            .callThisConstructor(
+                CodeBlock.of("map[%S]", "a"),
+                CodeBlock.of("map[%S]", "b"),
+                CodeBlock.of("map[%S]", "c"))
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |import kotlin.collections.Map
+        |
+        |class Taco(val a: String?, val b: String?, val c: String?) {
+        |  constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun requiresNonKeywordName() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("when")
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("not a valid name: when")
-    }
+    }.hasMessage("not a valid name: when")
   }
 
   @Test fun internalFunForbiddenInInterface() {
     val type = TypeSpec.interfaceBuilder("ITaco")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, INTERNAL)
           .build())
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
-    }
+    }.hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, INTERNAL)
           .build()))
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
-    }
+    }.hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
   }
 
   @Test fun privateAbstractFunForbiddenInInterface() {
     val type = TypeSpec.interfaceBuilder("ITaco")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, PRIVATE)
           .build())
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
-    }
+    }.hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, PRIVATE)
           .build()))
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
-    }
+    }.hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
   }
 
   @Test fun internalFunForbiddenInAnnotation() {
     val type = TypeSpec.annotationBuilder("Taco")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build())
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
-    }
+    }.hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
 
-    try {
+    assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build()))
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
-    }
+    }.hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
   }
 
   companion object {

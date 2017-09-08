@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.util.EnumSet
 
 /** Sentinel value that indicates that no user-provided package has been set.  */
@@ -24,7 +23,7 @@ private val NO_PACKAGE = String()
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
   for (i in 1..part.length) {
-    if (!isIdentifier(part.substring(0, i))) {
+    if (!part.substring(0, i).isIdentifier) {
       return part.substring(0, i - 1)
     }
   }
@@ -32,10 +31,10 @@ private fun extractMemberName(part: String): String {
 }
 
 /**
- * Converts a [KotlinFile] to a string suitable to both human- and javac-consumption. This honors
+ * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
-internal class CodeWriter @JvmOverloads constructor(
+internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
     private val memberImports: Set<String> = emptySet(),
@@ -68,40 +67,33 @@ internal class CodeWriter @JvmOverloads constructor(
 
   fun importedTypes() = importedTypes
 
-  @JvmOverloads fun indent(levels: Int = 1): CodeWriter {
+  fun indent(levels: Int = 1) = apply {
     indentLevel += levels
-    return this
   }
 
-  @JvmOverloads fun unindent(levels: Int = 1): CodeWriter {
+  fun unindent(levels: Int = 1) = apply {
     require(indentLevel - levels >= 0) { "cannot unindent $levels from $indentLevel" }
     indentLevel -= levels
-    return this
   }
 
-  fun pushPackage(packageName: String): CodeWriter {
+  fun pushPackage(packageName: String) = apply {
     require(this.packageName === NO_PACKAGE) { "package already set: ${this.packageName}" }
     this.packageName = packageName
-    return this
   }
 
-  fun popPackage(): CodeWriter {
+  fun popPackage() = apply {
     require(this.packageName !== NO_PACKAGE) { "package already set: ${this.packageName}" }
     this.packageName = NO_PACKAGE
-    return this
   }
 
-  fun pushType(type: TypeSpec): CodeWriter {
+  fun pushType(type: TypeSpec)= apply {
     this.typeSpecStack.add(type)
-    return this
   }
 
-  fun popType(): CodeWriter {
+  fun popType() = apply {
     this.typeSpecStack.removeAt(typeSpecStack.size - 1)
-    return this
   }
 
-  @Throws(IOException::class)
   fun emitComment(codeBlock: CodeBlock) {
     trailingNewline = true // Force the '//' prefix for the comment.
     comment = true
@@ -113,7 +105,6 @@ internal class CodeWriter @JvmOverloads constructor(
     }
   }
 
-  @Throws(IOException::class)
   fun emitKdoc(kdocCodeBlock: CodeBlock) {
     if (kdocCodeBlock.isEmpty()) return
 
@@ -127,7 +118,6 @@ internal class CodeWriter @JvmOverloads constructor(
     emit(" */\n")
   }
 
-  @Throws(IOException::class)
   fun emitAnnotations(annotations: List<AnnotationSpec>, inline: Boolean) {
     for (annotationSpec in annotations) {
       annotationSpec.emit(this, inline)
@@ -139,10 +129,9 @@ internal class CodeWriter @JvmOverloads constructor(
    * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
    * be emitted.
    */
-  @Throws(IOException::class)
-  @JvmOverloads fun emitModifiers(
+  fun emitModifiers(
       modifiers: Set<KModifier>,
-      implicitModifiers: Set<KModifier> = emptySet<KModifier>()) {
+      implicitModifiers: Set<KModifier> = emptySet()) {
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
@@ -157,14 +146,12 @@ internal class CodeWriter @JvmOverloads constructor(
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  @Throws(IOException::class)
   fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
     if (typeVariables.isEmpty()) return
 
     emit("<")
-    var firstTypeVariable = true
-    for (typeVariable in typeVariables) {
-      if (!firstTypeVariable) emit(", ")
+    typeVariables.forEachIndexed { index, typeVariable ->
+      if (index > 0) emit(", ")
       if (typeVariable.variance != null) {
         emit("${typeVariable.variance.keyword} ")
       }
@@ -172,7 +159,6 @@ internal class CodeWriter @JvmOverloads constructor(
       if (typeVariable.bounds.size == 1) {
         emitCode(" : %T", typeVariable.bounds[0])
       }
-      firstTypeVariable = false
     }
     emit(">")
   }
@@ -181,7 +167,6 @@ internal class CodeWriter @JvmOverloads constructor(
    * Emit a `where` block containing type bounds for each type variable that has at least two
    * bounds.
    */
-  @Throws(IOException::class)
   fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
     if (typeVariables.isEmpty()) return
 
@@ -198,14 +183,11 @@ internal class CodeWriter @JvmOverloads constructor(
     }
   }
 
-  @Throws(IOException::class)
   fun emitCode(s: String) = emitCode(CodeBlock.of(s))
 
-  @Throws(IOException::class)
   fun emitCode(format: String, vararg args: Any?) = emitCode(CodeBlock.of(format, *args))
 
-  @Throws(IOException::class)
-  fun emitCode(codeBlock: CodeBlock): CodeWriter {
+  fun emitCode(codeBlock: CodeBlock) = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
@@ -289,16 +271,12 @@ internal class CodeWriter @JvmOverloads constructor(
         }
       }
     }
-    return this
   }
 
-  @Throws(IOException::class)
-  fun emitWrappingSpace(): CodeWriter {
+  fun emitWrappingSpace() = apply {
     out.wrappingSpace(indentLevel + 2)
-    return this
   }
 
-  @Throws(IOException::class)
   private fun emitStaticImportMember(canonical: String, part: String): Boolean {
     val partWithoutLeadingDot = part.substring(1)
     if (partWithoutLeadingDot.isEmpty()) return false
@@ -313,16 +291,12 @@ internal class CodeWriter @JvmOverloads constructor(
     return false
   }
 
-  @Throws(IOException::class)
   private fun emitLiteral(o: Any?) {
-    if (o is TypeSpec) {
-      o.emit(this, null)
-    } else if (o is AnnotationSpec) {
-      o.emit(this, inline = true, asParameter = true)
-    } else if (o is CodeBlock) {
-      emitCode(o)
-    } else {
-      emit(o.toString())
+    when (o) {
+      is TypeSpec -> o.emit(this, null)
+      is AnnotationSpec -> o.emit(this, inline = true, asParameter = true)
+      is CodeBlock -> emitCode(o)
+      else -> emit(o.toString())
     }
   }
 
@@ -423,8 +397,7 @@ internal class CodeWriter @JvmOverloads constructor(
    * [CodeWriter.out] does it through here, since we emit indentation lazily in order to avoid
    * unnecessary trailing whitespace.
    */
-  @Throws(IOException::class)
-  fun emit(s: String): CodeWriter {
+  fun emit(s: String) = apply {
     var first = true
     for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
@@ -459,10 +432,8 @@ internal class CodeWriter @JvmOverloads constructor(
       out.append(line)
       trailingNewline = false
     }
-    return this
   }
 
-  @Throws(IOException::class)
   private fun emitIndentation() {
     for (j in 0 until indentLevel) {
       out.append(indent)

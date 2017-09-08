@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
-import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -34,10 +33,11 @@ class PropertySpec private constructor(builder: Builder) {
   val getter = builder.getter
   val setter = builder.setter
 
-  @Throws(IOException::class)
-  internal fun emit(codeWriter: CodeWriter, implicitModifiers: Set<KModifier>,
-                    withInitializer: Boolean = true,
-                    inline: Boolean = false) {
+  internal fun emit(
+      codeWriter: CodeWriter,
+      implicitModifiers: Set<KModifier>,
+      withInitializer: Boolean = true,
+      inline: Boolean = false) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
@@ -73,16 +73,7 @@ class PropertySpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, emptySet<KModifier>())
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this), emptySet()) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
@@ -171,7 +162,7 @@ class PropertySpec private constructor(builder: Builder) {
 
   companion object {
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(isName(name)) { "not a valid name: $name" }
+      require(name.isName) { "not a valid name: $name" }
       return Builder(name, type)
           .addModifiers(*modifiers)
     }
@@ -183,7 +174,7 @@ class PropertySpec private constructor(builder: Builder) {
         = builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun varBuilder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(isName(name)) { "not a valid name: $name" }
+      require(name.isName) { "not a valid name: $name" }
       return Builder(name, type)
           .mutable(true)
           .addModifiers(*modifiers)

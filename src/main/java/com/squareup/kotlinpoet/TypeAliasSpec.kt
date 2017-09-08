@@ -15,7 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
+import com.squareup.kotlinpoet.KModifier.IMPL
+import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -25,7 +28,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("typealias %L = %T", name, type)
@@ -41,16 +43,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this)) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
@@ -64,12 +57,15 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     internal var modifiers: MutableSet<KModifier> = mutableSetOf()
 
     init {
-      require(isName(name)) { "not a valid name: $name" }
+      require(name.isName) { "not a valid name: $name" }
     }
 
-    fun visibility(modifier: KModifier) = apply {
-      require(modifier == KModifier.PUBLIC || modifier == KModifier.INTERNAL
-          || modifier == KModifier.PRIVATE) {
+    fun addModifiers(vararg modifiers: KModifier) = apply {
+      modifiers.forEach(this::addModifier)
+    }
+
+    private fun addModifier(modifier: KModifier) {
+      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, IMPL)) {
         "unexpected typealias modifier $modifier"
       }
       this.modifiers.add(modifier)
@@ -79,7 +75,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   }
 
   companion object {
-
     @JvmStatic fun builder(name: String, type: TypeName) = Builder(name, type)
 
     @JvmStatic fun builder(name: String, type: Type) = builder(name, type.asTypeName())
