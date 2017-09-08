@@ -513,7 +513,7 @@ class FileSpecTest {
   @Test fun topOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco").build())
-        .addFileComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
+        .addComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |// Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!
@@ -526,7 +526,7 @@ class FileSpecTest {
   @Test fun emptyLinesInTopOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco").build())
-        .addFileComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
+        .addComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |//
@@ -594,11 +594,11 @@ class FileSpecTest {
 
   @Test fun fileAnnotations() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addFileAnnotation(AnnotationSpec.builder(JvmName::class)
+        .addAnnotation(AnnotationSpec.builder(JvmName::class)
             .useSiteTarget(FILE)
             .addMember("value", "%S", "TacoUtils")
             .build())
-        .addFileAnnotation(JvmMultifileClass::class)
+        .addAnnotation(JvmMultifileClass::class)
         .build()
     assertThat(source.toString()).isEqualTo("""
         |@file:JvmName("TacoUtils")
@@ -619,7 +619,7 @@ class FileSpecTest {
         .addMember("value", "%S", "TacoUtils")
         .build()
     assertThrows<IllegalStateException> {
-      builder.addFileAnnotation(annotation)
+      builder.addAnnotation(annotation)
     }.hasMessage("Use-site target SET not supported for file annotations.")
   }
 }

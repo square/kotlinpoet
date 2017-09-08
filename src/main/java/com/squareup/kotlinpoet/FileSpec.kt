@@ -33,12 +33,19 @@ import kotlin.reflect.KClass
 /**
  * A Kotlin file containing top level objects like classes, objects, functions, properties, and type
  * aliases.
+ *
+ * Items are output in the following order:
+ * - Comment
+ * - Annotations
+ * - Package
+ * - Imports
+ * - Members
  */
 class FileSpec private constructor(builder: FileSpec.Builder) {
-  val fileAnnotations = builder.fileAnnotations.toImmutableList()
-  val fileComment = builder.fileComment.build()
+  val annotations = builder.annotations.toImmutableList()
+  val comment = builder.comment.build()
   val packageName = builder.packageName
-  val fileName = builder.fileName
+  val name = builder.name
   val members = builder.members.toList()
   private val memberImports = builder.memberImports.toImmutableSet()
   private val indent = builder.indent
@@ -69,7 +76,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       Files.createDirectories(outputDirectory)
     }
 
-    val outputPath = outputDirectory.resolve("$fileName.kt")
+    val outputPath = outputDirectory.resolve("$name.kt")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
   }
 
@@ -78,16 +85,16 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   fun writeTo(directory: File) = writeTo(directory.toPath())
 
   private fun emit(codeWriter: CodeWriter) {
-    if (fileAnnotations.isNotEmpty()) {
-      codeWriter.emitAnnotations(fileAnnotations, inline = false)
+    if (comment.isNotEmpty()) {
+      codeWriter.emitComment(comment)
+    }
+
+    if (annotations.isNotEmpty()) {
+      codeWriter.emitAnnotations(annotations, inline = false)
       codeWriter.emit("\n")
     }
 
     codeWriter.pushPackage(packageName)
-
-    if (fileComment.isNotEmpty()) {
-      codeWriter.emitComment(fileComment)
-    }
 
     if (packageName.isNotEmpty()) {
       codeWriter.emitCode("package %L\n", packageName)
@@ -132,8 +139,8 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
   fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create((if (packageName.isEmpty())
-      fileName else
-      packageName.replace('.', '/') + '/' + fileName) + ".kt")
+      name else
+      packageName.replace('.', '/') + '/' + name) + ".kt")
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
       override fun getCharContent(ignoreEncodingErrors: Boolean): String {
@@ -149,9 +156,9 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(packageName, fileName)
-    builder.fileAnnotations.addAll(fileAnnotations)
-    builder.fileComment.add(fileComment)
+    val builder = Builder(packageName, name)
+    builder.annotations.addAll(annotations)
+    builder.comment.add(comment)
     builder.members.addAll(this.members)
     builder.indent = indent
     return builder
@@ -159,37 +166,41 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
   class Builder internal constructor(
       internal val packageName: String,
-      internal val fileName: String) {
-    internal val fileAnnotations = mutableListOf<AnnotationSpec>()
-    internal val fileComment = CodeBlock.builder()
+      internal val name: String) {
+    internal val annotations = mutableListOf<AnnotationSpec>()
+    internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
     init {
-      require(fileName.isName) { "not a valid file name: $fileName" }
+      require(name.isName) { "not a valid file name: $name" }
     }
 
-    fun addFileAnnotation(annotationSpec: AnnotationSpec) = apply {
+    /**
+     * Add an annotation to the file.
+     *
+     * The annotation must either have a [`file` use-site target][AnnotationSpec.UseSiteTarget.FILE]
+     * or not have a use-site target specified (in which case it will be changed to `file`).
+     */
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
       when (annotationSpec.useSiteTarget) {
-        FILE -> fileAnnotations += annotationSpec
-        null -> fileAnnotations += annotationSpec.toBuilder().useSiteTarget(FILE).build()
+        FILE -> annotations += annotationSpec
+        null -> annotations += annotationSpec.toBuilder().useSiteTarget(FILE).build()
         else -> error(
             "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.")
       }
     }
 
-    fun addFileAnnotation(annotation: ClassName)
-        = addFileAnnotation(AnnotationSpec.builder(annotation).build())
+    fun addAnnotation(annotation: ClassName)
+        = addAnnotation(AnnotationSpec.builder(annotation).build())
 
-    fun addFileAnnotation(annotation: Class<*>) =
-        addFileAnnotation(annotation.asClassName())
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
-    fun addFileAnnotation(annotation: KClass<*>) =
-        addFileAnnotation(annotation.asClassName())
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
-    fun addFileComment(format: String, vararg args: Any) = apply {
-      this.fileComment.add(format, *args)
+    fun addComment(format: String, vararg args: Any) = apply {
+      comment.add(format, *args)
     }
 
     fun addType(typeSpec: TypeSpec) = apply {
@@ -198,7 +209,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     fun addFunction(funSpec: FunSpec) = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
-        "cannot add ${funSpec.name} to file $fileName"
+        "cannot add ${funSpec.name} to file $name"
       }
       members += funSpec
     }
