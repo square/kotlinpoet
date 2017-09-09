@@ -38,8 +38,8 @@ internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
     private val memberImports: Set<String> = emptySet(),
-    private val importedTypes: Map<String, ClassName> = emptyMap()) {
-
+    private val importedTypes: Map<String, ClassName> = emptyMap()
+) {
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
 

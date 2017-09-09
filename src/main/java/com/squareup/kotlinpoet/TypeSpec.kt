@@ -282,7 +282,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   enum class Kind(
       internal val declarationKeyword: String,
       internal val implicitPropertyModifiers: Set<KModifier>,
-      internal val implicitFunctionModifiers: Set<KModifier>) {
+      internal val implicitFunctionModifiers: Set<KModifier>
+  ) {
     CLASS(
         "class",
         setOf(KModifier.PUBLIC),
@@ -317,7 +318,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   class Builder internal constructor(
       internal val kind: Kind,
       internal val name: String?,
-      internal val anonymousTypeArguments: CodeBlock?) {
+      internal val anonymousTypeArguments: CodeBlock?
+  ) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
