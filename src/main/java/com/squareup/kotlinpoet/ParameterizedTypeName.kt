@@ -27,9 +27,8 @@ class ParameterizedTypeName internal constructor(
     val rawType: ClassName,
     typeArguments: List<TypeName>,
     nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(nullable, annotations) {
-
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations) {
   val typeArguments = typeArguments.toImmutableList()
 
   init {

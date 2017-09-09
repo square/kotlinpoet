@@ -57,7 +57,8 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
 
   class Builder internal constructor(
       internal val name: String,
-      internal val type: TypeName) {
+      internal val type: TypeName
+  ) {
     internal val modifiers = mutableSetOf<KModifier>()
     internal val typeVariables = mutableSetOf<TypeVariableName>()
 

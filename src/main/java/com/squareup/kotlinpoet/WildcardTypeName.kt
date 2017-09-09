@@ -26,8 +26,8 @@ class WildcardTypeName private constructor(
     upperBounds: List<TypeName>,
     lowerBounds: List<TypeName>,
     nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
-
+    annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations
+) {
   val upperBounds = upperBounds.toImmutableList()
   val lowerBounds = lowerBounds.toImmutableList()
 

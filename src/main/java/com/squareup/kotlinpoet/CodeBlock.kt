@@ -52,7 +52,8 @@ import kotlin.reflect.KClass
  */
 class CodeBlock private constructor(
     internal val formatParts: List<String>,
-    internal val args: List<Any?>) {
+    internal val args: List<Any?>
+) {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
   fun isEmpty() = formatParts.isEmpty()
