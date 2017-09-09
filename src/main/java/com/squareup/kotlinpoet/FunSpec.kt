@@ -72,7 +72,7 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    val isEmptyConstructor = isConstructor && delegateConstructor != null && body.isEmpty()
+    val isEmptyConstructor = isConstructor && body.isEmpty()
     if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
       codeWriter.emit("\n")
       return
