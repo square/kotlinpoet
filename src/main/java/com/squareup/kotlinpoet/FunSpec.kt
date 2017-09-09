@@ -359,7 +359,7 @@ class FunSpec private constructor(builder: Builder) {
     internal const val SETTER = "set()"
 
     private val String.isConstructor get() = this == CONSTRUCTOR
-    private val String.isAccessor get() = this == GETTER || this == SETTER
+    private val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
     private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
 

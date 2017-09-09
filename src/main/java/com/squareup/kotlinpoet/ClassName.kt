@@ -198,7 +198,7 @@ fun TypeElement.asClassName(): ClassName {
   var e: Element = this
   while (isClassOrInterface(e)) {
     val eType = e as TypeElement
-    require(eType.nestingKind == TOP_LEVEL || eType.nestingKind == MEMBER) {
+    require(eType.nestingKind.isOneOf(TOP_LEVEL, MEMBER)) {
       "unexpected type testing"
     }
     names += eType.simpleName.toString()

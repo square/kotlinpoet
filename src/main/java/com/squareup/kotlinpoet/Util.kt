@@ -66,6 +66,9 @@ internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifie
   }
 }
 
+internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = null, t6: T? = null) =
+    this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
+
 // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
 internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\b' -> "\\b"   // \u0008: backspace (BS)
