@@ -279,11 +279,35 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun constructorDelegateWithBody() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("a", Int::class)
+        .callThisConstructor("a")
+        .addStatement("println()")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |constructor(a: kotlin.Int) : this(a) {
+      |  println()
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
     assertThrows<IllegalStateException> {
       FunSpec.builder("main")
           .callThisConstructor("a", "b", "c")
     }.hasMessage("only constructors can delegate to other constructors!")
+  }
+
+  @Test fun emptySecondaryConstructor() {
+    val constructorSpec = FunSpec.constructorBuilder()
+        .addParameter("a", Int::class)
+        .build()
+
+    assertThat(constructorSpec.toString()).isEqualTo("""
+      |constructor(a: kotlin.Int)
+      |""".trimMargin())
   }
 
   @Test fun equalsAndHashCode() {

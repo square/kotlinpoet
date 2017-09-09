@@ -1298,11 +1298,9 @@ class TypeSpecTest {
         |
         |  val U: String
         |
-        |  constructor(p: Int) {
-        |  }
+        |  constructor(p: Int)
         |
-        |  constructor(o: Long) {
-        |  }
+        |  constructor(o: Long)
         |
         |  fun T() {
         |  }
@@ -1968,8 +1966,7 @@ class TypeSpecTest {
         |    foo = "FOO"
         |  }
         |
-        |  constructor() {
-        |  }
+        |  constructor()
         |
         |  override fun toString(): String = FOO
         |}
@@ -2014,8 +2011,7 @@ class TypeSpecTest {
         |    foo = "instanceFoo"
         |  }
         |
-        |  constructor() {
-        |  }
+        |  constructor()
         |
         |  override fun toString(): String = FOO
         |}
@@ -2450,8 +2446,7 @@ class TypeSpecTest {
       |import java.lang.Exception
       |
       |class IoException : Exception {
-      |  constructor() {
-      |  }
+      |  constructor()
       |}
       |""".trimMargin())
   }
