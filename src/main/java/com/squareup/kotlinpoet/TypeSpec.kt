@@ -378,13 +378,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun companionObject(companionObject: TypeSpec) = apply {
-      check(kind == Kind.CLASS || kind == Kind.INTERFACE) { "$kind can't have a companion object" }
+      check(kind.isOneOf(Kind.CLASS, Kind.INTERFACE)) { "$kind can't have a companion object" }
       require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind " }
       this.companionObject = companionObject
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind == Kind.CLASS || kind == Kind.ENUM || kind == Kind.ANNOTATION) {
+      check(kind.isOneOf(Kind.CLASS, Kind.ENUM, Kind.ANNOTATION)) {
         "$kind can't have initializer blocks"
       }
       if (primaryConstructor != null) {
@@ -402,7 +402,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.COMPANION) {
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.COMPANION)) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -462,7 +462,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM)) {
+        "$kind can't have initializer blocks"
+      }
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
