@@ -184,8 +184,13 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Foo {
-        |  constructor(id: Long, @Ping one: String, @Ping two: String, @Pong("pong") three: String,
-        |      @Ping four: String) {
+        |  constructor(
+        |    id: Long,
+        |    @Ping one: String,
+        |    @Ping two: String,
+        |    @Pong("pong") three: String,
+        |    @Ping four: String
+        |  ) {
         |    /* code snippets */
         |  }
         |}
@@ -266,9 +271,11 @@ class TypeSpecTest {
         |      "User-Agent: foobar"
         |  ])
         |  @POST("/foo/bar")
-        |  fun fooBar(@Body things: Things<Thing>,
-        |      @QueryMap(encodeValues = false) query: Map<String, String>,
-        |      @Header("Authorization") authorization: String): Observable<FooBar>
+        |  fun fooBar(
+        |    @Body things: Things<Thing>,
+        |    @QueryMap(encodeValues = false) query: Map<String, String>,
+        |    @Header("Authorization") authorization: String
+        |  ): Observable<FooBar>
         |}
         |""".trimMargin())
   }
@@ -572,7 +579,11 @@ class TypeSpecTest {
         |
         |  override fun compareTo(p: P): Int = 0
         |
-        |  fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
+        |  fun <T, P : Number> of(
+        |    label: T,
+        |    x: P,
+        |    y: P
+        |  ): Location<T, P> {
         |    throw new UnsupportedOperationException("TODO")
         |  }
         |}
@@ -1091,7 +1102,11 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taqueria {
-        |  fun prepare(workers: Int, vararg jobs: Runnable, start: Boolean) {
+        |  fun prepare(
+        |    workers: Int,
+        |    vararg jobs: Runnable,
+        |    start: Boolean
+        |  ) {
         |  }
         |}
         |""".trimMargin())
@@ -2050,11 +2065,40 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |  fun call(s0: String, s1: String, s2: String, s3: String, s4: String, s5: String, s6: String,
-        |      s7: String, s8: String, s9: String, s10: String, s11: String, s12: String, s13: String,
-        |      s14: String, s15: String, s16: String, s17: String, s18: String, s19: String, s20: String,
-        |      s21: String, s22: String, s23: String, s24: String, s25: String, s26: String, s27: String,
-        |      s28: String, s29: String, s30: String, s31: String) {
+        |  fun call(
+        |    s0: String,
+        |    s1: String,
+        |    s2: String,
+        |    s3: String,
+        |    s4: String,
+        |    s5: String,
+        |    s6: String,
+        |    s7: String,
+        |    s8: String,
+        |    s9: String,
+        |    s10: String,
+        |    s11: String,
+        |    s12: String,
+        |    s13: String,
+        |    s14: String,
+        |    s15: String,
+        |    s16: String,
+        |    s17: String,
+        |    s18: String,
+        |    s19: String,
+        |    s20: String,
+        |    s21: String,
+        |    s22: String,
+        |    s23: String,
+        |    s24: String,
+        |    s25: String,
+        |    s26: String,
+        |    s27: String,
+        |    s28: String,
+        |    s29: String,
+        |    s30: String,
+        |    s31: String
+        |  ) {
         |    call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31");
         |  }
@@ -2473,7 +2517,7 @@ class TypeSpecTest {
           .addFunction(FunSpec.constructorBuilder().build())
           .build()
     }.hasMessage(
-          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters")
+        "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters")
   }
 
   @Test fun constructorWithDefaultParamValue() {
@@ -2537,7 +2581,11 @@ class TypeSpecTest {
         |import kotlin.String
         |import kotlin.collections.Map
         |
-        |class Taco(val a: String?, val b: String?, val c: String?) {
+        |class Taco(
+        |  val a: String?,
+        |  val b: String?,
+        |  val c: String?
+        |) {
         |  constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
         |""".trimMargin())
@@ -2595,6 +2643,39 @@ class TypeSpecTest {
           .addModifiers(INTERNAL)
           .build()))
     }.hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+  }
+
+  @Test fun classHeaderFormatting() {
+    val typeSpec = TypeSpec.classBuilder("Person")
+        .addModifiers(KModifier.DATA)
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("id", Int::class)
+            .addParameter("name", String::class)
+            .addParameter("surname", String::class)
+            .build())
+        .addProperty(PropertySpec.builder("id", Int::class, KModifier.OVERRIDE)
+            .initializer("id")
+            .build())
+        .addProperty(PropertySpec.builder("name", String::class, KModifier.OVERRIDE)
+            .initializer("name")
+            .build())
+        .addProperty(PropertySpec.builder("surname", String::class, KModifier.OVERRIDE)
+            .initializer("surname")
+            .build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.String
+      |
+      |data class Person(
+      |  override val id: Int,
+      |  override val name: String,
+      |  override val surname: String
+      |)
+      |""".trimMargin())
   }
 
   companion object {
