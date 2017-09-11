@@ -138,3 +138,28 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
         = builder(name, type.asTypeName(), *modifiers)
   }
 }
+
+internal fun List<ParameterSpec>.emit(
+    codeWriter: CodeWriter,
+    emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
+) {
+  codeWriter.emit("(")
+  when (size) {
+    0 -> codeWriter.emit("")
+    1 -> emitBlock(this[0])
+    2 -> {
+      emitBlock(this[0])
+      codeWriter.emit(", ")
+      emitBlock(this[1])
+    }
+    else -> {
+      codeWriter.emitCode("\n%>")
+      forEachIndexed { index, parameter ->
+        if (index > 0) codeWriter.emit(",\n")
+        emitBlock(parameter)
+      }
+      codeWriter.emitCode("%<\n")
+    }
+  }
+  codeWriter.emit(")")
+}

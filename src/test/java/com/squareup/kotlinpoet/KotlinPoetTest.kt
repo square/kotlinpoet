@@ -107,7 +107,11 @@ class KotlinPoetTest {
         |import kotlin.Boolean
         |import kotlin.String
         |
-        |class Taco(val cheese: String, var cilantro: String, lettuce: String) {
+        |class Taco(
+        |  val cheese: String,
+        |  var cilantro: String,
+        |  lettuce: String
+        |) {
         |  val lettuce: String = lettuce.trim()
         |
         |  val onion: Boolean = true

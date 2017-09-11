@@ -115,9 +115,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             codeWriter.emit("constructor")
           }
 
-          codeWriter.emit("(")
-          it.parameters.forEachIndexed { index, param ->
-            if (index > 0) codeWriter.emit(",").emitWrappingSpace()
+          it.parameters.emit(codeWriter) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
@@ -126,7 +124,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
               param.emit(codeWriter)
             }
           }
-          codeWriter.emit(")")
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
@@ -439,7 +436,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
-          "enum constants must have anonymous type arguments" }
+        "enum constants must have anonymous type arguments"
+      }
       require(name.isName) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }

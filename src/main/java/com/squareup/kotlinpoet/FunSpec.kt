@@ -107,7 +107,9 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("%L", name)
     }
 
-    emitParameterList(codeWriter)
+    parameters.emit(codeWriter) { param ->
+      param.emit(codeWriter, includeType = name != SETTER)
+    }
 
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
@@ -125,15 +127,6 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter.emitWrappingSpace().emitCode("%T", exception)
       }
     }
-  }
-
-  private fun emitParameterList(codeWriter: CodeWriter) {
-    codeWriter.emit("(")
-    parameters.forEachIndexed { index, parameter ->
-      if (index > 0) codeWriter.emit(",").emitWrappingSpace()
-      parameter.emit(codeWriter, includeType = name != SETTER)
-    }
-    codeWriter.emit(")")
   }
 
   val isConstructor get() = name.isConstructor
