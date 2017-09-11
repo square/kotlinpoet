@@ -143,18 +143,23 @@ internal fun List<ParameterSpec>.emit(
     codeWriter: CodeWriter,
     emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
 ) {
-
-  fun emit(prefix: String, separator: String, suffix: String) {
-    codeWriter.emitCode(prefix)
-    forEachIndexed { index, parameter ->
-      if (index > 0) codeWriter.emitCode(separator)
-      emitBlock(parameter)
+  codeWriter.emit("(")
+  when (size) {
+    0 -> codeWriter.emit("")
+    1 -> emitBlock(this[0])
+    2 -> {
+      emitBlock(this[0])
+      codeWriter.emit(", ")
+      emitBlock(this[1])
     }
-    codeWriter.emitCode(suffix)
+    else -> {
+      codeWriter.emitCode("\n%>")
+      forEachIndexed { index, parameter ->
+        if (index > 0) codeWriter.emit(",\n")
+        emitBlock(parameter)
+      }
+      codeWriter.emitCode("%<\n")
+    }
   }
-
-  return when {
-    size > 2 -> emit("(\n%>", ",\n", "%<\n)")
-    else -> emit("(", ",%W", ")")
-  }
+  codeWriter.emit(")")
 }
