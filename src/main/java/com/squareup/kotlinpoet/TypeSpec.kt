@@ -453,7 +453,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addProperty(propertySpec: PropertySpec) = apply {
       if (kind == Kind.HEADER_CLASS) {
-        require(propertySpec.initializer.isNullOrEmpty()) {
+        require(propertySpec.initializer == null) {
           "properties in header classes can't have initializers"
         }
         require(propertySpec.getter == null && propertySpec.setter == null) {
