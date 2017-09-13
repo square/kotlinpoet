@@ -286,6 +286,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
+    HEADER_CLASS(
+        "class",
+        setOf(KModifier.PUBLIC, KModifier.HEADER),
+        setOf(KModifier.PUBLIC, KModifier.HEADER)),
+
     OBJECT(
         "object",
         setOf(KModifier.PUBLIC),
@@ -381,7 +386,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind.isOneOf(Kind.CLASS, Kind.ENUM, Kind.ANNOTATION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.HEADER_CLASS, Kind.ENUM, Kind.ANNOTATION)) {
         "$kind can't have initializer blocks"
       }
       if (primaryConstructor != null) {
@@ -399,7 +404,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.COMPANION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.HEADER_CLASS, Kind.OBJECT, Kind.COMPANION)) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -443,10 +448,18 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
-      this.propertySpecs += propertySpecs
+      propertySpecs.map(this::addProperty)
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
+      if (kind == Kind.HEADER_CLASS) {
+        require(propertySpec.initializer == null) {
+          "properties in header classes can't have initializers"
+        }
+        require(propertySpec.getter == null && propertySpec.setter == null) {
+          "properties in header classes can't have getters and setters"
+        }
+      }
       propertySpecs += propertySpec
     }
 
@@ -475,12 +488,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunction(funSpec: FunSpec) = apply {
-      if (kind == Kind.INTERFACE) {
-        requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
-        requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
-      } else if (kind == Kind.ANNOTATION) {
-        require(funSpec.modifiers == kind.implicitFunctionModifiers) {
+      when (kind) {
+        Kind.INTERFACE -> {
+          requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
+          requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
+        }
+        Kind.ANNOTATION -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
+        }
+        Kind.HEADER_CLASS -> require(funSpec.body.isEmpty()) {
+          "functions in header classes can't have bodies"
         }
       }
       funSpecs += funSpec
@@ -526,6 +543,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun classBuilder(name: String) = Builder(Kind.CLASS, name, null)
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
+
+    @JvmStatic fun headerClassBuilder(name: String) = Builder(Kind.HEADER_CLASS, name, null).apply {
+      addModifiers(KModifier.HEADER)
+    }
+
+    @JvmStatic fun headerClassBuilder(className: ClassName) = headerClassBuilder(className.simpleName())
 
     @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name, null)
 
