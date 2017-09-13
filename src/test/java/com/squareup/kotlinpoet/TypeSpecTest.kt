@@ -185,11 +185,11 @@ class TypeSpecTest {
         |
         |class Foo {
         |  constructor(
-        |    id: Long,
-        |    @Ping one: String,
-        |    @Ping two: String,
-        |    @Pong("pong") three: String,
-        |    @Ping four: String
+        |      id: Long,
+        |      @Ping one: String,
+        |      @Ping two: String,
+        |      @Pong("pong") three: String,
+        |      @Ping four: String
         |  ) {
         |    /* code snippets */
         |  }
@@ -272,9 +272,9 @@ class TypeSpecTest {
         |  ])
         |  @POST("/foo/bar")
         |  fun fooBar(
-        |    @Body things: Things<Thing>,
-        |    @QueryMap(encodeValues = false) query: Map<String, String>,
-        |    @Header("Authorization") authorization: String
+        |      @Body things: Things<Thing>,
+        |      @QueryMap(encodeValues = false) query: Map<String, String>,
+        |      @Header("Authorization") authorization: String
         |  ): Observable<FooBar>
         |}
         |""".trimMargin())
@@ -580,9 +580,9 @@ class TypeSpecTest {
         |  override fun compareTo(p: P): Int = 0
         |
         |  fun <T, P : Number> of(
-        |    label: T,
-        |    x: P,
-        |    y: P
+        |      label: T,
+        |      x: P,
+        |      y: P
         |  ): Location<T, P> {
         |    throw new UnsupportedOperationException("TODO")
         |  }
@@ -1103,9 +1103,9 @@ class TypeSpecTest {
         |
         |class Taqueria {
         |  fun prepare(
-        |    workers: Int,
-        |    vararg jobs: Runnable,
-        |    start: Boolean
+        |      workers: Int,
+        |      vararg jobs: Runnable,
+        |      start: Boolean
         |  ) {
         |  }
         |}
@@ -2066,38 +2066,38 @@ class TypeSpecTest {
         |
         |class Taco {
         |  fun call(
-        |    s0: String,
-        |    s1: String,
-        |    s2: String,
-        |    s3: String,
-        |    s4: String,
-        |    s5: String,
-        |    s6: String,
-        |    s7: String,
-        |    s8: String,
-        |    s9: String,
-        |    s10: String,
-        |    s11: String,
-        |    s12: String,
-        |    s13: String,
-        |    s14: String,
-        |    s15: String,
-        |    s16: String,
-        |    s17: String,
-        |    s18: String,
-        |    s19: String,
-        |    s20: String,
-        |    s21: String,
-        |    s22: String,
-        |    s23: String,
-        |    s24: String,
-        |    s25: String,
-        |    s26: String,
-        |    s27: String,
-        |    s28: String,
-        |    s29: String,
-        |    s30: String,
-        |    s31: String
+        |      s0: String,
+        |      s1: String,
+        |      s2: String,
+        |      s3: String,
+        |      s4: String,
+        |      s5: String,
+        |      s6: String,
+        |      s7: String,
+        |      s8: String,
+        |      s9: String,
+        |      s10: String,
+        |      s11: String,
+        |      s12: String,
+        |      s13: String,
+        |      s14: String,
+        |      s15: String,
+        |      s16: String,
+        |      s17: String,
+        |      s18: String,
+        |      s19: String,
+        |      s20: String,
+        |      s21: String,
+        |      s22: String,
+        |      s23: String,
+        |      s24: String,
+        |      s25: String,
+        |      s26: String,
+        |      s27: String,
+        |      s28: String,
+        |      s29: String,
+        |      s30: String,
+        |      s31: String
         |  ) {
         |    call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31");
@@ -2582,9 +2582,9 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |class Taco(
-        |  val a: String?,
-        |  val b: String?,
-        |  val c: String?
+        |    val a: String?,
+        |    val b: String?,
+        |    val c: String?
         |) {
         |  constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
@@ -2671,9 +2671,9 @@ class TypeSpecTest {
       |import kotlin.String
       |
       |data class Person(
-      |  override val id: Int,
-      |  override val name: String,
-      |  override val surname: String
+      |    override val id: Int,
+      |    override val name: String,
+      |    override val surname: String
       |)
       |""".trimMargin())
   }

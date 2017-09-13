@@ -142,24 +142,27 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 internal fun List<ParameterSpec>.emit(
     codeWriter: CodeWriter,
     emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
-) {
-  codeWriter.emit("(")
+) = with(codeWriter) {
+  val params = this@emit
+  emit("(")
   when (size) {
-    0 -> codeWriter.emit("")
-    1 -> emitBlock(this[0])
+    0 -> emit("")
+    1 -> emitBlock(params[0])
     2 -> {
-      emitBlock(this[0])
-      codeWriter.emit(", ")
-      emitBlock(this[1])
+      emitBlock(params[0])
+      emit(", ")
+      emitBlock(params[1])
     }
     else -> {
-      codeWriter.emitCode("\n%>")
+      emit("\n")
+      indent(2)
       forEachIndexed { index, parameter ->
-        if (index > 0) codeWriter.emit(",\n")
+        if (index > 0) emit(",\n")
         emitBlock(parameter)
       }
-      codeWriter.emitCode("%<\n")
+      unindent(2)
+      emit("\n")
     }
   }
-  codeWriter.emit(")")
+  emit(")")
 }

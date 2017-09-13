@@ -108,9 +108,9 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |class Taco(
-        |  val cheese: String,
-        |  var cilantro: String,
-        |  lettuce: String
+        |    val cheese: String,
+        |    var cilantro: String,
+        |    lettuce: String
         |) {
         |  val lettuce: String = lettuce.trim()
         |
