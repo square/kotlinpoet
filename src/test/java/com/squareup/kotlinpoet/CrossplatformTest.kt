@@ -103,6 +103,44 @@ class CrossplatformTest {
       |""".trimMargin())
   }
 
+  @Test fun topLevelProperties() {
+    val fileSpec = FileSpec.builder("", "Test")
+        .addProperty(PropertySpec.builder("bar", String::class, KModifier.EXPECT).build())
+        .addProperty(PropertySpec.builder("bar", String::class, KModifier.ACTUAL)
+            .initializer(CodeBlock.of("%S", "Hello"))
+            .build())
+        .build()
+
+    assertThat(fileSpec.toString()).isEqualTo("""
+      |import kotlin.String
+      |
+      |expect val bar: String
+      |
+      |actual val bar: String = "Hello"
+      |""".trimMargin())
+  }
+
+  @Test fun topLevelFunctions() {
+    val fileSpec = FileSpec.builder("", "Test")
+        .addFunction(FunSpec.builder("f1")
+            .addModifiers(KModifier.EXPECT)
+            .returns(Int::class)
+            .build())
+        .addFunction(FunSpec.builder("f1")
+            .addModifiers(KModifier.ACTUAL)
+            .addStatement("return 1")
+            .build())
+        .build()
+
+    assertThat(fileSpec.toString()).isEqualTo("""
+      |import kotlin.Int
+      |
+      |expect fun f1(): Int
+      |
+      |actual fun f1() = 1
+      |""".trimMargin())
+  }
+
   @Test fun initBlockInExpectForbidden() {
     assertThrows<IllegalStateException> {
       TypeSpec.expectClassBuilder("AtomicRef")
