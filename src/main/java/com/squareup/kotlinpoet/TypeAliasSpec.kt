@@ -15,7 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.IMPL
+import com.squareup.kotlinpoet.KModifier.ACTUAL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -71,7 +71,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     }
 
     private fun addModifier(modifier: KModifier) {
-      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, IMPL)) {
+      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, ACTUAL)) {
         "unexpected typealias modifier $modifier"
       }
       this.modifiers.add(modifier)

@@ -23,8 +23,8 @@ enum class KModifier(
   // https://github.com/yole/kotlin-style-guide/issues/3.
 
   // Multiplatform modules.
-  HEADER("header", Target.CLASS),
-  IMPL("impl", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
 
   // Access.
   PUBLIC("public", Target.PROPERTY),

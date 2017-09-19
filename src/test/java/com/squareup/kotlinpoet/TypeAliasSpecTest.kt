@@ -88,11 +88,11 @@ class TypeAliasSpecTest {
         TypeVariableName("V"))
     val typeAliasSpec = TypeAliasSpec
         .builder("AtomicRef<V>", typeName)
-        .addModifiers(KModifier.IMPL)
+        .addModifiers(KModifier.ACTUAL)
         .build()
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |impl typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
+        |actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
         |""".trimMargin())
   }
 
