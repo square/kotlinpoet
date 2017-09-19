@@ -286,10 +286,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
-    HEADER_CLASS(
+    EXPECT_CLASS(
         "class",
-        setOf(KModifier.PUBLIC, KModifier.HEADER),
-        setOf(KModifier.PUBLIC, KModifier.HEADER)),
+        setOf(KModifier.PUBLIC, KModifier.EXPECT),
+        setOf(KModifier.PUBLIC, KModifier.EXPECT)),
 
     OBJECT(
         "object",
@@ -386,7 +386,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind.isOneOf(Kind.CLASS, Kind.HEADER_CLASS, Kind.ENUM, Kind.ANNOTATION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.ENUM, Kind.ANNOTATION)) {
         "$kind can't have initializer blocks"
       }
       if (primaryConstructor != null) {
@@ -404,7 +404,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind.isOneOf(Kind.CLASS, Kind.HEADER_CLASS, Kind.OBJECT, Kind.COMPANION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.OBJECT, Kind.COMPANION)) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -452,12 +452,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      if (kind == Kind.HEADER_CLASS) {
+      if (kind == Kind.EXPECT_CLASS) {
         require(propertySpec.initializer == null) {
-          "properties in header classes can't have initializers"
+          "properties in expect classes can't have initializers"
         }
         require(propertySpec.getter == null && propertySpec.setter == null) {
-          "properties in header classes can't have getters and setters"
+          "properties in expect classes can't have getters and setters"
         }
       }
       propertySpecs += propertySpec
@@ -496,8 +496,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         Kind.ANNOTATION -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
-        Kind.HEADER_CLASS -> require(funSpec.body.isEmpty()) {
-          "functions in header classes can't have bodies"
+        Kind.EXPECT_CLASS -> require(funSpec.body.isEmpty()) {
+          "functions in expect classes can't have bodies"
         }
       }
       funSpecs += funSpec
@@ -544,11 +544,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
 
-    @JvmStatic fun headerClassBuilder(name: String) = Builder(Kind.HEADER_CLASS, name, null).apply {
-      addModifiers(KModifier.HEADER)
+    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.EXPECT_CLASS, name, null).apply {
+      addModifiers(KModifier.EXPECT)
     }
 
-    @JvmStatic fun headerClassBuilder(className: ClassName) = headerClassBuilder(className.simpleName())
+    @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName())
 
     @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name, null)
 

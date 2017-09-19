@@ -17,7 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.HEADER
+import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
@@ -74,7 +74,7 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emitWhereBlock(typeVariables)
 
     val isEmptyConstructor = isConstructor && body.isEmpty()
-    if (ABSTRACT in modifiers || EXTERNAL in modifiers || HEADER in implicitModifiers ||
+    if (ABSTRACT in modifiers || EXTERNAL in modifiers || EXPECT in implicitModifiers ||
         isEmptyConstructor) {
       codeWriter.emit("\n")
       return

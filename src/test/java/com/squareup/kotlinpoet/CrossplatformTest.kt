@@ -23,46 +23,46 @@ import java.util.concurrent.atomic.AtomicReference
 class CrossplatformTest {
 
   @Test fun crossplatform() {
-    val headerTypeParam = TypeVariableName("V")
-    val headerType = "AtomicRef"
-    val headerSpec = TypeSpec.headerClassBuilder(headerType)
-        .addTypeVariable(headerTypeParam)
+    val expectTypeParam = TypeVariableName("V")
+    val expectType = "AtomicRef"
+    val expectSpec = TypeSpec.expectClassBuilder(expectType)
+        .addTypeVariable(expectTypeParam)
         .addModifiers(KModifier.INTERNAL)
         .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("value", headerTypeParam)
+            .addParameter("value", expectTypeParam)
             .build())
-        .addProperty(PropertySpec.builder("value", headerTypeParam).build())
+        .addProperty(PropertySpec.builder("value", expectTypeParam).build())
         .addFunction(FunSpec.builder("get")
-            .returns(headerTypeParam)
+            .returns(expectTypeParam)
             .build())
         .addFunction(FunSpec.builder("set")
-            .addParameter("value", headerTypeParam)
+            .addParameter("value", expectTypeParam)
             .build())
         .addFunction(FunSpec.builder("getAndSet")
-            .addParameter("value", headerTypeParam)
-            .returns(headerTypeParam)
+            .addParameter("value", expectTypeParam)
+            .returns(expectTypeParam)
             .build())
         .addFunction(FunSpec.builder("compareAndSet")
-            .addParameter("expect", headerTypeParam)
-            .addParameter("update", headerTypeParam)
+            .addParameter("expect", expectTypeParam)
+            .addParameter("update", expectTypeParam)
             .returns(Boolean::class)
             .build())
         .build()
-    val implName = ParameterizedTypeName.get(AtomicReference::class.asTypeName(), headerTypeParam)
-    val implSpec = TypeAliasSpec.builder(headerType, implName)
-        .addTypeVariable(headerTypeParam)
-        .addModifiers(KModifier.IMPL)
+    val actualName = ParameterizedTypeName.get(AtomicReference::class.asTypeName(), expectTypeParam)
+    val actualSpec = TypeAliasSpec.builder(expectType, actualName)
+        .addTypeVariable(expectTypeParam)
+        .addModifiers(KModifier.ACTUAL)
         .build()
     val fileSpec = FileSpec.builder("", "Test")
-        .addType(headerSpec)
-        .addTypeAlias(implSpec)
+        .addType(expectSpec)
+        .addTypeAlias(actualSpec)
         .build()
 
     assertThat(fileSpec.toString()).isEqualTo("""
       |import java.util.concurrent.atomic.AtomicReference
       |import kotlin.Boolean
       |
-      |header internal class AtomicRef<V>(value: V) {
+      |expect internal class AtomicRef<V>(value: V) {
       |  val value: V
       |
       |  fun get(): V
@@ -74,12 +74,12 @@ class CrossplatformTest {
       |  fun compareAndSet(expect: V, update: V): Boolean
       |}
       |
-      |impl typealias AtomicRef<V> = AtomicReference<V>
+      |actual typealias AtomicRef<V> = AtomicReference<V>
       |""".trimMargin())
   }
 
-  @Test fun headerWithSecondaryConstructors() {
-    val headerSpec = TypeSpec.headerClassBuilder("IoException")
+  @Test fun expectWithSecondaryConstructors() {
+    val expectSpec = TypeSpec.expectClassBuilder("IoException")
         .addModifiers(KModifier.OPEN)
         .superclass(Exception::class)
         .addFunction(FunSpec.constructorBuilder().build())
@@ -88,14 +88,14 @@ class CrossplatformTest {
             .build())
         .build()
     val fileSpec = FileSpec.builder("", "Test")
-        .addType(headerSpec)
+        .addType(expectSpec)
         .build()
 
     assertThat(fileSpec.toString()).isEqualTo("""
       |import java.lang.Exception
       |import kotlin.String
       |
-      |header open class IoException : Exception {
+      |expect open class IoException : Exception {
       |  constructor()
       |
       |  constructor(message: String)
@@ -103,51 +103,51 @@ class CrossplatformTest {
       |""".trimMargin())
   }
 
-  @Test fun initBlockInHeaderForbidden() {
+  @Test fun initBlockInExpectForbidden() {
     assertThrows<IllegalStateException> {
-      TypeSpec.headerClassBuilder("AtomicRef")
+      TypeSpec.expectClassBuilder("AtomicRef")
           .addInitializerBlock(CodeBlock.of("println()"))
-    }.hasMessage("HEADER_CLASS can't have initializer blocks")
+    }.hasMessage("EXPECT_CLASS can't have initializer blocks")
   }
 
-  @Test fun headerFunctionBodyForbidden() {
+  @Test fun expectFunctionBodyForbidden() {
     assertThrows<IllegalArgumentException> {
-      TypeSpec.headerClassBuilder("AtomicRef")
+      TypeSpec.expectClassBuilder("AtomicRef")
           .addFunction(FunSpec.builder("print")
               .addStatement("println()")
               .build())
-    }.hasMessage("functions in header classes can't have bodies")
+    }.hasMessage("functions in expect classes can't have bodies")
   }
 
-  @Test fun headerPropertyInitializerForbidden() {
+  @Test fun expectPropertyInitializerForbidden() {
     assertThrows<IllegalArgumentException> {
-      TypeSpec.headerClassBuilder("AtomicRef")
+      TypeSpec.expectClassBuilder("AtomicRef")
           .addProperty(PropertySpec.builder("a", Boolean::class)
               .initializer("true")
               .build())
-    }.hasMessage("properties in header classes can't have initializers")
+    }.hasMessage("properties in expect classes can't have initializers")
   }
 
-  @Test fun headerPropertyGetterForbidden() {
+  @Test fun expectPropertyGetterForbidden() {
     assertThrows<IllegalArgumentException> {
-      TypeSpec.headerClassBuilder("AtomicRef")
+      TypeSpec.expectClassBuilder("AtomicRef")
           .addProperty(PropertySpec.builder("a", Boolean::class)
               .getter(FunSpec.getterBuilder()
                   .addStatement("return true")
                   .build())
               .build())
-    }.hasMessage("properties in header classes can't have getters and setters")
+    }.hasMessage("properties in expect classes can't have getters and setters")
   }
 
-  @Test fun headerPropertySetterForbidden() {
+  @Test fun expectPropertySetterForbidden() {
     assertThrows<IllegalArgumentException> {
-      TypeSpec.headerClassBuilder("AtomicRef")
+      TypeSpec.expectClassBuilder("AtomicRef")
           .addProperty(PropertySpec.builder("a", Boolean::class)
               .setter(FunSpec.setterBuilder()
                   .addParameter("value", Boolean::class)
                   .addStatement("field = true")
                   .build())
               .build())
-    }.hasMessage("properties in header classes can't have getters and setters")
+    }.hasMessage("properties in expect classes can't have getters and setters")
   }
 }
