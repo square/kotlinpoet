@@ -248,7 +248,7 @@ class TypeSpecTest {
                 .build())
             .addParameter(ParameterSpec.builder("query", ParameterizedTypeName.get(map, string, string))
                 .addAnnotation(AnnotationSpec.builder(queryMap)
-                    .addMember("encodeValues", "false")
+                    .addMember("encodeValues", "false", emitName = true)
                     .build())
                 .build())
             .addParameter(ParameterSpec.builder("authorization", string)
@@ -266,10 +266,10 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |interface Service {
-        |  @Headers([
+        |  @Headers(
         |      "Accept: application/json",
         |      "User-Agent: foobar"
-        |  ])
+        |  )
         |  @POST("/foo/bar")
         |  fun fooBar(
         |      @Body things: Things<Thing>,
@@ -335,9 +335,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@Something(
-        |    hi = SomeType.PROPERTY,
-        |    hey = 12,
-        |    hello = "goodbye"
+        |    SomeType.PROPERTY,
+        |    12,
+        |    "goodbye"
         |)
         |class Foo
         |""".trimMargin())
@@ -1041,11 +1041,12 @@ class TypeSpecTest {
     val mealDeal = ClassName(tacosPackage, "MealDeal")
     val menu = TypeSpec.classBuilder("Menu")
         .addAnnotation(AnnotationSpec.builder(mealDeal)
-            .addMember("price", "%L", 500)
+            .addMember("price", "%L", 500, emitName = true)
             .addMember("options", "%L", AnnotationSpec.builder(option)
                 .addMember("name", "%S", "taco")
                 .addMember("meat", "%T::class", beef)
-                .build())
+                .build(),
+                emitName = true)
             .addMember("options", "%L", AnnotationSpec.builder(option)
                 .addMember("name", "%S", "quesadilla")
                 .addMember("meat", "%T::class", chicken)
@@ -1058,8 +1059,8 @@ class TypeSpecTest {
         |@MealDeal(
         |    price = 500,
         |    options = [
-        |        Option(name = "taco", meat = Beef::class),
-        |        Option(name = "quesadilla", meat = Chicken::class)
+        |        Option("taco", Beef::class),
+        |        Option("quesadilla", Chicken::class)
         |    ]
         |)
         |class Menu

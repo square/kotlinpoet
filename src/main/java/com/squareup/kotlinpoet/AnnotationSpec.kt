@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val type: TypeName = builder.type
-  val members = builder.members.toImmutableMultimap()
+  val members = builder.members.toImmutableMap()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
@@ -49,53 +49,52 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val whitespace = if (inline) "" else "\n"
     val memberSeparator = if (inline) ", " else ",\n"
 
+    // Inline:
+    //   @Column(name = "updated_at", nullable = false)
+    //
+    // Not inline:
+    //   @Column(
+    //       name = "updated_at",
+    //       nullable = false
+    //   )
+
     codeWriter.emit("(")
-    if (members.size == 1 && members.containsKey("value")) {
-      // @Named("foo")
-      emitAnnotationValues(codeWriter, whitespace, memberSeparator, members["value"]!!)
-    } else {
-      // Inline:
-      //   @Column(name = "updated_at", nullable = false)
-      //
-      // Not inline:
-      //   @Column(
-      //       name = "updated_at",
-      //       nullable = false
-      //   )
-      codeWriter.emit(whitespace).indent(2)
-      members.entries.forEachIndexed { index, entry ->
-        if (index > 0) codeWriter.emit(memberSeparator)
-        codeWriter.emitCode("%L = ", entry.key)
-        emitAnnotationValues(codeWriter, whitespace, memberSeparator, entry.value)
+    var hasMultipleMembers = members.size > 1
+    members.entries.forEachIndexed { index, (_, member) ->
+      if (index == 0) {
+        hasMultipleMembers = hasMultipleMembers || member.args.size > 1
+        if (hasMultipleMembers) codeWriter.emit(whitespace).indent(2)
+      } else {
+        codeWriter.emit(memberSeparator)
       }
-      codeWriter.unindent(2).emit(whitespace)
+      codeWriter.emitAnnotationMember(whitespace, memberSeparator, member)
     }
+    if (hasMultipleMembers) codeWriter.unindent(2).emit(whitespace)
     codeWriter.emit(")")
   }
 
-  private fun emitAnnotationValues(
-      codeWriter: CodeWriter,
+  private fun CodeWriter.emitAnnotationMember(
       whitespace: String,
       memberSeparator: String,
-      values: List<CodeBlock>) {
-    if (values.size == 1) {
-      codeWriter.indent(2)
-      codeWriter.emitCode(values[0])
-      codeWriter.unindent(2)
-      return
+      member: Member) {
+    if (member.emitName) {
+      emitCode("%L = ", member.name)
+      if (member.args.size > 1) {
+        emit("[" + whitespace)
+        indent(2)
+      }
     }
-
-    codeWriter.emit("[" + whitespace)
-    codeWriter.indent(2)
-    codeWriter.emitCode(values.joinToCode(separator = memberSeparator))
-    codeWriter.unindent(2)
-    codeWriter.emit(whitespace + "]")
+    emitCode(member.args.joinToCode(separator = memberSeparator))
+    if (member.args.size > 1 && member.emitName) {
+      unindent(2)
+      emit(whitespace + "]")
+    }
   }
 
   fun toBuilder(): Builder {
     val builder = Builder(type)
     for ((key, value) in members) {
-      builder.members.put(key, value.toMutableList())
+      builder.members[key] = value
     }
     builder.useSiteTarget = useSiteTarget
     return builder
@@ -126,15 +125,23 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     DELEGATE("delegate")
   }
 
+  class Member(
+      val name: String,
+      internal val args: MutableList<CodeBlock> = mutableListOf(),
+      val emitName: Boolean
+  ) {
+    override fun toString() = "$name = $args, should emit name = $emitName"
+  }
+
   class Builder internal constructor(internal val type: TypeName) {
-    internal val members = mutableMapOf<String, MutableList<CodeBlock>>()
+    internal val members = mutableMapOf<String, Member>()
     internal var useSiteTarget: UseSiteTarget? = null
 
-    fun addMember(name: String, format: String, vararg args: Any) =
-        addMember(name, CodeBlock.of(format, *args))
+    fun addMember(name: String, format: String, vararg args: Any, emitName: Boolean = false) =
+        addMember(name, CodeBlock.of(format, *args), emitName)
 
-    fun addMember(name: String, codeBlock: CodeBlock) = apply {
-      members.getOrPut(name, { mutableListOf() }).add(codeBlock)
+    fun addMember(name: String, codeBlock: CodeBlock, emitName: Boolean = false) = apply {
+      members.getOrPut(name, { Member(name, emitName = emitName) }).args.add(codeBlock)
     }
 
     /**
@@ -142,13 +149,18 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
      * Falls back to `"%L"` literal format if the class of the given `value` object is not
      * supported.
      */
-    internal fun addMemberForValue(memberName: String, value: Any) = when (value) {
-      is Class<*> -> addMember(memberName, "%T::class", value)
-      is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name)
-      is String -> addMember(memberName, "%S", value)
-      is Float -> addMember(memberName, "%Lf", value)
-      is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value))
-      else -> addMember(memberName, "%L", value)
+    internal fun addMemberForValue(memberName: String, value: Any) = apply {
+      val emitName = memberName != "value"
+      when (value) {
+        is Class<*> -> addMember(memberName, "%T::class", value, emitName = emitName)
+        is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name,
+            emitName = emitName)
+        is String -> addMember(memberName, "%S", value, emitName = emitName)
+        is Float -> addMember(memberName, "%Lf", value, emitName = emitName)
+        is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value),
+            emitName = emitName)
+        else -> addMember(memberName, "%L", value, emitName = emitName)
+      }
     }
 
     fun useSiteTarget(useSiteTarget: UseSiteTarget?) = apply {
@@ -168,13 +180,13 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
         = builder.addMemberForValue(name, o)
 
     override fun visitAnnotation(a: AnnotationMirror, name: String)
-        = builder.addMember(name, "%L", get(a))
+        = builder.addMember(name, "%L", get(a), emitName = name != "value")
 
     override fun visitEnumConstant(c: VariableElement, name: String)
-        = builder.addMember(name, "%T.%L", c.asType(), c.simpleName)
+        = builder.addMember(name, "%T.%L", c.asType(), c.simpleName, emitName = name != "value")
 
     override fun visitType(t: TypeMirror, name: String)
-        = builder.addMember(name, "%T::class", t)
+        = builder.addMember(name, "%T::class", t, emitName = name != "value")
 
     override fun visitArray(values: List<AnnotationValue>, name: String): Builder {
       for (value in values) {
@@ -207,7 +219,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
             continue
           }
           if (value is Annotation) {
-            builder.addMember(method.name, "%L", get(value))
+            builder.addMember(method.name, "%L", get(value), emitName = method.name != "value")
             continue
           }
           builder.addMemberForValue(method.name, value)

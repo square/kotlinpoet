@@ -93,10 +93,7 @@ class AnnotationSpecTest {
     val element = compilation.elements.getTypeElement(name)
     val annotation = AnnotationSpec.get(element.annotationMirrors[0])
 
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(annotation)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+    assertThat(toString(annotation)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -162,22 +159,22 @@ class AnnotationSpecTest {
 
   @Test fun emptyArray() {
     val builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%L", "{}")
+    builder.addMember("n", "%L", "[]", emitName = true)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}" +
+        "n = []" +
         ")")
-    builder.addMember("m", "%L", "{}")
+    builder.addMember("m", "%L", "[]", emitName = true)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}, " +
-        "m = {}" +
+        "n = [], " +
+        "m = []" +
         ")")
   }
 
   @Test fun dynamicArrayOfEnumConstants() {
     var builder: AnnotationSpec.Builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name)
+    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name, emitName = true)
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
         "n = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
@@ -236,10 +233,8 @@ class AnnotationSpecTest {
   @Test fun reflectAnnotation() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation)
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(spec)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+
+    assertThat(toString(spec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -270,10 +265,8 @@ class AnnotationSpecTest {
   @Test fun reflectAnnotationWithDefaults() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation, true)
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(spec)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+
+    assertThat(toString(spec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -340,7 +333,178 @@ class AnnotationSpecTest {
         "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
   }
 
-  private fun toString(typeSpec: TypeSpec): String {
-    return FileSpec.get("com.squareup.tacos", typeSpec).toString()
+  @Test fun deprecatedTest() {
+    val annotation = AnnotationSpec.builder(Deprecated::class)
+        .addMember("message", CodeBlock.of("%S", "Nope"))
+        .addMember("replaceWith", CodeBlock.of("%T(%S)", ReplaceWith::class, "Yep"))
+        .build()
+
+    assertThat(annotation.toString()).isEqualTo("" +
+        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Yep\"))")
   }
+
+  annotation class ValueParam(val value: Int)
+
+  @Test fun valueParameter() {
+    val annotationSpec = AnnotationSpec.builder(ValueParam::class)
+        .addMember("value", "42")
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.ValueParam(42)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  annotation class VarargValueParam(vararg val value: Int)
+
+  @Test fun varargValueParameter() {
+    val annotationSpec = AnnotationSpec.builder(VarargValueParam::class)
+        .addMember("value", "1")
+        .addMember("value", "2")
+        .addMember("value", "3")
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.VarargValueParam(
+      |    1,
+      |    2,
+      |    3
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  annotation class ValueAndOtherParam(val value: Int, val a: Int)
+
+  @Test fun valueAndOtherParameter() {
+    val annotationSpec = AnnotationSpec.builder(ValueAndOtherParam::class)
+        .addMember("value", "1")
+        .addMember("a", "2")
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.ValueAndOtherParam(
+      |    1,
+      |    2
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  annotation class ValueAndOtherVarargParam(vararg val a: String, val value: Int)
+
+  @Test fun valueAndOtherVarargParameter() {
+    val annotationSpec = AnnotationSpec.builder(ValueAndOtherVarargParam::class)
+        .addMember("a", CodeBlock.of("%S", "a"))
+        .addMember("a", CodeBlock.of("%S", "b"))
+        .addMember("a", CodeBlock.of("%S", "c"))
+        .addMember("value", "1", emitName = true)
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.ValueAndOtherVarargParam(
+      |    "a",
+      |    "b",
+      |    "c",
+      |    value = 1
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  @Test fun valueAndOtherVarargParameterEmitNames() {
+    val annotationSpec = AnnotationSpec.builder(ValueAndOtherVarargParam::class)
+        .addMember("a", CodeBlock.of("%S", "a"), emitName = true)
+        .addMember("a", CodeBlock.of("%S", "b"), emitName = true)
+        .addMember("a", CodeBlock.of("%S", "c"), emitName = true)
+        .addMember("value", "1", emitName = true)
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.ValueAndOtherVarargParam(
+      |    a = [
+      |        "a",
+      |        "b",
+      |        "c"
+      |    ],
+      |    value = 1
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  annotation class VarargValueAndOtherParam(vararg val value: Int, val a: Int)
+
+  @Test fun varargValueAndOtherParameter() {
+    val annotationSpec = AnnotationSpec.builder(VarargValueAndOtherParam::class)
+        .addMember("value", "1")
+        .addMember("value", "2")
+        .addMember("value", "3")
+        .addMember("a", "4", emitName = true)
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.VarargValueAndOtherParam(
+      |    1,
+      |    2,
+      |    3,
+      |    a = 4
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  annotation class MultipleParams(val a: Int, val b: String, val c: Char)
+
+  @Test fun multipleParameters() {
+    val annotationSpec = AnnotationSpec.builder(MultipleParams::class)
+        .addMember("a", "1")
+        .addMember("b", CodeBlock.of("%S", "hello"))
+        .addMember("c", CodeBlock.of("%L", "'a'"))
+        .build()
+
+    assertThat(toString(annotationSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.AnnotationSpecTest
+      |
+      |@AnnotationSpecTest.MultipleParams(
+      |    1,
+      |    "hello",
+      |    'a'
+      |)
+      |class Taco
+      |""".trimMargin())
+  }
+
+  private fun toString(annotationSpec: AnnotationSpec) =
+      toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
+
+  private fun toString(typeSpec: TypeSpec) =
+      FileSpec.get("com.squareup.tacos", typeSpec).toString()
 }
