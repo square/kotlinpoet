@@ -25,17 +25,17 @@ import javax.tools.JavaFileObject.Kind
 class FileReadingTest {
   @Test fun javaFileObjectUri() {
     val type = TypeSpec.classBuilder("Test").build()
-    assertThat(KotlinFile.get("", type).toJavaFileObject().toUri())
+    assertThat(FileSpec.get("", type).toJavaFileObject().toUri())
         .isEqualTo(URI.create("Test.kt"))
-    assertThat(KotlinFile.get("foo", type).toJavaFileObject().toUri())
+    assertThat(FileSpec.get("foo", type).toJavaFileObject().toUri())
         .isEqualTo(URI.create("foo/Test.kt"))
-    assertThat(KotlinFile.get("com.example", type).toJavaFileObject().toUri())
+    assertThat(FileSpec.get("com.example", type).toJavaFileObject().toUri())
         .isEqualTo(URI.create("com/example/Test.kt"))
   }
 
   @Test fun javaFileObjectKind() {
-    val kotlinFile = KotlinFile.get("", TypeSpec.classBuilder("Test").build())
-    assertThat(kotlinFile.toJavaFileObject().kind).isEqualTo(Kind.SOURCE)
+    val source = FileSpec.get("", TypeSpec.classBuilder("Test").build())
+    assertThat(source.toJavaFileObject().kind).isEqualTo(Kind.SOURCE)
   }
 
   @Test fun javaFileObjectCharacterContent() {
@@ -43,22 +43,22 @@ class FileReadingTest {
         .addKdoc("Pi\u00f1ata\u00a1")
         .addFunction(FunSpec.builder("fooBar").build())
         .build()
-    val kotlinFile = KotlinFile.get("foo", type)
-    val javaFileObject = kotlinFile.toJavaFileObject()
+    val source = FileSpec.get("foo", type)
+    val javaFileObject = source.toJavaFileObject()
 
     // We can never have encoding issues (everything is in process)
-    assertThat(javaFileObject.getCharContent(true)).isEqualTo(kotlinFile.toString())
-    assertThat(javaFileObject.getCharContent(false)).isEqualTo(kotlinFile.toString())
+    assertThat(javaFileObject.getCharContent(true)).isEqualTo(source.toString())
+    assertThat(javaFileObject.getCharContent(false)).isEqualTo(source.toString())
   }
 
   @Test fun javaFileObjectInputStreamIsUtf8() {
-    val kotlinFile = KotlinFile.builder("foo", "Test")
+    val source = FileSpec.builder("foo", "Test")
         .addType(TypeSpec.classBuilder("Test").build())
-        .addFileComment("Pi\u00f1ata\u00a1")
+        .addComment("Pi\u00f1ata\u00a1")
         .build()
-    val bytes = ByteStreams.toByteArray(kotlinFile.toJavaFileObject().openInputStream())
+    val bytes = ByteStreams.toByteArray(source.toJavaFileObject().openInputStream())
 
     // KotlinPoet always uses UTF-8.
-    assertThat(bytes).isEqualTo(kotlinFile.toString().toByteArray(UTF_8))
+    assertThat(bytes).isEqualTo(source.toString().toByteArray(UTF_8))
   }
 }

@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.io.IOException
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -59,7 +58,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return builder
   }
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, enumName: String?) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
@@ -92,7 +90,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
-        if (kind != Kind.COMPANION) {
+        if (name != null) {
           codeWriter.emitCode(" %L", name)
         }
         codeWriter.emitTypeVariables(typeVariables)
@@ -134,7 +132,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
-          CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
+          if (primaryConstructor != null || funSpecs.none { it.isConstructor }) {
+            CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
+          } else {
+            CodeBlock.of("%T", it)
+          }
         }
         val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) } +
             delegatedSuperInterfaces.entries.map {
@@ -182,7 +184,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
-      if (primaryConstructor != null && !primaryConstructor.body.isEmpty()) {
+      if (primaryConstructor != null && primaryConstructor.body.isNotEmpty()) {
         codeWriter.emit("init {\n")
         codeWriter.indent()
         codeWriter.emitCode(primaryConstructor.body)
@@ -191,7 +193,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
 
       // Initializer block.
-      if (!initializerBlock.isEmpty()) {
+      if (initializerBlock.isNotEmpty()) {
         if (!firstMember) codeWriter.emit("\n")
         codeWriter.emitCode(initializerBlock)
         firstMember = false
@@ -278,20 +280,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return toString() == other.toString()
   }
 
-  override fun hashCode(): Int {
-    return toString().hashCode()
-  }
+  override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, null)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
-  }
+  override fun toString() = buildString { emit(CodeWriter(this), null) }
 
   enum class Kind(
       internal val declarationKeyword: String,
@@ -349,7 +340,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val typeSpecs = mutableListOf<TypeSpec>()
 
     init {
-      require(name == null || isName(name)) { "not a valid name: $name" }
+      require(name == null || name.isName) { "not a valid name: $name" }
     }
 
     fun addKdoc(format: String, vararg args: Any) = apply {
@@ -476,7 +467,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
           "enum constants must have anonymous type arguments" }
-      require(isName(name)) { "not a valid enum constant: $name" }
+      require(name.isName) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }
 
@@ -548,12 +539,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         "anonymous type has too many supertypes"
       }
 
-      if (delegatedSuperInterfaces.isNotEmpty()) {
-        superinterfaces.forEach {
-          require(!delegatedSuperInterfaces.contains(it)) {
-            "class '$name' already implements $it directly" }
+      if (primaryConstructor == null) {
+        require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
+          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
         }
       }
+
       return TypeSpec(this)
     }
   }
@@ -567,7 +558,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
 
-    @JvmStatic fun companionObjectBuilder() = Builder(Kind.COMPANION, null, null)
+    @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
+        Builder(Kind.COMPANION, name, null)
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, null)
 

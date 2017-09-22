@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.fail
 import org.junit.Test
 
 class NameAllocatorTest {
@@ -74,22 +73,16 @@ class NameAllocatorTest {
   @Test fun tagReuseForbidden() {
     val nameAllocator = NameAllocator()
     nameAllocator.newName("foo", 1)
-    try {
+    assertThrows<IllegalArgumentException> {
       nameAllocator.newName("bar", 1)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("tag 1 cannot be used for both 'foo' and 'bar'")
-    }
+    }.hasMessage("tag 1 cannot be used for both 'foo' and 'bar'")
   }
 
   @Test fun useBeforeAllocateForbidden() {
     val nameAllocator = NameAllocator()
-    try {
+    assertThrows<IllegalArgumentException> {
       nameAllocator.get(1)
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("unknown tag: 1")
-    }
+    }.hasMessage("unknown tag: 1")
   }
 
   @Test fun cloneUsage() {

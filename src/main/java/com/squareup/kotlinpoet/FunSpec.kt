@@ -15,11 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.FunSpec.Companion.CONSTRUCTOR
-import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
-import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
-import java.io.IOException
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -39,11 +37,13 @@ class FunSpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
+  val delegateConstructor = builder.delegateConstructor
+  val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
   val exceptions = builder.exceptions.toImmutableList()
   val body = builder.body.build()
 
   init {
-    require(body.isEmpty() || !builder.modifiers.contains(KModifier.ABSTRACT)) {
+    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
       "abstract function ${builder.name} cannot have code"
     }
     require(name != SETTER || parameters.size == 1) {
@@ -53,7 +53,6 @@ class FunSpec private constructor(builder: Builder) {
 
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
-  @Throws(IOException::class)
   internal fun emit(
       codeWriter: CodeWriter,
       enclosingName: String?,
@@ -73,7 +72,8 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    if (modifiers.contains(KModifier.ABSTRACT) || modifiers.contains(KModifier.EXTERNAL)) {
+    val isEmptyConstructor = isConstructor && delegateConstructor != null && body.isEmpty()
+    if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
       codeWriter.emit("\n")
       return
     }
@@ -91,8 +91,7 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  @Throws(IOException::class)
-  internal fun emitSignature(
+  private fun emitSignature(
       codeWriter: CodeWriter,
       enclosingName: String?) {
     if (isConstructor) {
@@ -114,19 +113,21 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode(": %T", returnType)
     }
 
+    if (delegateConstructor != null) {
+      codeWriter.emitCode(delegateConstructorArguments
+          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
+    }
+
     if (exceptions.isNotEmpty()) {
       codeWriter.emitWrappingSpace().emit("throws")
-      var firstException = true
-      for (exception in exceptions) {
-        if (!firstException) codeWriter.emit(",")
+      exceptions.forEachIndexed { index, exception ->
+        if (index > 0) codeWriter.emit(",")
         codeWriter.emitWrappingSpace().emitCode("%T", exception)
-        firstException = false
       }
     }
   }
 
-  @Throws(IOException::class)
-  internal fun emitParameterList(codeWriter: CodeWriter) {
+  private fun emitParameterList(codeWriter: CodeWriter) {
     codeWriter.emit("(")
     parameters.forEachIndexed { index, parameter ->
       if (index > 0) codeWriter.emit(",").emitWrappingSpace()
@@ -135,11 +136,9 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emit(")")
   }
 
-  val isConstructor: Boolean
-    get() = name.isConstructor
+  val isConstructor get() = name.isConstructor
 
-  val isAccessor: Boolean
-    get() = name.isAccessor
+  val isAccessor get() = name.isAccessor
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -150,15 +149,8 @@ class FunSpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, "Constructor", TypeSpec.Kind.CLASS.implicitFunctionModifiers)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
+  override fun toString() = buildString {
+    emit(CodeWriter(this), "Constructor", TypeSpec.Kind.CLASS.implicitFunctionModifiers)
   }
 
   fun toBuilder(): Builder {
@@ -169,6 +161,8 @@ class FunSpec private constructor(builder: Builder) {
     builder.typeVariables += typeVariables
     builder.returnType = returnType
     builder.parameters += parameters
+    builder.delegateConstructor = delegateConstructor
+    builder.delegateConstructorArguments += delegateConstructorArguments
     builder.exceptions += exceptions
     builder.body.add(body)
     return builder
@@ -182,11 +176,13 @@ class FunSpec private constructor(builder: Builder) {
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
+    internal var delegateConstructor: String? = null
+    internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
 
     init {
-      require(name.isConstructor || name.isAccessor || isName(name)) {
+      require(name.isConstructor || name.isAccessor || name.isName) {
         "not a valid name: $name"
       }
     }
@@ -283,6 +279,28 @@ class FunSpec private constructor(builder: Builder) {
       parameters += parameterSpec
     }
 
+    fun callThisConstructor(vararg args: String) = apply {
+      callConstructor("this", *args.map { CodeBlock.of(it) }.toTypedArray())
+    }
+
+    fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+      callConstructor("this", *args)
+    }
+
+    fun callSuperConstructor(vararg args: String) = apply {
+      callConstructor("super", *args.map { CodeBlock.of(it) }.toTypedArray())
+    }
+
+    fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+      callConstructor("super", *args)
+    }
+
+    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
+      check(name.isConstructor) { "only constructors can delegate to other constructors!" }
+      delegateConstructor = constructor
+      delegateConstructorArguments += args
+    }
+
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
         = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
@@ -336,25 +354,22 @@ class FunSpec private constructor(builder: Builder) {
   }
 
   companion object {
-    internal const val CONSTRUCTOR = "constructor()"
+    private const val CONSTRUCTOR = "constructor()"
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
 
-    @JvmStatic fun builder(name: String): Builder {
-      return Builder(name)
-    }
+    private val String.isConstructor get() = this == CONSTRUCTOR
+    private val String.isAccessor get() = this == GETTER || this == SETTER
 
-    @JvmStatic fun constructorBuilder(): Builder {
-      return Builder(CONSTRUCTOR)
-    }
+    private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
 
-    @JvmStatic fun getterBuilder(): Builder {
-      return Builder(GETTER)
-    }
+    @JvmStatic fun builder(name: String) = Builder(name)
 
-    @JvmStatic fun setterBuilder(): Builder {
-      return Builder(SETTER)
-    }
+    @JvmStatic fun constructorBuilder() = Builder(CONSTRUCTOR)
+
+    @JvmStatic fun getterBuilder() = Builder(GETTER)
+
+    @JvmStatic fun setterBuilder() = Builder(SETTER)
 
     /**
      * Returns a new fun spec builder that overrides `method`.
@@ -365,9 +380,9 @@ class FunSpec private constructor(builder: Builder) {
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
       var modifiers: MutableSet<Modifier> = method.modifiers
-      require(!modifiers.contains(Modifier.PRIVATE)
-          && !modifiers.contains(Modifier.FINAL)
-          && !modifiers.contains(Modifier.STATIC)) {
+      require(Modifier.PRIVATE !in modifiers
+          && Modifier.FINAL !in modifiers
+          && Modifier.STATIC !in modifiers) {
         "cannot override method with modifiers: $modifiers"
       }
 
@@ -433,11 +448,3 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 }
-
-internal val String.isConstructor: Boolean
-  get() = this == CONSTRUCTOR
-
-internal val String.isAccessor: Boolean
-  get() = this == GETTER || this == SETTER
-
-internal val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")

@@ -57,7 +57,6 @@ class TypesEclipseTest : AbstractTypesTest() {
 
     override fun apply(base: Statement, description: Description): Statement {
       return object : Statement() {
-        @Throws(Throwable::class)
         override fun evaluate() {
           val thrown = AtomicReference<Throwable>()
           val successful = compile(listOf(object : AbstractProcessor() {

@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.IOException
 import java.lang.reflect.Array
 import java.util.Arrays
 import java.util.Objects
@@ -33,7 +32,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val members = builder.members.toImmutableMultimap()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
-  @Throws(IOException::class)
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
       codeWriter.emit("@")
@@ -75,7 +73,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     codeWriter.emit(")")
   }
 
-  @Throws(IOException::class)
   private fun emitAnnotationValues(
       codeWriter: CodeWriter,
       whitespace: String,
@@ -111,19 +108,10 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     return toString() == other.toString()
   }
 
-  override fun hashCode(): Int {
-    return toString().hashCode()
-  }
+  override fun hashCode() = toString().hashCode()
 
-  override fun toString(): String {
-    val out = StringBuilder()
-    try {
-      val codeWriter = CodeWriter(out)
-      emit(codeWriter, inline = true, asParameter = false)
-      return out.toString()
-    } catch (e: IOException) {
-      throw AssertionError()
-    }
+  override fun toString() = buildString {
+    emit(CodeWriter(this), inline = true, asParameter = false)
   }
 
   enum class UseSiteTarget(internal val keyword: String) {
@@ -242,16 +230,10 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       return builder.build()
     }
 
-    @JvmStatic fun builder(type: ClassName): Builder {
-      return Builder(type)
-    }
+    @JvmStatic fun builder(type: ClassName) = Builder(type)
 
-    @JvmStatic fun builder(type: Class<*>): Builder {
-      return builder(type.asClassName())
-    }
+    @JvmStatic fun builder(type: Class<*>) = builder(type.asClassName())
 
-    @JvmStatic fun builder(type: KClass<*>): Builder {
-      return builder(type.asClassName())
-    }
+    @JvmStatic fun builder(type: KClass<*>) = builder(type.asClassName())
   }
 }
