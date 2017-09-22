@@ -129,8 +129,7 @@ class FileSpecTest {
         |    out.println(nanoTime())
         |  }
         |
-        |  constructor(vararg states: Thread.State) {
-        |  }
+        |  constructor(vararg states: Thread.State)
         |}
         |""".trimMargin())
   }

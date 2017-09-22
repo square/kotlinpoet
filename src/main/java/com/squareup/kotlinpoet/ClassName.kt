@@ -29,9 +29,8 @@ import kotlin.reflect.KClass
 class ClassName internal constructor(
     names: List<String>,
     nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(nullable, annotations), Comparable<ClassName> {
-
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations), Comparable<ClassName> {
   /**
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
@@ -199,7 +198,7 @@ fun TypeElement.asClassName(): ClassName {
   var e: Element = this
   while (isClassOrInterface(e)) {
     val eType = e as TypeElement
-    require(eType.nestingKind == TOP_LEVEL || eType.nestingKind == MEMBER) {
+    require(eType.nestingKind.isOneOf(TOP_LEVEL, MEMBER)) {
       "unexpected type testing"
     }
     names += eType.simpleName.toString()

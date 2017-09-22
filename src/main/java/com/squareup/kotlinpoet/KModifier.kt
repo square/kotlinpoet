@@ -17,9 +17,14 @@ package com.squareup.kotlinpoet
 
 enum class KModifier(
     internal val keyword: String,
-    private vararg val targets: Target) {
+    private vararg val targets: Target
+) {
   // Modifier order defined here:
   // https://github.com/yole/kotlin-style-guide/issues/3.
+
+  // Multiplatform modules.
+  EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
 
   // Access.
   PUBLIC("public", Target.PROPERTY),
@@ -61,11 +66,7 @@ enum class KModifier(
   // Type modifiers.
   IN("in", Target.VARIANCE_ANNOTATION),
   OUT("out", Target.VARIANCE_ANNOTATION),
-  VARARG("vararg", Target.PARAMETER),
-
-  // Multiplatform modules.
-  HEADER("header", Target.CLASS),
-  IMPL("impl", Target.CLASS, Target.FUNCTION, Target.PROPERTY);
+  VARARG("vararg", Target.PARAMETER);
 
   internal enum class Target {
     CLASS,

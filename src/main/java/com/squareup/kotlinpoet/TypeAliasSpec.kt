@@ -15,7 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.IMPL
+import com.squareup.kotlinpoet.KModifier.ACTUAL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -27,10 +27,13 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   val name = builder.name
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
+  val typeVariables = builder.typeVariables.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emitCode("typealias %L = %T", name, type)
+    codeWriter.emitCode("typealias %L", name)
+    codeWriter.emitTypeVariables(typeVariables)
+    codeWriter.emitCode(" = %T", type)
     codeWriter.emit("\n")
   }
 
@@ -47,14 +50,17 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
-    builder.modifiers.addAll(modifiers)
+    builder.modifiers += modifiers
+    builder.typeVariables += typeVariables
     return builder
   }
 
   class Builder internal constructor(
       internal val name: String,
-      internal val type: TypeName) {
-    internal var modifiers: MutableSet<KModifier> = mutableSetOf()
+      internal val type: TypeName
+  ) {
+    internal val modifiers = mutableSetOf<KModifier>()
+    internal val typeVariables = mutableSetOf<TypeVariableName>()
 
     init {
       require(name.isName) { "not a valid name: $name" }
@@ -65,10 +71,18 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     }
 
     private fun addModifier(modifier: KModifier) {
-      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, IMPL)) {
+      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, ACTUAL)) {
         "unexpected typealias modifier $modifier"
       }
       this.modifiers.add(modifier)
+    }
+
+    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+      this.typeVariables += typeVariables
+    }
+
+    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+      typeVariables += typeVariable
     }
 
     fun build() = TypeAliasSpec(this)

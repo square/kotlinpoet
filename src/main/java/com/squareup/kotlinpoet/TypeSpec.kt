@@ -119,9 +119,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             codeWriter.emit("constructor")
           }
 
-          codeWriter.emit("(")
-          it.parameters.forEachIndexed { index, param ->
-            if (index > 0) codeWriter.emit(",").emitWrappingSpace()
+          it.parameters.emit(codeWriter) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
@@ -130,7 +128,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
               param.emit(codeWriter)
             }
           }
-          codeWriter.emit(")")
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
@@ -288,11 +285,17 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   enum class Kind(
       internal val declarationKeyword: String,
       internal val implicitPropertyModifiers: Set<KModifier>,
-      internal val implicitFunctionModifiers: Set<KModifier>) {
+      internal val implicitFunctionModifiers: Set<KModifier>
+  ) {
     CLASS(
         "class",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
+
+    EXPECT_CLASS(
+        "class",
+        setOf(KModifier.PUBLIC, KModifier.EXPECT),
+        setOf(KModifier.PUBLIC, KModifier.EXPECT)),
 
     OBJECT(
         "object",
@@ -323,7 +326,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   class Builder internal constructor(
       internal val kind: Kind,
       internal val name: String?,
-      internal val anonymousTypeArguments: CodeBlock?) {
+      internal val anonymousTypeArguments: CodeBlock?
+  ) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
@@ -382,13 +386,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun companionObject(companionObject: TypeSpec) = apply {
-      check(kind == Kind.CLASS || kind == Kind.INTERFACE) { "$kind can't have a companion object" }
+      check(kind.isOneOf(Kind.CLASS, Kind.INTERFACE)) { "$kind can't have a companion object" }
       require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind " }
       this.companionObject = companionObject
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind == Kind.CLASS || kind == Kind.ENUM || kind == Kind.ANNOTATION) {
+      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.ENUM, Kind.ANNOTATION)) {
         "$kind can't have initializer blocks"
       }
       if (primaryConstructor != null) {
@@ -406,7 +410,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.COMPANION) {
+      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.OBJECT, Kind.COMPANION)) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -467,16 +471,25 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
-          "enum constants must have anonymous type arguments" }
+        "enum constants must have anonymous type arguments"
+      }
       require(name.isName) { "not a valid enum constant: $name" }
       enumConstants.put(name, typeSpec)
     }
 
     fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
-      this.propertySpecs += propertySpecs
+      propertySpecs.map(this::addProperty)
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
+      if (kind == Kind.EXPECT_CLASS) {
+        require(propertySpec.initializer == null) {
+          "properties in expect classes can't have initializers"
+        }
+        require(propertySpec.getter == null && propertySpec.setter == null) {
+          "properties in expect classes can't have getters and setters"
+        }
+      }
       propertySpecs += propertySpec
     }
 
@@ -490,7 +503,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(kind == Kind.CLASS || kind == Kind.OBJECT || kind == Kind.ENUM) { "$kind can't have initializer blocks" }
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM)) {
+        "$kind can't have initializer blocks"
+      }
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
@@ -503,12 +518,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunction(funSpec: FunSpec) = apply {
-      if (kind == Kind.INTERFACE) {
-        requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
-        requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
-      } else if (kind == Kind.ANNOTATION) {
-        require(funSpec.modifiers == kind.implicitFunctionModifiers) {
+      when (kind) {
+        Kind.INTERFACE -> {
+          requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
+          requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
+        }
+        Kind.ANNOTATION -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
+        }
+        Kind.EXPECT_CLASS -> require(funSpec.body.isEmpty()) {
+          "functions in expect classes can't have bodies"
         }
       }
       funSpecs += funSpec
@@ -554,6 +573,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun classBuilder(name: String) = Builder(Kind.CLASS, name, null)
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
+
+    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.EXPECT_CLASS, name, null).apply {
+      addModifiers(KModifier.EXPECT)
+    }
+
+    @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName())
 
     @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name, null)
 

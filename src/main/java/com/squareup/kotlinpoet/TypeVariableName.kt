@@ -28,8 +28,8 @@ class TypeVariableName private constructor(
     val bounds: List<TypeName>,
     val variance: KModifier? = null,
     nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList())
-  : TypeName(nullable, annotations) {
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations) {
 
   override fun asNullable() = TypeVariableName(name, bounds, variance, true, annotations)
 
@@ -55,7 +55,7 @@ class TypeVariableName private constructor(
 
   companion object {
     internal fun of(name: String, bounds: List<TypeName>, variance: KModifier?): TypeVariableName {
-      require(variance == null || variance == KModifier.IN || variance == KModifier.OUT) {
+      require(variance == null || variance.isOneOf(KModifier.IN, KModifier.OUT)) {
         "$variance is an invalid variance modifier, the only allowed values are in and out!"
       }
       // Strip java.lang.Object from bounds if it is present.

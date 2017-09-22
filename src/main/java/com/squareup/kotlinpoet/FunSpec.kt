@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
@@ -72,8 +73,9 @@ class FunSpec private constructor(builder: Builder) {
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    val isEmptyConstructor = isConstructor && delegateConstructor != null && body.isEmpty()
-    if (ABSTRACT in modifiers || EXTERNAL in modifiers || isEmptyConstructor) {
+    val isEmptyConstructor = isConstructor && body.isEmpty()
+    if (modifiers.containsAnyOf(ABSTRACT, EXTERNAL, EXPECT) || EXPECT in implicitModifiers ||
+        isEmptyConstructor) {
       codeWriter.emit("\n")
       return
     }
@@ -107,7 +109,9 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("%L", name)
     }
 
-    emitParameterList(codeWriter)
+    parameters.emit(codeWriter) { param ->
+      param.emit(codeWriter, includeType = name != SETTER)
+    }
 
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
@@ -125,15 +129,6 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter.emitWrappingSpace().emitCode("%T", exception)
       }
     }
-  }
-
-  private fun emitParameterList(codeWriter: CodeWriter) {
-    codeWriter.emit("(")
-    parameters.forEachIndexed { index, parameter ->
-      if (index > 0) codeWriter.emit(",").emitWrappingSpace()
-      parameter.emit(codeWriter, includeType = name != SETTER)
-    }
-    codeWriter.emit(")")
   }
 
   val isConstructor get() = name.isConstructor
@@ -359,7 +354,7 @@ class FunSpec private constructor(builder: Builder) {
     internal const val SETTER = "set()"
 
     private val String.isConstructor get() = this == CONSTRUCTOR
-    private val String.isAccessor get() = this == GETTER || this == SETTER
+    private val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
     private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
 

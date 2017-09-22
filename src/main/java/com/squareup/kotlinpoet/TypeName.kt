@@ -61,7 +61,8 @@ import kotlin.reflect.KClass
  * and [WildcardTypeName].
  */
 abstract class TypeName internal constructor(
-    val nullable: Boolean, annotations: List<AnnotationSpec>) {
+    val nullable: Boolean, annotations: List<AnnotationSpec>
+) {
   val annotations = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */
