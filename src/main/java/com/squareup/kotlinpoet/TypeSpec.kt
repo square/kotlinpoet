@@ -32,8 +32,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
-  val superinterfaces = builder.superinterfaces.toImmutableList()
-  val delegatedSuperInterfaces = builder.delegatedSuperInterfaces.toImmutableMap()
+  /**
+   * Map of superinterfaces - entries with a null value represent a regular superinterface (with
+   * no delegation), while non-null [com.squareup.kotlinpoet.CodeBlock] values represent delegates
+   * for the corresponding [com.squareup.kotlinpoet.TypeSpec] interface (key) value */
+  val superinterfaces = builder.superinterfaces.toImmutableMap()
   val enumConstants = builder.enumConstants.toImmutableMap()
   val propertySpecs = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
@@ -48,13 +51,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.typeVariables += typeVariables
     builder.superclass = superclass
     builder.superclassConstructorParameters += superclassConstructorParameters
-    builder.superinterfaces += superinterfaces
     builder.enumConstants += enumConstants
     builder.propertySpecs += propertySpecs
     builder.funSpecs += funSpecs
     builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
-    builder.delegatedSuperInterfaces.putAll(delegatedSuperInterfaces)
+    builder.superinterfaces.putAll(superinterfaces)
     return builder
   }
 
@@ -81,7 +83,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
-        val supertype = if (superinterfaces.isNotEmpty()) superinterfaces[0] else superclass
+        val supertype = if (superinterfaces.isNotEmpty()) superinterfaces.entries.first().key else superclass
         codeWriter.emitCode("object : %T(", supertype)
         codeWriter.emitCode(anonymousTypeArguments)
         codeWriter.emit(") {\n")
@@ -138,9 +140,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             CodeBlock.of("%T", it)
           }
         }
-        val superTypes = types + superinterfaces.map { CodeBlock.of("%T", it) } +
-            delegatedSuperInterfaces.entries.map {
-              (type, init) -> CodeBlock.of("%T by $init", type) }
+        val superTypes = types + superinterfaces.entries.map { (type, init) ->
+              if(init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type) }
 
         if (superTypes.isNotEmpty()) {
           codeWriter.emitCode(superTypes.joinToCode(separator = ",%W", prefix = " : "))
@@ -331,8 +332,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal var companionObject: TypeSpec? = null
     internal var superclass: TypeName = ANY
     internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
-    internal val superinterfaces = mutableListOf<TypeName>()
-    internal val delegatedSuperInterfaces = mutableMapOf<TypeName, CodeBlock>()
+    internal val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     internal val enumConstants = mutableMapOf<String, TypeSpec>()
     internal val propertySpecs = mutableListOf<PropertySpec>()
     internal val initializerBlock = CodeBlock.builder()
@@ -425,21 +425,22 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
-      this.superinterfaces += superinterfaces
+      this.superinterfaces.putAll(superinterfaces.map {
+        Pair(it, null) })
     }
 
     fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
       if (delegate.isEmpty()) {
-        superinterfaces += superinterface
+        this.superinterfaces.put(superinterface, null)
       } else {
         require(kind == Kind.CLASS) {
           "delegation only allowed for classes (found $kind '$name')" }
         require(!superinterface.nullable) {
           "expected non-nullable type but was '${superinterface.asNonNullable()}'"}
-        require(delegatedSuperInterfaces[superinterface] == null) {
+        require(this.superinterfaces[superinterface] == null) {
           "'$name' can not delegate to $superinterface by $delegate with existing declaration by " +
-              "${delegatedSuperInterfaces[superinterface]}" }
-        delegatedSuperInterfaces[superinterface] = delegate
+              "${this.superinterfaces[superinterface]}" }
+        this.superinterfaces[superinterface] = delegate
       }
     }
 
@@ -534,7 +535,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
 
       val superclassIsAny = superclass == ANY
-      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
+      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + this.superinterfaces.size
       require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
         "anonymous type has too many supertypes"
       }

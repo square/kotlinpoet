@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -2622,21 +2623,6 @@ class TypeSpecTest {
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
-  }
-
-  @Test fun failDuplicateSuperifaceImplementation() {
-    try {
-      TypeSpec.classBuilder("Taco")
-          .primaryConstructor(FunSpec.constructorBuilder()
-              .addParameter("somethingElse", String::class)
-              .build())
-          .addSuperinterface(Consumer::class)
-          .addSuperinterface(Consumer::class, CodeBlock.of("HelloWorld.build()"))
-          .build()
-      fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("class 'Taco' already implements java.util.function.Consumer directly")
-    }
   }
 
   @Test fun testMultipleDelegates() {
