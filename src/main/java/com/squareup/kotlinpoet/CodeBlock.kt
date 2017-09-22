@@ -131,6 +131,13 @@ class CodeBlock private constructor(
     }
   }
 
+  /**
+   * Returns a copy of the code block with selected format parts replaced, similar to
+   * [java.lang.String.replaceAll].
+   */
+  internal fun replaceAll(oldValue: String, newValue: String) =
+      CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false

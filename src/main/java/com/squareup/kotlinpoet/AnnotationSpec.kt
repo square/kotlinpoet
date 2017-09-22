@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val type: TypeName = builder.type
-  val members = builder.members.toImmutableMap()
+  val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
@@ -59,43 +59,18 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     //   )
 
     codeWriter.emit("(")
-    var hasMultipleMembers = members.size > 1
-    members.entries.forEachIndexed { index, (_, member) ->
-      if (index == 0) {
-        hasMultipleMembers = hasMultipleMembers || member.args.size > 1
-        if (hasMultipleMembers) codeWriter.emit(whitespace).indent(2)
-      } else {
-        codeWriter.emit(memberSeparator)
-      }
-      codeWriter.emitAnnotationMember(whitespace, memberSeparator, member)
-    }
-    if (hasMultipleMembers) codeWriter.unindent(2).emit(whitespace)
+    if (members.size > 1) codeWriter.emit(whitespace).indent(2)
+    codeWriter.emitCode(members
+        .map { it.replaceAll("%W", whitespace) }
+        .map { if (inline) it.replaceAll("[%>|%<]", "") else it }
+        .joinToCode(separator = memberSeparator))
+    if (members.size > 1) codeWriter.unindent(2).emit(whitespace)
     codeWriter.emit(")")
-  }
-
-  private fun CodeWriter.emitAnnotationMember(
-      whitespace: String,
-      memberSeparator: String,
-      member: Member) {
-    if (member.emitName) {
-      emitCode("%L = ", member.name)
-      if (member.args.size > 1) {
-        emit("[" + whitespace)
-        indent(2)
-      }
-    }
-    emitCode(member.args.joinToCode(separator = memberSeparator))
-    if (member.args.size > 1 && member.emitName) {
-      unindent(2)
-      emit(whitespace + "]")
-    }
   }
 
   fun toBuilder(): Builder {
     val builder = Builder(type)
-    for ((key, value) in members) {
-      builder.members[key] = value
-    }
+    builder.members += members
     builder.useSiteTarget = useSiteTarget
     return builder
   }
@@ -125,42 +100,15 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     DELEGATE("delegate")
   }
 
-  class Member(
-      val name: String,
-      internal val args: MutableList<CodeBlock> = mutableListOf(),
-      val emitName: Boolean
-  ) {
-    override fun toString() = "$name = $args, should emit name = $emitName"
-  }
-
   class Builder internal constructor(internal val type: TypeName) {
-    internal val members = mutableMapOf<String, Member>()
+    internal val members = mutableListOf<CodeBlock>()
     internal var useSiteTarget: UseSiteTarget? = null
 
-    fun addMember(name: String, format: String, vararg args: Any, emitName: Boolean = false) =
-        addMember(name, CodeBlock.of(format, *args), emitName)
+    fun addMember(format: String, vararg args: Any) =
+        addMember(CodeBlock.of(format, *args))
 
-    fun addMember(name: String, codeBlock: CodeBlock, emitName: Boolean = false) = apply {
-      members.getOrPut(name, { Member(name, emitName = emitName) }).args.add(codeBlock)
-    }
-
-    /**
-     * Delegates to [.addMember], with parameter `format` depending on the given `value` object.
-     * Falls back to `"%L"` literal format if the class of the given `value` object is not
-     * supported.
-     */
-    internal fun addMemberForValue(memberName: String, value: Any) = apply {
-      val emitName = memberName != "value"
-      when (value) {
-        is Class<*> -> addMember(memberName, "%T::class", value, emitName = emitName)
-        is Enum<*> -> addMember(memberName, "%T.%L", value.javaClass, value.name,
-            emitName = emitName)
-        is String -> addMember(memberName, "%S", value, emitName = emitName)
-        is Float -> addMember(memberName, "%Lf", value, emitName = emitName)
-        is Char -> addMember(memberName, "'%L'", characterLiteralWithoutSingleQuotes(value),
-            emitName = emitName)
-        else -> addMember(memberName, "%L", value, emitName = emitName)
-      }
+    fun addMember(codeBlock: CodeBlock) = apply {
+      members += codeBlock
     }
 
     fun useSiteTarget(useSiteTarget: UseSiteTarget?) = apply {
@@ -168,30 +116,51 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     }
 
     fun build() = AnnotationSpec(this)
+
+    companion object {
+
+      /**
+       * Creates a [CodeBlock] with parameter `format` depending on the given `value` object.
+       * Falls back to `"%L"` literal format if the class of the given `value` object is not
+       * supported.
+       */
+      internal fun memberForValue(value: Any) = when (value) {
+        is Class<*> -> CodeBlock.of("%T::class", value)
+        is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
+        is String -> CodeBlock.of("%S", value)
+        is Float -> CodeBlock.of("%Lf", value)
+        is Char -> CodeBlock.of("'%L'", characterLiteralWithoutSingleQuotes(value))
+        else -> CodeBlock.of("%L", value)
+      }
+    }
   }
 
   /**
    * Annotation value visitor adding members to the given builder instance.
    */
-  private class Visitor internal constructor(internal val builder: Builder)
-    : SimpleAnnotationValueVisitor7<Builder, String>(builder) {
+  private class Visitor internal constructor(
+      internal val builder: CodeBlock.Builder
+  ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String)
-        = builder.addMemberForValue(name, o)
+        = builder.add(Builder.memberForValue(o))
 
     override fun visitAnnotation(a: AnnotationMirror, name: String)
-        = builder.addMember(name, "%L", get(a), emitName = name != "value")
+        = builder.add("%L", get(a))
 
     override fun visitEnumConstant(c: VariableElement, name: String)
-        = builder.addMember(name, "%T.%L", c.asType(), c.simpleName, emitName = name != "value")
+        = builder.add("%T.%L", c.asType(), c.simpleName)
 
     override fun visitType(t: TypeMirror, name: String)
-        = builder.addMember(name, "%T::class", t, emitName = name != "value")
+        = builder.add("%T::class", t)
 
-    override fun visitArray(values: List<AnnotationValue>, name: String): Builder {
-      for (value in values) {
+    override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
+      builder.add("[%W%>%>")
+      values.forEachIndexed { index, value ->
+        if (index > 0) builder.add(",%W")
         value.accept(this, name)
       }
+      builder.add("%W%<%<]")
       return builder
     }
   }
@@ -212,17 +181,27 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
               continue
             }
           }
+          val member = CodeBlock.builder()
+          if (method.name != "value") {
+            member.add("%L = ", method.name)
+          }
           if (value.javaClass.isArray) {
+            member.add("[%W%>%>")
             for (i in 0 until Array.getLength(value)) {
-              builder.addMemberForValue(method.name, Array.get(value, i))
+              if (i > 0) member.add(",%W")
+              member.add(Builder.memberForValue(Array.get(value, i)))
             }
+            member.add("%W%<%<]")
+            builder.addMember(member.build())
             continue
           }
           if (value is Annotation) {
-            builder.addMember(method.name, "%L", get(value), emitName = method.name != "value")
+            member.add("%L", get(value))
+            builder.addMember(member.build())
             continue
           }
-          builder.addMemberForValue(method.name, value)
+          member.add("%L", Builder.memberForValue(value))
+          builder.addMember(member.build())
         }
         return builder.build()
       } catch (e: Exception) {
@@ -233,11 +212,16 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     @JvmStatic fun get(annotation: AnnotationMirror): AnnotationSpec {
       val element = annotation.annotationType.asElement() as TypeElement
       val builder = AnnotationSpec.builder(element.asClassName())
-      val visitor = Visitor(builder)
       for (executableElement in annotation.elementValues.keys) {
+        val member = CodeBlock.builder()
+        val visitor = Visitor(member)
         val name = executableElement.simpleName.toString()
+        if (name != "value") {
+          member.add("%L = ", name)
+        }
         val value = annotation.elementValues[executableElement]!!
         value.accept(visitor, name)
+        builder.addMember(member.build())
       }
       return builder.build()
     }

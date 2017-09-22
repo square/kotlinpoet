@@ -595,7 +595,7 @@ class FileSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addAnnotation(AnnotationSpec.builder(JvmName::class)
             .useSiteTarget(FILE)
-            .addMember("value", "%S", "TacoUtils")
+            .addMember("%S", "TacoUtils")
             .build())
         .addAnnotation(JvmMultifileClass::class)
         .build()
