@@ -1,6 +1,25 @@
 Change Log
 ==========
 
+## Version 0.5.0
+
+_2017-09-13_
+
+ * New: Rename `addFun()` to `addFunction()`.
+ * New: Rename `KotlinFile` to `FileSpec`.
+ * New: Rename `KotlinFile.addFileAnnotation()` to `addAnnotation()`.
+ * New: Rename `KotlinFile.addFileComment()` to `addComment()`.
+ * New: Support cross-platform code, including `HEADER` and `IMPL` modifiers.
+ * New: Support type variables for type aliases.
+ * New: Support constructor delegation.
+ * New: Support named companion objects.
+ * New: Depend on Kotlin 1.1.4-3.
+ * Fix: Format one parameter per line when there are more than two parameters.
+ * Fix: Don't emit braces when the constructor body is empty.
+ * Fix: Do not invoke superclass constructor when no primary constructor.
+ * Fix: Enforce the right modifiers on functions.
+
+
 ## Version 0.4.0
 
 _2017-08-08_

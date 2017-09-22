@@ -22,7 +22,7 @@ import java.util.Collections
 import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 
-internal object NullAppendable: Appendable {
+internal object NullAppendable : Appendable {
   override fun append(charSequence: CharSequence) = this
   override fun append(charSequence: CharSequence, start: Int, end: Int) = this
   override fun append(c: Char) = this
@@ -65,6 +65,11 @@ internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifie
     "modifiers $modifiers must contain none of ${Arrays.toString(forbidden)}"
   }
 }
+
+internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = null, t6: T? = null) =
+    this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
+
+internal fun <T> Collection<T>.containsAnyOf(vararg t: T) = t.any(this::contains)
 
 // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
 internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {

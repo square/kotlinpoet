@@ -20,7 +20,8 @@ class LambdaTypeName internal constructor(
     private val parameters: List<TypeName> = emptyList(),
     private val returnType: TypeName = UNIT,
     nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()) : TypeName(nullable, annotations) {
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations) {
   override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, annotations)
 
   override fun asNonNullable()

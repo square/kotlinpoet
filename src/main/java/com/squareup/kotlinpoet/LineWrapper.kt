@@ -22,7 +22,8 @@ package com.squareup.kotlinpoet
 internal class LineWrapper(
     private val out: Appendable,
     private val indent: String,
-    private val columnLimit: Int) {
+    private val columnLimit: Int
+) {
   private var closed = false
 
   /** Characters written since the last wrapping space that haven't yet been flushed.  */
