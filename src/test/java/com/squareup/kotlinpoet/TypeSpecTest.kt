@@ -2645,7 +2645,7 @@ class TypeSpecTest {
             .addParameter("somethingElse", String::class)
             .build())
         .addSuperinterface(ClassName.bestGuess("RandomIface"), CodeBlock.of("Factory.byStrategy(FacadeImpl)"))
-        .addSuperinterface(Runnable::class, CodeBlock.of("{ Logger.debug(\"Hello world\") }"))
+        .addSuperinterface(Runnable::class, CodeBlock.of("Runnable({ Logger.debug(\"Hello world\") })"))
         .build()
 
     val expect = """
@@ -2654,7 +2654,8 @@ class TypeSpecTest {
         |import java.lang.Runnable
         |import kotlin.String
         |
-        |class Guac(somethingElse: String) : RandomIface by Factory.byStrategy(FacadeImpl), Runnable by { Logger.debug("Hello world") }
+        |class Guac(somethingElse: String) : RandomIface by Factory.byStrategy(FacadeImpl),
+        |    Runnable by Runnable({ Logger.debug("Hello world") })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
