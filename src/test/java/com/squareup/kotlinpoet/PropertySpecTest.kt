@@ -32,6 +32,27 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo("val foo: kotlin.String by Delegates.notNull()\n")
   }
 
+  @Test fun inline() {
+    val prop = PropertySpec.varBuilder("foo", String::class)
+        .addModifiers(KModifier.INLINE)
+        .getter(FunSpec.getterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addStatement("return %S", "foo")
+            .build())
+        .setter(FunSpec.setterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addParameter("value", String::class)
+            .build())
+        .build()
+    
+    assertThat(prop.toString()).isEqualTo("""
+      |inline var foo: kotlin.String
+      |  inline get() = "foo"
+      |  inline set(value) {
+      |  }
+      |""".trimMargin())
+  }
+
   @Test fun equalsAndHashCode() {
     val type = Int::class
     var a = PropertySpec.builder("foo", type).build()
