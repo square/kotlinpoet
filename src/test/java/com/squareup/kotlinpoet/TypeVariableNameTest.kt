@@ -125,4 +125,17 @@ class TypeVariableNameTest {
       TypeVariableName("E", KModifier.FINAL)
     }
   }
+
+  @Test fun reified() {
+    val funSpec = FunSpec.builder("printMembers")
+        .addModifiers(KModifier.INLINE)
+        .addTypeVariable(TypeVariableName("T").reified())
+        .addStatement("println(T::class.members)")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |inline fun <reified T> printMembers() {
+      |  println(T::class.members)
+      |}
+      |""".trimMargin())
+  }
 }

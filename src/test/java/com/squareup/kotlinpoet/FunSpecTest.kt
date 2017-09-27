@@ -309,6 +309,14 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun reifiedTypesOnNonInlineFunctionsForbidden() {
+    assertThrows<IllegalArgumentException> {
+      FunSpec.builder("foo")
+          .addTypeVariable(TypeVariableName("T").reified())
+          .build()
+    }.hasMessage("only type parameters of inline functions can be reified!")
+  }
+
   @Test fun equalsAndHashCode() {
     var a = FunSpec.constructorBuilder().build()
     var b = FunSpec.constructorBuilder().build()

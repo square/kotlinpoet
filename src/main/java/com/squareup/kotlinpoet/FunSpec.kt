@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
+import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
@@ -49,6 +50,9 @@ class FunSpec private constructor(builder: Builder) {
     }
     require(name != SETTER || parameters.size == 1) {
       "$name must have exactly one parameter"
+    }
+    require(INLINE in modifiers || typeVariables.none { it.reified }) {
+      "only type parameters of inline functions can be reified!"
     }
   }
 
