@@ -27,19 +27,19 @@ class TypeVariableName private constructor(
     val name: String,
     val bounds: List<TypeName>,
     val variance: KModifier? = null,
+    val reified: Boolean = false,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
-  override fun asNullable() = TypeVariableName(name, bounds, variance, true, annotations)
+  override fun asNullable() = TypeVariableName(name, bounds, variance, reified, true, annotations)
 
-  override fun asNonNullable() = TypeVariableName(name, bounds, variance, false, annotations)
+  override fun asNonNullable() = TypeVariableName(name, bounds, variance, reified, false, annotations)
 
-  override fun annotated(annotations: List<AnnotationSpec>): TypeVariableName {
-    return TypeVariableName(name, bounds, variance, nullable, annotations)
-  }
+  override fun annotated(annotations: List<AnnotationSpec>) =
+      TypeVariableName(name, bounds, variance, reified, nullable, annotations)
 
-  override fun withoutAnnotations() = TypeVariableName(name, bounds, variance, nullable)
+  override fun withoutAnnotations() = TypeVariableName(name, bounds, variance, reified, nullable)
 
   fun withBounds(vararg bounds: Type) = withBounds(bounds.map { it.asTypeName() })
 
@@ -47,9 +47,11 @@ class TypeVariableName private constructor(
 
   fun withBounds(vararg bounds: TypeName) = withBounds(bounds.toList())
 
-  fun withBounds(bounds: List<TypeName>): TypeVariableName {
-    return TypeVariableName(name, this.bounds + bounds, variance, nullable, annotations)
-  }
+  fun withBounds(bounds: List<TypeName>) =
+      TypeVariableName(name, this.bounds + bounds, variance, reified, nullable, annotations)
+
+  fun reified(value: Boolean = true) =
+      TypeVariableName(name, bounds, variance, value, nullable, annotations)
 
   override fun emit(out: CodeWriter) = out.emit(name)
 
