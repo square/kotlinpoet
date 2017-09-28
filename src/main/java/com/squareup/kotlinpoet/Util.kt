@@ -133,7 +133,7 @@ internal fun stringLiteralWithQuotes(value: String): String {
   }
 }
 
-internal fun escapeIfKeyword(value: String): String = if (value.isKeyword) "`$value`" else value
+internal fun escapeIfKeyword(value: String) = if (value.isKeyword) "`$value`" else value
 
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
