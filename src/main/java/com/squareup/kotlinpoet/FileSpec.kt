@@ -96,8 +96,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     codeWriter.pushPackage(packageName)
 
-    if (packageName.isNotEmpty()) {
-      codeWriter.emitCode("package %L\n", packageName)
+    val escapedPackageName = packageName.split('.')
+        .joinToString(".") { escapeIfKeyword(it) }
+
+    if (escapedPackageName.isNotEmpty()) {
+      codeWriter.emitCode("package %L\n", escapedPackageName)
       codeWriter.emit("\n")
     }
 
@@ -165,10 +168,8 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   }
 
   class Builder internal constructor(
-      packageName: String,
+      internal val packageName: String,
       internal val name: String) {
-    internal val packageName = packageName.split('.')
-        .joinToString(".") { escapeIfKeyword(it) }
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
