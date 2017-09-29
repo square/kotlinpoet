@@ -26,7 +26,7 @@ fun main(vararg args: String) {
 
 And this is the code to generate it with KotlinPoet:
 
-```java
+```kotlin
 val greeterClass = ClassName("", "Greeter")
 val file = FileSpec.builder("", "HelloWorld")
     .addType(TypeSpec.classBuilder("Greeter")
