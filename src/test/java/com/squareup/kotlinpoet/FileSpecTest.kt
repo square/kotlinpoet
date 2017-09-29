@@ -621,4 +621,13 @@ class FileSpecTest {
       builder.addAnnotation(annotation)
     }.hasMessage("Use-site target SET not supported for file annotations.")
   }
+
+  @Test fun escapeKeywordInPackageName() {
+    val source = FileSpec.builder("com.squareup.is.fun.in", "California")
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.`is`.`fun`.`in`
+        |
+        |""".trimMargin())
+  }
 }

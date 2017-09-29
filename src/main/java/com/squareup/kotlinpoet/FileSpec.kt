@@ -96,8 +96,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     codeWriter.pushPackage(packageName)
 
-    if (packageName.isNotEmpty()) {
-      codeWriter.emitCode("package %L\n", packageName)
+    val escapedPackageName = packageName.split('.')
+        .joinToString(".") { escapeIfKeyword(it) }
+
+    if (escapedPackageName.isNotEmpty()) {
+      codeWriter.emitCode("package %L\n", escapedPackageName)
       codeWriter.emit("\n")
     }
 
