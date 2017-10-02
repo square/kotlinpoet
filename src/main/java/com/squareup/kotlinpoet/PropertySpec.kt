@@ -38,9 +38,12 @@ class PropertySpec private constructor(builder: Builder) {
       implicitModifiers: Set<KModifier>,
       withInitializer: Boolean = true,
       inline: Boolean = false) {
+    val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
+        setter?.modifiers?.contains(KModifier.INLINE) ?: false
+    val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitModifiers(modifiers, implicitModifiers)
+    codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
     codeWriter.emitCode("%L: %T", name, type)
     if (withInitializer && initializer != null) {
@@ -52,14 +55,19 @@ class PropertySpec private constructor(builder: Builder) {
       codeWriter.emitCode("%[%L%]", initializer)
     }
     if (!inline) codeWriter.emit("\n")
+    val implicitAccessorModifiers = if (isInlineProperty) {
+      implicitModifiers + KModifier.INLINE
+    } else {
+      implicitModifiers
+    }
     if (getter != null) {
       codeWriter.emitCode("%>")
-      getter.emit(codeWriter, null, implicitModifiers)
+      getter.emit(codeWriter, null, implicitAccessorModifiers)
       codeWriter.emitCode("%<")
     }
     if (setter != null) {
       codeWriter.emitCode("%>")
-      setter.emit(codeWriter, null, implicitModifiers)
+      setter.emit(codeWriter, null, implicitAccessorModifiers)
       codeWriter.emitCode("%<")
     }
   }

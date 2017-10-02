@@ -32,9 +32,22 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo("val foo: kotlin.String by Delegates.notNull()\n")
   }
 
-  @Test fun inline() {
+  @Test fun inlineSingleAccessor() {
+    val prop = PropertySpec.builder("foo", String::class)
+        .getter(FunSpec.getterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addStatement("return %S", "foo")
+            .build())
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |val foo: kotlin.String
+      |  inline get() = "foo"
+      |""".trimMargin())
+  }
+
+  @Test fun inlineBothAccessors() {
     val prop = PropertySpec.varBuilder("foo", String::class)
-        .addModifiers(KModifier.INLINE)
         .getter(FunSpec.getterBuilder()
             .addModifiers(KModifier.INLINE)
             .addStatement("return %S", "foo")
@@ -44,13 +57,20 @@ class PropertySpecTest {
             .addParameter("value", String::class)
             .build())
         .build()
-    
+
     assertThat(prop.toString()).isEqualTo("""
       |inline var foo: kotlin.String
-      |  inline get() = "foo"
-      |  inline set(value) {
+      |  get() = "foo"
+      |  set(value) {
       |  }
       |""".trimMargin())
+  }
+
+  @Test fun inlineForbiddenOnProperty() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("foo", String::class)
+          .addModifiers(KModifier.INLINE)
+    }
   }
 
   @Test fun equalsAndHashCode() {
