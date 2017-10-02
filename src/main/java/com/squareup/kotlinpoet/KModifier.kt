@@ -47,7 +47,7 @@ enum class KModifier(
   // TODO: should COMPANION be a modifier? If so, it goes here.
 
   // Call-site compiler tips.
-  INLINE("inline", Target.FUNCTION, Target.PROPERTY),
+  INLINE("inline", Target.FUNCTION),
   NOINLINE("noinline", Target.PARAMETER),
   CROSSINLINE("crossinline", Target.PARAMETER),
   REIFIED("reified", Target.TYPE_PARAMETER),
