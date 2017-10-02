@@ -121,8 +121,8 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
       /**
        * Creates a [CodeBlock] with parameter `format` depending on the given `value` object.
-       * Falls back to `"%L"` literal format if the class of the given `value` object is not
-       * supported.
+       * Handles a number of special cases, such as appending "f" to `Float` values, and uses
+       * `%L` for other types.
        */
       internal fun memberForValue(value: Any) = when (value) {
         is Class<*> -> CodeBlock.of("%T::class", value)
