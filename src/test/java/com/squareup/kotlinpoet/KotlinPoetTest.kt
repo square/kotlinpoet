@@ -305,6 +305,27 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionProperty() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("extensionProperty", Int::class)
+            .receiver(String::class)
+            .getter(FunSpec.getterBuilder()
+                .addStatement("return length")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |val String.extensionProperty: Int
+        |  get() = length
+        |
+        """.trimMargin())
+  }
+
   @Test fun nullableTypes() {
     val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
         Int::class.asClassName().asNullable()).asNullable()

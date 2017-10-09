@@ -32,6 +32,7 @@ class PropertySpec private constructor(builder: Builder) {
   val delegated = builder.delegated
   val getter = builder.getter
   val setter = builder.setter
+  val receiverType = builder.receiverType
 
   internal fun emit(
       codeWriter: CodeWriter,
@@ -45,6 +46,9 @@ class PropertySpec private constructor(builder: Builder) {
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
+    if (receiverType != null) {
+      codeWriter.emitCode("%T.", receiverType)
+    }
     codeWriter.emitCode("%L: %T", name, type)
     if (withInitializer && initializer != null) {
       if (delegated) {
@@ -102,6 +106,7 @@ class PropertySpec private constructor(builder: Builder) {
     internal var delegated = false
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
+    internal var receiverType: TypeName? = null
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -164,6 +169,14 @@ class PropertySpec private constructor(builder: Builder) {
       check(this.setter == null) { "setter was already set" }
       this.setter = setter
     }
+
+    fun receiver(receiverType: TypeName) = apply {
+      this.receiverType = receiverType
+    }
+
+    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
+
+    fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun build() = PropertySpec(this)
   }
