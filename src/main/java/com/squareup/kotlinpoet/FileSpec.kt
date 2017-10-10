@@ -106,11 +106,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     val imports = codeWriter.importedTypes().values
         .map { it.canonicalName }
-        .plus(memberImports)
+        .plus(memberImports.map { it.toString() })
 
     if (imports.isNotEmpty()) {
-      for (className in imports.toSortedSet()) {
-        codeWriter.emitCode("import %L\n", className)
+      for (import in imports.toSortedSet()) {
+        codeWriter.emitCode("import %L\n", import)
       }
       codeWriter.emit("\n")
     }
@@ -172,7 +172,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       internal val name: String) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
-    internal val memberImports = sortedSetOf<String>()
+    internal val memberImports = sortedSetOf<ImportSpec>()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
@@ -238,15 +238,19 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports += className.canonicalName + "." + name
+        memberImports += ImportSpec.static(className, name)
       }
     }
 
     fun addStaticImport(packageName: String, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports += packageName + "." + name
+        memberImports += ImportSpec.forType(packageName, name)
       }
+    }
+
+    fun addImport(importSpec: ImportSpec) = apply {
+      memberImports += importSpec
     }
 
     fun indent(indent: String) = apply {
