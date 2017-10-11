@@ -48,6 +48,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   val name = builder.name
   val members = builder.members.toList()
   private val memberImports = builder.memberImports.toImmutableSet()
+  private val aliasedMemberImports = builder.aliasedMemberImports.toImmutableMap()
   private val indent = builder.indent
 
   @Throws(IOException::class)
@@ -107,6 +108,9 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     val imports = codeWriter.importedTypes().values
         .map { it.canonicalName }
         .plus(memberImports)
+        .plus(aliasedMemberImports.map { (className, alias) ->
+          "$className as $alias"
+        })
 
     if (imports.isNotEmpty()) {
       for (className in imports.toSortedSet()) {
@@ -173,6 +177,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<String>()
+    internal val aliasedMemberImports = sortedMapOf<String, String>()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
@@ -247,6 +252,20 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       for (name in names) {
         memberImports += packageName + "." + name
       }
+    }
+
+    fun addAliasedImport(`class`: Class<*>, `as`: String) =
+        addAliasedImport(`class`.asClassName(), `as`)
+
+    fun addAliasedImport(`class`: KClass<*>, `as`: String) =
+        addAliasedImport(`class`.asClassName(), `as`)
+
+    fun addAliasedImport(className: ClassName, `as`: String) = apply {
+      aliasedMemberImports[className.canonicalName] = `as`
+    }
+
+    fun addAliasedImport(className: ClassName, memberName: String, `as`: String) = apply {
+      aliasedMemberImports["${className.canonicalName}.$memberName"] = `as`
     }
 
     fun indent(indent: String) = apply {
