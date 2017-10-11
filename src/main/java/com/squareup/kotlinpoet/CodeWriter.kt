@@ -37,7 +37,7 @@ private fun extractMemberName(part: String): String {
 internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
-    private val memberImports: Set<ImportSpec> = emptySet(),
+    private val memberImports: Set<String> = emptySet(),
     private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
@@ -60,8 +60,8 @@ internal class CodeWriter constructor(
   var statementLine = -1
 
   init {
-    for (import in memberImports) {
-      memberImportClassNames += import.className
+    for (signature in memberImports) {
+      memberImportClassNames.add(signature.substring(0, signature.lastIndexOf('.')))
     }
   }
 
@@ -86,7 +86,7 @@ internal class CodeWriter constructor(
     this.packageName = NO_PACKAGE
   }
 
-  fun pushType(type: TypeSpec) = apply {
+  fun pushType(type: TypeSpec)= apply {
     this.typeSpecStack.add(type)
   }
 
@@ -285,8 +285,8 @@ internal class CodeWriter constructor(
     if (partWithoutLeadingDot.isEmpty()) return false
     val first = partWithoutLeadingDot[0]
     if (!Character.isJavaIdentifierStart(first)) return false
-    val explicit = ImportSpec.static(canonical, extractMemberName(partWithoutLeadingDot))
-    val wildcard = ImportSpec.wildcard(canonical)
+    val explicit = canonical + "." + extractMemberName(partWithoutLeadingDot)
+    val wildcard = canonical + ".*"
     if (memberImports.contains(explicit) || memberImports.contains(wildcard)) {
       emit(partWithoutLeadingDot)
       return true

@@ -324,37 +324,6 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun renamedImports() {
-    val javaStringType = "JString"
-    val javaStringClassName = ClassName("", javaStringType)
-    val kotlinStringType = "KString"
-    val kotlinStringClassName = ClassName("", kotlinStringType)
-    val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addImport(ImportSpec
-            .forType(java.lang.String::class.java.asClassName())
-            .renameTo(javaStringType))
-        .addImport(ImportSpec
-            .forType(kotlin.String::class.asClassName())
-            .renameTo(kotlinStringType))
-        .addProperty(PropertySpec.builder("a", javaStringClassName)
-            .initializer("%T(%S)", javaStringClassName, "a")
-            .build())
-        .addProperty(PropertySpec.builder("b", kotlinStringClassName)
-            .initializer("%S", "b")
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-      |package com.squareup.tacos
-      |
-      |import java.lang.String as JString
-      |import kotlin.String as KString
-      |
-      |val a: JString = JString("a")
-      |
-      |val b: KString = "b"
-      |""".trimMargin())
-  }
-
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
         .addType(TypeSpec.classBuilder("A")
