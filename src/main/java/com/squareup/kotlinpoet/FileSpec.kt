@@ -47,8 +47,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   val packageName = builder.packageName
   val name = builder.name
   val members = builder.members.toList()
-  private val memberImports = builder.memberImports.toImmutableSet()
-  private val aliasedMemberImports = builder.aliasedMemberImports.toImmutableMap()
+  private val memberImports = builder.memberImports.toImmutableMap()
   private val indent = builder.indent
 
   @Throws(IOException::class)
@@ -107,14 +106,16 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     val imports = codeWriter.importedTypes().values
         .map { it.canonicalName }
-        .plus(memberImports)
-        .plus(aliasedMemberImports.map { (className, alias) ->
-          "$className as $alias"
-        })
+        .plus(memberImports.keys)
 
     if (imports.isNotEmpty()) {
       for (className in imports.toSortedSet()) {
-        codeWriter.emitCode("import %L\n", className)
+        codeWriter.emitCode("import %L", className)
+        val alias = memberImports[className]
+        if (alias != null) {
+          codeWriter.emit(" as $alias")
+        }
+        codeWriter.emit("\n")
       }
       codeWriter.emit("\n")
     }
@@ -176,8 +177,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       internal val name: String) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
-    internal val memberImports = sortedSetOf<String>()
-    internal val aliasedMemberImports = sortedMapOf<String, String>()
+    internal val memberImports = sortedMapOf<String, String?>()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
@@ -243,14 +243,14 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports += className.canonicalName + "." + name
+        memberImports[className.canonicalName + "." + name] = null
       }
     }
 
     fun addStaticImport(packageName: String, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports += packageName + "." + name
+        memberImports[packageName + "." + name] = null
       }
     }
 
@@ -261,11 +261,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
         addAliasedImport(`class`.asClassName(), `as`)
 
     fun addAliasedImport(className: ClassName, `as`: String) = apply {
-      aliasedMemberImports[className.canonicalName] = `as`
+      memberImports[className.canonicalName] = `as`
     }
 
     fun addAliasedImport(className: ClassName, memberName: String, `as`: String) = apply {
-      aliasedMemberImports["${className.canonicalName}.$memberName"] = `as`
+      memberImports["${className.canonicalName}.$memberName"] = `as`
     }
 
     fun indent(indent: String) = apply {

@@ -325,17 +325,13 @@ class FileSpecTest {
   }
 
   @Test fun aliasedImports() {
-    val javaStringAlias = "JString"
-    val javaStringAliasClassName = ClassName("", javaStringAlias)
-    val kotlinStringAlias = "KString"
-    val kotlinStringAliasClassName = ClassName("", kotlinStringAlias)
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAliasedImport(java.lang.String::class.java, javaStringAlias)
-        .addAliasedImport(String::class, kotlinStringAlias)
-        .addProperty(PropertySpec.builder("a", javaStringAliasClassName)
-            .initializer("%T(%S)", javaStringAliasClassName, "a")
+        .addAliasedImport(java.lang.String::class.java, "JString")
+        .addAliasedImport(String::class, "KString")
+        .addProperty(PropertySpec.builder("a", java.lang.String::class.java)
+            .initializer("%T(%S)", java.lang.String::class.java, "a")
             .build())
-        .addProperty(PropertySpec.builder("b", kotlinStringAliasClassName)
+        .addProperty(PropertySpec.builder("b", String::class)
             .initializer("%S", "b")
             .build())
         .build()
@@ -348,30 +344,6 @@ class FileSpecTest {
       |val a: JString = JString("a")
       |
       |val b: KString = "b"
-      |""".trimMargin())
-  }
-
-  @Test fun sameTypeImportedTwiceViaAlias() {
-    val kotlinStringAlias = "KString"
-    val kotlinStringAliasClassName = ClassName("", kotlinStringAlias)
-    val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAliasedImport(String::class, kotlinStringAlias)
-        .addProperty(PropertySpec.builder("a", kotlinStringAliasClassName)
-            .initializer("%S", "a")
-            .build())
-        .addProperty(PropertySpec.builder("b", String::class)
-            .initializer("%S", "b")
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-      |package com.squareup.tacos
-      |
-      |import kotlin.String
-      |import kotlin.String as KString
-      |
-      |val a: KString = "a"
-      |
-      |val b: String = "b"
       |""".trimMargin())
   }
 
