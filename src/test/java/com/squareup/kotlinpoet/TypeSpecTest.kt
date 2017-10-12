@@ -167,7 +167,7 @@ class TypeSpecTest {
                 .build())
             .addParameter(ParameterSpec.builder("three", String::class)
                 .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "Pong"))
-                    .addMember("value", "%S", "pong")
+                    .addMember("%S", "pong")
                     .build())
                 .build())
             .addParameter(ParameterSpec.builder("four", String::class)
@@ -236,11 +236,11 @@ class TypeSpecTest {
         .addFunction(FunSpec.builder("fooBar")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(headers)
-                .addMember("value", "%S", "Accept: application/json")
-                .addMember("value", "%S", "User-Agent: foobar")
+                .addMember("%S", "Accept: application/json")
+                .addMember("%S", "User-Agent: foobar")
                 .build())
             .addAnnotation(AnnotationSpec.builder(post)
-                .addMember("value", "%S", "/foo/bar")
+                .addMember("%S", "/foo/bar")
                 .build())
             .returns(ParameterizedTypeName.get(observable, fooBar))
             .addParameter(ParameterSpec.builder("things", ParameterizedTypeName.get(things, thing))
@@ -248,12 +248,12 @@ class TypeSpecTest {
                 .build())
             .addParameter(ParameterSpec.builder("query", ParameterizedTypeName.get(map, string, string))
                 .addAnnotation(AnnotationSpec.builder(queryMap)
-                    .addMember("encodeValues", "false")
+                    .addMember("encodeValues = %L", "false")
                     .build())
                 .build())
             .addParameter(ParameterSpec.builder("authorization", string)
                 .addAnnotation(AnnotationSpec.builder(header)
-                    .addMember("value", "%S", "Authorization")
+                    .addMember("%S", "Authorization")
                     .build())
                 .build())
             .build())
@@ -266,10 +266,10 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |interface Service {
-        |  @Headers([
+        |  @Headers(
         |      "Accept: application/json",
         |      "User-Agent: foobar"
-        |  ])
+        |  )
         |  @POST("/foo/bar")
         |  fun fooBar(
         |      @Body things: Things<Thing>,
@@ -284,7 +284,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("thing", String::class, KModifier.PRIVATE)
             .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "JsonAdapter"))
-                .addMember("value", "%T::class", ClassName(tacosPackage, "Foo"))
+                .addMember("%T::class", ClassName(tacosPackage, "Foo"))
                 .build())
             .build())
         .build()
@@ -304,7 +304,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty(PropertySpec.builder("thing", String::class, KModifier.PRIVATE)
             .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "JsonAdapter"))
-                .addMember("value", "%T::class", ClassName(tacosPackage, "Foo"))
+                .addMember("%T::class", ClassName(tacosPackage, "Foo"))
                 .useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD)
                 .build())
             .build())
@@ -325,9 +325,9 @@ class TypeSpecTest {
     val someType = ClassName(tacosPackage, "SomeType")
     val taco = TypeSpec.classBuilder("Foo")
         .addAnnotation(AnnotationSpec.builder(ClassName(tacosPackage, "Something"))
-            .addMember("hi", "%T.%N", someType, "PROPERTY")
-            .addMember("hey", "%L", 12)
-            .addMember("hello", "%S", "goodbye")
+            .addMember("%T.%N", someType, "PROPERTY")
+            .addMember("%L", 12)
+            .addMember("%S", "goodbye")
             .build())
         .addModifiers(KModifier.PUBLIC)
         .build()
@@ -335,9 +335,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@Something(
-        |    hi = SomeType.PROPERTY,
-        |    hey = 12,
-        |    hello = "goodbye"
+        |    SomeType.PROPERTY,
+        |    12,
+        |    "goodbye"
         |)
         |class Foo
         |""".trimMargin())
@@ -488,25 +488,25 @@ class TypeSpecTest {
         .addModifiers(KModifier.ABSTRACT)
         .addFunction(FunSpec.builder("throwOne")
             .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("value", "%T::class", IOException::class.asClassName())
+                .addMember("%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .addFunction(FunSpec.builder("throwTwo")
             .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("value", "%T::class, %T::class",
+                .addMember("%T::class, %T::class",
                     IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
                 .build())
             .build())
         .addFunction(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("value", "%T::class", IOException::class.asClassName())
+                .addMember("%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .addFunction(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
             .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("value", "%T::class", IOException::class.asClassName())
+                .addMember("%T::class", IOException::class.asClassName())
                 .build())
             .build())
         .build()
@@ -1041,15 +1041,16 @@ class TypeSpecTest {
     val mealDeal = ClassName(tacosPackage, "MealDeal")
     val menu = TypeSpec.classBuilder("Menu")
         .addAnnotation(AnnotationSpec.builder(mealDeal)
-            .addMember("price", "%L", 500)
-            .addMember("options", "%L", AnnotationSpec.builder(option)
-                .addMember("name", "%S", "taco")
-                .addMember("meat", "%T::class", beef)
-                .build())
-            .addMember("options", "%L", AnnotationSpec.builder(option)
-                .addMember("name", "%S", "quesadilla")
-                .addMember("meat", "%T::class", chicken)
-                .build())
+            .addMember("%L = %L", "price", 500)
+            .addMember("%L = [%L, %L]", "options",
+                AnnotationSpec.builder(option)
+                    .addMember("%S", "taco")
+                    .addMember("%T::class", beef)
+                    .build(),
+                AnnotationSpec.builder(option)
+                    .addMember("%S", "quesadilla")
+                    .addMember("%T::class", chicken)
+                    .build())
             .build())
         .build()
     assertThat(toString(menu)).isEqualTo("""
@@ -1057,10 +1058,7 @@ class TypeSpecTest {
         |
         |@MealDeal(
         |    price = 500,
-        |    options = [
-        |        Option(name = "taco", meat = Beef::class),
-        |        Option(name = "quesadilla", meat = Chicken::class)
-        |    ]
+        |    options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
         |)
         |class Menu
         |""".trimMargin())
@@ -1373,7 +1371,7 @@ class TypeSpecTest {
 
   @Test fun annotationToString() {
     val annotation = AnnotationSpec.builder(SuppressWarnings::class)
-        .addMember("value", "%S", "unused")
+        .addMember("%S", "unused")
         .build()
     assertThat(annotation.toString()).isEqualTo("@java.lang.SuppressWarnings(\"unused\")")
   }
@@ -1598,7 +1596,7 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addAnnotations(Arrays.asList(
             AnnotationSpec.builder(SuppressWarnings::class)
-                .addMember("value", "%S", "unchecked")
+                .addMember("%S", "unchecked")
                 .build(),
             AnnotationSpec.builder(java.lang.Deprecated::class).build()))
         .build()

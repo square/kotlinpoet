@@ -131,6 +131,17 @@ class CodeBlock private constructor(
     }
   }
 
+  /**
+   * Returns a copy of the code block with selected format parts replaced, similar to
+   * [java.lang.String.replaceAll].
+   *
+   * **Warning!** This method leaves the arguments list unchanged. Take care when replacing
+   * placeholders with arguments, such as `%L`, as it can result in a code block, where
+   * placeholders don't match their arguments.
+   */
+  internal fun replaceAll(oldValue: String, newValue: String) =
+      CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false

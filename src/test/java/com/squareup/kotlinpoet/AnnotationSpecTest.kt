@@ -93,10 +93,7 @@ class AnnotationSpecTest {
     val element = compilation.elements.getTypeElement(name)
     val annotation = AnnotationSpec.get(element.annotationMirrors[0])
 
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(annotation)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+    assertThat(toString(annotation)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -162,84 +159,24 @@ class AnnotationSpecTest {
 
   @Test fun emptyArray() {
     val builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%L", "{}")
+    builder.addMember("%L = %L", "n", "[]")
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}" +
+        "n = []" +
         ")")
-    builder.addMember("m", "%L", "{}")
+    builder.addMember("%L = %L", "m", "[]")
     assertThat(builder.build().toString()).isEqualTo("" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = {}, " +
-        "m = {}" +
-        ")")
-  }
-
-  @Test fun dynamicArrayOfEnumConstants() {
-    var builder: AnnotationSpec.Builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        ")")
-
-    // builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.WAFFLES.name)
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.PANCAKES.name)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = [" +
-        "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES, " +
-        "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES, " +
-        "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        "])")
-
-    builder = builder.build().toBuilder() // idempotent
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = [" +
-        "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
-        ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        "])")
-
-    builder.addMember("n", "%T.%L", Breakfast::class.java, Breakfast.WAFFLES.name)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "n = [" +
-        "com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
-        ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        ", com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.WAFFLES" +
-        "])")
-  }
-
-  @Test fun defaultAnnotationToBuilder() {
-    val name = IsAnnotated::class.java.canonicalName
-    val element = compilation.elements.getTypeElement(name)
-    val builder = AnnotationSpec.get(element.annotationMirrors[0])
-        .toBuilder()
-    builder.addMember("m", "%L", 123)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
-        "o = com.squareup.kotlinpoet.AnnotationSpecTest.Breakfast.PANCAKES" +
-        ", p = 1701" +
-        ", f = 11.1" +
-        ", m = [9, 8, 1, 123]" +
-        ", l = java.lang.Override::class" +
-        ", j = com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA()" +
-        ", q = com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationC(\"bar\")" +
-        ", r = [kotlin.Float::class, kotlin.Double::class]" +
+        "n = [], " +
+        "m = []" +
         ")")
   }
 
   @Test fun reflectAnnotation() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation)
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(spec)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+
+    assertThat(toString(spec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -270,10 +207,8 @@ class AnnotationSpecTest {
   @Test fun reflectAnnotationWithDefaults() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation, true)
-    val taco = TypeSpec.classBuilder("Taco")
-        .addAnnotation(spec)
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
+
+    assertThat(toString(spec)).isEqualTo("""
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -340,7 +275,19 @@ class AnnotationSpecTest {
         "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
   }
 
-  private fun toString(typeSpec: TypeSpec): String {
-    return FileSpec.get("com.squareup.tacos", typeSpec).toString()
+  @Test fun deprecatedTest() {
+    val annotation = AnnotationSpec.builder(Deprecated::class)
+        .addMember("%S", "Nope")
+        .addMember("%T(%S)", ReplaceWith::class, "Yep")
+        .build()
+
+    assertThat(annotation.toString()).isEqualTo("" +
+        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Yep\"))")
   }
+
+  private fun toString(annotationSpec: AnnotationSpec) =
+      toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
+
+  private fun toString(typeSpec: TypeSpec) =
+      FileSpec.get("com.squareup.tacos", typeSpec).toString()
 }

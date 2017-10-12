@@ -411,7 +411,7 @@ class FunSpec private constructor(builder: Builder) {
       if (method.thrownTypes.isNotEmpty()) {
         val throwsValueString = method.thrownTypes.joinToString { "%T::class" }
         funBuilder.addAnnotation(AnnotationSpec.builder(Throws::class)
-            .addMember("value", throwsValueString, *method.thrownTypes.toTypedArray())
+            .addMember(throwsValueString, *method.thrownTypes.toTypedArray())
             .build())
       }
 

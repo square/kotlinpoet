@@ -378,6 +378,21 @@ class CodeBlockTest {
         .isEqualTo(CodeBlock.of(""))
   }
 
+  @Test fun replaceSimple() {
+    assertThat(CodeBlock.of("%W%>%W").replaceAll("%W", ""))
+        .isEqualTo(CodeBlock.of("%>"))
+  }
+
+  @Test fun replaceNoMatches() {
+    assertThat(CodeBlock.of("%W%>%W").replaceAll("%<", ""))
+        .isEqualTo(CodeBlock.of("%W%>%W"))
+  }
+
+  @Test fun replaceRegex() {
+    assertThat(CodeBlock.of("%W%>%W%<").replaceAll("[%>|%<]", ""))
+        .isEqualTo(CodeBlock.of("%W%W"))
+  }
+
   @Test fun joinToCode() {
     val blocks = listOf(CodeBlock.of("%L", "taco1"), CodeBlock.of("%L", "taco2"), CodeBlock.of("%L", "taco3"))
     assertThat(blocks.joinToCode(prefix = "(", suffix = ")"))
