@@ -37,7 +37,7 @@ private fun extractMemberName(part: String): String {
 internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
-    private val memberImports: Set<String> = emptySet(),
+    private val memberImports: Map<String, String?> = emptyMap(),
     private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
@@ -60,8 +60,8 @@ internal class CodeWriter constructor(
   var statementLine = -1
 
   init {
-    for (signature in memberImports) {
-      memberImportClassNames.add(signature.substring(0, signature.lastIndexOf('.')))
+    for ((className, _) in memberImports) {
+      memberImportClassNames.add(className.substring(0, className.lastIndexOf('.')))
     }
   }
 
@@ -86,7 +86,7 @@ internal class CodeWriter constructor(
     this.packageName = NO_PACKAGE
   }
 
-  fun pushType(type: TypeSpec)= apply {
+  fun pushType(type: TypeSpec) = apply {
     this.typeSpecStack.add(type)
   }
 
@@ -314,11 +314,13 @@ internal class CodeWriter constructor(
     var nameResolved = false
     var c: ClassName? = className
     while (c != null) {
-      val resolved = resolve(c.simpleName())
+      val alias = memberImports[c.canonicalName]
+      val resolved = resolve(alias ?: c.simpleName())
       nameResolved = resolved != null
 
       // We don't care about nullability here, as it's irrelevant for imports.
       if (resolved == c.asNonNullable()) {
+        if (alias != null) return alias
         val suffixOffset = c.simpleNames().size - 1
         return className.simpleNames().subList(suffixOffset,
             className.simpleNames().size).joinToString(".")
@@ -350,7 +352,8 @@ internal class CodeWriter constructor(
       return
     }
     val topLevelClassName = className.topLevelClassName()
-    val simpleName = topLevelClassName.simpleName()
+    val alias = memberImports[className.canonicalName]
+    val simpleName = alias ?: topLevelClassName.simpleName()
     val replaced = importableTypes.put(simpleName, topLevelClassName)
     if (replaced != null) {
       importableTypes.put(simpleName, replaced) // On collision, prefer the first inserted.

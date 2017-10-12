@@ -324,6 +324,42 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun aliasedImports() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addAliasedImport(java.lang.String::class.java, "JString")
+        .addAliasedImport(String::class, "KString")
+        .addProperty(PropertySpec.builder("a", java.lang.String::class.java)
+            .initializer("%T(%S)", java.lang.String::class.java, "a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class)
+            .initializer("%S", "b")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.String as JString
+      |import kotlin.String as KString
+      |
+      |val a: JString = JString("a")
+      |
+      |val b: KString = "b"
+      |""".trimMargin())
+  }
+
+  @Test fun enumAliasedImport() {
+    val minsAlias = "MINS"
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.util.concurrent.TimeUnit.MINUTES as MINS
+      |
+      |""".trimMargin())
+  }
+
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
         .addType(TypeSpec.classBuilder("A")
