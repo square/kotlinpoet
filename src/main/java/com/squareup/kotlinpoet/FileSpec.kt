@@ -111,8 +111,8 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     if (imports.isNotEmpty()) {
       for (className in imports.toSortedSet()) {
         codeWriter.emitCode("import %L", className)
-        val alias = memberImports[className]
-        if (alias != null) {
+        val alias = memberImports.getOrDefault(className, NO_ALIAS)
+        if (alias !== NO_ALIAS) {
           codeWriter.emit(" as $alias")
         }
         codeWriter.emit("\n")
@@ -177,7 +177,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       internal val name: String) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
-    internal val memberImports = sortedMapOf<String, String?>()
+    internal val memberImports = sortedMapOf<String, String>()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
@@ -243,14 +243,14 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports[className.canonicalName + "." + name] = null
+        memberImports[className.canonicalName + "." + name] = NO_ALIAS
       }
     }
 
     fun addStaticImport(packageName: String, vararg names: String) = apply {
       check(names.isNotEmpty()) { "names array is empty" }
       for (name in names) {
-        memberImports[packageName + "." + name] = null
+        memberImports[packageName + "." + name] = NO_ALIAS
       }
     }
 
