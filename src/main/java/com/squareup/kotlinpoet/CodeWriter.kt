@@ -20,9 +20,6 @@ import java.util.EnumSet
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
-/** Sentinel value that indicates that there's no alias provided for an import.  */
-internal val NO_ALIAS = String()
-
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
   for (i in 1..part.length) {
@@ -40,7 +37,7 @@ private fun extractMemberName(part: String): String {
 internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
-    private val memberImports: Map<String, String> = emptyMap(),
+    private val memberImports: Map<String, Import> = emptyMap(),
     private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
@@ -288,13 +285,12 @@ internal class CodeWriter constructor(
     if (partWithoutLeadingDot.isEmpty()) return false
     val first = partWithoutLeadingDot[0]
     if (!Character.isJavaIdentifierStart(first)) return false
-    val explicit = canonical + "." + extractMemberName(partWithoutLeadingDot)
-    val wildcard = canonical + ".*"
-    if (memberImports.contains(explicit) || memberImports.contains(wildcard)) {
-      val alias = memberImports.getOrDefault(explicit, NO_ALIAS)
-      if (alias !== NO_ALIAS) {
+    val explicit = memberImports[canonical + "." + extractMemberName(partWithoutLeadingDot)]
+    val wildcard = memberImports[canonical + ".*"]
+    if (explicit != null || wildcard != null) {
+      if (explicit?.alias != null) {
         val memberName = extractMemberName(partWithoutLeadingDot)
-        emit(partWithoutLeadingDot.replaceFirst(memberName, alias))
+        emit(partWithoutLeadingDot.replaceFirst(memberName, explicit.alias))
       } else {
         emit(partWithoutLeadingDot)
       }
@@ -323,14 +319,14 @@ internal class CodeWriter constructor(
     var nameResolved = false
     var c: ClassName? = className
     while (c != null) {
-      val alias = memberImports.getOrDefault(c.canonicalName, NO_ALIAS)
-      val simpleName = if (alias !== NO_ALIAS) alias else c.simpleName()
+      val alias = memberImports[c.canonicalName]?.alias
+      val simpleName = alias ?: c.simpleName()
       val resolved = resolve(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability here, as it's irrelevant for imports.
       if (resolved == c.asNonNullable()) {
-        if (alias !== NO_ALIAS) return alias
+        if (alias != null) return alias
         val suffixOffset = c.simpleNames().size - 1
         return className.simpleNames().subList(suffixOffset,
             className.simpleNames().size).joinToString(".")
@@ -362,8 +358,7 @@ internal class CodeWriter constructor(
       return
     }
     val topLevelClassName = className.topLevelClassName()
-    val alias = memberImports.getOrDefault(className.canonicalName, NO_ALIAS)
-    val simpleName = if (alias != NO_ALIAS) alias else topLevelClassName.simpleName()
+    val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName()
     val replaced = importableTypes.put(simpleName, topLevelClassName)
     if (replaced != null) {
       importableTypes.put(simpleName, replaced) // On collision, prefer the first inserted.
