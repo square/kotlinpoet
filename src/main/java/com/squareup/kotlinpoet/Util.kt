@@ -88,7 +88,9 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
 internal fun stringLiteralWithQuotes(value: String, indent: String = ""): String {
   if (value.contains("\n")) {
     val result = StringBuilder(value.length + 32)
-    result.append("\"\"\"\n" + indent + "|")
+    result.append("\"\"\"\n")
+    result.append(indent)
+    result.append('|')
     var i = 0
     while (i < value.length) {
       val c = value[i]
@@ -98,7 +100,9 @@ internal fun stringLiteralWithQuotes(value: String, indent: String = ""): String
         i += 2
       } else if (c == '\n') {
         // Add a '|' after newlines. This pipe will be removed by trimMargin().
-        result.append("\n" + indent + "|")
+        result.append('\n')
+        result.append(indent)
+        result.append('|')
       } else {
         result.append(c)
       }
@@ -106,7 +110,10 @@ internal fun stringLiteralWithQuotes(value: String, indent: String = ""): String
     }
     // If the last-emitted character wasn't a margin '|', add a blank line. This will get removed
     // by trimMargin().
-    if (!value.endsWith("\n")) result.append("\n" + indent)
+    if (!value.endsWith("\n")) {
+      result.append('\n')
+      result.append(indent)
+    }
     result.append("\"\"\".trimMargin()")
     return result.toString()
   } else {
