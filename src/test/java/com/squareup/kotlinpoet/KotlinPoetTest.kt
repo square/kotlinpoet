@@ -200,14 +200,14 @@ class KotlinPoetTest {
   @Test fun rawStrings() {
     val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("strings")
-            .addStatement("val a = %S", "\"\n")
-            .addStatement("val b = %S", "a\"\"\"b\"\"\"\"\"\"c\n")
-            .addStatement("val c = %S", """
+            .addCode("val a = %S\n", "\"\n")
+            .addCode("val b = %S\n", "a\"\"\"b\"\"\"\"\"\"c\n")
+            .addCode("val c = %S\n", """
             |whoa
             |"raw"
             |string
             """.trimMargin())
-            .addStatement("val d = %S", """
+            .addCode("val d = %S\n", """
             |"raw"
             |string
             |with
@@ -221,22 +221,22 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "  fun strings() {\n" +
         "    val a = \"\"\"\n" +
-        "        |\"\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |\"\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val b = \"\"\"\n" +
-        "        |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val c = \"\"\"\n" +
-        "        |whoa\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        \"\"\".trimMargin()\n" +
+        "      |whoa\n" +
+        "      |\"raw\"\n" +
+        "      |string\n" +
+        "      \"\"\".trimMargin()\n" +
         "    val d = \"\"\"\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        |with\n" +
-        "        |\$a interpolated value\n" +
-        "        \"\"\".trimMargin()\n" +
+        "      |\"raw\"\n" +
+        "      |string\n" +
+        "      |with\n" +
+        "      |\$a interpolated value\n" +
+        "      \"\"\".trimMargin()\n" +
         "  }\n" +
         "}\n")
   }
@@ -248,8 +248,8 @@ class KotlinPoetTest {
   @Test fun edgeCaseStrings() {
     val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("strings")
-            .addStatement("val a = %S", "\n")
-            .addStatement("val b = %S", " \n ")
+            .addCode("val a = %S\n", "\n")
+            .addCode("val b = %S\n", " \n ")
             .build())
         .build())
     assertThat(source.toString()).isEqualTo("" +
@@ -258,12 +258,12 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "  fun strings() {\n" +
         "    val a = \"\"\"\n" +
-        "        |\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val b = \"\"\"\n" +
-        "        | \n" +
-        "        | \n" +
-        "        \"\"\".trimMargin()\n" +
+        "      | \n" +
+        "      | \n" +
+        "      \"\"\".trimMargin()\n" +
         "  }\n" +
         "}\n")
   }

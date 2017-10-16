@@ -1127,11 +1127,11 @@ class TypeSpecTest {
         .build()
     val propertyBlock = CodeBlock.builder()
         .add("%T.<%T, %T>builder()", ImmutableMap::class, String::class, String::class)
-        .add("\n.add(%S, %S)", '\'', "&#39;")
+        .add("\n%>%>.add(%S, %S)", '\'', "&#39;")
         .add("\n.add(%S, %S)", '&', "&amp;")
         .add("\n.add(%S, %S)", '<', "&lt;")
         .add("\n.add(%S, %S)", '>', "&gt;")
-        .add("\n.build()")
+        .add("\n.build()%<%<")
         .build()
     val escapeHtml = PropertySpec.builder("ESCAPE_HTML", ParameterizedTypeName.get(
         Map::class, String::class, String::class))
@@ -1567,11 +1567,11 @@ class TypeSpecTest {
         |
         |class Taco {
         |  val toppings: String = ${"\"\"\""}
-        |      |shell
-        |      |beef
-        |      |lettuce
-        |      |cheese
-        |      |${"\"\"\""}.trimMargin()
+        |    |shell
+        |    |beef
+        |    |lettuce
+        |    |cheese
+        |    |${"\"\"\""}.trimMargin()
         |}
         |""".trimMargin())
   }
