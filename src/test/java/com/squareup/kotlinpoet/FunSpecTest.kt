@@ -336,7 +336,7 @@ class FunSpecTest {
 
   @Test fun escapeKeywordInFunctionName() {
     val funSpec = FunSpec.builder("if")
-	    .build()
+        .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
       |fun `if`() {
