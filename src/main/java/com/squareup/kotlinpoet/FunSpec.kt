@@ -110,7 +110,7 @@ class FunSpec private constructor(builder: Builder) {
       if (receiverType != null) {
         codeWriter.emitCode("%T.", receiverType)
       }
-      codeWriter.emitCode("%L", name)
+      codeWriter.emitCode("%L", escapeIfKeyword(name))
     }
 
     parameters.emit(codeWriter) { param ->
@@ -179,12 +179,6 @@ class FunSpec private constructor(builder: Builder) {
     internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
     internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
-
-    init {
-      require(name.isConstructor || name.isAccessor || name.isName) {
-        "not a valid name: $name"
-      }
-    }
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
