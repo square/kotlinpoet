@@ -341,7 +341,7 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo("""
     |fun `if`() {
     |}
-	|""".trimMargin())
+    |""".trimMargin())
   }
 
   private fun whenMock(any: Any?) = Mockito.`when`(any)
