@@ -334,5 +334,15 @@ class FunSpecTest {
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
 
+  @Test fun escapeKeywordInFunctionName() {
+    val funSpec = FunSpec.builder("if")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun `if`() {
+      |}
+      |""".trimMargin())
+  }
+
   private fun whenMock(any: Any?) = Mockito.`when`(any)
 }
