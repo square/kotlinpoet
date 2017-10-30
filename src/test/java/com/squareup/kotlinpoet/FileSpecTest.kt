@@ -351,12 +351,18 @@ class FileSpecTest {
     val minsAlias = "MINS"
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
+        .addFunction(FunSpec.builder("sleepForFiveMins")
+            .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
+            .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
+      |fun sleepForFiveMins() {
+      |  MINS.sleep(5)
+      |}
       |""".trimMargin())
   }
 

@@ -37,7 +37,7 @@ private fun extractMemberName(part: String): String {
 internal class CodeWriter constructor(
     out: Appendable,
     private val indent: String = "  ",
-    private val memberImports: Map<String, String?> = emptyMap(),
+    private val memberImports: Map<String, Import> = emptyMap(),
     private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
@@ -285,10 +285,15 @@ internal class CodeWriter constructor(
     if (partWithoutLeadingDot.isEmpty()) return false
     val first = partWithoutLeadingDot[0]
     if (!Character.isJavaIdentifierStart(first)) return false
-    val explicit = canonical + "." + extractMemberName(partWithoutLeadingDot)
-    val wildcard = canonical + ".*"
-    if (memberImports.contains(explicit) || memberImports.contains(wildcard)) {
-      emit(partWithoutLeadingDot)
+    val explicit = memberImports[canonical + "." + extractMemberName(partWithoutLeadingDot)]
+    val wildcard = memberImports[canonical + ".*"]
+    if (explicit != null || wildcard != null) {
+      if (explicit?.alias != null) {
+        val memberName = extractMemberName(partWithoutLeadingDot)
+        emit(partWithoutLeadingDot.replaceFirst(memberName, explicit.alias))
+      } else {
+        emit(partWithoutLeadingDot)
+      }
       return true
     }
     return false
@@ -314,8 +319,9 @@ internal class CodeWriter constructor(
     var nameResolved = false
     var c: ClassName? = className
     while (c != null) {
-      val alias = memberImports[c.canonicalName]
-      val resolved = resolve(alias ?: c.simpleName())
+      val alias = memberImports[c.canonicalName]?.alias
+      val simpleName = alias ?: c.simpleName()
+      val resolved = resolve(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability here, as it's irrelevant for imports.
@@ -352,8 +358,7 @@ internal class CodeWriter constructor(
       return
     }
     val topLevelClassName = className.topLevelClassName()
-    val alias = memberImports[className.canonicalName]
-    val simpleName = alias ?: topLevelClassName.simpleName()
+    val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName()
     val replaced = importableTypes.put(simpleName, topLevelClassName)
     if (replaced != null) {
       importableTypes.put(simpleName, replaced) // On collision, prefer the first inserted.
