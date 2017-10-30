@@ -655,7 +655,7 @@ class FileSpecTest {
         .build()
     assertThrows<IllegalStateException> {
       builder.addAnnotation(annotation)
-    }.hasMessage("Use-site target SET not supported for file annotations.")
+    }.hasMessageThat().isEqualTo("Use-site target SET not supported for file annotations.")
   }
 
   @Test fun escapeKeywordInPackageName() {

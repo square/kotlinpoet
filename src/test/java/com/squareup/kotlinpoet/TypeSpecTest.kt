@@ -1833,7 +1833,7 @@ class TypeSpecTest {
   @Test fun nameFromUnsupportedType() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%N", String::class)
-    }.hasMessage("expected name but was " + String::class)
+    }.hasMessageThat().isEqualTo("expected name but was " + String::class)
   }
 
   @Test fun stringFromAnything() {
@@ -1871,33 +1871,33 @@ class TypeSpecTest {
   @Test fun typeFromUnsupportedType() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%T", "kotlin.String")
-    }.hasMessage("expected type but was kotlin.String")
+    }.hasMessageThat().isEqualTo("expected type but was kotlin.String")
   }
 
   @Test fun tooFewArguments() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%S")
-    }.hasMessage("index 1 for '%S' not in range (received 0 arguments)")
+    }.hasMessageThat().isEqualTo("index 1 for '%S' not in range (received 0 arguments)")
   }
 
   @Test fun unusedArgumentsRelative() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%L %L", "a", "b", "c")
-    }.hasMessage("unused arguments: expected 2, received 3")
+    }.hasMessageThat().isEqualTo("unused arguments: expected 2, received 3")
   }
 
   @Test fun unusedArgumentsIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1L %2L", "a", "b", "c")
-    }.hasMessage("unused argument: %3")
+    }.hasMessageThat().isEqualTo("unused argument: %3")
 
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1L %1L %1L", "a", "b", "c")
-    }.hasMessage("unused arguments: %2, %3")
+    }.hasMessageThat().isEqualTo("unused arguments: %2, %3")
 
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%3L %1L %3L %1L %3L", "a", "b", "c", "d")
-    }.hasMessage("unused arguments: %2, %4")
+    }.hasMessageThat().isEqualTo("unused arguments: %2, %4")
   }
 
   @Test fun superClassOnlyValidForClasses() {
@@ -2514,7 +2514,7 @@ class TypeSpecTest {
           .addSuperclassConstructorParameter("%S", "hey")
           .addFunction(FunSpec.constructorBuilder().build())
           .build()
-    }.hasMessage(
+    }.hasMessageThat().isEqualTo(
         "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters")
   }
 
@@ -2592,7 +2592,7 @@ class TypeSpecTest {
   @Test fun requiresNonKeywordName() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("when")
-    }.hasMessage("not a valid name: when")
+    }.hasMessageThat().isEqualTo("not a valid name: when")
   }
 
   @Test fun internalFunForbiddenInInterface() {
@@ -2602,13 +2602,13 @@ class TypeSpecTest {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, INTERNAL)
           .build())
-    }.hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
+    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
 
     assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, INTERNAL)
           .build()))
-    }.hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
+    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
   }
 
   @Test fun privateAbstractFunForbiddenInInterface() {
@@ -2618,13 +2618,13 @@ class TypeSpecTest {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, PRIVATE)
           .build())
-    }.hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
+    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
 
     assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(ABSTRACT, PRIVATE)
           .build()))
-    }.hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
+    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
   }
 
   @Test fun internalFunForbiddenInAnnotation() {
@@ -2634,13 +2634,13 @@ class TypeSpecTest {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build())
-    }.hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
 
     assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build()))
-    }.hasMessage("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
   }
 
   @Test fun classHeaderFormatting() {
