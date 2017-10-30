@@ -205,7 +205,7 @@ internal class CodeWriter constructor(
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
           emit(if (string != null)
-            stringLiteralWithQuotes(string) else
+            stringLiteralWithQuotes(string, indent) else
             "null")
         }
 

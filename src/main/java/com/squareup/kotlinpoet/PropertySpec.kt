@@ -56,7 +56,7 @@ class PropertySpec private constructor(builder: Builder) {
       } else {
         codeWriter.emit(" = ")
       }
-      codeWriter.emitCode("%[%L%]", initializer)
+      codeWriter.emitCode("%L", initializer)
     }
     if (!inline) codeWriter.emit("\n")
     val implicitAccessorModifiers = if (isInlineProperty) {
