@@ -2676,6 +2676,47 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun lambdaBuilder() {
+    val propType = LambdaTypeName.get(
+        parameters = listOf(Int::class.asTypeName(), Int::class.asTypeName()),
+        returnType = Int::class.asTypeName())
+    val propValue = LambdaSpec.builder("x + y")
+        .addParameter("x", Int::class)
+        .addParameter("y", Int::class)
+        .build()
+    val localVarType = LambdaTypeName.get(
+        parameters = listOf(String::class.asTypeName()),
+        returnType = Unit::class.asTypeName())
+    val localVarValue = LambdaSpec.builder("println(it)").build()
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("a", propType)
+            // FIXME broken initializer formatting, see #259
+            .initializer(propValue.toCodeBlock())
+            .build())
+        .addFunction(FunSpec.builder("foo")
+            .addStatement("val b: %T = %L", localVarType, localVarValue)
+            .build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |class Taco {
+      |  val a: (Int, Int) -> Int = { x: Int, y: Int ->
+      |        x + y
+      |      }
+      |
+      |  fun foo() {
+      |    val b: (String) -> Unit = { println(it) }
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
