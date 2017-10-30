@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import java.lang.reflect.Array
-import java.util.Arrays
 import java.util.Objects
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -172,8 +171,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
       try {
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
-        val methods = annotation.annotationType().declaredMethods
-        Arrays.sort(methods, { m1, m2 -> m1.name.compareTo(m2.name) })
+        val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
         for (method in methods) {
           val value = method.invoke(annotation)
           if (!includeDefaultValues) {
