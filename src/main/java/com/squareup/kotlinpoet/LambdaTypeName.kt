@@ -16,12 +16,14 @@
 package com.squareup.kotlinpoet
 
 class LambdaTypeName internal constructor(
-    private val receiver: TypeName? = null,
-    private val parameters: List<TypeName> = emptyList(),
-    private val returnType: TypeName = UNIT,
+    val receiver: TypeName? = null,
+    parameters: List<TypeName> = emptyList(),
+    val returnType: TypeName = UNIT,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
+  val parameters = parameters.toImmutableList()
+
   override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, annotations)
 
   override fun asNonNullable()
