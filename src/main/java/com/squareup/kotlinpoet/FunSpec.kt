@@ -108,7 +108,11 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("set")
     } else {
       if (receiverType != null) {
-        codeWriter.emitCode("%T.", receiverType)
+        if (receiverType is LambdaTypeName) {
+          codeWriter.emitCode("(%T).", receiverType)
+        } else {
+          codeWriter.emitCode("%T.", receiverType)
+        }
       }
       codeWriter.emitCode("%L", escapeIfKeyword(name))
     }

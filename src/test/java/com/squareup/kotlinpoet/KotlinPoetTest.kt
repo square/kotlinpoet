@@ -305,6 +305,25 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionFunctionLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("shrink")
+            .returns(String::class)
+            .receiver(LambdaTypeName.get(
+                parameters = String::class.asClassName(),
+                returnType = String::class.asTypeName()))
+            .addStatement("return substring(0, length - 1)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |fun ((String) -> String).shrink(): String = substring(0, length - 1)
+        |""".trimMargin())
+  }
+
   @Test fun extensionProperty() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("extensionProperty", Int::class)
@@ -321,6 +340,29 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |val String.extensionProperty: Int
+        |  get() = length
+        |
+        """.trimMargin())
+  }
+
+  @Test fun extensionPropertyLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("extensionProperty", Int::class)
+            .receiver(LambdaTypeName.get(
+                parameters = String::class.asClassName(),
+                returnType = String::class.asClassName()))
+            .getter(FunSpec.getterBuilder()
+                .addStatement("return length")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |val ((String) -> String).extensionProperty: Int
         |  get() = length
         |
         """.trimMargin())
