@@ -1567,11 +1567,11 @@ class TypeSpecTest {
         |
         |class Taco {
         |  val toppings: String = ${"\"\"\""}
-        |      |shell
-        |      |beef
-        |      |lettuce
-        |      |cheese
-        |      |${"\"\"\""}.trimMargin()
+        |    |shell
+        |    |beef
+        |    |lettuce
+        |    |cheese
+        |    |${"\"\"\""}.trimMargin()
         |}
         |""".trimMargin())
   }
