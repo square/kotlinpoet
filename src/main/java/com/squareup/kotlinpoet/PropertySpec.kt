@@ -47,7 +47,11 @@ class PropertySpec private constructor(builder: Builder) {
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
     if (receiverType != null) {
-      codeWriter.emitCode("%T.", receiverType)
+      if (receiverType is LambdaTypeName) {
+        codeWriter.emitCode("(%T).", receiverType)
+      } else {
+        codeWriter.emitCode("%T.", receiverType)
+      }
     }
     codeWriter.emitCode("%L: %T", name, type)
     if (withInitializer && initializer != null) {
