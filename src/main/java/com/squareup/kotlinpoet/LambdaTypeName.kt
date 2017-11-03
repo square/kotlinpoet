@@ -59,6 +59,13 @@ class LambdaTypeName internal constructor(
      * Returns a lambda type with `returnType` and parameters listed in `parameters` and
      * `namedParameters`.
      */
+    @Deprecated(
+        message = "Use the version that accepts List<Parameter>",
+        replaceWith = ReplaceWith(
+            "LambdaTypeName.get(receiver, namedParameters + parameters.map { Parameter.ofType(it) }, returnType)",
+            "com.squareup.kotlinpoet.Parameter"
+        )
+    )
     @JvmStatic fun get(
         receiver: TypeName? = null,
         parameters: List<TypeName> = emptyList(),
@@ -67,6 +74,17 @@ class LambdaTypeName internal constructor(
     ) = LambdaTypeName(
         receiver,
         namedParameters + parameters.map { Parameter.ofType(it) },
+        returnType
+    )
+
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @JvmStatic fun get(
+        receiver: TypeName? = null,
+        parameters: List<Parameter> = emptyList(),
+        returnType: TypeName
+    ) = LambdaTypeName(
+        receiver,
+        parameters,
         returnType
     )
 

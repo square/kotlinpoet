@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.Parameter.Companion
 import org.junit.Test
 
 class KotlinPoetTest {
@@ -344,13 +345,15 @@ class KotlinPoetTest {
       |""".trimMargin())
   }
 
-  @Test fun extensionFunctionLambdaWithTwoParams() {
+  @Test fun extensionFunctionLambdaWithMultipleParams() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addFunction(FunSpec.builder("whatever")
             .returns(Unit::class)
             .receiver(LambdaTypeName.get(
-                parameters = listOf(Int::class.asClassName()),
-                namedParameters = listOf(Parameter("name", String::class)),
+                parameters = listOf(
+                    Parameter("name", String::class),
+                    Companion.ofType(Int::class),
+                    Parameter("age", Long::class)),
                 returnType = Unit::class.asClassName()))
             .addStatement("return Unit")
             .build())
@@ -359,10 +362,11 @@ class KotlinPoetTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
+      |import kotlin.Long
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((name: String, Int) -> Unit).whatever(): Unit = Unit
+      |fun ((name: String, Int, age: Long) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 
