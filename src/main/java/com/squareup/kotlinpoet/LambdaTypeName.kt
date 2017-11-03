@@ -17,7 +17,7 @@ package com.squareup.kotlinpoet
 
 class LambdaTypeName internal constructor(
     val receiver: TypeName? = null,
-    parameters: List<TypeName> = emptyList(),
+    parameters: List<Parameter> = emptyList(),
     val returnType: TypeName = UNIT,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
@@ -45,7 +45,7 @@ class LambdaTypeName internal constructor(
       out.emitCode("%T.", it)
     }
 
-    val params = parameters.map { CodeBlock.of("%T", it) }.joinToCode()
+    val params = parameters.map(Parameter::toCodeBlock).joinToCode()
     out.emitCode("(%L) -> %T", params, returnType)
 
     if (nullable) {
@@ -55,18 +55,33 @@ class LambdaTypeName internal constructor(
   }
 
   companion object {
-    /** Returns a lambda type with `returnType` and parameters of listed in `parameters`. */
+    /*
+     * Returns a lambda type with `returnType` and parameters listed in `parameters` and
+     * `namedParameters`.
+     */
     @JvmStatic fun get(
         receiver: TypeName? = null,
         parameters: List<TypeName> = emptyList(),
-        returnType: TypeName)
-        = LambdaTypeName(receiver, parameters, returnType)
+        namedParameters: List<Parameter> = emptyList(),
+        returnType: TypeName
+    ) = LambdaTypeName(
+        receiver,
+        namedParameters + parameters.map { Parameter.ofType(it) },
+        returnType
+    )
 
-    /** Returns a lambda type with `returnType` and parameters of listed in `parameters`. */
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
         receiver: TypeName? = null,
         vararg parameters: TypeName = emptyArray(),
-        returnType: TypeName)
-        = LambdaTypeName(receiver, parameters.toList(), returnType)
+        returnType: TypeName
+    ) = LambdaTypeName(receiver, parameters.toList().map { Parameter.ofType(it) }, returnType)
+
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @JvmStatic fun get(
+        receiver: TypeName? = null,
+        vararg parameters: Parameter = emptyArray(),
+        returnType: TypeName
+    ) = LambdaTypeName(receiver, parameters.toList(), returnType)
   }
 }

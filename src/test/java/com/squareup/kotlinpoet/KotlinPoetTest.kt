@@ -324,6 +324,48 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionFunctionLambdaWithParamName() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = Parameter("name", String::class),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((name: String) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithTwoParams() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = listOf(Int::class.asClassName()),
+                namedParameters = listOf(Parameter("name", String::class)),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((name: String, Int) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
   @Test fun extensionProperty() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("extensionProperty", Int::class)
