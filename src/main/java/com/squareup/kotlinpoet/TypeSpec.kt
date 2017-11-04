@@ -138,7 +138,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           }
         }
         val superTypes = types + superinterfaces.entries.map { (type, init) ->
-              if(init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type) }
+            if (init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type) 
+        }
 
         if (superTypes.isNotEmpty()) {
           codeWriter.emitCode(superTypes.joinToCode(separator = ",%W", prefix = " : "))
@@ -430,7 +431,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
       this.superinterfaces.putAll(superinterfaces.map {
-        Pair(it, null) })
+        Pair(it, null) 
+      })
     }
 
     fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
@@ -554,7 +556,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       }
 
       val superclassIsAny = superclass == ANY
-      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + this.superinterfaces.size
+      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
       require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
         "anonymous type has too many supertypes"
       }
