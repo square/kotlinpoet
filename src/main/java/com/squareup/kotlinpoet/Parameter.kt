@@ -25,11 +25,9 @@ data class Parameter(val name: String? = null, val type: TypeName) {
 
   constructor(name: String, type: Type) : this(name, type.asTypeName())
 
-  internal fun toCodeBlock() = if (name != null) {
-    CodeBlock.of("%L: %T", name, type)
-  } else {
+  internal fun toCodeBlock() = if (name != null)
+    CodeBlock.of("%L: %T", name, type) else
     CodeBlock.of("%T", type)
-  }
 
   companion object {
 

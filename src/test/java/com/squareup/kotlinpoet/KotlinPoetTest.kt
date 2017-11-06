@@ -352,7 +352,7 @@ class KotlinPoetTest {
             .receiver(LambdaTypeName.get(
                 parameters = listOf(
                     Parameter("name", String::class),
-                    Companion.ofType(Int::class),
+                    Parameter.ofType(Int::class),
                     Parameter("age", Long::class)),
                 returnType = Unit::class.asClassName()))
             .addStatement("return Unit")

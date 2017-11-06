@@ -55,7 +55,7 @@ class LambdaTypeName internal constructor(
   }
 
   companion object {
-    /*
+    /**
      * Returns a lambda type with `returnType` and parameters listed in `parameters` and
      * `namedParameters`.
      */
