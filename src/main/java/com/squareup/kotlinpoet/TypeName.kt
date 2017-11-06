@@ -56,7 +56,7 @@ import kotlin.reflect.KClass
  * Defining new types
  * ------------------
  *
- * Create new reference types like `com.example.HelloWorld` with [ClassName.get]. To build composite
+ * Create new reference types like `com.example.HelloWorld` with [ClassName.bestGuess]. To build composite
  * types like `Set<Long>`, use the factory methods on [ParameterizedTypeName], [TypeVariableName],
  * and [WildcardTypeName].
  */
