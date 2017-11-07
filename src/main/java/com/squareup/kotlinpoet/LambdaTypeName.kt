@@ -24,6 +24,14 @@ class LambdaTypeName internal constructor(
 ) : TypeName(nullable, annotations) {
   val parameters = parameters.toImmutableList()
 
+  init {
+    for (param in parameters) {
+      require(param.annotations.isEmpty()) { "Parameters with annotations are not allowed" }
+      require(param.modifiers.isEmpty()) { "Parameters with modifiers are not allowed" }
+      require(param.defaultValue == null) { "Parameters with default values are not allowed" }
+    }
+  }
+
   override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, annotations)
 
   override fun asNonNullable()
