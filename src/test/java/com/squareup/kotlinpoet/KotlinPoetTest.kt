@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.Parameter.Companion
 import org.junit.Test
 
 class KotlinPoetTest {
@@ -330,7 +329,7 @@ class KotlinPoetTest {
         .addFunction(FunSpec.builder("whatever")
             .returns(Unit::class)
             .receiver(LambdaTypeName.get(
-                parameters = Parameter("name", String::class),
+                parameters = ParameterSpec.builder("name", String::class).build(),
                 returnType = Unit::class.asClassName()))
             .addStatement("return Unit")
             .build())
@@ -351,9 +350,9 @@ class KotlinPoetTest {
             .returns(Unit::class)
             .receiver(LambdaTypeName.get(
                 parameters = listOf(
-                    Parameter("name", String::class),
-                    Parameter.ofType(Int::class),
-                    Parameter("age", Long::class)),
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.unnamed(Int::class),
+                    ParameterSpec.builder("age", Long::class).build()),
                 returnType = Unit::class.asClassName()))
             .addStatement("return Unit")
             .build())
@@ -366,7 +365,11 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((name: String, Int, age: Long) -> Unit).whatever(): Unit = Unit
+      |fun ((
+      |    name: String,
+      |    Int,
+      |    age: Long
+      |) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 

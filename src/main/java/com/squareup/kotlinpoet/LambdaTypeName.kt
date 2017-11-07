@@ -17,7 +17,7 @@ package com.squareup.kotlinpoet
 
 class LambdaTypeName internal constructor(
     val receiver: TypeName? = null,
-    parameters: List<Parameter> = emptyList(),
+    parameters: List<ParameterSpec> = emptyList(),
     val returnType: TypeName = UNIT,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
@@ -45,8 +45,8 @@ class LambdaTypeName internal constructor(
       out.emitCode("%T.", it)
     }
 
-    val params = parameters.map(Parameter::toCodeBlock).joinToCode()
-    out.emitCode("(%L) -> %T", params, returnType)
+    parameters.emit(out)
+    out.emitCode(" -> %T", returnType)
 
     if (nullable) {
       out.emit(")")
@@ -55,50 +55,29 @@ class LambdaTypeName internal constructor(
   }
 
   companion object {
-    /**
-     * Returns a lambda type with `returnType` and parameters listed in `parameters` and
-     * `namedParameters`.
-     */
-    @Deprecated(
-        message = "Use the version that accepts List<Parameter>",
-        replaceWith = ReplaceWith(
-            "LambdaTypeName.get(receiver, namedParameters + parameters.map { Parameter.ofType(it) }, returnType)",
-            "com.squareup.kotlinpoet.Parameter"
-        )
-    )
-    @JvmStatic fun get(
-        receiver: TypeName? = null,
-        parameters: List<TypeName> = emptyList(),
-        namedParameters: List<Parameter> = emptyList(),
-        returnType: TypeName
-    ) = LambdaTypeName(
-        receiver,
-        namedParameters + parameters.map { Parameter.ofType(it) },
-        returnType
-    )
-
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
         receiver: TypeName? = null,
-        parameters: List<Parameter> = emptyList(),
+        parameters: List<ParameterSpec> = emptyList(),
         returnType: TypeName
-    ) = LambdaTypeName(
-        receiver,
-        parameters,
-        returnType
-    )
+    ) = LambdaTypeName(receiver, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
         receiver: TypeName? = null,
         vararg parameters: TypeName = emptyArray(),
         returnType: TypeName
-    ) = LambdaTypeName(receiver, parameters.toList().map { Parameter.ofType(it) }, returnType)
+    ): LambdaTypeName {
+      return LambdaTypeName(
+          receiver,
+          parameters.toList().map { ParameterSpec.Companion.unnamed(it) },
+          returnType)
+    }
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
         receiver: TypeName? = null,
-        vararg parameters: Parameter = emptyArray(),
+        vararg parameters: ParameterSpec = emptyArray(),
         returnType: TypeName
     ) = LambdaTypeName(receiver, parameters.toList(), returnType)
   }
