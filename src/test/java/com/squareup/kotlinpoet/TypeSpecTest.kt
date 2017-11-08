@@ -2698,7 +2698,7 @@ class TypeSpecTest {
               .build())
           .addSuperinterface(KFunction::class, "notOther")
           .build()
-    }.hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
+    }.hasMessageThat().isEqualTo("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
   }
 
   @Test fun failAddParamDelegateWhenNullCtor() {
@@ -2706,7 +2706,7 @@ class TypeSpecTest {
       TypeSpec.classBuilder("Taco")
           .addSuperinterface(Runnable::class, "etc")
           .build()
-    }.hasMessage("delegating to constructor parameter requires not-null constructor")
+    }.hasMessageThat().isEqualTo("delegating to constructor parameter requires not-null constructor")
   }
 
   @Test fun testAddedDelegateByParamName() {
@@ -2727,7 +2727,7 @@ class TypeSpecTest {
   }
 
   @Test fun failOnAddExistingDelegateType() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Taco")
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("superString", Function::class)
@@ -2736,10 +2736,8 @@ class TypeSpecTest {
           .addSuperinterface(Function::class, "superString")
           .build()
       fail()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("'Taco' can not delegate to kotlin.Function by superString with " +
-          "existing declaration by { print(Hello) }")
-    }
+    }.hasMessageThat().isEqualTo("'Taco' can not delegate to kotlin.Function " +
+        "by superString with existing declaration by { print(Hello) }")
   }
 
   @Test
