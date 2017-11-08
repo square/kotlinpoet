@@ -324,6 +324,55 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionFunctionLambdaWithParamName() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = ParameterSpec.builder("name", String::class).build(),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((name: String) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithMultipleParams() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = listOf(
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.unnamed(Int::class),
+                    ParameterSpec.builder("age", Long::class).build()),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.Long
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((
+      |    name: String,
+      |    Int,
+      |    age: Long
+      |) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
   @Test fun extensionProperty() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("extensionProperty", Int::class)
