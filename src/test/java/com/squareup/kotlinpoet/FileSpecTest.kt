@@ -48,17 +48,18 @@ class FileSpecTest {
     val source = FileSpec.builder("com.example.helloworld", "HelloWorld")
         .addType(hello)
         .addStaticImport(hoverboard, "createNimbus")
-        .addStaticImport(namedBoards, "*")
-        .addStaticImport(Collections::class, "*")
+        .addStaticImport(namedBoards, "THUNDERBOLT")
+        .addStaticImport(Collections::class, "sort", "emptyList")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.example.helloworld
         |
         |import com.mattel.Hoverboard
-        |import com.mattel.Hoverboard.Boards.*
+        |import com.mattel.Hoverboard.Boards.THUNDERBOLT
         |import com.mattel.Hoverboard.createNimbus
         |import java.util.ArrayList
-        |import java.util.Collections.*
+        |import java.util.Collections.emptyList
+        |import java.util.Collections.sort
         |import kotlin.collections.List
         |
         |class HelloWorld {
@@ -74,30 +75,6 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun importStaticForCrazyFormatsWorks() {
-    val method = FunSpec.builder("method").build()
-    FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addInitializerBlock(CodeBlock.builder()
-                .addStatement("%T", Runtime::class)
-                .addStatement("%T.a()", Runtime::class)
-                .addStatement("%T.X", Runtime::class)
-                .addStatement("%T%T", Runtime::class, Runtime::class)
-                .addStatement("%T.%T", Runtime::class, Runtime::class)
-                .addStatement("%1T%1T", Runtime::class)
-                .addStatement("%1T%2L%1T", Runtime::class, "?")
-                .addStatement("%1T%2L%2S%1T", Runtime::class, "?")
-                .addStatement("%1T%2L%2S%1T%3N%1T", Runtime::class, "?", method)
-                .addStatement("%T%L", Runtime::class, "?")
-                .addStatement("%T%S", Runtime::class, "?")
-                .addStatement("%T%N", Runtime::class, method)
-                .build())
-            .build())
-        .addStaticImport(Runtime::class, "*")
-        .build()
-        .toString() // don't look at the generated code...
-  }
-
   @Test fun importStaticMixed() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
@@ -111,13 +88,15 @@ class FileSpecTest {
                 .build())
             .build())
         .addStaticImport(Thread.State.BLOCKED)
-        .addStaticImport(System::class, "*")
+        .addStaticImport(System::class, "gc", "out", "nanoTime")
         .addStaticImport(Thread.State::class, "valueOf")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.System.*
+        |import java.lang.System.gc
+        |import java.lang.System.nanoTime
+        |import java.lang.System.out
         |import java.lang.Thread
         |import java.lang.Thread.State.BLOCKED
         |import java.lang.Thread.State.valueOf
@@ -242,26 +221,12 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun importStaticUsingWildcards() {
-    val source = FileSpec.builder("readme", "Util")
-        .addType(importStaticTypeSpec("Util"))
-        .addStaticImport(TimeUnit::class, "*")
-        .addStaticImport(System::class, "*")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-        |package readme
-        |
-        |import java.lang.System.*
-        |import java.util.concurrent.TimeUnit.*
-        |import kotlin.Long
-        |
-        |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
-        |    gc()
-        |    return SECONDS.convert(minutes, MINUTES)
-        |  }
-        |}
-        |""".trimMargin())
+  @Test fun importStaticWildcardsForbidden() {
+    assertThrows<IllegalArgumentException> {
+      FileSpec.builder("readme", "Util")
+          .addType(importStaticTypeSpec("Util"))
+          .addStaticImport(TimeUnit::class, "*")
+    }.hasMessageThat().isEqualTo("Wildcard imports are not allowed")
   }
 
   private fun importStaticTypeSpec(name: String): TypeSpec {
@@ -273,7 +238,6 @@ class FileSpecTest {
         .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
         .build()
     return TypeSpec.classBuilder(name).addFunction(funSpec).build()
-
   }
 
   @Test fun noImports() {
@@ -322,6 +286,48 @@ class FileSpecTest {
         |  val madeFreshDatabaseDate: java.sql.Date
         |}
         |""".trimMargin())
+  }
+
+  @Test fun aliasedImports() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addAliasedImport(java.lang.String::class.java, "JString")
+        .addAliasedImport(String::class, "KString")
+        .addProperty(PropertySpec.builder("a", java.lang.String::class.java)
+            .initializer("%T(%S)", java.lang.String::class.java, "a")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class)
+            .initializer("%S", "b")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.lang.String as JString
+      |import kotlin.String as KString
+      |
+      |val a: JString = JString("a")
+      |
+      |val b: KString = "b"
+      |""".trimMargin())
+  }
+
+  @Test fun enumAliasedImport() {
+    val minsAlias = "MINS"
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
+        .addFunction(FunSpec.builder("sleepForFiveMins")
+            .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.util.concurrent.TimeUnit.MINUTES as MINS
+      |
+      |fun sleepForFiveMins() {
+      |  MINS.sleep(5)
+      |}
+      |""".trimMargin())
   }
 
   @Test fun conflictingParentName() {
@@ -595,7 +601,7 @@ class FileSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addAnnotation(AnnotationSpec.builder(JvmName::class)
             .useSiteTarget(FILE)
-            .addMember("value", "%S", "TacoUtils")
+            .addMember("%S", "TacoUtils")
             .build())
         .addAnnotation(JvmMultifileClass::class)
         .build()
@@ -619,6 +625,15 @@ class FileSpecTest {
         .build()
     assertThrows<IllegalStateException> {
       builder.addAnnotation(annotation)
-    }.hasMessage("Use-site target SET not supported for file annotations.")
+    }.hasMessageThat().isEqualTo("Use-site target SET not supported for file annotations.")
+  }
+
+  @Test fun escapeKeywordInPackageName() {
+    val source = FileSpec.builder("com.squareup.is.fun.in", "California")
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.`is`.`fun`.`in`
+        |
+        |""".trimMargin())
   }
 }

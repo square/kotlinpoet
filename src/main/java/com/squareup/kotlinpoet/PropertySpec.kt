@@ -32,34 +32,50 @@ class PropertySpec private constructor(builder: Builder) {
   val delegated = builder.delegated
   val getter = builder.getter
   val setter = builder.setter
+  val receiverType = builder.receiverType
 
   internal fun emit(
       codeWriter: CodeWriter,
       implicitModifiers: Set<KModifier>,
       withInitializer: Boolean = true,
       inline: Boolean = false) {
+    val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
+        setter?.modifiers?.contains(KModifier.INLINE) ?: false
+    val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitModifiers(modifiers, implicitModifiers)
+    codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
+    if (receiverType != null) {
+      if (receiverType is LambdaTypeName) {
+        codeWriter.emitCode("(%T).", receiverType)
+      } else {
+        codeWriter.emitCode("%T.", receiverType)
+      }
+    }
     codeWriter.emitCode("%L: %T", name, type)
     if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")
       } else {
-        codeWriter.emit(" = ")
+        codeWriter.emitCode(" =%W")
       }
       codeWriter.emitCode("%[%L%]", initializer)
     }
     if (!inline) codeWriter.emit("\n")
+    val implicitAccessorModifiers = if (isInlineProperty) {
+      implicitModifiers + KModifier.INLINE
+    } else {
+      implicitModifiers
+    }
     if (getter != null) {
       codeWriter.emitCode("%>")
-      getter.emit(codeWriter, null, implicitModifiers)
+      getter.emit(codeWriter, null, implicitAccessorModifiers)
       codeWriter.emitCode("%<")
     }
     if (setter != null) {
       codeWriter.emitCode("%>")
-      setter.emit(codeWriter, null, implicitModifiers)
+      setter.emit(codeWriter, null, implicitAccessorModifiers)
       codeWriter.emitCode("%<")
     }
   }
@@ -94,6 +110,7 @@ class PropertySpec private constructor(builder: Builder) {
     internal var delegated = false
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
+    internal var receiverType: TypeName? = null
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -156,6 +173,14 @@ class PropertySpec private constructor(builder: Builder) {
       check(this.setter == null) { "setter was already set" }
       this.setter = setter
     }
+
+    fun receiver(receiverType: TypeName) = apply {
+      this.receiverType = receiverType
+    }
+
+    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
+
+    fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun build() = PropertySpec(this)
   }

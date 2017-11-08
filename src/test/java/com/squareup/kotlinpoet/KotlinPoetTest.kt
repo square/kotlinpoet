@@ -305,6 +305,118 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionFunctionLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("shrink")
+            .returns(String::class)
+            .receiver(LambdaTypeName.get(
+                parameters = String::class.asClassName(),
+                returnType = String::class.asTypeName()))
+            .addStatement("return substring(0, length - 1)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |fun ((String) -> String).shrink(): String = substring(0, length - 1)
+        |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithParamName() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = ParameterSpec.builder("name", String::class).build(),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((name: String) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithMultipleParams() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = listOf(
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.unnamed(Int::class),
+                    ParameterSpec.builder("age", Long::class).build()),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.Long
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((
+      |    name: String,
+      |    Int,
+      |    age: Long
+      |) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
+  @Test fun extensionProperty() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("extensionProperty", Int::class)
+            .receiver(String::class)
+            .getter(FunSpec.getterBuilder()
+                .addStatement("return length")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |val String.extensionProperty: Int
+        |  get() = length
+        |
+        """.trimMargin())
+  }
+
+  @Test fun extensionPropertyLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("extensionProperty", Int::class)
+            .receiver(LambdaTypeName.get(
+                parameters = String::class.asClassName(),
+                returnType = String::class.asClassName()))
+            .getter(FunSpec.getterBuilder()
+                .addStatement("return length")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |val ((String) -> String).extensionProperty: Int
+        |  get() = length
+        |
+        """.trimMargin())
+  }
+
   @Test fun nullableTypes() {
     val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
         Int::class.asClassName().asNullable()).asNullable()
@@ -341,6 +453,21 @@ class KotlinPoetTest {
         |    field = value
         |  }
         |""".trimMargin())
+  }
+
+  @Test fun propertyWithLongInitializerWrapping() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("foo", ClassName(tacosPackage, "Foo").asNullable())
+            .addModifiers(KModifier.PRIVATE)
+            .initializer("DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |private val foo: Foo? =
+      |    DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)
+      |""".trimMargin())
   }
 
   @Test fun stackedPropertyModifiers() {

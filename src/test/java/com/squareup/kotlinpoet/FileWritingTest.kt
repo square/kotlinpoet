@@ -41,7 +41,7 @@ class FileWritingTest {
     Files.createFile(path)
     assertThrows<IllegalArgumentException> {
       source.writeTo(path)
-    }.hasMessage("path /foo/bar exists but is not a directory.")
+    }.hasMessageThat().isEqualTo("path /foo/bar exists but is not a directory.")
   }
 
   @Test fun fileNotDirectory() {
@@ -51,7 +51,7 @@ class FileWritingTest {
     file.createNewFile()
     assertThrows<IllegalArgumentException> {
       source.writeTo(file)
-    }.hasMessage("path ${file.path} exists but is not a directory.")
+    }.hasMessageThat().isEqualTo("path ${file.path} exists but is not a directory.")
   }
 
   @Test fun pathDefaultPackage() {

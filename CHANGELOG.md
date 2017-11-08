@@ -1,6 +1,22 @@
 Change Log
 ==========
 
+## Version 0.6.0
+
+_2017-11-03_
+
+ * New: Support lambda extensions.
+ * New: Support renames in imports like `import bar.Bar as bBar`.
+ * New: Support extension and inline properties.
+ * New: Support reified types.
+ * New: Expose enclosed types inside `LambdaTypeName`.
+ * New: Depend on Kotlin Kotlin 1.1.51.
+ * New: Improved API and formatting of annotations.
+ * New: Improved multiplatform support.
+ * Fix: Escape function and package names if they are a Kotlin keyword.
+ * Fix: Properly format WildcardTypeName's class declaration.
+
+
 ## Version 0.5.0
 
 _2017-09-13_

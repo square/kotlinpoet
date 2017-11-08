@@ -26,7 +26,7 @@ fun main(vararg args: String) {
 
 And this is the code to generate it with KotlinPoet:
 
-```java
+```kotlin
 val greeterClass = ClassName("", "Greeter")
 val file = FileSpec.builder("", "HelloWorld")
     .addType(TypeSpec.classBuilder("Greeter")
@@ -61,14 +61,14 @@ Download [the latest .jar][dl] or depend via Maven:
 <dependency>
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
 or Gradle:
 
 ```groovy
-compile 'com.squareup:kotlinpoet:0.5.0'
+compile 'com.squareup:kotlinpoet:0.6.0'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].

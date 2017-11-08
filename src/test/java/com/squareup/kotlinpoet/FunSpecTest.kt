@@ -120,17 +120,17 @@ class FunSpecTest {
     whenMock(method.enclosingElement).thenReturn(element)
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [final]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [final]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.PRIVATE))
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [private]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [private]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.STATIC))
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [static]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [static]")
   }
 
   @Test fun nullableParam() {
@@ -296,7 +296,7 @@ class FunSpecTest {
     assertThrows<IllegalStateException> {
       FunSpec.builder("main")
           .callThisConstructor("a", "b", "c")
-    }.hasMessage("only constructors can delegate to other constructors!")
+    }.hasMessageThat().isEqualTo("only constructors can delegate to other constructors!")
   }
 
   @Test fun emptySecondaryConstructor() {
@@ -307,6 +307,14 @@ class FunSpecTest {
     assertThat(constructorSpec.toString()).isEqualTo("""
       |constructor(a: kotlin.Int)
       |""".trimMargin())
+  }
+
+  @Test fun reifiedTypesOnNonInlineFunctionsForbidden() {
+    assertThrows<IllegalArgumentException> {
+      FunSpec.builder("foo")
+          .addTypeVariable(TypeVariableName("T").reified())
+          .build()
+    }.hasMessageThat().isEqualTo("only type parameters of inline functions can be reified!")
   }
 
   @Test fun equalsAndHashCode() {
@@ -324,6 +332,16 @@ class FunSpecTest {
     b = FunSpec.overriding(methodElement).build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
+  }
+
+  @Test fun escapeKeywordInFunctionName() {
+    val funSpec = FunSpec.builder("if")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun `if`() {
+      |}
+      |""".trimMargin())
   }
 
   private fun whenMock(any: Any?) = Mockito.`when`(any)

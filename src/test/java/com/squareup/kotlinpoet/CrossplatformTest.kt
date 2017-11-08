@@ -145,7 +145,7 @@ class CrossplatformTest {
     assertThrows<IllegalStateException> {
       TypeSpec.expectClassBuilder("AtomicRef")
           .addInitializerBlock(CodeBlock.of("println()"))
-    }.hasMessage("EXPECT_CLASS can't have initializer blocks")
+    }.hasMessageThat().isEqualTo("EXPECT_CLASS can't have initializer blocks")
   }
 
   @Test fun expectFunctionBodyForbidden() {
@@ -154,7 +154,7 @@ class CrossplatformTest {
           .addFunction(FunSpec.builder("print")
               .addStatement("println()")
               .build())
-    }.hasMessage("functions in expect classes can't have bodies")
+    }.hasMessageThat().isEqualTo("functions in expect classes can't have bodies")
   }
 
   @Test fun expectPropertyInitializerForbidden() {
@@ -163,7 +163,7 @@ class CrossplatformTest {
           .addProperty(PropertySpec.builder("a", Boolean::class)
               .initializer("true")
               .build())
-    }.hasMessage("properties in expect classes can't have initializers")
+    }.hasMessageThat().isEqualTo("properties in expect classes can't have initializers")
   }
 
   @Test fun expectPropertyGetterForbidden() {
@@ -174,7 +174,7 @@ class CrossplatformTest {
                   .addStatement("return true")
                   .build())
               .build())
-    }.hasMessage("properties in expect classes can't have getters and setters")
+    }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }
 
   @Test fun expectPropertySetterForbidden() {
@@ -186,6 +186,6 @@ class CrossplatformTest {
                   .addStatement("field = true")
                   .build())
               .build())
-    }.hasMessage("properties in expect classes can't have getters and setters")
+    }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }
 }

@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
+import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
@@ -40,7 +41,6 @@ class FunSpec private constructor(builder: Builder) {
   val parameters = builder.parameters.toImmutableList()
   val delegateConstructor = builder.delegateConstructor
   val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
-  val exceptions = builder.exceptions.toImmutableList()
   val body = builder.body.build()
 
   init {
@@ -49,6 +49,9 @@ class FunSpec private constructor(builder: Builder) {
     }
     require(name != SETTER || parameters.size == 1) {
       "$name must have exactly one parameter"
+    }
+    require(INLINE in modifiers || typeVariables.none { it.reified }) {
+      "only type parameters of inline functions can be reified!"
     }
   }
 
@@ -104,9 +107,13 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("set")
     } else {
       if (receiverType != null) {
-        codeWriter.emitCode("%T.", receiverType)
+        if (receiverType is LambdaTypeName) {
+          codeWriter.emitCode("(%T).", receiverType)
+        } else {
+          codeWriter.emitCode("%T.", receiverType)
+        }
       }
-      codeWriter.emitCode("%L", name)
+      codeWriter.emitCode("%L", escapeIfKeyword(name))
     }
 
     parameters.emit(codeWriter) { param ->
@@ -120,14 +127,6 @@ class FunSpec private constructor(builder: Builder) {
     if (delegateConstructor != null) {
       codeWriter.emitCode(delegateConstructorArguments
           .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
-    }
-
-    if (exceptions.isNotEmpty()) {
-      codeWriter.emitWrappingSpace().emit("throws")
-      exceptions.forEachIndexed { index, exception ->
-        if (index > 0) codeWriter.emit(",")
-        codeWriter.emitWrappingSpace().emitCode("%T", exception)
-      }
     }
   }
 
@@ -158,7 +157,6 @@ class FunSpec private constructor(builder: Builder) {
     builder.parameters += parameters
     builder.delegateConstructor = delegateConstructor
     builder.delegateConstructorArguments += delegateConstructorArguments
-    builder.exceptions += exceptions
     builder.body.add(body)
     return builder
   }
@@ -173,14 +171,7 @@ class FunSpec private constructor(builder: Builder) {
     internal val parameters = mutableListOf<ParameterSpec>()
     internal var delegateConstructor: String? = null
     internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
-    internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
-
-    init {
-      require(name.isConstructor || name.isAccessor || name.isName) {
-        "not a valid name: $name"
-      }
-    }
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
@@ -407,7 +398,7 @@ class FunSpec private constructor(builder: Builder) {
       if (method.thrownTypes.isNotEmpty()) {
         val throwsValueString = method.thrownTypes.joinToString { "%T::class" }
         funBuilder.addAnnotation(AnnotationSpec.builder(Throws::class)
-            .addMember("value", throwsValueString, *method.thrownTypes.toTypedArray())
+            .addMember(throwsValueString, *method.thrownTypes.toTypedArray())
             .build())
       }
 
