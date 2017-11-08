@@ -2653,7 +2653,9 @@ class TypeSpecTest {
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter("somethingElse", String::class)
             .build())
-        .addSuperinterface(ParameterizedTypeName.get(Consumer::class, String::class), CodeBlock.of("{ println(it) }"))
+        .addSuperinterface(
+            ParameterizedTypeName.get(Consumer::class, String::class),
+            CodeBlock.of("({ println(it) })"))
         .build()
 
     val expect = """
@@ -2662,7 +2664,7 @@ class TypeSpecTest {
         |import java.util.function.Consumer
         |import kotlin.String
         |
-        |class Guac(somethingElse: String) : Consumer<String> by { println(it) }
+        |class Guac(somethingElse: String) : Consumer<String> by ({ println(it) })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -2689,27 +2691,24 @@ class TypeSpecTest {
 
     assertThat(toString(type)).isEqualTo(expect)
   }
+
   @Test fun testNoSuchParameterDelegate() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Taco")
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("other", String::class)
               .build())
           .addSuperinterface(KFunction::class, "notOther")
           .build()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
-    }
+    }.hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
   }
 
   @Test fun failAddParamDelegateWhenNullCtor() {
-    try {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Taco")
           .addSuperinterface(Runnable::class, "etc")
           .build()
-    } catch (expected: IllegalArgumentException) {
-      assertThat(expected).hasMessage("delegating to constructor parameter requires not-null constructor")
-    }
+    }.hasMessage("delegating to constructor parameter requires not-null constructor")
   }
 
   @Test fun testAddedDelegateByParamName() {
@@ -2800,6 +2799,7 @@ class TypeSpecTest {
       |)
       |""".trimMargin())
   }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

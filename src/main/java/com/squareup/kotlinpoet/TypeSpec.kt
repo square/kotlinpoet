@@ -32,10 +32,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
-   * no delegation), while non-null [com.squareup.kotlinpoet.CodeBlock] values represent delegates
-   * for the corresponding [com.squareup.kotlinpoet.TypeSpec] interface (key) value */
+   * no delegation), while non-null [CodeBlock] values represent delegates
+   * for the corresponding [TypeSpec] interface (key) value
+   */
   val superinterfaces = builder.superinterfaces.toImmutableMap()
   val enumConstants = builder.enumConstants.toImmutableMap()
   val propertySpecs = builder.propertySpecs.toImmutableList()
@@ -138,7 +140,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           }
         }
         val superTypes = types + superinterfaces.entries.map { (type, init) ->
-            if (init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type) 
+            if (init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type)
         }
 
         if (superTypes.isNotEmpty()) {
@@ -431,7 +433,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
       this.superinterfaces.putAll(superinterfaces.map {
-        Pair(it, null) 
+        Pair(it, null)
       })
     }
 
