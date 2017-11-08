@@ -238,14 +238,16 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
         = addStaticImport(`class`.asClassName(), *names)
 
     fun addStaticImport(className: ClassName, vararg names: String) = apply {
-      check(names.isNotEmpty()) { "names array is empty" }
+      require(names.isNotEmpty()) { "names array is empty" }
+      require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += Import(className.canonicalName + "." + name)
       }
     }
 
     fun addStaticImport(packageName: String, vararg names: String) = apply {
-      check(names.isNotEmpty()) { "names array is empty" }
+      require(names.isNotEmpty()) { "names array is empty" }
+      require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += Import(packageName + "." + name)
       }

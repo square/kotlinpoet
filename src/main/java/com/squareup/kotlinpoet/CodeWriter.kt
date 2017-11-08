@@ -286,9 +286,8 @@ internal class CodeWriter constructor(
     val first = partWithoutLeadingDot[0]
     if (!Character.isJavaIdentifierStart(first)) return false
     val explicit = memberImports[canonical + "." + extractMemberName(partWithoutLeadingDot)]
-    val wildcard = memberImports[canonical + ".*"]
-    if (explicit != null || wildcard != null) {
-      if (explicit?.alias != null) {
+    if (explicit != null) {
+      if (explicit.alias != null) {
         val memberName = extractMemberName(partWithoutLeadingDot)
         emit(partWithoutLeadingDot.replaceFirst(memberName, explicit.alias))
       } else {
