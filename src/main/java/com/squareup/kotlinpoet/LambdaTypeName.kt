@@ -78,7 +78,7 @@ class LambdaTypeName internal constructor(
     ): LambdaTypeName {
       return LambdaTypeName(
           receiver,
-          parameters.toList().map { ParameterSpec.Companion.unnamed(it) },
+          parameters.toList().map { ParameterSpec.unnamed(it) },
           returnType)
     }
 
