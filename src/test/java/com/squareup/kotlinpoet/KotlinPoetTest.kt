@@ -455,6 +455,21 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun propertyWithLongInitializerWrapping() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("foo", ClassName(tacosPackage, "Foo").asNullable())
+            .addModifiers(KModifier.PRIVATE)
+            .initializer("DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |private val foo: Foo? =
+      |    DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)
+      |""".trimMargin())
+  }
+
   @Test fun stackedPropertyModifiers() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addType(TypeSpec.classBuilder("A")

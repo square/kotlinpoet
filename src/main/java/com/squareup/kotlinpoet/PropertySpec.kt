@@ -58,7 +58,7 @@ class PropertySpec private constructor(builder: Builder) {
       if (delegated) {
         codeWriter.emit(" by ")
       } else {
-        codeWriter.emit(" = ")
+        codeWriter.emitCode(" =%W")
       }
       codeWriter.emitCode("%[%L%]", initializer)
     }
