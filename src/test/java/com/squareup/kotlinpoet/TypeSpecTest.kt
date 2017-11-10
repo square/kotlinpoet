@@ -579,11 +579,7 @@ class TypeSpecTest {
         |
         |    override fun compareTo(p: P): Int = 0
         |
-        |    fun <T, P : Number> of(
-        |            label: T,
-        |            x: P,
-        |            y: P
-        |    ): Location<T, P> {
+        |    fun <T, P : Number> of(label: T, x: P, y: P): Location<T, P> {
         |        throw new UnsupportedOperationException("TODO")
         |    }
         |}
@@ -1100,11 +1096,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taqueria {
-        |    fun prepare(
-        |            workers: Int,
-        |            vararg jobs: Runnable,
-        |            start: Boolean
-        |    ) {
+        |    fun prepare(workers: Int, vararg jobs: Runnable, start: Boolean) {
         |    }
         |}
         |""".trimMargin())
@@ -2580,11 +2572,7 @@ class TypeSpecTest {
         |import kotlin.String
         |import kotlin.collections.Map
         |
-        |class Taco(
-        |        val a: String?,
-        |        val b: String?,
-        |        val c: String?
-        |) {
+        |class Taco(val a: String?, val b: String?, val c: String?) {
         |    constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
         |""".trimMargin())
@@ -2669,11 +2657,7 @@ class TypeSpecTest {
       |import kotlin.Int
       |import kotlin.String
       |
-      |data class Person(
-      |        override val id: Int,
-      |        override val name: String,
-      |        override val surname: String
-      |)
+      |data class Person(override val id: Int, override val name: String, override val surname: String)
       |""".trimMargin())
   }
 

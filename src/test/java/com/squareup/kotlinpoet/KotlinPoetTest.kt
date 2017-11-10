@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.io.Serializable
 
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -107,11 +108,7 @@ class KotlinPoetTest {
         |import kotlin.Boolean
         |import kotlin.String
         |
-        |class Taco(
-        |        val cheese: String,
-        |        var cilantro: String,
-        |        lettuce: String
-        |) {
+        |class Taco(val cheese: String, var cilantro: String, lettuce: String) {
         |    val lettuce: String = lettuce.trim()
         |
         |    val onion: Boolean = true
@@ -365,11 +362,7 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((
-      |        name: String,
-      |        Int,
-      |        age: Long
-      |) -> Unit).whatever(): Unit = Unit
+      |fun ((name: String, Int, age: Long) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 
@@ -578,6 +571,52 @@ class KotlinPoetTest {
       |
       |fun foo(bar: suspend (Foo) -> Bar) {
       |}
+      |""".trimMargin())
+  }
+
+  @Test fun longParameterListWrapping() {
+    val source = FunSpec.builder("sum")
+        .addParameter(ParameterSpec.builder("a", Int::class).build())
+        .addParameter(ParameterSpec.builder("b", Int::class).build())
+        .addParameter(ParameterSpec.builder("c", Int::class).build())
+        .addParameter(ParameterSpec.builder("d", Int::class).build())
+        .addParameter(ParameterSpec.builder("e", Int::class).build())
+        .addParameter(ParameterSpec.builder("f", Int::class).build())
+        .addParameter(ParameterSpec.builder("g", Int::class).build())
+        .addStatement("return a + b + c")
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |fun sum(
+      |        a: kotlin.Int,
+      |        b: kotlin.Int,
+      |        c: kotlin.Int,
+      |        d: kotlin.Int,
+      |        e: kotlin.Int,
+      |        f: kotlin.Int,
+      |        g: kotlin.Int
+      |) = a + b + c
+      |""".trimMargin())
+  }
+
+  @Test fun longLambdaParameterListWrapping() {
+    val source = FunSpec.builder("veryLongFunctionName")
+        .addParameter(ParameterSpec.builder(
+            "veryLongParameterName",
+            LambdaTypeName.get(
+                parameters = listOf(
+                    ParameterSpec.unnamed(Serializable::class),
+                    ParameterSpec.unnamed(Appendable::class),
+                    ParameterSpec.unnamed(Cloneable::class)),
+                returnType = Unit::class.asTypeName()))
+            .build())
+        .addParameter("i", Int::class)
+        .addStatement("return %T", Unit::class)
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |fun veryLongFunctionName(
+      |        veryLongParameterName: (java.io.Serializable, java.lang.Appendable, kotlin.Cloneable) -> kotlin.Unit,
+      |        i: kotlin.Int
+      |) = kotlin.Unit
       |""".trimMargin())
   }
 }
