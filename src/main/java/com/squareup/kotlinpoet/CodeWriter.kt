@@ -57,7 +57,7 @@ internal class CodeWriter constructor(
    * line of a statement is indented normally and subsequent wrapped lines are double-indented. This
    * is -1 when the currently-written line isn't part of a statement.
    */
-  var statementLine = -1
+  var statementFormatter: StatementFormatter? = null
 
   init {
     for ((className, _) in memberImports) {
@@ -238,16 +238,14 @@ internal class CodeWriter constructor(
         "%<" -> unindent()
 
         "%[" -> {
-          check(statementLine == -1) { "statement enter %[ followed by statement enter %[" }
-          statementLine = 0
+          check(statementFormatter == null) { "statement enter %[ followed by statement enter %[" }
+          statementFormatter = StatementFormatter()
         }
 
         "%]" -> {
-          check(statementLine != -1) { "statement exit %] has no matching statement enter %[" }
-          if (statementLine > 0) {
-            unindent(2) // End a multi-line statement. Decrease the indentation level.
-          }
-          statementLine = -1
+          check(statementFormatter != null) { "statement exit %] has no matching statement enter %[" }
+          statementFormatter?.closeStatement(this)
+          statementFormatter = null
         }
 
         "%W" -> out.wrappingSpace(indentLevel + 2)
@@ -418,12 +416,9 @@ internal class CodeWriter constructor(
         }
         out.append("\n")
         trailingNewline = true
-        if (statementLine != -1) {
-          if (statementLine == 0) {
-            indent(2) // Begin multiple-line statement. Increase the indentation level.
-          }
-          statementLine++
-        }
+        statementFormatter?.nextLine(line, this)
+      } else {
+        statementFormatter?.init(line)
       }
 
       first = false

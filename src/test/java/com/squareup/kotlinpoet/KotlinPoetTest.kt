@@ -221,22 +221,22 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "  fun strings() {\n" +
         "    val a = \"\"\"\n" +
-        "        |\"\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |\"\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val b = \"\"\"\n" +
-        "        |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val c = \"\"\"\n" +
-        "        |whoa\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        \"\"\".trimMargin()\n" +
+        "      |whoa\n" +
+        "      |\"raw\"\n" +
+        "      |string\n" +
+        "      \"\"\".trimMargin()\n" +
         "    val d = \"\"\"\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        |with\n" +
-        "        |\$a interpolated value\n" +
-        "        \"\"\".trimMargin()\n" +
+        "      |\"raw\"\n" +
+        "      |string\n" +
+        "      |with\n" +
+        "      |\$a interpolated value\n" +
+        "      \"\"\".trimMargin()\n" +
         "  }\n" +
         "}\n")
   }
@@ -258,12 +258,12 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "  fun strings() {\n" +
         "    val a = \"\"\"\n" +
-        "        |\n" +
-        "        |\"\"\".trimMargin()\n" +
+        "      |\n" +
+        "      |\"\"\".trimMargin()\n" +
         "    val b = \"\"\"\n" +
-        "        | \n" +
-        "        | \n" +
-        "        \"\"\".trimMargin()\n" +
+        "      | \n" +
+        "      | \n" +
+        "      \"\"\".trimMargin()\n" +
         "  }\n" +
         "}\n")
   }

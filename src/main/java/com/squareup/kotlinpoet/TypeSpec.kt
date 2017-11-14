@@ -59,8 +59,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   internal fun emit(codeWriter: CodeWriter, enumName: String?) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
-    val previousStatementLine = codeWriter.statementLine
-    codeWriter.statementLine = -1
+    val previousStatementFormatter = codeWriter.statementFormatter
+    codeWriter.statementFormatter = null
 
     val constructorProperties: Map<String, PropertySpec> = constructorProperties()
 
@@ -226,7 +226,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emit("\n") // If this type isn't also a value, include a trailing newline.
       }
     } finally {
-      codeWriter.statementLine = previousStatementLine
+      codeWriter.statementFormatter = previousStatementFormatter
     }
   }
 
