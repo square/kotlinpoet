@@ -23,14 +23,17 @@ internal object NullAppendable : Appendable {
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
-    = Collections.unmodifiableMap(LinkedHashMap(this))
+internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
+    Collections.unmodifiableMap(LinkedHashMap(this))
 
-internal fun <T> Collection<T>.toImmutableList(): List<T>
-    = Collections.unmodifiableList(ArrayList(this))
+internal fun <T> Collection<T>.toImmutableList(): List<T> =
+    Collections.unmodifiableList(ArrayList(this))
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T>
-    = Collections.unmodifiableSet(LinkedHashSet(this))
+internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
+    Collections.unmodifiableSet(LinkedHashSet(this))
+
+internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
+    enumValues<T>().filterTo(mutableSetOf(), this::contains)
 
 internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
@@ -70,9 +73,10 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   else -> Character.toString(c)
 }
 
-private val Char.isIsoControl: Boolean get() {
-  return this in '\u0000'..'\u001F' || this in '\u007F'..'\u009F'
-}
+private val Char.isIsoControl: Boolean
+  get() {
+    return this in '\u0000'..'\u001F' || this in '\u007F'..'\u009F'
+  }
 
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
 internal fun stringLiteralWithQuotes(value: String): String {
