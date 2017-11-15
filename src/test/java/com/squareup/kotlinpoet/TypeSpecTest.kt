@@ -39,6 +39,7 @@ import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
 import java.util.function.Consumer
+import java.util.logging.Logger
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -2669,22 +2670,26 @@ class TypeSpecTest {
   }
 
   @Test fun testMultipleDelegates() {
-    val type = TypeSpec.classBuilder("Guac")
+    val type = TypeSpec.classBuilder("StringToInteger")
         .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("somethingElse", String::class)
             .build())
-        .addSuperinterface(ClassName.bestGuess("RandomIface"), CodeBlock.of("Factory.byStrategy(FacadeImpl)"))
-        .addSuperinterface(Runnable::class, CodeBlock.of("Runnable({ Logger.debug(\"Hello world\") })"))
+        .addSuperinterface(ParameterizedTypeName.get(Function::class, String::class, Int::class),
+            CodeBlock.of("Function ({ text -> text.toIntOrNull() ?: 0 })"))
+        .addSuperinterface(
+            Runnable::class,
+            CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class.asTypeName()))
         .build()
 
     val expect = """
         |package com.squareup.tacos
         |
         |import java.lang.Runnable
+        |import kotlin.Function
+        |import kotlin.Int
         |import kotlin.String
         |
-        |class Guac(somethingElse: String) : RandomIface by Factory.byStrategy(FacadeImpl),
-        |    Runnable by Runnable({ Logger.debug("Hello world") })
+        |class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
+        |    Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -2701,7 +2706,7 @@ class TypeSpecTest {
     }.hasMessageThat().isEqualTo("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
   }
 
-  @Test fun failAddParamDelegateWhenNullCtor() {
+  @Test fun failAddParamDelegateWhenNullConstructor() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Taco")
           .addSuperinterface(Runnable::class, "etc")
