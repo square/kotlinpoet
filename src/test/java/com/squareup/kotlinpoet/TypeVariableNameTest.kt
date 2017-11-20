@@ -134,7 +134,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |inline fun <reified T> printMembers() {
-      |  println(T::class.members)
+      |    println(T::class.members)
       |}
       |""".trimMargin())
   }

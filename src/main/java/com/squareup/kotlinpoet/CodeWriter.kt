@@ -36,7 +36,7 @@ private fun extractMemberName(part: String): String {
  */
 internal class CodeWriter constructor(
     out: Appendable,
-    private val indent: String = "  ",
+    private val indent: String = DEFAULT_INDENT,
     private val memberImports: Map<String, Import> = emptyMap(),
     private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {

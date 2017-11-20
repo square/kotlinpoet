@@ -42,7 +42,7 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo("""
       |val foo: kotlin.String
-      |  inline get() = "foo"
+      |    inline get() = "foo"
       |""".trimMargin())
   }
 
@@ -60,9 +60,9 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo("""
       |inline var foo: kotlin.String
-      |  get() = "foo"
-      |  set(value) {
-      |  }
+      |    get() = "foo"
+      |    set(value) {
+      |    }
       |""".trimMargin())
   }
 

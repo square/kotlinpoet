@@ -107,7 +107,7 @@ class CodeBlockTest {
     map.put("text", "tacos")
     val block = CodeBlock.builder()
         .addNamed("%>\n%text:L for %%3.50", map).build()
-    assertThat(block.toString()).isEqualTo("\n  tacos for %3.50")
+    assertThat(block.toString()).isEqualTo("\n    tacos for %3.50")
   }
 
   @Test fun missingNamedArgument() {
