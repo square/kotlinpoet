@@ -175,7 +175,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
-    internal var indent = "  "
+    internal var indent = DEFAULT_INDENT
     internal val members = mutableListOf<Any>()
 
     init {
@@ -284,3 +284,5 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     @JvmStatic fun builder(packageName: String, fileName: String) = Builder(packageName, fileName)
   }
 }
+
+internal const val DEFAULT_INDENT = "    "

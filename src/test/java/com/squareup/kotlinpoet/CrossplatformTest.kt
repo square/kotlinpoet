@@ -63,15 +63,15 @@ class CrossplatformTest {
       |import kotlin.Boolean
       |
       |expect internal class AtomicRef<V>(value: V) {
-      |  val value: V
+      |    val value: V
       |
-      |  fun get(): V
+      |    fun get(): V
       |
-      |  fun set(value: V)
+      |    fun set(value: V)
       |
-      |  fun getAndSet(value: V): V
+      |    fun getAndSet(value: V): V
       |
-      |  fun compareAndSet(expect: V, update: V): Boolean
+      |    fun compareAndSet(expect: V, update: V): Boolean
       |}
       |
       |actual typealias AtomicRef<V> = AtomicReference<V>
@@ -96,9 +96,9 @@ class CrossplatformTest {
       |import kotlin.String
       |
       |expect open class IoException : Exception {
-      |  constructor()
+      |    constructor()
       |
-      |  constructor(message: String)
+      |    constructor(message: String)
       |}
       |""".trimMargin())
   }
