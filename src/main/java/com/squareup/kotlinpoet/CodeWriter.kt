@@ -15,8 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import java.util.EnumSet
-
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
@@ -131,9 +129,10 @@ internal class CodeWriter constructor(
    */
   fun emitModifiers(
       modifiers: Set<KModifier>,
-      implicitModifiers: Set<KModifier> = emptySet()) {
+      implicitModifiers: Set<KModifier> = emptySet()
+  ) {
     if (modifiers.isEmpty()) return
-    for (modifier in EnumSet.copyOf(modifiers)) {
+    for (modifier in modifiers.toEnumSet()) {
       if (implicitModifiers.contains(modifier)) continue
       emit(modifier.keyword)
       emit(" ")
