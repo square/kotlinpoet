@@ -552,4 +552,32 @@ class KotlinPoetTest {
         |fun addA(s: String): String = s + "a"
         |""".trimMargin())
   }
+
+  @Test fun suspendingLambdas() {
+    val barType = ClassName("", "Bar")
+    val suspendingLambda = LambdaTypeName
+        .get(parameters = ClassName("", "Foo"), returnType = barType)
+        .asSuspending()
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.varBuilder("bar", suspendingLambda)
+            .initializer("{ %T() }", barType)
+            .build())
+        .addProperty(PropertySpec.varBuilder("nullBar", suspendingLambda.asNullable())
+            .initializer("null")
+            .build())
+        .addFunction(FunSpec.builder("foo")
+            .addParameter("bar", suspendingLambda)
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |var bar: suspend (Foo) -> Bar = { Bar() }
+      |
+      |var nullBar: (suspend (Foo) -> Bar)? = null
+      |
+      |fun foo(bar: suspend (Foo) -> Bar) {
+      |}
+      |""".trimMargin())
+  }
 }

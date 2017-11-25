@@ -20,6 +20,7 @@ class LambdaTypeName internal constructor(
     parameters: List<ParameterSpec> = emptyList(),
     val returnType: TypeName = UNIT,
     nullable: Boolean = false,
+    val suspending: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val parameters = parameters.toImmutableList()
@@ -32,21 +33,32 @@ class LambdaTypeName internal constructor(
     }
   }
 
-  override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, annotations)
+  override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, suspending,
+      annotations)
 
   override fun asNonNullable()
-      = LambdaTypeName(receiver, parameters, returnType, false, annotations)
+      = LambdaTypeName(receiver, parameters, returnType, false, suspending, annotations)
+
+  fun asSuspending() = LambdaTypeName(receiver, parameters, returnType, nullable, true, annotations)
+
+  fun asNonSuspending() =
+      LambdaTypeName(receiver, parameters, returnType, nullable, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>)
-      = LambdaTypeName(receiver, parameters, returnType, nullable, annotations)
+      = LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations)
 
   override fun withoutAnnotations()
-      = LambdaTypeName(receiver, parameters, returnType, nullable)
+      = LambdaTypeName(receiver, parameters, returnType, nullable, suspending)
 
   override fun emit(out: CodeWriter): CodeWriter {
     emitAnnotations(out)
+
     if (nullable) {
       out.emit("(")
+    }
+
+    if (suspending) {
+      out.emit("suspend ")
     }
 
     receiver?.let {
