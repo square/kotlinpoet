@@ -310,7 +310,7 @@ class KotlinPoetTest {
         .addFunction(FunSpec.builder("shrink")
             .returns(String::class)
             .receiver(LambdaTypeName.get(
-                parameters = String::class.asClassName(),
+                parameters = *arrayOf(String::class.asClassName()),
                 returnType = String::class.asTypeName()))
             .addStatement("return substring(0, length - 1)")
             .build())
@@ -329,7 +329,7 @@ class KotlinPoetTest {
         .addFunction(FunSpec.builder("whatever")
             .returns(Unit::class)
             .receiver(LambdaTypeName.get(
-                parameters = ParameterSpec.builder("name", String::class).build(),
+                parameters = *arrayOf(ParameterSpec.builder("name", String::class).build()),
                 returnType = Unit::class.asClassName()))
             .addStatement("return Unit")
             .build())
@@ -398,7 +398,7 @@ class KotlinPoetTest {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("extensionProperty", Int::class)
             .receiver(LambdaTypeName.get(
-                parameters = String::class.asClassName(),
+                parameters = *arrayOf(String::class.asClassName()),
                 returnType = String::class.asClassName()))
             .getter(FunSpec.getterBuilder()
                 .addStatement("return length")
@@ -556,7 +556,7 @@ class KotlinPoetTest {
   @Test fun suspendingLambdas() {
     val barType = ClassName("", "Bar")
     val suspendingLambda = LambdaTypeName
-        .get(parameters = ClassName("", "Foo"), returnType = barType)
+        .get(parameters = *arrayOf(ClassName("", "Foo")), returnType = barType)
         .asSuspending()
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.varBuilder("bar", suspendingLambda)

@@ -25,9 +25,9 @@ class LambdaTypeNameTest {
   @Test fun paramsWithAnnotationsForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = ParameterSpec.builder("foo", Int::class)
+          parameters = *arrayOf(ParameterSpec.builder("foo", Int::class)
               .addAnnotation(Nullable::class)
-              .build(),
+              .build()),
           returnType = Unit::class.asTypeName())
     }.hasMessageThat().isEqualTo("Parameters with annotations are not allowed")
   }
@@ -35,9 +35,9 @@ class LambdaTypeNameTest {
   @Test fun paramsWithModifiersForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = ParameterSpec.builder("foo", Int::class)
+          parameters = *arrayOf(ParameterSpec.builder("foo", Int::class)
               .addModifiers(VARARG)
-              .build(),
+              .build()),
           returnType = Unit::class.asTypeName())
     }.hasMessageThat().isEqualTo("Parameters with modifiers are not allowed")
   }
@@ -45,9 +45,9 @@ class LambdaTypeNameTest {
   @Test fun paramsWithDefaultValueForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = ParameterSpec.builder("foo", Int::class)
+          parameters = *arrayOf(ParameterSpec.builder("foo", Int::class)
               .defaultValue("42")
-              .build(),
+              .build()),
           returnType = Unit::class.asTypeName())
     }.hasMessageThat().isEqualTo("Parameters with default values are not allowed")
   }

@@ -185,7 +185,9 @@ class FunSpecTest {
     val unitType = UNIT
     val booleanType = BOOLEAN
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(parameters = booleanType, returnType = unitType))
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(
+            parameters = *arrayOf(booleanType),
+            returnType = unitType))
             .build())
         .returns(String::class)
         .build()
