@@ -28,8 +28,10 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
+  val kdoc = builder.kdoc.build()
 
   internal fun emit(codeWriter: CodeWriter) {
+    codeWriter.emitKdoc(kdoc)
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("typealias %L", name)
     codeWriter.emitTypeVariables(typeVariables)
@@ -52,6 +54,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     val builder = Builder(name, type)
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
+    builder.kdoc.add(kdoc)
     return builder
   }
 
@@ -61,6 +64,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   ) {
     internal val modifiers = mutableSetOf<KModifier>()
     internal val typeVariables = mutableSetOf<TypeVariableName>()
+    internal val kdoc = CodeBlock.builder()
 
     init {
       require(name.isName) { "not a valid name: $name" }
@@ -83,6 +87,14 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
 
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
       typeVariables += typeVariable
+    }
+
+    fun addKdoc(format: String, vararg args: Any) = apply {
+      kdoc.add(format, *args)
+    }
+
+    fun addKdoc(block: CodeBlock) = apply {
+      kdoc.add(block)
     }
 
     fun build() = TypeAliasSpec(this)
