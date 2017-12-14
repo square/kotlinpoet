@@ -170,8 +170,9 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   }
 
   class Builder internal constructor(
-      internal val packageName: String,
-      internal val name: String) {
+    internal val packageName: String,
+    internal val name: String
+  ) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()

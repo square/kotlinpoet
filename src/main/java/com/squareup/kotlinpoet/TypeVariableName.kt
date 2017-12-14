@@ -24,12 +24,12 @@ import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
 
 class TypeVariableName private constructor(
-    val name: String,
-    val bounds: List<TypeName>,
-    val variance: KModifier? = null,
-    val reified: Boolean = false,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  val name: String,
+  val bounds: List<TypeName>,
+  val variance: KModifier? = null,
+  val reified: Boolean = false,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
   override fun asNullable() = TypeVariableName(name, bounds, variance, reified, true, annotations)
@@ -93,8 +93,9 @@ class TypeVariableName private constructor(
      * in `variables` will make sure that the bounds are filled in before returning.
      */
     internal fun get(
-        mirror: TypeVariable,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>): TypeVariableName {
+      mirror: TypeVariable,
+      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+    ): TypeVariableName {
       val element = mirror.asElement() as TypeParameterElement
       var typeVariableName: TypeVariableName? = typeVariables[element]
       if (typeVariableName == null) {
@@ -114,9 +115,9 @@ class TypeVariableName private constructor(
 
     /** Returns type variable equivalent to `type`.  */
     internal fun get(
-        type: java.lang.reflect.TypeVariable<*>,
-        map: MutableMap<Type, TypeVariableName> = mutableMapOf())
-        : TypeVariableName {
+      type: java.lang.reflect.TypeVariable<*>,
+      map: MutableMap<Type, TypeVariableName> = mutableMapOf()
+    ): TypeVariableName {
       var result: TypeVariableName? = map[type]
       if (result == null) {
         val bounds = mutableListOf<TypeName>()

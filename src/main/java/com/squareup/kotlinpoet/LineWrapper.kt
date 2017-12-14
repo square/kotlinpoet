@@ -20,9 +20,9 @@ package com.squareup.kotlinpoet
  * [LineWrapper.append] or soft-wrapping spaces using [LineWrapper.wrappingSpace].
  */
 internal class LineWrapper(
-    private val out: Appendable,
-    private val indent: String,
-    private val columnLimit: Int
+  private val out: Appendable,
+  private val indent: String,
+  private val columnLimit: Int
 ) {
   private var closed = false
 

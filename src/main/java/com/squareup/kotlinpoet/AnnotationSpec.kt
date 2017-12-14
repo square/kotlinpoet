@@ -138,7 +138,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
    * Annotation value visitor adding members to the given builder instance.
    */
   private class Visitor internal constructor(
-      internal val builder: CodeBlock.Builder
+    internal val builder: CodeBlock.Builder
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String)
@@ -166,8 +166,9 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
   companion object {
     @JvmStatic @JvmOverloads fun get(
-        annotation: Annotation,
-        includeDefaultValues: Boolean = false): AnnotationSpec {
+      annotation: Annotation,
+      includeDefaultValues: Boolean = false
+    ): AnnotationSpec {
       try {
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())

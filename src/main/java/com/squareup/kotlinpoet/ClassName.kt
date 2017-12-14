@@ -27,9 +27,9 @@ import kotlin.reflect.KClass
 
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName internal constructor(
-    names: List<String>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  names: List<String>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations), Comparable<ClassName> {
   /**
    * Returns a class name created from the given parts. For example, calling this with package name

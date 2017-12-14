@@ -51,8 +51,8 @@ import kotlin.reflect.KClass
  *  * `%]` ends a statement.
  */
 class CodeBlock private constructor(
-    internal val formatParts: List<String>,
-    internal val args: List<Any?>
+  internal val formatParts: List<String>,
+  internal val args: List<Any?>
 ) {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
@@ -410,8 +410,11 @@ class CodeBlock private constructor(
 }
 
 @JvmOverloads
-fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
-                                     suffix: CharSequence = ""): CodeBlock {
+fun Collection<CodeBlock>.joinToCode(
+  separator: CharSequence = ", ",
+  prefix: CharSequence = "",
+  suffix: CharSequence = ""
+): CodeBlock {
   val blocks = toTypedArray()
   val placeholders = Array(blocks.size, { "%L" })
   return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
