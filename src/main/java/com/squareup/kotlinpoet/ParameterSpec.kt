@@ -32,7 +32,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    if (name.isNotEmpty()) codeWriter.emitCode("%L", name)
+    if (name.isNotEmpty()) codeWriter.emitCode("%L", escapeIfKeyword(name))
     if (name.isNotEmpty() && includeType) codeWriter.emit(": ")
     if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
@@ -126,7 +126,6 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
         = method.parameters.map { ParameterSpec.get(it) }
 
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(name.isName) { "not a valid name: $name" }
       return Builder(name, type).addModifiers(*modifiers)
     }
 
