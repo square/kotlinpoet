@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.jvm.asClassName
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Square, Inc.
+ * Copyright (C) 2017 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet;
+package com.squareup.kotlinpoet.jvm;
 
+import com.squareup.kotlinpoet.ClassName;
+import com.squareup.kotlinpoet.ParameterizedTypeName;
+import com.squareup.kotlinpoet.TypeName;
+import com.squareup.kotlinpoet.TypeNames;
+import com.squareup.kotlinpoet.TypeVariableName;
+import com.squareup.kotlinpoet.WildcardTypeName;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -64,10 +70,10 @@ public class TypeNameTest {
 
   @Test public void genericType() throws Exception {
     Method recursiveEnum = getClass().getDeclaredMethod("generic", Enum[].class);
-    TypeNames.get(recursiveEnum.getReturnType());
-    TypeNames.get(recursiveEnum.getGenericReturnType());
-    TypeName genericTypeName = TypeNames.get(recursiveEnum.getParameterTypes()[0]);
-    TypeNames.get(recursiveEnum.getGenericParameterTypes()[0]);
+    TypeNamesJvm.get(recursiveEnum.getReturnType());
+    TypeNamesJvm.get(recursiveEnum.getGenericReturnType());
+    TypeName genericTypeName = TypeNamesJvm.get(recursiveEnum.getParameterTypes()[0]);
+    TypeNamesJvm.get(recursiveEnum.getGenericParameterTypes()[0]);
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).contains("Enum");
@@ -75,10 +81,10 @@ public class TypeNameTest {
 
   @Test public void innerClassInGenericType() throws Exception {
     Method genericStringInner = getClass().getDeclaredMethod("testGenericStringInner");
-    TypeNames.get(genericStringInner.getReturnType());
-    TypeName genericTypeName = TypeNames.get(genericStringInner.getGenericReturnType());
-    assertNotEquals(TypeNames.get(genericStringInner.getGenericReturnType()),
-        TypeNames.get(getClass().getDeclaredMethod("testGenericIntInner").getGenericReturnType()));
+    TypeNamesJvm.get(genericStringInner.getReturnType());
+    TypeName genericTypeName = TypeNamesJvm.get(genericStringInner.getGenericReturnType());
+    assertNotEquals(TypeNamesJvm.get(genericStringInner.getGenericReturnType()),
+        TypeNamesJvm.get(getClass().getDeclaredMethod("testGenericIntInner").getGenericReturnType()));
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
@@ -87,10 +93,10 @@ public class TypeNameTest {
 
   @Test public void innerGenericInGenericType() throws Exception {
     Method genericStringInner = getClass().getDeclaredMethod("testGenericInnerLong");
-    TypeNames.get(genericStringInner.getReturnType());
-    TypeName genericTypeName = TypeNames.get(genericStringInner.getGenericReturnType());
-    assertNotEquals(TypeNames.get(genericStringInner.getGenericReturnType()),
-        TypeNames.get(getClass().getDeclaredMethod("testGenericInnerInt").getGenericReturnType()));
+    TypeNamesJvm.get(genericStringInner.getReturnType());
+    TypeName genericTypeName = TypeNamesJvm.get(genericStringInner.getGenericReturnType());
+    assertNotEquals(TypeNamesJvm.get(genericStringInner.getGenericReturnType()),
+        TypeNamesJvm.get(getClass().getDeclaredMethod("testGenericInnerInt").getGenericReturnType()));
 
     // Make sure the generic argument is present
     assertThat(genericTypeName.toString()).isEqualTo(
@@ -99,8 +105,8 @@ public class TypeNameTest {
 
   @Test public void innerStaticInGenericType() throws Exception {
     Method staticInGeneric = getClass().getDeclaredMethod("testNestedNonGeneric");
-    TypeNames.get(staticInGeneric.getReturnType());
-    TypeName typeName = TypeNames.get(staticInGeneric.getGenericReturnType());
+    TypeNamesJvm.get(staticInGeneric.getReturnType());
+    TypeName typeName = TypeNamesJvm.get(staticInGeneric.getGenericReturnType());
 
     // Make sure there are no generic arguments
     assertThat(typeName.toString()).isEqualTo(
@@ -120,10 +126,10 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodeClassName() {
-    assertEqualsHashCodeAndToString(ClassNames.get(Object.class), ClassNames.get(Object.class));
-    assertEqualsHashCodeAndToString(TypeNames.get(Object.class), ClassNames.get(Object.class));
+    assertEqualsHashCodeAndToString(ClassNamesJvm.get(Object.class), ClassNamesJvm.get(Object.class));
+    assertEqualsHashCodeAndToString(TypeNamesJvm.get(Object.class), ClassNamesJvm.get(Object.class));
     assertEqualsHashCodeAndToString(ClassName.bestGuess("java.lang.Object"),
-        ClassNames.get(Object.class));
+        ClassNamesJvm.get(Object.class));
   }
 
   @Test public void equalsAndHashCodeParameterizedTypeName() {
@@ -131,7 +137,7 @@ public class TypeNameTest {
         ParameterizedTypeName.get(List.class, Object.class));
     assertEqualsHashCodeAndToString(ParameterizedTypeName.get(Set.class, UUID.class),
         ParameterizedTypeName.get(Set.class, UUID.class));
-    assertNotEquals(ClassNames.get(List.class), ParameterizedTypeName.get(List.class,
+    assertNotEquals(ClassNamesJvm.get(List.class), ParameterizedTypeName.get(List.class,
         String.class));
   }
 

@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asClassName
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier

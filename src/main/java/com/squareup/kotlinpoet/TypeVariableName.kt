@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmName("TypeVariableNames")
-
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import java.util.Collections
 import javax.lang.model.element.TypeParameterElement
@@ -131,17 +130,4 @@ class TypeVariableName private constructor(
       return result
     }
   }
-}
-
-/** Returns type variable equivalent to `mirror`.  */
-@JvmName("get")
-fun TypeVariable.asTypeVariableName()
-    = (asElement() as TypeParameterElement).asTypeVariableName()
-
-/** Returns type variable equivalent to `element`.  */
-@JvmName("get")
-fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
-  val name = simpleName.toString()
-  val boundsTypeNames = bounds.map { it.asTypeName() }
-  return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }

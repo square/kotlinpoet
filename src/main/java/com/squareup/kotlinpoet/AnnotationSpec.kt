@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asClassName
 import java.lang.reflect.Array
 import java.util.Objects
 import javax.lang.model.element.AnnotationMirror
