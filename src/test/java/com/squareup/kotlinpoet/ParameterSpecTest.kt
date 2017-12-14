@@ -35,4 +35,10 @@ class ParameterSpecTest {
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
+
+  @Test fun escapeKeywordInParameterName() {
+    val parameterSpec = ParameterSpec.builder("if", String::class)
+        .build()
+    assertThat(parameterSpec.toString()).isEqualTo("`if`: kotlin.String")
+  }
 }
