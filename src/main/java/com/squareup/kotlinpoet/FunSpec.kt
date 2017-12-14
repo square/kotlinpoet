@@ -58,9 +58,10 @@ class FunSpec private constructor(builder: Builder) {
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
   internal fun emit(
-      codeWriter: CodeWriter,
-      enclosingName: String?,
-      implicitModifiers: Set<KModifier>) {
+    codeWriter: CodeWriter,
+    enclosingName: String?,
+    implicitModifiers: Set<KModifier>
+  ) {
     codeWriter.emitKdoc(kdoc)
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
@@ -96,9 +97,7 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  private fun emitSignature(
-      codeWriter: CodeWriter,
-      enclosingName: String?) {
+  private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
     if (isConstructor) {
       codeWriter.emitCode("constructor", enclosingName)
     } else if (name == GETTER) {
@@ -414,7 +413,10 @@ class FunSpec private constructor(builder: Builder) {
      * throws declarations. An `override` modifier will be added.
      */
     @JvmStatic fun overriding(
-        method: ExecutableElement, enclosing: DeclaredType, types: Types): Builder {
+      method: ExecutableElement,
+      enclosing: DeclaredType,
+      types: Types
+    ): Builder {
       val executableType = types.asMemberOf(enclosing, method) as ExecutableType
       val resolvedParameterTypes = executableType.parameterTypes
       val resolvedReturnType = executableType.returnType

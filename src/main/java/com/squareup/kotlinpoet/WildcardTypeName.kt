@@ -23,10 +23,10 @@ import javax.lang.model.element.TypeParameterElement
 import kotlin.reflect.KClass
 
 class WildcardTypeName private constructor(
-    upperBounds: List<TypeName>,
-    lowerBounds: List<TypeName>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  upperBounds: List<TypeName>,
+  lowerBounds: List<TypeName>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val upperBounds = upperBounds.toImmutableList()
   val lowerBounds = lowerBounds.toImmutableList()
@@ -81,9 +81,9 @@ class WildcardTypeName private constructor(
     @JvmStatic fun supertypeOf(lowerBound: KClass<*>) = supertypeOf(lowerBound.asTypeName())
 
     internal fun get(
-        mirror: javax.lang.model.type.WildcardType,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
-        : TypeName {
+      mirror: javax.lang.model.type.WildcardType,
+      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+    ): TypeName {
       val extendsBound = mirror.extendsBound
       if (extendsBound == null) {
         val superBound = mirror.superBound
@@ -96,9 +96,9 @@ class WildcardTypeName private constructor(
     }
 
     internal fun get(
-        wildcardName: WildcardType,
-        map: MutableMap<Type, TypeVariableName>)
-        : TypeName {
+      wildcardName: WildcardType,
+      map: MutableMap<Type, TypeVariableName>
+    ): TypeName {
       return WildcardTypeName(
           wildcardName.upperBounds.map { TypeName.get(it, map = map) },
           wildcardName.lowerBounds.map { TypeName.get(it, map = map) })

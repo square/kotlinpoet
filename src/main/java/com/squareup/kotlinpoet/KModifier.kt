@@ -16,8 +16,8 @@
 package com.squareup.kotlinpoet
 
 enum class KModifier(
-    internal val keyword: String,
-    private vararg val targets: Target
+  internal val keyword: String,
+  private vararg val targets: Target
 ) {
   // Modifier order defined here:
   // https://github.com/yole/kotlin-style-guide/issues/3.

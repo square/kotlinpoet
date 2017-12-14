@@ -35,10 +35,11 @@ class PropertySpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
 
   internal fun emit(
-      codeWriter: CodeWriter,
-      implicitModifiers: Set<KModifier>,
-      withInitializer: Boolean = true,
-      inline: Boolean = false) {
+    codeWriter: CodeWriter,
+    implicitModifiers: Set<KModifier>,
+    withInitializer: Boolean = true,
+    inline: Boolean = false
+  ) {
     val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
         setter?.modifiers?.contains(KModifier.INLINE) ?: false
     val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers

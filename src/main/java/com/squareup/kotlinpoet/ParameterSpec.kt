@@ -63,8 +63,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   }
 
   class Builder internal constructor(
-      internal val name: String,
-      internal val type: TypeName
+    internal val name: String,
+    internal val type: TypeName
   ) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val modifiers = mutableListOf<KModifier>()
@@ -145,8 +145,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 }
 
 internal fun List<ParameterSpec>.emit(
-    codeWriter: CodeWriter,
-    emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
+  codeWriter: CodeWriter,
+  emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
 ) = with(codeWriter) {
   val params = this@emit
   emit("(")

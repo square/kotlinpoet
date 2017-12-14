@@ -33,10 +33,10 @@ private fun extractMemberName(part: String): String {
  * imports, indentation, and deferred variable names.
  */
 internal class CodeWriter constructor(
-    out: Appendable,
-    private val indent: String = DEFAULT_INDENT,
-    private val memberImports: Map<String, Import> = emptyMap(),
-    private val importedTypes: Map<String, ClassName> = emptyMap()
+  out: Appendable,
+  private val indent: String = DEFAULT_INDENT,
+  private val memberImports: Map<String, Import> = emptyMap(),
+  private val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
@@ -128,8 +128,8 @@ internal class CodeWriter constructor(
    * be emitted.
    */
   fun emitModifiers(
-      modifiers: Set<KModifier>,
-      implicitModifiers: Set<KModifier> = emptySet()
+    modifiers: Set<KModifier>,
+    implicitModifiers: Set<KModifier> = emptySet()
   ) {
     if (modifiers.isEmpty()) return
     for (modifier in modifiers.toEnumSet()) {

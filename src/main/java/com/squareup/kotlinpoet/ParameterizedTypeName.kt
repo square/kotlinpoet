@@ -23,11 +23,11 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 class ParameterizedTypeName internal constructor(
-    private val enclosingType: ParameterizedTypeName?,
-    val rawType: ClassName,
-    typeArguments: List<TypeName>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  private val enclosingType: ParameterizedTypeName?,
+  val rawType: ClassName,
+  typeArguments: List<TypeName>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val typeArguments = typeArguments.toImmutableList()
 
@@ -94,8 +94,9 @@ class ParameterizedTypeName internal constructor(
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(
-        type: ParameterizedType,
-        map: MutableMap<Type, TypeVariableName>): ParameterizedTypeName {
+      type: ParameterizedType,
+      map: MutableMap<Type, TypeVariableName>
+    ): ParameterizedTypeName {
       val rawType = (type.rawType as Class<*>).asClassName()
       val ownerType = if (type.ownerType is ParameterizedType
           && !Modifier.isStatic((type.rawType as Class<*>).modifiers))

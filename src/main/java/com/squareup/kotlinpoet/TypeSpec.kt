@@ -277,9 +277,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   override fun toString() = buildString { emit(CodeWriter(this), null) }
 
   enum class Kind(
-      internal val declarationKeyword: String,
-      internal val implicitPropertyModifiers: Set<KModifier>,
-      internal val implicitFunctionModifiers: Set<KModifier>
+    internal val declarationKeyword: String,
+    internal val implicitPropertyModifiers: Set<KModifier>,
+    internal val implicitFunctionModifiers: Set<KModifier>
   ) {
     CLASS(
         "class",
@@ -318,9 +318,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   class Builder internal constructor(
-      internal val kind: Kind,
-      internal val name: String?,
-      internal val anonymousTypeArguments: CodeBlock?
+    internal val kind: Kind,
+    internal val name: String?,
+    internal val anonymousTypeArguments: CodeBlock?
   ) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
@@ -437,8 +437,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addSuperinterface(superinterface.asTypeName())
 
     @JvmOverloads fun addEnumConstant(
-        name: String,
-        typeSpec: TypeSpec = anonymousClassBuilder("").build()) = apply {
+      name: String,
+      typeSpec: TypeSpec = anonymousClassBuilder("").build()
+    ) = apply {
       check(kind == Kind.ENUM) { "${this.name} is not enum" }
       require(typeSpec.anonymousTypeArguments != null) {
         "enum constants must have anonymous type arguments"

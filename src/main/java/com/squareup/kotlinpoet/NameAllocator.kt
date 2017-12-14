@@ -75,8 +75,8 @@ import java.util.UUID
  * scope.
  */
 class NameAllocator private constructor(
-    private val allocatedNames: MutableSet<String>,
-    private val tagToName: MutableMap<Any, String>
+  private val allocatedNames: MutableSet<String>,
+  private val tagToName: MutableMap<Any, String>
 ) : Cloneable {
   constructor() : this(mutableSetOf(), mutableMapOf())
 

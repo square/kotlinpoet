@@ -16,12 +16,12 @@
 package com.squareup.kotlinpoet
 
 class LambdaTypeName internal constructor(
-    val receiver: TypeName? = null,
-    parameters: List<ParameterSpec> = emptyList(),
-    val returnType: TypeName = UNIT,
-    nullable: Boolean = false,
-    val suspending: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  val receiver: TypeName? = null,
+  parameters: List<ParameterSpec> = emptyList(),
+  val returnType: TypeName = UNIT,
+  nullable: Boolean = false,
+  val suspending: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val parameters = parameters.toImmutableList()
 
@@ -77,16 +77,16 @@ class LambdaTypeName internal constructor(
   companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        parameters: List<ParameterSpec> = emptyList(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      parameters: List<ParameterSpec> = emptyList(),
+      returnType: TypeName
     ) = LambdaTypeName(receiver, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        vararg parameters: TypeName = emptyArray(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      vararg parameters: TypeName = emptyArray(),
+      returnType: TypeName
     ): LambdaTypeName {
       return LambdaTypeName(
           receiver,
@@ -96,9 +96,9 @@ class LambdaTypeName internal constructor(
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        vararg parameters: ParameterSpec = emptyArray(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      vararg parameters: ParameterSpec = emptyArray(),
+      returnType: TypeName
     ) = LambdaTypeName(receiver, parameters.toList(), returnType)
   }
 }

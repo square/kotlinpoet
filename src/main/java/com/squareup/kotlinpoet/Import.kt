@@ -17,8 +17,8 @@
 package com.squareup.kotlinpoet
 
 internal data class Import(
-    internal val qualifiedName: String,
-    internal val alias: String? = null
+  internal val qualifiedName: String,
+  internal val alias: String? = null
 ) : Comparable<Import> {
 
   private val importString = buildString {

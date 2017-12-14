@@ -61,7 +61,7 @@ import kotlin.reflect.KClass
  * and [WildcardTypeName].
  */
 abstract class TypeName internal constructor(
-    val nullable: Boolean, annotations: List<AnnotationSpec>
+  val nullable: Boolean, annotations: List<AnnotationSpec>
 ) {
   val annotations = annotations.toImmutableList()
 
@@ -115,9 +115,9 @@ abstract class TypeName internal constructor(
 
   companion object {
     internal fun get(
-        mirror: TypeMirror,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>)
-        : TypeName {
+      mirror: TypeMirror,
+      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+    ): TypeName {
       return mirror.accept(object : SimpleTypeVisitor7<TypeName, Void?>() {
         override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
           return when (t.kind) {
