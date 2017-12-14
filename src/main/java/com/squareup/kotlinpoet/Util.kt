@@ -15,12 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import java.lang.Character.isISOControl
-import java.util.ArrayList
-import java.util.Arrays
 import java.util.Collections
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
 
 internal object NullAppendable : Appendable {
   override fun append(charSequence: CharSequence) = this
@@ -28,41 +23,35 @@ internal object NullAppendable : Appendable {
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, List<V>>.toImmutableMultimap(): Map<K, List<V>> {
-  val result = LinkedHashMap<K, List<V>>()
-  for ((key, value) in this) {
-    if (value.isEmpty()) continue
-    result.put(key, value.toImmutableList())
-  }
-  return Collections.unmodifiableMap(result)
-}
+internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
+    Collections.unmodifiableMap(LinkedHashMap(this))
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
-    = Collections.unmodifiableMap(LinkedHashMap(this))
+internal fun <T> Collection<T>.toImmutableList(): List<T> =
+    Collections.unmodifiableList(ArrayList(this))
 
-internal fun <T> Collection<T>.toImmutableList(): List<T>
-    = Collections.unmodifiableList(ArrayList(this))
+internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
+    Collections.unmodifiableSet(LinkedHashSet(this))
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T>
-    = Collections.unmodifiableSet(LinkedHashSet(this))
+internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
+    enumValues<T>().filterTo(mutableSetOf(), this::contains)
 
 internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
   require(count == 1) {
-    "modifiers $modifiers must contain one of ${Arrays.toString(mutuallyExclusive)}"
+    "modifiers $modifiers must contain one of ${mutuallyExclusive.contentToString()}"
   }
 }
 
 internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
   require(count <= 1) {
-    "modifiers $modifiers must contain none or only one of ${Arrays.toString(mutuallyExclusive)}"
+    "modifiers $modifiers must contain none or only one of ${mutuallyExclusive.contentToString()}"
   }
 }
 
 internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifier) {
   require(forbidden.none(modifiers::contains)) {
-    "modifiers $modifiers must contain none of ${Arrays.toString(forbidden)}"
+    "modifiers $modifiers must contain none of ${forbidden.contentToString()}"
   }
 }
 
@@ -80,9 +69,14 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\"' -> "\""    // \u0022: double quote (")
   c == '\'' -> "\\'"   // \u0027: single quote (')
   c == '\\' -> "\\\\"  // \u005c: backslash (\)
-  isISOControl(c) -> String.format("\\u%04x", c.toInt())
+  c.isIsoControl -> String.format("\\u%04x", c.toInt())
   else -> Character.toString(c)
 }
+
+private val Char.isIsoControl: Boolean
+  get() {
+    return this in '\u0000'..'\u001F' || this in '\u007F'..'\u009F'
+  }
 
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
 internal fun stringLiteralWithQuotes(value: String): String {

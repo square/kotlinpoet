@@ -32,10 +32,9 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emitCode("%L", name)
-    if (includeType) {
-      codeWriter.emitCode(": %T", type)
-    }
+    if (name.isNotEmpty()) codeWriter.emitCode("%L", name)
+    if (name.isNotEmpty() && includeType) codeWriter.emit(": ")
+    if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
   }
 
@@ -136,6 +135,12 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = builder(name, type.asTypeName(), *modifiers)
+
+    @JvmStatic fun unnamed(type: KClass<*>) = unnamed(type.asTypeName())
+
+    @JvmStatic fun unnamed(type: Type) = unnamed(type.asTypeName())
+
+    @JvmStatic fun unnamed(type: TypeName) = Builder("", type).build()
   }
 }
 

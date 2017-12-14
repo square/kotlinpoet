@@ -48,54 +48,31 @@ class FileSpecTest {
     val source = FileSpec.builder("com.example.helloworld", "HelloWorld")
         .addType(hello)
         .addStaticImport(hoverboard, "createNimbus")
-        .addStaticImport(namedBoards, "*")
-        .addStaticImport(Collections::class, "*")
+        .addStaticImport(namedBoards, "THUNDERBOLT")
+        .addStaticImport(Collections::class, "sort", "emptyList")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.example.helloworld
         |
         |import com.mattel.Hoverboard
-        |import com.mattel.Hoverboard.Boards.*
+        |import com.mattel.Hoverboard.Boards.THUNDERBOLT
         |import com.mattel.Hoverboard.createNimbus
         |import java.util.ArrayList
-        |import java.util.Collections.*
+        |import java.util.Collections.emptyList
+        |import java.util.Collections.sort
         |import kotlin.collections.List
         |
         |class HelloWorld {
-        |  fun beyond(): List<Hoverboard> {
-        |    val result = ArrayList<Hoverboard>()
-        |    result.add(createNimbus(2000))
-        |    result.add(createNimbus("2001"))
-        |    result.add(createNimbus(THUNDERBOLT))
-        |    sort(result)
-        |    return if (result.isEmpty()) emptyList() else result
-        |  }
+        |    fun beyond(): List<Hoverboard> {
+        |        val result = ArrayList<Hoverboard>()
+        |        result.add(createNimbus(2000))
+        |        result.add(createNimbus("2001"))
+        |        result.add(createNimbus(THUNDERBOLT))
+        |        sort(result)
+        |        return if (result.isEmpty()) emptyList() else result
+        |    }
         |}
         |""".trimMargin())
-  }
-
-  @Test fun importStaticForCrazyFormatsWorks() {
-    val method = FunSpec.builder("method").build()
-    FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addInitializerBlock(CodeBlock.builder()
-                .addStatement("%T", Runtime::class)
-                .addStatement("%T.a()", Runtime::class)
-                .addStatement("%T.X", Runtime::class)
-                .addStatement("%T%T", Runtime::class, Runtime::class)
-                .addStatement("%T.%T", Runtime::class, Runtime::class)
-                .addStatement("%1T%1T", Runtime::class)
-                .addStatement("%1T%2L%1T", Runtime::class, "?")
-                .addStatement("%1T%2L%2S%1T", Runtime::class, "?")
-                .addStatement("%1T%2L%2S%1T%3N%1T", Runtime::class, "?", method)
-                .addStatement("%T%L", Runtime::class, "?")
-                .addStatement("%T%S", Runtime::class, "?")
-                .addStatement("%T%N", Runtime::class, method)
-                .build())
-            .build())
-        .addStaticImport(Runtime::class, "*")
-        .build()
-        .toString() // don't look at the generated code...
   }
 
   @Test fun importStaticMixed() {
@@ -111,25 +88,27 @@ class FileSpecTest {
                 .build())
             .build())
         .addStaticImport(Thread.State.BLOCKED)
-        .addStaticImport(System::class, "*")
+        .addStaticImport(System::class, "gc", "out", "nanoTime")
         .addStaticImport(Thread.State::class, "valueOf")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import java.lang.System.*
+        |import java.lang.System.gc
+        |import java.lang.System.nanoTime
+        |import java.lang.System.out
         |import java.lang.Thread
         |import java.lang.Thread.State.BLOCKED
         |import java.lang.Thread.State.valueOf
         |
         |class Taco {
-        |  init {
-        |    assert valueOf("BLOCKED") == BLOCKED
-        |    gc()
-        |    out.println(nanoTime())
-        |  }
+        |    init {
+        |        assert valueOf("BLOCKED") == BLOCKED
+        |        gc()
+        |        out.println(nanoTime())
+        |    }
         |
-        |  constructor(vararg states: Thread.State)
+        |    constructor(vararg states: Thread.State)
         |}
         |""".trimMargin())
   }
@@ -190,10 +169,10 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
-        |    System.gc()
-        |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
-        |  }
+        |    fun minutesToSeconds(minutes: Long): Long {
+        |        System.gc()
+        |        return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
+        |    }
         |}
         |""".trimMargin())
   }
@@ -211,10 +190,10 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
-        |    System.gc()
-        |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
-        |  }
+        |    fun minutesToSeconds(minutes: Long): Long {
+        |        System.gc()
+        |        return SECONDS.convert(minutes, TimeUnit.MINUTES)
+        |    }
         |}
         |""".trimMargin())
   }
@@ -234,34 +213,20 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
-        |    System.gc()
-        |    return SECONDS.convert(minutes, MINUTES)
-        |  }
+        |    fun minutesToSeconds(minutes: Long): Long {
+        |        System.gc()
+        |        return SECONDS.convert(minutes, MINUTES)
+        |    }
         |}
         |""".trimMargin())
   }
 
-  @Test fun importStaticUsingWildcards() {
-    val source = FileSpec.builder("readme", "Util")
-        .addType(importStaticTypeSpec("Util"))
-        .addStaticImport(TimeUnit::class, "*")
-        .addStaticImport(System::class, "*")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
-        |package readme
-        |
-        |import java.lang.System.*
-        |import java.util.concurrent.TimeUnit.*
-        |import kotlin.Long
-        |
-        |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
-        |    gc()
-        |    return SECONDS.convert(minutes, MINUTES)
-        |  }
-        |}
-        |""".trimMargin())
+  @Test fun importStaticWildcardsForbidden() {
+    assertThrows<IllegalArgumentException> {
+      FileSpec.builder("readme", "Util")
+          .addType(importStaticTypeSpec("Util"))
+          .addStaticImport(TimeUnit::class, "*")
+    }.hasMessageThat().isEqualTo("Wildcard imports are not allowed")
   }
 
   private fun importStaticTypeSpec(name: String): TypeSpec {
@@ -273,7 +238,6 @@ class FileSpecTest {
         .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
         .build()
     return TypeSpec.classBuilder(name).addFunction(funSpec).build()
-
   }
 
   @Test fun noImports() {
@@ -299,7 +263,7 @@ class FileSpecTest {
         |import java.util.Date
         |
         |class Taco {
-        |  val madeFreshDate: Date
+        |    val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -317,9 +281,9 @@ class FileSpecTest {
         |import java.util.Date
         |
         |class Taco {
-        |  val madeFreshDate: Date
+        |    val madeFreshDate: Date
         |
-        |  val madeFreshDatabaseDate: java.sql.Date
+        |    val madeFreshDatabaseDate: java.sql.Date
         |}
         |""".trimMargin())
   }
@@ -351,12 +315,18 @@ class FileSpecTest {
     val minsAlias = "MINS"
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
+        .addFunction(FunSpec.builder("sleepForFiveMins")
+            .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
+            .build())
         .build()
     assertThat(source.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
+      |fun sleepForFiveMins() {
+      |    MINS.sleep(5)
+      |}
       |""".trimMargin())
   }
 
@@ -379,17 +349,17 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |  class B {
-        |    class Twin
+        |    class B {
+        |        class Twin
         |
-        |    class C {
-        |      val d: A.Twin.D
+        |        class C {
+        |            val d: A.Twin.D
+        |        }
         |    }
-        |  }
         |
-        |  class Twin {
-        |    class D
-        |  }
+        |    class Twin {
+        |        class D
+        |    }
         |}
         |""".trimMargin())
   }
@@ -413,17 +383,17 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |  class B {
-        |    class C {
-        |      val d: A.Twin.D
+        |    class B {
+        |        class C {
+        |            val d: A.Twin.D
         |
-        |      class Twin
+        |            class Twin
+        |        }
         |    }
-        |  }
         |
-        |  class Twin {
-        |    class D
-        |  }
+        |    class Twin {
+        |        class D
+        |    }
         |}
         |""".trimMargin())
   }
@@ -449,19 +419,19 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |  class B {
-        |    class C {
-        |      val d: Twin.D
+        |    class B {
+        |        class C {
+        |            val d: Twin.D
         |
-        |      class Nested {
-        |        class Twin
-        |      }
+        |            class Nested {
+        |                class Twin
+        |            }
+        |        }
         |    }
-        |  }
         |
-        |  class Twin {
-        |    class D
-        |  }
+        |    class Twin {
+        |        class D
+        |    }
         |}
         |""".trimMargin())
   }
@@ -481,7 +451,7 @@ class FileSpecTest {
         |import com.squareup.wire.Message
         |
         |class Taco : Message() {
-        |  class Builder : Message.Builder()
+        |    class Builder : Message.Builder()
         |}
         |""".trimMargin())
   }
@@ -503,8 +473,8 @@ class FileSpecTest {
         |
         |@Component
         |class TestComponent {
-        |  @Component.Builder
-        |  class Builder
+        |    @Component.Builder
+        |    class Builder
         |}
         |""".trimMargin())
   }
@@ -525,9 +495,9 @@ class FileSpecTest {
         |import kotlin.String
         |
         |class HelloWorld {
-        |  fun main(args: Array<String>) {
-        |    System.out.println("Hello World!");
-        |  }
+        |    fun main(args: Array<String>) {
+        |        System.out.println("Hello World!");
+        |    }
         |}
         |""".trimMargin())
   }
@@ -586,9 +556,9 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  val a: com.squareup.tacos.A
+        |    val a: com.squareup.tacos.A
         |
-        |  class A
+        |    class A
         |}
         |""".trimMargin())
   }
@@ -655,7 +625,7 @@ class FileSpecTest {
         .build()
     assertThrows<IllegalStateException> {
       builder.addAnnotation(annotation)
-    }.hasMessage("Use-site target SET not supported for file annotations.")
+    }.hasMessageThat().isEqualTo("Use-site target SET not supported for file annotations.")
   }
 
   @Test fun escapeKeywordInPackageName() {

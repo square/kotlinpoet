@@ -120,17 +120,17 @@ class FunSpecTest {
     whenMock(method.enclosingElement).thenReturn(element)
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [final]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [final]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.PRIVATE))
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [private]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [private]")
 
     whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.STATIC))
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(method)
-    }.hasMessage("cannot override method with modifiers: [static]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [static]")
   }
 
   @Test fun nullableParam() {
@@ -185,7 +185,9 @@ class FunSpecTest {
     val unitType = UNIT
     val booleanType = BOOLEAN
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(parameters = booleanType, returnType = unitType))
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(
+            parameters = *arrayOf(booleanType),
+            returnType = unitType))
             .build())
         .returns(String::class)
         .build()
@@ -287,7 +289,7 @@ class FunSpecTest {
 
     assertThat(funSpec.toString()).isEqualTo("""
       |constructor(a: kotlin.Int) : this(a) {
-      |  println()
+      |    println()
       |}
       |""".trimMargin())
   }
@@ -296,7 +298,7 @@ class FunSpecTest {
     assertThrows<IllegalStateException> {
       FunSpec.builder("main")
           .callThisConstructor("a", "b", "c")
-    }.hasMessage("only constructors can delegate to other constructors!")
+    }.hasMessageThat().isEqualTo("only constructors can delegate to other constructors!")
   }
 
   @Test fun emptySecondaryConstructor() {
@@ -314,7 +316,7 @@ class FunSpecTest {
       FunSpec.builder("foo")
           .addTypeVariable(TypeVariableName("T").reified())
           .build()
-    }.hasMessage("only type parameters of inline functions can be reified!")
+    }.hasMessageThat().isEqualTo("only type parameters of inline functions can be reified!")
   }
 
   @Test fun equalsAndHashCode() {

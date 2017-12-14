@@ -75,14 +75,14 @@ class NameAllocatorTest {
     nameAllocator.newName("foo", 1)
     assertThrows<IllegalArgumentException> {
       nameAllocator.newName("bar", 1)
-    }.hasMessage("tag 1 cannot be used for both 'foo' and 'bar'")
+    }.hasMessageThat().isEqualTo("tag 1 cannot be used for both 'foo' and 'bar'")
   }
 
   @Test fun useBeforeAllocateForbidden() {
     val nameAllocator = NameAllocator()
     assertThrows<IllegalArgumentException> {
       nameAllocator.get(1)
-    }.hasMessage("unknown tag: 1")
+    }.hasMessageThat().isEqualTo("unknown tag: 1")
   }
 
   @Test fun cloneUsage() {

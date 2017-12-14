@@ -38,31 +38,31 @@ class CodeBlockTest {
   @Test fun indentCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1>", "taco").build()
-    }.hasMessage("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
   }
 
   @Test fun deindentCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1<", "taco").build()
-    }.hasMessage("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
   }
 
   @Test fun percentEscapeCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1%", "taco").build()
-    }.hasMessage("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
   }
 
   @Test fun statementBeginningCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1[", "taco").build()
-    }.hasMessage("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
   }
 
   @Test fun statementEndingCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1]", "taco").build()
-    }.hasMessage("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
   }
 
   @Test fun nameFormatCanBeIndexed() {
@@ -107,14 +107,14 @@ class CodeBlockTest {
     map.put("text", "tacos")
     val block = CodeBlock.builder()
         .addNamed("%>\n%text:L for %%3.50", map).build()
-    assertThat(block.toString()).isEqualTo("\n  tacos for %3.50")
+    assertThat(block.toString()).isEqualTo("\n    tacos for %3.50")
   }
 
   @Test fun missingNamedArgument() {
     assertThrows<IllegalArgumentException> {
       val map = LinkedHashMap<String, Any>()
       CodeBlock.builder().addNamed("%text:S", map).build()
-    }.hasMessage("Missing named argument for %text")
+    }.hasMessageThat().isEqualTo("Missing named argument for %text")
   }
 
   @Test fun lowerCaseNamed() {
@@ -122,7 +122,7 @@ class CodeBlockTest {
       val map = LinkedHashMap<String, Any>()
       map.put("Text", "tacos")
       CodeBlock.builder().addNamed("%Text:S", map).build()
-    }.hasMessage("argument 'Text' must start with a lowercase character")
+    }.hasMessageThat().isEqualTo("argument 'Text' must start with a lowercase character")
   }
 
   @Test fun multipleNamedArguments() {
@@ -150,55 +150,55 @@ class CodeBlockTest {
     map.put("clazz", Int::class)
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().addNamed("%clazz:T%", map).build()
-    }.hasMessage("dangling % at end")
+    }.hasMessageThat().isEqualTo("dangling % at end")
   }
 
   @Test fun indexTooHigh() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%2T", String::class).build()
-    }.hasMessage("index 2 for '%2T' not in range (received 1 arguments)")
+    }.hasMessageThat().isEqualTo("index 2 for '%2T' not in range (received 1 arguments)")
   }
 
   @Test fun indexIsZero() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%0T", String::class).build()
-    }.hasMessage("index 0 for '%0T' not in range (received 1 arguments)")
+    }.hasMessageThat().isEqualTo("index 0 for '%0T' not in range (received 1 arguments)")
   }
 
   @Test fun indexIsNegative() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%-1T", String::class).build()
-    }.hasMessage("invalid format string: '%-1T'")
+    }.hasMessageThat().isEqualTo("invalid format string: '%-1T'")
   }
 
   @Test fun indexWithoutFormatType() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1", String::class).build()
-    }.hasMessage("dangling format characters in '%1'")
+    }.hasMessageThat().isEqualTo("dangling format characters in '%1'")
   }
 
   @Test fun indexWithoutFormatTypeNotAtStringEnd() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1 taco", String::class).build()
-    }.hasMessage("invalid format string: '%1 taco'")
+    }.hasMessageThat().isEqualTo("invalid format string: '%1 taco'")
   }
 
   @Test fun indexButNoArguments() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1T").build()
-    }.hasMessage("index 1 for '%1T' not in range (received 0 arguments)")
+    }.hasMessageThat().isEqualTo("index 1 for '%1T' not in range (received 0 arguments)")
   }
 
   @Test fun formatIndicatorAlone() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%", String::class).build()
-    }.hasMessage("dangling format characters in '%'")
+    }.hasMessageThat().isEqualTo("dangling format characters in '%'")
   }
 
   @Test fun formatIndicatorWithoutIndexOrFormatType() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("% tacoString", String::class).build()
-    }.hasMessage("invalid format string: '% tacoString'")
+    }.hasMessageThat().isEqualTo("invalid format string: '% tacoString'")
   }
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
@@ -213,7 +213,7 @@ class CodeBlockTest {
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessage("statement enter %[ followed by statement enter %[")
+    }.hasMessageThat().isEqualTo("statement enter %[ followed by statement enter %[")
   }
 
   @Test fun statementExitWithoutStatementEnter() {
@@ -221,7 +221,7 @@ class CodeBlockTest {
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessage("statement exit %] has no matching statement enter %[")
+    }.hasMessageThat().isEqualTo("statement exit %] has no matching statement enter %[")
   }
 
   @Test fun nullableType() {

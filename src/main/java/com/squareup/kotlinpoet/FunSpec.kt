@@ -41,7 +41,6 @@ class FunSpec private constructor(builder: Builder) {
   val parameters = builder.parameters.toImmutableList()
   val delegateConstructor = builder.delegateConstructor
   val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
-  val exceptions = builder.exceptions.toImmutableList()
   val body = builder.body.build()
 
   init {
@@ -108,7 +107,11 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("set")
     } else {
       if (receiverType != null) {
-        codeWriter.emitCode("%T.", receiverType)
+        if (receiverType is LambdaTypeName) {
+          codeWriter.emitCode("(%T).", receiverType)
+        } else {
+          codeWriter.emitCode("%T.", receiverType)
+        }
       }
       codeWriter.emitCode("%L", escapeIfKeyword(name))
     }
@@ -124,14 +127,6 @@ class FunSpec private constructor(builder: Builder) {
     if (delegateConstructor != null) {
       codeWriter.emitCode(delegateConstructorArguments
           .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
-    }
-
-    if (exceptions.isNotEmpty()) {
-      codeWriter.emitWrappingSpace().emit("throws")
-      exceptions.forEachIndexed { index, exception ->
-        if (index > 0) codeWriter.emit(",")
-        codeWriter.emitWrappingSpace().emitCode("%T", exception)
-      }
     }
   }
 
@@ -162,7 +157,6 @@ class FunSpec private constructor(builder: Builder) {
     builder.parameters += parameters
     builder.delegateConstructor = delegateConstructor
     builder.delegateConstructorArguments += delegateConstructorArguments
-    builder.exceptions += exceptions
     builder.body.add(body)
     return builder
   }
@@ -177,7 +171,6 @@ class FunSpec private constructor(builder: Builder) {
     internal val parameters = mutableListOf<ParameterSpec>()
     internal var delegateConstructor: String? = null
     internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
-    internal val exceptions = mutableSetOf<TypeName>()
     internal val body = CodeBlock.builder()
 
     fun addKdoc(format: String, vararg args: Any) = apply {

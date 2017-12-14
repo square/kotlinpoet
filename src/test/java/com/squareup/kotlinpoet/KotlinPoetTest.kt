@@ -77,11 +77,11 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |class Taco(cheese: String) {
-        |  init {
-        |    require(cheese.isNotEmpty()) {
-        |      "cheese cannot be empty"
+        |    init {
+        |        require(cheese.isNotEmpty()) {
+        |            "cheese cannot be empty"
+        |        }
         |    }
-        |  }
         |}
         |""".trimMargin())
   }
@@ -108,18 +108,18 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |class Taco(
-        |    val cheese: String,
-        |    var cilantro: String,
-        |    lettuce: String
+        |        val cheese: String,
+        |        var cilantro: String,
+        |        lettuce: String
         |) {
-        |  val lettuce: String = lettuce.trim()
+        |    val lettuce: String = lettuce.trim()
         |
-        |  val onion: Boolean = true
-        |  init {
-        |    require(!cheese.isEmpty()) {
-        |      "cheese cannot be empty"
+        |    val onion: Boolean = true
+        |    init {
+        |        require(!cheese.isEmpty()) {
+        |            "cheese cannot be empty"
+        |        }
         |    }
-        |  }
         |}
         |""".trimMargin())
   }
@@ -139,9 +139,9 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |class Taco {
-        |  private const val CHEESE: String = "monterey jack"
+        |    private const val CHEESE: String = "monterey jack"
         |
-        |  var sauce: String = "chipotle mayo"
+        |    var sauce: String = "chipotle mayo"
         |}
         |""".trimMargin())
   }
@@ -163,17 +163,17 @@ class KotlinPoetTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |  fun a() {
-        |  }
+        |    fun a() {
+        |    }
         |
-        |  protected fun b() {
-        |  }
+        |    protected fun b() {
+        |    }
         |
-        |  internal fun c() {
-        |  }
+        |    internal fun c() {
+        |    }
         |
-        |  private fun d() {
-        |  }
+        |    private fun d() {
+        |    }
         |}
         |""".trimMargin())
   }
@@ -189,10 +189,10 @@ class KotlinPoetTest {
         "package com.squareup.tacos\n" +
         "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
-        "    val a = \"basic string\"\n" +
-        "    val b = \"string with a \$ dollar sign\"\n" +
-        "  }\n" +
+        "    fun strings() {\n" +
+        "        val a = \"basic string\"\n" +
+        "        val b = \"string with a \$ dollar sign\"\n" +
+        "    }\n" +
         "}\n")
   }
 
@@ -219,25 +219,25 @@ class KotlinPoetTest {
         "package com.squareup.tacos\n" +
         "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
-        "    val a = \"\"\"\n" +
-        "        |\"\n" +
-        "        |\"\"\".trimMargin()\n" +
-        "    val b = \"\"\"\n" +
-        "        |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
-        "        |\"\"\".trimMargin()\n" +
-        "    val c = \"\"\"\n" +
-        "        |whoa\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        \"\"\".trimMargin()\n" +
-        "    val d = \"\"\"\n" +
-        "        |\"raw\"\n" +
-        "        |string\n" +
-        "        |with\n" +
-        "        |\$a interpolated value\n" +
-        "        \"\"\".trimMargin()\n" +
-        "  }\n" +
+        "    fun strings() {\n" +
+        "        val a = \"\"\"\n" +
+        "                |\"\n" +
+        "                |\"\"\".trimMargin()\n" +
+        "        val b = \"\"\"\n" +
+        "                |a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\n" +
+        "                |\"\"\".trimMargin()\n" +
+        "        val c = \"\"\"\n" +
+        "                |whoa\n" +
+        "                |\"raw\"\n" +
+        "                |string\n" +
+        "                \"\"\".trimMargin()\n" +
+        "        val d = \"\"\"\n" +
+        "                |\"raw\"\n" +
+        "                |string\n" +
+        "                |with\n" +
+        "                |\$a interpolated value\n" +
+        "                \"\"\".trimMargin()\n" +
+        "    }\n" +
         "}\n")
   }
 
@@ -256,15 +256,15 @@ class KotlinPoetTest {
         "package com.squareup.tacos\n" +
         "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
-        "    val a = \"\"\"\n" +
-        "        |\n" +
-        "        |\"\"\".trimMargin()\n" +
-        "    val b = \"\"\"\n" +
-        "        | \n" +
-        "        | \n" +
-        "        \"\"\".trimMargin()\n" +
-        "  }\n" +
+        "    fun strings() {\n" +
+        "        val a = \"\"\"\n" +
+        "                |\n" +
+        "                |\"\"\".trimMargin()\n" +
+        "        val b = \"\"\"\n" +
+        "                | \n" +
+        "                | \n" +
+        "                \"\"\".trimMargin()\n" +
+        "    }\n" +
         "}\n")
   }
 
@@ -282,8 +282,8 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |class Taco {
-        |  fun addCheese(kind: String = "monterey jack") {
-        |  }
+        |    fun addCheese(kind: String = "monterey jack") {
+        |    }
         |}
         |""".trimMargin())
   }
@@ -305,6 +305,74 @@ class KotlinPoetTest {
         |""".trimMargin())
   }
 
+  @Test fun extensionFunctionLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("shrink")
+            .returns(String::class)
+            .receiver(LambdaTypeName.get(
+                parameters = *arrayOf(String::class.asClassName()),
+                returnType = String::class.asTypeName()))
+            .addStatement("return substring(0, length - 1)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |fun ((String) -> String).shrink(): String = substring(0, length - 1)
+        |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithParamName() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = *arrayOf(ParameterSpec.builder("name", String::class).build()),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((name: String) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
+  @Test fun extensionFunctionLambdaWithMultipleParams() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("whatever")
+            .returns(Unit::class)
+            .receiver(LambdaTypeName.get(
+                parameters = listOf(
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.unnamed(Int::class),
+                    ParameterSpec.builder("age", Long::class).build()),
+                returnType = Unit::class.asClassName()))
+            .addStatement("return Unit")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.Long
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |fun ((
+      |        name: String,
+      |        Int,
+      |        age: Long
+      |) -> Unit).whatever(): Unit = Unit
+      |""".trimMargin())
+  }
+
   @Test fun extensionProperty() {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("extensionProperty", Int::class)
@@ -321,7 +389,30 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |val String.extensionProperty: Int
-        |  get() = length
+        |    get() = length
+        |
+        """.trimMargin())
+  }
+
+  @Test fun extensionPropertyLambda() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("extensionProperty", Int::class)
+            .receiver(LambdaTypeName.get(
+                parameters = *arrayOf(String::class.asClassName()),
+                returnType = String::class.asClassName()))
+            .getter(FunSpec.getterBuilder()
+                .addStatement("return length")
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |val ((String) -> String).extensionProperty: Int
+        |    get() = length
         |
         """.trimMargin())
   }
@@ -353,15 +444,30 @@ class KotlinPoetTest {
         |import kotlin.Int
         |
         |var propertyWithCustomAccessors: Int = 1
-        |  get() {
-        |    println("getter")
-        |    return field
-        |  }
-        |  set(value) {
-        |    println("setter")
-        |    field = value
-        |  }
+        |    get() {
+        |        println("getter")
+        |        return field
+        |    }
+        |    set(value) {
+        |        println("setter")
+        |        field = value
+        |    }
         |""".trimMargin())
+  }
+
+  @Test fun propertyWithLongInitializerWrapping() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.builder("foo", ClassName(tacosPackage, "Foo").asNullable())
+            .addModifiers(KModifier.PRIVATE)
+            .initializer("DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |private val foo: Foo? =
+      |        DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)
+      |""".trimMargin())
   }
 
   @Test fun stackedPropertyModifiers() {
@@ -391,13 +497,13 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |abstract class A {
-        |  protected abstract var q: String
+        |    protected abstract var q: String
         |}
         |
         |internal const val p: String = "a"
         |
         |abstract class B : A() {
-        |  final override lateinit var q: String
+        |    final override lateinit var q: String
         |}
         |""".trimMargin())
   }
@@ -423,9 +529,9 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |open class A {
-        |  protected open infix operator external fun get(v: String): String
+        |    protected open infix operator external fun get(v: String): String
         |
-        |  internal final inline tailrec fun loop(): String = "a"
+        |    internal final inline tailrec fun loop(): String = "a"
         |}
         |""".trimMargin())
   }
@@ -445,5 +551,33 @@ class KotlinPoetTest {
         |
         |fun addA(s: String): String = s + "a"
         |""".trimMargin())
+  }
+
+  @Test fun suspendingLambdas() {
+    val barType = ClassName("", "Bar")
+    val suspendingLambda = LambdaTypeName
+        .get(parameters = *arrayOf(ClassName("", "Foo")), returnType = barType)
+        .asSuspending()
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addProperty(PropertySpec.varBuilder("bar", suspendingLambda)
+            .initializer("{ %T() }", barType)
+            .build())
+        .addProperty(PropertySpec.varBuilder("nullBar", suspendingLambda.asNullable())
+            .initializer("null")
+            .build())
+        .addFunction(FunSpec.builder("foo")
+            .addParameter("bar", suspendingLambda)
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |var bar: suspend (Foo) -> Bar = { Bar() }
+      |
+      |var nullBar: (suspend (Foo) -> Bar)? = null
+      |
+      |fun foo(bar: suspend (Foo) -> Bar) {
+      |}
+      |""".trimMargin())
   }
 }

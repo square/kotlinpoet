@@ -11,7 +11,7 @@
 
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>0.6.0-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
 
   <name>KotlinPoet</name>
   <description>Use beautiful Java code to generate beautiful Kotlin code.</description>
@@ -22,11 +22,11 @@
     <maven.javadoc.skip>true</maven.javadoc.skip><!-- We use Dokka instead. -->
 
     <java.version>1.7</java.version>
-    <kotlin.version>1.1.51</kotlin.version>
-    <dokka.version>0.9.13</dokka.version>
+    <kotlin.version>1.2.0</kotlin.version>
+    <dokka.version>0.9.15</dokka.version>
     <junit.version>4.12</junit.version>
-    <truth.version>0.28</truth.version>
-    <compile-testing.version>0.9</compile-testing.version>
+    <truth.version>0.36</truth.version>
+    <compile-testing.version>0.12</compile-testing.version>
   </properties>
 
   <scm>
@@ -86,19 +86,19 @@
     <dependency>
       <groupId>com.google.jimfs</groupId>
       <artifactId>jimfs</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.10.16</version>
+      <version>2.11.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jdt.core.compiler</groupId>
       <artifactId>ecj</artifactId>
-      <version>4.4.2</version>
+      <version>4.6.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -143,7 +143,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.7.0</version>
         <executions>
           <execution>
             <id>compile</id>
@@ -163,12 +163,12 @@
           <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-compiler-javac-errorprone</artifactId>
-            <version>2.8.1</version>
+            <version>2.8.2</version>
           </dependency>
           <dependency>
             <groupId>com.google.errorprone</groupId>
             <artifactId>error_prone_core</artifactId>
-            <version>2.0.16</version>
+            <version>2.1.2</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -188,7 +188,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>package</phase>
