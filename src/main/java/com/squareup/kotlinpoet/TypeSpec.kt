@@ -115,7 +115,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             codeWriter.emit("constructor")
           }
 
-          it.parameters.emit(codeWriter, wrappable = true) { param ->
+          it.parameters.emit(codeWriter) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
