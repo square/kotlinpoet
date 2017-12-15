@@ -27,6 +27,15 @@
     <junit.version>4.12</junit.version>
     <truth.version>0.36</truth.version>
     <compile-testing.version>0.12</compile-testing.version>
+    <jimfs.version>1.1</jimfs.version>
+    <mockito.version>2.11.0</mockito.version>
+    <ecj.version>4.6.1</ecj.version>
+
+    <!-- Plugins -->
+    <maven-compiler.version>3.7.0</maven-compiler.version>
+    <plexus-compiler.version>2.8.2</plexus-compiler.version>
+    <error-prone.version>2.1.2</error-prone.version>
+    <maven-assembly.version>3.1.0</maven-assembly.version>
   </properties>
 
   <scm>
@@ -86,19 +95,19 @@
     <dependency>
       <groupId>com.google.jimfs</groupId>
       <artifactId>jimfs</artifactId>
-      <version>1.1</version>
+      <version>${jimfs.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.11.0</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jdt.core.compiler</groupId>
       <artifactId>ecj</artifactId>
-      <version>4.6.1</version>
+      <version>${ecj.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -143,7 +152,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>${maven-compiler.version}</version>
         <executions>
           <execution>
             <id>compile</id>
@@ -163,12 +172,12 @@
           <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-compiler-javac-errorprone</artifactId>
-            <version>2.8.2</version>
+            <version>${plexus-compiler.version}</version>
           </dependency>
           <dependency>
             <groupId>com.google.errorprone</groupId>
             <artifactId>error_prone_core</artifactId>
-            <version>2.1.2</version>
+            <version>${error-prone.version}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -188,7 +197,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>${maven-assembly.version}</version>
         <executions>
           <execution>
             <phase>package</phase>
