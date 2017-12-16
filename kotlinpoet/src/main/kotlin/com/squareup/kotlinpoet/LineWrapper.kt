@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Square, Inc.
+ * Copyright (C) 2017 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ internal class LineWrapper(
   private var closed = false
 
   /** Characters written since the last wrapping space that haven't yet been flushed.  */
-  private val buffer = StringBuilder()
+  private var buffer = StringBuilder()
 
   /** The number of characters since the most recent newline. Includes both out and the buffer.  */
   private var column = 0
@@ -90,7 +90,7 @@ internal class LineWrapper(
       out.append(' ')
     }
     out.append(buffer)
-    buffer.delete(0, buffer.length)
+    buffer = StringBuilder()
     indentLevel = -1
   }
 }

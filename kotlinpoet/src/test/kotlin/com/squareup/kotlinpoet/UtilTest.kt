@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Square, Inc.
+ * Copyright (C) 2017 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.assertEquals
-
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class UtilTest {
   @Test fun characterLiteral() {
@@ -61,31 +61,31 @@ class UtilTest {
     stringLiteral("abc")
     stringLiteral("♦♥♠♣")
     stringLiteral("€\\t@\\t$", "€\t@\t$")
-    assertThat(stringLiteralWithQuotes("abc();\ndef();"))
-        .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
+    assertEquals("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()",
+        stringLiteralWithQuotes("abc();\ndef();"))
     stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!")
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0")
   }
 
   @Test fun legalIdentifiers() {
-    assertThat("foo".isIdentifier).isTrue()
-    assertThat("bAr1".isIdentifier).isTrue()
-    assertThat("1".isIdentifier).isFalse()
-    assertThat("♦♥♠♣".isIdentifier).isFalse()
-    assertThat("`♦♥♠♣`".isIdentifier).isTrue()
-    assertThat("`  ♣ !`".isIdentifier).isTrue()
-    assertThat("€".isIdentifier).isFalse()
-    assertThat("`€`".isIdentifier).isTrue()
-    assertThat("`1`".isIdentifier).isTrue()
-    assertThat("```".isIdentifier).isFalse()
-    assertThat("``".isIdentifier).isFalse()
-    assertThat("\n".isIdentifier).isFalse()
-    assertThat("`\n`".isIdentifier).isFalse()
-    assertThat("\r".isIdentifier).isFalse()
-    assertThat("`\r`".isIdentifier).isFalse()
-    assertThat("when".isIdentifier).isTrue()
-    assertThat("fun".isIdentifier).isTrue()
-    assertThat("".isIdentifier).isFalse()
+    assertTrue("foo".isIdentifier)
+    assertTrue("bAr1".isIdentifier)
+    assertFalse("1".isIdentifier)
+    assertFalse("♦♥♠♣".isIdentifier)
+    assertTrue("`♦♥♠♣`".isIdentifier)
+    assertTrue("`  ♣ !`".isIdentifier)
+    assertFalse("€".isIdentifier)
+    assertTrue("`€`".isIdentifier)
+    assertTrue("`1`".isIdentifier)
+    assertFalse("```".isIdentifier)
+    assertFalse("``".isIdentifier)
+    assertFalse("\n".isIdentifier)
+    assertFalse("`\n`".isIdentifier)
+    assertFalse("\r".isIdentifier)
+    assertFalse("`\r`".isIdentifier)
+    assertTrue("when".isIdentifier)
+    assertTrue("fun".isIdentifier)
+    assertFalse("".isIdentifier)
   }
 
   private fun stringLiteral(string: String) = stringLiteral(string, string)
