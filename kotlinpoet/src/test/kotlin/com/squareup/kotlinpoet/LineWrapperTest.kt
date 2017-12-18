@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Square, Inc.
+ * Copyright (C) 2017 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,32 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class LineWrapperTest {
   @Test fun wrap() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("fghij")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde\n    fghij")
+    assertEquals("abcde\n    fghij", out.toString())
   }
 
   @Test fun noWrap() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("fghi")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi")
+    assertEquals("abcde fghi", out.toString())
   }
 
   @Test fun multipleWrite() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("ab")
     lineWrapper.wrappingSpace(1)
@@ -60,11 +60,11 @@ class LineWrapperTest {
     lineWrapper.wrappingSpace(1)
     lineWrapper.append("qr")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("ab cd ef\n  gh ij kl\n  mn op qr")
+    assertEquals("ab cd ef\n  gh ij kl\n  mn op qr", out.toString())
   }
 
   @Test fun fencepost() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.append("fghij")
@@ -72,50 +72,50 @@ class LineWrapperTest {
     lineWrapper.append("k")
     lineWrapper.append("lmnop")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcdefghij\n    klmnop")
+    assertEquals("abcdefghij\n    klmnop", out.toString())
   }
 
   @Test fun overlyLongLinesWithoutLeadingSpace() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcdefghijkl")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcdefghijkl")
+    assertEquals("abcdefghijkl", out.toString())
   }
 
   @Test fun overlyLongLinesWithLeadingSpace() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("abcdefghijkl")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("\n    abcdefghijkl")
+    assertEquals("\n    abcdefghijkl", out.toString())
   }
 
   @Test fun noWrapEmbeddedNewlines() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("fghi\njklmn")
     lineWrapper.append("opqrstuvwxy")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\njklmnopqrstuvwxy")
+    assertEquals("abcde fghi\njklmnopqrstuvwxy", out.toString())
   }
 
   @Test fun wrapEmbeddedNewlines() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("fghij\nklmn")
     lineWrapper.append("opqrstuvwxy")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde\n    fghij\nklmnopqrstuvwxy")
+    assertEquals("abcde\n    fghij\nklmnopqrstuvwxy", out.toString())
   }
 
   @Test fun noWrapMultipleNewlines() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
@@ -123,11 +123,11 @@ class LineWrapperTest {
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("stuvwxyz")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\nklmnopq\nr stuvwxyz")
+    assertEquals("abcde fghi\nklmnopq\nr stuvwxyz", out.toString())
   }
 
   @Test fun wrapMultipleNewlines() {
-    val out = StringBuffer()
+    val out = StringBuilder()
     val lineWrapper = LineWrapper(out, "  ", 10)
     lineWrapper.append("abcde")
     lineWrapper.wrappingSpace(2)
@@ -135,6 +135,6 @@ class LineWrapperTest {
     lineWrapper.wrappingSpace(2)
     lineWrapper.append("tuvwxyz1")
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\nklmnopq\nrs\n    tuvwxyz1")
+    assertEquals("abcde fghi\nklmnopq\nrs\n    tuvwxyz1", out.toString())
   }
 }

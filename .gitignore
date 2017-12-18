@@ -10,8 +10,6 @@ build
 out
 lib
 
-target
-pom.xml.*
 release.properties
 
 .idea
@@ -21,3 +19,6 @@ classes
 obj
 
 .DS_Store
+
+.gradle
+reports

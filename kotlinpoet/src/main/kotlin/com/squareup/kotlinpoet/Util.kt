@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Square, Inc.
+ * Copyright (C) 2017 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("Utils")
+@file:JvmMultifileClass
+
 package com.squareup.kotlinpoet
 
-import java.util.Collections
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
 
 internal object NullAppendable : Appendable {
-  override fun append(charSequence: CharSequence) = this
-  override fun append(charSequence: CharSequence, start: Int, end: Int) = this
+  override fun append(csq: CharSequence?) = this
+  override fun append(csq: CharSequence?, start: Int, end: Int) = this
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-    Collections.unmodifiableMap(LinkedHashMap(this))
+expect internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
 
-internal fun <T> Collection<T>.toImmutableList(): List<T> =
-    Collections.unmodifiableList(ArrayList(this))
+expect internal fun <T> Collection<T>.toImmutableList(): List<T>
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
-    Collections.unmodifiableSet(LinkedHashSet(this))
+expect internal fun <T> Collection<T>.toImmutableSet(): Set<T>
 
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
     enumValues<T>().filterTo(mutableSetOf(), this::contains)
@@ -69,9 +70,11 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\"' -> "\""    // \u0022: double quote (")
   c == '\'' -> "\\'"   // \u0027: single quote (')
   c == '\\' -> "\\\\"  // \u005c: backslash (\)
-  c.isIsoControl -> String.format("\\u%04x", c.toInt())
-  else -> Character.toString(c)
+  c.isIsoControl -> "\\u%04x".format(c.toInt())
+  else -> c.toString()
 }
+
+expect internal fun String.format(vararg args: Any?): String
 
 private val Char.isIsoControl: Boolean
   get() {
@@ -86,7 +89,7 @@ internal fun stringLiteralWithQuotes(value: String): String {
     var i = 0
     while (i < value.length) {
       val c = value[i]
-      if (value.regionMatches(i, "\"\"\"", 0, 3)) {
+      if (value.regionMatches(i, "\"\"\"", 0, 3, ignoreCase = false)) {
         // Don't inadvertently end the raw string too early
         result.append("\"\"\${'\"'}")
         i += 2
