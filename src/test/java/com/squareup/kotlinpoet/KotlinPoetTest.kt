@@ -587,13 +587,13 @@ class KotlinPoetTest {
         .build()
     assertThat(source.toString()).isEqualTo("""
       |fun sum(
-      |        a: kotlin.Int,
-      |        b: kotlin.Int,
-      |        c: kotlin.Int,
-      |        d: kotlin.Int,
-      |        e: kotlin.Int,
-      |        f: kotlin.Int,
-      |        g: kotlin.Int
+      |    a: kotlin.Int,
+      |    b: kotlin.Int,
+      |    c: kotlin.Int,
+      |    d: kotlin.Int,
+      |    e: kotlin.Int,
+      |    f: kotlin.Int,
+      |    g: kotlin.Int
       |) = a + b + c
       |""".trimMargin())
   }
@@ -614,8 +614,8 @@ class KotlinPoetTest {
         .build()
     assertThat(source.toString()).isEqualTo("""
       |fun veryLongFunctionName(
-      |        veryLongParameterName: (java.io.Serializable, java.lang.Appendable, kotlin.Cloneable) -> kotlin.Unit,
-      |        i: kotlin.Int
+      |    veryLongParameterName: (java.io.Serializable, java.lang.Appendable, kotlin.Cloneable) -> kotlin.Unit,
+      |    i: kotlin.Int
       |) = kotlin.Unit
       |""".trimMargin())
   }
