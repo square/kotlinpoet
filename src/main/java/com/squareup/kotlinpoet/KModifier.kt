@@ -20,11 +20,7 @@ enum class KModifier(
   private vararg val targets: Target
 ) {
   // Modifier order defined here:
-  // https://github.com/yole/kotlin-style-guide/issues/3.
-
-  // Multiplatform modules.
-  EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  // https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers
 
   // Access.
   PUBLIC("public", Target.PROPERTY),
@@ -32,18 +28,27 @@ enum class KModifier(
   PRIVATE("private", Target.PROPERTY),
   INTERNAL("internal", Target.PROPERTY),
 
-  // Inheritance.
+  // Multiplatform modules.
+  EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+
   FINAL("final", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OPEN("open", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   ABSTRACT("abstract", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
+  SEALED("sealed", Target.CLASS),
+  CONST("const", Target.PROPERTY),
 
-  // Type declarations.
+  EXTERNAL("external", Target.FUNCTION),
+  OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
+  LATEINIT("lateinit", Target.PROPERTY),
+  TAILREC("tailrec", Target.FUNCTION),
+  VARARG("vararg", Target.PARAMETER),
+  SUSPEND("suspend", Target.FUNCTION),
   INNER("inner", Target.CLASS),
+
   ENUM("enum", Target.CLASS),
   ANNOTATION("annotation", Target.CLASS),
-  DATA("data", Target.CLASS),
-  SEALED("sealed", Target.CLASS),
+
   // TODO: should COMPANION be a modifier? If so, it goes here.
 
   // Call-site compiler tips.
@@ -52,21 +57,13 @@ enum class KModifier(
   CROSSINLINE("crossinline", Target.PARAMETER),
   REIFIED("reified", Target.TYPE_PARAMETER),
 
-  // Call-site syntax.
   INFIX("infix", Target.FUNCTION),
   OPERATOR("operator", Target.FUNCTION),
 
-  // Implementation details.
-  LATEINIT("lateinit", Target.PROPERTY),
-  CONST("const", Target.PROPERTY),
-  EXTERNAL("external", Target.FUNCTION),
-  SUSPEND("suspend", Target.FUNCTION),
-  TAILREC("tailrec", Target.FUNCTION),
+  DATA("data", Target.CLASS),
 
-  // Type modifiers.
   IN("in", Target.VARIANCE_ANNOTATION),
-  OUT("out", Target.VARIANCE_ANNOTATION),
-  VARARG("vararg", Target.PARAMETER);
+  OUT("out", Target.VARIANCE_ANNOTATION);
 
   internal enum class Target {
     CLASS,

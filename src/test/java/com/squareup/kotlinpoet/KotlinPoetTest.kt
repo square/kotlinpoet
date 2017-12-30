@@ -529,9 +529,9 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |open class A {
-        |    protected open infix operator external fun get(v: String): String
+        |    protected open external infix operator fun get(v: String): String
         |
-        |    internal final inline tailrec fun loop(): String = "a"
+        |    internal final tailrec inline fun loop(): String = "a"
         |}
         |""".trimMargin())
   }
