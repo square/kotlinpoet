@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -37,8 +38,11 @@ import java.util.EventListener
 import java.util.Locale
 import java.util.Random
 import java.util.concurrent.Callable
+import java.util.function.Consumer
+import java.util.logging.Logger
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -2644,6 +2648,127 @@ class TypeSpecTest {
     }.hasMessageThat().isEqualTo("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
   }
 
+  @Test fun basicDelegateTest() {
+    val type = TypeSpec.classBuilder("Guac")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("somethingElse", String::class)
+            .build())
+        .addSuperinterface(
+            ParameterizedTypeName.get(Consumer::class, String::class),
+            CodeBlock.of("({ println(it) })"))
+        .build()
+
+    val expect = """
+        |package com.squareup.tacos
+        |
+        |import java.util.function.Consumer
+        |import kotlin.String
+        |
+        |class Guac(somethingElse: String) : Consumer<String> by ({ println(it) })
+        |""".trimMargin()
+
+    assertThat(toString(type)).isEqualTo(expect)
+  }
+
+  @Test fun testMultipleDelegates() {
+    val type = TypeSpec.classBuilder("StringToInteger")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .build())
+        .addSuperinterface(ParameterizedTypeName.get(Function::class, String::class, Int::class),
+            CodeBlock.of("Function ({ text -> text.toIntOrNull() ?: 0 })"))
+        .addSuperinterface(
+            Runnable::class,
+            CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class.asTypeName()))
+        .build()
+
+    val expect = """
+        |package com.squareup.tacos
+        |
+        |import java.lang.Runnable
+        |import kotlin.Function
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
+        |    Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
+        |""".trimMargin()
+
+    assertThat(toString(type)).isEqualTo(expect)
+  }
+
+  @Test fun testNoSuchParameterDelegate() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Taco")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("other", String::class)
+              .build())
+          .addSuperinterface(KFunction::class, "notOther")
+          .build()
+    }.hasMessageThat().isEqualTo("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
+  }
+
+  @Test fun failAddParamDelegateWhenNullConstructor() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Taco")
+          .addSuperinterface(Runnable::class, "etc")
+          .build()
+    }.hasMessageThat().isEqualTo("delegating to constructor parameter requires not-null constructor")
+  }
+
+  @Test fun testAddedDelegateByParamName() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("superString", Function::class)
+            .build())
+        .addSuperinterface(Function::class, "superString")
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+          |package com.squareup.tacos
+          |
+          |import kotlin.Function
+          |
+          |class Taco(superString: Function) : Function by superString
+          |""".trimMargin())
+  }
+
+  @Test fun failOnAddExistingDelegateType() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Taco")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("superString", Function::class)
+              .build())
+          .addSuperinterface(Function::class, CodeBlock.of("{ print(Hello) }"))
+          .addSuperinterface(Function::class, "superString")
+          .build()
+      fail()
+    }.hasMessageThat().isEqualTo("'Taco' can not delegate to kotlin.Function " +
+        "by superString with existing declaration by { print(Hello) }")
+  }
+
+  @Test
+  fun testDelegateIfaceWithOtherParamTypeName() {
+    val type = TypeSpec.classBuilder("EntityBuilder")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("argBuilder",
+                ParameterizedTypeName.get(ClassName.bestGuess("Payload"),
+                    ClassName.bestGuess("EntityBuilder"),
+                    ClassName.bestGuess("Entity")))
+                .defaultValue("Payload.create()")
+                .build())
+            .build())
+        .addSuperinterface(ParameterizedTypeName.get(ClassName.bestGuess("TypeBuilder"),
+            ClassName.bestGuess("EntityBuilder"),
+            ClassName.bestGuess("Entity")), "argBuilder")
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+          |package com.squareup.tacos
+          |
+          |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) : TypeBuilder<EntityBuilder, Entity> by argBuilder
+          |""".trimMargin())
+  }
+
   @Test fun classHeaderFormatting() {
     val typeSpec = TypeSpec.classBuilder("Person")
         .addModifiers(KModifier.DATA)
@@ -2681,3 +2806,4 @@ class TypeSpecTest {
     private val donutsPackage = "com.squareup.donuts"
   }
 }
+
