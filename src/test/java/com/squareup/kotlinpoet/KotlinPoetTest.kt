@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -577,6 +578,28 @@ class KotlinPoetTest {
       |var nullBar: (suspend (Foo) -> Bar)? = null
       |
       |fun foo(bar: suspend (Foo) -> Bar) {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun enumAsDefaultArgument() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("timeout")
+            .addParameter("duration", Long::class)
+            .addParameter(ParameterSpec.builder("timeUnit", TimeUnit::class)
+                .defaultValue("%T.%L", TimeUnit::class, TimeUnit.MILLISECONDS.name)
+                .build())
+            .addStatement("this.timeout = timeUnit.toMillis(duration)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import java.util.concurrent.TimeUnit
+      |import kotlin.Long
+      |
+      |fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS) {
+      |    this.timeout = timeUnit.toMillis(duration)
       |}
       |""".trimMargin())
   }
