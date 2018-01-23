@@ -79,10 +79,25 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emit(" {\n")
       } else if (anonymousTypeArguments != null) {
-        val supertype = if (superinterfaces.isNotEmpty()) superinterfaces[0] else superclass
-        codeWriter.emitCode("object : %T(", supertype)
-        codeWriter.emitCode(anonymousTypeArguments)
-        codeWriter.emit(") {\n")
+
+        codeWriter.emitCode("object")
+        val supertype = if (superclass != ANY) {
+          listOf(CodeBlock.of(" %T(%L)", superclass, anonymousTypeArguments))
+        } else {
+          listOf()
+        }
+
+        val allSuperTypes = supertype + superinterfaces.map { CodeBlock.of(" %T", it) }
+
+        if (allSuperTypes.isNotEmpty()) {
+          codeWriter.emitCode(" :")
+          codeWriter.emitCode(allSuperTypes.joinToCode(","))
+        }
+        if (hasNoBody) {
+          codeWriter.emit(" { }")
+          return
+        }
+        codeWriter.emit(" {\n")
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
@@ -524,12 +539,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
 
-      val superclassIsAny = superclass == ANY
-      val interestingSupertypeCount = (if (superclassIsAny) 0 else 1) + superinterfaces.size
-      require(anonymousTypeArguments == null || interestingSupertypeCount <= 1) {
-        "anonymous type has too many supertypes"
-      }
-
       if (primaryConstructor == null) {
         require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
           "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
@@ -565,6 +574,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun enumBuilder(name: String) = Builder(Kind.ENUM, name, null)
 
     @JvmStatic fun enumBuilder(className: ClassName) = enumBuilder(className.simpleName())
+
+    @JvmStatic fun anonymousClassBuilder(): Builder {
+      return anonymousClassBuilder("")
+    }
 
     @JvmStatic fun anonymousClassBuilder(typeArgumentsFormat: String, vararg args: Any): Builder {
       return Builder(Kind.CLASS, null, CodeBlock.builder()

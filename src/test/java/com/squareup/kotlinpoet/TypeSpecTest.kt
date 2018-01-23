@@ -154,6 +154,58 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/315
+  @Test fun anonymousClassWithMultipleSuperTypes() {
+    val superclass = ClassName("com.squareup.wire", "Message")
+    val anonymousClass = TypeSpec.anonymousClassBuilder()
+        .superclass(superclass)
+        .addSuperinterface(Runnable::class)
+        .addFunction(FunSpec.builder("run")
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
+            .addCode("/* code snippets */\n")
+            .build()
+        ).build()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("NAME", Runnable::class)
+            .initializer("%L", anonymousClass)
+            .build()
+        ).build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.wire.Message
+        |import java.lang.Runnable
+        |
+        |class Taco {
+        |    val NAME: Runnable = object : Message(), Runnable {
+        |        override fun run() {
+        |            /* code snippets */
+        |        }
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun anonymousClassWithoutSuperType() {
+    val anonymousClass = TypeSpec.anonymousClassBuilder().build()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("NAME", Any::class)
+            .initializer("%L", anonymousClass)
+            .build()
+        ).build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Any
+        |
+        |class Taco {
+        |    val NAME: Any = object { }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun annotatedParameters() {
     val service = TypeSpec.classBuilder("Foo")
         .addFunction(FunSpec.constructorBuilder()
@@ -1437,7 +1489,7 @@ class TypeSpecTest {
             .build())
         .build()
     assertThat(type.toString()).isEqualTo("""
-        |object : java.lang.Runnable() {
+        |object : java.lang.Runnable {
         |    override fun run() {
         |    }
         |}""".trimMargin())
@@ -1530,7 +1582,7 @@ class TypeSpecTest {
         |class Taco {
         |    fun comparePrefix(final length: Int): Comparator<String> {
         |        // Return a new comparator for the target length.
-        |        return object : Comparator<String>() {
+        |        return object : Comparator<String> {
         |            override fun compare(a: String, b: String): Int {
         |                // Prefix the strings and compare them
         |                return a.substring(0, length)
@@ -1542,7 +1594,7 @@ class TypeSpecTest {
         |    fun sortPrefix(list: List<String>, final length: Int) {
         |        Collections.sort(
         |                list,
-        |                object : Comparator<String>() {
+        |                object : Comparator<String> {
         |                    override fun compare(a: String, b: String): Int {
         |                        // Prefix the strings and compare them
         |                        return a.substring(0, length)
