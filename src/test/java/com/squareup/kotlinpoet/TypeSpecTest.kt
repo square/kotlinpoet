@@ -2698,11 +2698,11 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |  fun shell() {
-        |    val taco1: String = "Taco!"
-        |    val taco2: String? = null
-        |    lateinit var taco3: String
-        |  }
+        |    fun shell() {
+        |        val taco1: String = "Taco!"
+        |        val taco2: String? = null
+        |        lateinit var taco3: String
+        |    }
         |}
         |""".trimMargin())
   }
