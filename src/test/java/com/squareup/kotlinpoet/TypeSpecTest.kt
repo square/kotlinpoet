@@ -2677,6 +2677,36 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun literalPropertySpec() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .addFunction(FunSpec.builder("shell")
+            .addCode(CodeBlock.of("%L", PropertySpec.builder("taco1", String::class.asTypeName())
+                .initializer("%S", "Taco!").build()))
+            .addCode(CodeBlock.of("%L",
+                PropertySpec.builder("taco2", String::class.asTypeName().asNullable())
+                    .initializer("null")
+                    .build()))
+            .addCode(CodeBlock.of("%L",
+                PropertySpec.builder("taco3", String::class.asTypeName(), KModifier.LATEINIT)
+                    .mutable(true)
+                    .build()))
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Taco {
+        |  fun shell() {
+        |    val taco1: String = "Taco!"
+        |    val taco2: String? = null
+        |    lateinit var taco3: String
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

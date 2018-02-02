@@ -301,6 +301,7 @@ internal class CodeWriter constructor(
     when (o) {
       is TypeSpec -> o.emit(this, null)
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = true)
+      is PropertySpec -> o.emit(this, emptySet())
       is CodeBlock -> emitCode(o)
       else -> emit(o.toString())
     }
