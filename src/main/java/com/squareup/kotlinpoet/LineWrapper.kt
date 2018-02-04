@@ -26,71 +26,185 @@ internal class LineWrapper(
 ) {
   private var closed = false
 
-  /** Characters written since the last wrapping space that haven't yet been flushed.  */
-  private val buffer = StringBuilder()
-
   /** The number of characters since the most recent newline. Includes both out and the buffer.  */
   private var column = 0
 
-  /** -1 if we have no buffering; otherwise the number of spaces to write after wrapping.  */
-  private var indentLevel = -1
+  private var helper: BufferedLineWrapperHelper = DefaultLineWrapperHelper()
 
   /** Emit `s`. This may be buffered to permit line wraps to be inserted.  */
   fun append(s: String) {
     check(!closed) { "closed" }
 
-    if (indentLevel != -1) {
+    if (helper.isBuffering) {
       val nextNewline = s.indexOf('\n')
 
       // If s doesn't cause the current line to cross the limit, buffer it and return. We'll decide
       // whether or not we have to wrap it later.
       if (nextNewline == -1 && column + s.length <= columnLimit) {
-        buffer.append(s)
+        helper.buffer(s)
         column += s.length
         return
       }
 
       // Wrap if appending s would overflow the current line.
       val wrap = nextNewline == -1 || column + nextNewline > columnLimit
-      flush(wrap)
+      helper.flush(wrap)
     }
 
-    out.append(s)
+    helper.append(s)
     val lastNewline = s.lastIndexOf('\n')
     column = if (lastNewline != -1)
       s.length - lastNewline - 1 else
       column + s.length
   }
 
+  fun openWrappingGroup() {
+    check(!closed) { "closed" }
+
+    helper = GroupLineWrapperHelper()
+  }
+
   /** Emit either a space or a newline character.  */
   fun wrappingSpace(indentLevel: Int) {
     check(!closed) { "closed" }
 
-    if (this.indentLevel != -1) flush(false)
+    helper.wrappingSpace(indentLevel)
     this.column++
-    this.indentLevel = indentLevel
+  }
+
+  fun closeWrappingGroup(): Boolean {
+    check(!closed) { "closed" }
+
+    val wrapped = helper.close()
+    helper = DefaultLineWrapperHelper()
+    return wrapped
   }
 
   /** Flush any outstanding text and forbid future writes to this line wrapper.  */
   fun close() {
-    if (indentLevel != -1) flush(false)
+    helper.close()
     closed = true
   }
 
   /** Write the space followed by any buffered text that follows it.  */
-  private fun flush(wrap: Boolean) {
+  private fun flush(buffered: String, wrap: Boolean) {
     if (wrap) {
       out.append('\n')
-      for (i in 0 until indentLevel) {
+      for (i in 0 until helper.indentLevel) {
         out.append(indent)
       }
-      column = indentLevel * indent.length
-      column += buffer.length
+      column = helper.indentLevel * indent.length
+      column += buffered.length
     } else {
       out.append(' ')
     }
-    out.append(buffer)
-    buffer.delete(0, buffer.length)
-    indentLevel = -1
+    out.append(buffered)
+  }
+
+  /**
+   * Contract for helpers that handle buffering, post-processing and flushing of the input.
+   */
+  internal interface BufferedLineWrapperHelper {
+
+    val indentLevel: Int
+
+    val isBuffering get() = indentLevel != -1
+
+    /** Append to out, bypassing the buffer */
+    fun append(s: String): Appendable
+
+    /** Append to buffer */
+    fun buffer(s: String): Appendable
+
+    /**
+     * Indicates that a new wrapping space occurred in input.
+     *
+     * @param indentLevel Indentation level for the new line
+     */
+    fun wrappingSpace(indentLevel: Int)
+
+    /**
+     * Flush any buffered text.
+     *
+     * @param wrap `true` if buffer contents should be flushed a on new line
+     * */
+    fun flush(wrap: Boolean)
+
+    /**
+     * Flush and clear the buffer.
+     *
+     * @return `true` if input wrapped to new line
+     */
+    fun close(): Boolean
+  }
+
+  /** Flushes the buffer each time the wrapping space is encountered */
+  internal inner class DefaultLineWrapperHelper : BufferedLineWrapperHelper {
+
+    private val buffer = StringBuilder()
+
+    private var _indentLevel = -1
+
+    override val indentLevel get() = _indentLevel
+
+    override fun append(s: String): Appendable = out.append(s)
+
+    override fun buffer(s: String): Appendable = buffer.append(s)
+
+    override fun wrappingSpace(indentLevel: Int) {
+      if (isBuffering) flush(false)
+      _indentLevel = indentLevel
+    }
+
+    override fun flush(wrap: Boolean) {
+      flush(buffer.toString(), wrap)
+      buffer.delete(0, buffer.length)
+      _indentLevel = -1
+    }
+
+    override fun close(): Boolean {
+      if (isBuffering) flush(false)
+      return false
+    }
+  }
+
+  /**
+   * Holds multiple buffers and only flushes when the group is closed. If wrapping happened within
+   * a group - each buffer will be flushed on a new line.
+   */
+  internal inner class GroupLineWrapperHelper : BufferedLineWrapperHelper {
+
+    private val buffer = mutableListOf(StringBuilder())
+    private var wrapped = false
+
+    private var _indentLevel = -1
+
+    override val indentLevel get() = _indentLevel
+
+    override fun append(s: String): Appendable = buffer.last().append(s)
+
+    override fun buffer(s: String): Appendable = buffer.last().append(s)
+
+    override fun wrappingSpace(indentLevel: Int) {
+      _indentLevel = indentLevel
+      buffer += StringBuilder()
+    }
+
+    override fun flush(wrap: Boolean) {
+      wrapped = wrap
+    }
+
+    override fun close(): Boolean {
+      if (wrapped) buffer.last().append('\n')
+      buffer.forEachIndexed { index, segment ->
+        if (index == 0 && !wrapped) {
+          out.append(segment)
+        } else {
+          flush(segment.toString(), wrapped)
+        }
+      }
+      _indentLevel = -1
+      return wrapped
+    }
   }
 }

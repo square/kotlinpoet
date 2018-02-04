@@ -18,6 +18,9 @@ package com.squareup.kotlinpoet
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
+private const val DEFAULT_INDENT_LEVEL = 1
+private const val CONTINUATION_INDENT_LEVEL = 2
+
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
   for (i in 1..part.length) {
@@ -40,6 +43,7 @@ internal class CodeWriter constructor(
 ) {
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
+  private var indentLevelIncrement = CONTINUATION_INDENT_LEVEL
 
   private var kdoc = false
   private var comment = false
@@ -249,7 +253,7 @@ internal class CodeWriter constructor(
           statementLine = -1
         }
 
-        "%W" -> out.wrappingSpace(indentLevel + 2)
+        "%W" -> out.wrappingSpace(indentLevel + indentLevelIncrement)
 
         else -> {
           // Handle deferred type.
@@ -275,8 +279,18 @@ internal class CodeWriter constructor(
     }
   }
 
+  fun openWrappingGroup() {
+    out.openWrappingGroup()
+    indentLevelIncrement = DEFAULT_INDENT_LEVEL
+  }
+
+  fun closeWrappingGroup() {
+    trailingNewline = out.closeWrappingGroup()
+    indentLevelIncrement = CONTINUATION_INDENT_LEVEL
+  }
+
   fun emitWrappingSpace() = apply {
-    out.wrappingSpace(indentLevel + 2)
+    out.wrappingSpace(indentLevel + indentLevelIncrement)
   }
 
   private fun emitStaticImportMember(canonical: String, part: String): Boolean {
