@@ -138,4 +138,22 @@ class TypeVariableNameTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun anyBoundsIsLegal() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(TypeVariableName("E", ANY))
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<E : kotlin.Any>
+      |""".trimMargin())
+  }
+
+  @Test fun filterOutNullableAnyBounds() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(TypeVariableName("E", ANY.asNullable()))
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<E>
+      |""".trimMargin())
+  }
 }
