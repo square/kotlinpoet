@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror

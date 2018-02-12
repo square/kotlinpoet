@@ -20,6 +20,9 @@ import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.jvm.asClassName
+import com.squareup.kotlinpoet.jvm.asTypeName
+import com.squareup.kotlinpoet.jvm.asTypeVariableName
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier

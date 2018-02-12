@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asClassName
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -217,14 +218,6 @@ abstract class TypeName internal constructor(
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
-/** Returns a [TypeName] equivalent to this [TypeMirror]. */
-@JvmName("get")
-fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
-
 /** Returns a [TypeName] equivalent to this [KClass].  */
 @JvmName("get")
 fun KClass<*>.asTypeName() = asClassName()
-
-/** Returns a [TypeName] equivalent to this [Type].  */
-@JvmName("get")
-fun Type.asTypeName() = TypeName.get(this, mutableMapOf())

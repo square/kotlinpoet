@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.KModifier.ACTUAL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 

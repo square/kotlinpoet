@@ -17,6 +17,8 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.jvm.asClassName
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 

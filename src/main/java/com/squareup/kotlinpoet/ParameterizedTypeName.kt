@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmName("ParameterizedTypeNames")
-
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asClassName
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -110,7 +110,3 @@ class ParameterizedTypeName internal constructor(
     }
   }
 }
-
-/** Returns a parameterized type equivalent to `type`.  */
-@JvmName("get")
-fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this, mutableMapOf())

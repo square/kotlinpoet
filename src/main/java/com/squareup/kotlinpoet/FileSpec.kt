@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
+import com.squareup.kotlinpoet.jvm.asClassName
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException

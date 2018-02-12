@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2017 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@file:JvmName("ClassNamesJvm")
+
+package com.squareup.kotlinpoet.jvm
+
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.isOneOf
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.NestingKind
+import javax.lang.model.element.PackageElement
+import javax.lang.model.element.TypeElement
+
+@JvmName("get")
+fun Class<*>.asClassName(): ClassName {
+  require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
+  require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
+  require(!isArray) { "array types cannot be represented as a ClassName" }
+  val names = mutableListOf<String>()
+  var c = this
+  while (true) {
+    names += c.simpleName
+    val enclosing = c.enclosingClass ?: break
+    c = enclosing
+  }
+  // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
+  val lastDot = c.name.lastIndexOf('.')
+  if (lastDot != -1) names += c.name.substring(0, lastDot)
+  names.reverse()
+  return ClassName(names)
+}
+
+/** Returns the class name for `element`.  */
+@JvmName("get")
+fun TypeElement.asClassName(): ClassName {
+  fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface
+
+  fun getPackage(type: Element): PackageElement {
+    var t = type
+    while (t.kind != ElementKind.PACKAGE) {
+      t = t.enclosingElement
+    }
+    return t as PackageElement
+  }
+
+  val names = mutableListOf<String>()
+  var e: Element = this
+  while (isClassOrInterface(e)) {
+    val eType = e as TypeElement
+    require(eType.nestingKind.isOneOf(NestingKind.TOP_LEVEL, NestingKind.MEMBER)) {
+      "unexpected type testing"
+    }
+    names += eType.simpleName.toString()
+    e = eType.enclosingElement
+  }
+  names += getPackage(this).qualifiedName.toString()
+  names.reverse()
+  return ClassName(names)
+}

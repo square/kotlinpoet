@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmName("WildcardTypeNames")
-
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.asTypeName
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import javax.lang.model.element.TypeParameterElement
@@ -105,10 +104,3 @@ class WildcardTypeName private constructor(
     }
   }
 }
-
-@JvmName("get")
-fun javax.lang.model.type.WildcardType.asWildcardTypeName()
-    = WildcardTypeName.get(this, mutableMapOf())
-
-@JvmName("get")
-fun WildcardType.asWildcardTypeName() = WildcardTypeName.get(this, mutableMapOf())
