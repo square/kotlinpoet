@@ -19,8 +19,8 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
-import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.Ignore
+import kotlin.test.Test
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit

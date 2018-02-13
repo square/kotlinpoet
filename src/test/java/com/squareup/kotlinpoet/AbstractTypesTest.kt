@@ -16,9 +16,9 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.fail
-import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.fail
+import kotlin.test.Ignore
+import kotlin.test.Test
 import java.io.Serializable
 import java.nio.charset.Charset
 import javax.lang.model.type.DeclaredType
