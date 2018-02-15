@@ -2268,6 +2268,39 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun companionObjectWithInitializer() {
+    val companion = TypeSpec.companionObjectBuilder()
+            .addProperty(PropertySpec.builder("tacos", Int::class)
+                    .mutable(true)
+                    .initializer("%L", 24)
+                    .build())
+            .addInitializerBlock(CodeBlock.builder()
+                    .addStatement("tacos = %L", 42)
+                    .build())
+            .build()
+
+    val type = TypeSpec.classBuilder("MyClass")
+            .addModifiers(KModifier.PUBLIC)
+            .companionObject(companion)
+            .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |class MyClass {
+        |    companion object {
+        |        var tacos: Int = 24
+        |
+        |        init {
+        |            tacos = 42
+        |        }
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun companionObjectWithName() {
     val companion = TypeSpec.companionObjectBuilder("Factory")
         .addFunction(FunSpec.builder("tacos").build())
