@@ -18,7 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
 

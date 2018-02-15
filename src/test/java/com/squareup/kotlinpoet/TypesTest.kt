@@ -16,7 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.testing.compile.CompilationRule
-import org.junit.Ignore
+import kotlin.test.Ignore
 import org.junit.Rule
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types

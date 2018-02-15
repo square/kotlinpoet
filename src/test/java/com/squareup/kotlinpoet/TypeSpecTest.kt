@@ -22,10 +22,10 @@ import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
-import org.junit.Assert.assertEquals
-import org.junit.Ignore
+import kotlin.test.assertEquals
+import kotlin.test.Ignore
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import java.io.IOException
 import java.io.Serializable
 import java.math.BigDecimal

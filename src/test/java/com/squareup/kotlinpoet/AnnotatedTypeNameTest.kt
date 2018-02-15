@@ -15,12 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertTrue
-import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
+import kotlin.test.Ignore
+import kotlin.test.Test
 
 class AnnotatedTypeNameTest {
   private val NEVER_NULL = AnnotationSpec.builder(NeverNull::class).build()

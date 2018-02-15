@@ -19,9 +19,9 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import org.junit.Before
+import kotlin.test.BeforeTest
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.io.Closeable
@@ -42,7 +42,7 @@ class FunSpecTest {
   private lateinit var elements: Elements
   private lateinit var types: Types
 
-  @Before fun setUp() {
+  @BeforeTest fun setUp() {
     elements = compilation.elements
     types = compilation.types
   }

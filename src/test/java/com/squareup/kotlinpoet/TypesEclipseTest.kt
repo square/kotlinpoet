@@ -18,7 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.base.Charsets.UTF_8
 import com.google.common.collect.ImmutableSet
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler
-import org.junit.Ignore
+import kotlin.test.Ignore
 import org.junit.Rule
 import org.junit.rules.TestRule
 import org.junit.runner.Description

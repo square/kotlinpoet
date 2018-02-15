@@ -17,7 +17,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicReference
 
 class CrossplatformTest {

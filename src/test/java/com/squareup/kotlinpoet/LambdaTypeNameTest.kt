@@ -17,7 +17,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.VARARG
-import org.junit.Test
+import kotlin.test.Test
 import javax.annotation.Nullable
 
 class LambdaTypeNameTest {
