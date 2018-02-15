@@ -401,6 +401,7 @@ class CodeBlock private constructor(
     private const val ARG_NAME = 1
     private const val TYPE_NAME = 2
     private val NO_ARG_PLACEHOLDERS = setOf("%W", "%>", "%<", "%[", "%]")
+    internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
