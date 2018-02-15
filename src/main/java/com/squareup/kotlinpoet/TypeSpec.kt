@@ -489,7 +489,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM, Kind.COMPANION)) {
         "$kind can't have initializer blocks"
       }
       initializerBlock.add("init {\n")
