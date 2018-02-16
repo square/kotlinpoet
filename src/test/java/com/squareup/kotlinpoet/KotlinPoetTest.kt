@@ -603,4 +603,29 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun dynamicType() {
+    val source = FileSpec.builder(tacosPackage, "Taco")
+        .addFunction(FunSpec.builder("dynamicTest")
+            .addCode(CodeBlock.of("%L", PropertySpec.builder("d1", DYNAMIC)
+                .initializer("%S", "Taco")
+                .build()))
+            .addCode(CodeBlock.of("%L", PropertySpec.builder("d2", DYNAMIC)
+                .initializer("1f")
+                .build()))
+            .addStatement("// dynamics are dangerous!")
+            .addStatement("println(d1 - d2)")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |fun dynamicTest() {
+      |    val d1: dynamic = "Taco"
+      |    val d2: dynamic = 1f
+      |    // dynamics are dangerous!
+      |    println(d1 - d2)
+      |}
+      |""".trimMargin())
+  }
 }

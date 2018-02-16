@@ -217,6 +217,25 @@ abstract class TypeName internal constructor(
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
+@JvmField val DYNAMIC = object : TypeName(false, emptyList()) {
+
+  override fun asNullable() =
+      throw UnsupportedOperationException("dynamic can't be nullable")
+
+  override fun asNonNullable() =
+      throw UnsupportedOperationException("dynamic can't be non-nullable")
+
+  override fun annotated(annotations: List<AnnotationSpec>) =
+      throw UnsupportedOperationException("dynamic can't have annotations")
+
+  override fun withoutAnnotations() =
+      throw UnsupportedOperationException("dynamic can't have annotations")
+
+  override fun emit(out: CodeWriter) = out.apply {
+    emit("dynamic")
+  }
+}
+
 /** Returns a [TypeName] equivalent to this [TypeMirror]. */
 @JvmName("get")
 fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
