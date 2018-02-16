@@ -1,6 +1,28 @@
 Change Log
 ==========
 
+## Version 0.7.0
+
+_2018-02-16_
+
+ * New: Increase indent to 4 spaces.
+ * New: Delegate super interfaces as constructor parameters.
+ * New: Support `PropertySpec`s as `CodeBlock` literals.
+ * New: Support KDoc for `TypeAliasSpec`.
+ * New: Allow for adding an initializer block inside a companion object.
+ * New: Escape name in `ParameterSpec` which is also a keyword.
+ * New: Escape names in statements.
+ * New: Set com.squareup.kotlinpoet as automatic module name.
+ * New: Support suspending lambda types.
+ * New: Support named `LambdaTypeName` parameters.
+ * New: Support dynamic type.
+ * New: Disallow wildcard imports.
+ * New: Depend on Kotlin 1.2.21.
+ * Fix: Correct handling of super-classes/interfaces on anonymous classes.
+ * Fix: Fix boundary filtering to `Any?`.
+ * Fix: Wrap long property initializers.
+ * Fix: Fix formatting and indentation of parameter lists.
+
 ## Version 0.6.0
 
 _2017-11-03_
