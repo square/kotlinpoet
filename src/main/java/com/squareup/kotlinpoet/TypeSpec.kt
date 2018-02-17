@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.COMPANION
+import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -44,6 +46,16 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val initializerBlock = builder.initializerBlock.build()
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
+
+  private val implicitPropertyModifiers = kind.implicitPropertyModifiers + when {
+    KModifier.EXPECT in modifiers -> setOf(KModifier.EXPECT)
+    else -> emptySet()
+  }
+
+  private val implicitFunctionModifiers = kind.implicitFunctionModifiers + when {
+    KModifier.EXPECT in modifiers -> setOf(KModifier.EXPECT)
+    else -> emptySet()
+  }
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, anonymousTypeArguments)
@@ -198,7 +210,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           continue
         }
         if (!firstMember) codeWriter.emit("\n")
-        propertySpec.emit(codeWriter, kind.implicitPropertyModifiers)
+        propertySpec.emit(codeWriter, implicitPropertyModifiers)
         firstMember = false
       }
 
@@ -221,7 +233,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (!funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name!!, kind.implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, implicitFunctionModifiers)
         firstMember = false
       }
 
@@ -229,7 +241,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, implicitFunctionModifiers)
         firstMember = false
       }
 
@@ -312,18 +324,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
-    EXPECT_CLASS(
-        "class",
-        setOf(KModifier.PUBLIC, KModifier.EXPECT),
-        setOf(KModifier.PUBLIC, KModifier.EXPECT)),
-
     OBJECT(
         "object",
-        setOf(KModifier.PUBLIC),
-        setOf(KModifier.PUBLIC)),
-
-    COMPANION(
-        "companion object",
         setOf(KModifier.PUBLIC),
         setOf(KModifier.PUBLIC)),
 
@@ -407,12 +409,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun companionObject(companionObject: TypeSpec) = apply {
       check(kind.isOneOf(Kind.CLASS, Kind.INTERFACE)) { "$kind can't have a companion object" }
-      require(companionObject.kind == Kind.COMPANION) { "expected a companion object class but was $kind " }
+      require(companionObject.kind == Kind.OBJECT && COMPANION in companionObject.modifiers) {
+        "expected a companion object class but was $kind "
+      }
       this.companionObject = companionObject
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
-      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.ENUM, Kind.ANNOTATION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.ENUM, Kind.ANNOTATION)) {
         "$kind can't have initializer blocks"
       }
       if (primaryConstructor != null) {
@@ -430,7 +434,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind.isOneOf(Kind.CLASS, Kind.EXPECT_CLASS, Kind.OBJECT, Kind.COMPANION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT)) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -509,7 +513,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      if (kind == Kind.EXPECT_CLASS) {
+      if (EXPECT in modifiers) {
         require(propertySpec.initializer == null) {
           "properties in expect classes can't have initializers"
         }
@@ -530,8 +534,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM, Kind.COMPANION)) {
+      check(kind.isOneOf(Kind.CLASS, Kind.OBJECT, Kind.ENUM)) {
         "$kind can't have initializer blocks"
+      }
+      check(EXPECT !in modifiers) {
+        "expect $kind can't have initializer blocks"
       }
       initializerBlock.add("init {\n")
           .indent()
@@ -545,15 +552,15 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunction(funSpec: FunSpec) = apply {
-      when (kind) {
-        Kind.INTERFACE -> {
+      when {
+        kind == Kind.INTERFACE -> {
           requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
           requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
         }
-        Kind.ANNOTATION -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
+        kind == Kind.ANNOTATION -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "$kind $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
-        Kind.EXPECT_CLASS -> require(funSpec.body.isEmpty()) {
+        EXPECT in modifiers -> require(funSpec.body.isEmpty()) {
           "functions in expect classes can't have bodies"
         }
       }
@@ -595,7 +602,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
 
-    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.EXPECT_CLASS, name, null).apply {
+    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.CLASS, name, null).apply {
       addModifiers(KModifier.EXPECT)
     }
 
@@ -606,7 +613,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
 
     @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
-        Builder(Kind.COMPANION, name, null)
+        Builder(Kind.OBJECT, name, null).apply {
+          addModifiers(KModifier.COMPANION)
+        }
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, null)
 

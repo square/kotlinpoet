@@ -145,7 +145,7 @@ class CrossplatformTest {
     assertThrows<IllegalStateException> {
       TypeSpec.expectClassBuilder("AtomicRef")
           .addInitializerBlock(CodeBlock.of("println()"))
-    }.hasMessageThat().isEqualTo("EXPECT_CLASS can't have initializer blocks")
+    }.hasMessageThat().isEqualTo("expect CLASS can't have initializer blocks")
   }
 
   @Test fun expectFunctionBodyForbidden() {

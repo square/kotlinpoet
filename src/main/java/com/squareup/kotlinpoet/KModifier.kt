@@ -49,7 +49,7 @@ enum class KModifier(
   ENUM("enum", Target.CLASS),
   ANNOTATION("annotation", Target.CLASS),
 
-  // TODO: should COMPANION be a modifier? If so, it goes here.
+  COMPANION("companion", Target.CLASS),
 
   // Call-site compiler tips.
   INLINE("inline", Target.FUNCTION),
