@@ -96,8 +96,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     codeWriter.pushPackage(packageName)
 
-    val escapedPackageName = packageName.split('.')
-        .joinToString(".") { escapeIfKeyword(it) }
+    val escapedPackageName = escapeKeywords(packageName)
 
     if (escapedPackageName.isNotEmpty()) {
       codeWriter.emitCode("package %L\n", escapedPackageName)
@@ -111,7 +110,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     if (imports.isNotEmpty()) {
       for (className in imports.toSortedSet()) {
-        codeWriter.emitCode("import %L", className)
+        codeWriter.emitCode("import %L", escapeKeywords(className))
         codeWriter.emit("\n")
       }
       codeWriter.emit("\n")
