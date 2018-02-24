@@ -285,27 +285,6 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun doubleImportEscapeKeywords() {
-    val source = FileSpec.builder("com.squareup.tacos", "Taco")
-            .addType(TypeSpec.classBuilder("Taco")
-                    .addProperty("madeFreshDate", ClassName("com.squareup.is.fun.in", "Date"))
-                    .addProperty("madeFreshTimer", ClassName("com.squareup.do.val.var", "Timer"))
-                    .build())
-            .build()
-    assertThat(source.toString()).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import com.squareup.`do`.`val`.`var`.Timer
-        |import com.squareup.`is`.`fun`.`in`.Date
-        |
-        |class Taco {
-        |    val madeFreshDate: Date
-        |
-        |    val madeFreshTimer: Timer
-        |}
-        |""".trimMargin())
-  }
-
   @Test fun conflictingImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")

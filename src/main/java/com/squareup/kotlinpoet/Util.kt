@@ -127,8 +127,8 @@ internal fun stringLiteralWithQuotes(value: String): String {
   }
 }
 
-internal fun escapeKeywords(canonicalName: String) =
-        canonicalName.split('.').joinToString(".") { escapeIfKeyword(it) }
+internal fun escapeKeywords(canonicalName: String)
+    = canonicalName.split('.').joinToString(".") { escapeIfKeyword(it) }
 
 internal fun escapeIfKeyword(value: String) = if (value.isKeyword) "`$value`" else value
 
