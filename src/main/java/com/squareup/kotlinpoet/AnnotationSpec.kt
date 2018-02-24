@@ -227,8 +227,8 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
     @JvmStatic fun builder(type: ClassName) = Builder(type)
 
-    @JvmStatic fun builder(type: Class<*>) = builder(type.asClassName())
+    @JvmStatic fun builder(type: Class<out Annotation>) = builder(type.asClassName())
 
-    @JvmStatic fun builder(type: KClass<*>) = builder(type.asClassName())
+    @JvmStatic fun builder(type: KClass<out Annotation>) = builder(type.asClassName())
   }
 }
