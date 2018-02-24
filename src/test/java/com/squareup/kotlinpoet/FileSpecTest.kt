@@ -268,6 +268,23 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun singleImportEscapeKeywords() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addProperty("madeFreshDate", ClassName("com.squareup.is.fun.in", "Date"))
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.`is`.`fun`.`in`.Date
+        |
+        |class Taco {
+        |    val madeFreshDate: Date
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun conflictingImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
@@ -284,6 +301,26 @@ class FileSpecTest {
         |    val madeFreshDate: Date
         |
         |    val madeFreshDatabaseDate: java.sql.Date
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun conflictingImportsEscapeKeywords() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addProperty("madeFreshDate1", ClassName("com.squareup.is.fun.in", "Date"))
+            .addProperty("madeFreshDate2", ClassName("com.squareup.do.val.var", "Date"))
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.`is`.`fun`.`in`.Date
+        |
+        |class Taco {
+        |    val madeFreshDate1: Date
+        |
+        |    val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
         |""".trimMargin())
   }
