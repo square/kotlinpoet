@@ -2724,13 +2724,13 @@ class TypeSpecTest {
       type.addFunction(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build())
-    }.hasMessageThat().isEqualTo("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("annotation class Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
 
     assertThrows<IllegalArgumentException> {
       type.addFunctions(listOf(FunSpec.builder("eat")
           .addModifiers(INTERNAL)
           .build()))
-    }.hasMessageThat().isEqualTo("ANNOTATION Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("annotation class Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
   }
 
   @Test fun classHeaderFormatting() {
