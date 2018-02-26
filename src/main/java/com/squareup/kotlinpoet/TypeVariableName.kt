@@ -22,6 +22,8 @@ import java.util.Collections
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
+import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVariance
 
 class TypeVariableName private constructor(
   val name: String,
@@ -147,4 +149,13 @@ fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()
   val boundsTypeNames = bounds.map { it.asTypeName() }
   return TypeVariableName.of(name, boundsTypeNames, variance = null)
+}
+
+fun KTypeParameter.asTypeVariableName(): TypeVariableName {
+  return TypeVariableName.of(name, upperBounds.map { it.asTypeName() },
+      when(variance) {
+        KVariance.INVARIANT -> null
+        KVariance.IN -> KModifier.IN
+        KVariance.OUT -> KModifier.OUT
+      })
 }

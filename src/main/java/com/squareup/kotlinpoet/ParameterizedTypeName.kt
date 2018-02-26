@@ -127,7 +127,7 @@ class ParameterizedTypeName internal constructor(
           },
           type.asTypeName(),
           typeArguments.take(type.typeParameters.size).map {
-            it.type?.asClassName() ?: WildcardTypeName.subtypeOf(ANY)
+            it.type?.asTypeName() ?: WildcardTypeName.subtypeOf(ANY)
           },
           nullable,
           type.annotations.map { AnnotationSpec.get(it) })
@@ -140,10 +140,10 @@ class ParameterizedTypeName internal constructor(
 fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this, mutableMapOf())
 
 /** Returns a class name equivalent to given Kotlin KType.  */
-fun KType.asClassName(): TypeName {
+fun KType.asTypeName(): TypeName {
   val classifier = this.classifier
   if (classifier is KTypeParameter) {
-    return ClassName("", classifier.name)
+    return classifier.asTypeVariableName()
   }
 
   if (classifier == null || classifier !is KClass<*>) {
