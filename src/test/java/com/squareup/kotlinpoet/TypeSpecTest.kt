@@ -22,11 +22,7 @@ import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.VARARG
-import kotlin.test.assertEquals
-import kotlin.test.fail
-import kotlin.test.Ignore
 import org.junit.Rule
-import kotlin.test.Test
 import java.io.IOException
 import java.io.Serializable
 import java.math.BigDecimal
@@ -43,6 +39,10 @@ import java.util.logging.Logger
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.test.Ignore
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -2915,6 +2915,101 @@ class TypeSpecTest {
           |
           |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) : TypeBuilder<EntityBuilder, Entity> by argBuilder
           |""".trimMargin())
+  }
+
+  @Test
+  fun externalClassFunctionHasNoBody() {
+    val typeSpec = TypeSpec.classBuilder("Foo")
+        .addModifiers(KModifier.EXTERNAL)
+        .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |external class Foo {
+      |    fun bar()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test
+  fun externalInterfaceWithMembers() {
+    val typeSpec = TypeSpec.interfaceBuilder("Foo")
+        .addModifiers(KModifier.EXTERNAL)
+        .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
+        .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |
+      |external interface Foo {
+      |    val baz: String
+      |
+      |    fun bar()
+      |}
+      |""".trimMargin())
+  }
+
+
+  @Test
+  fun externalObjectWithMembers() {
+    val typeSpec = TypeSpec.objectBuilder("Foo")
+        .addModifiers(KModifier.EXTERNAL)
+        .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
+        .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |
+      |external object Foo {
+      |    val baz: String
+      |
+      |    fun bar()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test
+  fun externalClassWithNestedTypes() {
+    val typeSpec = TypeSpec.classBuilder("Foo")
+        .addModifiers(KModifier.EXTERNAL)
+        .addType(TypeSpec.classBuilder("Nested1")
+            .addModifiers(KModifier.EXTERNAL)
+            .addType(TypeSpec.objectBuilder("Nested2")
+                .addModifiers(KModifier.EXTERNAL)
+                .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
+                .build())
+            .addFunction(FunSpec.builder("baz").addModifiers(KModifier.EXTERNAL).build())
+            .build())
+        .companionObject(TypeSpec.companionObjectBuilder()
+            .addModifiers(KModifier.EXTERNAL)
+            .addFunction(FunSpec.builder("qux").addModifiers(KModifier.EXTERNAL).build())
+            .build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |external class Foo {
+      |    class Nested1 {
+      |        fun baz()
+      |
+      |        object Nested2 {
+      |            fun bar()
+      |        }
+      |    }
+      |    companion object {
+      |        fun qux()
+      |    }
+      |}
+      |""".trimMargin())
   }
 
   companion object {

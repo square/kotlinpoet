@@ -84,4 +84,15 @@ class PropertySpecTest {
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
+
+  @Test
+  fun externalTopLevel() {
+    val prop = PropertySpec.builder("foo", String::class)
+        .addModifiers(KModifier.EXTERNAL)
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |external val foo: kotlin.String
+      |""".trimMargin())
+  }
 }

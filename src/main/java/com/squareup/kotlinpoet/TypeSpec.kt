@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.KModifier.EXPECT
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -47,13 +48,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
 
-  private val implicitPropertyModifiers = kind.implicitPropertyModifiers + when {
-    KModifier.EXPECT in modifiers -> setOf(KModifier.EXPECT)
-    else -> emptySet()
-  }
-
-  private val implicitFunctionModifiers = kind.implicitFunctionModifiers + when {
-    KModifier.EXPECT in modifiers -> setOf(KModifier.EXPECT)
+  private val implicitMemberModifiers = kind.implicitFunctionModifiers + when {
+    EXPECT in modifiers -> setOf(EXPECT)
+    EXTERNAL in modifiers -> setOf(EXTERNAL)
     else -> emptySet()
   }
 
@@ -74,7 +71,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return builder
   }
 
-  internal fun emit(codeWriter: CodeWriter, enumName: String?) {
+  internal fun emit(codeWriter: CodeWriter, enumName: String?, isNestedExternal: Boolean = false) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -121,7 +118,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       } else {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
-        codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
+        codeWriter.emitModifiers(modifiers, if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
         if (name != null) {
           codeWriter.emitCode(" %L", name)
@@ -210,7 +207,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           continue
         }
         if (!firstMember) codeWriter.emit("\n")
-        propertySpec.emit(codeWriter, implicitPropertyModifiers)
+        propertySpec.emit(codeWriter, implicitMemberModifiers)
         firstMember = false
       }
 
@@ -233,7 +230,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (!funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, implicitMemberModifiers)
         firstMember = false
       }
 
@@ -241,18 +238,20 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, implicitMemberModifiers)
         firstMember = false
       }
 
       // Types.
+      val areNestedExternal = EXTERNAL in modifiers || isNestedExternal
+
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null)
+        typeSpec.emit(codeWriter, null, isNestedExternal = areNestedExternal)
         firstMember = false
       }
 
-      companionObject?.emit(codeWriter, null)
+      companionObject?.emit(codeWriter, null, isNestedExternal = areNestedExternal)
 
       codeWriter.unindent()
       codeWriter.popType()

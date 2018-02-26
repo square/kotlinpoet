@@ -38,7 +38,7 @@ enum class KModifier(
   SEALED("sealed", Target.CLASS),
   CONST("const", Target.PROPERTY),
 
-  EXTERNAL("external", Target.FUNCTION),
+  EXTERNAL("external", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
   LATEINIT("lateinit", Target.PROPERTY),
   TAILREC("tailrec", Target.FUNCTION),
