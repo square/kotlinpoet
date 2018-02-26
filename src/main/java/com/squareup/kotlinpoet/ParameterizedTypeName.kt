@@ -84,27 +84,26 @@ class ParameterizedTypeName internal constructor(
 
   companion object {
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic
-    fun get(rawType: ClassName, vararg typeArguments: TypeName) = ParameterizedTypeName(null, rawType, typeArguments.toList())
+    @JvmStatic fun get(rawType: ClassName, vararg typeArguments: TypeName)
+        = ParameterizedTypeName(null, rawType, typeArguments.toList())
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic
-    fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>) = ParameterizedTypeName(null, rawType.asClassName(),
-            typeArguments.map { it.asTypeName() })
+    @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
+        = ParameterizedTypeName(null, rawType.asClassName(),
+        typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic
-    fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
-            null, rawType.asClassName(), typeArguments.map { it.asTypeName() })
+    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
+        null, rawType.asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(
-            type: ParameterizedType,
-            map: MutableMap<Type, TypeVariableName>
+      type: ParameterizedType,
+      map: MutableMap<Type, TypeVariableName>
     ): ParameterizedTypeName {
       val rawType = (type.rawType as Class<*>).asClassName()
       val ownerType = if (type.ownerType is ParameterizedType
-              && !Modifier.isStatic((type.rawType as Class<*>).modifiers))
+          && !Modifier.isStatic((type.rawType as Class<*>).modifiers))
         type.ownerType as ParameterizedType else
         null
 
@@ -116,21 +115,22 @@ class ParameterizedTypeName internal constructor(
 
     /** Returns a type name equivalent to type with given list of type arguments.  */
     internal fun get(type: KClass<*>, nullable: Boolean, typeArguments: List<KTypeProjection>): TypeName {
-      if (typeArguments.isEmpty())
+      if (typeArguments.isEmpty()) {
         return type.asTypeName()
+      }
 
       val enclosingClass = type.java.enclosingClass?.kotlin
 
       return ParameterizedTypeName(
-              enclosingClass?.let {
-                get(it, false, typeArguments.drop(type.typeParameters.size))
-              },
-              type.asTypeName(),
-              typeArguments.take(type.typeParameters.size).map {
-                it.type?.asClassName() ?: WildcardTypeName.subtypeOf(ANY)
-              },
-              nullable,
-              type.annotations.map { AnnotationSpec.get(it) })
+          enclosingClass?.let {
+            get(it, false, typeArguments.drop(type.typeParameters.size))
+          },
+          type.asTypeName(),
+          typeArguments.take(type.typeParameters.size).map {
+            it.type?.asClassName() ?: WildcardTypeName.subtypeOf(ANY)
+          },
+          nullable,
+          type.annotations.map { AnnotationSpec.get(it) })
     }
   }
 }
@@ -142,11 +142,13 @@ fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this
 /** Returns a class name equivalent to given Kotlin KType.  */
 fun KType.asClassName(): TypeName {
   val classifier = this.classifier
-  if (classifier is KTypeParameter)
+  if (classifier is KTypeParameter) {
     return ClassName("", classifier.name)
+  }
 
-  if (classifier == null || classifier !is KClass<*>)
+  if (classifier == null || classifier !is KClass<*>) {
     throw IllegalArgumentException("Cannot build ClassName for $this")
+  }
 
   return ParameterizedTypeName.get(classifier, this.isMarkedNullable, this.arguments)
 }

@@ -187,9 +187,12 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun kType() {
-    assertThat(Map::class.starProjectedType.asClassName().toString()).isEqualTo("kotlin.collections.Map<*, *>")
-    assertThat(Map::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString()).isEqualTo("kotlin.collections.Map<kotlin.String, *>")
-    assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString()).isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
+    assertThat(Map::class.starProjectedType.asClassName().toString())
+        .isEqualTo("kotlin.collections.Map<*, *>")
+    assertThat(Map::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString())
+        .isEqualTo("kotlin.collections.Map<kotlin.String, *>")
+    assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString())
+        .isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
   }
 
   private class DeclaredTypeAsErrorType(private val declaredType: DeclaredType) : ErrorType {
