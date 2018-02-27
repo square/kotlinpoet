@@ -187,11 +187,11 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun kType() {
-    assertThat(Map::class.starProjectedType.asClassName().toString())
+    assertThat(Map::class.starProjectedType.asTypeName().toString())
         .isEqualTo("kotlin.collections.Map<*, *>")
-    assertThat(Map::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString())
+    assertThat(Map::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asTypeName().toString())
         .isEqualTo("kotlin.collections.Map<kotlin.String, *>")
-    assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asClassName().toString())
+    assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asTypeName().toString())
         .isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
   }
 
