@@ -253,6 +253,10 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       }
     }
 
+    fun addWildcardImport(packageName: String) = apply {
+      memberImports += Import(packageName + ".*")
+    }
+
     fun addAliasedImport(`class`: Class<*>, `as`: String) =
         addAliasedImport(`class`.asClassName(), `as`)
 
