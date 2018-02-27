@@ -147,7 +147,7 @@ fun KType.asTypeName(): TypeName {
   }
 
   if (classifier == null || classifier !is KClass<*>) {
-    throw IllegalArgumentException("Cannot build ClassName for $this")
+    throw IllegalArgumentException("Cannot build TypeName for $this")
   }
 
   return ParameterizedTypeName.get(classifier, this.isMarkedNullable, this.arguments)
