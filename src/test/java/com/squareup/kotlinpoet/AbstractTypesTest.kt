@@ -27,6 +27,8 @@ import javax.lang.model.util.Types
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.starProjectedType
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -193,6 +195,10 @@ abstract class AbstractTypesTest {
         .isEqualTo("kotlin.collections.Map<kotlin.String, *>")
     assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asTypeName().toString())
         .isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
+
+    val treeMapClass = java.util.TreeMap::class
+    assertThat(treeMapClass.declaredFunctions.find { it.name == "parentOf" }!!.returnType.asTypeName().toString())
+        .isEqualTo("java.util.TreeMap.Entry<K, V>")
   }
 
   private class DeclaredTypeAsErrorType(private val declaredType: DeclaredType) : ErrorType {
