@@ -31,7 +31,6 @@ import kotlin.reflect.KClass
 class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val kind = builder.kind
   val name = builder.name
-  val anonymousTypeArguments = builder.anonymousTypeArguments
   val kdoc = builder.kdoc.build()
   val annotations = builder.annotations.toImmutableList()
   val modifiers = kind.modifiers.toImmutableSet()
@@ -40,6 +39,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+  private val isAnonymousClass = name == null && kind is Kind.Class
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
@@ -54,7 +54,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val typeSpecs = builder.typeSpecs.toImmutableList()
 
   fun toBuilder(): Builder {
-    val builder = Builder(kind, name, anonymousTypeArguments)
+    val builder = Builder(kind, name)
     builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.typeVariables += typeVariables
@@ -76,33 +76,27 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     codeWriter.statementLine = -1
 
     val constructorProperties: Map<String, PropertySpec> = constructorProperties()
+    val superclassConstructorParametersBlock = superclassConstructorParameters.joinToCode()
 
     try {
       if (enumName != null) {
         codeWriter.emitKdoc(kdoc)
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitCode("%L", enumName)
-        if (anonymousTypeArguments!!.formatParts.isNotEmpty()) {
+        if (superclassConstructorParametersBlock.isNotEmpty()) {
           codeWriter.emit("(")
-          codeWriter.emitCode(anonymousTypeArguments)
+          codeWriter.emitCode(superclassConstructorParametersBlock)
           codeWriter.emit(")")
         }
         if (hasNoBody) {
           return // Avoid unnecessary braces "{}".
         }
         codeWriter.emit(" {\n")
-      } else if (anonymousTypeArguments != null) {
+      } else if (isAnonymousClass) {
 
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
-          var superclassConstructorParameters = superclassConstructorParameters
-          if (anonymousTypeArguments.isNotEmpty()) {
-            superclassConstructorParameters = superclassConstructorParameters
-                .toMutableList().apply {
-              add(anonymousTypeArguments)
-            }
-          }
-          listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParameters.joinToCode()))
+          listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParametersBlock))
         } else {
           listOf()
         }
@@ -166,7 +160,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         val types = listOf(superclass).filter { it != ANY }.map {
           if (primaryConstructor != null || funSpecs.none { it.isConstructor }) {
-            CodeBlock.of("%T(%L)", it, superclassConstructorParameters.joinToCode())
+            CodeBlock.of("%T(%L)", it, superclassConstructorParametersBlock)
           } else {
             CodeBlock.of("%T", it)
           }
@@ -265,7 +259,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (!kind.isAnnotation) {
         codeWriter.emit("}")
       }
-      if (enumName == null && anonymousTypeArguments == null) {
+      if (enumName == null && !isAnonymousClass) {
         codeWriter.emit("\n") // If this type isn't also a value, include a trailing newline.
       }
     } finally {
@@ -384,8 +378,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   class Builder internal constructor(
     internal var kind: Kind,
-    internal val name: String?,
-    internal val anonymousTypeArguments: CodeBlock?
+    internal val name: String?
   ) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
@@ -429,17 +422,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
-      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       kind = kind.plusModifiers(*modifiers)
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
-      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       this.typeVariables += typeVariables
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
-      check(anonymousTypeArguments == null) { "forbidden on anonymous types." }
       typeVariables += typeVariable
     }
 
@@ -472,7 +462,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind.isSimpleClass || kind is Object) {
+      check(kind.isSimpleClass || kind.isEnum || kind is Object) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -536,14 +526,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     @JvmOverloads fun addEnumConstant(
       name: String,
-      typeSpec: TypeSpec = anonymousClassBuilder("").build()
+      typeSpec: TypeSpec = anonymousClassBuilder().build()
     ) = apply {
       check(kind.isEnum) { "${this.name} is not enum" }
-      require(typeSpec.anonymousTypeArguments != null) {
-        "enum constants must have anonymous type arguments"
-      }
       require(name.isName) { "not a valid enum constant: $name" }
-      enumConstants.put(name, typeSpec)
+      enumConstants[name] = typeSpec
     }
 
     fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
@@ -636,40 +623,34 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   }
 
   companion object {
-    @JvmStatic fun classBuilder(name: String) = Builder(Kind.Class(), name, null)
+    @JvmStatic fun classBuilder(name: String) = Builder(Kind.Class(), name)
 
     @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
 
-    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.Class(EXPECT), name, null)
+    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.Class(EXPECT), name)
 
     @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName())
 
-    @JvmStatic fun objectBuilder(name: String) = Builder(Kind.Object(), name, null)
+    @JvmStatic fun objectBuilder(name: String) = Builder(Kind.Object(), name)
 
     @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
 
     @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
-        Builder(Kind.Object(COMPANION), name, null)
+        Builder(Kind.Object(COMPANION), name)
 
-    @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.Interface(), name, null)
+    @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.Interface(), name)
 
     @JvmStatic fun interfaceBuilder(className: ClassName) = interfaceBuilder(className.simpleName())
 
-    @JvmStatic fun enumBuilder(name: String) = Builder(Kind.Class(ENUM), name, null)
+    @JvmStatic fun enumBuilder(name: String) = Builder(Kind.Class(ENUM), name)
 
     @JvmStatic fun enumBuilder(className: ClassName) = enumBuilder(className.simpleName())
 
     @JvmStatic fun anonymousClassBuilder(): Builder {
-      return anonymousClassBuilder("")
+      return Builder(Kind.Class(), null)
     }
 
-    @JvmStatic fun anonymousClassBuilder(typeArgumentsFormat: String, vararg args: Any): Builder {
-      return Builder(Kind.Class(), null, CodeBlock.builder()
-          .add(typeArgumentsFormat, *args)
-          .build())
-    }
-
-    @JvmStatic fun annotationBuilder(name: String) = Builder(Kind.Class(ANNOTATION), name, null)
+    @JvmStatic fun annotationBuilder(name: String) = Builder(Kind.Class(ANNOTATION), name)
 
     @JvmStatic fun annotationBuilder(className: ClassName)
         = annotationBuilder(className.simpleName())
