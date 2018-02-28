@@ -460,11 +460,15 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun superclass(superclass: TypeName) = apply {
+      ensureCanHaveSuperclass()
+      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
+      this.superclass = superclass
+    }
+
+    private fun ensureCanHaveSuperclass() {
       check(kind.isSimpleClass || kind is Object) {
         "only classes can have super classes, not $kind"
       }
-      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
-      this.superclass = superclass
     }
 
     fun superclass(superclass: Type) = superclass(superclass.asTypeName())
@@ -476,9 +480,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperclassConstructorParameter(codeBlock: CodeBlock) = apply {
-      check(!kind.isAnnotation && kind !is Interface) {
-        "$kind cannot have superclass constructor parameters"
-      }
+      ensureCanHaveSuperclass()
       this.superclassConstructorParameters += codeBlock
     }
 

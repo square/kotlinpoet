@@ -21,6 +21,7 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import org.junit.Rule
 import java.io.IOException
@@ -1996,6 +1997,34 @@ class TypeSpecTest {
 
     assertThrows<IllegalStateException> {
       TypeSpec.interfaceBuilder("I").superclass(Any::class.asClassName())
+    }
+  }
+
+  @Test fun superClassConstructorParametersOnlyValidForClasses() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.annotationBuilder("A").addSuperclassConstructorParameter("")
+    }
+
+    assertThrows<IllegalStateException> {
+      TypeSpec.enumBuilder("E").addSuperclassConstructorParameter("")
+    }
+
+    assertThrows<IllegalStateException> {
+      TypeSpec.interfaceBuilder("I").addSuperclassConstructorParameter("")
+    }
+  }
+
+  @Test fun anonymousClassesCannotHaveModifiersOrTypeVariable() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.anonymousClassBuilder().addModifiers(PUBLIC)
+    }
+
+    assertThrows<IllegalStateException> {
+      TypeSpec.anonymousClassBuilder().addTypeVariable(TypeVariableName("T"))
+    }
+
+    assertThrows<IllegalStateException> {
+      TypeSpec.anonymousClassBuilder().addTypeVariables(listOf(TypeVariableName("T")))
     }
   }
 
