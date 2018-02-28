@@ -158,6 +158,53 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun anonymousClassWithTypeArguments() {
+    val superclass = ParameterizedTypeName.get(ArrayList::class, String::class)
+    val anonymousClass = TypeSpec.anonymousClassBuilder("%L", "4")
+        .superclass(superclass)
+        .build()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("names", superclass)
+            .initializer("%L", anonymousClass)
+            .build()
+        ).build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.util.ArrayList
+        |import kotlin.String
+        |
+        |class Taco {
+        |    val names: ArrayList<String> = object : ArrayList<String>(4) { }
+        |}
+        |""".trimMargin())
+  }
+
+  @Ignore @Test fun anonymousClassWithSuperClassConstructorCall() {
+    val superclass = ParameterizedTypeName.get(ArrayList::class, String::class)
+    val anonymousClass = TypeSpec.anonymousClassBuilder()
+        .addSuperclassConstructorParameter("%L", "4")
+        .superclass(superclass)
+        .build()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("names", superclass)
+            .initializer("%L", anonymousClass)
+            .build()
+        ).build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.util.ArrayList
+        |import kotlin.String
+        |
+        |class Taco {
+        |    val names: ArrayList<String> = object : ArrayList<String>(4) { }
+        |}
+        |""".trimMargin())
+  }
+
   // https://github.com/square/kotlinpoet/issues/315
   @Test fun anonymousClassWithMultipleSuperTypes() {
     val superclass = ClassName("com.squareup.wire", "Message")
