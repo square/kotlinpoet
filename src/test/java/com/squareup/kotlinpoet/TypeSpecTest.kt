@@ -120,15 +120,16 @@ class TypeSpecTest {
     val thungParameter = ParameterSpec.builder("thung", thungOfSuperFoo)
         .addModifiers(KModifier.FINAL)
         .build()
-    val aSimpleThung = TypeSpec.anonymousClassBuilder("%N", thungParameter)
+    val aSimpleThung = TypeSpec.anonymousClassBuilder()
         .superclass(simpleThungOfBar)
+        .addSuperclassConstructorParameter("%N", thungParameter)
         .addFunction(FunSpec.builder("doSomething")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
             .addParameter("bar", bar)
             .addCode("/* code snippets */\n")
             .build())
         .build()
-    val aThingThang = TypeSpec.anonymousClassBuilder("")
+    val aThingThang = TypeSpec.anonymousClassBuilder()
         .superclass(thingThangOfFooBar)
         .addFunction(FunSpec.builder("call")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
@@ -153,6 +154,31 @@ class TypeSpecTest {
         |                /* code snippets */
         |            }
         |        }
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun anonymousClassWithSuperClassConstructorCall() {
+    val superclass = ParameterizedTypeName.get(ArrayList::class, String::class)
+    val anonymousClass = TypeSpec.anonymousClassBuilder()
+        .addSuperclassConstructorParameter("%L", "4")
+        .superclass(superclass)
+        .build()
+    val taco = TypeSpec.classBuilder("Taco")
+        .addProperty(PropertySpec.builder("names", superclass)
+            .initializer("%L", anonymousClass)
+            .build()
+        ).build()
+
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import java.util.ArrayList
+        |import kotlin.String
+        |
+        |class Taco {
+        |    val names: ArrayList<String> = object : ArrayList<String>(4) {
         |    }
         |}
         |""".trimMargin())
@@ -205,7 +231,8 @@ class TypeSpecTest {
         |import kotlin.Any
         |
         |class Taco {
-        |    val NAME: Any = object { }
+        |    val NAME: Any = object {
+        |    }
         |}
         |""".trimMargin())
   }
@@ -402,17 +429,19 @@ class TypeSpecTest {
   @Test fun enumWithSubclassing() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
         .addModifiers(KModifier.PUBLIC)
-        .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("")
+        .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder()
             .addKdoc("Avalanche!\n")
             .build())
-        .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("%S", "flat")
+        .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%S", "flat")
             .addFunction(FunSpec.builder("toString")
                 .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE, KModifier.OVERRIDE)
                 .returns(String::class)
                 .addCode("return %S\n", "paper airplane!")
                 .build())
             .build())
-        .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("%S", "peace sign")
+        .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%S", "peace sign")
             .build())
         .addProperty(PropertySpec.builder("handPosition", String::class, KModifier.PRIVATE)
             .initializer("handPosition")
@@ -452,7 +481,7 @@ class TypeSpecTest {
   @Test fun enumsMayDefineAbstractFunctions() {
     val roshambo = TypeSpec.enumBuilder("Tortilla")
         .addModifiers(KModifier.PUBLIC)
-        .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder("")
+        .addEnumConstant("CORN", TypeSpec.anonymousClassBuilder()
             .addFunction(FunSpec.builder("fold")
                 .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
                 .build())
@@ -492,7 +521,7 @@ class TypeSpecTest {
 
   @Test fun enumWithMembersButNoConstructorCall() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
-        .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder("")
+        .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder()
             .addFunction(FunSpec.builder("toString")
                 .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
                 .returns(String::class)
@@ -517,7 +546,7 @@ class TypeSpecTest {
   @Test fun enumWithAnnotatedValues() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
         .addModifiers(KModifier.PUBLIC)
-        .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("")
+        .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder()
             .addAnnotation(java.lang.Deprecated::class)
             .build())
         .addEnumConstant("PAPER")
@@ -1486,7 +1515,7 @@ class TypeSpecTest {
   }
 
   @Test fun anonymousClassToString() {
-    val type = TypeSpec.anonymousClassBuilder("")
+    val type = TypeSpec.anonymousClassBuilder()
         .addSuperinterface(Runnable::class)
         .addFunction(FunSpec.builder("run")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
@@ -1550,7 +1579,7 @@ class TypeSpecTest {
   @Test fun multilineStatementWithAnonymousClass() {
     val stringComparator = ParameterizedTypeName.get(Comparator::class, String::class)
     val listOfString = ParameterizedTypeName.get(List::class, String::class)
-    val prefixComparator = TypeSpec.anonymousClassBuilder("")
+    val prefixComparator = TypeSpec.anonymousClassBuilder()
         .addSuperinterface(stringComparator)
         .addFunction(FunSpec.builder("compare")
             .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
