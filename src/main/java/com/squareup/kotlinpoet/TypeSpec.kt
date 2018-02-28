@@ -39,7 +39,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
-  private val isAnonymousClass = name == null && kind is Kind.Class
+  private val isAnonymousClass = builder.isAnonymousClass
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
@@ -393,6 +393,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val initializerBlock = CodeBlock.builder()
     internal val funSpecs = mutableListOf<FunSpec>()
     internal val typeSpecs = mutableListOf<TypeSpec>()
+    internal val isAnonymousClass get() = name == null && kind is Kind.Class
 
     init {
       require(name == null || name.isName) { "not a valid name: $name" }
@@ -422,14 +423,17 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
+      check(!isAnonymousClass) { "forbidden on anonymous types." }
       kind = kind.plusModifiers(*modifiers)
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+      check(!isAnonymousClass) { "forbidden on anonymous types." }
       this.typeVariables += typeVariables
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+      check(!isAnonymousClass) { "forbidden on anonymous types." }
       typeVariables += typeVariable
     }
 
@@ -456,15 +460,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun superclass(superclass: TypeName) = apply {
-      ensureCanHaveSuperclass()
-      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
-      this.superclass = superclass
-    }
-
-    private fun ensureCanHaveSuperclass() {
-      check(kind.isSimpleClass || kind.isEnum || kind is Object) {
+      check(kind.isSimpleClass || kind is Object) {
         "only classes can have super classes, not $kind"
       }
+      check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
+      this.superclass = superclass
     }
 
     fun superclass(superclass: Type) = superclass(superclass.asTypeName())
@@ -476,7 +476,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperclassConstructorParameter(codeBlock: CodeBlock) = apply {
-      ensureCanHaveSuperclass()
+      check(!kind.isAnnotation && kind !is Interface) {
+        "$kind cannot have superclass constructor parameters"
+      }
       this.superclassConstructorParameters += codeBlock
     }
 

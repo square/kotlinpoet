@@ -1985,9 +1985,13 @@ class TypeSpecTest {
     }.hasMessageThat().isEqualTo("unused arguments: %2, %4")
   }
 
-  @Test fun superClassOnlyValidForClassesAndEnums() {
+  @Test fun superClassOnlyValidForClasses() {
     assertThrows<IllegalStateException> {
       TypeSpec.annotationBuilder("A").superclass(Any::class.asClassName())
+    }
+
+    assertThrows<IllegalStateException> {
+      TypeSpec.enumBuilder("E").superclass(Any::class.asClassName())
     }
 
     assertThrows<IllegalStateException> {
