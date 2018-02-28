@@ -176,12 +176,13 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val names: ArrayList<String> = object : ArrayList<String>(4) { }
+        |    val names: ArrayList<String> = object : ArrayList<String>(4) {
+        |    }
         |}
         |""".trimMargin())
   }
 
-  @Ignore @Test fun anonymousClassWithSuperClassConstructorCall() {
+  @Test fun anonymousClassWithSuperClassConstructorCall() {
     val superclass = ParameterizedTypeName.get(ArrayList::class, String::class)
     val anonymousClass = TypeSpec.anonymousClassBuilder()
         .addSuperclassConstructorParameter("%L", "4")
@@ -200,7 +201,8 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val names: ArrayList<String> = object : ArrayList<String>(4) { }
+        |    val names: ArrayList<String> = object : ArrayList<String>(4) {
+        |    }
         |}
         |""".trimMargin())
   }
@@ -252,7 +254,8 @@ class TypeSpecTest {
         |import kotlin.Any
         |
         |class Taco {
-        |    val NAME: Any = object { }
+        |    val NAME: Any = object {
+        |    }
         |}
         |""".trimMargin())
   }

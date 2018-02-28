@@ -95,7 +95,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
-          listOf(CodeBlock.of(" %T(%L)", superclass, anonymousTypeArguments))
+          var superclassConstructorParameters = superclassConstructorParameters
+          if (anonymousTypeArguments.isNotEmpty()) {
+            superclassConstructorParameters = superclassConstructorParameters
+                .toMutableList().apply {
+              add(anonymousTypeArguments)
+            }
+          }
+          listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParameters.joinToCode()))
         } else {
           listOf()
         }
@@ -109,7 +116,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emitCode(allSuperTypes.joinToCode(","))
         }
         if (hasNoBody) {
-          codeWriter.emit(" { }")
+          codeWriter.emit(" {\n}")
           return
         }
         codeWriter.emit(" {\n")
