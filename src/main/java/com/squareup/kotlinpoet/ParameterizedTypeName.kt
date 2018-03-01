@@ -20,10 +20,14 @@ package com.squareup.kotlinpoet
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import javax.lang.model.util.Types
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KTypeProjection
 
 class ParameterizedTypeName internal constructor(
-  private val enclosingType: ParameterizedTypeName?,
+  private val enclosingType: TypeName?,
   val rawType: ClassName,
   typeArguments: List<TypeName>,
   nullable: Boolean = false,
@@ -108,9 +112,43 @@ class ParameterizedTypeName internal constructor(
         get(ownerType, map = map).nestedClass(rawType.simpleName(), typeArguments) else
         ParameterizedTypeName(null, rawType, typeArguments)
     }
+
+    /** Returns a type name equivalent to type with given list of type arguments.  */
+    internal fun get(type: KClass<*>, nullable: Boolean, typeArguments: List<KTypeProjection>): TypeName {
+      if (typeArguments.isEmpty()) {
+        return type.asTypeName()
+      }
+
+      val enclosingClass = type.java.enclosingClass?.kotlin
+
+      return ParameterizedTypeName(
+          enclosingClass?.let {
+            get(it, false, typeArguments.drop(type.typeParameters.size))
+          },
+          type.asTypeName(),
+          typeArguments.take(type.typeParameters.size).map {
+            it.type?.asTypeName() ?: WildcardTypeName.subtypeOf(ANY)
+          },
+          nullable,
+          type.annotations.map { AnnotationSpec.get(it) })
+    }
   }
 }
 
 /** Returns a parameterized type equivalent to `type`.  */
 @JvmName("get")
 fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this, mutableMapOf())
+
+/** Returns a class name equivalent to given Kotlin KType.  */
+fun KType.asTypeName(): TypeName {
+  val classifier = this.classifier
+  if (classifier is KTypeParameter) {
+    return classifier.asTypeVariableName()
+  }
+
+  if (classifier == null || classifier !is KClass<*>) {
+    throw IllegalArgumentException("Cannot build TypeName for $this")
+  }
+
+  return ParameterizedTypeName.get(classifier, this.isMarkedNullable, this.arguments)
+}
