@@ -15,26 +15,21 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import kotlin.test.BeforeTest
 import org.junit.Rule
-import kotlin.test.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
 import java.io.Closeable
 import java.io.IOException
 import java.util.concurrent.Callable
-import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.util.ElementFilter.methodsIn
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class FunSpecTest {
   @Rule @JvmField val compilation = CompilationRule()
@@ -70,7 +65,18 @@ class FunSpecTest {
 
   internal interface ExtendsOthers : Callable<Int>, Comparable<Long>
 
-  internal interface ExtendsIterableWithDefaultMethods : Iterable<Any>
+  abstract class InvalidOverrideMethods {
+    fun finalMethod() {
+    }
+
+    private fun privateMethod() {
+    }
+
+    companion object {
+      @JvmStatic fun staticMethod() {
+      }
+    }
+  }
 
   @Test fun overrideEverything() {
     val classElement = getElement(Everything::class.java)
@@ -113,24 +119,20 @@ class FunSpecTest {
   }
 
   @Test fun overrideInvalidModifiers() {
-    val method = mock(ExecutableElement::class.java)
-    whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.FINAL))
-    val element = mock(Element::class.java)
-    whenMock(element.asType()).thenReturn(mock(DeclaredType::class.java))
-    whenMock(method.enclosingElement).thenReturn(element)
-    assertThrows<IllegalArgumentException> {
-      FunSpec.overriding(method)
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [final]")
+    val classElement = getElement(InvalidOverrideMethods::class.java)
+    val methods = methodsIn(elements.getAllMembers(classElement))
 
-    whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.PRIVATE))
     assertThrows<IllegalArgumentException> {
-      FunSpec.overriding(method)
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [private]")
+      FunSpec.overriding(findFirst(methods, "finalMethod"))
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, final]")
 
-    whenMock(method.modifiers).thenReturn(ImmutableSet.of(Modifier.STATIC))
     assertThrows<IllegalArgumentException> {
-      FunSpec.overriding(method)
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [static]")
+      FunSpec.overriding(findFirst(methods, "privateMethod"))
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [private, final]")
+
+    assertThrows<IllegalArgumentException> {
+      FunSpec.overriding(findFirst(methods, "staticMethod"))
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, static, final]")
   }
 
   @Test fun nullableParam() {
@@ -345,6 +347,4 @@ class FunSpecTest {
       |}
       |""".trimMargin())
   }
-
-  private fun whenMock(any: Any?) = Mockito.`when`(any)
 }
