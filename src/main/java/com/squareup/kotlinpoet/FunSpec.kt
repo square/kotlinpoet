@@ -364,7 +364,7 @@ class FunSpec private constructor(builder: Builder) {
      * throws declarations. An `override` modifier will be added.
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
-      var modifiers: MutableSet<Modifier> = method.modifiers
+      var modifiers: Set<Modifier> = method.modifiers
       require(Modifier.PRIVATE !in modifiers
           && Modifier.FINAL !in modifiers
           && Modifier.STATIC !in modifiers) {

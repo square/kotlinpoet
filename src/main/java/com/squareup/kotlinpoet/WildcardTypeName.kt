@@ -82,7 +82,7 @@ class WildcardTypeName private constructor(
 
     internal fun get(
       mirror: javax.lang.model.type.WildcardType,
-      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+      typeVariables: Map<TypeParameterElement, TypeVariableName>
     ): TypeName {
       val extendsBound = mirror.extendsBound
       if (extendsBound == null) {

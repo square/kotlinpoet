@@ -116,7 +116,7 @@ abstract class TypeName internal constructor(
   companion object {
     internal fun get(
       mirror: TypeMirror,
-      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+      typeVariables: Map<TypeParameterElement, TypeVariableName>
     ): TypeName {
       return mirror.accept(object : SimpleTypeVisitor7<TypeName, Void?>() {
         override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
