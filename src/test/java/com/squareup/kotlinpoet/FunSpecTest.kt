@@ -73,7 +73,7 @@ class FunSpecTest {
     }
 
     companion object {
-      @JvmStatic fun staticMethod() {
+      @JvmStatic open fun staticMethod() {
       }
     }
   }
@@ -132,7 +132,7 @@ class FunSpecTest {
 
     assertThrows<IllegalArgumentException> {
       FunSpec.overriding(findFirst(methods, "staticMethod"))
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, static, final]")
+    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, static]")
   }
 
   @Test fun nullableParam() {
