@@ -159,12 +159,12 @@ internal fun List<ParameterSpec>.emit(
     }
     else -> {
       emit("\n")
-      indent(2)
+      indent(1)
       forEachIndexed { index, parameter ->
         if (index > 0) emit(",\n")
         emitBlock(parameter)
       }
-      unindent(2)
+      unindent(1)
       emit("\n")
     }
   }
