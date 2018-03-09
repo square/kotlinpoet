@@ -628,4 +628,26 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun primaryConstructorParameterAnnotation() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter("foo", String::class)
+                .build())
+            .addProperty(PropertySpec.builder("foo", String::class)
+                .addAnnotation(JvmField::class)
+                .initializer("foo")
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.jvm.JvmField
+      |
+      |class Taco(@JvmField val foo: String)
+      |""".trimMargin())
+  }
 }
