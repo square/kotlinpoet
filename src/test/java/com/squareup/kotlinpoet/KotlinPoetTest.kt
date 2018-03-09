@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.jvm.jvmField
 import kotlin.test.Test
 import java.util.concurrent.TimeUnit
 
@@ -636,7 +637,7 @@ class KotlinPoetTest {
                 .addParameter("foo", String::class)
                 .build())
             .addProperty(PropertySpec.builder("foo", String::class)
-                .addAnnotation(JvmField::class)
+                .jvmField()
                 .initializer("foo")
                 .build())
             .build())
