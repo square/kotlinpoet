@@ -44,7 +44,7 @@ class PropertySpec private constructor(builder: Builder) {
         setter?.modifiers?.contains(KModifier.INLINE) ?: false
     val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     codeWriter.emitKdoc(kdoc)
-    codeWriter.emitAnnotations(annotations, false)
+    codeWriter.emitAnnotations(annotations, inline)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
     if (receiverType != null) {
