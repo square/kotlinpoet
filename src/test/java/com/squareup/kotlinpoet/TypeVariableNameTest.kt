@@ -16,10 +16,15 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.Test
 import java.io.Serializable
+import kotlin.test.Test
 
 class TypeVariableNameTest {
+  @Test fun nullableAnyIsImplicitBound() {
+    val typeVariableName = TypeVariableName("T")
+    assertThat(typeVariableName.bounds).containsExactly(ANY.asNullable())
+  }
+
   @Test fun oneTypeVariableNoBounds() {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T"))

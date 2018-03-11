@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
+internal val NULLABLE_ANY = ANY.asNullable()
+
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
   for (i in 1..part.length) {
@@ -158,7 +160,7 @@ internal class CodeWriter constructor(
         emit("reified ")
       }
       emitCode("%L", typeVariable.name)
-      if (typeVariable.bounds.size == 1) {
+      if (typeVariable.bounds.size == 1 && typeVariable.bounds[0] != NULLABLE_ANY) {
         emitCode(" : %T", typeVariable.bounds[0])
       }
     }
