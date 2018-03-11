@@ -56,20 +56,21 @@ class TypeVariableName private constructor(
   override fun emit(out: CodeWriter) = out.emit(name)
 
   companion object {
-    private val NULLABLE_ANY = ANY.asNullable()
-    
     internal fun of(name: String, bounds: List<TypeName>, variance: KModifier?): TypeVariableName {
       require(variance == null || variance.isOneOf(KModifier.IN, KModifier.OUT)) {
         "$variance is an invalid variance modifier, the only allowed values are in and out!"
       }
+      require(bounds.isNotEmpty()) {
+        "$name has no bounds"
+      }
       // Strip Any? from bounds if it is present.
-      return TypeVariableName(name, bounds.filter { it != NULLABLE_ANY }, variance)
+      return TypeVariableName(name, bounds, variance)
     }
 
     /** Returns type variable named `name` with `variance` and without bounds.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, variance: KModifier? = null) =
-        TypeVariableName.of(name, emptyList(), variance)
+        TypeVariableName.of(name, listOf(NULLABLE_ANY), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
