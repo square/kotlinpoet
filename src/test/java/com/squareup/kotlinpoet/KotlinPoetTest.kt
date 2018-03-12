@@ -650,4 +650,28 @@ class KotlinPoetTest {
       |class Taco(@JvmField val foo: String)
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/346
+  @Test fun importTypeArgumentInParameterizedTypeName() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(FunSpec.builder("foo")
+            .addParameter("a", ParameterizedTypeName.get(
+                rawType = List::class.asTypeName(),
+                typeArguments = *arrayOf(Int::class.asTypeName()
+                    .annotated(AnnotationSpec.builder(JvmSuppressWildcards::class)
+                        .build()))
+            ))
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |import kotlin.collections.List
+      |import kotlin.jvm.JvmSuppressWildcards
+      |
+      |fun foo(a: List<@JvmSuppressWildcards Int>) {
+      |}
+      |""".trimMargin())
+  }
 }
