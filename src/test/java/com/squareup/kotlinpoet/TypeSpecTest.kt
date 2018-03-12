@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
 import java.io.Serializable
@@ -573,27 +574,18 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
         .addFunction(FunSpec.builder("throwOne")
-            .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("%T::class", IOException::class.asClassName())
-                .build())
+            .throws(IOException::class)
             .build())
         .addFunction(FunSpec.builder("throwTwo")
-            .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("%T::class, %T::class",
-                    IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
-                .build())
+            .throws(IOException::class.asClassName(), ClassName(tacosPackage, "SourCreamException"))
             .build())
         .addFunction(FunSpec.builder("abstractThrow")
             .addModifiers(KModifier.ABSTRACT)
-            .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("%T::class", IOException::class.asClassName())
-                .build())
+            .throws(IOException::class)
             .build())
         .addFunction(FunSpec.builder("nativeThrow")
             .addModifiers(KModifier.EXTERNAL)
-            .addAnnotation(AnnotationSpec.builder(Throws::class)
-                .addMember("%T::class", IOException::class.asClassName())
-                .build())
+            .throws(IOException::class)
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -607,7 +599,10 @@ class TypeSpecTest {
         |    fun throwOne() {
         |    }
         |
-        |    @Throws(IOException::class, SourCreamException::class)
+        |    @Throws(
+        |            IOException::class,
+        |            SourCreamException::class
+        |    )
         |    fun throwTwo() {
         |    }
         |
