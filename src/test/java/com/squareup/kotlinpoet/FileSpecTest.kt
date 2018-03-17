@@ -47,9 +47,9 @@ class FileSpecTest {
         .build()
     val source = FileSpec.builder("com.example.helloworld", "HelloWorld")
         .addType(hello)
-        .addStaticImport(hoverboard, "createNimbus")
-        .addStaticImport(namedBoards, "THUNDERBOLT")
-        .addStaticImport(Collections::class, "sort", "emptyList")
+        .addImport(hoverboard, "createNimbus")
+        .addImport(namedBoards, "THUNDERBOLT")
+        .addImport(Collections::class, "sort", "emptyList")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.example.helloworld
@@ -87,9 +87,9 @@ class FileSpecTest {
                 .addParameter("states", Thread.State::class.asClassName(), VARARG)
                 .build())
             .build())
-        .addStaticImport(Thread.State.BLOCKED)
-        .addStaticImport(System::class, "gc", "out", "nanoTime")
-        .addStaticImport(Thread.State::class, "valueOf")
+        .addImport(Thread.State.BLOCKED)
+        .addImport(System::class, "gc", "out", "nanoTime")
+        .addImport(Thread.State::class, "valueOf")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
@@ -115,7 +115,7 @@ class FileSpecTest {
 
   @Test fun importTopLevel() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addStaticImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
+        .addImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
         .addFunction(FunSpec.builder("prepareTacos")
             .returns(ParameterizedTypeName.get(List::class.asClassName(),
                 ClassName("com.squareup.tacos", "Taco")))
@@ -133,7 +133,7 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Ignore("addStaticImport doesn't support members with %L")
+  @Ignore("addImport doesn't support members with %L")
   @Test
   fun importStaticDynamic() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
@@ -142,7 +142,7 @@ class FileSpecTest {
                 .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
                 .build())
             .build())
-        .addStaticImport(System::class, "out")
+        .addImport(System::class, "out")
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos;
@@ -180,7 +180,7 @@ class FileSpecTest {
   @Test fun importStaticOnce() {
     val source = FileSpec.builder("readme", "Util")
         .addType(importStaticTypeSpec("Util"))
-        .addStaticImport(TimeUnit.SECONDS).build()
+        .addImport(TimeUnit.SECONDS).build()
     assertThat(source.toString()).isEqualTo("""
         |package readme
         |
@@ -201,8 +201,8 @@ class FileSpecTest {
   @Test fun importStaticTwice() {
     val source = FileSpec.builder("readme", "Util")
         .addType(importStaticTypeSpec("Util"))
-        .addStaticImport(TimeUnit.SECONDS)
-        .addStaticImport(TimeUnit.MINUTES)
+        .addImport(TimeUnit.SECONDS)
+        .addImport(TimeUnit.MINUTES)
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package readme
@@ -225,7 +225,7 @@ class FileSpecTest {
     assertThrows<IllegalArgumentException> {
       FileSpec.builder("readme", "Util")
           .addType(importStaticTypeSpec("Util"))
-          .addStaticImport(TimeUnit::class, "*")
+          .addImport(TimeUnit::class, "*")
     }.hasMessageThat().isEqualTo("Wildcard imports are not allowed")
   }
 

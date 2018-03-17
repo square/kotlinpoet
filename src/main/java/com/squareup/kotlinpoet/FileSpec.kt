@@ -227,17 +227,16 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       members += typeAliasSpec
     }
 
-    fun addStaticImport(constant: Enum<*>)
-        = addStaticImport(
+    fun addImport(constant: Enum<*>) = addImport(
         (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
-    fun addStaticImport(`class`: Class<*>, vararg names: String)
-        = addStaticImport(`class`.asClassName(), *names)
+    fun addImport(`class`: Class<*>, vararg names: String)
+        = addImport(`class`.asClassName(), *names)
 
-    fun addStaticImport(`class`: KClass<*>, vararg names: String)
-        = addStaticImport(`class`.asClassName(), *names)
+    fun addImport(`class`: KClass<*>, vararg names: String)
+        = addImport(`class`.asClassName(), *names)
 
-    fun addStaticImport(className: ClassName, vararg names: String) = apply {
+    fun addImport(className: ClassName, vararg names: String) = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
@@ -245,7 +244,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       }
     }
 
-    fun addStaticImport(packageName: String, vararg names: String) = apply {
+    fun addImport(packageName: String, vararg names: String) = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
