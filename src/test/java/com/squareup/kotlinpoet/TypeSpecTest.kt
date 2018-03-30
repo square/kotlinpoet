@@ -2500,6 +2500,37 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun propertyWithKdocInPrimaryConstructor() {
+    val type = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("a", Int::class)
+            .addParameter("b", String::class)
+            .build())
+        .addProperty(PropertySpec.builder("a", Int::class)
+            .initializer("a")
+            .addKdoc("KDoc\n")
+            .build())
+        .addProperty(PropertySpec.builder("b", String::class)
+            .initializer("b")
+            .build())
+        .build()
+
+    assertThat(toString(type)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |import kotlin.String
+        |
+        |class Taco(
+        |    /**
+        |     * KDoc
+        |     */
+        |    val a: Int,
+        |    val b: String
+        |)
+        |""".trimMargin())
+  }
+
   @Test fun annotatedConstructor() {
     val injectAnnotation = ClassName("javax.inject", "Inject")
     val taco = TypeSpec.classBuilder("Taco")
