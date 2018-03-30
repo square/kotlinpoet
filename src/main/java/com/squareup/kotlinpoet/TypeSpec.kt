@@ -147,7 +147,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             codeWriter.emit("constructor")
           }
 
-          it.parameters.emit(codeWriter) { param ->
+          val forceNewLines = it.parameters
+              .any { param -> constructorProperties[param.name]?.kdoc?.isNotEmpty() == true }
+
+          it.parameters.emit(codeWriter, forceNewLines = forceNewLines) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
