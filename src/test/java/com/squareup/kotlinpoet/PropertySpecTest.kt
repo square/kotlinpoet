@@ -95,4 +95,28 @@ class PropertySpecTest {
       |external val foo: kotlin.String
       |""".trimMargin())
   }
+
+  @Test fun initializer() {
+    val prop = PropertySpec.builder("foo", String::class)
+            .initializer("\"bar\"")
+            .build()
+
+    assertThat(prop.toString()).isEqualTo("val foo: kotlin.String = \"bar\"\n")
+  }
+
+  @Test fun initializerWithTypeInferrence() {
+    val prop = PropertySpec.builder("foo", String::class)
+        .initializerWithTypeInference("\"bar\"")
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("val foo = \"bar\"\n")
+  }
+
+  @Test fun delegateWithTypeInferrence() {
+    val prop = PropertySpec.builder("foo", String::class)
+            .delegateWithTypeInference("Delegates.notNull<String>()")
+            .build()
+
+    assertThat(prop.toString()).isEqualTo("val foo by Delegates.notNull<String>()\n")
+  }
 }
