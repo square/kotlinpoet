@@ -44,6 +44,13 @@ class ClassName internal constructor(
     names.subList(1, names.size).joinToString(".") else
     names.joinToString(".")
 
+  /** Package name, like `"java.util"` for `Map.Entry`.  */
+  val packageName get() = names[0]
+
+  /** Simple name of this class, like `"Entry"` for [Map.Entry].  */
+  val simpleName get() = names[names.size - 1]
+  val simpleNames get() = names.subList(1, names.size)
+
   init {
     for (i in 1 until names.size) {
       require(names[i].isName) { "part ${names[i]} is keyword" }
@@ -58,9 +65,6 @@ class ClassName internal constructor(
       = ClassName(names, nullable, this.annotations + annotations)
 
   override fun withoutAnnotations() = ClassName(names, nullable)
-
-  /** Returns the package name, like `"java.util"` for `Map.Entry`.  */
-  fun packageName() = names[0]
 
   /**
    * Returns the enclosing class, like [Map] for `Map.Entry`. Returns null if this class
@@ -81,7 +85,6 @@ class ClassName internal constructor(
   fun reflectionName(): String {
     // trivial case: no nested names
     if (names.size == 2) {
-      val packageName = packageName()
       return if (packageName.isEmpty())
         names[1] else
         packageName + "." + names[1]
@@ -89,7 +92,7 @@ class ClassName internal constructor(
     // concat top level class name and nested names
     return buildString {
       append(topLevelClassName())
-      for (name in simpleNames().subList(1, simpleNames().size)) {
+      for (name in simpleNames.subList(1, simpleNames.size)) {
         append('$').append(name)
       }
     }
@@ -101,8 +104,6 @@ class ClassName internal constructor(
    */
   fun nestedClass(name: String) = ClassName(names + name)
 
-  fun simpleNames() = names.subList(1, names.size)
-
   /**
    * Returns a class that shares the same enclosing package or class. If this class is enclosed by
    * another class, this is equivalent to `enclosingClassName().nestedClass(name)`. Otherwise
@@ -113,9 +114,6 @@ class ClassName internal constructor(
     result[result.size - 1] = name
     return ClassName(result)
   }
-
-  /** Returns the simple name of this class, like `"Entry"` for [Map.Entry].  */
-  fun simpleName() = names[names.size - 1]
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 

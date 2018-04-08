@@ -149,7 +149,7 @@ abstract class TypeName internal constructor(
             typeArgumentNames += get(typeArgument, typeVariables)
           }
           return if (enclosing is ParameterizedTypeName)
-            enclosing.nestedClass(rawType.simpleName(), typeArgumentNames) else
+            enclosing.nestedClass(rawType.simpleName, typeArgumentNames) else
             ParameterizedTypeName(null, rawType, typeArgumentNames)
         }
 
