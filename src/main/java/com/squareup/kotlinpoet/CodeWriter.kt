@@ -38,7 +38,7 @@ internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = DEFAULT_INDENT,
   private val memberImports: Map<String, Import> = emptyMap(),
-  private val importedTypes: Map<String, ClassName> = emptyMap()
+  val importedTypes: Map<String, ClassName> = emptyMap()
 ) {
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
@@ -64,8 +64,6 @@ internal class CodeWriter constructor(
       memberImportClassNames.add(className.substring(0, className.lastIndexOf('.')))
     }
   }
-
-  fun importedTypes() = importedTypes
 
   fun indent(levels: Int = 1) = apply {
     indentLevel += levels
@@ -321,16 +319,16 @@ internal class CodeWriter constructor(
     var c: ClassName? = className
     while (c != null) {
       val alias = memberImports[c.canonicalName]?.alias
-      val simpleName = alias ?: c.simpleName()
+      val simpleName = alias ?: c.simpleName
       val resolved = resolve(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
       if (resolved == c.asNonNullable().withoutAnnotations()) {
         if (alias != null) return alias
-        val suffixOffset = c.simpleNames().size - 1
-        return className.simpleNames().subList(suffixOffset,
-            className.simpleNames().size).joinToString(".")
+        val suffixOffset = c.simpleNames.size - 1
+        return className.simpleNames.subList(suffixOffset,
+            className.simpleNames.size).joinToString(".")
       }
       c = c.enclosingClassName()
     }
@@ -341,9 +339,9 @@ internal class CodeWriter constructor(
     }
 
     // If the class is in the same package, we're done.
-    if (packageName == className.packageName()) {
-      referencedNames.add(className.topLevelClassName().simpleName())
-      return className.simpleNames().joinToString(".")
+    if (packageName == className.packageName) {
+      referencedNames.add(className.topLevelClassName().simpleName)
+      return className.simpleNames.joinToString(".")
     }
 
     // We'll have to use the fully-qualified name. Mark the type as importable for a future pass.
@@ -355,11 +353,11 @@ internal class CodeWriter constructor(
   }
 
   private fun importableType(className: ClassName) {
-    if (className.packageName().isEmpty()) {
+    if (className.packageName.isEmpty()) {
       return
     }
     val topLevelClassName = className.topLevelClassName()
-    val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName()
+    val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName
     val replaced = importableTypes.put(simpleName, topLevelClassName)
     if (replaced != null) {
       importableTypes.put(simpleName, replaced) // On collision, prefer the first inserted.

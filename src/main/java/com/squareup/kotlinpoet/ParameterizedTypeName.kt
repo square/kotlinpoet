@@ -57,7 +57,7 @@ class ParameterizedTypeName internal constructor(
     if (enclosingType != null) {
       enclosingType.emitAnnotations(out)
       enclosingType.emit(out)
-      out.emit("." + rawType.simpleName())
+      out.emit("." + rawType.simpleName)
     } else {
       rawType.emitAnnotations(out)
       rawType.emit(out)
@@ -109,7 +109,7 @@ class ParameterizedTypeName internal constructor(
 
       val typeArguments = type.actualTypeArguments.map { TypeName.get(it, map = map) }
       return if (ownerType != null)
-        get(ownerType, map = map).nestedClass(rawType.simpleName(), typeArguments) else
+        get(ownerType, map = map).nestedClass(rawType.simpleName, typeArguments) else
         ParameterizedTypeName(null, rawType, typeArguments)
     }
 

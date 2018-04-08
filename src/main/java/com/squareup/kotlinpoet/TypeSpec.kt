@@ -632,26 +632,26 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   companion object {
     @JvmStatic fun classBuilder(name: String) = Builder(Kind.Class(), name)
 
-    @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName())
+    @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName)
 
     @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.Class(EXPECT), name)
 
-    @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName())
+    @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName)
 
     @JvmStatic fun objectBuilder(name: String) = Builder(Kind.Object(), name)
 
-    @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName())
+    @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName)
 
     @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
         Builder(Kind.Object(COMPANION), name)
 
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.Interface(), name)
 
-    @JvmStatic fun interfaceBuilder(className: ClassName) = interfaceBuilder(className.simpleName())
+    @JvmStatic fun interfaceBuilder(className: ClassName) = interfaceBuilder(className.simpleName)
 
     @JvmStatic fun enumBuilder(name: String) = Builder(Kind.Class(ENUM), name)
 
-    @JvmStatic fun enumBuilder(className: ClassName) = enumBuilder(className.simpleName())
+    @JvmStatic fun enumBuilder(className: ClassName) = enumBuilder(className.simpleName)
 
     @JvmStatic fun anonymousClassBuilder(): Builder {
       return Builder(Kind.Class(), null)
@@ -660,6 +660,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     @JvmStatic fun annotationBuilder(name: String) = Builder(Kind.Class(ANNOTATION), name)
 
     @JvmStatic fun annotationBuilder(className: ClassName)
-        = annotationBuilder(className.simpleName())
+        = annotationBuilder(className.simpleName)
   }
 }

@@ -103,7 +103,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       codeWriter.emit("\n")
     }
 
-    val imports = codeWriter.importedTypes().values
+    val imports = codeWriter.importedTypes.values
         .map { it.canonicalName }
         .filterNot { it in memberImports.keys }
         .plus(memberImports.map { it.value.toString() })
