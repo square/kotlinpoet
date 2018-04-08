@@ -33,6 +33,7 @@ class PropertySpec private constructor(builder: Builder) {
   val getter = builder.getter
   val setter = builder.setter
   val receiverType = builder.receiverType
+  val typeInference = builder.typeInference
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -54,7 +55,11 @@ class PropertySpec private constructor(builder: Builder) {
         codeWriter.emitCode("%T.", receiverType)
       }
     }
-    codeWriter.emitCode("%L: %T", name, type)
+    if (typeInference) {
+      codeWriter.emitCode("%L", name)
+    } else {
+      codeWriter.emitCode("%L: %T", name, type)
+    }
     if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")
@@ -112,6 +117,7 @@ class PropertySpec private constructor(builder: Builder) {
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
+    internal var typeInference = false
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -155,12 +161,29 @@ class PropertySpec private constructor(builder: Builder) {
       this.initializer = codeBlock
     }
 
+    fun initializerWithTypeInference(format: String, vararg args: Any?) = initializerWithTypeInference(CodeBlock.of(format, *args))
+
+    fun initializerWithTypeInference(codeBlock: CodeBlock) = apply {
+      check(this.initializer == null) { "initializer was already set" }
+      this.initializer = codeBlock
+      this.typeInference = true
+    }
+
     fun delegate(format: String, vararg args: Any?): Builder = delegate(CodeBlock.of(format, *args))
 
     fun delegate(codeBlock: CodeBlock) = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
       this.delegated = true
+    }
+
+    fun delegateWithTypeInference(format: String, vararg args: Any?): Builder = delegateWithTypeInference(CodeBlock.of(format, *args))
+
+    fun delegateWithTypeInference(codeBlock: CodeBlock) = apply {
+      check(this.initializer == null) { "initializer was already set" }
+      this.initializer = codeBlock
+      this.delegated = true
+      this.typeInference = true
     }
 
     fun getter(getter: FunSpec) = apply {
