@@ -818,4 +818,49 @@ class JvmAnnotationsTest {
       |    }
       |""".trimMargin())
   }
+
+  @Test fun jvmDefaultProperty() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.interfaceBuilder("Taco")
+            .addProperty(PropertySpec.builder("foo", String::class)
+                .jvmDefault()
+                .initializer("%S", "foo")
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.jvm.JvmDefault
+      |
+      |interface Taco {
+      |    @JvmDefault
+      |    val foo: String = "foo"
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun jvmDefaultFunction() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.interfaceBuilder("Taco")
+            .addFunction(FunSpec.builder("foo")
+                .jvmDefault()
+                .returns(String::class)
+                .addStatement("return %S", "foo")
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.jvm.JvmDefault
+      |
+      |interface Taco {
+      |    @JvmDefault
+      |    fun foo(): String = "foo"
+      |}
+      |""".trimMargin())
+  }
 }

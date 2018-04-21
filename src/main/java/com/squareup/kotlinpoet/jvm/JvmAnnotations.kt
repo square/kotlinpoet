@@ -109,3 +109,7 @@ fun TypeName.jvmSuppressWildcards(suppress: Boolean = true) =
     annotated(jvmSuppressWildcardsAnnotation(suppress))
 
 fun TypeName.jvmWildcard() = annotated(AnnotationSpec.builder(JvmWildcard::class).build())
+
+fun PropertySpec.Builder.jvmDefault() = addAnnotation(JvmDefault::class)
+
+fun FunSpec.Builder.jvmDefault() = addAnnotation(JvmDefault::class)
