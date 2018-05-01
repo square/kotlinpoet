@@ -197,7 +197,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
         if (i.hasNext()) {
           codeWriter.emit(",\n")
-        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
+        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty() || companionObject != null) {
           codeWriter.emit(";\n")
         } else {
           codeWriter.emit("\n")
@@ -441,7 +441,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun companionObject(companionObject: TypeSpec) = apply {
-      check(kind.isSimpleClass || kind is Interface) {
+      check(kind.isSimpleClass || kind is Interface || kind.isEnum) {
         "$kind can't have a companion object"
       }
       require(companionObject.kind is Object && COMPANION in companionObject.kind.modifiers) {

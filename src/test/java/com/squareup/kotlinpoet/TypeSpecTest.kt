@@ -2403,7 +2403,7 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun companionObjectOnEnumNotAlowed() {
+  @Test fun companionObjectOnEnum() {
     val companion = TypeSpec.companionObjectBuilder()
         .addFunction(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC)
@@ -2411,11 +2411,25 @@ class TypeSpecTest {
         .build()
 
     val enumBuilder = TypeSpec.enumBuilder("MyEnum")
+        .addEnumConstant("FOO")
+        .addEnumConstant("BAR")
         .addModifiers(KModifier.PUBLIC)
+        .companionObject(companion)
+        .build()
 
-    assertThrows<IllegalStateException> {
-      enumBuilder.companionObject(companion)
-    }
+    assertThat(toString(enumBuilder)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |enum class MyEnum {
+        |    FOO,
+        |
+        |    BAR;
+        |    companion object {
+        |        fun test() {
+        |        }
+        |    }
+        |}
+        |""".trimMargin())
   }
 
   @Test fun companionObjectOnObjectNotAlowed() {
