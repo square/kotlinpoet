@@ -27,7 +27,6 @@ import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.jvm.throws
-import org.eclipse.jdt.internal.compiler.parser.Parser.name
 import org.junit.Rule
 import java.io.IOException
 import java.io.Serializable
