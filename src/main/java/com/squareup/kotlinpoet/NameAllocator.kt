@@ -23,11 +23,11 @@ import java.util.UUID
  * mix of user-supplied names and constants:
  *
  * ```
- *   NameAllocator nameAllocator = new NameAllocator();
- *   for (MyProperty property : properties) {
- *     nameAllocator.newName(property.name(), property);
+ *   val nameAllocator = NameAllocator()
+ *   for (property in properties) {
+ *     nameAllocator.newName(property.name, property)
  *   }
- *   nameAllocator.newName("sb", "string builder");
+ *   nameAllocator.newName("sb", "string builder")
  * ```
  *
  * Pass a unique tag object to each allocation. The tag scopes the name, and can be used to look up
@@ -38,31 +38,30 @@ import java.util.UUID
  * Once we've allocated names we can use them when generating code:
  *
  * ```
- *   FunSpec.Builder builder = FunSpec.builder("toString")
- *       .addAnnotation(Override.class)
- *       .addModifiers(Modifier.PUBLIC)
- *       .returns(String.class);
+ *   val builder = FunSpec.builder("toString")
+ *       .addModifiers(KModifier.OVERRIDE)
+ *       .returns(String::class)
  *
- *   builder.addStatement("%1T %2N = new %1T()",
- *       StringBuilder.class, nameAllocator.get("string builder"));
+ *   builder.addStatement("val %N = %T()",
+ *       nameAllocator.get("string builder"), StringBuilder::class)
  *
- *   for (MyProperty property : properties) {
+ *   for (property in properties) {
  *     builder.addStatement("%N.append(%N)",
- *         nameAllocator.get("string builder"), nameAllocator.get(property));
+ *         nameAllocator.get("string builder"), nameAllocator.get(property))
  *   }
- *   builder.addStatement("return %N", nameAllocator.get("string builder"));
- *   return builder.build();
+ *   builder.addStatement("return %N.toString()", nameAllocator.get("string builder"))
+ *   return builder.build()
  * ```
  *
  * The above code generates unique names if presented with conflicts. Given user-supplied properties
  * with names `ab` and `sb` this generates the following:
  *
  * ```
- * @Override public String toString() {
- *   StringBuilder sb_ = new StringBuilder();
- *   sb_.append(ab);
- *   sb_.append(sb);
- *   return sb_.toString();
+ * override fun toString(): kotlin.String {
+ *     val sb_ = java.lang.StringBuilder()
+ *     sb_.append(ab)
+ *     sb_.append(sb)
+ *     return sb_.toString()
  * }
  * ```
  *
