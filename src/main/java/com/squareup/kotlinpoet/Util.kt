@@ -132,6 +132,10 @@ internal fun escapeKeywords(canonicalName: String)
 
 internal fun escapeIfKeyword(value: String) = if (value.isKeyword) "`$value`" else value
 
+internal fun escapeIfNotJavaIdentifier(value: String) = if (!Character.isJavaIdentifierStart(value.first()) || value.drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$value`" else value
+
+internal fun escapeIfNecessary(value: String) = escapeIfKeyword(escapeIfNotJavaIdentifier(value))
+
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 internal val String.isKeyword get() = KEYWORDS.contains(this)

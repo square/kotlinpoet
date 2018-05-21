@@ -88,6 +88,13 @@ class UtilTest {
     assertThat("".isIdentifier).isFalse()
   }
 
+  @Test fun escapeNonJavaIdentifiers() {
+    assertThat(escapeIfNotJavaIdentifier("8startWithNumber")).isEqualTo("`8startWithNumber`")
+    assertThat(escapeIfNotJavaIdentifier("with-hyphen")).isEqualTo("`with-hyphen`")
+    assertThat(escapeIfNotJavaIdentifier("with space")).isEqualTo("`with space`")
+    assertThat(escapeIfNotJavaIdentifier("with_unicode_punctuation\u2026")).isEqualTo("`with_unicode_punctuation\u2026`")
+  }
+
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
   private fun stringLiteral(expected: String, value: String)
