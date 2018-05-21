@@ -112,7 +112,7 @@ class FunSpec private constructor(builder: Builder) {
           codeWriter.emitCode("%T.", receiverType)
         }
       }
-      codeWriter.emitCode("%L", escapeIfKeyword(name))
+      codeWriter.emitCode("%L", escapeIfNecessary(name))
     }
 
     parameters.emit(codeWriter) { param ->

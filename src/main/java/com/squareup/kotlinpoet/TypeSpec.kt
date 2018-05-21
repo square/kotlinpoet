@@ -121,7 +121,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
             if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
         if (name != null) {
-          codeWriter.emitCode(" %L", name)
+          codeWriter.emitCode(" %L", escapeIfNecessary(name))
         }
         codeWriter.emitTypeVariables(typeVariables)
         codeWriter.emitWhereBlock(typeVariables)
