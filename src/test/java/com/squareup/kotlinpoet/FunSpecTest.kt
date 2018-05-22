@@ -350,7 +350,7 @@ class FunSpecTest {
 
   @Test fun escapePunctuationInFunctionName() {
     val funSpec = FunSpec.builder("with-hyphen")
-            .build()
+        .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
       |fun `with-hyphen`() {
