@@ -44,7 +44,7 @@ class ParameterSpecTest {
 
   @Test fun escapePunctuationInParameterName() {
     val parameterSpec = ParameterSpec.builder("with-hyphen", String::class)
-            .build()
+        .build()
     assertThat(parameterSpec.toString()).isEqualTo("`with-hyphen`: kotlin.String")
   }
 }
