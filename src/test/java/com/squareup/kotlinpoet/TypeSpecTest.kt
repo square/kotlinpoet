@@ -3029,8 +3029,7 @@ class TypeSpecTest {
         "by superString with existing declaration by { print(Hello) }")
   }
 
-  @Test
-  fun testDelegateIfaceWithOtherParamTypeName() {
+  @Test fun testDelegateIfaceWithOtherParamTypeName() {
     val type = TypeSpec.classBuilder("EntityBuilder")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter(ParameterSpec.builder("argBuilder",
@@ -3052,8 +3051,7 @@ class TypeSpecTest {
           |""".trimMargin())
   }
 
-  @Test
-  fun externalClassFunctionHasNoBody() {
+  @Test fun externalClassFunctionHasNoBody() {
     val typeSpec = TypeSpec.classBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
@@ -3068,8 +3066,7 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun externalInterfaceWithMembers() {
+  @Test fun externalInterfaceWithMembers() {
     val typeSpec = TypeSpec.interfaceBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
@@ -3090,8 +3087,7 @@ class TypeSpecTest {
   }
 
 
-  @Test
-  fun externalObjectWithMembers() {
+  @Test fun externalObjectWithMembers() {
     val typeSpec = TypeSpec.objectBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
@@ -3111,8 +3107,7 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun externalClassWithNestedTypes() {
+  @Test fun externalClassWithNestedTypes() {
     val typeSpec = TypeSpec.classBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addType(TypeSpec.classBuilder("Nested1")
@@ -3145,6 +3140,19 @@ class TypeSpecTest {
       |    }
       |}
       |""".trimMargin())
+  }
+
+  @Test fun kindIsEnum() {
+    val enum = TypeSpec.enumBuilder("Topping")
+        .addEnumConstant("CHEESE")
+        .build()
+    assertThat(enum.kind.isEnum).isTrue()
+  }
+
+  @Test fun kindIsAnnotation() {
+    val annotation = TypeSpec.annotationBuilder("Taco")
+        .build()
+    assertThat(annotation.kind.isAnnotation).isTrue()
   }
 
   companion object {

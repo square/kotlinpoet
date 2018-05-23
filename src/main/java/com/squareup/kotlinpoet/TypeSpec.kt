@@ -325,9 +325,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val modifiers: Set<KModifier> = emptySet()
   ) {
 
-    internal val isEnum get() = this is Class && ENUM in modifiers
+    val isEnum get() = this is Class && ENUM in modifiers
 
-    internal val isAnnotation get() = this is Class && ANNOTATION in modifiers
+    val isAnnotation get() = this is Class && ANNOTATION in modifiers
 
     internal val isSimpleClass get() = this is Class && !isEnum && !isAnnotation
 
