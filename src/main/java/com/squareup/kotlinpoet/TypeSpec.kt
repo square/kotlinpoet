@@ -329,7 +329,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     val isAnnotation get() = this is Class && ANNOTATION in modifiers
 
-    val isSimpleClass get() = this is Class && !isEnum && !isAnnotation
+    internal val isSimpleClass get() = this is Class && !isEnum && !isAnnotation
 
     internal val implicitPropertyModifiers get() =
       if (isAnnotation) emptySet()

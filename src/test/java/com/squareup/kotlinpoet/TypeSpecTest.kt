@@ -3155,12 +3155,6 @@ class TypeSpecTest {
     assertThat(annotation.kind.isAnnotation).isTrue()
   }
 
-  @Test fun kindIsSimpleClass() {
-    val simpleClass = TypeSpec.classBuilder("Taco")
-        .build()
-    assertThat(simpleClass.kind.isSimpleClass).isTrue()
-  }
-
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
