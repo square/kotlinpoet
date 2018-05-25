@@ -700,8 +700,8 @@ class FileSpecTest {
         |
         |import kotlin.Int
         |
-        |data class Taco(val madeFreshDatabaseDate: java.sql.Taco.Taco, fooNt: Int) {
-        |  constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
+        |data class Taco(val madeFreshDatabaseDate: java.sql.Taco, fooNt: Int) {
+        |    constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
         |}
         |""".trimMargin())
   }
