@@ -2153,7 +2153,7 @@ class TypeSpecTest {
         .addAnnotation(SuppressWarnings::class)
         .addModifiers(DATA)
         .addTypeVariable(TypeVariableName.of("State", listOf(ANY), IN).reified(true))
-        .addType(TypeSpec.companionObjectBuilder()
+        .companionObject(TypeSpec.companionObjectBuilder()
             .build())
         .addType(TypeSpec.classBuilder("InnerTaco")
             .addModifiers(INNER)
@@ -3164,6 +3164,28 @@ class TypeSpecTest {
       |class `With-Hyphen`
       |
       """.trimMargin())
+  }
+
+  @Test fun companionObjectInAddType() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Taco")
+          .addType(TypeSpec.companionObjectBuilder()
+              .build())
+          .build()
+    }
+  }
+
+  @Test fun companionObjectInAddTypes() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Taco")
+          .addTypes(listOf(
+              TypeSpec.companionObjectBuilder()
+                  .build(),
+              TypeSpec.classBuilder("Seasoning")
+                  .build()
+          ))
+          .build()
+    }
   }
 
   companion object {

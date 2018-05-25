@@ -603,10 +603,18 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addTypes(typeSpecs: Iterable<TypeSpec>) = apply {
+      typeSpecs.forEachIndexed { index, typeSpec ->
+        require(!(typeSpec.kind is Object && COMPANION in typeSpec.kind.modifiers)) {
+          "provided TypeSpec at index $index is a companion object, use the companionObject() function to set it"
+        }
+      }
       this.typeSpecs += typeSpecs
     }
 
     fun addType(typeSpec: TypeSpec) = apply {
+      require(!(typeSpec.kind is Object && COMPANION in typeSpec.kind.modifiers)) {
+        "provided TypeSpec is a companion object, use the companionObject() function to set it"
+      }
       typeSpecs += typeSpec
     }
 
