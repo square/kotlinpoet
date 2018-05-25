@@ -367,6 +367,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(PUBLIC),
         modifiers.toSet()) {
 
+      val isCompanion get() = COMPANION in modifiers
+
       override fun plusModifiers(vararg modifiers: KModifier) =
           Object(*(this.modifiers.toTypedArray() + modifiers))
     }

@@ -26,6 +26,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.TypeSpec.Kind
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
@@ -3164,6 +3165,13 @@ class TypeSpecTest {
       |class `With-Hyphen`
       |
       """.trimMargin())
+  }
+
+  @Test fun objectKindIsCompanion() {
+    val comanionObject = TypeSpec.companionObjectBuilder()
+        .build()
+    assertThat(comanionObject.kind is Kind.Object).isTrue()
+    assertThat((comanionObject.kind as Kind.Object).isCompanion).isTrue()
   }
 
   companion object {
