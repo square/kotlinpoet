@@ -55,7 +55,9 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
     val importsCollector = CodeWriter(NullAppendable, indent, memberImports)
     emit(importsCollector)
+    val typeSpecs = members.filterIsInstance<TypeSpec>().mapNotNull { it.name }.toSet()
     val suggestedImports = importsCollector.suggestedImports()
+        .filterKeys { it !in typeSpecs }
 
     // Second pass: write the code, taking advantage of the imports.
     val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports)
