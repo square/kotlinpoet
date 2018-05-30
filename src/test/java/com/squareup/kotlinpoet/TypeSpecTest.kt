@@ -3155,6 +3155,13 @@ class TypeSpecTest {
     assertThat(annotation.kind.isAnnotation).isTrue()
   }
 
+  @Test fun escapePunctuationInTypeName() {
+    assertThat(TypeSpec.classBuilder("With-Hyphen").build().toString()).isEqualTo("""
+      |class `With-Hyphen`
+      |
+      """.trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

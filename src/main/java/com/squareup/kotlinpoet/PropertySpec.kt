@@ -54,7 +54,7 @@ class PropertySpec private constructor(builder: Builder) {
         codeWriter.emitCode("%T.", receiverType)
       }
     }
-    codeWriter.emitCode("%L: %T", name, type)
+    codeWriter.emitCode("%L: %T", escapeIfNecessary(name), type)
     if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")

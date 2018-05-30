@@ -95,4 +95,13 @@ class PropertySpecTest {
       |external val foo: kotlin.String
       |""".trimMargin())
   }
+
+  @Test fun escapePunctuationInPropertyName() {
+    val prop = PropertySpec.builder("with-hyphen", String::class)
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |val `with-hyphen`: kotlin.String
+      |""".trimMargin())
+  }
 }
