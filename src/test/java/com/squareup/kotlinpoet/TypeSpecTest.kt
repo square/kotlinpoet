@@ -19,6 +19,9 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.DATA
+import com.squareup.kotlinpoet.KModifier.IN
+import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -2140,6 +2143,40 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun generalToBuilderEqualityTest() {
+    val comprehensiveTaco = TypeSpec.classBuilder("Taco")
+        .addKdoc("SuperTaco")
+        .addAnnotation(SuppressWarnings::class)
+        .addModifiers(DATA)
+        .addTypeVariable(TypeVariableName.of("State", listOf(ANY), IN).reified(true))
+        .addType(TypeSpec.companionObjectBuilder()
+            .build())
+        .addType(TypeSpec.classBuilder("InnerTaco")
+            .addModifiers(INNER)
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .build())
+        .superclass(ClassName("texmexfood", "TortillaBased"))
+        .addSuperclassConstructorParameter("true")
+        .addProperty(PropertySpec.builder("meat", ClassName("texmexfood", "Meat"))
+            .build())
+        .addFunction(FunSpec.builder("fold")
+            .build())
+        .addSuperinterface(ClassName("texmexfood", "Consumable"))
+        .build()
+
+    assertThat(comprehensiveTaco.toBuilder().build()).isEqualTo(comprehensiveTaco)
+  }
+
+  @Test fun generalEnumToBuilderEqualityTest() {
+    val bestTexMexEnum = TypeSpec.enumBuilder("BestTexMex")
+        .addEnumConstant("TACO")
+        .addEnumConstant("BREAKFAST_TACO")
+        .build()
+
+    assertThat(bestTexMexEnum.toBuilder().build()).isEqualTo(bestTexMexEnum)
+  }
+
   @Test fun initializerBlockUnsupportedExceptionOnInterface() {
     val interfaceBuilder = TypeSpec.interfaceBuilder("Taco")
     assertThrows<IllegalStateException> {
@@ -2992,8 +3029,7 @@ class TypeSpecTest {
         "by superString with existing declaration by { print(Hello) }")
   }
 
-  @Test
-  fun testDelegateIfaceWithOtherParamTypeName() {
+  @Test fun testDelegateIfaceWithOtherParamTypeName() {
     val type = TypeSpec.classBuilder("EntityBuilder")
         .primaryConstructor(FunSpec.constructorBuilder()
             .addParameter(ParameterSpec.builder("argBuilder",
@@ -3015,8 +3051,7 @@ class TypeSpecTest {
           |""".trimMargin())
   }
 
-  @Test
-  fun externalClassFunctionHasNoBody() {
+  @Test fun externalClassFunctionHasNoBody() {
     val typeSpec = TypeSpec.classBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addFunction(FunSpec.builder("bar").addModifiers(KModifier.EXTERNAL).build())
@@ -3031,8 +3066,7 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun externalInterfaceWithMembers() {
+  @Test fun externalInterfaceWithMembers() {
     val typeSpec = TypeSpec.interfaceBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
@@ -3053,8 +3087,7 @@ class TypeSpecTest {
   }
 
 
-  @Test
-  fun externalObjectWithMembers() {
+  @Test fun externalObjectWithMembers() {
     val typeSpec = TypeSpec.objectBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addProperty(PropertySpec.builder("baz", String::class).addModifiers(KModifier.EXTERNAL).build())
@@ -3074,8 +3107,7 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun externalClassWithNestedTypes() {
+  @Test fun externalClassWithNestedTypes() {
     val typeSpec = TypeSpec.classBuilder("Foo")
         .addModifiers(KModifier.EXTERNAL)
         .addType(TypeSpec.classBuilder("Nested1")
@@ -3108,6 +3140,19 @@ class TypeSpecTest {
       |    }
       |}
       |""".trimMargin())
+  }
+
+  @Test fun kindIsEnum() {
+    val enum = TypeSpec.enumBuilder("Topping")
+        .addEnumConstant("CHEESE")
+        .build()
+    assertThat(enum.kind.isEnum).isTrue()
+  }
+
+  @Test fun kindIsAnnotation() {
+    val annotation = TypeSpec.annotationBuilder("Taco")
+        .build()
+    assertThat(annotation.kind.isAnnotation).isTrue()
   }
 
   @Test fun escapePunctuationInTypeName() {

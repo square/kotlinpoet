@@ -66,6 +66,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
     builder.superinterfaces.putAll(superinterfaces)
+    builder.primaryConstructor = primaryConstructor
+    builder.companionObject = companionObject
     return builder
   }
 
@@ -323,9 +325,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val modifiers: Set<KModifier> = emptySet()
   ) {
 
-    internal val isEnum get() = this is Class && ENUM in modifiers
+    val isEnum get() = this is Class && ENUM in modifiers
 
-    internal val isAnnotation get() = this is Class && ANNOTATION in modifiers
+    val isAnnotation get() = this is Class && ANNOTATION in modifiers
 
     internal val isSimpleClass get() = this is Class && !isEnum && !isAnnotation
 
