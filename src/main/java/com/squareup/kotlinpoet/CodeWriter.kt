@@ -176,9 +176,8 @@ internal class CodeWriter constructor(
     for (typeVariable in typeVariables) {
       if (typeVariable.bounds.size > 1) {
         for (bound in typeVariable.bounds) {
-          if (!firstBound) emit(", ") else emit(" where ")
-          emitCode("%L", typeVariable.name)
-          emitCode(" : %T", bound)
+          if (!firstBound) emitCode(",%W") else emitCode("%Wwhere ")
+          emitCode("%L : %T", typeVariable.name, bound)
           firstBound = false
         }
       }

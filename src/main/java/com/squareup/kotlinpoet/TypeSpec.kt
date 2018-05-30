@@ -126,7 +126,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emitCode(" %L", escapeIfNecessary(name))
         }
         codeWriter.emitTypeVariables(typeVariables)
-        codeWriter.emitWhereBlock(typeVariables)
 
         primaryConstructor?.let {
           var useKeyword = false
@@ -178,6 +177,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emitCode(superTypes.joinToCode(separator = ",%W", prefix = " : "))
         }
 
+        codeWriter.emitWhereBlock(typeVariables)
+
         if (hasNoBody) {
           codeWriter.emit("\n")
           return // Avoid unnecessary braces "{}".
@@ -206,7 +207,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
 
-      // Non-static properties.
+      // Properties.
       for (propertySpec in propertySpecs) {
         if (constructorProperties.containsKey(propertySpec.name)) {
           continue
@@ -239,7 +240,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
-      // Functions (static and non-static).
+      // Functions.
       for (funSpec in funSpecs) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
