@@ -683,6 +683,9 @@ class TypeSpecTest {
         .addTypeVariable(q.withBounds(Comparable::class))
         .addProperty("x", p)
         .addProperty("y", q)
+        .primaryConstructor(FunSpec.constructorBuilder().build())
+        .superclass(Number::class)
+        .addSuperinterface(Comparable::class)
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
@@ -690,7 +693,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |class Location<P, Q> where P : Number, P : Comparable, Q : Number, Q : Comparable {
+        |class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number,
+        |        Q : Comparable {
         |    val x: P
         |
         |    val y: @A Q
