@@ -1200,15 +1200,15 @@ class TypeSpecTest {
 
   @Test fun codeBlocks() {
     val ifBlock = CodeBlock.builder()
-        .beginControlFlow("if (!a.equals(b))")
+        .beginControlFlow("if (a != b)")
         .addStatement("return i")
         .endControlFlow()
         .build()
     val funBody = CodeBlock.builder()
-        .addStatement("%T size = %T.min(listA.size(), listB.size())", Int::class.javaPrimitiveType, Math::class)
-        .beginControlFlow("for (%T i = 0; i < size; i++)", Int::class.javaPrimitiveType)
-        .addStatement("%T %N = %N.get(i)", String::class, "a", "listA")
-        .addStatement("%T %N = %N.get(i)", String::class, "b", "listB")
+        .addStatement("val size = %T.min(listA.size, listB.size)", Math::class)
+        .beginControlFlow("for (i in 0 until size)")
+        .addStatement("val %N = %N[i]", "a", "listA")
+        .addStatement("val %N = %N[i]", "b", "listB")
         .add("%L", ifBlock)
         .endControlFlow()
         .addStatement("return size")
@@ -1254,11 +1254,11 @@ class TypeSpecTest {
         |            .build()
         |
         |    fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
-        |        Int size = Math.min(listA.size(), listB.size())
-        |        for (Int i = 0; i < size; i++) {
-        |            String a = listA.get(i)
-        |            String b = listB.get(i)
-        |            if (!a.equals(b)) {
+        |        val size = Math.min(listA.size, listB.size)
+        |        for (i in 0 until size) {
+        |            val a = listA[i]
+        |            val b = listB[i]
+        |            if (a != b) {
         |                return i
         |            }
         |        }
