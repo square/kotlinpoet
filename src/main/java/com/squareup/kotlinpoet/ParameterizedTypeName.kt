@@ -84,17 +84,16 @@ class ParameterizedTypeName internal constructor(
 
   companion object {
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: ClassName, vararg typeArguments: TypeName)
-        = ParameterizedTypeName(null, rawType, typeArguments.toList())
+    @JvmStatic @JvmName("get") fun ClassName.parameterizedBy(vararg typeArguments: TypeName)
+        = ParameterizedTypeName(null, this, typeArguments.toList())
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: KClass<*>, vararg typeArguments: KClass<*>)
-        = ParameterizedTypeName(null, rawType.asClassName(),
-        typeArguments.map { it.asTypeName() })
+    @JvmStatic @JvmName("get") fun KClass<*>.parameterizedBy(vararg typeArguments: KClass<*>)
+        = ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `rawType`.  */
-    @JvmStatic fun get(rawType: Class<*>, vararg typeArguments: Type) = ParameterizedTypeName(
-        null, rawType.asClassName(), typeArguments.map { it.asTypeName() })
+    @JvmStatic @JvmName("get") fun Class<*>.parameterizedBy(vararg typeArguments: Type) =
+        ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(

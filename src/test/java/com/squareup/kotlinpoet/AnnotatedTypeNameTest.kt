@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -55,7 +56,7 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedParameterizedType() {
     val expected = "@$NN kotlin.collections.List<kotlin.String>"
-    val type = ParameterizedTypeName.get(List::class, String::class)
+    val type = List::class.parameterizedBy(String::class)
     val actual = type.annotated(NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
@@ -64,7 +65,7 @@ class AnnotatedTypeNameTest {
     val expected = "kotlin.collections.List<@$NN kotlin.String>"
     val type = String::class.asTypeName().annotated(NEVER_NULL)
     val list = List::class.asClassName()
-    val actual = ParameterizedTypeName.get(list, type).toString()
+    val actual = list.parameterizedBy(type).toString()
     assertEquals(expected, actual)
   }
 
@@ -85,7 +86,7 @@ class AnnotatedTypeNameTest {
   @Test fun annotatedEquivalence() {
     annotatedEquivalence(UNIT)
     annotatedEquivalence(Any::class.asClassName())
-    annotatedEquivalence(ParameterizedTypeName.get(List::class, Any::class))
+    annotatedEquivalence(List::class.parameterizedBy(Any::class))
     annotatedEquivalence(TypeVariableName("A"))
     annotatedEquivalence(WildcardTypeName.subtypeOf(Object::class))
   }
@@ -118,7 +119,7 @@ class AnnotatedTypeNameTest {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName +
         " Entry<kotlin.Byte, kotlin.Byte>"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
-    val type = ParameterizedTypeName.get(Map.Entry::class, Byte::class, Byte::class)
+    val type = Map.Entry::class.parameterizedBy(Byte::class, Byte::class)
         .annotated(typeUseAnnotation)
     val actual = type.toString()
     assertEquals(expected, actual)

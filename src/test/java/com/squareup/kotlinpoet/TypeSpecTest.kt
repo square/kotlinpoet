@@ -26,6 +26,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
@@ -83,12 +84,11 @@ class TypeSpecTest {
   }
 
   @Test fun interestingTypes() {
-    val listOfAny = ParameterizedTypeName.get(
-        List::class.asClassName(), WildcardTypeName.subtypeOf(ANY))
-    val listOfExtends = ParameterizedTypeName.get(
-        List::class.asClassName(), WildcardTypeName.subtypeOf(Serializable::class))
-    val listOfSuper = ParameterizedTypeName.get(List::class.asClassName(),
-        WildcardTypeName.supertypeOf(String::class))
+    val listOfAny = List::class.asClassName().parameterizedBy(WildcardTypeName.subtypeOf(ANY))
+    val listOfExtends = List::class.asClassName()
+        .parameterizedBy(WildcardTypeName.subtypeOf(Serializable::class))
+    val listOfSuper = List::class.asClassName()
+        .parameterizedBy(WildcardTypeName.supertypeOf(String::class))
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty("star", listOfAny)
         .addProperty("outSerializable", listOfExtends)
@@ -115,12 +115,12 @@ class TypeSpecTest {
     val foo = ClassName(tacosPackage, "Foo")
     val bar = ClassName(tacosPackage, "Bar")
     val thingThang = ClassName(tacosPackage, "Thing", "Thang")
-    val thingThangOfFooBar = ParameterizedTypeName.get(thingThang, foo, bar)
+    val thingThangOfFooBar = thingThang.parameterizedBy(foo, bar)
     val thung = ClassName(tacosPackage, "Thung")
     val simpleThung = ClassName(tacosPackage, "SimpleThung")
-    val thungOfSuperBar = ParameterizedTypeName.get(thung, WildcardTypeName.supertypeOf(bar))
-    val thungOfSuperFoo = ParameterizedTypeName.get(thung, WildcardTypeName.supertypeOf(foo))
-    val simpleThungOfBar = ParameterizedTypeName.get(simpleThung, bar)
+    val thungOfSuperBar = thung.parameterizedBy(WildcardTypeName.supertypeOf(bar))
+    val thungOfSuperFoo = thung.parameterizedBy(WildcardTypeName.supertypeOf(foo))
+    val simpleThungOfBar = simpleThung.parameterizedBy(bar)
 
     val thungParameter = ParameterSpec.builder("thung", thungOfSuperFoo)
         .addModifiers(KModifier.FINAL)
@@ -165,7 +165,7 @@ class TypeSpecTest {
   }
 
   @Test fun anonymousClassWithSuperClassConstructorCall() {
-    val superclass = ParameterizedTypeName.get(ArrayList::class, String::class)
+    val superclass = ArrayList::class.parameterizedBy(String::class)
     val anonymousClass = TypeSpec.anonymousClassBuilder()
         .addSuperclassConstructorParameter("%L", "4")
         .superclass(superclass)
@@ -330,11 +330,11 @@ class TypeSpecTest {
             .addAnnotation(AnnotationSpec.builder(post)
                 .addMember("%S", "/foo/bar")
                 .build())
-            .returns(ParameterizedTypeName.get(observable, fooBar))
-            .addParameter(ParameterSpec.builder("things", ParameterizedTypeName.get(things, thing))
+            .returns(observable.parameterizedBy(fooBar))
+            .addParameter(ParameterSpec.builder("things", things.parameterizedBy(thing))
                 .addAnnotation(body)
                 .build())
-            .addParameter(ParameterSpec.builder("query", ParameterizedTypeName.get(map, string, string))
+            .addParameter(ParameterSpec.builder("query", map.parameterizedBy(string, string))
                 .addAnnotation(AnnotationSpec.builder(queryMap)
                     .addMember("encodeValues = %L", "false")
                     .build())
@@ -625,7 +625,7 @@ class TypeSpecTest {
     val typeSpec = TypeSpec.classBuilder("Location")
         .addTypeVariable(t)
         .addTypeVariable(p)
-        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), p))
+        .addSuperinterface(Comparable::class.asClassName().parameterizedBy(p))
         .addProperty("label", t)
         .addProperty("x", p)
         .addProperty("y", p)
@@ -639,7 +639,7 @@ class TypeSpecTest {
             .addModifiers(KModifier.PUBLIC)
             .addTypeVariable(t)
             .addTypeVariable(p)
-            .returns(ParameterizedTypeName.get(location, t, p))
+            .returns(location.parameterizedBy(t, p))
             .addParameter("label", t)
             .addParameter("x", p)
             .addParameter("y", p)
@@ -707,9 +707,9 @@ class TypeSpecTest {
     val food = ClassName("com.squareup.tacos", "Food")
     val typeSpec = TypeSpec.classBuilder("Taco")
         .addModifiers(KModifier.ABSTRACT)
-        .superclass(ParameterizedTypeName.get(AbstractSet::class.asClassName(), food))
+        .superclass(AbstractSet::class.asClassName().parameterizedBy(food))
         .addSuperinterface(Serializable::class)
-        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), taco))
+        .addSuperinterface(Comparable::class.asClassName().parameterizedBy(taco))
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
@@ -728,7 +728,7 @@ class TypeSpecTest {
     val fishTaco = ClassName("org.fish.taco", "Taco")
     val typeSpec = TypeSpec.classBuilder("Taco")
         .superclass(fishTaco)
-        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), javapoetTaco))
+        .addSuperinterface(Comparable::class.asClassName().parameterizedBy(javapoetTaco))
         .addSuperinterface(tacoBellTaco)
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
@@ -745,8 +745,7 @@ class TypeSpecTest {
     val inner = outer.nestedClass("Inner")
     val callable = Callable::class.asClassName()
     val typeSpec = TypeSpec.classBuilder("Outer")
-        .superclass(ParameterizedTypeName.get(callable,
-            inner))
+        .superclass(callable.parameterizedBy(inner))
         .addType(TypeSpec.classBuilder("Inner")
             .addModifiers(KModifier.INNER)
             .build())
@@ -788,7 +787,7 @@ class TypeSpecTest {
     val taco = ClassName(tacosPackage, "Taco")
     val typeSpec = TypeSpec.interfaceBuilder("Taco")
         .addSuperinterface(Serializable::class)
-        .addSuperinterface(ParameterizedTypeName.get(Comparable::class.asClassName(), taco))
+        .addSuperinterface(Comparable::class.asClassName().parameterizedBy(taco))
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
@@ -809,7 +808,7 @@ class TypeSpecTest {
         .addProperty("taco", taco)
         .addProperty("chips", chips)
         .addType(TypeSpec.classBuilder(taco.simpleName)
-            .addProperty("toppings", ParameterizedTypeName.get(List::class.asClassName(), topping))
+            .addProperty("toppings", List::class.asClassName().parameterizedBy(topping))
             .addProperty("sauce", sauce)
             .addType(TypeSpec.enumBuilder(topping.simpleName)
                 .addEnumConstant("SHREDDED_CHEESE")
@@ -1221,8 +1220,8 @@ class TypeSpecTest {
         .add("\n.add(%S, %S)", '>', "&gt;")
         .add("\n.build()")
         .build()
-    val escapeHtml = PropertySpec.builder("ESCAPE_HTML", ParameterizedTypeName.get(
-        Map::class, String::class, String::class))
+    val escapeHtml = PropertySpec.builder("ESCAPE_HTML",
+        Map::class.parameterizedBy(String::class, String::class))
         .addModifiers(KModifier.PRIVATE)
         .initializer(propertyBlock)
         .build()
@@ -1230,8 +1229,8 @@ class TypeSpecTest {
         .addProperty(escapeHtml)
         .addFunction(FunSpec.builder("commonPrefixLength")
             .returns(Int::class)
-            .addParameter("listA", ParameterizedTypeName.get(List::class, String::class))
-            .addParameter("listB", ParameterizedTypeName.get(List::class, String::class))
+            .addParameter("listA", List::class.parameterizedBy(String::class))
+            .addParameter("listB", List::class.parameterizedBy(String::class))
             .addCode(funBody)
             .build())
         .build()
@@ -1580,8 +1579,8 @@ class TypeSpecTest {
   }
 
   @Test fun multilineStatementWithAnonymousClass() {
-    val stringComparator = ParameterizedTypeName.get(Comparator::class, String::class)
-    val listOfString = ParameterizedTypeName.get(List::class, String::class)
+    val stringComparator = Comparator::class.parameterizedBy(String::class)
+    val listOfString = List::class.parameterizedBy(String::class)
     val prefixComparator = TypeSpec.anonymousClassBuilder()
         .addSuperinterface(stringComparator)
         .addFunction(FunSpec.builder("compare")
@@ -2792,9 +2791,7 @@ class TypeSpecTest {
             .initializer("c")
             .build())
         .addFunction(FunSpec.constructorBuilder()
-            .addParameter(
-                "map",
-                ParameterizedTypeName.get(Map::class, String::class, String::class))
+            .addParameter("map", Map::class.parameterizedBy(String::class, String::class))
             .callThisConstructor(
                 CodeBlock.of("map[%S]", "a"),
                 CodeBlock.of("map[%S]", "b"),
@@ -2941,7 +2938,7 @@ class TypeSpecTest {
             .addParameter("somethingElse", String::class)
             .build())
         .addSuperinterface(
-            ParameterizedTypeName.get(Consumer::class, String::class),
+            Consumer::class.parameterizedBy(String::class),
             CodeBlock.of("({ println(it) })"))
         .build()
 
@@ -2961,7 +2958,7 @@ class TypeSpecTest {
     val type = TypeSpec.classBuilder("StringToInteger")
         .primaryConstructor(FunSpec.constructorBuilder()
             .build())
-        .addSuperinterface(ParameterizedTypeName.get(Function::class, String::class, Int::class),
+        .addSuperinterface(Function::class.parameterizedBy(String::class, Int::class),
             CodeBlock.of("Function ({ text -> text.toIntOrNull() ?: 0 })"))
         .addSuperinterface(
             Runnable::class,
@@ -3034,18 +3031,18 @@ class TypeSpecTest {
   }
 
   @Test fun testDelegateIfaceWithOtherParamTypeName() {
+    val entity = ClassName.bestGuess("Entity")
+    val entityBuilder = ClassName.bestGuess("EntityBuilder")
     val type = TypeSpec.classBuilder("EntityBuilder")
         .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter(ParameterSpec.builder("argBuilder",
-                ParameterizedTypeName.get(ClassName.bestGuess("Payload"),
-                    ClassName.bestGuess("EntityBuilder"),
-                    ClassName.bestGuess("Entity")))
+            .addParameter(ParameterSpec.builder("argBuilder", ClassName.bestGuess("Payload")
+                .parameterizedBy(entityBuilder, entity))
                 .defaultValue("Payload.create()")
                 .build())
             .build())
-        .addSuperinterface(ParameterizedTypeName.get(ClassName.bestGuess("TypeBuilder"),
-            ClassName.bestGuess("EntityBuilder"),
-            ClassName.bestGuess("Entity")), "argBuilder")
+        .addSuperinterface(ClassName.bestGuess("TypeBuilder")
+            .parameterizedBy(entityBuilder, entity),
+            "argBuilder")
         .build()
 
     assertThat(toString(type)).isEqualTo("""

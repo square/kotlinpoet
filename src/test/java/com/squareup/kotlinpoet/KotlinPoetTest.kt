@@ -16,9 +16,12 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.jvmField
-import kotlin.test.Test
+import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
+import com.squareup.kotlinpoet.jvm.jvmWildcard
 import java.util.concurrent.TimeUnit
+import kotlin.test.Test
 
 class KotlinPoetTest {
   private val tacosPackage = "com.squareup.tacos"
@@ -420,8 +423,8 @@ class KotlinPoetTest {
   }
 
   @Test fun nullableTypes() {
-    val list = ParameterizedTypeName.get(List::class.asClassName().asNullable(),
-        Int::class.asClassName().asNullable()).asNullable()
+    val list = List::class.asClassName().asNullable()
+        .parameterizedBy(Int::class.asClassName().asNullable()).asNullable()
     assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
   }
 
@@ -656,12 +659,8 @@ class KotlinPoetTest {
   @Test fun importTypeArgumentInParameterizedTypeName() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addFunction(FunSpec.builder("foo")
-            .addParameter("a", ParameterizedTypeName.get(
-                rawType = List::class.asTypeName(),
-                typeArguments = *arrayOf(Int::class.asTypeName()
-                    .annotated(AnnotationSpec.builder(JvmSuppressWildcards::class)
-                        .build()))
-            ))
+            .addParameter("a", List::class.asTypeName()
+                .parameterizedBy(Int::class.asTypeName().jvmSuppressWildcards()))
             .build())
         .build()
     assertThat(file.toString()).isEqualTo("""
