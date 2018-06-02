@@ -2153,7 +2153,7 @@ class TypeSpecTest {
         .addAnnotation(SuppressWarnings::class)
         .addModifiers(DATA)
         .addTypeVariable(TypeVariableName.of("State", listOf(ANY), IN).reified(true))
-        .companionObject(TypeSpec.companionObjectBuilder()
+        .addType(TypeSpec.companionObjectBuilder()
             .build())
         .addType(TypeSpec.classBuilder("InnerTaco")
             .addModifiers(INNER)
@@ -2347,7 +2347,7 @@ class TypeSpecTest {
 
     val type = TypeSpec.classBuilder("MyClass")
         .addModifiers(KModifier.PUBLIC)
-        .companionObject(companion)
+        .addType(companion)
         .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -2379,7 +2379,7 @@ class TypeSpecTest {
 
     val type = TypeSpec.classBuilder("MyClass")
             .addModifiers(KModifier.PUBLIC)
-            .companionObject(companion)
+            .addType(companion)
             .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -2405,7 +2405,7 @@ class TypeSpecTest {
         .build()
 
     val type = TypeSpec.classBuilder("MyClass")
-        .companionObject(companion)
+        .addType(companion)
         .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -2429,7 +2429,7 @@ class TypeSpecTest {
 
     val type = TypeSpec.interfaceBuilder("MyInterface")
         .addModifiers(KModifier.PUBLIC)
-        .companionObject(companion)
+        .addType(companion)
         .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -2455,7 +2455,7 @@ class TypeSpecTest {
         .addEnumConstant("FOO")
         .addEnumConstant("BAR")
         .addModifiers(KModifier.PUBLIC)
-        .companionObject(companion)
+        .addType(companion)
         .build()
 
     assertThat(toString(enumBuilder)).isEqualTo("""
@@ -2465,6 +2465,7 @@ class TypeSpecTest {
         |    FOO,
         |
         |    BAR;
+        |
         |    companion object {
         |        fun test() {
         |        }
@@ -2473,7 +2474,7 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun companionObjectOnObjectNotAlowed() {
+  @Test fun companionObjectOnObjectNotAllowed() {
     val companion = TypeSpec.companionObjectBuilder()
         .addFunction(FunSpec.builder("test")
             .addModifiers(KModifier.PUBLIC)
@@ -2482,24 +2483,10 @@ class TypeSpecTest {
 
     val objectBuilder = TypeSpec.objectBuilder("MyObject")
         .addModifiers(KModifier.PUBLIC)
-
-    assertThrows<IllegalStateException> {
-      objectBuilder.companionObject(companion)
-    }
-  }
-
-  @Test fun companionObjectIsCompanionObjectKind() {
-    val companion = TypeSpec.objectBuilder("Companion")
-        .addFunction(FunSpec.builder("test")
-            .addModifiers(KModifier.PUBLIC)
-            .build())
-        .build()
-
-    val typeBuilder = TypeSpec.classBuilder("MyClass")
-        .addModifiers(KModifier.PUBLIC)
+        .addType(companion)
 
     assertThrows<IllegalArgumentException> {
-      typeBuilder.companionObject(companion)
+      objectBuilder.build()
     }
   }
 
@@ -2514,7 +2501,7 @@ class TypeSpecTest {
 
     val type = TypeSpec.classBuilder("MyClass")
         .addModifiers(KModifier.PUBLIC)
-        .companionObject(companion)
+        .addType(companion)
         .build()
 
     assertThat(toString(type)).isEqualTo("""
@@ -3122,7 +3109,7 @@ class TypeSpecTest {
                 .build())
             .addFunction(FunSpec.builder("baz").addModifiers(KModifier.EXTERNAL).build())
             .build())
-        .companionObject(TypeSpec.companionObjectBuilder()
+        .addType(TypeSpec.companionObjectBuilder()
             .addModifiers(KModifier.EXTERNAL)
             .addFunction(FunSpec.builder("qux").addModifiers(KModifier.EXTERNAL).build())
             .build())
@@ -3139,6 +3126,7 @@ class TypeSpecTest {
       |            fun bar()
       |        }
       |    }
+      |
       |    companion object {
       |        fun qux()
       |    }
@@ -3166,22 +3154,13 @@ class TypeSpecTest {
       """.trimMargin())
   }
 
-  @Test fun companionObjectInAddType() {
-    assertThrows<IllegalArgumentException> {
-      TypeSpec.classBuilder("Taco")
-          .addType(TypeSpec.companionObjectBuilder()
-              .build())
-          .build()
-    }
-  }
-
-  @Test fun companionObjectInAddTypes() {
+  @Test fun multipleCompanionObjects() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Taco")
           .addTypes(listOf(
               TypeSpec.companionObjectBuilder()
                   .build(),
-              TypeSpec.classBuilder("Seasoning")
+              TypeSpec.companionObjectBuilder()
                   .build()
           ))
           .build()
