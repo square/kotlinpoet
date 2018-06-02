@@ -673,4 +673,36 @@ class FileSpecTest {
         |
         |""".trimMargin())
   }
+
+  @Test fun conflictingImportsSameType() {
+    val sqlTaco = ClassName("java.sql", "Taco")
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addModifiers(KModifier.DATA)
+            .addProperty(PropertySpec.builder("madeFreshDatabaseDate", sqlTaco)
+                .initializer("madeFreshDatabaseDate")
+                .build())
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter("madeFreshDatabaseDate", sqlTaco)
+                .addParameter("fooNt", INT)
+                .build())
+            .addFunction(FunSpec.constructorBuilder()
+                .addParameter("anotherTaco", ClassName("com.squareup.tacos", "Taco"))
+                .callThisConstructor(CodeBlock.of("%T.defaultInstance(), 0", sqlTaco))
+                .build())
+            .build())
+        .build()
+
+    // What should happen: no sql taco import, fully qualify the data class parameter in the primary
+    // constructor
+    assertThat(source.toString()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |data class Taco(val madeFreshDatabaseDate: java.sql.Taco, fooNt: Int) {
+        |    constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
+        |}
+        |""".trimMargin())
+  }
 }
