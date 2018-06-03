@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
 import java.nio.charset.Charset
 import javax.lang.model.type.DeclaredType
@@ -28,7 +29,6 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.starProjectedType
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -54,8 +54,7 @@ abstract class AbstractTypesTest {
   @Test fun getParameterizedTypeMirror() {
     val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(String::class.java))
     assertThat(setType.asTypeName())
-        .isEqualTo(
-            ParameterizedTypeName.get(Set::class.asClassName(), String::class.asClassName()))
+        .isEqualTo(Set::class.asClassName().parameterizedBy(String::class.asClassName()))
   }
 
   @Test fun getErrorType() {
@@ -123,7 +122,7 @@ abstract class AbstractTypesTest {
 
   @Test fun getArrayTypeMirror() {
     assertThat(types.getArrayType(getMirror(String::class.java)).asTypeName())
-        .isEqualTo(ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
+        .isEqualTo(ARRAY.parameterizedBy(String::class.asClassName()))
   }
 
   @Test fun getVoidTypeMirror() {
@@ -139,7 +138,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun parameterizedType() {
-    val type = ParameterizedTypeName.get(Map::class, String::class, Long::class)
+    val type = Map::class.parameterizedBy(String::class, Long::class)
     assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Long>")
   }
 

@@ -19,6 +19,7 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.test.Ignore
 import kotlin.test.Test
 import java.util.Collections
@@ -30,9 +31,8 @@ class FileSpecTest {
     val hoverboard = ClassName("com.mattel", "Hoverboard")
     val namedBoards = ClassName("com.mattel", "Hoverboard", "Boards")
     val list = List::class.asClassName()
-    val arrayList = ParameterizedTypeName.get(
-        ClassName("java.util", "ArrayList"), hoverboard)
-    val listOfHoverboards = ParameterizedTypeName.get(list, hoverboard)
+    val arrayList = ClassName("java.util", "ArrayList").parameterizedBy(hoverboard)
+    val listOfHoverboards = list.parameterizedBy(hoverboard)
     val beyond = FunSpec.builder("beyond")
         .returns(listOfHoverboards)
         .addStatement("val result = %T()", arrayList)
@@ -117,8 +117,8 @@ class FileSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
         .addFunction(FunSpec.builder("prepareTacos")
-            .returns(ParameterizedTypeName.get(List::class.asClassName(),
-                ClassName("com.squareup.tacos", "Taco")))
+            .returns(List::class.asClassName()
+                .parameterizedBy(ClassName("com.squareup.tacos", "Taco")))
             .addCode("return wrap(INGREDIENTS)\n")
             .build())
         .build()
@@ -521,7 +521,7 @@ class FileSpecTest {
         .addType(TypeSpec.classBuilder("HelloWorld")
             .addFunction(FunSpec.builder("main")
                 .addModifiers(KModifier.PUBLIC)
-                .addParameter("args", ParameterizedTypeName.get(ARRAY, String::class.asClassName()))
+                .addParameter("args", ARRAY.parameterizedBy(String::class.asClassName()))
                 .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
                 .build())
             .build())
@@ -618,7 +618,7 @@ class FileSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
         .addTypeAlias(TypeAliasSpec.builder("FileTable",
-            ParameterizedTypeName.get(Map::class, String::class, Int::class)).build())
+            Map::class.parameterizedBy(String::class, Int::class)).build())
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos

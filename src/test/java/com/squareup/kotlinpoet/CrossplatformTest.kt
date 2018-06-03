@@ -17,6 +17,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicReference
 
@@ -48,7 +49,7 @@ class CrossplatformTest {
             .returns(Boolean::class)
             .build())
         .build()
-    val actualName = ParameterizedTypeName.get(AtomicReference::class.asTypeName(), expectTypeParam)
+    val actualName = AtomicReference::class.asTypeName().parameterizedBy(expectTypeParam)
     val actualSpec = TypeAliasSpec.builder(expectType, actualName)
         .addTypeVariable(expectTypeParam)
         .addModifiers(KModifier.ACTUAL)

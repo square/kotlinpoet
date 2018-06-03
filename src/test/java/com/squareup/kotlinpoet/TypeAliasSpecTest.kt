@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicReference
 
@@ -40,7 +41,7 @@ class TypeAliasSpecTest {
   @Test fun typeVariable() {
     val v = TypeVariableName("V")
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", ParameterizedTypeName.get(List::class.asClassName(), v))
+        .builder("Word", List::class.asClassName().parameterizedBy(v))
         .addTypeVariable(v)
         .build()
 
@@ -83,9 +84,7 @@ class TypeAliasSpecTest {
   }
 
   @Test fun implTypeAlias() {
-    val typeName = ParameterizedTypeName.get(
-        AtomicReference::class.asClassName(),
-        TypeVariableName("V"))
+    val typeName = AtomicReference::class.asClassName().parameterizedBy(TypeVariableName("V"))
     val typeAliasSpec = TypeAliasSpec
         .builder("AtomicRef<V>", typeName)
         .addModifiers(KModifier.ACTUAL)

@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.junit.Rule
 import java.io.Closeable
 import java.io.IOException
@@ -252,7 +253,7 @@ class FunSpecTest {
 
   @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .addParameter("list", List::class.parameterizedBy(Int::class))
         .callThisConstructor("list[0]", "list[1]")
         .build()
 
@@ -263,7 +264,7 @@ class FunSpecTest {
 
   @Test fun superConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("list", ParameterizedTypeName.get(List::class, Int::class))
+        .addParameter("list", List::class.parameterizedBy(Int::class))
         .callSuperConstructor("list[0]", "list[1]")
         .build()
 

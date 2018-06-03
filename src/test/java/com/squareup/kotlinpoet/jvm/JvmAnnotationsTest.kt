@@ -21,7 +21,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
@@ -543,10 +543,8 @@ class JvmAnnotationsTest {
   @Test fun jvmSuppressWildcardsType() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addFunction(FunSpec.builder("foo")
-            .addParameter("a", ParameterizedTypeName.get(
-                rawType = List::class.asClassName(),
-                typeArguments = *arrayOf(Int::class.asTypeName().jvmSuppressWildcards())
-            ))
+            .addParameter("a", List::class.asClassName()
+                .parameterizedBy(Int::class.asTypeName().jvmSuppressWildcards()))
             .build())
         .build()
     assertThat(file.toString()).isEqualTo("""
@@ -564,10 +562,8 @@ class JvmAnnotationsTest {
   @Test fun jvmWildcardType() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addFunction(FunSpec.builder("foo")
-            .addParameter("a", ParameterizedTypeName.get(
-                rawType = List::class.asClassName(),
-                typeArguments = *arrayOf(Int::class.asTypeName().jvmWildcard())
-            ))
+            .addParameter("a", List::class.asClassName()
+                .parameterizedBy(Int::class.asTypeName().jvmWildcard()))
             .build())
         .build()
     assertThat(file.toString()).isEqualTo("""

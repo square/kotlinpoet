@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -158,7 +159,7 @@ abstract class TypeName internal constructor(
         }
 
         override fun visitArray(t: ArrayType, p: Void?): ParameterizedTypeName {
-          return ParameterizedTypeName.get(ARRAY, TypeName.get(t.componentType, typeVariables))
+          return ARRAY.parameterizedBy(TypeName.get(t.componentType, typeVariables))
         }
 
         override fun visitTypeVariable(t: javax.lang.model.type.TypeVariable, p: Void?): TypeName {
@@ -192,13 +193,13 @@ abstract class TypeName internal constructor(
           type === Char::class.javaPrimitiveType -> CHAR
           type === Float::class.javaPrimitiveType -> FLOAT
           type === Double::class.javaPrimitiveType -> DOUBLE
-          type.isArray -> ParameterizedTypeName.get(ARRAY, get(type.componentType, map))
+          type.isArray -> ARRAY.parameterizedBy(get(type.componentType, map))
           else -> type.asClassName()
         }
         is ParameterizedType -> ParameterizedTypeName.get(type, map)
         is WildcardType -> WildcardTypeName.get(type, map)
         is TypeVariable<*> -> TypeVariableName.get(type, map)
-        is GenericArrayType -> ParameterizedTypeName.get(ARRAY, get(type.genericComponentType, map))
+        is GenericArrayType -> ARRAY.parameterizedBy(get(type.genericComponentType, map))
         else -> throw IllegalArgumentException("unexpected type: " + type)
       }
     }
