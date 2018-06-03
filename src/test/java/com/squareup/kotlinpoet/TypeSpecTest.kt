@@ -3134,17 +3134,17 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test fun kindIsEnum() {
+  @Test fun isEnum() {
     val enum = TypeSpec.enumBuilder("Topping")
         .addEnumConstant("CHEESE")
         .build()
-    assertThat(enum.kind.isEnum).isTrue()
+    assertThat(enum.isEnum).isTrue()
   }
 
-  @Test fun kindIsAnnotation() {
+  @Test fun isAnnotation() {
     val annotation = TypeSpec.annotationBuilder("Taco")
         .build()
-    assertThat(annotation.kind.isAnnotation).isTrue()
+    assertThat(annotation.isAnnotation).isTrue()
   }
 
   @Test fun escapePunctuationInTypeName() {
