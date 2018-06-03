@@ -39,6 +39,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+  val isEnum = builder.isEnum
+  val isAnnotation = builder.isAnnotation
   private val isAnonymousClass = builder.isAnonymousClass
 
   /**
@@ -183,7 +185,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           codeWriter.emit("\n")
           return // Avoid unnecessary braces "{}".
         }
-        if (!kind.isAnnotation) {
+        if (!isAnnotation) {
           codeWriter.emit(" {\n")
         }
       }
@@ -262,7 +264,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       codeWriter.unindent()
       codeWriter.popType()
 
-      if (!kind.isAnnotation) {
+      if (!isAnnotation) {
         codeWriter.emit("}")
       }
       if (enumName == null && !isAnonymousClass) {
@@ -289,7 +291,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   private val hasNoBody: Boolean
     get() {
-      if (kind.isAnnotation) {
+      if (isAnnotation) {
         return true
       }
       if (propertySpecs.isNotEmpty()) {
@@ -326,15 +328,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val modifiers: Set<KModifier> = emptySet()
   ) {
 
-    val isEnum get() = this is Class && ENUM in modifiers
-
-    val isAnnotation get() = this is Class && ANNOTATION in modifiers
-
-    internal val isSimpleClass get() = this is Class && !isEnum && !isAnnotation
-
-    internal val implicitPropertyModifiers get() =
-      if (isAnnotation) emptySet()
-      else defaultImplicitPropertyModifiers + when {
+    internal val implicitPropertyModifiers get() = defaultImplicitPropertyModifiers + when {
+        ANNOTATION in modifiers -> emptySet()
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         else -> emptySet()
@@ -366,6 +361,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(PUBLIC),
         setOf(PUBLIC),
         modifiers.toSet()) {
+
+      val isCompanion get() = COMPANION in modifiers
 
       override fun plusModifiers(vararg modifiers: KModifier) =
           Object(*(this.modifiers.toTypedArray() + modifiers))
@@ -400,6 +397,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val funSpecs = mutableListOf<FunSpec>()
     internal val typeSpecs = mutableListOf<TypeSpec>()
     internal val isAnonymousClass get() = name == null && kind is Kind.Class
+    internal val isEnum get() = kind is Kind.Class && ENUM in kind.modifiers
+    internal val isAnnotation get() = kind is Kind.Class && ANNOTATION in kind.modifiers
+    internal val isSimpleClass = kind is Kind.Class && !isEnum && !isAnnotation
 
     init {
       require(name == null || name.isName) { "not a valid name: $name" }
@@ -444,7 +444,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun companionObject(companionObject: TypeSpec) = apply {
-      check(kind.isSimpleClass || kind is Interface || kind.isEnum) {
+      check(isSimpleClass || kind is Interface || isEnum) {
         "$kind can't have a companion object"
       }
       require(companionObject.kind is Object && COMPANION in companionObject.kind.modifiers) {
@@ -472,7 +472,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     private fun ensureCanHaveSuperclass() {
-      check(kind.isSimpleClass || kind is Object) {
+      check(isSimpleClass || kind is Object) {
         "only classes can have super classes, not $kind"
       }
     }
@@ -500,7 +500,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (delegate.isEmpty()) {
         this.superinterfaces.put(superinterface, null)
       } else {
-        require(kind.isSimpleClass) {
+        require(isSimpleClass) {
           "delegation only allowed for classes (found $kind '$name')"
         }
         require(!superinterface.nullable) {
@@ -538,7 +538,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       name: String,
       typeSpec: TypeSpec = anonymousClassBuilder().build()
     ) = apply {
-      check(kind.isEnum) { "${this.name} is not enum" }
+      check(isEnum) { "${this.name} is not enum" }
       require(name.isName) { "not a valid enum constant: $name" }
       enumConstants[name] = typeSpec
     }
@@ -569,7 +569,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(kind.isSimpleClass || kind.isEnum || kind is Object) {
+      check(isSimpleClass || isEnum || kind is Object) {
         "$kind can't have initializer blocks"
       }
       check(EXPECT !in kind.modifiers) {
@@ -592,7 +592,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
           requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
         }
-        kind.isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
+        isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
           "annotation class $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
         }
         EXPECT in kind.modifiers -> require(funSpec.body.isEmpty()) {
@@ -611,11 +611,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun build(): TypeSpec {
-      require(!kind.isEnum || enumConstants.isNotEmpty()) {
+      require(!isEnum || enumConstants.isNotEmpty()) {
         "at least one enum constant is required for $name"
       }
 
-      val isAbstract = ABSTRACT in kind.modifiers || kind !is Kind.Class || !kind.isSimpleClass
+      val isAbstract = ABSTRACT in kind.modifiers || kind !is Kind.Class || !isSimpleClass
       for (funSpec in funSpecs) {
         require(isAbstract || ABSTRACT !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
