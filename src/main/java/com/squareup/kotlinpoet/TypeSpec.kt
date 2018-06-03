@@ -35,7 +35,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val annotations = builder.annotations.toImmutableList()
   val modifiers = kind.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
-  val companionObject = builder.companionObject
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
@@ -69,7 +68,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.initializerBlock.add(initializerBlock)
     builder.superinterfaces.putAll(superinterfaces)
     builder.primaryConstructor = primaryConstructor
-    builder.companionObject = companionObject
     return builder
   }
 
@@ -202,7 +200,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
         if (i.hasNext()) {
           codeWriter.emit(",\n")
-        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty() || companionObject != null) {
+        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
           codeWriter.emit(";\n")
         } else {
           codeWriter.emit("\n")
@@ -259,8 +257,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         firstMember = false
       }
 
-      companionObject?.emit(codeWriter, null, isNestedExternal = areNestedExternal)
-
       codeWriter.unindent()
       codeWriter.popType()
 
@@ -302,8 +298,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           }
         }
       }
-      return companionObject == null &&
-          enumConstants.isEmpty() &&
+      return enumConstants.isEmpty() &&
           initializerBlock.isEmpty() &&
           (primaryConstructor?.body?.isEmpty() ?: true) &&
           funSpecs.isEmpty() &&
@@ -387,7 +382,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var primaryConstructor: FunSpec? = null
-    internal var companionObject: TypeSpec? = null
     internal var superclass: TypeName = ANY
     internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
     internal val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
@@ -441,16 +435,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
       typeVariables += typeVariable
-    }
-
-    fun companionObject(companionObject: TypeSpec) = apply {
-      check(isSimpleClass || kind is Interface || isEnum) {
-        "$kind can't have a companion object"
-      }
-      require(companionObject.kind is Object && COMPANION in companionObject.kind.modifiers) {
-        "expected a companion object class but was $kind "
-      }
-      this.companionObject = companionObject
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
@@ -625,6 +609,22 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (primaryConstructor == null) {
         require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
           "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
+        }
+      }
+
+      val companionObjectsCount = typeSpecs.count {
+        // Replace this with isCompanion check after merged
+        it.kind is Object && COMPANION in it.kind.modifiers
+      }
+      when (companionObjectsCount) {
+        0 -> Unit
+        1 -> {
+          require(isSimpleClass || kind is Interface || isEnum) {
+            "$kind types can't have a companion object"
+          }
+        }
+        else -> {
+          throw IllegalArgumentException("Multiple companion objects are present but only one is allowed.")
         }
       }
 
