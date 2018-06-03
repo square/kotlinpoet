@@ -612,10 +612,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
 
-      val companionObjectsCount = typeSpecs.count {
-        // Replace this with isCompanion check after merged
-        it.kind is Object && COMPANION in it.kind.modifiers
-      }
+      val companionObjectsCount = typeSpecs.count { it.kind.let { it is Object && it.isCompanion } }
       when (companionObjectsCount) {
         0 -> Unit
         1 -> {
