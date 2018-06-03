@@ -2181,6 +2181,64 @@ class TypeSpecTest {
     assertThat(bestTexMexEnum.toBuilder().build()).isEqualTo(bestTexMexEnum)
   }
 
+  @Test fun generalInterfaceBuilderEqualityTest() {
+    val taco = TypeSpec.interfaceBuilder("Taco")
+        .addProperty("isVegan", Boolean::class)
+        .addSuperinterface(Runnable::class)
+        .build()
+    assertThat(taco.toBuilder().build()).isEqualTo(taco)
+  }
+
+  @Test fun generalAnnotationBuilderEqualityTest() {
+    val annotation = TypeSpec.annotationBuilder("MyAnnotation")
+        .addModifiers(KModifier.PUBLIC)
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("test", Int::class)
+                .build())
+            .build())
+        .addProperty(PropertySpec.builder("test", Int::class)
+            .initializer("test")
+            .build())
+        .build()
+    assertThat(annotation.toBuilder().build()).isEqualTo(annotation)
+  }
+
+  @Test fun generalExpectClassBuilderEqualityTest() {
+    val expectSpec = TypeSpec.expectClassBuilder("AtmoicRef")
+        .addModifiers(KModifier.INTERNAL)
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("value", Int::class)
+            .build())
+        .addProperty(PropertySpec.builder("value", Int::class).build())
+        .addFunction(FunSpec.builder("get")
+            .returns(Int::class)
+            .build())
+        .build()
+    assertThat(expectSpec.toBuilder().build()).isEqualTo(expectSpec)
+  }
+
+  @Test fun generalObjectBuilderEqualityTest() {
+    val objectSpec = TypeSpec.objectBuilder("MyObject")
+        .addModifiers(KModifier.PUBLIC)
+        .addProperty("tacos", Int::class)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addFunction(FunSpec.builder("test")
+            .addModifiers(KModifier.PUBLIC)
+            .build())
+        .build()
+    assertThat(objectSpec.toBuilder().build()).isEqualTo(objectSpec)
+  }
+
+  @Test fun generalAnonymousClassBuilderEqualityTest() {
+    val anonObjectSpec = TypeSpec.anonymousClassBuilder()
+        .addSuperinterface(Runnable::class)
+        .addFunction(FunSpec.builder("run")
+            .addModifiers(KModifier.PUBLIC, KModifier.OVERRIDE)
+            .build())
+        .build()
+    assertThat(anonObjectSpec.toBuilder().build()).isEqualTo(anonObjectSpec)
+  }
+
   @Test fun initializerBlockUnsupportedExceptionOnInterface() {
     val interfaceBuilder = TypeSpec.interfaceBuilder("Taco")
     assertThrows<IllegalStateException> {
