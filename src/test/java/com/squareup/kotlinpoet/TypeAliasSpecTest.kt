@@ -116,4 +116,15 @@ class TypeAliasSpecTest {
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
+
+  @Test fun generalBuilderEqualityTest() {
+    val typeParam = TypeVariableName("V")
+    val typeAliasSpec = TypeAliasSpec
+        .builder("Bio", Pair::class.parameterizedBy(String::class, String::class))
+        .addKdoc("First nand Last Name.\n")
+        .addModifiers(KModifier.PUBLIC)
+        .addTypeVariable(typeParam)
+        .build()
+    assertThat(typeAliasSpec.toBuilder().build()).isEqualTo(typeAliasSpec)
+  }
 }

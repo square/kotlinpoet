@@ -359,4 +359,35 @@ class FunSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun generalBuilderEqualityTest() {
+    val funSpec = FunSpec.Builder("getConfig")
+        .addKdoc("Fix me")
+        .addAnnotation(AnnotationSpec.builder(SuppressWarnings::class)
+            .build())
+        .addModifiers(KModifier.PROTECTED)
+        .addTypeVariable(TypeVariableName("T"))
+        .receiver(String::class)
+        .returns(String::class)
+        .addParameter(ParameterSpec.builder("config", String::class)
+            .build())
+        .addParameter(ParameterSpec.builder("override", TypeVariableName("T"))
+            .build())
+        .beginControlFlow("return when")
+        .addStatement("    override is String -> config + override")
+        .addStatement("    else -> config + %S", "{ttl:500}")
+        .endControlFlow()
+        .build();
+
+    assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec);
+  }
+
+  @Test fun constructorBuilderEqualityTest() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("list", List::class.parameterizedBy(Int::class))
+        .callThisConstructor("list[0]", "list[1]")
+        .build()
+
+    assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
+  }
 }

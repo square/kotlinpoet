@@ -94,11 +94,15 @@ class PropertySpec private constructor(builder: Builder) {
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
+    builder.mutable = mutable
     builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.initializer = initializer
     builder.delegated = delegated
+    builder.setter = setter
+    builder.getter = getter
+    builder.receiverType = receiverType
     return builder
   }
 

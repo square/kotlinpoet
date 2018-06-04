@@ -165,6 +165,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     builder.comment.add(comment)
     builder.members.addAll(this.members)
     builder.indent = indent
+    builder.memberImports.addAll(memberImports.values)
     return builder
   }
 
