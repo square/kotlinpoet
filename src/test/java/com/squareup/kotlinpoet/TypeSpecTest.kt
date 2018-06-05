@@ -3226,8 +3226,7 @@ class TypeSpecTest {
   @Test fun objectKindIsCompanion() {
     val companionObject = TypeSpec.companionObjectBuilder()
         .build()
-    assertThat(companionObject.kind is Kind.Object).isTrue()
-    assertThat((companionObject.kind as Kind.Object).isCompanion).isTrue()
+    assertThat(companionObject.isCompanion).isTrue()
   }
 
   @Test fun typeNamesCollision() {
