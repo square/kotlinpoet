@@ -129,6 +129,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emitWhereBlock(typeVariables)
 
         primaryConstructor?.let {
+          codeWriter.pushType(this) // avoid name collisions when emitting primary constructor
           var useKeyword = false
           var emittedAnnotations = false
 
@@ -161,6 +162,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
               param.emit(codeWriter)
             }
           }
+          codeWriter.popType()
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
