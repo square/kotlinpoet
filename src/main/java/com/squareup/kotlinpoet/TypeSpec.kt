@@ -38,9 +38,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+
   val isEnum = builder.isEnum
   val isAnnotation = builder.isAnnotation
-  private val isAnonymousClass = builder.isAnonymousClass
+  val isCompanion = builder.isCompanion
+  val isAnonymousClass = builder.isAnonymousClass
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
@@ -359,8 +361,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         setOf(PUBLIC),
         modifiers.toSet()) {
 
-      val isCompanion get() = COMPANION in modifiers
-
       override fun plusModifiers(vararg modifiers: KModifier) =
           Object(*(this.modifiers.toTypedArray() + modifiers))
     }
@@ -395,6 +395,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val isAnonymousClass get() = name == null && kind is Kind.Class
     internal val isEnum get() = kind is Kind.Class && ENUM in kind.modifiers
     internal val isAnnotation get() = kind is Kind.Class && ANNOTATION in kind.modifiers
+    internal val isCompanion get() = kind is Kind.Object && COMPANION in kind.modifiers
     internal val isSimpleClass = kind is Kind.Class && !isEnum && !isAnnotation
 
     init {
@@ -614,7 +615,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
       }
 
-      val companionObjectsCount = typeSpecs.count { it.kind is Object && it.kind.isCompanion }
+      val companionObjectsCount = typeSpecs.count { it.isCompanion }
       when (companionObjectsCount) {
         0 -> Unit
         1 -> {
