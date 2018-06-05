@@ -104,4 +104,25 @@ class PropertySpecTest {
       |val `with-hyphen`: kotlin.String
       |""".trimMargin())
   }
+
+  @Test fun generalBuilderEqualityTest() {
+    val prop = PropertySpec.builder("tacos", Int::class)
+        .mutable(true)
+        .addAnnotation(ClassName("com.squareup.kotlinpoet", "Vegan"))
+        .addKdoc("Can make it vegan!")
+        .addModifiers(KModifier.PUBLIC)
+        .delegate("Delegates.notNull()")
+        .receiver(Int::class)
+        .getter(FunSpec.getterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addStatement("return %S", 42)
+            .build())
+        .setter(FunSpec.setterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addParameter("value", Int::class)
+            .build())
+        .build()
+
+    assertThat(prop.toBuilder().build()).isEqualTo(prop);
+  }
 }

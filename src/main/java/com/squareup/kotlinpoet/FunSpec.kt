@@ -157,6 +157,7 @@ class FunSpec private constructor(builder: Builder) {
     builder.delegateConstructor = delegateConstructor
     builder.delegateConstructorArguments += delegateConstructorArguments
     builder.body.add(body)
+    builder.receiverType = receiverType
     return builder
   }
 

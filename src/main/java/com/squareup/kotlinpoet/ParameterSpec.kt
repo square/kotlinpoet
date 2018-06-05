@@ -59,6 +59,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     val builder = Builder(name, type)
     builder.annotations += annotations
     builder.modifiers += modifiers
+    builder.defaultValue = defaultValue
     return builder
   }
 

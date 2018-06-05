@@ -47,4 +47,14 @@ class ParameterSpecTest {
         .build()
     assertThat(parameterSpec.toString()).isEqualTo("`with-hyphen`: kotlin.String")
   }
+
+  @Test fun generalBuilderEqualityTest() {
+    val parameterSpec = ParameterSpec.builder("Nuts", String::class)
+        .addAnnotation(ClassName("com.squareup.kotlinpoet", "Food"))
+        .addModifiers(KModifier.VARARG)
+        .defaultValue("Almonds")
+        .build()
+
+    assertThat(parameterSpec.toBuilder().build()).isEqualTo(parameterSpec)
+  }
 }

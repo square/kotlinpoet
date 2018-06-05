@@ -673,4 +673,19 @@ class FileSpecTest {
         |
         |""".trimMargin())
   }
+
+  @Test fun generalBuilderEqualityTest() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addAnnotation(JvmMultifileClass::class)
+        .addComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
+        .addImport("com.squareup.tacos.internal", "INGREDIENTS")
+        .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
+        .indent("  ")
+        .addFunction(FunSpec.builder("defaultIngredients")
+            .addCode("println(INGREDIENTS)\n")
+            .build())
+        .build()
+
+    assertThat(source.toBuilder().build()).isEqualTo(source)
+  }
 }
