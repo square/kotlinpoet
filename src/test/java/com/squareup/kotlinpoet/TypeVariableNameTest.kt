@@ -118,30 +118,6 @@ class TypeVariableNameTest {
       |""".trimMargin())
   }
 
-  @Test fun inVariance() {
-    val typeSpec = TypeSpec.classBuilder("Taco")
-        .addTypeVariable(TypeVariableName("E", Number::class, variance = KModifier.IN))
-        .build()
-    assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<in E : kotlin.Number>
-      |""".trimMargin())
-  }
-
-  @Test fun outVariance() {
-    val typeSpec = TypeSpec.classBuilder("Taco")
-        .addTypeVariable(TypeVariableName("E", Number::class, variance = KModifier.OUT))
-        .build()
-    assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<out E : kotlin.Number>
-      |""".trimMargin())
-  }
-
-  @Test fun invalidVariance() {
-    assertThrows<IllegalArgumentException> {
-      TypeVariableName("E", KModifier.FINAL)
-    }
-  }
-
   @Test fun reified() {
     val funSpec = FunSpec.builder("printMembers")
         .addModifiers(KModifier.INLINE)

@@ -35,6 +35,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val annotations = builder.annotations.toImmutableList()
   val modifiers = kind.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
+  val typeVariableVariance = builder.typeVariableVariance.toImmutableMap()
   val primaryConstructor = builder.primaryConstructor
   val superclass = builder.superclass
   val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
@@ -61,6 +62,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.typeVariables += typeVariables
+    builder.typeVariableVariance += typeVariableVariance
     builder.superclass = superclass
     builder.superclassConstructorParameters += superclassConstructorParameters
     builder.enumConstants += enumConstants
@@ -127,7 +129,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         if (name != null) {
           codeWriter.emitCode(" %L", escapeIfNecessary(name))
         }
-        codeWriter.emitTypeVariables(typeVariables)
+        codeWriter.emitTypeVariables(typeVariables, typeVariableVariance)
 
         primaryConstructor?.let {
           codeWriter.pushType(this) // avoid name collisions when emitting primary constructor
@@ -383,6 +385,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val kdoc = CodeBlock.builder()
     internal val annotations = mutableListOf<AnnotationSpec>()
     internal val typeVariables = mutableListOf<TypeVariableName>()
+    internal val typeVariableVariance = mutableMapOf<TypeVariableName, KModifier>()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
@@ -438,6 +441,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
       typeVariables += typeVariable
+    }
+
+    fun addTypeVariable(typeVariable: TypeVariableName, variance: KModifier) = apply {
+      check(!isAnonymousClass) { "forbidden on anonymous types." }
+      typeVariables += typeVariable
+      typeVariableVariance += typeVariable to variance
     }
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {

@@ -23,11 +23,11 @@ import com.squareup.kotlinpoet.KModifier.DATA
 import com.squareup.kotlinpoet.KModifier.IN
 import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.OUT
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeSpec.Kind
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
@@ -2152,7 +2152,7 @@ class TypeSpecTest {
         .addKdoc("SuperTaco")
         .addAnnotation(SuppressWarnings::class)
         .addModifiers(DATA)
-        .addTypeVariable(TypeVariableName.of("State", listOf(ANY), IN).reified(true))
+        .addTypeVariable(TypeVariableName.of("State", listOf(ANY)).reified(true), variance = IN)
         .addType(TypeSpec.companionObjectBuilder()
             .build())
         .addType(TypeSpec.classBuilder("InnerTaco")
@@ -3254,6 +3254,34 @@ class TypeSpecTest {
       |
       |data class Taco(val madeFreshDatabaseDate: java.sql.Taco, fooNt: Int) {
       |    constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun typeVariablesWithVariance() {
+    val money = ClassName("com.squareup.tacos", "Money")
+    val taco = ClassName("com.squareup.tacos", "Taco")
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.interfaceBuilder("Taqueria")
+            .addTypeVariable(TypeVariableName("M").withBounds(money), variance = IN)
+            .addTypeVariable(TypeVariableName("T").withBounds(taco), variance = OUT)
+            .addFunction(FunSpec.builder("takeMoney")
+                .addModifiers(ABSTRACT)
+                .addParameter("money", TypeVariableName("M"))
+                .build())
+            .addFunction(FunSpec.builder("serveTaco")
+                .addModifiers(ABSTRACT)
+                .returns(TypeVariableName("T"))
+                .build())
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |interface Taqueria<in M : Money, out T : Taco> {
+      |    fun takeMoney(money: M)
+      |
+      |    fun serveTaco(): T
       |}
       |""".trimMargin())
   }
