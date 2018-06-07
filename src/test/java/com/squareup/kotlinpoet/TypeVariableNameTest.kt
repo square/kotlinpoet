@@ -109,6 +109,15 @@ class TypeVariableNameTest {
       |""".trimMargin())
   }
 
+  @Test fun addingBoundsRemovesImplicitBound() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(TypeVariableName("T").withBounds(Number::class))
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<T : kotlin.Number>
+      |""".trimMargin())
+  }
+
   @Test fun inVariance() {
     val typeSpec = TypeSpec.classBuilder("Taco")
         .addTypeVariable(TypeVariableName("E", Number::class, variance = KModifier.IN))
