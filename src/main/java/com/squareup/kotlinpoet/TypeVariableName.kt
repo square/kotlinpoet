@@ -49,8 +49,12 @@ class TypeVariableName private constructor(
 
   fun withBounds(vararg bounds: TypeName) = withBounds(bounds.toList())
 
-  fun withBounds(bounds: List<TypeName>) =
-      TypeVariableName(name, this.bounds + bounds, variance, reified, nullable, annotations)
+  fun withBounds(bounds: List<TypeName>) = TypeVariableName(name,
+      (this.bounds + bounds).withoutImplicitBound(), variance, reified, nullable, annotations)
+
+  private fun List<TypeName>.withoutImplicitBound(): List<TypeName> {
+    return if (size == 1) this else filterNot { it == NULLABLE_ANY }
+  }
 
   fun reified(value: Boolean = true) =
       TypeVariableName(name, bounds, variance, value, nullable, annotations)
