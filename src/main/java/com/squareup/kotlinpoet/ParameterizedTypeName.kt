@@ -126,7 +126,7 @@ class ParameterizedTypeName internal constructor(
           },
           type.asTypeName(),
           typeArguments.take(type.typeParameters.size).map {
-            it.type?.asTypeName() ?: WildcardTypeName.subtypeOf(ANY)
+            it.type?.asTypeName() ?: WildcardTypeName.STAR
           },
           nullable,
           type.annotations.map { AnnotationSpec.get(it) })

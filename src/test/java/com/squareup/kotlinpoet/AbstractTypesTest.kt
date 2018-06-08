@@ -143,8 +143,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun starProjection() {
-    val type = WildcardTypeName.subtypeOf(ANY)
-    assertThat(type.toString()).isEqualTo("*")
+    assertThat(WildcardTypeName.STAR.toString()).isEqualTo("*")
   }
 
   @Ignore("Figure out what this maps to in Kotlin.")

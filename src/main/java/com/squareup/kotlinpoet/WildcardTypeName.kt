@@ -55,6 +55,8 @@ class WildcardTypeName private constructor(
   }
 
   companion object {
+    @JvmField val STAR = subtypeOf(Any::class)
+
     /**
      * Returns a type that represents an unknown type that extends `bound`. For example, if `bound`
      * is `CharSequence.class`, this returns `? extends CharSequence`. If `bound` is `Object.class`,
@@ -88,7 +90,7 @@ class WildcardTypeName private constructor(
       if (extendsBound == null) {
         val superBound = mirror.superBound
         return if (superBound == null)
-          subtypeOf(ANY) else
+          STAR else
           supertypeOf(TypeName.get(superBound, typeVariables))
       } else {
         return subtypeOf(TypeName.get(extendsBound, typeVariables))

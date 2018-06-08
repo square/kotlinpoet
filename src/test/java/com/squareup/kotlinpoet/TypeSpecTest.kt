@@ -85,7 +85,7 @@ class TypeSpecTest {
   }
 
   @Test fun interestingTypes() {
-    val listOfAny = List::class.asClassName().parameterizedBy(WildcardTypeName.subtypeOf(ANY))
+    val listOfAny = List::class.asClassName().parameterizedBy(WildcardTypeName.STAR)
     val listOfExtends = List::class.asClassName()
         .parameterizedBy(WildcardTypeName.subtypeOf(Serializable::class))
     val listOfSuper = List::class.asClassName()
