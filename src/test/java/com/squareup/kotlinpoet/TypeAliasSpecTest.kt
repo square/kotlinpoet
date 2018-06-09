@@ -17,8 +17,8 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.test.Test
 
 class TypeAliasSpecTest {
 
@@ -126,5 +126,28 @@ class TypeAliasSpecTest {
         .addTypeVariable(typeParam)
         .build()
     assertThat(typeAliasSpec.toBuilder().build()).isEqualTo(typeAliasSpec)
+  }
+
+  @Test fun modifyModifiers() {
+    val builder = TypeAliasSpec
+        .builder("Word", String::class)
+        .addModifiers(KModifier.PRIVATE)
+
+    builder.modifiers.clear()
+    builder.modifiers.add(KModifier.INTERNAL)
+
+    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+  }
+
+  @Test fun modifyTypeVariableNames() {
+    val builder = TypeAliasSpec
+        .builder("Word", String::class)
+        .addTypeVariable(TypeVariableName("V"))
+
+    val tVar = TypeVariableName("T")
+    builder.typeVariables.clear()
+    builder.typeVariables.add(tVar)
+
+    assertThat(builder.build().typeVariables).containsExactly(tVar)
   }
 }
