@@ -100,8 +100,9 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   }
 
   class Builder internal constructor(internal val type: TypeName) {
-    internal val members = mutableListOf<CodeBlock>()
     internal var useSiteTarget: UseSiteTarget? = null
+
+    val members = mutableListOf<CodeBlock>()
 
     fun addMember(format: String, vararg args: Any) =
         addMember(CodeBlock.of(format, *args))

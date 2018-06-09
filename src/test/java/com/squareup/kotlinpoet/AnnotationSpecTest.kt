@@ -285,6 +285,18 @@ class AnnotationSpecTest {
         "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Yep\"))")
   }
 
+  @Test fun modifyMembers() {
+    val builder = AnnotationSpec.builder(Deprecated::class)
+        .addMember("%S", "Nope")
+        .addMember("%T(%S)", ReplaceWith::class, "Yep")
+
+    builder.members.removeAt(1)
+    builder.members.add(CodeBlock.of("%T(%S)", ReplaceWith::class, "Nope"))
+
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Nope\"))")
+  }
+
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
 
