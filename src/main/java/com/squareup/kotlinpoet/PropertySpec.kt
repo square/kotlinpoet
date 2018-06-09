@@ -109,13 +109,14 @@ class PropertySpec private constructor(builder: Builder) {
   class Builder internal constructor(internal val name: String, internal val type: TypeName) {
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<KModifier>()
     internal var initializer: CodeBlock? = null
     internal var delegated = false
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
+
+    val annotations = mutableListOf<AnnotationSpec>()
+    val modifiers = mutableListOf<KModifier>()
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -146,9 +147,6 @@ class PropertySpec private constructor(builder: Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
-      for (modifier in modifiers) {
-        modifier.checkTarget(KModifier.Target.PROPERTY)
-      }
       this.modifiers += modifiers
     }
 
@@ -187,7 +185,10 @@ class PropertySpec private constructor(builder: Builder) {
 
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
-    fun build() = PropertySpec(this)
+    fun build(): PropertySpec {
+      modifiers.forEach { it.checkTarget(KModifier.Target.PROPERTY) }
+      return PropertySpec(this)
+    }
   }
 
   companion object {
