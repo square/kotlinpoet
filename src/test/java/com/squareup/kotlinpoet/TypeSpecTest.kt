@@ -27,7 +27,6 @@ import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeSpec.Kind
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
@@ -44,6 +43,7 @@ import java.util.concurrent.Callable
 import java.util.function.Consumer
 import java.util.logging.Logger
 import javax.lang.model.element.TypeElement
+import kotlin.collections.ArrayList
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.test.Ignore
@@ -2945,6 +2945,36 @@ class TypeSpecTest {
       |    override val name: String,
       |    override val surname: String
       |)
+      |""".trimMargin())
+  }
+
+  @Test
+  fun classHeaderAnnotations() {
+    val idParameterSpec = ParameterSpec.builder("id", Int::class)
+        .addAnnotation(ClassName("com.squareup.kotlinpoet", "Id"))
+        .addModifiers(PRIVATE)
+        .defaultValue("1")
+        .build()
+
+    val typeSpec = TypeSpec.classBuilder("Person")
+        .addModifiers(KModifier.DATA)
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(idParameterSpec)
+            .build())
+        .addProperty(PropertySpec.builder("id", Int::class)
+            .initializer("id")
+            .addAnnotation(ClassName("com.squareup.kotlinpoet", "OrderBy"))
+            .build())
+        .build()
+
+    assertThat(toString(typeSpec)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.Id
+      |import com.squareup.kotlinpoet.OrderBy
+      |import kotlin.Int
+      |
+      |data class Person(@OrderBy @Id private val id: Int = 1)
       |""".trimMargin())
   }
 
