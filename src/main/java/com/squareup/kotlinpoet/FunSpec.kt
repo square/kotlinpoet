@@ -163,15 +163,16 @@ class FunSpec private constructor(builder: Builder) {
 
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<KModifier>()
-    internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
-    internal val parameters = mutableListOf<ParameterSpec>()
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
+
+    val annotations = mutableListOf<AnnotationSpec>()
+    val modifiers = mutableListOf<KModifier>()
+    val typeVariables = mutableListOf<TypeVariableName>()
+    val parameters = mutableListOf<ParameterSpec>()
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
@@ -226,12 +227,10 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
-      check(!name.isAccessor) { "$name cannot have type variables" }
       this.typeVariables += typeVariables
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
-      check(!name.isAccessor) { "$name cannot have type variables" }
       typeVariables += typeVariable
     }
 
@@ -260,8 +259,6 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     fun addParameter(parameterSpec: ParameterSpec) = apply {
-      check(name != GETTER) { "$name cannot have parameters" }
-      check(name != SETTER || parameters.size == 0) { "$name can have only one parameter" }
       parameters += parameterSpec
     }
 
@@ -336,7 +333,14 @@ class FunSpec private constructor(builder: Builder) {
       body.addStatement(format, *args)
     }
 
-    fun build() = FunSpec(this)
+    fun build(): FunSpec {
+      if (typeVariables.isNotEmpty()) {
+        check(!name.isAccessor) { "$name cannot have type variables" }
+      }
+      check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
+      check(!(name == SETTER && parameters.size != 1)) { "$name can have only one parameter" }
+      return FunSpec(this)
+    }
   }
 
   companion object {
