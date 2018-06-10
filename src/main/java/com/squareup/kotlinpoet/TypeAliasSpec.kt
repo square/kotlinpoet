@@ -96,7 +96,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     }
 
     fun build(): TypeAliasSpec {
-      modifiers.forEach {
+      for (it in modifiers) {
         require(it in ALLOWABLE_MODIFIERS) {
           "unexpected typealias modifier $it"
         }
