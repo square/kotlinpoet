@@ -334,9 +334,7 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     fun build(): FunSpec {
-      if (typeVariables.isNotEmpty()) {
-        check(!name.isAccessor) { "$name cannot have type variables" }
-      }
+      check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
       check(!(name == SETTER && parameters.size != 1)) { "$name can have only one parameter" }
       return FunSpec(this)
