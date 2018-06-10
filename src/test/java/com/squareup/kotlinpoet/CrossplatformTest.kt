@@ -155,6 +155,7 @@ class CrossplatformTest {
           .addFunction(FunSpec.builder("print")
               .addStatement("println()")
               .build())
+          .build()
     }.hasMessageThat().isEqualTo("functions in expect classes can't have bodies")
   }
 
