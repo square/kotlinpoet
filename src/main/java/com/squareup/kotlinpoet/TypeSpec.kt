@@ -588,7 +588,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun build(): TypeSpec {
       if (enumConstants.isNotEmpty()) {
         check(isEnum) { "${this.name} is not enum and cannot have enum constants" }
-        enumConstants.keys.forEach {
+        for (it in enumConstants.keys) {
           require(it.isName) { "not a valid enum constant: $name" }
         }
       }
