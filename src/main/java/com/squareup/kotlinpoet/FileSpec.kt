@@ -273,7 +273,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     }
 
     fun build(): FileSpec {
-      annotations.forEach { annotationSpec ->
+      for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
           error(
               "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.")
