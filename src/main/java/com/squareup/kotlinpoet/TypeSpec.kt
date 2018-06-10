@@ -384,22 +384,23 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val name: String?
   ) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val typeVariables = mutableListOf<TypeVariableName>()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
-    internal val superclassConstructorParameters = mutableListOf<CodeBlock>()
-    internal val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
-    internal val enumConstants = mutableMapOf<String, TypeSpec>()
-    internal val propertySpecs = mutableListOf<PropertySpec>()
     internal val initializerBlock = CodeBlock.builder()
-    internal val funSpecs = mutableListOf<FunSpec>()
-    internal val typeSpecs = mutableListOf<TypeSpec>()
     internal val isAnonymousClass get() = name == null && kind is Kind.Class
     internal val isEnum get() = kind is Kind.Class && ENUM in kind.modifiers
     internal val isAnnotation get() = kind is Kind.Class && ANNOTATION in kind.modifiers
     internal val isCompanion get() = kind is Kind.Object && COMPANION in kind.modifiers
     internal val isSimpleClass = kind is Kind.Class && !isEnum && !isAnnotation
+
+    val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
+    val enumConstants = mutableMapOf<String, TypeSpec>()
+    val annotations = mutableListOf<AnnotationSpec>()
+    val typeVariables = mutableListOf<TypeVariableName>()
+    val superclassConstructorParameters = mutableListOf<CodeBlock>()
+    val propertySpecs = mutableListOf<PropertySpec>()
+    val funSpecs = mutableListOf<FunSpec>()
+    val typeSpecs = mutableListOf<TypeSpec>()
 
     init {
       require(name == null || name.isName) { "not a valid name: $name" }
@@ -434,12 +435,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
-      check(!isAnonymousClass) { "forbidden on anonymous types." }
       this.typeVariables += typeVariables
     }
 
     fun addTypeVariable(typeVariable: TypeVariableName) = apply {
-      check(!isAnonymousClass) { "forbidden on anonymous types." }
       typeVariables += typeVariable
     }
 
@@ -528,8 +527,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       name: String,
       typeSpec: TypeSpec = anonymousClassBuilder().build()
     ) = apply {
-      check(isEnum) { "${this.name} is not enum" }
-      require(name.isName) { "not a valid enum constant: $name" }
       enumConstants[name] = typeSpec
     }
 
@@ -577,18 +574,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addFunction(funSpec: FunSpec) = apply {
-      when {
-        kind is Interface -> {
-          requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
-          requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
-        }
-        isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
-          "annotation class $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
-        }
-        EXPECT in kind.modifiers -> require(funSpec.body.isEmpty()) {
-          "functions in expect classes can't have bodies"
-        }
-      }
       funSpecs += funSpec
     }
 
@@ -601,6 +586,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun build(): TypeSpec {
+      if (enumConstants.isNotEmpty()) {
+        check(isEnum) { "${this.name} is not enum and cannot have enum constants" }
+        enumConstants.keys.forEach {
+          require(it.isName) { "not a valid enum constant: $name" }
+        }
+      }
+
+      if (superclassConstructorParameters.isNotEmpty()) {
+        ensureCanHaveSuperclass()
+      }
+
+      check(!(isAnonymousClass && typeVariables.isNotEmpty())) {
+        "typevariables are forbidden on anonymous types"
+      }
+
       require(!isEnum || enumConstants.isNotEmpty()) {
         "at least one enum constant is required for $name"
       }
@@ -609,6 +609,18 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         require(isAbstract || ABSTRACT !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
+        }
+        when {
+          kind is Interface -> {
+            requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
+            requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
+          }
+          isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers) {
+            "annotation class $name.${funSpec.name} requires modifiers ${kind.implicitFunctionModifiers}"
+          }
+          EXPECT in kind.modifiers -> require(funSpec.body.isEmpty()) {
+            "functions in expect classes can't have bodies"
+          }
         }
       }
 
