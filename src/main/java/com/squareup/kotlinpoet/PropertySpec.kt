@@ -186,7 +186,9 @@ class PropertySpec private constructor(builder: Builder) {
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun build(): PropertySpec {
-      modifiers.forEach { it.checkTarget(KModifier.Target.PROPERTY) }
+      for (it in modifiers) {
+        it.checkTarget(KModifier.Target.PROPERTY)
+      }
       return PropertySpec(this)
     }
   }
