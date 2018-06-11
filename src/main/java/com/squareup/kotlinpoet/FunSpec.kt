@@ -170,7 +170,7 @@ class FunSpec private constructor(builder: Builder) {
     internal var returnType: TypeName? = null
     internal val parameters = mutableListOf<ParameterSpec>()
     internal var delegateConstructor: String? = null
-    internal val delegateConstructorArguments = mutableListOf<CodeBlock>()
+    internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
 
     fun addKdoc(format: String, vararg args: Any) = apply {
@@ -284,7 +284,7 @@ class FunSpec private constructor(builder: Builder) {
     private fun callConstructor(constructor: String, vararg args: CodeBlock) {
       check(name.isConstructor) { "only constructors can delegate to other constructors!" }
       delegateConstructor = constructor
-      delegateConstructorArguments += args
+      delegateConstructorArguments = args.toList()
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
