@@ -390,4 +390,18 @@ class FunSpecTest {
 
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
+
+  // https://github.com/square/kotlinpoet/issues/398
+  @Test fun changingDelegateConstructorOverridesArgs() {
+    val funSpec = FunSpec.constructorBuilder()
+        .addParameter("values", List::class.parameterizedBy(String::class))
+        .callSuperConstructor("values")
+        .build()
+    val updatedFunSpec = funSpec.toBuilder()
+        .callSuperConstructor("values.toImmutableList()")
+        .build()
+    assertThat(updatedFunSpec.toString()).isEqualTo("""
+      |constructor(values: kotlin.collections.List<kotlin.String>) : super(values.toImmutableList())
+      |""".trimMargin())
+  }
 }
