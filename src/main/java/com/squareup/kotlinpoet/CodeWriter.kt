@@ -140,22 +140,28 @@ internal class CodeWriter constructor(
   }
 
   /**
-   * Emit type variables with their bounds. If a type variable has more than a single bound - call
-   * [emitWhereBlock] with same input to produce an additional `where` block.
+   * Emit type variables with their bounds.
+   *
+   * If a type variable has more than a single bound it will be omitted: call [emitWhereBlock] with
+   * same input to produce an additional `where` block. [emitWhereBlock] omits type variables that
+   * have less than 2 bounds.
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
+  fun emitTypeVariables(
+    typeVariables: List<TypeVariableName>,
+    typeVariableVariance: Map<TypeVariableName, KModifier> = emptyMap()
+  ) {
     if (typeVariables.isEmpty()) return
 
     emit("<")
     typeVariables.forEachIndexed { index, typeVariable ->
       if (index > 0) emit(", ")
-      if (typeVariable.variance != null) {
-        emit("${typeVariable.variance.keyword} ")
-      }
       if (typeVariable.reified) {
         emit("reified ")
+      }
+      typeVariableVariance[typeVariable]?.let { variance ->
+        emitCode("%L ", variance.keyword)
       }
       emitCode("%L", typeVariable.name)
       if (typeVariable.bounds.size == 1 && typeVariable.bounds[0] != NULLABLE_ANY) {
