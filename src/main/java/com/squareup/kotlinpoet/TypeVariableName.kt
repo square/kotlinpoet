@@ -23,23 +23,25 @@ import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
 import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVariance
 
 class TypeVariableName private constructor(
   val name: String,
   val bounds: List<TypeName>,
+  val variance: KModifier? = null,
   val reified: Boolean = false,
   nullable: Boolean = false,
   annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
-  override fun asNullable() = TypeVariableName(name, bounds, reified, true, annotations)
+  override fun asNullable() = TypeVariableName(name, bounds, variance, reified, true, annotations)
 
-  override fun asNonNullable() = TypeVariableName(name, bounds, reified, false, annotations)
+  override fun asNonNullable() = TypeVariableName(name, bounds, variance, reified, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>) =
-      TypeVariableName(name, bounds, reified, nullable, annotations)
+      TypeVariableName(name, bounds, variance, reified, nullable, annotations)
 
-  override fun withoutAnnotations() = TypeVariableName(name, bounds, reified, nullable)
+  override fun withoutAnnotations() = TypeVariableName(name, bounds, variance, reified, nullable)
 
   fun withBounds(vararg bounds: Type) = withBounds(bounds.map { it.asTypeName() })
 
@@ -48,44 +50,48 @@ class TypeVariableName private constructor(
   fun withBounds(vararg bounds: TypeName) = withBounds(bounds.toList())
 
   fun withBounds(bounds: List<TypeName>) = TypeVariableName(name,
-      (this.bounds + bounds).withoutImplicitBound(), reified, nullable, annotations)
+      (this.bounds + bounds).withoutImplicitBound(), variance, reified, nullable, annotations)
 
   private fun List<TypeName>.withoutImplicitBound(): List<TypeName> {
     return if (size == 1) this else filterNot { it == NULLABLE_ANY }
   }
 
   fun reified(value: Boolean = true) =
-      TypeVariableName(name, bounds, value, nullable, annotations)
+      TypeVariableName(name, bounds, variance, value, nullable, annotations)
 
   override fun emit(out: CodeWriter) = out.emit(name)
 
   companion object {
-    internal fun of(name: String, bounds: List<TypeName>): TypeVariableName {
+    internal fun of(name: String, bounds: List<TypeName>, variance: KModifier?): TypeVariableName {
+      require(variance == null || variance.isOneOf(KModifier.IN, KModifier.OUT)) {
+        "$variance is an invalid variance modifier, the only allowed values are in and out!"
+      }
       require(bounds.isNotEmpty()) {
         "$name has no bounds"
       }
       // Strip Any? from bounds if it is present.
-      return TypeVariableName(name, bounds)
+      return TypeVariableName(name, bounds, variance)
     }
 
     /** Returns type variable named `name` with `variance` and without bounds.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String) = TypeVariableName.of(name, listOf(NULLABLE_ANY))
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, variance: KModifier? = null) =
+        TypeVariableName.of(name, listOf(NULLABLE_ANY), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: TypeName) =
-        TypeVariableName.of(name, bounds.toList())
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: TypeName, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.toList(), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: KClass<*>) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() })
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: KClass<*>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
-    @JvmStatic @JvmName("get")
-    operator fun invoke(name: String, vararg bounds: Type) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() })
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
@@ -147,9 +153,14 @@ fun TypeVariable.asTypeVariableName()
 fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()
   val boundsTypeNames = bounds.map { it.asTypeName() }
-  return TypeVariableName.of(name, boundsTypeNames)
+  return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }
 
 fun KTypeParameter.asTypeVariableName(): TypeVariableName {
-  return TypeVariableName.of(name, upperBounds.map { it.asTypeName() })
+  return TypeVariableName.of(name, upperBounds.map { it.asTypeName() },
+      when(variance) {
+        KVariance.INVARIANT -> null
+        KVariance.IN -> KModifier.IN
+        KVariance.OUT -> KModifier.OUT
+      })
 }
