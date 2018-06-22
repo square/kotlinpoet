@@ -306,6 +306,65 @@ val byteToHex = FunSpec.builder("byteToHex")
     .build()
 ```
 
+### %L for Literals
+
+Although Kotlin's string templates usually work well in cases when you want to include literals into 
+generated code, KotlinPoet offers additional syntax inspired-by but incompatible-with
+[`String.format()`][formatter]. It accepts **`%L`** to emit a **literal** value in the output. This
+works just like `Formatter`'s `%s`:
+
+```kotlin
+private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec {
+  return FunSpec.builder(name)
+      .returns(Int::class)
+      .addStatement("var result = 0")
+      .beginControlFlow("for (i in %L until %L)", from, to)
+      .addStatement("result = result %L i", op)
+      .endControlFlow()
+      .addStatement("return result")
+      .build()
+}
+```
+
+Literals are emitted directly to the output code with no escaping. Arguments for literals may be
+strings, primitives, and a few KotlinPoet types described below.
+
+### Code block format strings
+
+Code blocks may specify the values for their placeholders in a few ways. Only one style may be used
+for each operation on a code block.
+
+#### Relative Arguments
+
+Pass an argument value for each placeholder in the format string to `CodeBlock.add()`. In each
+example, we generate code to say "I ate 3 tacos"
+
+```kotlin
+CodeBlock.builder().add("I ate %L %L", 3, "tacos")
+```
+
+#### Positional Arguments
+
+Place an integer index (1-based) before the placeholder in the format string to specify which
+ argument to use.
+
+```kotlin
+CodeBlock.builder().add("I ate %2L %1L", "tacos", 3)
+```
+
+#### Named Arguments
+
+Use the syntax `%argumentName:X` where `X` is the format character and call `CodeBlock.addNamed()`
+with a map containing all argument keys in the format string. Argument names use characters in
+`a-z`, `A-Z`, `0-9`, and `_`, and must start with a lowercase character.
+
+```kotlin
+val map = LinkedHashMap<String, Any>()
+map += "food" to "tacos"
+map += "count" to 3
+CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
+  ```
+
 Download
 --------
 
@@ -350,3 +409,4 @@ License
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
  [kdoc]: https://square.github.io/kotlinpoet/0.x/kotlinpoet/com.squareup.kotlinpoet/
  [javapoet]: https://github.com/square/javapoet/
+ [formatter]: https://developer.android.com/reference/java/util/Formatter.html
