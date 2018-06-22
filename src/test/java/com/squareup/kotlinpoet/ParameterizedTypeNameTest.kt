@@ -34,6 +34,12 @@ class ParameterizedTypeNameTest {
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Int>")
   }
 
+  @Test fun classNamePlusTypeVariableParameter() {
+    val t = TypeVariableName("T")
+    val mapOfT = Map::class.asTypeName().plusParameter(t)
+    assertThat(mapOfT.toString()).isEqualTo("kotlin.collections.Map<T>")
+  }
+
   @Test fun kClassPlusParameter() {
     val typeName = List::class.plusParameter(String::class)
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.List<kotlin.String>")

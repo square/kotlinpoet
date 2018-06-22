@@ -102,7 +102,7 @@ class ParameterizedTypeName internal constructor(
         ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArgument` to `this`.  */
-    @JvmStatic @JvmName("get") fun ClassName.plusParameter(typeArgument: ClassName) =
+    @JvmStatic @JvmName("get") fun ClassName.plusParameter(typeArgument: TypeName) =
         parameterizedBy(typeArgument)
 
     /** Returns a parameterized type, applying `typeArgument` to `this`.  */
