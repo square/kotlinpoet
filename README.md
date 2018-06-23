@@ -127,6 +127,245 @@ fun multiply10to20(): kotlin.Int {
 Methods generating methods! And since KotlinPoet generates source instead of bytecode, you can
 read through it to make sure it's right.
 
+### %S for Strings
+
+When emitting code that includes string literals, we can use **`%S`** to emit a **string**, complete
+with wrapping quotation marks and escaping. Here's a program that emits 3 methods, each of which
+returns its own name:
+
+```kotlin
+fun main(args: Array<String>) {
+  val helloWorld = TypeSpec.classBuilder("HelloWorld")
+      .addFunction(whatsMyNameYo("slimShady"))
+      .addFunction(whatsMyNameYo("eminem"))
+      .addFunction(whatsMyNameYo("marshallMathers"))
+      .build()
+  
+  val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
+      .addType(helloWorld)
+      .build()
+  
+  kotlinFile.writeTo(System.out)
+}
+
+private fun whatsMyNameYo(name: String): FunSpec {
+  return FunSpec.builder(name)
+      .returns(String::class)
+      .addStatement("return %S", name)
+      .build()
+}
+```
+
+In this case, using `%S` gives us quotation marks:
+
+```kotlin
+class HelloWorld {
+    fun slimShady(): String = "slimShady"
+
+    fun eminem(): String = "eminem"
+
+    fun marshallMathers(): String = "marshallMathers"
+}
+```
+
+### %T for Types
+
+KotlinPoet has rich built-in support for types, including automatic generation of `import`
+statements. Just use **`%T`** to reference **types**:
+
+```kotlin
+val today = FunSpec.builder("today")
+    .returns(Date::class)
+    .addStatement("return %T()", Date::class)
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addFunction(today)
+    .build()
+
+val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
+    .addType(helloWorld)
+    .build()
+
+kotlinFile.writeTo(System.out)
+```
+
+That generates the following `.kt` file, complete with the necessary `import`:
+
+```kotlin
+package com.example.helloworld
+
+import java.util.Date
+
+class HelloWorld {
+    fun today(): Date = Date()
+}
+```
+
+We passed `Date::class` to reference a class that just-so-happens to be available when we're
+generating code. This doesn't need to be the case. Here's a similar example, but this one
+references a class that doesn't exist (yet):
+
+```kotlin
+val hoverboard = ClassName("com.mattel", "Hoverboard")
+
+val tomorrow = FunSpec.builder("tomorrow")
+    .returns(hoverboard)
+    .addStatement("return %T()", hoverboard)
+    .build()
+```
+
+And that not-yet-existent class is imported as well:
+
+```kotlin
+package com.example.helloworld
+
+import com.mattel.Hoverboard
+
+class HelloWorld {
+    fun tomorrow(): Hoverboard = Hoverboard()
+}
+```
+
+The `ClassName` type is very important, and you'll need it frequently when you're using KotlinPoet.
+It can identify any _declared_ class. Declared types are just the beginning of Kotlin's rich type
+system: we also have arrays, parameterized types, wildcard types, lambda types and type variables. 
+KotlinPoet has classes for building each of these:
+
+```kotlin
+val hoverboard = ClassName("com.mattel", "Hoverboard")
+val list = ClassName("kotlin.collections", "List")
+val arrayList = ClassName("kotlin.collections", "ArrayList")
+val listOfHoverboards = list.parameterizedBy(hoverboard)
+val arrayListOfHoverboards = arrayList.parameterizedBy(hoverboard)
+
+val beyond = FunSpec.builder("beyond")
+    .returns(listOfHoverboards)
+    .addStatement("val result = %T()", arrayListOfHoverboards)
+    .addStatement("result += %T()", hoverboard)
+    .addStatement("result += %T()", hoverboard)
+    .addStatement("result += %T()", hoverboard)
+    .addStatement("return result")
+    .build()
+```
+
+KotlinPoet will decompose each type and import its components where possible.
+
+```kotlin
+package com.example.helloworld
+
+import com.mattel.Hoverboard
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+
+class HelloWorld {
+    fun beyond(): List<Hoverboard> {
+        val result = ArrayList<Hoverboard>()
+        result += Hoverboard()
+        result += Hoverboard()
+        result += Hoverboard()
+        return result
+    }
+}
+```
+
+### %N for Names
+
+Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
+its name. Here's a method that calls another:
+
+```kotlin
+fun byteToHex(b: Int): String {
+  val result = CharArray(2)
+  result[0] = hexDigit((b ushr 4) and 0xf)
+  result[1] = hexDigit(b and 0xf)
+  return String(result)
+}
+
+fun hexDigit(i: Int): Char {
+  return (if (i < 10) i + '0'.toInt() else i - 10 + 'a'.toInt()).toChar()
+}
+```
+
+When generating the code above, we pass the `hexDigit()` method as an argument to the `byteToHex()`
+method using `%N`:
+
+```kotlin
+val hexDigit = FunSpec.builder("hexDigit")
+    .addParameter("i", Int::class)
+    .returns(Char::class)
+    .addStatement("return (if (i < 10) i + '0'.toInt() else i - 10 + 'a'.toInt()).toChar()")
+    .build()
+
+val byteToHex = FunSpec.builder("byteToHex")
+    .addParameter("b", Int::class)
+    .returns(String::class)
+    .addStatement("val result = CharArray(2)")
+    .addStatement("result[0] = %N((b ushr 4) and 0xf)", hexDigit)
+    .addStatement("result[1] = %N(b and 0xf)", hexDigit)
+    .addStatement("return String(result)")
+    .build()
+```
+
+### %L for Literals
+
+Although Kotlin's string templates usually work well in cases when you want to include literals into 
+generated code, KotlinPoet offers additional syntax inspired-by but incompatible-with
+[`String.format()`][formatter]. It accepts **`%L`** to emit a **literal** value in the output. This
+works just like `Formatter`'s `%s`:
+
+```kotlin
+private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec {
+  return FunSpec.builder(name)
+      .returns(Int::class)
+      .addStatement("var result = 0")
+      .beginControlFlow("for (i in %L until %L)", from, to)
+      .addStatement("result = result %L i", op)
+      .endControlFlow()
+      .addStatement("return result")
+      .build()
+}
+```
+
+Literals are emitted directly to the output code with no escaping. Arguments for literals may be
+strings, primitives, and a few KotlinPoet types described below.
+
+### Code block format strings
+
+Code blocks may specify the values for their placeholders in a few ways. Only one style may be used
+for each operation on a code block.
+
+#### Relative Arguments
+
+Pass an argument value for each placeholder in the format string to `CodeBlock.add()`. In each
+example, we generate code to say "I ate 3 tacos"
+
+```kotlin
+CodeBlock.builder().add("I ate %L %L", 3, "tacos")
+```
+
+#### Positional Arguments
+
+Place an integer index (1-based) before the placeholder in the format string to specify which
+ argument to use.
+
+```kotlin
+CodeBlock.builder().add("I ate %2L %1L", "tacos", 3)
+```
+
+#### Named Arguments
+
+Use the syntax `%argumentName:X` where `X` is the format character and call `CodeBlock.addNamed()`
+with a map containing all argument keys in the format string. Argument names use characters in
+`a-z`, `A-Z`, `0-9`, and `_`, and must start with a lowercase character.
+
+```kotlin
+val map = LinkedHashMap<String, Any>()
+map += "food" to "tacos"
+map += "count" to 3
+CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
+  ```
+
 Download
 --------
 
@@ -171,3 +410,4 @@ License
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
  [kdoc]: https://square.github.io/kotlinpoet/0.x/kotlinpoet/com.squareup.kotlinpoet/
  [javapoet]: https://github.com/square/javapoet/
+ [formatter]: https://developer.android.com/reference/java/util/Formatter.html
