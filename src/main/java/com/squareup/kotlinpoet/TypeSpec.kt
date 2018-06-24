@@ -384,7 +384,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val name: String?
   ) {
     internal val kdoc = CodeBlock.builder()
-    internal val annotations = mutableListOf<AnnotationSpec>()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
@@ -396,6 +395,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()
+    val annotations = mutableListOf<AnnotationSpec>()
     val typeVariables = mutableListOf<TypeVariableName>()
     val superclassConstructorParameters = mutableListOf<CodeBlock>()
     val propertySpecs = mutableListOf<PropertySpec>()
@@ -412,12 +412,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
-    }
-
-    fun replaceAnnotations(modifierBlock: (List<AnnotationSpec>) -> Iterable<AnnotationSpec>) = apply {
-      val currentAnnotations = annotations.toList()
-      annotations.clear()
-      addAnnotations(modifierBlock(currentAnnotations))
     }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {

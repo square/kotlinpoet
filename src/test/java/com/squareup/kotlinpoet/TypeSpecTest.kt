@@ -3301,16 +3301,13 @@ class TypeSpecTest {
             .addMember("name = %S", "jvmWord")
             .build())
 
-    val suppressWarnings = AnnotationSpec.builder(SuppressWarnings::class.asClassName())
-        .addMember("value = [%S]", "randomstuff")
+    val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
+        .addMember("name = %S", "javaWord")
         .build()
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
 
-    builder.replaceAnnotations { currentAnnotations ->
-      currentAnnotations.filterNot { it.type == JvmName::class.asClassName() }
-          .plus(suppressWarnings)
-    }
-
-    assertThat(builder.build().annotations).containsExactly(suppressWarnings)
+    assertThat(builder.build().annotations).containsExactly(javaWord)
   }
 
   @Test fun modifyTypeVariableNames() {
