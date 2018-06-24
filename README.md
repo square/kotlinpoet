@@ -365,6 +365,512 @@ map += "food" to "tacos"
 map += "count" to 3
 CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
   ```
+### Functions
+
+All of the above functions have a code body. Use `KModifier.ABSTRACT` to get a function without any
+body. This is only legal if it is enclosed by an abstract class or an interface.
+
+```kotlin
+val flux = FunSpec.builder("flux")
+    .addModifiers(KModifier.ABSTRACT, KModifier.PROTECTED)
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addModifiers(KModifier.ABSTRACT)
+    .addFunction(flux)
+    .build()
+```
+
+Which generates this:
+
+```kotlin
+abstract class HelloWorld {
+    protected abstract fun flux()
+}
+```
+
+The other modifiers work where permitted.
+
+Methods also have parameters, varargs, KDoc, annotations, type variables, return type and receiver
+type for extension functions. All of these are configured with `FunSpec.Builder`.
+
+Also, KotlinPoet can recognize single-expression functions and print them out properly. It treats
+each function with a body that starts with `return` as a single-expression function:
+
+```kotlin
+val abs = FunSpec.builder("abs")
+    .receiver(Int::class)
+    .returns(Int::class)
+    .addStatement("return if (this < 0) -this else this")
+    .build()
+```
+
+Which outputs:
+
+```kotlin
+fun kotlin.Int.abs(): kotlin.Int = if (this < 0) -this else this
+```
+
+### Constructors
+
+`FunSpec` is a slight misnomer; it can also be used for constructors:
+
+```kotlin
+val flux = FunSpec.constructorBuilder()
+    .addParameter("greeting", String::class)
+    .addStatement("this.%N = %N", "greeting", "greeting")
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addProperty("greeting", String::class, KModifier.PRIVATE)
+    .addFunction(flux)
+    .build()
+```
+
+Which generates this:
+
+```kotlin
+class HelloWorld {
+    private val greeting: kotlin.String
+
+    constructor(greeting: kotlin.String) {
+        this.greeting = greeting
+    }
+}
+```
+
+For the most part, constructors work just like methods. When emitting code, KotlinPoet will place
+constructors before methods in the output file.
+
+Often times you'll need to generate the primary constructor for a class:
+
+```kotlin
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .primaryConstructor(flux)
+    .addProperty("greeting", String::class, KModifier.PRIVATE)
+    .build()
+``` 
+
+This code, however, generates the following:
+
+```kotlin
+class HelloWorld(greeting: kotlin.String) {
+    private val greeting: kotlin.String
+    init {
+        this.greeting = greeting
+    }
+}
+```
+
+By default, KotlinPoet won't merge primary constructor parameters and properties, even if they share
+the same name. To achieve the effect, you have to tell KotlinPoet that the property is initialized 
+via the constructor parameter:
+
+```kotlin
+val flux = FunSpec.constructorBuilder()
+    .addParameter("greeting", String::class)
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .primaryConstructor(flux)
+    .addProperty(PropertySpec.builder("greeting", String::class)
+        .initializer("greeting")
+        .addModifiers(KModifier.PRIVATE)
+        .build())
+    .build()
+```
+
+Now we're getting the following output:
+
+```kotlin
+class HelloWorld(private val greeting: kotlin.String)
+```
+
+Notice that KotlinPoet omits `{}` for classes with empty bodies.
+
+### Parameters
+
+Declare parameters on methods and constructors with either `ParameterSpec.builder()` or
+`FunSpec`'s convenient `addParameter()` API:
+
+```kotlin
+val android = ParameterSpec.builder("android", String::class)
+    .build()
+
+val welcomeOverlords = FunSpec.builder("welcomeOverlords")
+    .addParameter(android)
+    .addParameter("robot", String::class)
+    .build()
+```
+
+Though the code above to generate `android` and `robot` parameters is different, the output is the
+same:
+
+```kotlin
+fun welcomeOverlords(android: kotlin.String, robot: kotlin.String) {
+}
+```
+
+The extended `Builder` form is necessary when the parameter has annotations (such as `@Inject`).
+
+### Properties
+
+Like parameters, properties can be created either with builders or by using convenient helper methods:
+
+```kotlin
+val android = PropertySpec.builder("android", String::class)
+    .addModifiers(KModifier.PRIVATE)
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addProperty(android)
+    .addProperty("robot", String::class, KModifier.PRIVATE)
+    .build()
+```
+
+Which generates:
+
+```kotlin
+class HelloWorld {
+    private val android: kotlin.String
+
+    private val robot: kotlin.String
+}
+```
+
+The extended `Builder` form is necessary when a field has KDoc, annotations, or a field
+initializer. Field initializers use the same [`String.format()`][formatter]-like syntax as the code
+blocks above:
+
+```kotlin
+val android = PropertySpec.builder("android", String::class)
+    .addModifiers(KModifier.PRIVATE)
+    .initializer("%S + %L", "Oreo v.", 8.1)
+    .build()
+```
+
+Which generates:
+
+```kotlin
+private val android: kotlin.String = "Oreo v." + 8.1
+```
+
+By default `PropertySpec.Builder` produces `val` properties. Use `PropertySpec.varBuilder()` if you
+need a `var`:
+
+```kotlin
+val android = PropertySpec.varBuilder("android", String::class)
+    .addModifiers(KModifier.PRIVATE)
+    .initializer("%S + %L", "Oreo v.", 8.1)
+    .build()
+```
+
+### Interfaces
+
+KotlinPoet has no trouble with interfaces. Note that interface methods must always be `ABSTRACT`. 
+The modifier is necessary when defining the interface:
+
+```kotlin
+val helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
+    .addProperty("buzz", String::class)
+    .addFunction(FunSpec.builder("beep")
+        .addModifiers(KModifier.ABSTRACT)
+        .build())
+    .build()
+```
+
+But these modifiers are omitted when the code is generated. These are the defaults so we don't need
+to include them for `kotlinc`'s benefit!
+
+```kotlin
+interface HelloWorld {
+    val buzz: kotlin.String
+
+    fun beep()
+}
+```
+
+### Objects
+
+KotlinPoet supports objects:
+
+```kotlin
+val helloWorld = TypeSpec.objectBuilder("HelloWorld")
+    .addProperty(PropertySpec.builder("buzz", String::class)
+        .initializer("%S", "buzz")
+        .build())
+    .addFunction(FunSpec.builder("beep")
+        .addStatement("println(%S)", "Beep!")
+        .build())
+    .build()
+```
+
+Similarly, you can create companion objects and add them to classes using `addType()`: 
+
+```kotlin
+val companion = TypeSpec.companionObjectBuilder()
+    .addProperty(PropertySpec.builder("buzz", String::class)
+        .initializer("%S", "buzz")
+        .build())
+    .addFunction(FunSpec.builder("beep")
+        .addStatement("println(%S)", "Beep!")
+        .build())
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addType(companion)
+    .build()
+```
+
+You can provide an optional name for a companion object.
+
+### Enums
+
+Use `enumBuilder` to create the enum type, and `addEnumConstant()` for each value:
+
+```kotlin
+val helloWorld = TypeSpec.enumBuilder("Roshambo")
+    .addEnumConstant("ROCK")
+    .addEnumConstant("SCISSORS")
+    .addEnumConstant("PAPER")
+    .build()
+```
+
+To generate this:
+
+```kotlin
+enum class Roshambo {
+    ROCK,
+
+    SCISSORS,
+
+    PAPER
+}
+```
+
+Fancy enums are supported, where the enum values override methods or call a superclass constructor.
+Here's a comprehensive example:
+
+```kotlin
+val helloWorld = TypeSpec.enumBuilder("Roshambo")
+    .primaryConstructor(FunSpec.constructorBuilder()
+        .addParameter("handsign", String::class)
+        .build())
+    .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder()
+        .addSuperclassConstructorParameter("%S", "fist")
+        .addFunction(FunSpec.builder("toString")
+            .addModifiers(KModifier.OVERRIDE)
+            .addStatement("return %S", "avalanche!")
+            .returns(String::class)
+            .build())
+        .build())
+    .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder()
+        .addSuperclassConstructorParameter("%S", "peace")
+        .build())
+    .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder()
+        .addSuperclassConstructorParameter("%S", "flat")
+        .build())
+    .addProperty(PropertySpec.builder("handsign", String::class, KModifier.PRIVATE)
+        .initializer("handsign")
+        .build())
+    .build()
+```
+
+Which generates this:
+
+```kotlin
+enum class Roshambo(private val handsign: kotlin.String) {
+    ROCK("fist") {
+        override fun toString(): kotlin.String = "avalanche!"
+    },
+
+    SCISSORS("peace"),
+
+    PAPER("flat");
+}
+```
+
+### Anonymous Inner Classes
+
+In the enum code, we used `TypeSpec.anonymousClassBuilder()`. Anonymous inner classes can also be 
+used in code blocks. They are values that can be referenced with `%L`:
+
+```kotlin
+val comparator = TypeSpec.anonymousClassBuilder()
+    .addSuperinterface(Comparator::class.parameterizedBy(String::class))
+    .addFunction(FunSpec.builder("compare")
+        .addModifiers(KModifier.OVERRIDE)
+        .addParameter("a", String::class)
+        .addParameter("b", String::class)
+        .returns(Int::class)
+        .addStatement("return %N.length - %N.length", "a", "b")
+        .build())
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addFunction(FunSpec.builder("sortByLength")
+        .addParameter("strings", List::class.parameterizedBy(String::class))
+        .addStatement("%N.sortedWith(%L)", "strings", comparator)
+        .build())
+    .build()
+```
+
+This generates a method that contains a class that contains a method:
+
+```kotlin
+class HelloWorld {
+    fun sortByLength(strings: kotlin.collections.List<kotlin.String>) {
+        strings.sortedWith(object : java.util.Comparator<kotlin.String> {
+            override fun compare(a: kotlin.String, b: kotlin.String): kotlin.Int = a.length - b.length
+        })
+    }
+}
+```
+
+One particularly tricky part of defining anonymous inner classes is the arguments to the superclass
+constructor. To pass them use `TypeSpec.Builder`'s `addSuperclassConstructorParameter()` method. 
+
+### Annotations
+
+Simple annotations are easy:
+
+```kotlin
+val test = FunSpec.builder("test string equality")
+    .addAnnotation(Test::class)
+    .addStatement("assertThat(%1S).isEqualTo(%1S)", "foo")
+    .build()
+```
+
+Which generates this function with an `@Test` annotation:
+
+```kotlin
+@kotlin.Test
+fun `test string equality`() {
+    assertThat("foo").isEqualTo("foo")
+}
+```
+
+Use `AnnotationSpec.builder()` to set properties on annotations:
+
+```kotlin
+val logRecord = FunSpec.builder("recordEvent")
+    .addModifiers(KModifier.ABSTRACT)
+    .addAnnotation(AnnotationSpec.builder(Headers::class)
+        .addMember("accept = %S", "application/json; charset=utf-8")
+        .addMember("userAgent = %S", "Square Cash")
+        .build())
+    .addParameter("logRecord", LogRecord::class)
+    .returns(LogReceipt::class)
+    .build()
+```
+
+Which generates this annotation with `accept` and `userAgent` properties:
+
+```kotlin
+@Headers(
+        accept = "application/json; charset=utf-8",
+        userAgent = "Square Cash"
+)
+abstract fun recordEvent(logRecord: LogRecord): LogReceipt
+```
+
+When you get fancy, annotation values can be annotations themselves. Use `%L` for embedded
+annotations:
+
+```kotlin
+val headerList = ClassName("", "HeaderList")
+val header = ClassName("", "Header")
+val logRecord = FunSpec.builder("recordEvent")
+    .addModifiers(KModifier.ABSTRACT)
+    .addAnnotation(AnnotationSpec.builder(headerList)
+        .addMember(
+            "[\n%>%L,\n%L%<\n]",
+            AnnotationSpec.builder(header)
+                .addMember("name = %S", "Accept")
+                .addMember("value = %S", "application/json; charset=utf-8")
+                .build(),
+            AnnotationSpec.builder(header)
+                .addMember("name = %S", "User-Agent")
+                .addMember("value = %S", "Square Cash")
+                .build())
+        .build())
+    .addParameter("logRecord", logRecordName)
+    .returns(logReceipt)
+    .build()
+```
+
+Which generates this:
+
+```kotlin
+@HeaderList([
+    Header(name = "Accept", value = "application/json; charset=utf-8"),
+    Header(name = "User-Agent", value = "Square Cash")
+])
+abstract fun recordEvent(logRecord: LogRecord): LogReceipt
+```
+
+KotlinPoet supports use-site targets for annotations:
+
+```kotlin
+val utils = FileSpec.builder("com.example", "Utils")
+    .addAnnotation(AnnotationSpec.builder(JvmName::class)
+        .useSiteTarget(UseSiteTarget.FILE)
+        .build())
+    .addFunction(FunSpec.builder("abs")
+        .receiver(Int::class)
+        .returns(Int::class)
+        .addStatement("return if (this < 0) -this else this")
+        .build())
+    .build()
+```
+
+Will output this:
+
+```kotlin
+@file:JvmName
+
+package com.example
+
+import kotlin.Int
+import kotlin.jvm.JvmName
+
+fun Int.abs(): Int = if (this < 0) -this else this
+```
+
+### Type Aliases
+
+KotlinPoet provides API for creating Type Aliases, which supports simple class names, parameterized
+types and lambdas:
+
+```kotlin
+val fileTable = Map::class.asClassName()
+    .parameterizedBy(TypeVariableName("K"), Set::class.parameterizedBy(File::class))
+val predicate = LambdaTypeName.get(parameters = *arrayOf(TypeVariableName("T")),
+    returnType = Boolean::class.asClassName())
+val helloWorld = FileSpec.builder("com.example", "HelloWorld")
+    .addTypeAlias(TypeAliasSpec.builder("Word", String::class).build())
+    .addTypeAlias(TypeAliasSpec.builder("FileTable<K>", fileTable).build())
+    .addTypeAlias(TypeAliasSpec.builder("Predicate<T>", predicate).build())
+    .build()
+```
+
+Which generates the following:
+
+```kotlin
+package com.example
+
+import java.io.File
+import kotlin.Boolean
+import kotlin.String
+import kotlin.collections.Map
+import kotlin.collections.Set
+
+typealias Word = String
+
+typealias FileTable<K> = Map<K, Set<File>>
+
+typealias Predicate<T> = (T) -> Boolean
+```
 
 Download
 --------
