@@ -408,7 +408,7 @@ val abs = FunSpec.builder("abs")
 Which outputs:
 
 ```kotlin
-fun kotlin.Int.abs(): kotlin.Int = if (this < 0) -this else this
+fun Int.abs(): Int = if (this < 0) -this else this
 ```
 
 ### Constructors
@@ -431,9 +431,9 @@ Which generates this:
 
 ```kotlin
 class HelloWorld {
-    private val greeting: kotlin.String
+    private val greeting: String
 
-    constructor(greeting: kotlin.String) {
+    constructor(greeting: String) {
         this.greeting = greeting
     }
 }
@@ -454,8 +454,8 @@ val helloWorld = TypeSpec.classBuilder("HelloWorld")
 This code, however, generates the following:
 
 ```kotlin
-class HelloWorld(greeting: kotlin.String) {
-    private val greeting: kotlin.String
+class HelloWorld(greeting: String) {
+    private val greeting: String
     init {
         this.greeting = greeting
     }
@@ -483,7 +483,7 @@ val helloWorld = TypeSpec.classBuilder("HelloWorld")
 Now we're getting the following output:
 
 ```kotlin
-class HelloWorld(private val greeting: kotlin.String)
+class HelloWorld(private val greeting: String)
 ```
 
 Notice that KotlinPoet omits `{}` for classes with empty bodies.
@@ -507,7 +507,7 @@ Though the code above to generate `android` and `robot` parameters is different,
 same:
 
 ```kotlin
-fun welcomeOverlords(android: kotlin.String, robot: kotlin.String) {
+fun welcomeOverlords(android: String, robot: String) {
 }
 ```
 
@@ -532,9 +532,9 @@ Which generates:
 
 ```kotlin
 class HelloWorld {
-    private val android: kotlin.String
+    private val android: String
 
-    private val robot: kotlin.String
+    private val robot: String
 }
 ```
 
@@ -552,7 +552,7 @@ val android = PropertySpec.builder("android", String::class)
 Which generates:
 
 ```kotlin
-private val android: kotlin.String = "Oreo v." + 8.1
+private val android: String = "Oreo v." + 8.1
 ```
 
 By default `PropertySpec.Builder` produces `val` properties. Use `PropertySpec.varBuilder()` if you
@@ -584,7 +584,7 @@ to include them for `kotlinc`'s benefit!
 
 ```kotlin
 interface HelloWorld {
-    val buzz: kotlin.String
+    val buzz: String
 
     fun beep()
 }
@@ -679,9 +679,9 @@ val helloWorld = TypeSpec.enumBuilder("Roshambo")
 Which generates this:
 
 ```kotlin
-enum class Roshambo(private val handsign: kotlin.String) {
+enum class Roshambo(private val handsign: String) {
     ROCK("fist") {
-        override fun toString(): kotlin.String = "avalanche!"
+        override fun toString(): String = "avalanche!"
     },
 
     SCISSORS("peace"),
@@ -719,9 +719,9 @@ This generates a method that contains a class that contains a method:
 
 ```kotlin
 class HelloWorld {
-    fun sortByLength(strings: kotlin.collections.List<kotlin.String>) {
-        strings.sortedWith(object : java.util.Comparator<kotlin.String> {
-            override fun compare(a: kotlin.String, b: kotlin.String): kotlin.Int = a.length - b.length
+    fun sortByLength(strings: List<String>) {
+        strings.sortedWith(object : Comparator<String> {
+            override fun compare(a: String, b: String): Int = a.length - b.length
         })
     }
 }
@@ -744,7 +744,7 @@ val test = FunSpec.builder("test string equality")
 Which generates this function with an `@Test` annotation:
 
 ```kotlin
-@kotlin.Test
+@Test
 fun `test string equality`() {
     assertThat("foo").isEqualTo("foo")
 }
