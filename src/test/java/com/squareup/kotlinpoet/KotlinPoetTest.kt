@@ -19,7 +19,6 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.jvmField
 import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
-import com.squareup.kotlinpoet.jvm.jvmWildcard
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
@@ -153,7 +152,7 @@ class KotlinPoetTest {
 
   @Test fun mistargetedModifier() {
     assertThrows<IllegalArgumentException> {
-      PropertySpec.builder("CHEESE", String::class, KModifier.DATA)
+      PropertySpec.builder("CHEESE", String::class, KModifier.DATA).build()
     }
   }
 

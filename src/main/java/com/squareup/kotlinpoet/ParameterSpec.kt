@@ -67,9 +67,10 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     internal val name: String,
     internal val type: TypeName
   ) {
-    internal val annotations = mutableListOf<AnnotationSpec>()
-    internal val modifiers = mutableListOf<KModifier>()
     internal var defaultValue: CodeBlock? = null
+
+    val annotations = mutableListOf<AnnotationSpec>()
+    val modifiers = mutableListOf<KModifier>()
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       annotations += annotationSpecs

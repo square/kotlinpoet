@@ -62,9 +62,10 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     internal val name: String,
     internal val type: TypeName
   ) {
-    internal val modifiers = mutableSetOf<KModifier>()
-    internal val typeVariables = mutableSetOf<TypeVariableName>()
     internal val kdoc = CodeBlock.builder()
+
+    val modifiers = mutableSetOf<KModifier>()
+    val typeVariables = mutableSetOf<TypeVariableName>()
 
     init {
       require(name.isName) { "not a valid name: $name" }
@@ -75,9 +76,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     }
 
     private fun addModifier(modifier: KModifier) {
-      require(modifier in setOf(PUBLIC, INTERNAL, PRIVATE, ACTUAL)) {
-        "unexpected typealias modifier $modifier"
-      }
       this.modifiers.add(modifier)
     }
 
@@ -97,7 +95,18 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
       kdoc.add(block)
     }
 
-    fun build() = TypeAliasSpec(this)
+    fun build(): TypeAliasSpec {
+      for (it in modifiers) {
+        require(it in ALLOWABLE_MODIFIERS) {
+          "unexpected typealias modifier $it"
+        }
+      }
+      return TypeAliasSpec(this)
+    }
+
+    private companion object {
+      private val ALLOWABLE_MODIFIERS = setOf(PUBLIC, INTERNAL, PRIVATE, ACTUAL)
+    }
   }
 
   companion object {

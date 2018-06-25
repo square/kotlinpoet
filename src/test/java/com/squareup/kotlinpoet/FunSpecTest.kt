@@ -404,4 +404,51 @@ class FunSpecTest {
       |constructor(values: kotlin.collections.List<kotlin.String>) : super(values.toImmutableList())
       |""".trimMargin())
   }
+
+  @Test fun modifyModifiers() {
+    val builder = FunSpec.builder("taco")
+        .addModifiers(KModifier.PRIVATE)
+
+    builder.modifiers.clear()
+    builder.modifiers.add(KModifier.INTERNAL)
+
+    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+  }
+
+  @Test fun modifyAnnotations() {
+    val builder = FunSpec.builder("taco")
+        .addAnnotation(AnnotationSpec.builder(JvmName::class.asClassName())
+            .addMember("name = %S", "jvmWord")
+            .build())
+
+    val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
+        .addMember("name = %S", "javaWord")
+        .build()
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
+
+    assertThat(builder.build().annotations).containsExactly(javaWord)
+  }
+
+  @Test fun modifyTypeVariableNames() {
+    val builder = FunSpec.builder("taco")
+        .addTypeVariable(TypeVariableName("V"))
+
+    val tVar = TypeVariableName("T")
+    builder.typeVariables.clear()
+    builder.typeVariables.add(tVar)
+
+    assertThat(builder.build().typeVariables).containsExactly(tVar)
+  }
+
+  @Test fun modifyParameters() {
+    val builder = FunSpec.builder("taco")
+        .addParameter(ParameterSpec.builder("topping", String::class.asClassName()).build())
+
+    val seasoning = ParameterSpec.builder("seasoning", String::class.asClassName()).build()
+    builder.parameters.clear()
+    builder.parameters.add(seasoning)
+
+    assertThat(builder.build().parameters).containsExactly(seasoning)
+  }
 }

@@ -173,11 +173,12 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     val packageName: String,
     val name: String
   ) {
-    internal val annotations = mutableListOf<AnnotationSpec>()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     internal val members = mutableListOf<Any>()
+
+    val annotations = mutableListOf<AnnotationSpec>()
 
     init {
       require(name.isName) { "not a valid file name: $name" }
@@ -271,7 +272,15 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       this.indent = indent
     }
 
-    fun build() = FileSpec(this)
+    fun build(): FileSpec {
+      for (annotationSpec in annotations) {
+        if (annotationSpec.useSiteTarget != FILE) {
+          error(
+              "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.")
+        }
+      }
+      return FileSpec(this)
+    }
   }
 
   companion object {

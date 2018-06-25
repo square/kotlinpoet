@@ -70,6 +70,7 @@ class PropertySpecTest {
     assertThrows<IllegalArgumentException> {
       PropertySpec.builder("foo", String::class)
           .addModifiers(KModifier.INLINE)
+          .build()
     }
   }
 
@@ -123,6 +124,33 @@ class PropertySpecTest {
             .build())
         .build()
 
-    assertThat(prop.toBuilder().build()).isEqualTo(prop);
+    assertThat(prop.toBuilder().build()).isEqualTo(prop)
+  }
+
+  @Test fun modifyModifiers() {
+    val builder = PropertySpec
+        .builder("word", String::class)
+        .addModifiers(KModifier.PRIVATE)
+
+    builder.modifiers.clear()
+    builder.modifiers.add(KModifier.INTERNAL)
+
+    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+  }
+
+  @Test fun modifyAnnotations() {
+    val builder = PropertySpec
+        .builder("word", String::class)
+        .addAnnotation(AnnotationSpec.builder(JvmName::class.asClassName())
+            .addMember("name = %S", "jvmWord")
+            .build())
+
+    val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
+        .addMember("name = %S", "javaWord")
+        .build()
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
+
+    assertThat(builder.build().annotations).containsExactly(javaWord)
   }
 }

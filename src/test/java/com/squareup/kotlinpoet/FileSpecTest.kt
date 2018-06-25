@@ -20,11 +20,11 @@ import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import kotlin.test.Ignore
-import kotlin.test.Test
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.test.Ignore
+import kotlin.test.Test
 
 class FileSpecTest {
   @Test fun importStaticReadmeExample() {
@@ -687,5 +687,22 @@ class FileSpecTest {
         .build()
 
     assertThat(source.toBuilder().build()).isEqualTo(source)
+  }
+
+  @Test fun modifyAnnotations() {
+    val builder = FileSpec.builder("com.taco", "Taco")
+        .addAnnotation(AnnotationSpec.builder(JvmName::class.asClassName())
+            .useSiteTarget(FILE)
+            .addMember("name = %S", "JvmTaco")
+            .build())
+
+    val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
+        .useSiteTarget(FILE)
+        .addMember("name = %S", "JavaTaco")
+        .build()
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
+
+    assertThat(builder.build().annotations).containsExactly(javaWord)
   }
 }
