@@ -354,8 +354,32 @@ class CodeBlock private constructor(
      *     Shouldn't contain braces or newline characters.
      */
     fun beginControlFlow(controlFlow: String, vararg args: Any?) = apply {
-      add(controlFlow + " {\n", *args)
+      add("$controlFlow {\n", *args)
       indent()
+    }
+
+    /**
+     * @param statement statement that precedes the lambda expression, e.g. a function call that
+     * takes the expression as an argument.
+     * @param parameters optional lambda expression parameter names.
+     */
+    fun beginLambdaExpression(statement: String, vararg parameters: String) =
+        beginLambdaExpression(CodeBlock.of(statement), *parameters)
+
+    /**
+     * @param statement statement that precedes the lambda expression, e.g. a function call that
+     * takes the expression as an argument.
+     * @param parameters optional lambda expression parameter names.
+     */
+    fun beginLambdaExpression(
+      statement: CodeBlock,
+      vararg parameters: String
+    ): Builder {
+      return apply {
+        val argsBlock = parameters.joinToString(prefix = " ", separator = ", ", postfix = " ->")
+        add("%L {$argsBlock\n", statement)
+        indent()
+      }
     }
 
     /**
