@@ -11,7 +11,7 @@
 
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>1.0.0-RC1</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <name>KotlinPoet</name>
   <description>Use beautiful Java code to generate beautiful Kotlin code.</description>
