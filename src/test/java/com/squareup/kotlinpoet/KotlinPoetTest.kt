@@ -673,4 +673,44 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/416
+  @Test fun beginLambdaExpression() {
+    val code = CodeBlock.builder()
+        .beginLambdaExpression("val unknownFields = reader.decodeMessage", "tag")
+        .beginControlFlow("when (tag)")
+        .addStatement("1 -> name = ProtoAdapter.STRING.decode(reader)")
+        .addStatement("2 -> id = ProtoAdapter.INT32.decode(reader)")
+        .addStatement("3 -> email = ProtoAdapter.STRING.decode(reader)")
+        .addStatement("4 -> phone.add(PhoneNumber.ADAPTER.decode(reader))")
+        .addStatement("else -> UnknownFieldsBuilder.UNKNOWN_FIELD")
+        .endControlFlow()
+        .endControlFlow()
+        .build()
+    assertThat(code.toString()).isEqualTo("""
+      |val unknownFields = reader.decodeMessage { tag ->
+      |    when (tag) {
+      |        1 -> name = ProtoAdapter.STRING.decode(reader)
+      |        2 -> id = ProtoAdapter.INT32.decode(reader)
+      |        3 -> email = ProtoAdapter.STRING.decode(reader)
+      |        4 -> phone.add(PhoneNumber.ADAPTER.decode(reader))
+      |        else -> UnknownFieldsBuilder.UNKNOWN_FIELD
+      |    }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun beginLambdaExpressionWithArgsAndMultipleParams() {
+    val statement = CodeBlock.of("emptyList<%T>().forEachIndexed", String::class)
+    val code = CodeBlock.builder()
+        .beginLambdaExpression(statement, "index", "value")
+        .addStatement("println(%S)", "\$value #\$index")
+        .endControlFlow()
+        .build()
+    assertThat(code.toString()).isEqualTo("""
+      |emptyList<kotlin.String>().forEachIndexed { index, value ->
+      |    println("${'$'}value #${'$'}index")
+      |}
+      |""".trimMargin())
+  }
 }
