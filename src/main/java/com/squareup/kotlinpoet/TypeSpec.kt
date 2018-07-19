@@ -32,7 +32,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val kind = builder.kind
   val name = builder.name
   val kdoc = builder.kdoc.build()
-  val annotations = builder.annotations.toImmutableList()
+  val annotationSpecs = builder.annotationSpecs.toImmutableList()
   val modifiers = kind.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
   val primaryConstructor = builder.primaryConstructor
@@ -59,7 +59,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(kind, name)
     builder.kdoc.add(kdoc)
-    builder.annotations += annotations
+    builder.annotationSpecs += annotationSpecs
     builder.typeVariables += typeVariables
     builder.superclass = superclass
     builder.superclassConstructorParameters += superclassConstructorParameters
@@ -85,7 +85,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     try {
       if (enumName != null) {
         codeWriter.emitKdoc(kdoc)
-        codeWriter.emitAnnotations(annotations, false)
+        codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitCode("%L", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
           codeWriter.emit("(")
@@ -120,7 +120,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         codeWriter.emit(" {\n")
       } else {
         codeWriter.emitKdoc(kdoc)
-        codeWriter.emitAnnotations(annotations, false)
+        codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitModifiers(kind.modifiers,
             if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC))
         codeWriter.emit(kind.declarationKeyword)
@@ -395,7 +395,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()
-    val annotations = mutableListOf<AnnotationSpec>()
+    val annotationSpecs = mutableListOf<AnnotationSpec>()
     val typeVariables = mutableListOf<TypeVariableName>()
     val superclassConstructorParameters = mutableListOf<CodeBlock>()
     val propertySpecs = mutableListOf<PropertySpec>()
@@ -415,11 +415,11 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
-      annotations += annotationSpecs
+      this.annotationSpecs += annotationSpecs
     }
 
     fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
-      annotations += annotationSpec
+      annotationSpecs += annotationSpec
     }
 
     fun addAnnotation(annotation: ClassName)
