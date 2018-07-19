@@ -350,12 +350,25 @@ class CodeBlock private constructor(
     }
 
     /**
-     * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
-     *     Shouldn't contain braces or newline characters.
+     * @param controlFlow the control flow construct and its code, such as `if (foo == 5)`.
+     *     Shouldn't contain newline characters. Can contain opening braces, e.g.
+     *     `beginControlFlow("list.forEach { element ->")`. If there's no opening brace at the end
+     *     of the string, it will be added.
      */
     fun beginControlFlow(controlFlow: String, vararg args: Any?) = apply {
-      add(controlFlow + " {\n", *args)
+      add(controlFlow.withOpeningBrace(), *args)
       indent()
+    }
+
+    private fun String.withOpeningBrace(): String {
+      for (i in length - 1 downTo 0) {
+        if (this[i] == '{') {
+          return "$this\n"
+        } else if (this[i] == '}') {
+          break
+        }
+      }
+      return "$this {\n"
     }
 
     /**

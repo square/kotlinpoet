@@ -399,4 +399,30 @@ class CodeBlockTest {
     assertThat(blocks.joinToCode(prefix = "(", suffix = ")"))
         .isEqualTo(CodeBlock.of("(%L, %L, %L)", "taco1", "taco2", "taco3"))
   }
+
+  @Test fun beginControlFlowWithParams() {
+    val controlFlow = CodeBlock.builder()
+        .beginControlFlow("list.forEach { element ->")
+        .addStatement("println(element)")
+        .endControlFlow()
+        .build()
+    assertThat(controlFlow.toString()).isEqualTo("""
+      |list.forEach { element ->
+      |    println(element)
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun beginControlFlowWithParamsAndTemplateString() {
+    val controlFlow = CodeBlock.builder()
+        .beginControlFlow("listOf(\"\${1.toString()}\").forEach { element ->")
+        .addStatement("println(element)")
+        .endControlFlow()
+        .build()
+    assertThat(controlFlow.toString()).isEqualTo("""
+      |listOf("${'$'}{1.toString()}").forEach { element ->
+      |    println(element)
+      |}
+      |""".trimMargin())
+  }
 }
