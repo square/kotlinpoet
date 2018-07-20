@@ -195,7 +195,25 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "    fun strings() {\n" +
         "        val a = \"basic string\"\n" +
-        "        val b = \"string with a \$ dollar sign\"\n" +
+        "        val b = \"string with a \\\$ dollar sign\"\n" +
+        "    }\n" +
+        "}\n")
+  }
+
+  @Test fun stringInterpolation() {
+    val source = FileSpec.get(tacosPackage, TypeSpec.classBuilder("Taco")
+        .addFunction(FunSpec.builder("strings")
+            .addStatement("val a = %S", "basic string")
+            .addStatement("val b = %L", "\"the value of 'a' is \$a.\"")
+            .build())
+        .build())
+    assertThat(source.toString()).isEqualTo("" +
+        "package com.squareup.tacos\n" +
+        "\n" +
+        "class Taco {\n" +
+        "    fun strings() {\n" +
+        "        val a = \"basic string\"\n" +
+        "        val b = \"the value of 'a' is \$a.\"\n" +
         "    }\n" +
         "}\n")
   }

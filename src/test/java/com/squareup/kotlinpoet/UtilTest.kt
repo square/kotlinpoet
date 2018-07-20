@@ -60,7 +60,7 @@ class UtilTest {
   @Test fun stringLiteral() {
     stringLiteral("abc")
     stringLiteral("♦♥♠♣")
-    stringLiteral("€\\t@\\t$", "€\t@\t$")
+    stringLiteral("€\\t@\\t\\$", "€\t@\t$")
     assertThat(stringLiteralWithQuotes("abc();\ndef();"))
         .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
     stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!")
