@@ -136,18 +136,19 @@ class ParameterizedTypeName internal constructor(
         return type.asTypeName()
       }
 
+      val effectiveType = if (type.java.isArray) Array<Unit>::class else type
       val enclosingClass = type.java.enclosingClass?.kotlin
 
       return ParameterizedTypeName(
           enclosingClass?.let {
-            get(it, false, typeArguments.drop(type.typeParameters.size))
+            get(it, false, typeArguments.drop(effectiveType.typeParameters.size))
           },
-          type.asTypeName(),
-          typeArguments.take(type.typeParameters.size).map {
+          effectiveType.asTypeName(),
+          typeArguments.take(effectiveType.typeParameters.size).map {
             it.type?.asTypeName() ?: WildcardTypeName.STAR
           },
           nullable,
-          type.annotations.map { AnnotationSpec.get(it) })
+          effectiveType.annotations.map { AnnotationSpec.get(it) })
     }
   }
 }

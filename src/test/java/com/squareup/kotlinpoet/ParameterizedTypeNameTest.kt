@@ -19,6 +19,11 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Test
+import java.io.Closeable
+import java.io.InputStream
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
+import kotlin.reflect.full.createType
 
 class ParameterizedTypeNameTest {
   @Test fun classNamePlusParameter() {
@@ -55,6 +60,26 @@ class ParameterizedTypeNameTest {
   @Test fun classPlusParameter() {
     val typeName = java.util.List::class.java.plusParameter(java.lang.String::class.java)
     assertThat(typeName.toString()).isEqualTo("java.util.List<java.lang.String>")
+  }
+
+  @Test fun primitiveArray() {
+    assertThat(ByteArray::class.asTypeName().toString()).isEqualTo("kotlin.ByteArray")
+    assertThat(CharArray::class.asTypeName().toString()).isEqualTo("kotlin.CharArray")
+    assertThat(ShortArray::class.asTypeName().toString()).isEqualTo("kotlin.ShortArray")
+    assertThat(IntArray::class.asTypeName().toString()).isEqualTo("kotlin.IntArray")
+    assertThat(LongArray::class.asTypeName().toString()).isEqualTo("kotlin.LongArray")
+    assertThat(FloatArray::class.asTypeName().toString()).isEqualTo("kotlin.FloatArray")
+    assertThat(DoubleArray::class.asTypeName().toString()).isEqualTo("kotlin.DoubleArray")
+  }
+
+  @Test fun arrayPlusPrimitiveParameter() {
+    val typeName = Array<Int>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Int::class.createType()))).asTypeName()
+    assertThat(typeName.toString()).isEqualTo("kotlin.Array<kotlin.Int>")
+  }
+
+  @Test fun arrayPlusObjectParameter() {
+    val typeName = Array<Unit>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Closeable::class.createType()))).asTypeName()
+    assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable>")
   }
 
   @Test fun classPlusTwoParameters() {
