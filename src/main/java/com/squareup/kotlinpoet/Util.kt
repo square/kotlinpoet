@@ -118,6 +118,11 @@ internal fun stringLiteralWithQuotes(value: String): String {
         result.append("\\\"")
         continue
       }
+      // Trivial case: the dollar sign can start a string template and must be escaped.
+      if (c == '$') {
+        result.append("\\$")
+        continue
+      }
       // Default case: just let character literal do its work.
       result.append(characterLiteralWithoutSingleQuotes(c))
       // Need to append indent after linefeed?
