@@ -168,6 +168,8 @@ class HelloWorld {
 }
 ```
 
+Note that "$" is also escaped. To make string templates, use literals with [%L](#%L-for-Literals).
+
 ### %T for Types
 
 KotlinPoet has rich built-in support for types, including automatic generation of `import`
