@@ -233,6 +233,8 @@ system: we also have arrays, parameterized types, wildcard types, lambda types a
 KotlinPoet has classes for building each of these:
 
 ```kotlin
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+
 val hoverboard = ClassName("com.mattel", "Hoverboard")
 val list = ClassName("kotlin.collections", "List")
 val arrayList = ClassName("kotlin.collections", "ArrayList")
@@ -268,6 +270,9 @@ class HelloWorld {
     }
 }
 ```
+
+Note that an [IDE bug](youtrack.jetbrains.com/issue/KT-15286) will not autocomplete the `parameterizedBy` or `plusParameter` extensions
+and you'll have to add the import statement manually to get those extensions.
 
 ### %N for Names
 
