@@ -27,7 +27,6 @@ import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeSpec.Kind
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
@@ -3304,10 +3303,10 @@ class TypeSpecTest {
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
         .addMember("name = %S", "javaWord")
         .build()
-    builder.annotations.clear()
-    builder.annotations.add(javaWord)
+    builder.annotationSpecs.clear()
+    builder.annotationSpecs.add(javaWord)
 
-    assertThat(builder.build().annotations).containsExactly(javaWord)
+    assertThat(builder.build().annotationSpecs).containsExactly(javaWord)
   }
 
   @Test fun modifyTypeVariableNames() {
