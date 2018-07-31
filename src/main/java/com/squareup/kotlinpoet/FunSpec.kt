@@ -60,9 +60,14 @@ class FunSpec private constructor(builder: Builder) {
   internal fun emit(
     codeWriter: CodeWriter,
     enclosingName: String?,
-    implicitModifiers: Set<KModifier>
+    implicitModifiers: Set<KModifier>,
+    includeParametersKdoc: Boolean
   ) {
-    codeWriter.emitKdoc(kdoc)
+    if (includeParametersKdoc) {
+      codeWriter.emitKdoc(kdocWithParameters())
+    } else {
+      codeWriter.emitKdoc(kdoc)
+    }
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
@@ -133,6 +138,17 @@ class FunSpec private constructor(builder: Builder) {
 
   val isAccessor get() = name.isAccessor
 
+  private fun kdocWithParameters(): CodeBlock {
+    return with(kdoc.toBuilder()) {
+      for (parameterSpec in parameters) {
+        if (parameterSpec.kdoc.isNotEmpty()) {
+          add("@param %L %L", parameterSpec.name, parameterSpec.kdoc)
+        }
+      }
+      build()
+    }
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
@@ -143,7 +159,11 @@ class FunSpec private constructor(builder: Builder) {
   override fun hashCode() = toString().hashCode()
 
   override fun toString() = buildString {
-    emit(CodeWriter(this), "Constructor", TypeSpec.Kind.Class().implicitFunctionModifiers)
+    emit(
+        codeWriter = CodeWriter(this),
+        enclosingName = "Constructor",
+        implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
+        includeParametersKdoc = true)
   }
 
   fun toBuilder(): Builder {

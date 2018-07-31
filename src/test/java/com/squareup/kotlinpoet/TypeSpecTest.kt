@@ -1122,6 +1122,63 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun kdocWithParameters() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .addKdoc("A hard or soft tortilla, loosely folded and filled with whatever\n")
+        .addKdoc("[random][%T] tex-mex stuff we could find in the pantry\n", Random::class)
+        .addKdoc(CodeBlock.of("and some [%T] cheese.\n", String::class))
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("temperature", Double::class)
+                .addKdoc(CodeBlock.of("%L", """
+                    |Taco temperature. Can be as cold as the famous ice tacos from
+                    |the Andes, or hot with lava-like cheese from the depths of
+                    |the Ninth Circle.
+                    |""".trimMargin()))
+                .build())
+            .addParameter("soft", Boolean::class)
+            .addParameter(ParameterSpec.builder("mild", Boolean::class)
+                .addKdoc(CodeBlock.of("%L", "No one likes mild tacos.\n"))
+                .build())
+            .addParameter("nodoc", Int::class)
+            .build())
+        .addProperty(PropertySpec.builder("soft", Boolean::class)
+            .addKdoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
+            .initializer("soft")
+            .build())
+        .addProperty(PropertySpec.builder("mild", Boolean::class)
+            .addKdoc("This property doc comment should be overridden.\n")
+            .initializer("mild")
+            .build())
+        .addProperty(PropertySpec.builder("nodoc", Int::class, KModifier.PRIVATE)
+            .initializer("nodoc")
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Boolean
+        |import kotlin.Double
+        |import kotlin.Int
+        |
+        |/**
+        | * A hard or soft tortilla, loosely folded and filled with whatever
+        | * [random][java.util.Random] tex-mex stuff we could find in the pantry
+        | * and some [kotlin.String] cheese.
+        | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
+        | * the Andes, or hot with lava-like cheese from the depths of
+        | * the Ninth Circle.
+        | * @param soft True for a soft flour tortilla; false for a crunchy corn tortilla.
+        | * @param mild No one likes mild tacos.
+        | */
+        |class Taco(
+        |    temperature: Double,
+        |    val soft: Boolean,
+        |    val mild: Boolean,
+        |    private val nodoc: Int
+        |)
+        |""".trimMargin())
+  }
+
   @Test fun annotationsInAnnotations() {
     val beef = ClassName(tacosPackage, "Beef")
     val chicken = ClassName(tacosPackage, "Chicken")
@@ -2621,10 +2678,10 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
+        |/**
+        | * @param a KDoc
+        | */
         |class Taco(
-        |    /**
-        |     * KDoc
-        |     */
         |    val a: Int,
         |    val b: String
         |)

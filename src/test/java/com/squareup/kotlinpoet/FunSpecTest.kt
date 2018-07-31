@@ -158,6 +158,34 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionParamWithKdoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("string", String::class.asTypeName())
+            .addKdoc("A string parameter.\n")
+            .build())
+        .addParameter(ParameterSpec.builder("number", Int::class.asTypeName())
+            .addKdoc("A number with a multi-line doc comment.\nYes,\nthese\nthings\nhappen.\n")
+            .build())
+        .addParameter(ParameterSpec.builder("nodoc", Boolean::class.asTypeName()).build())
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @param string A string parameter.
+      | * @param number A number with a multi-line doc comment.
+      | * Yes,
+      | * these
+      | * things
+      | * happen.
+      | */
+      |fun foo(
+      |    string: kotlin.String,
+      |    number: kotlin.Int,
+      |    nodoc: kotlin.Boolean
+      |) {
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun functionParamNoLambdaParam() {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
