@@ -84,7 +84,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     try {
       if (enumName != null) {
-        codeWriter.emitKdoc(kdoc)
+        codeWriter.emitKdoc(kdocWithConstructorParameters())
         codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitCode("%L", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
@@ -119,7 +119,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
         codeWriter.emit(" {\n")
       } else {
-        codeWriter.emitKdoc(kdoc)
+        codeWriter.emitKdoc(kdocWithConstructorParameters())
         codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitModifiers(kind.modifiers,
             if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC))
@@ -240,7 +240,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (!funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers, false)
         firstMember = false
       }
 
@@ -248,7 +248,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       for (funSpec in funSpecs) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers)
+        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers, true)
         firstMember = false
       }
 
@@ -290,6 +290,26 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           .build()
     }
     return result
+  }
+
+  /** Returns KDoc comments including those of primary constructor parameters. */
+  private fun kdocWithConstructorParameters(): CodeBlock {
+    if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
+      return kdoc
+    }
+
+    val constructorProperties = constructorProperties()
+
+    return with(kdoc.toBuilder()) {
+      for (parameterSpec in primaryConstructor.parameters) {
+        val kdoc = parameterSpec.kdoc.takeUnless { it.isEmpty() }
+                ?: constructorProperties[parameterSpec.name]?.kdoc?.takeUnless { it.isEmpty() }
+        if (kdoc != null) {
+          add("@param %L %L", parameterSpec.name, kdoc)
+        }
+      }
+      build()
+    }
   }
 
   private val hasNoBody: Boolean

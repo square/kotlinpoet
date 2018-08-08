@@ -24,6 +24,7 @@ import kotlin.reflect.KClass
 /** A generated parameter declaration.  */
 class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val name = builder.name
+  val kdoc = builder.kdoc.build()
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val type = builder.type
@@ -69,8 +70,17 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   ) {
     internal var defaultValue: CodeBlock? = null
 
+    val kdoc = CodeBlock.builder()
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
+
+    fun addKdoc(format: String, vararg args: Any) = apply {
+      kdoc.add(format, *args)
+    }
+
+    fun addKdoc(block: CodeBlock) = apply {
+      kdoc.add(block)
+    }
 
     fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
       annotations += annotationSpecs

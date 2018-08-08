@@ -120,7 +120,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       if (index > 0) codeWriter.emit("\n")
       when (member) {
         is TypeSpec -> member.emit(codeWriter, null)
-        is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC))
+        is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC), true)
         is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
         is TypeAliasSpec -> member.emit(codeWriter)
         else -> throw AssertionError()
