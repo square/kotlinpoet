@@ -28,11 +28,21 @@ class PropertySpec private constructor(builder: Builder) {
   val kdoc = builder.kdoc.build()
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
+  val typeVariables = builder.typeVariables.toImmutableList()
   val initializer = builder.initializer
   val delegated = builder.delegated
   val getter = builder.getter
   val setter = builder.setter
   val receiverType = builder.receiverType
+
+  init {
+    require(typeVariables.none { it.reified } ||
+        (getter != null || setter != null) &&
+        (getter == null || KModifier.INLINE in getter.modifiers) &&
+        (setter == null || KModifier.INLINE in setter.modifiers)) {
+      "only type parameters of properties with inline getters and/or setters can be reified!"
+    }
+  }
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -49,6 +59,10 @@ class PropertySpec private constructor(builder: Builder) {
     codeWriter.emitAnnotations(annotations, inline)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emit(if (mutable) "var " else "val ")
+    if (typeVariables.isNotEmpty()) {
+      codeWriter.emitTypeVariables(typeVariables)
+      codeWriter.emit(" ")
+    }
     if (receiverType != null) {
       if (receiverType is LambdaTypeName) {
         codeWriter.emitCode("(%T).", receiverType)
@@ -65,6 +79,7 @@ class PropertySpec private constructor(builder: Builder) {
       }
       codeWriter.emitCode("%[%L%]", initializer)
     }
+    codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
     val implicitAccessorModifiers = if (isInlineProperty) {
       implicitModifiers + KModifier.INLINE
@@ -100,6 +115,7 @@ class PropertySpec private constructor(builder: Builder) {
     builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.modifiers += modifiers
+    builder.typeVariables += typeVariables
     builder.initializer = initializer
     builder.delegated = delegated
     builder.setter = setter
@@ -119,6 +135,7 @@ class PropertySpec private constructor(builder: Builder) {
 
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
+    val typeVariables = mutableListOf<TypeVariableName>()
 
     fun mutable(mutable: Boolean) = apply {
       this.mutable = mutable
@@ -150,6 +167,14 @@ class PropertySpec private constructor(builder: Builder) {
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
       this.modifiers += modifiers
+    }
+
+    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+      this.typeVariables += typeVariables
+    }
+
+    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+      typeVariables += typeVariable
     }
 
     fun initializer(format: String, vararg args: Any?) = initializer(CodeBlock.of(format, *args))
