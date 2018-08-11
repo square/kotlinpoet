@@ -16,11 +16,36 @@
 
 package com.squareup.kotlinpoet
 
+import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.KModifier.VARARG
 import kotlin.test.Test
 import javax.annotation.Nullable
 
 class LambdaTypeNameTest {
+
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class HasSomeAnnotation
+
+  @HasSomeAnnotation
+  inner class IsAnnotated
+
+  @Test fun receiverWithoutAnnotationHasNoParens() {
+    val typeName = LambdaTypeName.get(
+            Int::class.asClassName(),
+            listOf(),
+            Unit::class.asTypeName())
+    assertThat(typeName.toString()).isEqualTo("kotlin.Int.() -> kotlin.Unit")
+  }
+
+  @Test fun receiverWithAnnotationHasParens() {
+    val annotation = IsAnnotated::class.java.getAnnotation(HasSomeAnnotation::class.java)
+    val typeName = LambdaTypeName.get(
+            Int::class.asClassName().annotated(AnnotationSpec.get(annotation, true)),
+            listOf(),
+            Unit::class.asTypeName())
+    assertThat(typeName.toString()).isEqualTo(
+            "(@com.squareup.kotlinpoet.LambdaTypeNameTest.HasSomeAnnotation kotlin.Int).() -> kotlin.Unit")
+  }
 
   @Test fun paramsWithAnnotationsForbidden() {
     assertThrows<IllegalArgumentException> {
