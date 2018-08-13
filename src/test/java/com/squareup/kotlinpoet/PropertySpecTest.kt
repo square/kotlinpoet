@@ -16,6 +16,10 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.io.Serializable
+import java.util.function.Function
+import kotlin.reflect.KClass
 import kotlin.test.Test
 
 class PropertySpecTest {
@@ -112,6 +116,7 @@ class PropertySpecTest {
         .addAnnotation(ClassName("com.squareup.kotlinpoet", "Vegan"))
         .addKdoc("Can make it vegan!")
         .addModifiers(KModifier.PUBLIC)
+        .addTypeVariable(TypeVariableName("T"))
         .delegate("Delegates.notNull()")
         .receiver(Int::class)
         .getter(FunSpec.getterBuilder()
@@ -152,5 +157,107 @@ class PropertySpecTest {
     builder.annotations.add(javaWord)
 
     assertThat(builder.build().annotations).containsExactly(javaWord)
+  }
+
+  // https://github.com/square/kotlinpoet/issues/437
+  @Test fun typeVariable() {
+    val t = TypeVariableName("T", Any::class)
+    val prop = PropertySpec.builder("someFunction", t, KModifier.PRIVATE)
+        .addTypeVariable(t)
+        .receiver(KClass::class.asClassName().parameterizedBy(t))
+        .getter(FunSpec.getterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addStatement("return stuff as %T", t)
+            .build())
+        .build()
+    assertThat(prop.toString()).isEqualTo("""
+      |private val <T : kotlin.Any> kotlin.reflect.KClass<T>.someFunction: T
+      |    inline get() = stuff as T
+      |""".trimMargin())
+  }
+
+  @Test fun typeVariablesWithWhere() {
+    val t = TypeVariableName("T", Serializable::class, Cloneable::class)
+    val r = TypeVariableName("R", Any::class)
+    val function = Function::class.asClassName().parameterizedBy(t, r)
+    val prop = PropertySpec.builder("property", String::class, KModifier.PRIVATE)
+        .receiver(function)
+        .addTypeVariables(listOf(t, r))
+        .getter(FunSpec.getterBuilder()
+            .addStatement("return %S", "")
+            .build())
+        .build()
+    assertThat(prop.toString()).isEqualTo("""
+      |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.property: kotlin.String
+      |        where T : java.io.Serializable, T : kotlin.Cloneable
+      |    get() = ""
+      |""".trimMargin())
+  }
+
+  @Test fun reifiedTypeVariable() {
+    val t = TypeVariableName("T").reified(true)
+    val prop = PropertySpec.builder("someFunction", t, KModifier.PRIVATE)
+        .addTypeVariable(t)
+        .receiver(KClass::class.asClassName().parameterizedBy(t))
+        .getter(FunSpec.getterBuilder()
+            .addModifiers(KModifier.INLINE)
+            .addStatement("return stuff as %T", t)
+            .build())
+        .build()
+    assertThat(prop.toString()).isEqualTo("""
+      |private val <reified T> kotlin.reflect.KClass<T>.someFunction: T
+      |    inline get() = stuff as T
+      |""".trimMargin())
+  }
+
+  @Test fun reifiedTypeVariableNotAllowedWhenNoAccessors() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("property", String::class)
+          .addTypeVariable(TypeVariableName("T").reified(true))
+          .build()
+    }.hasMessageThat().isEqualTo(
+        "only type parameters of properties with inline getters and/or setters can be reified!")
+  }
+
+  @Test fun reifiedTypeVariableNotAllowedWhenGetterNotInline() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("property", String::class)
+          .addTypeVariable(TypeVariableName("T").reified(true))
+          .getter(FunSpec.getterBuilder()
+              .addStatement("return %S", "")
+              .build())
+          .build()
+    }.hasMessageThat().isEqualTo(
+        "only type parameters of properties with inline getters and/or setters can be reified!")
+  }
+
+  @Test fun reifiedTypeVariableNotAllowedWhenSetterNotInline() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.varBuilder("property", String::class)
+          .addTypeVariable(TypeVariableName("T").reified(true))
+          .setter(FunSpec.setterBuilder()
+              .addParameter("value", String::class)
+              .addStatement("println()")
+              .build())
+          .build()
+    }.hasMessageThat().isEqualTo(
+        "only type parameters of properties with inline getters and/or setters can be reified!")
+  }
+
+  @Test fun reifiedTypeVariableNotAllowedWhenOnlySetterIsInline() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.varBuilder("property", String::class)
+          .addTypeVariable(TypeVariableName("T").reified(true))
+          .getter(FunSpec.getterBuilder()
+              .addStatement("return %S", "")
+              .build())
+          .setter(FunSpec.setterBuilder()
+              .addModifiers(KModifier.INLINE)
+              .addParameter("value", String::class)
+              .addStatement("println()")
+              .build())
+          .build()
+    }.hasMessageThat().isEqualTo(
+        "only type parameters of properties with inline getters and/or setters can be reified!")
   }
 }
