@@ -62,7 +62,11 @@ class LambdaTypeName internal constructor(
     }
 
     receiver?.let {
-      out.emitCode("%T.", it)
+      if (it.isAnnotated) {
+        out.emitCode("(%T).", it)
+      } else {
+        out.emitCode("%T.", it)
+      }
     }
 
     parameters.emit(out)
