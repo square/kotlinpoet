@@ -52,7 +52,7 @@ class ParameterizedTypeName internal constructor(
   override fun withoutAnnotations()
       = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
 
-  fun plusParameter(typeArgument: ClassName) = ParameterizedTypeName(enclosingType, rawType,
+  fun plusParameter(typeArgument: TypeName) = ParameterizedTypeName(enclosingType, rawType,
       typeArguments + typeArgument, nullable, annotations)
 
   fun plusParameter(typeArgument: KClass<*>) = plusParameter(typeArgument.asClassName())
