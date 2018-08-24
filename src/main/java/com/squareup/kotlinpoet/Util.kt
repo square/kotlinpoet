@@ -79,7 +79,7 @@ private val Char.isIsoControl: Boolean
   }
 
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
-internal fun stringLiteralWithQuotes(value: String): String {
+internal fun stringLiteralWithQuotes(value: String, escapeDollar: Boolean = false): String {
   if (value.contains("\n")) {
     val result = StringBuilder(value.length + 32)
     result.append("\"\"\"\n|")
@@ -93,6 +93,8 @@ internal fun stringLiteralWithQuotes(value: String): String {
       } else if (c == '\n') {
         // Add a '|' after newlines. This pipe will be removed by trimMargin().
         result.append("\n|")
+      } else if (escapeDollar && c == '$') {
+        result.append("\${'$'}")
       } else {
         result.append(c)
       }
@@ -116,6 +118,11 @@ internal fun stringLiteralWithQuotes(value: String): String {
       // Trivial case: double quotes must be escaped.
       if (c == '\"') {
         result.append("\\\"")
+        continue
+      }
+      // Trivial case: the dollar sign can start a string template and must be escaped.
+      if (escapeDollar && c == '$') {
+        result.append("\\$")
         continue
       }
       // Default case: just let character literal do its work.

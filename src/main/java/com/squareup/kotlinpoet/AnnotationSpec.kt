@@ -200,7 +200,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
             builder.addMember(member.build())
             continue
           }
-          member.add("%L", Builder.memberForValue(value))
+          member.add("%V", value)
           builder.addMember(member.build())
         }
         return builder.build()
