@@ -20,7 +20,8 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Test
 import java.io.Closeable
-import java.io.InputStream
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
@@ -88,4 +89,24 @@ class ParameterizedTypeNameTest {
         .plusParameter(java.lang.Integer::class.java)
     assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>")
   }
+
+  interface Projections {
+    val outVariance: KClass<out Annotation>
+    val inVariance: KClass<in Test>
+    val invariantNullable: KClass<Test>?
+    val star: KClass<*>
+    val multiVariant: Map<in String, List<Map<KClass<out Number>, *>?>>
+  }
+
+  private fun assertKTypeProjections(kType: KType) = assertThat(kType.asTypeName().toString()).isEqualTo(kType.toString())
+
+  @Test fun kTypeOutProjection() = assertKTypeProjections(Projections::outVariance.returnType)
+
+  @Test fun kTypeInProjection() = assertKTypeProjections(Projections::inVariance.returnType)
+
+  @Test fun kTypeInvariantNullableProjection() = assertKTypeProjections(Projections::invariantNullable.returnType)
+
+  @Test fun kTypeStarProjection() = assertKTypeProjections(Projections::star.returnType)
+
+  @Test fun kTypeMultiVariantProjection() = assertKTypeProjections(Projections::multiVariant.returnType)
 }

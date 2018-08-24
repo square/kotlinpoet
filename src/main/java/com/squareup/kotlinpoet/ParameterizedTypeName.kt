@@ -24,6 +24,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 
 class ParameterizedTypeName internal constructor(
   private val enclosingType: TypeName?,
@@ -144,8 +145,14 @@ class ParameterizedTypeName internal constructor(
             get(it, false, typeArguments.drop(effectiveType.typeParameters.size))
           },
           effectiveType.asTypeName(),
-          typeArguments.take(effectiveType.typeParameters.size).map {
-            it.type?.asTypeName() ?: WildcardTypeName.STAR
+          typeArguments.take(effectiveType.typeParameters.size).map { (paramVariance, paramType) ->
+            val typeName = paramType?.asTypeName() ?: return@map WildcardTypeName.STAR
+            when (paramVariance) {
+              null -> WildcardTypeName.STAR
+              KVariance.INVARIANT -> typeName
+              KVariance.IN -> WildcardTypeName.supertypeOf(typeName)
+              KVariance.OUT -> WildcardTypeName.subtypeOf(typeName)
+            }
           },
           nullable,
           effectiveType.annotations.map { AnnotationSpec.get(it) })
