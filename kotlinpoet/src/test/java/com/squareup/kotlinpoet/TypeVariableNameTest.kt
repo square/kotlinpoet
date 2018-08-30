@@ -169,4 +169,15 @@ class TypeVariableNameTest {
       |class Taco<E>
       |""".trimMargin())
   }
+
+  @Test fun emptyBoundsShouldDefaultToAnyNullable() {
+    val typeVariable = TypeVariableName("E", bounds = *emptyArray<TypeName>())
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(typeVariable)
+        .build()
+    assertThat(typeVariable.bounds).isEqualTo(listOf(ANY.asNullable()))
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<E>
+      |""".trimMargin())
+  }
 }
