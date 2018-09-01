@@ -511,13 +511,13 @@ class TypeSpecTest {
   }
 
   @Test fun sealedClassesMayDefineAbstractFunctions() {
-    val sld = TypeSpec.classBuilder("Sealed")
+    val sealedClass = TypeSpec.classBuilder("Sealed")
         .addModifiers(KModifier.SEALED)
         .addFunction(FunSpec.builder("fold")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .build())
         .build()
-    assertThat(toString(sld)).isEqualTo("""
+    assertThat(toString(sealedClass)).isEqualTo("""
         |package com.squareup.tacos
         |
         |sealed class Sealed {
