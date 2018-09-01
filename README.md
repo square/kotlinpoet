@@ -499,7 +499,8 @@ Declare parameters on methods and constructors with either `ParameterSpec.builde
 `FunSpec`'s convenient `addParameter()` API:
 
 ```kotlin
-val android = ParameterSpec.builder("android", String::class)
+val android = ParameterSpec.builder("android", String::class.asTypeName().asNullable())
+    .defaultValue("\"pie\"")
     .build()
 
 val welcomeOverlords = FunSpec.builder("welcomeOverlords")
@@ -508,11 +509,10 @@ val welcomeOverlords = FunSpec.builder("welcomeOverlords")
     .build()
 ```
 
-Though the code above to generate `android` and `robot` parameters is different, the output is the
-same:
+The code above generates:
 
 ```kotlin
-fun welcomeOverlords(android: String, robot: String) {
+fun welcomeOverlords(android: String? = "pie", robot: String) {
 }
 ```
 
