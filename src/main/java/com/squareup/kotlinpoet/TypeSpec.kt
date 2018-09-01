@@ -626,9 +626,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         "at least one enum constant is required for $name"
       }
 
-      val isAbstract = ABSTRACT in kind.modifiers || kind !is Kind.Class || !isSimpleClass
+      val isAbstract = ABSTRACT in kind.modifiers || SEALED in kind.modifiers || kind !is Kind.Class || !isSimpleClass
       for (funSpec in funSpecs) {
-        require(isAbstract || ABSTRACT !in funSpec.modifiers || SEALED !in funSpec.modifiers) {
+        require(isAbstract || ABSTRACT !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
         }
         when {
