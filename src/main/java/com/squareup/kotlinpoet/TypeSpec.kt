@@ -22,6 +22,7 @@ import com.squareup.kotlinpoet.KModifier.ENUM
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.TypeSpec.Kind.Interface
 import com.squareup.kotlinpoet.TypeSpec.Kind.Object
 import java.lang.reflect.Type
@@ -627,7 +628,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       val isAbstract = ABSTRACT in kind.modifiers || kind !is Kind.Class || !isSimpleClass
       for (funSpec in funSpecs) {
-        require(isAbstract || ABSTRACT !in funSpec.modifiers) {
+        require(isAbstract || ABSTRACT !in funSpec.modifiers || SEALED !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
         }
         when {

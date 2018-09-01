@@ -510,6 +510,22 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun sealedClassesMayDefineAbstractFunctions() {
+    val sld = TypeSpec.classBuilder("Sealed")
+        .addModifiers(KModifier.SEALED)
+        .addFunction(FunSpec.builder("fold")
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
+            .build())
+        .build()
+    assertThat(toString(sld)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |sealed class Sealed {
+        |    abstract fun fold()
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun enumConstantsRequired() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("Roshambo")
