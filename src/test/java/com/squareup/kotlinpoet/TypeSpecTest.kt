@@ -512,11 +512,14 @@ class TypeSpecTest {
   @Test fun sealedClassesMayDefineAbstractMembers() {
     val sealedClass = TypeSpec.classBuilder("Sealed")
         .addModifiers(KModifier.SEALED)
-        .addProperty(PropertySpec.builder("name", String::class).addModifiers(ABSTRACT).build())
+        .addProperty(PropertySpec.builder("name", String::class)
+                             .addModifiers(ABSTRACT).build())
         .addFunction(FunSpec.builder("fold").addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT).build())
         .build()
     assertThat(toString(sealedClass)).isEqualTo("""
         |package com.squareup.tacos
+        |
+        |import kotlin.String
         |
         |sealed class Sealed {
         |    abstract val name: String
