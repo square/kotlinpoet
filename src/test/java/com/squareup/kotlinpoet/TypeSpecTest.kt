@@ -510,9 +510,12 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun sealedClassesMayDefineAbstractFunctions() {
+  @Test fun sealedClassesMayDefineAbstractMembers() {
     val sealedClass = TypeSpec.classBuilder("Sealed")
         .addModifiers(KModifier.SEALED)
+            .addProperty(PropertySpec.builder("name", ClassName("", "String"))
+                                 .addModifiers(ABSTRACT)
+                                 .build())
         .addFunction(FunSpec.builder("fold")
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .build())
@@ -521,6 +524,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |sealed class Sealed {
+        |    abstract val name: String
+        |
         |    abstract fun fold()
         |}
         |""".trimMargin())
