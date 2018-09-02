@@ -75,7 +75,8 @@ class PropertySpecTest {
       PropertySpec.builder("foo", String::class)
           .addModifiers(KModifier.INLINE)
           .build()
-    }
+    }.hasMessageThat().isEqualTo("KotlinPoet doesn't allow setting the inline modifier on " +
+        "properties. You should mark either the getter, the setter, or both inline.")
   }
 
   @Test fun equalsAndHashCode() {

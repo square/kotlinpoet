@@ -213,6 +213,10 @@ class PropertySpec private constructor(builder: Builder) {
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
     fun build(): PropertySpec {
+      if (KModifier.INLINE in modifiers) {
+        throw IllegalArgumentException("KotlinPoet doesn't allow setting the inline modifier on " +
+            "properties. You should mark either the getter, the setter, or both inline.")
+      }
       for (it in modifiers) {
         it.checkTarget(KModifier.Target.PROPERTY)
       }
