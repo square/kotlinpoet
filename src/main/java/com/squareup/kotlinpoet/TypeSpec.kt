@@ -23,7 +23,6 @@ import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
-import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
 import com.squareup.kotlinpoet.TypeSpec.Kind.Interface
 import com.squareup.kotlinpoet.TypeSpec.Kind.Object
 import java.lang.reflect.Type
@@ -288,15 +287,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (CodeBlock.of("%N", parameter) != property.initializer) continue
       result[property.name] = property.toBuilder()
           .addAnnotations(parameter.annotations)
-          .addModifiers(*parameter.modifiers
-                  .filter { try {
-                      it.checkTarget(PROPERTY)
-                      true
-                    } catch(e: IllegalArgumentException) {
-                    false
-                    }
-                  }
-                  .toTypedArray())
+          .addModifiers(*parameter.modifiers.toTypedArray())
           .build()
     }
     return result
