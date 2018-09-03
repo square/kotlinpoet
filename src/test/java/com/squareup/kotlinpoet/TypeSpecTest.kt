@@ -528,6 +528,22 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun classesMayHaveVarargConstructorProperties() {
+    val variable = TypeSpec.classBuilder("Variable")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("name", String::class, VARARG).build())
+            .build())
+        .addProperty(PropertySpec.builder("name", String::class).initializer("name").build())
+        .build()
+    assertThat(toString(variable)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |class Variable(vararg val name: String)
+        |""".trimMargin())
+  }
+
   @Test fun enumConstantsRequired() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("Roshambo")

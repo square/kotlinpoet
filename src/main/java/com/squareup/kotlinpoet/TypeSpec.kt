@@ -285,10 +285,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
       if (CodeBlock.of("%N", parameter) != property.initializer) continue
-      result[property.name] = property.toBuilder()
-          .addAnnotations(parameter.annotations)
-          .addModifiers(*parameter.modifiers.toTypedArray())
-          .build()
+      val builder = property.toBuilder().addAnnotations(parameter.annotations)
+      builder.modifiers += parameter.modifiers
+
+      result[property.name] = PropertySpec(builder)
     }
     return result
   }

@@ -21,7 +21,7 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec private constructor(builder: Builder) {
+class PropertySpec internal constructor(builder: Builder) {
   val mutable = builder.mutable
   val name = builder.name
   val type = builder.type
