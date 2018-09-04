@@ -230,7 +230,7 @@ class PropertySpec private constructor(builder: Builder) {
             "properties. You should mark either the getter, the setter, or both inline.")
       }
       for (it in modifiers) {
-            if (it == VARARG && validate) it.checkTarget(PROPERTY)
+            if (validate) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }
