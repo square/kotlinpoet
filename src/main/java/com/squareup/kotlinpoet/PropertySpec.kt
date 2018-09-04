@@ -17,11 +17,13 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
+import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec internal constructor(builder: Builder) {
+class PropertySpec private constructor(builder: Builder) {
   val mutable = builder.mutable
   val name = builder.name
   val type = builder.type
@@ -98,6 +100,15 @@ class PropertySpec internal constructor(builder: Builder) {
     }
   }
 
+  fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
+    val builder = toBuilder()
+        .addAnnotations(parameter.annotations)
+    builder.validate = false
+    builder.modifiers += parameter.modifiers
+
+    return builder.build()
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
@@ -125,6 +136,7 @@ class PropertySpec internal constructor(builder: Builder) {
   }
 
   class Builder internal constructor(internal val name: String, internal val type: TypeName) {
+    internal var validate = true
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
     internal var initializer: CodeBlock? = null
@@ -218,7 +230,7 @@ class PropertySpec internal constructor(builder: Builder) {
             "properties. You should mark either the getter, the setter, or both inline.")
       }
       for (it in modifiers) {
-        it.checkTarget(KModifier.Target.PROPERTY)
+            if (it == VARARG && validate) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }
