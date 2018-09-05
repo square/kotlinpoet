@@ -425,4 +425,140 @@ class CodeBlockTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun booleanValue() =
+      assertThat(CodeBlock.of("%V", true).toString())
+          .isEqualTo("true")
+
+  @Test fun byteValue() =
+      assertThat(CodeBlock.of("%V", 8.toByte()).toString())
+          .isEqualTo("8.toByte()")
+
+  @Test fun shortValue() =
+      assertThat(CodeBlock.of("%V", 0x9E37.toShort()).toString())
+          .isEqualTo("-25033.toShort()")
+
+  @Test fun intValue() =
+      assertThat(CodeBlock.of("%V", 0xFA23).toString())
+          .isEqualTo("64035")
+
+  @Test fun longValue() = assertThat(CodeBlock.of("%V", 2L).toString()).isEqualTo("2L")
+
+  @Test fun charValue() = assertThat(CodeBlock.of("%V", 'h').toString()).isEqualTo("'h'")
+
+  @Test fun escapedCharValue() =
+      assertThat(CodeBlock.of("%V", '\\').toString())
+          .isEqualTo("""'\\'""")
+
+  @Test fun floatValue() = assertThat(CodeBlock.of("%V", 1f).toString()).isEqualTo("1.0f")
+
+  @Test fun doubleValue() = assertThat(CodeBlock.of("%V", 1.234).toString()).isEqualTo("1.234")
+
+  @Test fun classValue() =
+      assertThat(CodeBlock.of("%V", Test::class).toString())
+          .isEqualTo("org.junit.Test::class")
+
+  @Test fun enumValue() =
+      assertThat(CodeBlock.of("%V", AnnotationRetention.SOURCE).toString())
+          .isEqualTo("kotlin.annotation.AnnotationRetention.SOURCE")
+
+  @Test fun stringValue() =
+      assertThat(CodeBlock.of("%V", "My String with \$arg and \" escaped.").toString())
+          .isEqualTo(""""My String with \${'$'}arg and \" escaped."""")
+
+  @Test fun multiLineStringValue() =
+      assertThat(CodeBlock.of("%V", "A multi-lined string\nwith a \$var in it.").toString())
+          .isEqualTo("\"\"\"\n|A multi-lined string\n|with a \${'$'}var in it.\n\"\"\".trimMargin()")
+
+  @Test fun booleanArrayValue() =
+      assertThat(CodeBlock.of("%V", booleanArrayOf(true, true, false)).toString())
+          .isEqualTo("booleanArrayOf(true, true, false)")
+
+  @Test fun byteArrayValue() =
+      assertThat(CodeBlock.of("%V", byteArrayOf(1, 2, 3)).toString())
+          .isEqualTo("byteArrayOf(1, 2, 3)")
+
+  @Test fun shortArrayValue() =
+      assertThat(CodeBlock.of("%V", shortArrayOf(4, 5, 6)).toString())
+          .isEqualTo("shortArrayOf(4, 5, 6)")
+
+  @Test fun intArrayValue() =
+      assertThat(CodeBlock.of("%V", intArrayOf(7, 8, 9)).toString())
+          .isEqualTo("intArrayOf(7, 8, 9)")
+
+  @Test fun longArrayValue() =
+      assertThat(CodeBlock.of("%V", longArrayOf(10, 11, 12)).toString())
+          .isEqualTo("longArrayOf(10, 11, 12)")
+
+  @Test fun charArrayValue() =
+      assertThat(CodeBlock.of("%V", charArrayOf('A', 'b', '\n')).toString())
+          .isEqualTo("charArrayOf('A', 'b', '\\n')")
+
+  @Test fun floatArrayValue() =
+      assertThat(CodeBlock.of("%V", floatArrayOf(13f, 14.1f, 15.987f)).toString())
+          .isEqualTo("floatArrayOf(13.0f, 14.1f, 15.987f)")
+
+  @Test fun doubleArrayValue() =
+      assertThat(CodeBlock.of("%V", doubleArrayOf(16.0, -17.6, 18.987)).toString())
+          .isEqualTo("doubleArrayOf(16.0, -17.6, 18.987)")
+
+  @Test fun arrayOfNumbersValue() =
+      assertThat(CodeBlock.of("%V", arrayOf(1, -2L, 3.0, 4f, 5.toShort(), 6.toByte())).toString())
+          .isEqualTo("arrayOf(1, -2L, 3.0, 4.0f, 5.toShort(), 6.toByte())")
+
+  @Test fun emptyArrayValue() =
+      assertThat(CodeBlock.of("%V", emptyArray<String>()).toString())
+          .isEqualTo("arrayOf()")
+
+  @Test fun pairValueOfIntToShort() =
+      assertThat(CodeBlock.of("%V", 1 to 2.toShort()).toString())
+          .isEqualTo("1 to 2.toShort()")
+
+  @Test fun pairValueOfFloatToNull() =
+      assertThat(CodeBlock.of("%V", 3f to null).toString())
+          .isEqualTo("3.0f to null")
+
+  @Test fun pairValueOfCharToSpec() =
+      assertThat(CodeBlock.of("%V", 'A' to TypeSpec.anonymousClassBuilder().build()).toString())
+          .isEqualTo("'A' to object {\n}")
+
+  @Test fun mapEntryValueOfLongToDouble() =
+      assertThat(CodeBlock.of("%V", mapOf(99L to 7.7).entries.single()).toString())
+          .isEqualTo("99L to 7.7")
+
+  @Test fun mapEntryValueOfBoolToNull() =
+      assertThat(CodeBlock.of("%V", mapOf(false to null).entries.single()).toString())
+          .isEqualTo("false to null")
+
+  @Test fun mapEntryValueOfStringToSpec() {
+    val spec = TypeSpec.anonymousClassBuilder().build()
+    assertThat(CodeBlock.of("%V", mapOf("StringKey" to spec).entries.single()).toString())
+        .isEqualTo("\"StringKey\" to object {\n}")
+  }
+
+  @Test fun listOfValue() {
+    val list = listOf(true, 1.toByte(), 2.toShort(), 3, 4L, '5', 6.7f, 8.910, "Eleven")
+    assertThat(CodeBlock.of("%V", list).toString())
+        .isEqualTo("""listOf(true, 1.toByte(), 2.toShort(), 3, 4L, '5', 6.7f, 8.91, "Eleven")""")
+  }
+
+  @Test fun listOfPairsValue() {
+    val list = listOf(1 to 2, 3 to null, "StringValue" to TypeSpec.anonymousClassBuilder().build())
+    assertThat(CodeBlock.of("%V", list).toString())
+        .isEqualTo("listOf(1 to 2, 3 to null, \"StringValue\" to object {\n})")
+  }
+
+  @Test fun emptyListValue() =
+      assertThat(CodeBlock.of("%V", emptyList<String>()).toString())
+          .isEqualTo("listOf()")
+
+  @Test fun mapOfValue() {
+    val map = mapOf(1 to 2, 3 to null, "StringKey" to TypeSpec.anonymousClassBuilder().build())
+    assertThat(CodeBlock.of("%V", map).toString())
+        .isEqualTo("mapOf(1 to 2, 3 to null, \"StringKey\" to object {\n})")
+  }
+
+  @Test fun setOfValue() =
+      assertThat(CodeBlock.of("%V", setOf("a", "b", "c")).toString())
+          .isEqualTo("""setOf("a", "b", "c")""")
 }
