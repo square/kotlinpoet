@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
-  val type: TypeName = builder.type
+  val className: ClassName = builder.className
   val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
@@ -38,7 +38,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     if (useSiteTarget != null) {
       codeWriter.emit(useSiteTarget.keyword + ":")
     }
-    codeWriter.emitCode("%T", type)
+    codeWriter.emitCode("%T", className)
 
     if (members.isEmpty() && !asParameter) {
       // @Singleton
@@ -68,7 +68,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(type)
+    val builder = Builder(className)
     builder.members += members
     builder.useSiteTarget = useSiteTarget
     return builder
@@ -99,7 +99,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     DELEGATE("delegate")
   }
 
-  class Builder internal constructor(internal val type: TypeName) {
+  class Builder internal constructor(internal val className: ClassName) {
     internal var useSiteTarget: UseSiteTarget? = null
 
     val members = mutableListOf<CodeBlock>()
