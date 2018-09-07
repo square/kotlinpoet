@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
-import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -103,7 +102,7 @@ class PropertySpec private constructor(builder: Builder) {
   fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
     val builder = toBuilder()
         .addAnnotations(parameter.annotations)
-    builder.validate = false
+    builder.isPrimaryConstructorParameter = true
     builder.modifiers += parameter.modifiers
 
     return builder.build()
@@ -136,7 +135,7 @@ class PropertySpec private constructor(builder: Builder) {
   }
 
   class Builder internal constructor(internal val name: String, internal val type: TypeName) {
-    internal var validate = true
+    internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
     internal var initializer: CodeBlock? = null
@@ -230,7 +229,7 @@ class PropertySpec private constructor(builder: Builder) {
             "properties. You should mark either the getter, the setter, or both inline.")
       }
       for (it in modifiers) {
-            if (validate) it.checkTarget(PROPERTY)
+            if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }
