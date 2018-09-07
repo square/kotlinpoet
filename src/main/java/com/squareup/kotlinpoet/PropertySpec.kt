@@ -99,7 +99,7 @@ class PropertySpec private constructor(builder: Builder) {
     }
   }
 
-  fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
+  internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
     val builder = toBuilder()
         .addAnnotations(parameter.annotations)
     builder.isPrimaryConstructorParameter = true
