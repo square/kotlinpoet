@@ -229,7 +229,7 @@ class PropertySpec private constructor(builder: Builder) {
             "properties. You should mark either the getter, the setter, or both inline.")
       }
       for (it in modifiers) {
-            if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
+          if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }
