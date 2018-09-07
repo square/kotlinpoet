@@ -422,12 +422,12 @@ Consider the example below.
 Function argument `b` has a default value of 0 to avoid overloading this function.
 
 ```kotlin
-fun add(a:Int, b:Int = 0) {
+fun add(a: Int, b: Int = 0) {
   print("a + b = ${ a + b }")
 }
 ```
 
-Use the `defaultValue()` builder function to declare default value for a function argument 
+Use the `defaultValue()` builder function to declare default value for a function argument.
 
 ```kotlin
 FunSpec.builder("add")
