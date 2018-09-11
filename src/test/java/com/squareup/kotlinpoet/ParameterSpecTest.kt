@@ -84,4 +84,23 @@ class ParameterSpecTest {
 
     assertThat(builder.build().annotations).containsExactly(javaWord)
   }
+
+  // https://github.com/square/kotlinpoet/issues/462
+  @Test fun codeBlockDefaultValue() {
+    val param = ParameterSpec.builder("arg", ANY).build()
+    val defaultValue = CodeBlock.builder()
+        .beginControlFlow("{ %L ->", param)
+        .addStatement("println(\"arg=\$%N\")", param)
+        .endControlFlow()
+        .build()
+    val lambdaTypeName = ClassName.bestGuess("com.example.SomeTypeAlias")
+    val paramSpec = ParameterSpec.builder("parameter", lambdaTypeName)
+        .defaultValue(defaultValue)
+        .build()
+    assertThat(paramSpec.toString()).isEqualTo("""
+      |parameter: com.example.SomeTypeAlias = { arg: kotlin.Any ->
+      |    println("arg=${'$'}arg")
+      |}
+      |""".trimMargin())
+  }
 }

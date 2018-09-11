@@ -673,4 +673,38 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/462
+  @Test fun foldingPropertyWithLambdaInitializer() {
+    val param = ParameterSpec.builder("arg", ANY).build()
+    val initializer = CodeBlock.builder()
+        .beginControlFlow("{ %L ->", param)
+        .addStatement("println(\"arg=\$%N\")", param)
+        .endControlFlow()
+        .build()
+    val lambdaTypeName = ClassName.bestGuess("com.example.SomeTypeAlias")
+    val property = PropertySpec.builder("foo", lambdaTypeName)
+        .initializer("foo")
+        .build()
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter(ParameterSpec.builder("foo", lambdaTypeName)
+                    .defaultValue(initializer)
+                    .build())
+                .build())
+            .addProperty(property)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.example.SomeTypeAlias
+      |
+      |class Taco(val foo: SomeTypeAlias = { arg: kotlin.Any ->
+      |    println("arg=${'$'}arg")
+      |}
+      |)
+      |""".trimMargin())
+  }
 }

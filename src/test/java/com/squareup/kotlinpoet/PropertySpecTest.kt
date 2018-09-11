@@ -261,4 +261,24 @@ class PropertySpecTest {
     }.hasMessageThat().isEqualTo(
         "only type parameters of properties with inline getters and/or setters can be reified!")
   }
+
+  // https://github.com/square/kotlinpoet/issues/462
+  @Test fun codeBlockInitializer() {
+    val param = ParameterSpec.builder("arg", ANY).build()
+    val initializer = CodeBlock.builder()
+        .beginControlFlow("{ %L ->", param)
+        .addStatement("println(\"arg=\$%N\")", param)
+        .endControlFlow()
+        .build()
+    val lambdaTypeName = ClassName.bestGuess("com.example.SomeTypeAlias")
+    val property = PropertySpec.builder("property", lambdaTypeName)
+        .initializer(initializer)
+        .build()
+    assertThat(property.toString()).isEqualTo("""
+      |val property: com.example.SomeTypeAlias = { arg: kotlin.Any ->
+      |    println("arg=${'$'}arg")
+      |}
+      |
+      |""".trimMargin())
+  }
 }

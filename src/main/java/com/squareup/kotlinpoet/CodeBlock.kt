@@ -142,6 +142,8 @@ class CodeBlock private constructor(
   internal fun replaceAll(oldValue: String, newValue: String) =
       CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
 
+  internal fun hasStatements() = formatParts.any { "%[" in it }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
