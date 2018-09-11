@@ -77,7 +77,7 @@ class PropertySpec private constructor(builder: Builder) {
       } else {
         codeWriter.emitCode(" =%W")
       }
-      codeWriter.emitCode("%[%L%]", initializer)
+      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "%[%L%]", initializer)
     }
     codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
