@@ -433,3 +433,11 @@ fun Collection<CodeBlock>.joinToCode(
   val placeholders = Array(blocks.size, { "%L" })
   return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
 }
+
+/**
+ * Builds new [CodeBlock] by populating newly created [CodeBlock.Builder] using provided
+ * [builderAction] and then converting it to [CodeBlock].
+ */
+inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock {
+  return CodeBlock.builder().apply(builderAction).build()
+}

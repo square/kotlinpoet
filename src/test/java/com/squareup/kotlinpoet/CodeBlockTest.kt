@@ -425,4 +425,21 @@ class CodeBlockTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun buildCodeBlock() {
+    val codeBlock = buildCodeBlock {
+      beginControlFlow("if (2 == 2)")
+      addStatement("println(%S)", "foo")
+      nextControlFlow("else")
+      addStatement("println(%S)", "bar")
+      endControlFlow()
+    }
+    assertThat(codeBlock.toString()).isEqualTo("""
+      |if (2 == 2) {
+      |    println("foo")
+      |} else {
+      |    println("bar")
+      |}
+      |""".trimMargin())
+  }
 }
