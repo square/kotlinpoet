@@ -416,6 +416,29 @@ Which outputs:
 fun Int.abs(): Int = if (this < 0) -this else this
 ```
 
+#### Default function arguments
+
+Consider the example below.
+Function argument `b` has a default value of 0 to avoid overloading this function.
+
+```kotlin
+fun add(a: Int, b: Int = 0) {
+  print("a + b = ${ a + b }")
+}
+```
+
+Use the `defaultValue()` builder function to declare default value for a function argument.
+
+```kotlin
+FunSpec.builder("add")
+    .addParameter("a", Int::class)
+    .addParameter(ParameterSpec.builder("b", Int::class)
+        .defaultValue("%L", 0)
+        .build())
+    .addStatement("print(\"a + b = ${ a + b }\")")
+    .build()
+```
+
 ### Constructors
 
 `FunSpec` is a slight misnomer; it can also be used for constructors:
