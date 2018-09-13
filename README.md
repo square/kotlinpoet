@@ -274,6 +274,33 @@ class HelloWorld {
 Note that due to a [bug](https://youtrack.jetbrains.com/issue/KT-15286), the IDE will not autocomplete the `parameterizedBy` or `plusParameter` extensions
 and you'll have to add the import statement manually to get those extensions.
 
+#### Nullable Types
+
+KotlinPoet also supports Kotlin's nullable types. Simply add the extension `asNullable()` to any type to make it nullable. For example:
+
+```kotlin
+val java = PropertySpec.varBuilder("java", String::class.asTypeName().asNullable())
+    .addModifiers(KModifier.PRIVATE)
+    .initializer("null")
+    .build()
+
+val helloWorld = TypeSpec.classBuilder("HelloWorld")
+    .addProperty(java)
+    .addProperty("kotlin", String::class, KModifier.PRIVATE)
+    .build()
+```
+
+generates:
+
+```kotlin
+class HelloWorld {
+    private var java: String? = null
+
+    private val kotlin: String
+}
+```
+
+
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
@@ -523,6 +550,7 @@ Declare parameters on methods and constructors with either `ParameterSpec.builde
 
 ```kotlin
 val android = ParameterSpec.builder("android", String::class)
+    .defaultValue("\"pie\"")
     .build()
 
 val welcomeOverlords = FunSpec.builder("welcomeOverlords")
@@ -531,11 +559,10 @@ val welcomeOverlords = FunSpec.builder("welcomeOverlords")
     .build()
 ```
 
-Though the code above to generate `android` and `robot` parameters is different, the output is the
-same:
+The code above generates:
 
 ```kotlin
-fun welcomeOverlords(android: String, robot: String) {
+fun welcomeOverlords(android: String = "pie", robot: String) {
 }
 ```
 
