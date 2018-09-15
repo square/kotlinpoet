@@ -111,6 +111,24 @@ class PropertySpecTest {
       |""".trimMargin())
   }
 
+  @Test fun escapeKeywordInPropertyName() {
+    val prop = PropertySpec.builder("object", String::class)
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |val `object`: kotlin.String
+      |""".trimMargin())
+  }
+
+  @Test fun escapeKeywordInVariableName() {
+    val prop = PropertySpec.varBuilder("object", String::class)
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |var `object`: kotlin.String
+      |""".trimMargin())
+  }
+
   @Test fun generalBuilderEqualityTest() {
     val prop = PropertySpec.builder("tacos", Int::class)
         .mutable(true)
