@@ -34,8 +34,9 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     if (name.isNotEmpty()) codeWriter.emitCode("%L", escapeIfNecessary(name))
-    if (name.isNotEmpty() && includeType) codeWriter.emit(": ")
-    if (includeType) codeWriter.emitCode("%T", type)
+    val emitType = type != null && includeType
+    if (name.isNotEmpty() && emitType) codeWriter.emit(": ")
+    if (emitType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
   }
 
@@ -56,7 +57,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   override fun toString() = buildString { emit(CodeWriter(this)) }
 
-  fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
+  fun toBuilder(name: String = this.name, type: TypeName? = this.type): Builder {
     val builder = Builder(name, type)
     builder.annotations += annotations
     builder.modifiers += modifiers
@@ -66,7 +67,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   class Builder internal constructor(
     internal val name: String,
-    internal val type: TypeName
+    internal val type: TypeName?
   ) {
     internal var defaultValue: CodeBlock? = null
 
@@ -152,6 +153,8 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     @JvmStatic fun unnamed(type: Type) = unnamed(type.asTypeName())
 
     @JvmStatic fun unnamed(type: TypeName) = Builder("", type).build()
+
+    @JvmStatic fun untyped(name: String) = Builder(name, null).build()
   }
 }
 

@@ -333,7 +333,7 @@ class CodeBlock private constructor(
       is CharSequence -> o.toString()
       is ParameterSpec -> o.name
       is PropertySpec -> o.name
-      is FunSpec -> o.name
+      is FunSpec -> o.name!!
       is TypeSpec -> o.name!!
       else -> throw IllegalArgumentException("expected name but was " + o)
     }

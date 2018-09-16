@@ -479,4 +479,26 @@ class FunSpecTest {
 
     assertThat(builder.build().parameters).containsExactly(seasoning)
   }
+
+  @Test fun anonymousFunction() {
+    val funSpec = FunSpec.anonymousFunctionBuilder()
+        .addParameter("x", Int::class)
+        .addParameter("y", Int::class)
+        .returns(Int::class)
+        .addStatement("return x + y")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun(x: kotlin.Int, y: kotlin.Int): kotlin.Int = x + y
+      |""".trimMargin())
+  }
+
+  @Test fun anonymousFunctionWithUntypedParameters() {
+    val funSpec = FunSpec.anonymousFunctionBuilder()
+        .addParameter(ParameterSpec.untyped("item"))
+        .addStatement("return item > 0")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun(item) = item > 0
+      |""".trimMargin())
+  }
 }
