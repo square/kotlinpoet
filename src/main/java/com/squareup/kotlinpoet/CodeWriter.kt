@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import kotlin.reflect.KClass
+
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
@@ -197,6 +199,8 @@ internal class CodeWriter constructor(
       when (part) {
         "%L" -> emitLiteral(codeBlock.args[a++])
 
+        "%V" -> emitValue(codeBlock.args[a++])
+
         "%N" -> emit(codeBlock.args[a++] as String)
 
         "%S" -> {
@@ -303,6 +307,42 @@ internal class CodeWriter constructor(
       is PropertySpec -> o.emit(this, emptySet())
       is CodeBlock -> emitCode(o)
       else -> emit(o.toString())
+    }
+  }
+
+  private fun emitValue(o: Any?) {
+    if (o == null) {
+      emit("null")
+      return
+    }
+    when (o) {
+      is TypeSpec -> o.emit(this, null)
+      is AnnotationSpec -> o.emit(this, inline = true, asParameter = true)
+      is PropertySpec -> o.emit(this, emptySet())
+      is CodeBlock -> emitCode(o)
+      is Boolean -> emit(o.toString())
+      is Byte -> emit("$o.toByte()")
+      is Short -> emit("$o.toShort()")
+      is Int -> emit(o.toString())
+      is Long -> emit("${o}L")
+      is Char -> emit("'${characterLiteralWithoutSingleQuotes(o)}'")
+      is Float -> emit("${o}f")
+      is Double -> emit(o.toString())
+      is Class<*> -> emitCode("%T::class", o)
+      is KClass<*> -> emitCode("%T::class", o)
+      is Enum<*> -> emitCode("%T.%L", o.javaClass, o.name)
+      is String -> emit(stringLiteralWithQuotes(o, escapeDollar = true))
+      is BooleanArray -> emit("booleanArrayOf(${o.joinToString()})")
+      is ByteArray -> emit("byteArrayOf(${o.joinToString()})")
+      is ShortArray -> emit("shortArrayOf(${o.joinToString()})")
+      is IntArray -> emit("intArrayOf(${o.joinToString()})")
+      is LongArray -> emit("longArrayOf(${o.joinToString()})")
+      is CharArray -> emit("charArrayOf(${o.joinToString { "'${characterLiteralWithoutSingleQuotes(it)}'" }})")
+      is FloatArray -> emit("floatArrayOf(${o.joinToString { "${it}f" }})")
+      is DoubleArray -> emit("doubleArrayOf(${o.joinToString()})")
+      is Array<*> -> emitCode("arrayOf(%L)", o.map { CodeBlock.of("%V", it) }.joinToCode())
+      is Pair<*, *> -> emitCode("%V to %V", o.first, o.second)
+      else -> throw UnsupportedOperationException("Value type ${o::class} not supported.")
     }
   }
 

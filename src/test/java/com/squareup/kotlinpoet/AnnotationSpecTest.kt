@@ -217,10 +217,10 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
-        |        a = 5,
-        |        b = 6,
+        |        a = 5.toByte(),
+        |        b = 6.toShort(),
         |        c = 7,
-        |        d = 8,
+        |        d = 8L,
         |        e = 9.0f,
         |        f = 11.1,
         |        g = [

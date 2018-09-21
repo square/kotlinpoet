@@ -324,6 +324,7 @@ class CodeBlock private constructor(
         'L' -> this.args += argToLiteral(arg)
         'S' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
+        'V' -> this.args += argToValue(arg)
         else -> throw IllegalArgumentException(
             String.format("invalid format string: '%s'", format))
       }
@@ -339,6 +340,8 @@ class CodeBlock private constructor(
     }
 
     private fun argToLiteral(o: Any?) = o
+
+    private fun argToValue(o: Any?) = o
 
     private fun argToString(o: Any?) = o?.toString()
 
