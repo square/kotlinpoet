@@ -93,6 +93,9 @@ internal fun stringLiteralWithQuotes(value: String): String {
       } else if (c == '\n') {
         // Add a '|' after newlines. This pipe will be removed by trimMargin().
         result.append("\n|")
+      } else if (c == '$') {
+        // Escape '$' symbols with ${'$'}.
+        result.append("\${\'\$\'}")
       } else {
         result.append(c)
       }
@@ -116,6 +119,11 @@ internal fun stringLiteralWithQuotes(value: String): String {
       // Trivial case: double quotes must be escaped.
       if (c == '\"') {
         result.append("\\\"")
+        continue
+      }
+      // Trivial case: $ signs must be escaped.
+      if (c == '$') {
+        result.append("\${\'\$\'}")
         continue
       }
       // Default case: just let character literal do its work.

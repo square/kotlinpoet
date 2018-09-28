@@ -195,7 +195,7 @@ class KotlinPoetTest {
         "class Taco {\n" +
         "    fun strings() {\n" +
         "        val a = \"basic string\"\n" +
-        "        val b = \"string with a \$ dollar sign\"\n" +
+        "        val b = \"string with a \${\'\$\'} dollar sign\"\n" +
         "    }\n" +
         "}\n")
   }
@@ -239,7 +239,7 @@ class KotlinPoetTest {
         "                |\"raw\"\n" +
         "                |string\n" +
         "                |with\n" +
-        "                |\$a interpolated value\n" +
+        "                |\${\'\$\'}a interpolated value\n" +
         "                \"\"\".trimMargin()\n" +
         "    }\n" +
         "}\n")
