@@ -27,26 +27,32 @@ fun main(vararg args: String) {
 And this is the code to generate it with KotlinPoet:
 
 ```kotlin
-val greeterClass = ClassName("", "Greeter")
-val file = FileSpec.builder("", "HelloWorld")
-    .addType(TypeSpec.classBuilder("Greeter")
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("name", String::class)
-            .build())
-        .addProperty(PropertySpec.builder("name", String::class)
-            .initializer("name")
-            .build())
-        .addFunction(FunSpec.builder("greet")
-            .addStatement("println(%S)", "Hello, \$name")
-            .build())
-        .build())
-    .addFunction(FunSpec.builder("main")
-        .addParameter("args", String::class, VARARG)
-        .addStatement("%T(args[0]).greet()", greeterClass)
-        .build())
+fun main(args: Array<String>) {
+
+  val greetFunSpec = FunSpec.builder("greet")
+    .addStatement("println(%S)", "Hello, \$name")
     .build()
 
-file.writeTo(System.out)
+  val greeterTypeSpec = TypeSpec.of(
+    className = "Greeter",
+    constructorProperties = listOf(PropertySpec.property("name", typeName<String>())),
+    functions = listOf(greetFunSpec)
+  )
+
+  val mainFunSpec = FunSpec.builder("main")
+    .addParameter("args", String::class, KModifier.VARARG)
+    .addStatement("%T(args[0]).greet()", ClassName("", "Greeter"))
+    .build()
+
+  val file = FileSpec.of(
+    packageName = "",
+    fileName = "HelloWorld",
+    types = listOf(greeterTypeSpec),
+    functions = listOf(mainFunSpec)
+  )
+  file.writeTo(System.out)
+}
+
 ```
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].
@@ -135,16 +141,22 @@ returns its own name:
 
 ```kotlin
 fun main(args: Array<String>) {
-  val helloWorld = TypeSpec.classBuilder("HelloWorld")
-      .addFunction(whatsMyNameYo("slimShady"))
-      .addFunction(whatsMyNameYo("eminem"))
-      .addFunction(whatsMyNameYo("marshallMathers"))
-      .build()
-  
-  val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
-      .addType(helloWorld)
-      .build()
-  
+
+  val helloWorld = TypeSpec.of(
+    className = "HelloWorld",
+    functions = listOf(
+      whatsMyNameYo("slimShady"),
+      whatsMyNameYo("eminem"),
+      whatsMyNameYo("marshallMathers")
+    )
+  )
+
+  val kotlinFile = FileSpec.of(
+    packageName = "com.example.helloworld",
+    fileName = "HelloWorld",
+    types = listOf(helloWorld)
+  )
+
   kotlinFile.writeTo(System.out)
 }
 
@@ -279,15 +291,11 @@ and you'll have to add the import statement manually to get those extensions.
 KotlinPoet also supports Kotlin's nullable types. Simply add the extension `asNullable()` to any type to make it nullable. For example:
 
 ```kotlin
-val java = PropertySpec.varBuilder("java", String::class.asTypeName().asNullable())
-    .addModifiers(KModifier.PRIVATE)
-    .initializer("null")
-    .build()
-
-val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addProperty(java)
-    .addProperty("kotlin", String::class, KModifier.PRIVATE)
-    .build()
+val java = PropertySpec.nullableVarProperty("java", typeName<String>(),
+    listOf(KModifier.PRIVATE), CodeBlock.of("null"))
+    
+val kotlin = PropertySpec.property("kotlin", typeName<String>(), 
+    listOf(KModifier.PRIVATE))
 ```
 
 generates:
@@ -466,6 +474,8 @@ FunSpec.builder("add")
     .build()
 ```
 
+
+
 ### Constructors
 
 `FunSpec` is a slight misnomer; it can also be used for constructors:
@@ -493,6 +503,27 @@ class HelloWorld {
     }
 }
 ```
+
+
+Here is a simpler way to produce
+
+```kotlin
+data class User(val greeting: String = "", val id: Int = -1)
+```
+
+
+```kotlin
+val greeting = PropertySpec.property("greeting", typeName<String>())
+
+val id = PropertySpec.property("id", typeName<Int>())
+
+val userTypeSpec = TypeSpec.of(
+  className = "User",
+  constructorProperties = listOf(greeting, id),
+  modifiers = listOf(KModifier.DATA)
+)
+```
+
 
 For the most part, constructors work just like methods. When emitting code, KotlinPoet will place
 constructors before methods in the output file.
