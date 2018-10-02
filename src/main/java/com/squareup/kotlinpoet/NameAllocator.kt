@@ -69,14 +69,14 @@ import java.util.UUID
  * Underscores are also prefixed for names that start with a digit, and used to replace name-unsafe
  * characters like space or dash.
  *
- * When dealing with multiple independent inner scopes, use a [clone][NameAllocator.clone] of the
+ * When dealing with multiple independent inner scopes, use a [copy][NameAllocator.copy] of the
  * NameAllocator used for the outer scope to further refine name allocation for a specific inner
  * scope.
  */
 class NameAllocator private constructor(
   private val allocatedNames: MutableSet<String>,
   private val tagToName: MutableMap<Any, String>
-) : Cloneable {
+) {
   constructor() : this(mutableSetOf(), mutableMapOf())
 
   /**
@@ -92,7 +92,7 @@ class NameAllocator private constructor(
 
     val replaced = tagToName.put(tag, result)
     if (replaced != null) {
-      tagToName.put(tag, replaced) // Put things back as they were!
+      tagToName[tag] = replaced // Put things back as they were!
       throw IllegalArgumentException("tag $tag cannot be used for both '$replaced' and '$result'")
     }
 
@@ -100,7 +100,7 @@ class NameAllocator private constructor(
   }
 
   /** Retrieve a name created with [NameAllocator.newName]. */
-  fun get(tag: Any): String {
+  operator fun get(tag: Any): String {
     return tagToName[tag] ?: throw IllegalArgumentException("unknown tag: $tag")
   }
 
@@ -111,7 +111,7 @@ class NameAllocator private constructor(
    *
    * @return A deep copy of this NameAllocator.
    */
-  public override fun clone(): NameAllocator {
+  fun copy(): NameAllocator {
     return NameAllocator(allocatedNames.toMutableSet(), tagToName.toMutableMap())
   }
 }

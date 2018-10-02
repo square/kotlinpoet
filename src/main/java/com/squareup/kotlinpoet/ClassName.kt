@@ -40,6 +40,8 @@ class ClassName internal constructor(
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
   private val names = names.toImmutableList()
+
+  /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   val canonicalName = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
     names.joinToString(".")
@@ -82,6 +84,10 @@ class ClassName internal constructor(
    */
   fun topLevelClassName() = ClassName(names.subList(0, 2))
 
+  /**
+   * Fully qualified name using `.` to separate package from the top level class name, and `$` to
+   * separate nested classes, like `kotlin.collections.Map$Entry`.
+   */
   fun reflectionName(): String {
     // trivial case: no nested names
     if (names.size == 2) {

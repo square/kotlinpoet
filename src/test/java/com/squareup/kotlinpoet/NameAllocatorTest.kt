@@ -23,8 +23,8 @@ class NameAllocatorTest {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
     assertThat(nameAllocator.newName("bar", 2)).isEqualTo("bar")
-    assertThat(nameAllocator.get(1)).isEqualTo("foo")
-    assertThat(nameAllocator.get(2)).isEqualTo("bar")
+    assertThat(nameAllocator[1]).isEqualTo("foo")
+    assertThat(nameAllocator[2]).isEqualTo("bar")
   }
 
   @Test fun nameCollision() {
@@ -39,9 +39,9 @@ class NameAllocatorTest {
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
     assertThat(nameAllocator.newName("foo", 2)).isEqualTo("foo_")
     assertThat(nameAllocator.newName("foo", 3)).isEqualTo("foo__")
-    assertThat(nameAllocator.get(1)).isEqualTo("foo")
-    assertThat(nameAllocator.get(2)).isEqualTo("foo_")
-    assertThat(nameAllocator.get(3)).isEqualTo("foo__")
+    assertThat(nameAllocator[1]).isEqualTo("foo")
+    assertThat(nameAllocator[2]).isEqualTo("foo_")
+    assertThat(nameAllocator[3]).isEqualTo("foo__")
   }
 
   @Test fun characterMappingSubstitute() {
@@ -67,7 +67,7 @@ class NameAllocatorTest {
   @Test fun kotlinKeyword() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("when", 1)).isEqualTo("when_")
-    assertThat(nameAllocator.get(1)).isEqualTo("when_")
+    assertThat(nameAllocator[1]).isEqualTo("when_")
   }
 
   @Test fun tagReuseForbidden() {
@@ -81,7 +81,7 @@ class NameAllocatorTest {
   @Test fun useBeforeAllocateForbidden() {
     val nameAllocator = NameAllocator()
     assertThrows<IllegalArgumentException> {
-      nameAllocator.get(1)
+      nameAllocator[1]
     }.hasMessageThat().isEqualTo("unknown tag: 1")
   }
 
@@ -89,11 +89,11 @@ class NameAllocatorTest {
     val outerAllocator = NameAllocator()
     outerAllocator.newName("foo", 1)
 
-    val innerAllocator1 = outerAllocator.clone()
+    val innerAllocator1 = outerAllocator.copy()
     assertThat(innerAllocator1.newName("bar", 2)).isEqualTo("bar")
     assertThat(innerAllocator1.newName("foo", 3)).isEqualTo("foo_")
 
-    val innerAllocator2 = outerAllocator.clone()
+    val innerAllocator2 = outerAllocator.copy()
     assertThat(innerAllocator2.newName("foo", 2)).isEqualTo("foo_")
     assertThat(innerAllocator2.newName("bar", 3)).isEqualTo("bar")
   }
