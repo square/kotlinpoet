@@ -363,7 +363,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       else -> emptySet()
     }
 
-    abstract fun plusModifiers(vararg modifiers: KModifier): Kind
+    internal abstract fun plusModifiers(vararg modifiers: KModifier): Kind
 
     override fun toString() = javaClass.simpleName.toUpperCase()
 
