@@ -2799,7 +2799,7 @@ class TypeSpecTest {
   @Test fun importNonNullableProperty() {
     val type = String::class.asTypeName()
     val taco = TypeSpec.classBuilder("Taco")
-        .addProperty(PropertySpec.builder("taco", type.asNonNullable())
+        .addProperty(PropertySpec.builder("taco", type.asNonNull())
             .initializer("%S", "taco")
             .build())
         .addProperty(PropertySpec.builder("nullTaco", type.asNullable())

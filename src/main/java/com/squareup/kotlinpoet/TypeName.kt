@@ -80,7 +80,7 @@ abstract class TypeName internal constructor(
 
   abstract fun asNullable(): TypeName
 
-  abstract fun asNonNullable(): TypeName
+  abstract fun asNonNull(): TypeName
 
   abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
 
@@ -223,7 +223,7 @@ abstract class TypeName internal constructor(
   override fun asNullable() =
       throw UnsupportedOperationException("dynamic can't be nullable")
 
-  override fun asNonNullable() =
+  override fun asNonNull() =
       throw UnsupportedOperationException("dynamic can't be non-nullable")
 
   override fun annotated(annotations: List<AnnotationSpec>) =

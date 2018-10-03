@@ -37,7 +37,7 @@ class WildcardTypeName private constructor(
 
   override fun asNullable() = WildcardTypeName(upperBounds, lowerBounds, true, annotations)
 
-  override fun asNonNullable() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
+  override fun asNonNull() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
     return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)

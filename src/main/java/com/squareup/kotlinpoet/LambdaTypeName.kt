@@ -36,7 +36,7 @@ class LambdaTypeName internal constructor(
   override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, suspending,
       annotations)
 
-  override fun asNonNullable()
+  override fun asNonNull()
       = LambdaTypeName(receiver, parameters, returnType, false, suspending, annotations)
 
   fun asSuspending() = LambdaTypeName(receiver, parameters, returnType, nullable, true, annotations)
