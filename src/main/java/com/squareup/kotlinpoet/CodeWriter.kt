@@ -323,7 +323,7 @@ internal class CodeWriter constructor(
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
-      if (resolved == c.asNonNullable().withoutAnnotations()) {
+      if (resolved == c.asNonNull().withoutAnnotations()) {
         if (alias != null) return alias
         val suffixOffset = c.simpleNames.size - 1
         return className.simpleNames.subList(suffixOffset,

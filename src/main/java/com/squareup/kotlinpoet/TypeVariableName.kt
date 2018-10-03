@@ -36,7 +36,7 @@ class TypeVariableName private constructor(
 
   override fun asNullable() = TypeVariableName(name, bounds, variance, reified, true, annotations)
 
-  override fun asNonNullable() = TypeVariableName(name, bounds, variance, reified, false, annotations)
+  override fun asNonNull() = TypeVariableName(name, bounds, variance, reified, false, annotations)
 
   override fun annotated(annotations: List<AnnotationSpec>) =
       TypeVariableName(name, bounds, variance, reified, nullable, annotations)
