@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec.Companion.builder
 import com.squareup.kotlinpoet.jvm.jvmField
 import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
 import java.util.concurrent.TimeUnit
@@ -100,10 +101,19 @@ class KotlinPoetTest {
             .addStatement("%S", "cheese cannot be empty")
             .endControlFlow()
             .build())
-        .addProperty(PropertySpec.builder("cheese", String::class).initializer("cheese").build())
-        .addProperty(PropertySpec.varBuilder("cilantro", String::class).initializer("cilantro").build())
-        .addProperty(PropertySpec.builder("lettuce", String::class).initializer("lettuce.trim()").build())
-        .addProperty(PropertySpec.builder("onion", Boolean::class).initializer("true").build())
+        .addProperty(PropertySpec.builder("cheese", String::class)
+            .initializer("cheese")
+            .build())
+        .addProperty(PropertySpec.builder("cilantro", String::class.asTypeName())
+            .mutable()
+            .initializer("cilantro")
+            .build())
+        .addProperty(PropertySpec.builder("lettuce", String::class)
+            .initializer("lettuce.trim()")
+            .build())
+        .addProperty(PropertySpec.builder("onion", Boolean::class)
+            .initializer("true")
+            .build())
         .build())
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
@@ -133,7 +143,8 @@ class KotlinPoetTest {
         .addProperty(PropertySpec.builder("CHEESE", String::class, KModifier.PRIVATE, KModifier.CONST)
             .initializer("%S", "monterey jack")
             .build())
-        .addProperty(PropertySpec.varBuilder("sauce", String::class, KModifier.PUBLIC)
+        .addProperty(PropertySpec.builder("sauce", String::class.asTypeName(), KModifier.PUBLIC)
+            .mutable()
             .initializer("%S", "chipotle mayo")
             .build())
         .build())
@@ -429,7 +440,8 @@ class KotlinPoetTest {
 
   @Test fun getAndSet() {
     val source = FileSpec.builder(tacosPackage, "Taco")
-        .addProperty(PropertySpec.varBuilder("propertyWithCustomAccessors", Int::class)
+        .addProperty(PropertySpec.builder("propertyWithCustomAccessors", Int::class.asTypeName())
+            .mutable()
             .initializer("%L", 1)
             .getter(FunSpec.getterBuilder()
                 .addStatement("println(%S)", "getter")
@@ -478,7 +490,8 @@ class KotlinPoetTest {
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addType(TypeSpec.classBuilder("A")
             .addModifiers(KModifier.ABSTRACT)
-            .addProperty(PropertySpec.varBuilder("q", String::class)
+            .addProperty(PropertySpec.builder("q", String::class.asTypeName())
+                .mutable()
                 .addModifiers(KModifier.ABSTRACT, KModifier.PROTECTED)
                 .build())
             .build())
@@ -489,7 +502,8 @@ class KotlinPoetTest {
         .addType(TypeSpec.classBuilder("B")
             .superclass(ClassName("", "A"))
             .addModifiers(KModifier.ABSTRACT)
-            .addProperty(PropertySpec.varBuilder("q", String::class)
+            .addProperty(PropertySpec.builder("q", String::class.asTypeName())
+                .mutable()
                 .addModifiers(
                     KModifier.FINAL, KModifier.LATEINIT, KModifier.OVERRIDE, KModifier.PUBLIC)
                 .build())
@@ -563,10 +577,12 @@ class KotlinPoetTest {
         .get(parameters = *arrayOf(ClassName("", "Foo")), returnType = barType)
         .asSuspending()
     val source = FileSpec.builder(tacosPackage, "Taco")
-        .addProperty(PropertySpec.varBuilder("bar", suspendingLambda)
+        .addProperty(PropertySpec.builder("bar", suspendingLambda)
+            .mutable()
             .initializer("{ %T() }", barType)
             .build())
-        .addProperty(PropertySpec.varBuilder("nullBar", suspendingLambda.asNullable())
+        .addProperty(PropertySpec.builder("nullBar", suspendingLambda.asNullable())
+            .mutable()
             .initializer("null")
             .build())
         .addFunction(FunSpec.builder("foo")
