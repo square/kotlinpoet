@@ -148,7 +148,8 @@ class PropertySpec private constructor(builder: Builder) {
     val modifiers = mutableListOf<KModifier>()
     val typeVariables = mutableListOf<TypeVariableName>()
 
-    fun mutable(mutable: Boolean) = apply {
+    /** True to create a `var` instead of a `val`. */
+    fun mutable(mutable: Boolean = true) = apply {
       this.mutable = mutable
     }
 
@@ -248,17 +249,5 @@ class PropertySpec private constructor(builder: Builder) {
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic fun varBuilder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      require(name.isName) { "not a valid name: $name" }
-      return Builder(name, type)
-          .mutable(true)
-          .addModifiers(*modifiers)
-    }
-
-    @JvmStatic fun varBuilder(name: String, type: Type, vararg modifiers: KModifier)
-        = varBuilder(name, type.asTypeName(), *modifiers)
-
-    @JvmStatic fun varBuilder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = varBuilder(name, type.asTypeName(), *modifiers)
   }
 }

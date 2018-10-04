@@ -162,7 +162,8 @@ class JvmAnnotationsTest {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
             .addType(TypeSpec.companionObjectBuilder()
-                .addProperty(PropertySpec.varBuilder("foo", String::class)
+                .addProperty(PropertySpec.builder("foo", String::class.asTypeName())
+                    .mutable()
                     .setter(FunSpec.setterBuilder()
                         .jvmStatic()
                         .addParameter("value", String::class)
@@ -421,7 +422,8 @@ class JvmAnnotationsTest {
 
   @Test fun jvmNameSetter() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addProperty(PropertySpec.varBuilder("foo", String::class)
+        .addProperty(PropertySpec.builder("foo", String::class.asTypeName())
+            .mutable()
             .initializer("%S", "foo")
             .setter(FunSpec.setterBuilder()
                 .jvmName("foo")
@@ -618,7 +620,8 @@ class JvmAnnotationsTest {
 
   @Test fun synchronizedSetter() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addProperty(PropertySpec.varBuilder("foo", String::class)
+        .addProperty(PropertySpec.builder("foo", String::class.asTypeName())
+            .mutable()
             .initializer("%S", "foo")
             .setter(FunSpec.setterBuilder()
                 .synchronized()

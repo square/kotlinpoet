@@ -2518,7 +2518,7 @@ class TypeSpecTest {
   @Test fun companionObjectWithInitializer() {
     val companion = TypeSpec.companionObjectBuilder()
             .addProperty(PropertySpec.builder("tacos", Int::class)
-                    .mutable(true)
+                    .mutable()
                     .initializer("%L", 24)
                     .build())
             .addInitializerBlock(CodeBlock.builder()
@@ -3086,7 +3086,7 @@ class TypeSpecTest {
                     .build()))
             .addCode(CodeBlock.of("%L",
                 PropertySpec.builder("taco3", String::class.asTypeName(), KModifier.LATEINIT)
-                    .mutable(true)
+                    .mutable()
                     .build()))
             .build())
         .build()
