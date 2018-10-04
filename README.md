@@ -280,7 +280,7 @@ KotlinPoet also supports Kotlin's nullable types. Simply add the extension `asNu
 
 ```kotlin
 val java = PropertySpec.builder("java", String::class.asTypeName().asNullable())
-    .mutable(true)
+    .mutable()
     .addModifiers(KModifier.PRIVATE)
     .initializer("null")
     .build()
@@ -611,12 +611,12 @@ Which generates:
 private val android: String = "Oreo v." + 8.1
 ```
 
-By default `PropertySpec.Builder` produces `val` properties. Use `mutable(true)` if you need a
+By default `PropertySpec.Builder` produces `val` properties. Use `mutable()` if you need a
 `var`:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .mutable(true)
+    .mutable()
     .addModifiers(KModifier.PRIVATE)
     .initializer("%S + %L", "Oreo v.", 8.1)
     .build()
