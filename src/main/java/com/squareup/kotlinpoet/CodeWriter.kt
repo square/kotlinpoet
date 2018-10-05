@@ -60,8 +60,11 @@ internal class CodeWriter constructor(
   var statementLine = -1
 
   init {
-    for ((className, _) in memberImports) {
-      memberImportClassNames.add(className.substring(0, className.lastIndexOf('.')))
+    for ((memberName, _) in memberImports) {
+      val lastDotIndex = memberName.lastIndexOf('.')
+      if (lastDotIndex >= 0) {
+        memberImportClassNames.add(memberName.substring(0, lastDotIndex))
+      }
     }
   }
 

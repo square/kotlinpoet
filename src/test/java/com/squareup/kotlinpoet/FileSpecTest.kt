@@ -705,4 +705,32 @@ class FileSpecTest {
 
     assertThat(builder.build().annotations).containsExactly(javaWord)
   }
+
+  // https://github.com/square/kotlinpoet/issues/480
+  @Test fun defaultPackageMemberImport() {
+    val bigInteger = ClassName.bestGuess("bigInt.BigInteger")
+    val spec = FileSpec.builder("testsrc", "Test")
+        .addImport("", "bigInt")
+        .addFunction(FunSpec.builder("add5ToInput")
+            .addParameter("input", Int::class)
+            .returns(bigInteger)
+            .addCode("""
+               |val inputBigInt = bigInt(input)
+               |return inputBigInt.add(5)
+               |""".trimMargin())
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package testsrc
+      |
+      |import bigInt
+      |import bigInt.BigInteger
+      |import kotlin.Int
+      |
+      |fun add5ToInput(input: Int): BigInteger {
+      |    val inputBigInt = bigInt(input)
+      |    return inputBigInt.add(5)
+      |}
+      |""".trimMargin())
+  }
 }
