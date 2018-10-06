@@ -250,7 +250,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       require(names.isNotEmpty()) { "names array is empty" }
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
-        memberImports += Import(packageName + "." + name)
+        memberImports += if (packageName.isNotEmpty()) {
+          Import("$packageName.$name")
+        } else {
+          Import(name)
+        }
       }
     }
 
