@@ -85,7 +85,7 @@ class LambdaTypeNameTest {
         parameters = *arrayOf(Int::class.asTypeName()),
         returnType = returnTypeName)
     assertThat(typeName.toString())
-        .isEqualTo("(kotlin.Int) -> (kotlin.Int) -> kotlin.Unit")
+        .isEqualTo("(kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit)")
   }
 
   @Test fun lambdaParameterType() {

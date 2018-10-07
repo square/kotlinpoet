@@ -70,7 +70,7 @@ class LambdaTypeName internal constructor(
     }
 
     parameters.emit(out)
-    out.emitCode(" -> %T", returnType)
+    out.emitCode(if (returnType is LambdaTypeName) " -> (%T)" else " -> %T", returnType)
 
     if (nullable) {
       out.emit(")")
