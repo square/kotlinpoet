@@ -76,4 +76,26 @@ class LambdaTypeNameTest {
           returnType = Unit::class.asTypeName())
     }.hasMessageThat().isEqualTo("Parameters with default values are not allowed")
   }
+
+  @Test fun lambdaReturnType() {
+    val returnTypeName = LambdaTypeName.get(
+        parameters = *arrayOf(Int::class.asTypeName()),
+        returnType = Unit::class.asTypeName())
+    val typeName = LambdaTypeName.get(
+        parameters = *arrayOf(Int::class.asTypeName()),
+        returnType = returnTypeName)
+    assertThat(typeName.toString())
+        .isEqualTo("(kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit)")
+  }
+
+  @Test fun lambdaParameterType() {
+    val parameterTypeName = LambdaTypeName.get(
+        parameters = *arrayOf(Int::class.asTypeName()),
+        returnType = Int::class.asTypeName())
+    val typeName = LambdaTypeName.get(
+        parameters = *arrayOf(parameterTypeName),
+        returnType = Unit::class.asTypeName())
+    assertThat(typeName.toString())
+        .isEqualTo("((kotlin.Int) -> kotlin.Int) -> kotlin.Unit")
+  }
 }
