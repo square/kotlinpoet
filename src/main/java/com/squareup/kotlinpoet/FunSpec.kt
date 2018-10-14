@@ -62,9 +62,9 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter: CodeWriter,
     enclosingName: String?,
     implicitModifiers: Set<KModifier>,
-    includeParametersKdoc: Boolean
+    includeExtrasKdoc: Boolean = false
   ) {
-    if (includeParametersKdoc) {
+    if (includeExtrasKdoc) {
       codeWriter.emitKdoc(kdocWithExtras())
     } else {
       codeWriter.emitKdoc(kdoc)
@@ -165,7 +165,7 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter = CodeWriter(this),
         enclosingName = "Constructor",
         implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
-        includeParametersKdoc = true)
+        includeExtrasKdoc = true)
   }
 
   fun toBuilder(): Builder {
