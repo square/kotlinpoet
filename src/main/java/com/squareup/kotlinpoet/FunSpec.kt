@@ -33,6 +33,7 @@ import kotlin.reflect.KClass
 class FunSpec private constructor(builder: Builder) {
   val name = builder.name
   val kdoc = builder.kdoc.build()
+  val returnKdoc = builder.returnKdoc.build()
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -64,7 +65,7 @@ class FunSpec private constructor(builder: Builder) {
     includeParametersKdoc: Boolean
   ) {
     if (includeParametersKdoc) {
-      codeWriter.emitKdoc(kdocWithParameters())
+      codeWriter.emitKdoc(kdocWithExtras())
     } else {
       codeWriter.emitKdoc(kdoc)
     }
@@ -138,13 +139,14 @@ class FunSpec private constructor(builder: Builder) {
 
   val isAccessor get() = name.isAccessor
 
-  private fun kdocWithParameters(): CodeBlock {
+  private fun kdocWithExtras(): CodeBlock {
     return with(kdoc.toBuilder()) {
       for (parameterSpec in parameters) {
         if (parameterSpec.kdoc.isNotEmpty()) {
           add("@param %L %L", parameterSpec.name, parameterSpec.kdoc)
         }
       }
+      add(returnKdoc)
       build()
     }
   }
@@ -183,6 +185,7 @@ class FunSpec private constructor(builder: Builder) {
 
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
+    internal val returnKdoc = CodeBlock.builder()
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
@@ -263,14 +266,17 @@ class FunSpec private constructor(builder: Builder) {
 
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
-    fun returns(returnType: TypeName) = apply {
+    @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock? = null) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
+      kdoc?.let {
+        this.returnKdoc.add(it)
+      }
     }
 
-    fun returns(returnType: Type) = returns(returnType.asTypeName())
+    @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
 
-    fun returns(returnType: KClass<*>) = returns(returnType.asTypeName())
+    @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
       for (parameterSpec in parameterSpecs) {
