@@ -192,7 +192,7 @@ class FunSpecTest {
             .addKdoc("A string parameter.\n")
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class.asTypeName()).build())
-        .returns(String::class.asTypeName(), CodeBlock.of("@return the foo.\n"))
+        .returns(String::class.asTypeName(), CodeBlock.of("the foo.\n"))
         .addCode(CodeBlock.of("return \"foo\""))
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -217,10 +217,9 @@ class FunSpecTest {
   }
 
   @Test fun functionWithReturnKDoc() {
-    val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = unitType)).build())
-        .returns(String::class, CodeBlock.builder().add("@return the foo.\n").build())
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = UNIT)).build())
+        .returns(String::class, CodeBlock.builder().add("the foo.\n").build())
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""

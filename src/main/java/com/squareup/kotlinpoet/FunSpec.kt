@@ -270,7 +270,7 @@ class FunSpec private constructor(builder: Builder) {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
       kdoc?.let {
-        this.returnKdoc.add(it)
+        this.returnKdoc.add("@return %L", it)
       }
     }
 
