@@ -186,6 +186,23 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionParamWithKdocAndReturnKdoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("string", String::class)
+            .addKdoc("A string parameter.\n")
+            .build())
+        .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
+        .returns(String::class, "the foo.")
+        .addCode(CodeBlock.of("return \"foo\""))
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @param string A string parameter.
+      | * @return the foo.
+      | */
+      |fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
+  }
+
   @Test fun functionParamNoLambdaParam() {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
@@ -194,6 +211,21 @@ class FunSpecTest {
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(f: () -> kotlin.Unit): kotlin.String {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun functionWithReturnKDoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = UNIT)).build())
+        .returns(String::class, CodeBlock.of("the foo."))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @return the foo.
+      | */
       |fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
       |""".trimMargin())

@@ -33,6 +33,7 @@ import kotlin.reflect.KClass
 class FunSpec private constructor(builder: Builder) {
   val name = builder.name
   val kdoc = builder.kdoc.build()
+  val returnKdoc = builder.returnKdoc.build()
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -61,10 +62,10 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter: CodeWriter,
     enclosingName: String?,
     implicitModifiers: Set<KModifier>,
-    includeParametersKdoc: Boolean
+    includeKdocTags: Boolean = false
   ) {
-    if (includeParametersKdoc) {
-      codeWriter.emitKdoc(kdocWithParameters())
+    if (includeKdocTags) {
+      codeWriter.emitKdoc(kdocWithTags())
     } else {
       codeWriter.emitKdoc(kdoc)
     }
@@ -138,13 +139,14 @@ class FunSpec private constructor(builder: Builder) {
 
   val isAccessor get() = name.isAccessor
 
-  private fun kdocWithParameters(): CodeBlock {
+  private fun kdocWithTags(): CodeBlock {
     return with(kdoc.toBuilder()) {
       for (parameterSpec in parameters) {
         if (parameterSpec.kdoc.isNotEmpty()) {
           add("@param %L %L", parameterSpec.name, parameterSpec.kdoc)
         }
       }
+      add(returnKdoc)
       build()
     }
   }
@@ -163,7 +165,7 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter = CodeWriter(this),
         enclosingName = "Constructor",
         implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
-        includeParametersKdoc = true)
+        includeKdocTags = true)
   }
 
   fun toBuilder(): Builder {
@@ -183,6 +185,7 @@ class FunSpec private constructor(builder: Builder) {
 
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
+    internal val returnKdoc = CodeBlock.builder()
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
@@ -263,14 +266,22 @@ class FunSpec private constructor(builder: Builder) {
 
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
 
-    fun returns(returnType: TypeName) = apply {
+    @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock? = null) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
+      kdoc?.let {
+        this.returnKdoc.add("@return %L\n", it)
+      }
     }
 
-    fun returns(returnType: Type) = returns(returnType.asTypeName())
+    @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
 
-    fun returns(returnType: KClass<*>) = returns(returnType.asTypeName())
+    fun returns(returnType: Type, kdoc: String, vararg args: Any) = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+
+    @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
+
+    fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any)
+        = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
       for (parameterSpec in parameterSpecs) {
