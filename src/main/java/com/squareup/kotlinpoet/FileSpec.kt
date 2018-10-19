@@ -73,8 +73,9 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
         outputDirectory = outputDirectory.resolve(packageComponent)
       }
-      Files.createDirectories(outputDirectory)
     }
+    
+    Files.createDirectories(outputDirectory)
 
     val outputPath = outputDirectory.resolve("$name.kt")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }

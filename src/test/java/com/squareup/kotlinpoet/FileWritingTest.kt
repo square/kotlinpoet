@@ -62,6 +62,14 @@ class FileWritingTest {
     assertThat(Files.exists(testPath)).isTrue()
   }
 
+  @Test fun pathDefaultPackageWithSubdirectory() {
+    val type = TypeSpec.classBuilder("Test").build()
+    FileSpec.get("", type).writeTo(fsRoot.resolve("sub"))
+
+    val testPath = fsRoot.resolve("sub/Test.kt")
+    assertThat(Files.exists(testPath)).isTrue()
+  }
+
   @Test fun fileDefaultPackage() {
     val type = TypeSpec.classBuilder("Test").build()
     FileSpec.get("", type).writeTo(tmp.root)
