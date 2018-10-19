@@ -161,10 +161,10 @@ class FunSpecTest {
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class.asTypeName())
-            .addKdoc("A string parameter.\n")
+            .addKdoc("A string parameter.")
             .build())
         .addParameter(ParameterSpec.builder("number", Int::class.asTypeName())
-            .addKdoc("A number with a multi-line doc comment.\nYes,\nthese\nthings\nhappen.\n")
+            .addKdoc("A number with a multi-line doc comment.\nYes,\nthese\nthings\nhappen.")
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class.asTypeName()).build())
         .build()
@@ -189,7 +189,7 @@ class FunSpecTest {
   @Test fun functionParamWithKdocAndReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class)
-            .addKdoc("A string parameter.\n")
+            .addKdoc("A string parameter.")
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
         .returns(String::class, "the foo.")
