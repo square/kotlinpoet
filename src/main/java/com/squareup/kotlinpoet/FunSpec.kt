@@ -143,7 +143,7 @@ class FunSpec private constructor(builder: Builder) {
     return with(kdoc.toBuilder()) {
       for (parameterSpec in parameters) {
         if (parameterSpec.kdoc.isNotEmpty()) {
-          add("@param %L %L", parameterSpec.name, parameterSpec.kdoc)
+          add("@param %L %L\n", parameterSpec.name, parameterSpec.kdoc)
         }
       }
       add(returnKdoc)
