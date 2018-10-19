@@ -62,10 +62,10 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter: CodeWriter,
     enclosingName: String?,
     implicitModifiers: Set<KModifier>,
-    includeExtrasKdoc: Boolean = false
+    includeKdocTags: Boolean = false
   ) {
-    if (includeExtrasKdoc) {
-      codeWriter.emitKdoc(kdocWithExtras())
+    if (includeKdocTags) {
+      codeWriter.emitKdoc(kdocWithTags())
     } else {
       codeWriter.emitKdoc(kdoc)
     }
@@ -139,7 +139,7 @@ class FunSpec private constructor(builder: Builder) {
 
   val isAccessor get() = name.isAccessor
 
-  private fun kdocWithExtras(): CodeBlock {
+  private fun kdocWithTags(): CodeBlock {
     return with(kdoc.toBuilder()) {
       for (parameterSpec in parameters) {
         if (parameterSpec.kdoc.isNotEmpty()) {
@@ -165,7 +165,7 @@ class FunSpec private constructor(builder: Builder) {
         codeWriter = CodeWriter(this),
         enclosingName = "Constructor",
         implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
-        includeExtrasKdoc = true)
+        includeKdocTags = true)
   }
 
   fun toBuilder(): Builder {
@@ -270,13 +270,18 @@ class FunSpec private constructor(builder: Builder) {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
       kdoc?.let {
-        this.returnKdoc.add("@return %L", it)
+        this.returnKdoc.add("@return %L\n", it)
       }
     }
 
     @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
 
+    fun returns(returnType: Type, kdoc: String, vararg args: Any) = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+
     @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
+
+    fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any)
+        = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
       for (parameterSpec in parameterSpecs) {
