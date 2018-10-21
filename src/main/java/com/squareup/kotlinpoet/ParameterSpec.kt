@@ -58,6 +58,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)
+    builder.kdoc.add(kdoc)
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.defaultValue = defaultValue
