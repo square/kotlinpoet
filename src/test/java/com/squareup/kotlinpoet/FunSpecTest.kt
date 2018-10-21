@@ -186,6 +186,24 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionParamWithKdocToBuilder() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("string", String::class.asTypeName())
+            .addKdoc("A string parameter.")
+            .build()
+            .toBuilder()
+            .addKdoc(" This is non null")
+            .build())
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @param string A string parameter. This is non null
+      | */
+      |fun foo(string: kotlin.String) {
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun functionParamWithKdocAndReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class)
