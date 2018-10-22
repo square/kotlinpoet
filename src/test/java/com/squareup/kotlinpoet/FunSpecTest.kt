@@ -221,6 +221,22 @@ class FunSpecTest {
       |fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
   }
 
+  @Test fun functionWithModifiedReturnKdoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
+        .returns(String::class, "the foo.")
+        .addCode(CodeBlock.of("return \"foo\""))
+        .build()
+        .toBuilder()
+        .returns(String::class, "the modified foo.")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @return the modified foo.
+      | */
+      |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
+  }
+
   @Test fun functionParamNoLambdaParam() {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")

@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
 class FunSpec private constructor(builder: Builder) {
   val name = builder.name
   val kdoc = builder.kdoc.build()
-  val returnKdoc = builder.returnKdoc.build()
+  val returnKdoc = builder.returnKdoc
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -146,7 +146,9 @@ class FunSpec private constructor(builder: Builder) {
           add("@param %L %L\n", parameterSpec.name, parameterSpec.kdoc)
         }
       }
-      add(returnKdoc)
+      if (returnKdoc.isNotEmpty()) {
+        add("@return %L\n", returnKdoc)
+      }
       build()
     }
   }
@@ -171,6 +173,7 @@ class FunSpec private constructor(builder: Builder) {
   fun toBuilder(): Builder {
     val builder = Builder(name)
     builder.kdoc.add(kdoc)
+    builder.returnKdoc = returnKdoc
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
@@ -185,7 +188,7 @@ class FunSpec private constructor(builder: Builder) {
 
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
-    internal val returnKdoc = CodeBlock.builder()
+    internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
@@ -270,7 +273,7 @@ class FunSpec private constructor(builder: Builder) {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
       kdoc?.let {
-        this.returnKdoc.add("@return %L\n", it)
+        this.returnKdoc = it
       }
     }
 
