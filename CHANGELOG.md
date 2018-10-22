@@ -1,6 +1,34 @@
 Change Log
 ==========
 
+## Version 1.0.0-RC2
+
+_2018-10-22_
+
+ * New: Kotlin 1.2.71.
+ * New: README improvements.
+ * New: Allow opening braces and params in `beginControlFlow()`.
+ * New: Add KDoc to `ParameterSpec`, collapse into parent KDoc.
+ * New: Support `TypeVariable`s in `PropertySpec`.
+ * New: Add parens for annotated types in `LambdaTypeName`.
+ * New: Improve error messaging and documentation for inline properties.
+ * New: Allow sealed classes to declare abstract properties.
+ * New: Added `buildCodeBlock()` helper function.
+ * New: Allow using `CodeBlock`s with statements as property initializers and default parameter values.
+ * New: Rename `NameAllocator.clone()` into `NameAllocator.copy().
+ * New: Rename `TypeName.asNonNullable()` to `TypeName.asNonNull()`.
+ * New: Remove `PropertySpec.varBuilder()` (use `mutable()` instead).
+ * New: Allow importing top-level members in default package.
+ * New: Add overloads to add KDoc to return type.
+ * Fix: Distinguishing `IntArray` and `Array<Int>` when creating `TypeName`.
+ * Fix: Use `TypeName` instead of `ClassName` as parameter type of `plusParameter()`.
+ * Fix: Keep type-parameter variance when constructing `TypeName` from `KType`.
+ * Fix: Don't validate modifiers when merging properties with primary constructor parameters.
+ * Fix: Escape $ characters in formatted strings.
+ * Fix: `FileSpec.Builder` blank package and subfolder fix.
+ * Fix: Append new line at end of parameter KDoc.
+ * Fix: Add parameter KDoc in `toBuilder()`.
+
 ## Version 1.0.0-RC1
 
 _2018-07-16_
