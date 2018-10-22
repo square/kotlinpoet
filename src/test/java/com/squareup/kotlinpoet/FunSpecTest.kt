@@ -211,7 +211,7 @@ class FunSpecTest {
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
         .returns(String::class, "the foo.")
-        .addCode(CodeBlock.of("return \"foo\""))
+        .addCode("return %S", "foo")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |/**
@@ -223,9 +223,9 @@ class FunSpecTest {
 
   @Test fun functionWithModifiedReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
+        .addParameter("nodoc", Boolean::class)
         .returns(String::class, "the foo.")
-        .addCode(CodeBlock.of("return \"foo\""))
+        .addCode("return %S", "foo")
         .build()
         .toBuilder()
         .returns(String::class, "the modified foo.")
