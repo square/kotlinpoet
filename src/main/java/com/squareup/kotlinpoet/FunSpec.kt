@@ -34,6 +34,7 @@ class FunSpec private constructor(builder: Builder) {
   val name = builder.name
   val kdoc = builder.kdoc.build()
   val returnKdoc = builder.returnKdoc
+  val receiverKdoc = builder.receiverKdoc
   val annotations = builder.annotations.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -141,6 +142,9 @@ class FunSpec private constructor(builder: Builder) {
 
   private fun kdocWithTags(): CodeBlock {
     return with(kdoc.toBuilder()) {
+      if (receiverKdoc.isNotEmpty()) {
+        add("@receiver %L\n", receiverKdoc)
+      }
       for (parameterSpec in parameters) {
         if (parameterSpec.kdoc.isNotEmpty()) {
           add("@param %L %L\n", parameterSpec.name, parameterSpec.kdoc)
@@ -174,6 +178,7 @@ class FunSpec private constructor(builder: Builder) {
     val builder = Builder(name)
     builder.kdoc.add(kdoc)
     builder.returnKdoc = returnKdoc
+    builder.receiverKdoc = receiverKdoc
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
@@ -189,6 +194,7 @@ class FunSpec private constructor(builder: Builder) {
   class Builder internal constructor(internal val name: String) {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
+    internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
@@ -260,14 +266,21 @@ class FunSpec private constructor(builder: Builder) {
       typeVariables += typeVariable
     }
 
-    fun receiver(receiverType: TypeName) = apply {
+    @JvmOverloads fun receiver(receiverType: TypeName, kdoc: CodeBlock? = null) = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
+      kdoc?.let {
+        receiverKdoc = it
+      }
     }
 
-    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
+    @JvmOverloads fun receiver(receiverType: Type, kdoc: CodeBlock? = null) = receiver(receiverType.asTypeName(), kdoc)
 
-    fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
+    fun receiver(receiverType: Type, kdoc: String, vararg args: Any) = receiver(receiverType, CodeBlock.of(kdoc, args))
+
+    @JvmOverloads fun receiver(receiverType: KClass<*>, kdoc: CodeBlock? = null) = receiver(receiverType.asTypeName(), kdoc)
+
+    fun receiver(receiverType: KClass<*>, kdoc: String, vararg args: Any) = receiver(receiverType, CodeBlock.of(kdoc, args))
 
     @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock? = null) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
