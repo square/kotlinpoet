@@ -158,6 +158,17 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun returnsUnit() {
+    val funSpec = FunSpec.builder("foo")
+        .returns(Unit::class)
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo() {
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class.asTypeName())

@@ -125,7 +125,8 @@ class FunSpec private constructor(builder: Builder) {
       param.emit(codeWriter, includeType = name != SETTER)
     }
 
-    if (returnType != null) {
+    // Omit emitting "Unit" for redundancy.
+    if (returnType != null && returnType != Unit::class.asTypeName()) {
       codeWriter.emitCode(": %T", returnType)
     }
 
