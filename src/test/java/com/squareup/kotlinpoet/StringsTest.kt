@@ -39,4 +39,24 @@ class StringsTest {
         "|\${\'\$\'}annoyingUser is annoying.\n" +
         "\"\"\".trimMargin()\n")
   }
+
+  @Test fun singleLineStringTemplate() {
+    val stringWithTemplate = "$" + "annoyingUser" + " is annoying."
+    val funSpec = FunSpec.builder("getString")
+        .addStatement("return %P", stringWithTemplate)
+        .build()
+    assertThat(funSpec.toString())
+        .isEqualTo("fun getString() = \"\$annoyingUser is annoying.\"\n")
+  }
+
+  @Test fun multilineStringTemplate() {
+    val stringWithTemplate = "Some string\n" + "$" + "annoyingUser" + " is annoying."
+    val funSpec = FunSpec.builder("getString")
+        .addStatement("return %P", stringWithTemplate)
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("fun getString() = \"\"\"\n" +
+        "|Some string\n" +
+        "|\$annoyingUser is annoying.\n" +
+        "\"\"\".trimMargin()\n")
+  }
 }
