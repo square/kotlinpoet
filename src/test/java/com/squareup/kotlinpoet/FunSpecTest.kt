@@ -476,6 +476,44 @@ class FunSpecTest {
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec);
   }
 
+  @Test fun receiverWithKdoc() {
+    val funSpec = FunSpec.builder("toBar")
+        .receiver(String::class, kdoc = "the string to transform.")
+        .returns(String::class)
+        .addCode(CodeBlock.of("return %S", "bar"))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @receiver the string to transform.
+      | */
+      |fun kotlin.String.toBar(): kotlin.String = "bar"
+      """.trimMargin())
+  }
+
+  @Test fun withAllKdocTags() {
+    val funSpec = FunSpec.builder("charAt")
+        .receiver(String::class, kdoc = "the string you want the char from.")
+        .returns(Char::class, kdoc = "The char at the given [position].")
+        .addParameter(ParameterSpec.builder("position", Int::class)
+            .addKdoc("the index of the character that is returned.")
+            .build())
+        .addKdoc("Returns the character at the given [position].\n\n")
+        .addCode(CodeBlock.of("return -1"))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * Returns the character at the given [position].
+      | *
+      | * @receiver the string you want the char from.
+      | * @param position the index of the character that is returned.
+      | * @return The char at the given [position].
+      | */
+      |fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
+      """.trimMargin())
+  }
+
   @Test fun constructorBuilderEqualityTest() {
     val funSpec = FunSpec.constructorBuilder()
         .addParameter("list", List::class.parameterizedBy(Int::class))
