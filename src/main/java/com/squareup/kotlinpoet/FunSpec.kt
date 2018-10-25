@@ -266,19 +266,17 @@ class FunSpec private constructor(builder: Builder) {
       typeVariables += typeVariable
     }
 
-    @JvmOverloads fun receiver(receiverType: TypeName, kdoc: CodeBlock? = null) = apply {
+    @JvmOverloads fun receiver(receiverType: TypeName, kdoc: CodeBlock = CodeBlock.EMPTY) = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
-      kdoc?.let {
-        receiverKdoc = it
-      }
+      this.receiverKdoc = kdoc
     }
 
-    @JvmOverloads fun receiver(receiverType: Type, kdoc: CodeBlock? = null) = receiver(receiverType.asTypeName(), kdoc)
+    @JvmOverloads fun receiver(receiverType: Type, kdoc: CodeBlock = CodeBlock.EMPTY) = receiver(receiverType.asTypeName(), kdoc)
 
     fun receiver(receiverType: Type, kdoc: String, vararg args: Any) = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads fun receiver(receiverType: KClass<*>, kdoc: CodeBlock? = null) = receiver(receiverType.asTypeName(), kdoc)
+    @JvmOverloads fun receiver(receiverType: KClass<*>, kdoc: CodeBlock = CodeBlock.EMPTY) = receiver(receiverType.asTypeName(), kdoc)
 
     fun receiver(receiverType: KClass<*>, kdoc: String, vararg args: Any) = receiver(receiverType, CodeBlock.of(kdoc, args))
 

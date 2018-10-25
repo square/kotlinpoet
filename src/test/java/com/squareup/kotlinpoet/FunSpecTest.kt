@@ -478,7 +478,7 @@ class FunSpecTest {
 
   @Test fun receiverWithKdoc() {
     val funSpec = FunSpec.builder("toBar")
-        .receiver(String::class, "the string to transform.")
+        .receiver(String::class, kdoc = "the string to transform.")
         .returns(String::class)
         .addCode(CodeBlock.of("return %S", "bar"))
         .build()
@@ -487,13 +487,14 @@ class FunSpecTest {
       |/**
       | * @receiver the string to transform.
       | */
-      |fun kotlin.String.toBar(): kotlin.String = "bar"""".trimMargin())
+      |fun kotlin.String.toBar(): kotlin.String = "bar"
+      """.trimMargin())
   }
 
   @Test fun withAllKdocTags() {
     val funSpec = FunSpec.builder("charAt")
-        .receiver(String::class, "the string you want the char from.")
-        .returns(Char::class, "The char at the given [position].")
+        .receiver(String::class, kdoc = "the string you want the char from.")
+        .returns(Char::class, kdoc = "The char at the given [position].")
         .addParameter(ParameterSpec.builder("position", Int::class)
             .addKdoc("the index of the character that is returned.")
             .build())
@@ -510,7 +511,7 @@ class FunSpecTest {
       | * @return The char at the given [position].
       | */
       |fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
-    """.trimMargin())
+      """.trimMargin())
   }
 
   @Test fun constructorBuilderEqualityTest() {
