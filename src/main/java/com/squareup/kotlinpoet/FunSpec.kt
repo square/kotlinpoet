@@ -280,7 +280,7 @@ class FunSpec private constructor(builder: Builder) {
 
     fun receiver(receiverType: KClass<*>, kdoc: String, vararg args: Any) = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock? = null) = apply {
+    @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock = CodeBlock.EMPTY) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
       kdoc?.let {
@@ -288,11 +288,11 @@ class FunSpec private constructor(builder: Builder) {
       }
     }
 
-    @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
+    @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
 
     fun returns(returnType: Type, kdoc: String, vararg args: Any) = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
-    @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock? = null) = returns(returnType.asTypeName(), kdoc)
+    @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
 
     fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any)
         = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
