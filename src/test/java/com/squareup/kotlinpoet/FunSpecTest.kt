@@ -158,6 +158,28 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun returnsUnitWithoutExpressionBody() {
+    val funSpec = FunSpec.builder("foo")
+        .returns(Unit::class)
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo() {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun returnsUnitWithExpressionBody() {
+    val funSpec = FunSpec.builder("foo")
+        .returns(Unit::class)
+        .addCode(CodeBlock.of("return bar()"))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(): kotlin.Unit = bar()
+      """.trimMargin())
+  }
+
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class.asTypeName())

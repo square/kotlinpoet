@@ -126,7 +126,7 @@ class FunSpec private constructor(builder: Builder) {
       param.emit(codeWriter, includeType = name != SETTER)
     }
 
-    if (returnType != null) {
+    if (emitReturnType(returnType)) {
       codeWriter.emitCode(": %T", returnType)
     }
 
@@ -155,6 +155,26 @@ class FunSpec private constructor(builder: Builder) {
       }
       build()
     }
+  }
+
+  /**
+   * Returns whether we should emit the return type for given [returnType].
+   *
+   * For return types like [Unit], we can omit emitting the return type, only
+   * if it's not a single expression body.
+   * If it is a single expression body, we want to emit [Unit] so that any type
+   * change in the delegated function doesn't inadvertently carry over to the
+   * delegating function.
+   */
+  private fun emitReturnType(returnType: TypeName?): Boolean {
+    if (returnType != null) {
+      return returnType != Unit::class.asTypeName() || isExpressionBody()
+    }
+    return false
+  }
+
+  private fun isExpressionBody(): Boolean {
+    return body.trim().withoutPrefix(EXPRESSION_BODY_PREFIX) != null
   }
 
   override fun equals(other: Any?): Boolean {
