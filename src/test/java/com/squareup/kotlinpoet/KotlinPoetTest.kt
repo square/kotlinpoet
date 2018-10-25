@@ -355,7 +355,7 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((name: String) -> Unit).whatever() = Unit
+      |fun ((name: String) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 
@@ -384,7 +384,7 @@ class KotlinPoetTest {
       |    name: String,
       |    Int,
       |    age: Long
-      |) -> Unit).whatever() = Unit
+      |) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 
