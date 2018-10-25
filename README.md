@@ -168,6 +168,42 @@ class HelloWorld {
 }
 ```
 
+### %P for String Templates
+
+`%S` also handles the escaping of dollar signs (`$`), to avoid inadvertent creation of string 
+templates, which may fail to compile in generated code:
+
+```kotlin
+val stringWithADollar = "Your total is " + "$" + "50"
+val funSpec = FunSpec.builder("printTotal")
+    .returns(String::class)
+    .addStatement("return %S", stringWithADollar)
+    .build()
+```
+
+produces:
+
+```kotlin
+fun printTotal(): String = "Your total is ${'$'}50"
+```
+
+If you need to generate string templates, use `%P`, which doesn't escape dollars:
+
+```kotlin
+val amount = 50
+val stringWithADollar = "Your total is " + "$" + "amount"
+val funSpec = FunSpec.builder("printTotal")
+    .returns(String::class)
+    .addStatement("return %P", stringWithADollar)
+    .build()
+```
+
+produces:
+
+```kotlin
+fun printTotal(): String = "Your total is $amount"
+```
+
 ### %T for Types
 
 KotlinPoet has rich built-in support for types, including automatic generation of `import`

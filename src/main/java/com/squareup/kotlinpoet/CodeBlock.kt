@@ -37,7 +37,10 @@ import kotlin.reflect.KClass
  *    be strings (actually any [character sequence][CharSequence]), [parameters][ParameterSpec],
  *    [properties][PropertySpec], [functions][FunSpec], and [types][TypeSpec].
  *  * `%S` escapes the value as a *string*, wraps it with double quotes, and emits that. For
- *    example, `6" sandwich` is emitted `"6\" sandwich"`.
+ *    example, `6" sandwich` is emitted `"6\" sandwich"`. `%S` will also escape all dollar signs
+ *    (`$`), use `%P` for string templates.
+ *  * `%P` - Similar to `%S`, but doesn't escape dollar signs (`$`) to allow creation of string
+ *    templates. If the string contains dollar signs that should be escaped - use `%S`.
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
@@ -322,7 +325,7 @@ class CodeBlock private constructor(
       when (c) {
         'N' -> this.args += escapeIfKeyword(argToName(arg))
         'L' -> this.args += argToLiteral(arg)
-        'S' -> this.args += argToString(arg)
+        'S', 'P' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
         else -> throw IllegalArgumentException(
             String.format("invalid format string: '%s'", format))
