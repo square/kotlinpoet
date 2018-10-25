@@ -283,9 +283,7 @@ class FunSpec private constructor(builder: Builder) {
     @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock = CodeBlock.EMPTY) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
-      kdoc?.let {
-        this.returnKdoc = it
-      }
+      this.returnKdoc = kdoc
     }
 
     @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
