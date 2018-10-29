@@ -22,7 +22,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip><!-- We use Dokka instead. -->
 
     <java.version>1.7</java.version>
-    <kotlin.version>1.2.71</kotlin.version>
+    <kotlin.version>1.3.0</kotlin.version>
     <dokka.version>0.9.17</dokka.version>
     <junit.version>4.12</junit.version>
     <truth.version>0.40</truth.version>
