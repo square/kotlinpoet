@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
+import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.TypeSpec.Kind.Interface
 import com.squareup.kotlinpoet.TypeSpec.Kind.Object
 import java.lang.reflect.Type
@@ -410,7 +411,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val isEnum get() = kind is Kind.Class && ENUM in kind.modifiers
     internal val isAnnotation get() = kind is Kind.Class && ANNOTATION in kind.modifiers
     internal val isCompanion get() = kind is Kind.Object && COMPANION in kind.modifiers
-    internal val isSimpleClass = kind is Kind.Class && !isEnum && !isAnnotation
+    internal val isInlineClass get() = kind is Kind.Class && INLINE in kind.modifiers
+    internal val isSimpleClass get() = kind is Kind.Class && !isEnum && !isAnnotation
 
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()
@@ -469,6 +471,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         require(primaryConstructor.isConstructor) {
           "expected a constructor but was ${primaryConstructor.name}"
         }
+
+        if (isInlineClass) {
+          check(primaryConstructor.parameters.size == 1) {
+            "Inline class can only have 1 parameter in constructor"
+          }
+        }
       }
       this.primaryConstructor = primaryConstructor
     }
@@ -482,6 +490,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     private fun checkCanHaveSuperclass() {
       check(isSimpleClass || kind is Object) {
         "only classes can have super classes, not $kind"
+      }
+      check(!isInlineClass) {
+        "Inline classes cannot have super classes"
+      }
+    }
+
+    private fun checkCanHaveInitializerBlocks() {
+      check(isSimpleClass || isEnum || kind is Object) {
+        "$kind can't have initializer blocks"
+      }
+      check(!isInlineClass) {
+        "Inline class can't have initializer blocks"
+      }
+      check(EXPECT !in kind.modifiers) {
+        "expect $kind can't have initializer blocks"
       }
     }
 
@@ -575,12 +598,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         = addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
-      check(isSimpleClass || isEnum || kind is Object) {
-        "$kind can't have initializer blocks"
-      }
-      check(EXPECT !in kind.modifiers) {
-        "expect $kind can't have initializer blocks"
-      }
+      checkCanHaveInitializerBlocks()
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
@@ -646,6 +664,21 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
       if (primaryConstructor == null) {
         require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
           "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
+        }
+      }
+
+      if (isInlineClass) {
+        primaryConstructor?.let {
+          // Inline classes only have 1 parameter
+          check(it.parameters.size == 1) {
+            "Inline class can only have 1 parameter in constructor"
+          }
+        }
+        check(propertySpecs.size == 1) {
+          "Inline class can only have 1 property"
+        }
+        check(!propertySpecs.first().mutable) {
+          "Inline class must have a single read-only (val) property."
         }
       }
 

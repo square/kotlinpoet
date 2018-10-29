@@ -26,6 +26,7 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
@@ -1753,6 +1754,130 @@ class TypeSpecTest {
         |            |${"\"\"\""}.trimMargin()
         |}
         |""".trimMargin())
+  }
+
+  @Test fun validInlineClass() {
+    val guacamole = TypeSpec.classBuilder("Guacamole")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("avacado", String::class)
+            .build())
+        .addProperty(PropertySpec.builder("avacado", String::class)
+            .initializer("avacado")
+            .build())
+        .addModifiers(INLINE)
+        .build()
+
+    assertThat(guacamole.toString()).isEqualTo("""
+      |inline class Guacamole(val avacado: kotlin.String)
+      |""".trimMargin())
+  }
+
+  @Test fun inlineClassWithInitBlock() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .build())
+          .addModifiers(INLINE)
+          .addInitializerBlock(CodeBlock.EMPTY)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline class can't have initializer blocks")
+  }
+
+  class InlineSuperClass
+
+  @Test fun inlineClassWithSuperClass() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .build())
+          .addModifiers(INLINE)
+          .superclass(InlineSuperClass::class)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline classes cannot have super classes")
+  }
+
+  interface InlineSuperInterface
+
+  @Test fun inlineClassInheritsFromInterface() {
+    val guacamole = TypeSpec.classBuilder("Guacamole")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("avacado", String::class)
+            .build())
+        .addProperty(PropertySpec.builder("avacado", String::class)
+            .initializer("avacado")
+            .build())
+        .addModifiers(INLINE)
+        .addSuperinterface(InlineSuperInterface::class)
+        .build()
+
+    assertThat(guacamole.toString()).isEqualTo("""
+      |inline class Guacamole(val avacado: kotlin.String) : com.squareup.kotlinpoet.TypeSpecTest.InlineSuperInterface
+      |""".trimMargin())
+  }
+
+  @Test fun inlineClassWithTwoParameters() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .addParameter("garlic", String::class)
+              .build())
+          .addModifiers(INLINE)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline class can only have 1 parameter in constructor")
+  }
+
+  @Test fun inlineClassWithoutProperties() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .build())
+          .addModifiers(INLINE)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline class can only have 1 property")
+  }
+
+  @Test fun inlineClassWithMutableProperties() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .build())
+          .addProperty(PropertySpec.builder("avacado", String::class)
+              .initializer("avacado")
+              .mutable(true)
+              .build())
+          .addModifiers(INLINE)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline class must have a single read-only (val) property.")
+  }
+
+  @Test fun inlineEnumClass() {
+    val guacamole = TypeSpec.enumBuilder("Foo")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("x", Int::class)
+            .build())
+        .addEnumConstant("A", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%S", "1")
+            .build())
+        .addEnumConstant("B", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%S", "2")
+            .build())
+        .addProperty(PropertySpec.builder("x", Int::class)
+            .initializer("x")
+            .build())
+        .addModifiers(INLINE)
+        .build()
+    assertThat(guacamole.toString()).isEqualTo("""
+      |enum inline class Foo(val x: kotlin.Int) {
+      |    A("1"),
+      |
+      |    B("2");
+      |}
+      |""".trimMargin())
   }
 
   @Test fun doublePropertyInitialization() {
