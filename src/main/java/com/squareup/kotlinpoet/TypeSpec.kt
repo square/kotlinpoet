@@ -476,7 +476,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         if (isInlineClass) {
           check(primaryConstructor.parameters.size == 1) {
-            "Inline class can only have 1 parameter in constructor"
+            "Inline class must have 1 parameter in constructor"
           }
         }
       }
