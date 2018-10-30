@@ -24,6 +24,8 @@ import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.INLINE
+import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.TypeSpec.Kind.Interface
 import com.squareup.kotlinpoet.TypeSpec.Kind.Object
 import java.lang.reflect.Type
@@ -669,16 +671,30 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       if (isInlineClass) {
         primaryConstructor?.let {
-          // Inline classes only have 1 parameter
+          // Inline classes only have 1 constructor parameter
           check(it.parameters.size == 1) {
-            "Inline class can only have 1 parameter in constructor"
+            "Inline class must have 1 parameter in constructor"
+          }
+          // Inline class must have public primary constructor
+          check(PRIVATE !in it.modifiers && INTERNAL !in it.modifiers) {
+            "Inline class must have a public primary constructor"
           }
         }
+        // Inline classes can only have 1 backing property
         check(propertySpecs.size == 1) {
-          "Inline class can only have 1 property"
+          "Inline class must have a single read-only (val) property."
         }
+        // Inline classes property must be immutable.
         check(!propertySpecs.first().mutable) {
           "Inline class must have a single read-only (val) property."
+        }
+        // Inline class cannot have init blocks
+        check(initializerBlock.isEmpty()) {
+          "Inline class can't have initializer blocks"
+        }
+        // Inline class cannot have super class
+        check(superclass == Any::class.asTypeName()) {
+          "Inline classes cannot have super classes"
         }
       }
 

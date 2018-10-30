@@ -1778,8 +1778,11 @@ class TypeSpecTest {
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("avacado", String::class)
               .build())
-          .addModifiers(INLINE)
+          .addProperty(PropertySpec.builder("avacado", String::class)
+              .initializer("avacado")
+              .build())
           .addInitializerBlock(CodeBlock.EMPTY)
+          .addModifiers(INLINE)
           .build()
     }.hasMessageThat().isEqualTo("Inline class can't have initializer blocks")
   }
@@ -1792,8 +1795,11 @@ class TypeSpecTest {
           .primaryConstructor(FunSpec.constructorBuilder()
               .addParameter("avacado", String::class)
               .build())
-          .addModifiers(INLINE)
+          .addProperty(PropertySpec.builder("avacado", String::class)
+              .initializer("avacado")
+              .build())
           .superclass(InlineSuperClass::class)
+          .addModifiers(INLINE)
           .build()
     }.hasMessageThat().isEqualTo("Inline classes cannot have super classes")
   }
@@ -1808,8 +1814,8 @@ class TypeSpecTest {
         .addProperty(PropertySpec.builder("avacado", String::class)
             .initializer("avacado")
             .build())
-        .addModifiers(INLINE)
         .addSuperinterface(InlineSuperInterface::class)
+        .addModifiers(INLINE)
         .build()
 
     assertThat(guacamole.toString()).isEqualTo("""
@@ -1826,7 +1832,7 @@ class TypeSpecTest {
               .build())
           .addModifiers(INLINE)
           .build()
-    }.hasMessageThat().isEqualTo("Inline class can only have 1 parameter in constructor")
+    }.hasMessageThat().isEqualTo("Inline class must have 1 parameter in constructor")
   }
 
   @Test fun inlineClassWithoutProperties() {
@@ -1837,7 +1843,7 @@ class TypeSpecTest {
               .build())
           .addModifiers(INLINE)
           .build()
-    }.hasMessageThat().isEqualTo("Inline class can only have 1 property")
+    }.hasMessageThat().isEqualTo("Inline class must have a single read-only (val) property.")
   }
 
   @Test fun inlineClassWithMutableProperties() {
@@ -1853,6 +1859,21 @@ class TypeSpecTest {
           .addModifiers(INLINE)
           .build()
     }.hasMessageThat().isEqualTo("Inline class must have a single read-only (val) property.")
+  }
+
+  @Test fun inlineClassWithPrivateConstructor() {
+    assertThrows<IllegalStateException> {
+      TypeSpec.classBuilder("Guacamole")
+          .primaryConstructor(FunSpec.constructorBuilder()
+              .addParameter("avacado", String::class)
+              .addModifiers(PRIVATE)
+              .build())
+          .addProperty(PropertySpec.builder("avacado", String::class)
+              .initializer("avacado")
+              .build())
+          .addModifiers(INLINE)
+          .build()
+    }.hasMessageThat().isEqualTo("Inline class must have a public primary constructor")
   }
 
   @Test fun inlineEnumClass() {
