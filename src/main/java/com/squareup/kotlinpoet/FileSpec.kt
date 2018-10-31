@@ -87,7 +87,11 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
   private fun emit(codeWriter: CodeWriter) {
     if (comment.isNotEmpty()) {
-      codeWriter.emitComment(comment)
+      if (comment.isMultiLine()) {
+        codeWriter.emitKdoc(comment)
+      } else {
+        codeWriter.emitComment(comment)
+      }
     }
 
     if (annotations.isNotEmpty()) {
@@ -129,6 +133,10 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     }
 
     codeWriter.popPackage()
+  }
+
+  private fun CodeBlock.isMultiLine(): Boolean {
+    return this.toString().contains("\n")
   }
 
   override fun equals(other: Any?): Boolean {
@@ -209,6 +217,10 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     fun addComment(format: String, vararg args: Any) = apply {
       comment.add(format, *args)
+    }
+
+    fun addComment(comment: CodeBlock) = apply {
+      this.comment.add(comment)
     }
 
     fun addType(typeSpec: TypeSpec) = apply {
