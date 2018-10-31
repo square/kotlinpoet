@@ -476,7 +476,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
         if (isInlineClass) {
           check(primaryConstructor.parameters.size == 1) {
-            "Inline class must have 1 parameter in constructor"
+            "Inline classes must have 1 parameter in constructor"
           }
         }
       }
@@ -503,7 +503,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         "$kind can't have initializer blocks"
       }
       check(!isInlineClass) {
-        "Inline class can't have initializer blocks"
+        "Inline classes can't have initializer blocks"
       }
       check(EXPECT !in kind.modifiers) {
         "expect $kind can't have initializer blocks"
@@ -671,28 +671,31 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
       if (isInlineClass) {
         primaryConstructor?.let {
-          // Inline classes only have 1 constructor parameter
           check(it.parameters.size == 1) {
-            "Inline class must have 1 parameter in constructor"
+            "Inline classes must have 1 parameter in constructor"
           }
-          // Inline class must have public primary constructor
           check(PRIVATE !in it.modifiers && INTERNAL !in it.modifiers) {
-            "Inline class must have a public primary constructor"
+            "Inline classes must have a public primary constructor"
           }
         }
-        // Inline classes can only have 1 backing property
-        check(propertySpecs.size == 1) {
-          "Inline class must have a single read-only (val) property."
+
+        check(propertySpecs.size > 0) {
+          "Inline classes must have at least 1 property"
         }
-        // Inline classes property must be immutable.
-        check(!propertySpecs.first().mutable) {
-          "Inline class must have a single read-only (val) property."
+
+        val constructorParamName = primaryConstructor?.parameters?.firstOrNull()?.name
+        constructorParamName?.let { paramName ->
+          val underlyingProperty = propertySpecs.find { it.name == paramName }
+          requireNotNull(underlyingProperty) {
+            "Inline classes must have a single read-only (val) property parameter."
+          }
+          check(!underlyingProperty.mutable) {
+            "Inline classes must have a single read-only (val) property parameter."
+          }
         }
-        // Inline class cannot have init blocks
         check(initializerBlock.isEmpty()) {
-          "Inline class can't have initializer blocks"
+          "Inline classes can't have initializer blocks"
         }
-        // Inline class cannot have super class
         check(superclass == Any::class.asTypeName()) {
           "Inline classes cannot have super classes"
         }
