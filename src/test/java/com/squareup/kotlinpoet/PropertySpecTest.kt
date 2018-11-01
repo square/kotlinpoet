@@ -36,6 +36,20 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo("val foo: kotlin.String by Delegates.notNull()\n")
   }
 
+  @Test fun emptySetter() {
+    val prop = PropertySpec.builder("foo", String::class)
+        .mutable()
+        .setter(FunSpec.setterBuilder()
+            .addModifiers(KModifier.PRIVATE)
+            .build())
+        .build()
+
+    assertThat(prop.toString()).isEqualTo("""
+      |var foo: kotlin.String
+      |    private set
+      """.trimMargin())
+  }
+
   @Test fun inlineSingleAccessor() {
     val prop = PropertySpec.builder("foo", String::class)
         .getter(FunSpec.getterBuilder()

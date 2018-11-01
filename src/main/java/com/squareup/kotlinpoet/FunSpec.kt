@@ -44,13 +44,14 @@ class FunSpec private constructor(builder: Builder) {
   val delegateConstructor = builder.delegateConstructor
   val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
   val body = builder.body.build()
+  private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
     require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
       "abstract function ${builder.name} cannot have code"
     }
-    require(name != SETTER || parameters.size == 1) {
-      "$name must have exactly one parameter"
+    require(name != SETTER || parameters.size <= 1) {
+      "$name can have at most one parameter"
     }
     require(INLINE in modifiers || typeVariables.none { it.reified }) {
       "only type parameters of inline functions can be reified!"
@@ -95,7 +96,7 @@ class FunSpec private constructor(builder: Builder) {
 
     if (asExpressionBody != null) {
       codeWriter.emitCode(" = %L", asExpressionBody)
-    } else {
+    } else if (!isEmptySetter) {
       codeWriter.emit(" {\n")
       codeWriter.indent()
       codeWriter.emitCode(body)
@@ -122,8 +123,10 @@ class FunSpec private constructor(builder: Builder) {
       codeWriter.emitCode("%L", escapeIfNecessary(name))
     }
 
-    parameters.emit(codeWriter) { param ->
-      param.emit(codeWriter, includeType = name != SETTER)
+    if (!isEmptySetter) {
+      parameters.emit(codeWriter) { param ->
+        param.emit(codeWriter, includeType = name != SETTER)
+      }
     }
 
     if (emitReturnType(returnType)) {
@@ -399,7 +402,7 @@ class FunSpec private constructor(builder: Builder) {
     fun build(): FunSpec {
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
-      check(!(name == SETTER && parameters.size != 1)) { "$name can have only one parameter" }
+      check(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
       return FunSpec(this)
     }
   }
