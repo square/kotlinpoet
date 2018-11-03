@@ -49,13 +49,13 @@ class WildcardTypeName private constructor(
     if (lowerBounds.size == 1) {
       return out.emitCode("in %T", lowerBounds[0])
     }
-    return if (upperBounds[0] == ANY)
+    return if (upperBounds[0] == ANY.asNullable())
       out.emit("*") else
       out.emitCode("out %T", upperBounds[0])
   }
 
   companion object {
-    @JvmField val STAR = subtypeOf(Any::class)
+    @JvmField val STAR = subtypeOf(ANY.asNullable())
 
     /**
      * Returns a type that represents an unknown type that extends `bound`. For example, if `bound`
