@@ -20,8 +20,8 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Test
 import java.io.Closeable
-import java.util.Queue
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
@@ -97,7 +97,7 @@ class ParameterizedTypeNameTest {
     val invariantNullable: KClass<Test>?
     val star: KClass<*>
     val multiVariant: Map<in String, List<Map<KClass<out Number>, *>?>>
-    val outAnyOnTypeWithoutBoundsAndVariance: Queue<out Any>
+    val outAnyOnTypeWithoutBoundsAndVariance: KMutableProperty<out Any>
   }
 
   private fun assertKTypeProjections(kType: KType) = assertThat(kType.asTypeName().toString()).isEqualTo(kType.toString())
