@@ -21,6 +21,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Test
 import java.io.Closeable
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
@@ -96,6 +97,7 @@ class ParameterizedTypeNameTest {
     val invariantNullable: KClass<Test>?
     val star: KClass<*>
     val multiVariant: Map<in String, List<Map<KClass<out Number>, *>?>>
+    val outAnyOnTypeWithoutBoundsAndVariance: KMutableProperty<out Any>
   }
 
   private fun assertKTypeProjections(kType: KType) = assertThat(kType.asTypeName().toString()).isEqualTo(kType.toString())
@@ -109,4 +111,7 @@ class ParameterizedTypeNameTest {
   @Test fun kTypeStarProjection() = assertKTypeProjections(Projections::star.returnType)
 
   @Test fun kTypeMultiVariantProjection() = assertKTypeProjections(Projections::multiVariant.returnType)
+
+  @Test fun kTypeOutAnyOnTypeWithoutBoundsVariance() = assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
+
 }
