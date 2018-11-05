@@ -106,8 +106,24 @@ class PropertySpecTest {
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
 
-  @Test
-  fun externalTopLevel() {
+  @Test fun escapeKeywordInPropertyName() {
+    val prop = PropertySpec.builder("object", String::class)
+        .build()
+    assertThat(prop.toString()).isEqualTo("""
+      |val `object`: kotlin.String
+      |""".trimMargin())
+  }
+
+  @Test fun escapeKeywordInVariableName() {
+    val prop = PropertySpec.builder("object", String::class)
+        .mutable()
+        .build()
+    assertThat(prop.toString()).isEqualTo("""
+      |var `object`: kotlin.String
+      |""".trimMargin())
+  }
+
+  @Test fun externalTopLevel() {
     val prop = PropertySpec.builder("foo", String::class)
         .addModifiers(KModifier.EXTERNAL)
         .build()
