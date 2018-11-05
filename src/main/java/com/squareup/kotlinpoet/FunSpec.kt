@@ -74,7 +74,9 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
-    if (!isConstructor && !name.isAccessor) {
+    if (name == null) {
+      codeWriter.emit("fun")
+    } else if (!isConstructor && !name.isAccessor) {
       codeWriter.emit("fun ")
     }
 
@@ -120,7 +122,9 @@ class FunSpec private constructor(builder: Builder) {
           codeWriter.emitCode("%T.", receiverType)
         }
       }
-      codeWriter.emitCode("%L", escapeIfNecessary(name))
+      if (name != null) {
+        codeWriter.emitCode("%L", escapeIfNecessary(name))
+      }
     }
 
     if (!isEmptySetter) {
@@ -214,7 +218,7 @@ class FunSpec private constructor(builder: Builder) {
     return builder
   }
 
-  class Builder internal constructor(internal val name: String) {
+  class Builder internal constructor(internal val name: String?) {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
@@ -412,8 +416,8 @@ class FunSpec private constructor(builder: Builder) {
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
 
-    internal val String.isConstructor get() = this == CONSTRUCTOR
-    internal val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
+    internal val String?.isConstructor get() = this === CONSTRUCTOR
+    internal val String?.isAccessor get() = this != null && this.isOneOf(GETTER, SETTER)
 
     private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
 
@@ -424,6 +428,8 @@ class FunSpec private constructor(builder: Builder) {
     @JvmStatic fun getterBuilder() = Builder(GETTER)
 
     @JvmStatic fun setterBuilder() = Builder(SETTER)
+
+    @JvmStatic fun anonymousFunctionBuilder() = Builder(null)
 
     /**
      * Returns a new fun spec builder that overrides `method`.
