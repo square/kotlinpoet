@@ -33,7 +33,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    if (name.isNotEmpty()) codeWriter.emitCode("%L", escapeIfNecessary(name))
+    if (name.isNotEmpty()) codeWriter.emitCode("%L", name.escapeIfNecessary())
     if (name.isNotEmpty() && includeType) codeWriter.emit(": ")
     if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)

@@ -138,14 +138,17 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun escapeKeywords(canonicalName: String)
-    = canonicalName.split('.').joinToString(".") { escapeIfKeyword(it) }
+/**
+ * @receiver Canonical name
+ */
+internal fun String.escapeKeywords() = split('.').joinToString(".") { it.escapeIfKeyword() }
 
-internal fun escapeIfKeyword(value: String) = if (value.isKeyword) "`$value`" else value
+internal fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
 
-internal fun escapeIfNotJavaIdentifier(value: String) = if (!Character.isJavaIdentifierStart(value.first()) || value.drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$value`" else value
+internal fun String.escapeIfNotJavaIdentifier() =
+  if (!Character.isJavaIdentifierStart(first()) || drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$this`" else this
 
-internal fun escapeIfNecessary(value: String) = escapeIfKeyword(escapeIfNotJavaIdentifier(value))
+internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword()
 
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 

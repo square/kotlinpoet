@@ -89,10 +89,10 @@ class UtilTest {
   }
 
   @Test fun escapeNonJavaIdentifiers() {
-    assertThat(escapeIfNotJavaIdentifier("8startWithNumber")).isEqualTo("`8startWithNumber`")
-    assertThat(escapeIfNotJavaIdentifier("with-hyphen")).isEqualTo("`with-hyphen`")
-    assertThat(escapeIfNotJavaIdentifier("with space")).isEqualTo("`with space`")
-    assertThat(escapeIfNotJavaIdentifier("with_unicode_punctuation\u2026")).isEqualTo("`with_unicode_punctuation\u2026`")
+    assertThat("8startWithNumber".escapeIfNotJavaIdentifier()).isEqualTo("`8startWithNumber`")
+    assertThat("with-hyphen".escapeIfNotJavaIdentifier()).isEqualTo("`with-hyphen`")
+    assertThat("with space".escapeIfNotJavaIdentifier()).isEqualTo("`with space`")
+    assertThat("with_unicode_punctuation\u2026".escapeIfNotJavaIdentifier()).isEqualTo("`with_unicode_punctuation\u2026`")
   }
 
   private fun stringLiteral(string: String) = stringLiteral(string, string)

@@ -123,7 +123,7 @@ class ClassName internal constructor(
 
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
-  override fun emit(out: CodeWriter) = out.emit(escapeKeywords(out.lookupName(this)))
+  override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
 
   companion object {
     /**
