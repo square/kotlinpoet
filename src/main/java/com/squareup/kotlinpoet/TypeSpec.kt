@@ -287,7 +287,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     for (property in propertySpecs) {
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
-      if (CodeBlock.of("%N", parameter) != property.initializer) continue
+      if (CodeBlock.of("%N", parameter) != CodeBlock.of("%N", property.initializer.toString()))
+        continue
 
       result[property.name] = property.fromPrimaryConstructorParameter(parameter)
     }
