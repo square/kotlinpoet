@@ -150,13 +150,17 @@ class CodeBlock private constructor(
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
-    if (javaClass != other.javaClass) return false
-    return toString() == other.toString()
+    if (other !is CodeBlock) return false
+    return toUnescapedString() == other.toUnescapedString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode() = toUnescapedString().hashCode()
 
   override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock) }
+
+  private fun toUnescapedString() = toString().run {
+    if (isNotEmpty() && first() == '`' && last() == '`') substring(1, length - 1) else this
+  }
 
   fun toBuilder(): Builder {
     val builder = Builder()
