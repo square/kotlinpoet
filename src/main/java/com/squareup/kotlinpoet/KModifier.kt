@@ -75,6 +75,6 @@ enum class KModifier(
   }
 
   internal fun checkTarget(target: Target) {
-    require(targets.contains(target)) { "unexpected modifier $this for $target" }
+    require(target in targets) { "unexpected modifier $this for $target" }
   }
 }

@@ -218,7 +218,7 @@ class CodeBlock private constructor(
           }
           val formatChar = matchResult.groupValues[TYPE_NAME].first()
           addArgument(format, formatChar, arguments[argumentName])
-          formatParts += "%" + formatChar
+          formatParts += "%$formatChar"
           p += matchResult.range.endInclusive + 1
         } else {
           require(p < format.length - 1) { "dangling % at end" }
@@ -275,7 +275,7 @@ class CodeBlock private constructor(
           require(indexStart == indexEnd) {
             "%%, %>, %<, %[, %], and %W may not have an index"
           }
-          formatParts += "%" + c
+          formatParts += "%$c"
           continue
         }
 
@@ -301,7 +301,7 @@ class CodeBlock private constructor(
 
         addArgument(format, c, args[index])
 
-        formatParts += "%" + c
+        formatParts += "%$c"
       }
 
       if (hasRelative) {
@@ -338,7 +338,7 @@ class CodeBlock private constructor(
       is PropertySpec -> o.name
       is FunSpec -> o.name
       is TypeSpec -> o.name!!
-      else -> throw IllegalArgumentException("expected name but was " + o)
+      else -> throw IllegalArgumentException("expected name but was $o")
     }
 
     private fun argToLiteral(o: Any?) = o
@@ -351,7 +351,7 @@ class CodeBlock private constructor(
       is Element -> o.asType().asTypeName()
       is Type -> o.asTypeName()
       is KClass<*> -> o.asTypeName()
-      else -> throw IllegalArgumentException("expected type but was " + o)
+      else -> throw IllegalArgumentException("expected type but was $o")
     }
 
     /**
@@ -435,7 +435,7 @@ fun Collection<CodeBlock>.joinToCode(
   suffix: CharSequence = ""
 ): CodeBlock {
   val blocks = toTypedArray()
-  val placeholders = Array(blocks.size, { "%L" })
+  val placeholders = Array(blocks.size) { "%L" }
   return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
 }
 

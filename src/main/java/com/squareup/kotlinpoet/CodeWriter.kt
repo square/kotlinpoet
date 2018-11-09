@@ -136,7 +136,7 @@ internal class CodeWriter constructor(
   ) {
     if (modifiers.isEmpty()) return
     for (modifier in modifiers.toEnumSet()) {
-      if (implicitModifiers.contains(modifier)) continue
+      if (modifier in implicitModifiers) continue
       emit(modifier.keyword)
       emit(" ")
     }
@@ -221,7 +221,7 @@ internal class CodeWriter constructor(
           if (typeName is ClassName && partIterator.hasNext()) {
             if (!codeBlock.formatParts[partIterator.nextIndex()].startsWith("%")) {
               val candidate = typeName
-              if (memberImportClassNames.contains(candidate.canonicalName)) {
+              if (candidate.canonicalName in memberImportClassNames) {
                 check(deferredTypeName == null) { "pending type for static import?!" }
                 deferredTypeName = candidate
                 defer = true
@@ -275,10 +275,6 @@ internal class CodeWriter constructor(
         }
       }
     }
-  }
-
-  fun emitWrappingSpace() = apply {
-    out.wrappingSpace(indentLevel + 2)
   }
 
   private fun emitStaticImportMember(canonical: String, part: String): Boolean {
@@ -362,7 +358,7 @@ internal class CodeWriter constructor(
     val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName
     val replaced = importableTypes.put(simpleName, topLevelClassName)
     if (replaced != null) {
-      importableTypes.put(simpleName, replaced) // On collision, prefer the first inserted.
+      importableTypes[simpleName] = replaced // On collision, prefer the first inserted.
     }
   }
 

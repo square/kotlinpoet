@@ -171,7 +171,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         val types = listOf(superclass).filter { it != ANY }.map {
-          if (primaryConstructor != null || funSpecs.none { it.isConstructor }) {
+          if (primaryConstructor != null || funSpecs.none(FunSpec::isConstructor)) {
             CodeBlock.of("%T(%L)", it, superclassConstructorParametersBlock)
           } else {
             CodeBlock.of("%T", it)
@@ -524,14 +524,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     }
 
     fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
-      this.superinterfaces.putAll(superinterfaces.map {
-        Pair(it, null)
-      })
+      this.superinterfaces.putAll(superinterfaces.map { it to null })
     }
 
     fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
       if (delegate.isEmpty()) {
-        this.superinterfaces.put(superinterface, null)
+        this.superinterfaces[superinterface] = null
       } else {
         require(isSimpleClass) {
           "delegation only allowed for classes (found $kind '$name')"

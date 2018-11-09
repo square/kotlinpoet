@@ -83,7 +83,7 @@ internal fun stringLiteralWithQuotes(
   value: String,
   escapeDollarSign: Boolean = true
 ): String {
-  if (value.contains("\n")) {
+  if ('\n' in value) {
     val result = StringBuilder(value.length + 32)
     result.append("\"\"\"\n|")
     var i = 0
@@ -152,7 +152,7 @@ internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKe
 
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
-internal val String.isKeyword get() = KEYWORDS.contains(this)
+internal val String.isKeyword get() = this in KEYWORDS
 
 internal val String.isName get() = split("\\.").none { it.isKeyword }
 
