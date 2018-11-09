@@ -138,7 +138,7 @@ abstract class TypeName internal constructor(
           val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
           val enclosingType = t.enclosingType
           val enclosing = if (enclosingType.kind != TypeKind.NONE
-              && !t.asElement().modifiers.contains(Modifier.STATIC))
+              && Modifier.STATIC !in t.asElement().modifiers)
             enclosingType.accept(this, null) else
             null
           if (t.typeArguments.isEmpty() && enclosing !is ParameterizedTypeName) {
