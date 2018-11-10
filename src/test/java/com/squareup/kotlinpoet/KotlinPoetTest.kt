@@ -723,4 +723,25 @@ class KotlinPoetTest {
       |)
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/483
+  @Test fun foldingPropertyWithEscapedName() {
+    val file = FileSpec.builder("com.squareup.tacos", "AlarmInfo")
+        .addType(TypeSpec.classBuilder("AlarmInfo")
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter("when", Float::class)
+                .build())
+            .addProperty(PropertySpec.builder("when", Float::class)
+                .initializer("when")
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Float
+      |
+      |class AlarmInfo(val `when`: Float)
+      |""".trimMargin())
+  }
 }
