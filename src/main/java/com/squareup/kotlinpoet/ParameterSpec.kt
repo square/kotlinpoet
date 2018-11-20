@@ -41,7 +41,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   internal fun emitDefaultValue(codeWriter: CodeWriter) {
     if (defaultValue != null) {
-      codeWriter.emitCode(if (defaultValue.hasStatements()) " = %L" else " = %[%L%]", defaultValue)
+      codeWriter.emitCode(if (defaultValue.hasStatements()) " = %L" else " = «%L»", defaultValue)
     }
   }
 

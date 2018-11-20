@@ -234,17 +234,17 @@ internal class CodeWriter constructor(
 
         "%%" -> emit("%")
 
-        "%>" -> indent()
+        "⇥" -> indent()
 
-        "%<" -> unindent()
+        "⇤" -> unindent()
 
-        "%[" -> {
-          check(statementLine == -1) { "statement enter %[ followed by statement enter %[" }
+        "«" -> {
+          check(statementLine == -1) { "statement enter « followed by statement enter «" }
           statementLine = 0
         }
 
-        "%]" -> {
-          check(statementLine != -1) { "statement exit %] has no matching statement enter %[" }
+        "»" -> {
+          check(statementLine != -1) { "statement exit » has no matching statement enter «" }
           if (statementLine > 0) {
             unindent(2) // End a multi-line statement. Decrease the indentation level.
           }

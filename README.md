@@ -954,7 +954,7 @@ val logRecord = FunSpec.builder("recordEvent")
     .addModifiers(KModifier.ABSTRACT)
     .addAnnotation(AnnotationSpec.builder(headerList)
         .addMember(
-            "[\n%>%L,\n%L%<\n]",
+            "[\n⇥%L,\n%L⇤\n]",
             AnnotationSpec.builder(header)
                 .addMember("name = %S", "Accept")
                 .addMember("value = %S", "application/json; charset=utf-8")

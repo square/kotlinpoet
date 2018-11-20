@@ -36,34 +36,10 @@ class CodeBlockTest {
     assertThat(a.toString()).isEqualTo("delicious taco")
   }
 
-  @Test fun indentCannotBeIndexed() {
-    assertThrows<IllegalArgumentException> {
-      CodeBlock.builder().add("%1>", "taco").build()
-    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
-  }
-
-  @Test fun deindentCannotBeIndexed() {
-    assertThrows<IllegalArgumentException> {
-      CodeBlock.builder().add("%1<", "taco").build()
-    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
-  }
-
   @Test fun percentEscapeCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1%", "taco").build()
-    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
-  }
-
-  @Test fun statementBeginningCannotBeIndexed() {
-    assertThrows<IllegalArgumentException> {
-      CodeBlock.builder().add("%1[", "taco").build()
-    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
-  }
-
-  @Test fun statementEndingCannotBeIndexed() {
-    assertThrows<IllegalArgumentException> {
-      CodeBlock.builder().add("%1]", "taco").build()
-    }.hasMessageThat().isEqualTo("%%, %>, %<, %[, %], and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%% and %W may not have an index")
   }
 
   @Test fun nameFormatCanBeIndexed() {
@@ -107,8 +83,8 @@ class CodeBlockTest {
     val map = LinkedHashMap<String, Any>()
     map.put("text", "tacos")
     val block = CodeBlock.builder()
-        .addNamed("%>\n%text:L for %%3.50", map).build()
-    assertThat(block.toString()).isEqualTo("\n    tacos for %3.50")
+        .addNamed("⇥\n%text:L for\n⇤%%3.50", map).build()
+    assertThat(block.toString()).isEqualTo("\n    tacos for\n%3.50")
   }
 
   @Test fun missingNamedArgument() {
@@ -210,19 +186,19 @@ class CodeBlockTest {
   }
 
   @Test fun tooManyStatementEnters() {
-    val codeBlock = CodeBlock.builder().add("%[%[").build()
+    val codeBlock = CodeBlock.builder().add("««").build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("statement enter %[ followed by statement enter %[")
+    }.hasMessageThat().isEqualTo("statement enter « followed by statement enter «")
   }
 
   @Test fun statementExitWithoutStatementEnter() {
-    val codeBlock = CodeBlock.builder().add("%]").build()
+    val codeBlock = CodeBlock.builder().add("»").build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("statement exit %] has no matching statement enter %[")
+    }.hasMessageThat().isEqualTo("statement exit » has no matching statement enter «")
   }
 
   @Test fun nullableType() {
@@ -354,7 +330,7 @@ class CodeBlockTest {
   }
 
   @Test fun trimNoArgPlaceholderStart() {
-    assertThat(CodeBlock.of("%>return ").trim())
+    assertThat(CodeBlock.of("⇥return ").trim())
         .isEqualTo(CodeBlock.of("return "))
   }
 
@@ -364,33 +340,33 @@ class CodeBlockTest {
   }
 
   @Test fun trimNoArgPlaceholdersStartEnd() {
-    assertThat(CodeBlock.of("%[return this%]").trim())
+    assertThat(CodeBlock.of("«return this»").trim())
         .isEqualTo(CodeBlock.of("return this"))
   }
 
   @Test fun trimMultipleNoArgPlaceholders() {
     assertThat(
-        CodeBlock.of("%[return if (x > %L) %S %Welse %S%]", 1, "a", "b").trim())
+        CodeBlock.of("«return if (x > %L) %S %Welse %S»", 1, "a", "b").trim())
         .isEqualTo(CodeBlock.of("return if (x > %L) %S %Welse %S", 1, "a", "b"))
   }
 
   @Test fun trimOnlyNoArgPlaceholders() {
-    assertThat(CodeBlock.of("%[%W%]%>%<").trim())
+    assertThat(CodeBlock.of("«%W»⇥⇤").trim())
         .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun replaceSimple() {
-    assertThat(CodeBlock.of("%W%>%W").replaceAll("%W", ""))
-        .isEqualTo(CodeBlock.of("%>"))
+    assertThat(CodeBlock.of("%W⇥%W").replaceAll("%W", ""))
+        .isEqualTo(CodeBlock.of("⇥"))
   }
 
   @Test fun replaceNoMatches() {
-    assertThat(CodeBlock.of("%W%>%W").replaceAll("%<", ""))
-        .isEqualTo(CodeBlock.of("%W%>%W"))
+    assertThat(CodeBlock.of("%W⇥%W").replaceAll("⇤", ""))
+        .isEqualTo(CodeBlock.of("%W⇥%W"))
   }
 
   @Test fun replaceRegex() {
-    assertThat(CodeBlock.of("%W%>%W%<").replaceAll("[%>|%<]", ""))
+    assertThat(CodeBlock.of("%W⇥%W⇤").replaceAll("[⇥|⇤]", ""))
         .isEqualTo(CodeBlock.of("%W%W"))
   }
 

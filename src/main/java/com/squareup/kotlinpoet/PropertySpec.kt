@@ -78,7 +78,7 @@ class PropertySpec private constructor(builder: Builder) {
       } else {
         codeWriter.emitCode(" =%W")
       }
-      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "%[%L%]", initializer)
+      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "«%L»", initializer)
     }
     codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
@@ -88,14 +88,14 @@ class PropertySpec private constructor(builder: Builder) {
       implicitModifiers
     }
     if (getter != null) {
-      codeWriter.emitCode("%>")
+      codeWriter.emitCode("⇥")
       getter.emit(codeWriter, null, implicitAccessorModifiers, false)
-      codeWriter.emitCode("%<")
+      codeWriter.emitCode("⇤")
     }
     if (setter != null) {
-      codeWriter.emitCode("%>")
+      codeWriter.emitCode("⇥")
       setter.emit(codeWriter, null, implicitAccessorModifiers, false)
-      codeWriter.emitCode("%<")
+      codeWriter.emitCode("⇤")
     }
   }
 
