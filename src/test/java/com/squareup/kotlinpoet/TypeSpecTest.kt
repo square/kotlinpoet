@@ -1417,7 +1417,7 @@ class TypeSpecTest {
   @Test fun inlineIndent() {
     val taco = TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("inlineIndent")
-            .addCode("if (3 < 4) {\n%>%T.out.println(%S);\n%<}\n", System::class, "hello")
+            .addCode("if (3 < 4) {\n⇥%T.out.println(%S);\n⇤}\n", System::class, "hello")
             .build())
         .build()
     assertThat(toString(taco)).isEqualTo("""
@@ -2492,12 +2492,12 @@ class TypeSpecTest {
 
   @Test fun lineWrapping() {
     val funSpecBuilder = FunSpec.builder("call")
-    funSpecBuilder.addCode("%[call(")
+    funSpecBuilder.addCode("«call(")
     for (i in 0..31) {
       funSpecBuilder.addParameter("s" + i, String::class)
       funSpecBuilder.addCode(if (i > 0) ",%W%S" else "%S", i)
     }
-    funSpecBuilder.addCode(");%]\n")
+    funSpecBuilder.addCode(");»\n")
 
     val taco = TypeSpec.classBuilder("Taco")
         .addFunction(funSpecBuilder.build())

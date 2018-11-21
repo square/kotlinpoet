@@ -61,7 +61,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     if (members.size > 1) codeWriter.emit(whitespace).indent(2)
     codeWriter.emitCode(members
         .map { it.replaceAll("%W", whitespace) }
-        .map { if (inline) it.replaceAll("[%>|%<]", "") else it }
+        .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
         .joinToCode(separator = memberSeparator))
     if (members.size > 1) codeWriter.unindent(2).emit(whitespace)
     codeWriter.emit(")")
@@ -155,12 +155,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
         = builder.add("%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
-      builder.add("[%W%>%>")
+      builder.add("[%W⇥⇥")
       values.forEachIndexed { index, value ->
         if (index > 0) builder.add(",%W")
         value.accept(this, name)
       }
-      builder.add("%W%<%<]")
+      builder.add("%W⇤⇤]")
       return builder
     }
   }
@@ -186,12 +186,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
             member.add("%L = ", method.name)
           }
           if (value.javaClass.isArray) {
-            member.add("[%W%>%>")
+            member.add("[%W⇥⇥")
             for (i in 0 until Array.getLength(value)) {
               if (i > 0) member.add(",%W")
               member.add(Builder.memberForValue(Array.get(value, i)))
             }
-            member.add("%W%<%<]")
+            member.add("%W⇤⇤]")
             builder.addMember(member.build())
             continue
           }

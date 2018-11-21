@@ -27,8 +27,8 @@ import kotlin.reflect.KClass
  * Code blocks are not necessarily well-formed Kotlin code, and are not validated. This class
  * assumes kotlinc will check correctness later!
  *
- * Code blocks support placeholders like [java.text.Format]. This class uses a percent sign
- * `%` but has its own set of permitted placeholders:
+ * Code blocks support placeholders like [java.text.Format]. This class primarily uses a percent
+ * sign `%` but has its own set of permitted placeholders:
  *
  *  * `%L` emits a *literal* value with no escaping. Arguments for literals may be strings,
  *    primitives, [type declarations][TypeSpec], [annotations][AnnotationSpec] and even other code
@@ -47,11 +47,11 @@ import kotlin.reflect.KClass
  *  * `%%` emits a percent sign.
  *  * `%W` emits a space or a newline, depending on its position on the line. This prefers to wrap
  *    lines before 100 columns.
- *  * `%>` increases the indentation level.
- *  * `%<` decreases the indentation level.
- *  * `%[` begins a statement. For multiline statements, every line after the first line is
+ *  * `⇥` increases the indentation level.
+ *  * `⇤` decreases the indentation level.
+ *  * `«` begins a statement. For multiline statements, every line after the first line is
  *    double-indented.
- *  * `%]` ends a statement.
+ *  * `»` ends a statement.
  */
 class CodeBlock private constructor(
   internal val formatParts: List<String>,
@@ -90,7 +90,7 @@ class CodeBlock private constructor(
       }
 
       // If the matching format part has an argument, check that too.
-      if (formatPart.startsWith("%") && !isNoArgPlaceholder(formatPart[1])) {
+      if (formatPart.startsWith("%") && !isMultiCharNoArgPlaceholder(formatPart[1])) {
         if (args[prefixArgCount] != prefix.args[prefixArgCount]) {
           return null // Argument doesn't match.
         }
@@ -117,7 +117,7 @@ class CodeBlock private constructor(
 
   /**
    * Returns a copy of the code block without leading and trailing no-arg placeholders
-   * (`%W`, `%<`, `%>`, `%[`, `%]`).
+   * (`%W`, `⇥`, `⇤`, `«`, `»`).
    */
   internal fun trim(): CodeBlock {
     var start = 0
@@ -145,7 +145,7 @@ class CodeBlock private constructor(
   internal fun replaceAll(oldValue: String, newValue: String) =
       CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
 
-  internal fun hasStatements() = formatParts.any { "%[" in it }
+  internal fun hasStatements() = formatParts.any { "«" in it }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -194,7 +194,7 @@ class CodeBlock private constructor(
       }
 
       while (p < format.length) {
-        val nextP = format.indexOf("%", p)
+        val nextP = nextPotentialPlaceholderPosition(format, p)
         if (nextP == -1) {
           formatParts += format.substring(p, format.length)
           break
@@ -220,9 +220,12 @@ class CodeBlock private constructor(
           addArgument(format, formatChar, arguments[argumentName])
           formatParts += "%$formatChar"
           p += matchResult.range.endInclusive + 1
+        } else if (isSingleCharNoArgPlaceholder(format[p])) {
+          formatParts += format.substring(p, p + 1)
+          p++
         } else {
           require(p < format.length - 1) { "dangling % at end" }
-          require(isNoArgPlaceholder(format[p + 1])) {
+          require(isMultiCharNoArgPlaceholder(format[p + 1])) {
             "unknown format %${format[p + 1]} at ${p + 1} in '$format'"
           }
           formatParts += format.substring(p, p + 2)
@@ -251,8 +254,14 @@ class CodeBlock private constructor(
 
       var p = 0
       while (p < format.length) {
+        if (isSingleCharNoArgPlaceholder(format[p])) {
+          formatParts += format[p].toString()
+          p++
+          continue
+        }
+
         if (format[p] != '%') {
-          var nextP = format.indexOf('%', p + 1)
+          var nextP = nextPotentialPlaceholderPosition(format, p + 1)
           if (nextP == -1) nextP = format.length
           formatParts += format.substring(p, nextP)
           p = nextP
@@ -271,9 +280,9 @@ class CodeBlock private constructor(
         val indexEnd = p - 1
 
         // If 'c' doesn't take an argument, we're done.
-        if (isNoArgPlaceholder(c)) {
+        if (isMultiCharNoArgPlaceholder(c)) {
           require(indexStart == indexEnd) {
-            "%%, %>, %<, %[, %], and %W may not have an index"
+            "%% and %W may not have an index"
           }
           formatParts += "%$c"
           continue
@@ -392,9 +401,9 @@ class CodeBlock private constructor(
     }
 
     fun addStatement(format: String, vararg args: Any?) = apply {
-      add("%[")
+      add("«")
       add(format, *args)
-      add("\n%]")
+      add("\n»")
     }
 
     fun add(codeBlock: CodeBlock) = apply {
@@ -403,11 +412,11 @@ class CodeBlock private constructor(
     }
 
     fun indent() = apply {
-      formatParts += "%>"
+      formatParts += "⇥"
     }
 
     fun unindent() = apply {
-      formatParts += "%<"
+      formatParts += "⇤"
     }
 
     fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
@@ -418,13 +427,16 @@ class CodeBlock private constructor(
     private val LOWERCASE = Regex("[a-z]+[\\w_]*")
     private const val ARG_NAME = 1
     private const val TYPE_NAME = 2
-    private val NO_ARG_PLACEHOLDERS = setOf("%W", "%>", "%<", "%[", "%]")
+    private val NO_ARG_PLACEHOLDERS = setOf("%W", "⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
 
-    internal fun isNoArgPlaceholder(c: Char) = c.isOneOf('%', '>', '<', '[', ']', 'W')
+    internal fun isMultiCharNoArgPlaceholder(c: Char) = c.isOneOf('%', 'W')
+    internal fun isSingleCharNoArgPlaceholder(c: Char) = c.isOneOf('⇥', '⇤', '«', '»')
+    internal fun nextPotentialPlaceholderPosition(s: String, startIndex: Int) = s.indexOfAny(
+        charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
   }
 }
 
