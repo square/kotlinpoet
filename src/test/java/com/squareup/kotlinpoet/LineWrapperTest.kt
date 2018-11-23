@@ -22,19 +22,18 @@ class LineWrapperTest {
   @Test fun wrap() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghij")
+    lineWrapper.append("abcde fghij", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde\n    fghij")
+    assertThat(out.toString()).isEqualTo("""
+        |abcde
+        |    fghij
+        """.trimMargin())
   }
 
   @Test fun noWrap() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghi")
+    lineWrapper.append("abcde fghi", indentLevel = 2)
     lineWrapper.close()
     assertThat(out.toString()).isEqualTo("abcde fghi")
   }
@@ -42,43 +41,32 @@ class LineWrapperTest {
   @Test fun multipleWrite() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("ab")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("cd")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("ef")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("gh")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("ij")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("kl")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("mn")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("op")
-    lineWrapper.wrappingSpace(1)
-    lineWrapper.append("qr")
+    lineWrapper.append("ab cd ef gh ij kl mn op qr", indentLevel = 1)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("ab cd ef\n  gh ij kl\n  mn op qr")
+    assertThat(out.toString()).isEqualTo("""
+        |ab cd ef
+        |  gh ij kl
+        |  mn op qr
+        """.trimMargin())
   }
 
   @Test fun fencepost() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.append("fghij")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("k")
-    lineWrapper.append("lmnop")
+    lineWrapper.append("abcde", indentLevel = 2)
+    lineWrapper.append("fghij k", indentLevel = 2)
+    lineWrapper.append("lmnop", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcdefghij\n    klmnop")
+    assertThat(out.toString()).isEqualTo("""
+        |abcdefghij
+        |    klmnop
+        """.trimMargin())
   }
 
   @Test fun overlyLongLinesWithoutLeadingSpace() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcdefghijkl")
+    lineWrapper.append("abcdefghijkl", indentLevel = 2)
     lineWrapper.close()
     assertThat(out.toString()).isEqualTo("abcdefghijkl")
   }
@@ -86,8 +74,7 @@ class LineWrapperTest {
   @Test fun overlyLongLinesWithLeadingSpace() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("abcdefghijkl")
+    lineWrapper.append(" abcdefghijkl", indentLevel = 2)
     lineWrapper.close()
     assertThat(out.toString()).isEqualTo("\n    abcdefghijkl")
   }
@@ -95,46 +82,98 @@ class LineWrapperTest {
   @Test fun noWrapEmbeddedNewlines() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghi\njklmn")
-    lineWrapper.append("opqrstuvwxy")
+    lineWrapper.append("abcde fghi\njklmn", indentLevel = 2)
+    lineWrapper.append("opqrstuvwxy", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\njklmnopqrstuvwxy")
+    assertThat(out.toString()).isEqualTo("""
+        |abcde fghi
+        |jklmnopqrstuvwxy
+        """.trimMargin())
   }
 
   @Test fun wrapEmbeddedNewlines() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghij\nklmn")
-    lineWrapper.append("opqrstuvwxy")
+    lineWrapper.append("abcde fghij\nklmn", indentLevel = 2)
+    lineWrapper.append("opqrstuvwxy", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde\n    fghij\nklmnopqrstuvwxy")
+    assertThat(out.toString()).isEqualTo("""
+        |abcde
+        |    fghij
+        |klmnopqrstuvwxy
+        """.trimMargin())
   }
 
   @Test fun noWrapMultipleNewlines() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghi\nklmnopq\nr")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("stuvwxyz")
+    lineWrapper.append("abcde fghi\nklmnopq\nr stuvwxyz", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\nklmnopq\nr stuvwxyz")
+    assertThat(out.toString()).isEqualTo("""
+        |abcde fghi
+        |klmnopq
+        |r stuvwxyz
+        """.trimMargin())
   }
 
   @Test fun wrapMultipleNewlines() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("abcde")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("fghi\nklmnopq\nrs")
-    lineWrapper.wrappingSpace(2)
-    lineWrapper.append("tuvwxyz1")
+    lineWrapper.append("abcde fghi\nklmnopq\nrs tuvwxyz1", indentLevel = 2)
     lineWrapper.close()
-    assertThat(out.toString()).isEqualTo("abcde fghi\nklmnopq\nrs\n    tuvwxyz1")
+    assertThat(out.toString()).isEqualTo("""
+        |abcde fghi
+        |klmnopq
+        |rs
+        |    tuvwxyz1
+        """.trimMargin())
+  }
+
+  @Test fun noWrapPrecedingUnaryPlus() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("a + b       + c", indentLevel = 2)
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |a +
+        |    b       +
+        |    c
+        """.trimMargin())
+  }
+
+  @Test fun noWrapPrecedingUnaryMinus() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("a - b       - c", indentLevel = 2)
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |a -
+        |    b       -
+        |    c
+        """.trimMargin())
+  }
+
+  @Test fun appendNonWrapping() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("ab cd ef", indentLevel = 2)
+    lineWrapper.appendNonWrapping("gh ij kl mn")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |ab cd
+        |    efgh ij kl mn
+        """.trimMargin())
+  }
+
+  @Test fun appendNonWrappingSpace() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("ab cd ef", indentLevel = 2)
+    lineWrapper.append("gh·ij·kl·mn", indentLevel = 2)
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |ab cd
+        |    efgh ij kl mn
+        """.trimMargin())
   }
 }

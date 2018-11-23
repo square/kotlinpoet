@@ -220,8 +220,7 @@ class PropertySpecTest {
             .build())
         .build()
     assertThat(prop.toString()).isEqualTo("""
-      |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.property: kotlin.String
-      |        where T : java.io.Serializable, T : kotlin.Cloneable
+      |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.property: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
       |    get() = ""
       |""".trimMargin())
   }

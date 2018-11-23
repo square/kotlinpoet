@@ -325,8 +325,8 @@ class CodeBlockTest {
   }
 
   @Test fun trimNoArgPlaceholderMiddle() {
-    assertThat(CodeBlock.of("this.taco =%W%S", "taco").trim())
-        .isEqualTo(CodeBlock.of("this.taco =%W%S", "taco"))
+    assertThat(CodeBlock.of("this.taco = %S", "taco").trim())
+        .isEqualTo(CodeBlock.of("this.taco = %S", "taco"))
   }
 
   @Test fun trimNoArgPlaceholderStart() {
@@ -346,8 +346,8 @@ class CodeBlockTest {
 
   @Test fun trimMultipleNoArgPlaceholders() {
     assertThat(
-        CodeBlock.of("«return if (x > %L) %S %Welse %S»", 1, "a", "b").trim())
-        .isEqualTo(CodeBlock.of("return if (x > %L) %S %Welse %S", 1, "a", "b"))
+        CodeBlock.of("«return if (x > %L) %S else %S»", 1, "a", "b").trim())
+        .isEqualTo(CodeBlock.of("return if (x > %L) %S else %S", 1, "a", "b"))
   }
 
   @Test fun trimOnlyNoArgPlaceholders() {
@@ -361,13 +361,13 @@ class CodeBlockTest {
   }
 
   @Test fun replaceNoMatches() {
-    assertThat(CodeBlock.of("%W⇥%W").replaceAll("⇤", ""))
-        .isEqualTo(CodeBlock.of("%W⇥%W"))
+    assertThat(CodeBlock.of("%%⇥%%").replaceAll("⇤", ""))
+        .isEqualTo(CodeBlock.of("%%⇥%%"))
   }
 
   @Test fun replaceRegex() {
-    assertThat(CodeBlock.of("%W⇥%W⇤").replaceAll("[⇥|⇤]", ""))
-        .isEqualTo(CodeBlock.of("%W%W"))
+    assertThat(CodeBlock.of("%%⇥%%⇤").replaceAll("[⇥|⇤]", ""))
+        .isEqualTo(CodeBlock.of("%%%%"))
   }
 
   @Test fun joinToCode() {

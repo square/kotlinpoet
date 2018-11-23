@@ -68,11 +68,10 @@ abstract class TypeName internal constructor(
 
   /** Lazily-initialized toString of this type name.  */
   private val cachedString: String by lazy {
-    buildString {
-      val codeWriter = CodeWriter(this)
-      emitAnnotations(codeWriter)
-      emit(codeWriter)
-      if (nullable) append("?")
+    buildCodeString {
+      emitAnnotations(this)
+      emit(this)
+      if (nullable) emit("?")
     }
   }
 

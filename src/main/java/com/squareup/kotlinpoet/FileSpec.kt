@@ -56,10 +56,12 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     val importsCollector = CodeWriter(NullAppendable, indent, memberImports)
     emit(importsCollector)
     val suggestedImports = importsCollector.suggestedImports()
+    importsCollector.close()
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports)
+    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports, wrapWhitespace = true)
     emit(codeWriter)
+    codeWriter.close()
   }
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */

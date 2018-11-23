@@ -21,11 +21,11 @@ import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.KModifier.ENUM
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
+import com.squareup.kotlinpoet.KModifier.INLINE
+import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
-import com.squareup.kotlinpoet.KModifier.INLINE
-import com.squareup.kotlinpoet.KModifier.PRIVATE
-import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.TypeSpec.Kind.Interface
 import com.squareup.kotlinpoet.TypeSpec.Kind.Object
 import java.lang.reflect.Type
@@ -182,7 +182,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         }
 
         if (superTypes.isNotEmpty()) {
-          codeWriter.emitCode(superTypes.joinToCode(separator = ",%W", prefix = " : "))
+          codeWriter.emitCode(superTypes.joinToCode(separator = ", ", prefix = " : "))
         }
 
         codeWriter.emitWhereBlock(typeVariables)
@@ -344,7 +344,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this), null) }
+  override fun toString() = buildCodeString { emit(this, null) }
 
   sealed class Kind(
     internal val declarationKeyword: String,

@@ -76,7 +76,7 @@ class PropertySpec private constructor(builder: Builder) {
       if (delegated) {
         codeWriter.emit(" by ")
       } else {
-        codeWriter.emitCode(" =%W")
+        codeWriter.emitCode(" = ")
       }
       codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "«%L»", initializer)
     }
@@ -117,7 +117,7 @@ class PropertySpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this), emptySet()) }
+  override fun toString() = buildCodeString { emit(this, emptySet()) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)

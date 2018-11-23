@@ -60,7 +60,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     codeWriter.emit("(")
     if (members.size > 1) codeWriter.emit(whitespace).indent(2)
     codeWriter.emitCode(members
-        .map { it.replaceAll("%W", whitespace) }
         .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
         .joinToCode(separator = memberSeparator))
     if (members.size > 1) codeWriter.unindent(2).emit(whitespace)
@@ -83,8 +82,8 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString {
-    emit(CodeWriter(this), inline = true, asParameter = false)
+  override fun toString() = buildCodeString {
+    emit(this, inline = true, asParameter = false)
   }
 
   enum class UseSiteTarget(internal val keyword: String) {
@@ -155,12 +154,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
         = builder.add("%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
-      builder.add("[%W⇥⇥")
+      builder.add("[⇥⇥")
       values.forEachIndexed { index, value ->
-        if (index > 0) builder.add(",%W")
+        if (index > 0) builder.add(", ")
         value.accept(this, name)
       }
-      builder.add("%W⇤⇤]")
+      builder.add("⇤⇤]")
       return builder
     }
   }
@@ -186,12 +185,12 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
             member.add("%L = ", method.name)
           }
           if (value.javaClass.isArray) {
-            member.add("[%W⇥⇥")
+            member.add("[⇥⇥")
             for (i in 0 until Array.getLength(value)) {
-              if (i > 0) member.add(",%W")
+              if (i > 0) member.add(", ")
               member.add(Builder.memberForValue(Array.get(value, i)))
             }
-            member.add("%W⇤⇤]")
+            member.add("⇤⇤]")
             builder.addMember(member.build())
             continue
           }

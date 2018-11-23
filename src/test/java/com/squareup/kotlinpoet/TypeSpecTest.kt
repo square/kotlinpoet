@@ -155,7 +155,8 @@ class TypeSpecTest {
         |
         |class Taco {
         |    val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |        override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung) {
+        |        override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object :
+        |                SimpleThung<Bar>(thung) {
         |            override fun doSomething(bar: Bar) {
         |                /* code snippets */
         |            }
@@ -729,8 +730,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number,
-        |        Q : Comparable {
+        |class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q :
+        |        Comparable {
         |    val x: P
         |
         |    val y: @A Q
@@ -2490,66 +2491,6 @@ class TypeSpecTest {
     }
   }
 
-  @Test fun lineWrapping() {
-    val funSpecBuilder = FunSpec.builder("call")
-    funSpecBuilder.addCode("«call(")
-    for (i in 0..31) {
-      funSpecBuilder.addParameter("s" + i, String::class)
-      funSpecBuilder.addCode(if (i > 0) ",%W%S" else "%S", i)
-    }
-    funSpecBuilder.addCode(");»\n")
-
-    val taco = TypeSpec.classBuilder("Taco")
-        .addFunction(funSpecBuilder.build())
-        .build()
-    assertThat(toString(taco)).isEqualTo("""
-        |package com.squareup.tacos
-        |
-        |import kotlin.String
-        |
-        |class Taco {
-        |    fun call(
-        |        s0: String,
-        |        s1: String,
-        |        s2: String,
-        |        s3: String,
-        |        s4: String,
-        |        s5: String,
-        |        s6: String,
-        |        s7: String,
-        |        s8: String,
-        |        s9: String,
-        |        s10: String,
-        |        s11: String,
-        |        s12: String,
-        |        s13: String,
-        |        s14: String,
-        |        s15: String,
-        |        s16: String,
-        |        s17: String,
-        |        s18: String,
-        |        s19: String,
-        |        s20: String,
-        |        s21: String,
-        |        s22: String,
-        |        s23: String,
-        |        s24: String,
-        |        s25: String,
-        |        s26: String,
-        |        s27: String,
-        |        s28: String,
-        |        s29: String,
-        |        s30: String,
-        |        s31: String
-        |    ) {
-        |        call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-        |                "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-        |                "30", "31");
-        |    }
-        |}
-        |""".trimMargin())
-  }
-
   @Test fun equalsAndHashCode() {
     var a = TypeSpec.interfaceBuilder("taco").build()
     var b = TypeSpec.interfaceBuilder("taco").build()
@@ -3367,7 +3308,8 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
           |package com.squareup.tacos
           |
-          |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) : TypeBuilder<EntityBuilder, Entity> by argBuilder
+          |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) :
+          |        TypeBuilder<EntityBuilder, Entity> by argBuilder
           |""".trimMargin())
   }
 
