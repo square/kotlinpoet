@@ -45,8 +45,9 @@ import kotlin.reflect.KClass
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
  *  * `%%` emits a percent sign.
- *  * `%W` emits a space or a newline, depending on its position on the line. This prefers to wrap
- *    lines before 100 columns.
+ *  * `·` emits a space that never wraps. KotlinPoet prefers to wrap lines longer than 100 columns.
+ *    It does this by replacing normal spaces with a newline and indent. Note that spaces in strings
+ *    are never wrapped.
  *  * `⇥` increases the indentation level.
  *  * `⇤` decreases the indentation level.
  *  * `«` begins a statement. For multiline statements, every line after the first line is
@@ -156,7 +157,7 @@ class CodeBlock private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock) }
+  override fun toString() = buildCodeString { emitCode(this@CodeBlock) }
 
   fun toBuilder(): Builder {
     val builder = Builder()

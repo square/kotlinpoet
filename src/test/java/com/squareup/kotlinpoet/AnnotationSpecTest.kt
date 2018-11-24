@@ -105,18 +105,11 @@ class AnnotationSpecTest {
         |        o = AnnotationSpecTest.Breakfast.PANCAKES,
         |        p = 1701,
         |        f = 11.1,
-        |        m = [
-        |                9,
-        |                8,
-        |                1
-        |        ],
+        |        m = [9, 8, 1],
         |        l = Override::class,
         |        j = AnnotationSpecTest.AnnotationA(),
         |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [
-        |                Float::class,
-        |                Double::class
-        |        ]
+        |        r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())
@@ -140,18 +133,11 @@ class AnnotationSpecTest {
         |        o = AnnotationSpecTest.Breakfast.PANCAKES,
         |        p = 1701,
         |        f = 11.1,
-        |        m = [
-        |                9,
-        |                8,
-        |                1
-        |        ],
+        |        m = [9, 8, 1],
         |        l = Override::class,
         |        j = AnnotationSpecTest.AnnotationA(),
         |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [
-        |                Float::class,
-        |                Double::class
-        |        ]
+        |        r = [Float::class, Double::class]
         |)
         |class IsAnnotated
         |""".trimMargin())
@@ -187,18 +173,11 @@ class AnnotationSpecTest {
         |@AnnotationSpecTest.HasDefaultsAnnotation(
         |        f = 11.1,
         |        l = Override::class,
-        |        m = [
-        |                9,
-        |                8,
-        |                1
-        |        ],
+        |        m = [9, 8, 1],
         |        o = AnnotationSpecTest.Breakfast.PANCAKES,
         |        p = 1701,
         |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [
-        |                Float::class,
-        |                Double::class
-        |        ]
+        |        r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())
@@ -223,38 +202,18 @@ class AnnotationSpecTest {
         |        d = 8,
         |        e = 9.0f,
         |        f = 11.1,
-        |        g = [
-        |                '\u0000',
-        |                '쫾',
-        |                'z',
-        |                '€',
-        |                'ℕ',
-        |                '"',
-        |                '\'',
-        |                '\t',
-        |                '\n'
-        |        ],
+        |        g = ['\u0000', '쫾', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'],
         |        h = true,
         |        i = AnnotationSpecTest.Breakfast.WAFFLES,
         |        j = AnnotationSpecTest.AnnotationA(),
         |        k = "maple",
         |        l = Override::class,
-        |        m = [
-        |                9,
-        |                8,
-        |                1
-        |        ],
-        |        n = [
-        |                AnnotationSpecTest.Breakfast.WAFFLES,
-        |                AnnotationSpecTest.Breakfast.PANCAKES
-        |        ],
+        |        m = [9, 8, 1],
+        |        n = [AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES],
         |        o = AnnotationSpecTest.Breakfast.PANCAKES,
         |        p = 1701,
         |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [
-        |                Float::class,
-        |                Double::class
-        |        ]
+        |        r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())

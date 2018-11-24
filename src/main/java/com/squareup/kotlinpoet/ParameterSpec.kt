@@ -54,7 +54,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this)) }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)

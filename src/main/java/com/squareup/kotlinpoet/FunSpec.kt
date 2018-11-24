@@ -189,9 +189,9 @@ class FunSpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString {
+  override fun toString() = buildCodeString {
     emit(
-        codeWriter = CodeWriter(this),
+        codeWriter = this,
         enclosingName = "Constructor",
         implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
         includeKdocTags = true)

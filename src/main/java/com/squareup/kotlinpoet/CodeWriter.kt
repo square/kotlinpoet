@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Closeable
+
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
@@ -30,6 +32,14 @@ private fun extractMemberName(part: String): String {
   return part
 }
 
+internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
+  val stringBuilder = StringBuilder()
+  CodeWriter(stringBuilder).use {
+    it.builderAction()
+  }
+  return stringBuilder.toString()
+}
+
 /**
  * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
@@ -38,8 +48,9 @@ internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = DEFAULT_INDENT,
   private val memberImports: Map<String, Import> = emptyMap(),
-  val importedTypes: Map<String, ClassName> = emptyMap()
-) {
+  val importedTypes: Map<String, ClassName> = emptyMap(),
+  private val wrapWhitespace: Boolean = false
+) : Closeable {
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
 
@@ -179,7 +190,7 @@ internal class CodeWriter constructor(
     for (typeVariable in typeVariables) {
       if (typeVariable.bounds.size > 1) {
         for (bound in typeVariable.bounds) {
-          if (!firstBound) emitCode(",%W") else emitCode("%Wwhere ")
+          if (!firstBound) emitCode(", ") else emitCode(" where ")
           emitCode("%L : %T", typeVariable.name, bound)
           firstBound = false
         }
@@ -205,9 +216,10 @@ internal class CodeWriter constructor(
         "%S", "%P" -> {
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
-          emit(if (string != null)
+          val literal = if (string != null)
             stringLiteralWithQuotes(string, escapeDollarSign = part == "%S") else
-            "null")
+            "null"
+          emit(literal, nonWrapping = true)
         }
 
         "%T" -> {
@@ -250,8 +262,6 @@ internal class CodeWriter constructor(
           }
           statementLine = -1
         }
-
-        "%W" -> out.wrappingSpace(indentLevel + 2)
 
         else -> {
           // Handle deferred type.
@@ -405,16 +415,16 @@ internal class CodeWriter constructor(
    * [CodeWriter.out] does it through here, since we emit indentation lazily in order to avoid
    * unnecessary trailing whitespace.
    */
-  fun emit(s: String) = apply {
+  fun emit(s: String, nonWrapping: Boolean = false) = apply {
     var first = true
     for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
       if (!first) {
         if ((kdoc || comment) && trailingNewline) {
           emitIndentation()
-          out.append(if (kdoc) " *" else "//")
+          out.appendNonWrapping(if (kdoc) " *" else "//")
         }
-        out.append("\n")
+        out.newline()
         trailingNewline = true
         if (statementLine != -1) {
           if (statementLine == 0) {
@@ -431,20 +441,24 @@ internal class CodeWriter constructor(
       if (trailingNewline) {
         emitIndentation()
         if (kdoc) {
-          out.append(" * ")
+          out.appendNonWrapping(" * ")
         } else if (comment) {
-          out.append("// ")
+          out.appendNonWrapping("// ")
         }
       }
 
-      out.append(line)
+      if (nonWrapping || !wrapWhitespace) {
+        out.appendNonWrapping(line)
+      } else {
+        out.append(line, indentLevel + 2)
+      }
       trailingNewline = false
     }
   }
 
   private fun emitIndentation() {
     for (j in 0 until indentLevel) {
-      out.append(indent)
+      out.appendNonWrapping(indent)
     }
   }
 
@@ -454,5 +468,9 @@ internal class CodeWriter constructor(
    */
   fun suggestedImports(): Map<String, ClassName> {
     return importableTypes.filterKeys { it !in referencedNames }
+  }
+
+  override fun close() {
+    out.close()
   }
 }

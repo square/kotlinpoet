@@ -17,7 +17,8 @@ package com.squareup.kotlinpoet
 
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
- * [LineWrapper.append] or soft-wrapping spaces using [LineWrapper.wrappingSpace].
+ * [LineWrapper.append], which will replace spaces with newlines where necessary. Use
+ * [LineWrapper.appendNonWrapping] to append a string that never wraps.
  */
 internal class LineWrapper(
   private val out: Appendable,
@@ -26,71 +27,139 @@ internal class LineWrapper(
 ) {
   private var closed = false
 
-  /** Characters written since the last wrapping space that haven't yet been flushed.  */
-  private val buffer = StringBuilder()
+  /**
+   * Segments of the current line to be joined by spaces or wraps. Never empty, but contains a lone
+   * empty string if no data has been emitted since the last newline.
+   */
+  private val segments = mutableListOf("")
 
-  /** The number of characters since the most recent newline. Includes both out and the buffer.  */
-  private var column = 0
-
-  /** -1 if we have no buffering; otherwise the number of spaces to write after wrapping.  */
+  /** Number of indents in wraps. -1 if the current line has no wraps. */
   private var indentLevel = -1
 
-  /** Emit `s`. This may be buffered to permit line wraps to be inserted.  */
-  fun append(s: String) {
+  /** Emit `s` replacing its spaces with line wraps as necessary. */
+  fun append(s: String, indentLevel: Int) {
     check(!closed) { "closed" }
 
-    if (indentLevel != -1) {
-      val nextNewline = s.indexOf('\n')
+    var pos = 0
+    while (pos < s.length) {
+      val c = s[pos]
+      when (c) {
+        ' ' -> {
+          // Each space starts a new empty segment.
+          this.indentLevel = indentLevel
+          segments += ""
+          pos++
+        }
 
-      // If s doesn't cause the current line to cross the limit, buffer it and return. We'll decide
-      // whether or not we have to wrap it later.
-      if (nextNewline == -1 && column + s.length <= columnLimit) {
-        buffer.append(s)
-        column += s.length
-        return
+        '\n' -> {
+          // Each newline emits the current segments.
+          newline()
+          pos++
+        }
+
+        '·' -> {
+          // Render · as a non-breaking space.
+          segments[segments.size - 1] += " "
+          pos++
+        }
+
+        else -> {
+          var next = s.indexOfAny(SPECIAL_CHARACTERS, pos)
+          if (next == -1) next = s.length
+          segments[segments.size - 1] += s.substring(pos, next)
+          pos = next
+        }
       }
-
-      // Wrap if appending s would overflow the current line.
-      val wrap = nextNewline == -1 || column + nextNewline > columnLimit
-      flush(wrap)
     }
-
-    out.append(s)
-    val lastNewline = s.lastIndexOf('\n')
-    column = if (lastNewline != -1)
-      s.length - lastNewline - 1 else
-      column + s.length
   }
 
-  /** Emit either a space or a newline character.  */
-  fun wrappingSpace(indentLevel: Int) {
+  /** Emit `s` leaving spaces as-is. */
+  fun appendNonWrapping(s: String) {
+    check(!closed) { "closed" }
+    require(!s.contains("\n"))
+
+    segments[segments.size - 1] += s
+  }
+
+  fun newline() {
     check(!closed) { "closed" }
 
-    if (this.indentLevel != -1) flush(false)
-    this.column++
-    this.indentLevel = indentLevel
+    emitCurrentLine()
+    out.append("\n")
+    indentLevel = -1
   }
 
   /** Flush any outstanding text and forbid future writes to this line wrapper.  */
   fun close() {
-    if (indentLevel != -1) flush(false)
+    emitCurrentLine()
     closed = true
   }
 
-  /** Write the space followed by any buffered text that follows it.  */
-  private fun flush(wrap: Boolean) {
-    if (wrap) {
-      out.append('\n')
+  private fun emitCurrentLine() {
+    foldUnsafeBreaks()
+
+    var start = 0
+    var columnCount = segments[0].length
+
+    for (i in 1 until segments.size) {
+      val segment = segments[i]
+      val newColumnCount = columnCount + 1 + segment.length
+
+      // If this segment doesn't fit in the current run, print the current run and start a new one.
+      if (newColumnCount > columnLimit) {
+        emitSegmentRange(start, i)
+        start = i
+        columnCount = segment.length + indent.length * indentLevel
+        continue
+      }
+
+      columnCount = newColumnCount
+    }
+
+    // Print the last run.
+    emitSegmentRange(start, segments.size)
+
+    segments.clear()
+    segments += ""
+  }
+
+  private fun emitSegmentRange(startIndex: Int, endIndex: Int) {
+    // If this is a wrapped line we need a newline and an indent.
+    if (startIndex > 0) {
+      out.append("\n")
       for (i in 0 until indentLevel) {
         out.append(indent)
       }
-      column = indentLevel * indent.length
-      column += buffer.length
-    } else {
-      out.append(' ')
     }
-    out.append(buffer)
-    buffer.delete(0, buffer.length)
-    indentLevel = -1
+
+    // Emit each segment separated by spaces.
+    out.append(segments[startIndex])
+    for (i in startIndex + 1 until endIndex) {
+      out.append(" ")
+      out.append(segments[i])
+    }
+  }
+
+  /**
+   * Any segment that starts with '+' or '-' can't have a break preceding it. Combine it with the
+   * preceding segment. Note that this doesn't apply to the first segment.
+   */
+  private fun foldUnsafeBreaks() {
+    var i = 1
+    while (i < segments.size) {
+      val segment = segments[i]
+      if (UNSAFE_LINE_START.matches(segment)) {
+        segments[i - 1] = segments[i - 1] + " " + segments[i]
+        segments.removeAt(i)
+        if (i > 0) i--
+      } else {
+        i++
+      }
+    }
+  }
+
+  companion object {
+    private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
+    private val SPECIAL_CHARACTERS = " \n·".toCharArray()
   }
 }
