@@ -61,7 +61,7 @@ import kotlin.reflect.KClass
  * types like `Set<Long>`, use the factory methods on [ParameterizedTypeName], [TypeVariableName],
  * and [WildcardTypeName].
  */
-abstract class TypeName internal constructor(
+sealed class TypeName internal constructor(
   val nullable: Boolean, annotations: List<AnnotationSpec>
 ) {
   val annotations = annotations.toImmutableList()
