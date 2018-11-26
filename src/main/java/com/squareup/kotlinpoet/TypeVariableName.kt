@@ -28,6 +28,8 @@ import kotlin.reflect.KVariance
 class TypeVariableName private constructor(
   val name: String,
   val bounds: List<TypeName>,
+
+  /** Either [KModifier.IN], [KModifier.OUT], or null. */
   val variance: KModifier? = null,
   val reified: Boolean = false,
   nullable: Boolean = false,

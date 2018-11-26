@@ -33,12 +33,12 @@ class ClassName internal constructor(
 ) : TypeName(nullable, annotations), Comparable<ClassName> {
   /**
    * Returns a class name created from the given parts. For example, calling this with package name
-   * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
+   * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
    */
   constructor(packageName: String, simpleName: String, vararg simpleNames: String)
       : this(listOf(packageName, simpleName, *simpleNames))
 
-  /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
+  /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`.  */
   private val names = names.toImmutableList()
 
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
@@ -46,11 +46,16 @@ class ClassName internal constructor(
     names.subList(1, names.size).joinToString(".") else
     names.joinToString(".")
 
-  /** Package name, like `"java.util"` for `Map.Entry`.  */
+  /** Package name, like `"kotlin.collections"` for `Map.Entry`.  */
   val packageName get() = names[0]
 
-  /** Simple name of this class, like `"Entry"` for [Map.Entry].  */
+  /** Simple name of this class, like `"Entry"` for `Map.Entry`.  */
   val simpleName get() = names[names.size - 1]
+
+  /**
+   * The enclosing classes, outermost first, followed by the simple name. This is `["Map", "Entry"]`
+   * for `Map.Entry`.
+   */
   val simpleNames get() = names.subList(1, names.size)
 
   init {
@@ -69,8 +74,8 @@ class ClassName internal constructor(
   override fun withoutAnnotations() = ClassName(names, nullable)
 
   /**
-   * Returns the enclosing class, like [Map] for `Map.Entry`. Returns null if this class
-   * is not nested in another class.
+   * Returns the enclosing class, like `Map` for `Map.Entry`. Returns null if this class is not
+   * nested in another class.
    */
   fun enclosingClassName(): ClassName? {
     return if (names.size != 2)
@@ -104,10 +109,7 @@ class ClassName internal constructor(
     }
   }
 
-  /**
-   * Returns a new [ClassName] instance for the specified `name` as nested inside this
-   * class.
-   */
+  /** Returns a new [ClassName] instance for the specified `name` as nested inside this class. */
   fun nestedClass(name: String) = ClassName(names + name)
 
   /**
@@ -121,6 +123,16 @@ class ClassName internal constructor(
     return ClassName(result)
   }
 
+  /**
+   * Orders by the fully-qualified name. Nested types are ordered immediately after their
+   * enclosing type. For example, the following types are ordered by this method:
+   *
+   * ```
+   * com.example.Robot
+   * com.example.Robot.Motor
+   * com.example.RoboticVacuum
+   * ```
+   */
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
   override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
@@ -130,9 +142,8 @@ class ClassName internal constructor(
      * Returns a new [ClassName] instance for the given fully-qualified class name string. This
      * method assumes that the input is ASCII and follows typical Java style (lowercase package
      * names, UpperCamelCase class names) and may produce incorrect results or throw
-     * [IllegalArgumentException] otherwise. For that reason, [.get] and
-     * [.get] should be preferred as they can correctly create [ClassName]
-     * instances without such restrictions.
+     * [IllegalArgumentException] otherwise. For that reason, the constructor should be preferred as
+     * it can create [ClassName] instances without such restrictions.
      */
     @JvmStatic fun bestGuess(classNameString: String): ClassName {
       val names = mutableListOf<String>()
