@@ -290,40 +290,9 @@ class ClassName internal constructor(
 
   override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
 
-  companion object {
-    /**
-     * Returns a new [ClassName] instance for the given fully-qualified class name string. This
-     * method assumes that the input is ASCII and follows typical Java style (lowercase package
-     * names, UpperCamelCase class names) and may produce incorrect results or throw
-     * [IllegalArgumentException] otherwise. For that reason, [.get] and
-     * [.get] should be preferred as they can correctly create [ClassName]
-     * instances without such restrictions.
-     *
-     * TODO should this live in ClassName.kt?
-     */
-    @JvmStatic fun bestGuess(classNameString: String): ClassName {
-      val names = mutableListOf<String>()
-
-      // Add the package name, like "java.util.concurrent", or "" for no package.
-      var p = 0
-      while (p < classNameString.length && Character.isLowerCase(classNameString.codePointAt(p))) {
-        p = classNameString.indexOf('.', p) + 1
-        require(p != 0) { "couldn't make a guess for $classNameString" }
-      }
-      names += if (p != 0) classNameString.substring(0, p - 1) else ""
-
-      // Add the class names, like "Map" and "Entry".
-      for (part in classNameString.substring(p).split('.')) {
-        require(part.isNotEmpty() && Character.isUpperCase(part.codePointAt(0))) {
-          "couldn't make a guess for $classNameString"
-        }
-
-        names += part
-      }
-
-      require(names.size >= 2) { "couldn't make a guess for $classNameString" }
-      return ClassName(names)
-    }
+  companion object : ClassNameFactories {
+    @JvmStatic
+    override fun bestGuess(classNameString: String): ClassName = super.bestGuess(classNameString)
   }
 }
 //endregion
