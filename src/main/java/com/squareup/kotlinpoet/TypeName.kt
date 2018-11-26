@@ -35,6 +35,8 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleTypeVisitor7
 import kotlin.reflect.KClass
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 
 /**
  * Any type in Kotlin's type system. This class identifies simple types like `Int` and `String`,
@@ -410,6 +412,128 @@ class LambdaTypeName internal constructor(
         vararg parameters: ParameterSpec = emptyArray(),
         returnType: TypeName
     ) = LambdaTypeName(receiver, parameters.toList(), returnType)
+  }
+}
+//endregion
+
+//region ParameterizedTypeName
+class ParameterizedTypeName internal constructor(
+    internal val enclosingType: TypeName?,
+    val rawType: ClassName,
+    typeArguments: List<TypeName>,
+    nullable: Boolean = false,
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations) {
+  val typeArguments = typeArguments.toImmutableList()
+
+  init {
+    require(typeArguments.isNotEmpty() || enclosingType != null) {
+      "no type arguments: $rawType"
+    }
+  }
+
+  override fun asNullable()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
+
+  override fun asNonNull()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
+
+  override fun annotated(annotations: List<AnnotationSpec>) = ParameterizedTypeName(
+      enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)
+
+  override fun withoutAnnotations()
+      = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
+
+  override fun emit(out: CodeWriter): CodeWriter {
+    if (enclosingType != null) {
+      enclosingType.emitAnnotations(out)
+      enclosingType.emit(out)
+      out.emit("." + rawType.simpleName)
+    } else {
+      rawType.emitAnnotations(out)
+      rawType.emit(out)
+    }
+    if (typeArguments.isNotEmpty()) {
+      out.emit("<")
+      typeArguments.forEachIndexed { index, parameter ->
+        if (index > 0) out.emit(", ")
+        parameter.emitAnnotations(out)
+        parameter.emit(out)
+        parameter.emitNullable(out)
+      }
+      out.emit(">")
+    }
+    return out
+  }
+
+  companion object {
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun ClassName.parameterizedBy(vararg typeArguments: TypeName)
+        = ParameterizedTypeName(null, this, typeArguments.toList())
+
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun KClass<*>.parameterizedBy(vararg typeArguments: KClass<*>)
+        = ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
+
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun Class<*>.parameterizedBy(vararg typeArguments: Type) =
+        ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
+
+    /** Returns a parameterized type, applying `typeArgument` to `this`.  */
+    @JvmStatic @JvmName("get") fun ClassName.plusParameter(typeArgument: TypeName) =
+        parameterizedBy(typeArgument)
+
+    /** Returns a parameterized type, applying `typeArgument` to `this`.  */
+    @JvmStatic @JvmName("get") fun KClass<*>.plusParameter(typeArgument: KClass<*>) =
+        parameterizedBy(typeArgument)
+
+    /** Returns a parameterized type, applying `typeArgument` to `this`.  */
+    @JvmStatic @JvmName("get") fun Class<*>.plusParameter(typeArgument: Class<*>) =
+        parameterizedBy(typeArgument)
+
+    /** Returns a parameterized type equivalent to `type`.  */
+    internal fun get(
+        type: ParameterizedType,
+        map: MutableMap<Type, TypeVariableName>
+    ): ParameterizedTypeName {
+      val rawType = (type.rawType as Class<*>).asClassName()
+      val ownerType = if (type.ownerType is ParameterizedType
+          && !java.lang.reflect.Modifier.isStatic((type.rawType as Class<*>).modifiers))
+        type.ownerType as ParameterizedType else
+        null
+
+      val typeArguments = type.actualTypeArguments.map { TypeName.get(it, map = map) }
+      return if (ownerType != null)
+        get(ownerType, map = map).nestedClass(rawType.simpleName, typeArguments) else
+        ParameterizedTypeName(null, rawType, typeArguments)
+    }
+
+    /** Returns a type name equivalent to type with given list of type arguments.  */
+    internal fun get(type: KClass<*>, nullable: Boolean, typeArguments: List<KTypeProjection>): TypeName {
+      if (typeArguments.isEmpty()) {
+        return type.asTypeName()
+      }
+
+      val effectiveType = if (type.java.isArray) Array<Unit>::class else type
+      val enclosingClass = type.java.enclosingClass?.kotlin
+
+      return ParameterizedTypeName(
+          enclosingClass?.let {
+            get(it, false, typeArguments.drop(effectiveType.typeParameters.size))
+          },
+          effectiveType.asTypeName(),
+          typeArguments.take(effectiveType.typeParameters.size).map { (paramVariance, paramType) ->
+            val typeName = paramType?.asTypeName() ?: return@map WildcardTypeName.STAR
+            when (paramVariance) {
+              null -> WildcardTypeName.STAR
+              KVariance.INVARIANT -> typeName
+              KVariance.IN -> WildcardTypeName.supertypeOf(typeName)
+              KVariance.OUT -> WildcardTypeName.subtypeOf(typeName)
+            }
+          },
+          nullable,
+          effectiveType.annotations.map { AnnotationSpec.get(it) })
+    }
   }
 }
 //endregion
