@@ -220,7 +220,22 @@ abstract class TypeName internal constructor(
 /** The wildcard type `*` which is shorthand for `out Any?`. */
 @JvmField val STAR = WildcardTypeName.subtypeOf(ANY.asNullable())
 
-@JvmField val DYNAMIC = object : TypeName(false, emptyList()) {
+/** [Dynamic] is a singleton `object` type, so this is a shorthand for it in Java. */
+@JvmField val DYNAMIC = Dynamic
+
+/** Returns a [TypeName] equivalent to this [TypeMirror]. */
+@JvmName("get")
+fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
+
+/** Returns a [TypeName] equivalent to this [KClass].  */
+@JvmName("get")
+fun KClass<*>.asTypeName() = asClassName()
+
+/** Returns a [TypeName] equivalent to this [Type].  */
+@JvmName("get")
+fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
+
+object Dynamic : TypeName(false, emptyList()) {
 
   override fun asNullable() =
       throw UnsupportedOperationException("dynamic can't be nullable")
@@ -238,15 +253,3 @@ abstract class TypeName internal constructor(
     emit("dynamic")
   }
 }
-
-/** Returns a [TypeName] equivalent to this [TypeMirror]. */
-@JvmName("get")
-fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
-
-/** Returns a [TypeName] equivalent to this [KClass].  */
-@JvmName("get")
-fun KClass<*>.asTypeName() = asClassName()
-
-/** Returns a [TypeName] equivalent to this [Type].  */
-@JvmName("get")
-fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
