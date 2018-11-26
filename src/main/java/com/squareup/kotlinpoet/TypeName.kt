@@ -216,8 +216,21 @@ sealed class TypeName internal constructor(
 @JvmField val CHAR = ClassName("kotlin", "Char")
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
+@JvmField val DYNAMIC = Dynamic
 
-@JvmField val DYNAMIC = object : TypeName(false, emptyList()) {
+/** Returns a [TypeName] equivalent to this [TypeMirror]. */
+@JvmName("get")
+fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
+
+/** Returns a [TypeName] equivalent to this [KClass].  */
+@JvmName("get")
+fun KClass<*>.asTypeName() = asClassName()
+
+/** Returns a [TypeName] equivalent to this [Type].  */
+@JvmName("get")
+fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
+
+object Dynamic : TypeName(false, emptyList()) {
 
   override fun asNullable() =
       throw UnsupportedOperationException("dynamic can't be nullable")
@@ -235,18 +248,6 @@ sealed class TypeName internal constructor(
     emit("dynamic")
   }
 }
-
-/** Returns a [TypeName] equivalent to this [TypeMirror]. */
-@JvmName("get")
-fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
-
-/** Returns a [TypeName] equivalent to this [KClass].  */
-@JvmName("get")
-fun KClass<*>.asTypeName() = asClassName()
-
-/** Returns a [TypeName] equivalent to this [Type].  */
-@JvmName("get")
-fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
 
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName internal constructor(
