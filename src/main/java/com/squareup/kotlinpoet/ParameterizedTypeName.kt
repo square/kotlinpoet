@@ -146,9 +146,9 @@ class ParameterizedTypeName internal constructor(
           },
           effectiveType.asTypeName(),
           typeArguments.take(effectiveType.typeParameters.size).map { (paramVariance, paramType) ->
-            val typeName = paramType?.asTypeName() ?: return@map WildcardTypeName.STAR
+            val typeName = paramType?.asTypeName() ?: return@map STAR
             when (paramVariance) {
-              null -> WildcardTypeName.STAR
+              null -> STAR
               KVariance.INVARIANT -> typeName
               KVariance.IN -> WildcardTypeName.supertypeOf(typeName)
               KVariance.OUT -> WildcardTypeName.subtypeOf(typeName)

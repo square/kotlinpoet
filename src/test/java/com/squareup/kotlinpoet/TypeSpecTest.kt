@@ -21,12 +21,12 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.DATA
 import com.squareup.kotlinpoet.KModifier.IN
+import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
-import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
@@ -85,7 +85,7 @@ class TypeSpecTest {
   }
 
   @Test fun interestingTypes() {
-    val listOfAny = List::class.asClassName().parameterizedBy(WildcardTypeName.STAR)
+    val listOfAny = List::class.asClassName().parameterizedBy(STAR)
     val listOfExtends = List::class.asClassName()
         .parameterizedBy(WildcardTypeName.subtypeOf(Serializable::class))
     val listOfSuper = List::class.asClassName()
