@@ -247,3 +247,75 @@ fun KClass<*>.asTypeName() = asClassName()
 /** Returns a [TypeName] equivalent to this [Type].  */
 @JvmName("get")
 fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
+
+/** A fully-qualified class name for top-level and member classes.  */
+class ClassName internal constructor(
+    names: List<String>,
+    nullable: Boolean = false,
+    annotations: List<AnnotationSpec> = emptyList()
+) : TypeName(nullable, annotations), Comparable<ClassName> {
+  /**
+   * Returns a class name created from the given parts. For example, calling this with package name
+   * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
+   */
+  constructor(packageName: String, simpleName: String, vararg simpleNames: String)
+      : this(listOf(packageName, simpleName, *simpleNames))
+
+  /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
+  internal val names: List<String> = names.toImmutableList()
+
+  init {
+    for (i in 1 until names.size) {
+      require(names[i].isName) { "part ${names[i]} is keyword" }
+    }
+  }
+
+  override fun asNullable() = ClassName(names, true, annotations)
+
+  override fun asNonNull() = ClassName(names, false, annotations)
+
+  override fun annotated(annotations: List<AnnotationSpec>)
+      = ClassName(names, nullable, this.annotations + annotations)
+
+  override fun withoutAnnotations() = ClassName(names, nullable)
+
+  override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
+
+  override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
+
+  companion object {
+    /**
+     * Returns a new [ClassName] instance for the given fully-qualified class name string. This
+     * method assumes that the input is ASCII and follows typical Java style (lowercase package
+     * names, UpperCamelCase class names) and may produce incorrect results or throw
+     * [IllegalArgumentException] otherwise. For that reason, [.get] and
+     * [.get] should be preferred as they can correctly create [ClassName]
+     * instances without such restrictions.
+     *
+     * TODO should this live in ClassName.kt?
+     */
+    @JvmStatic fun bestGuess(classNameString: String): ClassName {
+      val names = mutableListOf<String>()
+
+      // Add the package name, like "java.util.concurrent", or "" for no package.
+      var p = 0
+      while (p < classNameString.length && Character.isLowerCase(classNameString.codePointAt(p))) {
+        p = classNameString.indexOf('.', p) + 1
+        require(p != 0) { "couldn't make a guess for $classNameString" }
+      }
+      names += if (p != 0) classNameString.substring(0, p - 1) else ""
+
+      // Add the class names, like "Map" and "Entry".
+      for (part in classNameString.substring(p).split('.')) {
+        require(part.isNotEmpty() && Character.isUpperCase(part.codePointAt(0))) {
+          "couldn't make a guess for $classNameString"
+        }
+
+        names += part
+      }
+
+      require(names.size >= 2) { "couldn't make a guess for $classNameString" }
+      return ClassName(names)
+    }
+  }
+}
