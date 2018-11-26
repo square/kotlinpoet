@@ -260,7 +260,7 @@ class ClassName internal constructor(
     names: List<String>,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
-) : TypeName(nullable, annotations), Comparable<ClassName> {
+) : TypeName(nullable, annotations), Comparable<ClassName>, ClassNameInterface {
   /**
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields [Map.Entry].
@@ -269,7 +269,7 @@ class ClassName internal constructor(
       : this(listOf(packageName, simpleName, *simpleNames))
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for [Map.Entry].  */
-  internal val names: List<String> = names.toImmutableList()
+  override val names: List<String> = names.toImmutableList()
 
   init {
     for (i in 1 until names.size) {

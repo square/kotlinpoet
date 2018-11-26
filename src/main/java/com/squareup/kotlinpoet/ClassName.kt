@@ -25,70 +25,74 @@ import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
-/** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
-val ClassName.canonicalName
-  get() = if (names[0].isEmpty())
-  names.subList(1, names.size).joinToString(".") else
-  names.joinToString(".")
+internal interface ClassNameInterface {
+  val names: List<String>
 
-/** Package name, like `"java.util"` for `Map.Entry`.  */
-val ClassName.packageName get() = names[0]
+  /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
+  val canonicalName
+    get() = if (names[0].isEmpty())
+      names.subList(1, names.size).joinToString(".") else
+      names.joinToString(".")
 
-/** Simple name of this class, like `"Entry"` for [Map.Entry].  */
-val ClassName.simpleName get() = names[names.size - 1]
-val ClassName.simpleNames get() = names.subList(1, names.size)
+  /** Package name, like `"java.util"` for `Map.Entry`.  */
+  val packageName get() = names[0]
 
-/**
- * Returns the enclosing class, like [Map] for `Map.Entry`. Returns null if this class
- * is not nested in another class.
- */
-fun ClassName.enclosingClassName(): ClassName? {
-  return if (names.size != 2)
-    ClassName(names.subList(0, names.size - 1)) else
-    null
-}
+  /** Simple name of this class, like `"Entry"` for [Map.Entry].  */
+  val simpleName get() = names[names.size - 1]
+  val simpleNames get() = names.subList(1, names.size)
 
-/**
- * Returns the top class in this nesting group. Equivalent to chained calls to
- * [ClassName.enclosingClassName] until the result's enclosing class is null.
- */
-fun ClassName.topLevelClassName() = ClassName(names.subList(0, 2))
-
-/**
- * Fully qualified name using `.` to separate package from the top level class name, and `$` to
- * separate nested classes, like `kotlin.collections.Map$Entry`.
- */
-fun ClassName.reflectionName(): String {
-  // trivial case: no nested names
-  if (names.size == 2) {
-    return if (packageName.isEmpty())
-      names[1] else
-      packageName + "." + names[1]
+  /**
+   * Returns the enclosing class, like [Map] for `Map.Entry`. Returns null if this class
+   * is not nested in another class.
+   */
+  fun enclosingClassName(): ClassName? {
+    return if (names.size != 2)
+      ClassName(names.subList(0, names.size - 1)) else
+      null
   }
-  // concat top level class name and nested names
-  return buildString {
-    append(topLevelClassName())
-    for (name in simpleNames.subList(1, simpleNames.size)) {
-      append('$').append(name)
+
+  /**
+   * Returns the top class in this nesting group. Equivalent to chained calls to
+   * [enclosingClassName] until the result's enclosing class is null.
+   */
+  fun topLevelClassName() = ClassName(names.subList(0, 2))
+
+  /**
+   * Fully qualified name using `.` to separate package from the top level class name, and `$` to
+   * separate nested classes, like `kotlin.collections.Map$Entry`.
+   */
+  fun reflectionName(): String {
+    // trivial case: no nested names
+    if (names.size == 2) {
+      return if (packageName.isEmpty())
+        names[1] else
+        packageName + "." + names[1]
+    }
+    // concat top level class name and nested names
+    return buildString {
+      append(topLevelClassName())
+      for (name in simpleNames.subList(1, simpleNames.size)) {
+        append('$').append(name)
+      }
     }
   }
-}
 
-/**
- * Returns a new [ClassName] instance for the specified `name` as nested inside this
- * class.
- */
-fun ClassName.nestedClass(name: String) = ClassName(names + name)
+  /**
+   * Returns a new [ClassName] instance for the specified `name` as nested inside this
+   * class.
+   */
+  fun nestedClass(name: String) = ClassName(names + name)
 
-/**
- * Returns a class that shares the same enclosing package or class. If this class is enclosed by
- * another class, this is equivalent to `enclosingClassName().nestedClass(name)`. Otherwise
- * it is equivalent to `get(packageName(), name)`.
- */
-fun ClassName.peerClass(name: String): ClassName {
-  val result = names.toMutableList()
-  result[result.size - 1] = name
-  return ClassName(result)
+  /**
+   * Returns a class that shares the same enclosing package or class. If this class is enclosed by
+   * another class, this is equivalent to `enclosingClassName().nestedClass(name)`. Otherwise
+   * it is equivalent to `get(packageName(), name)`.
+   */
+  fun peerClass(name: String): ClassName {
+    val result = names.toMutableList()
+    result[result.size - 1] = name
+    return ClassName(result)
+  }
 }
 
 @JvmName("get")
