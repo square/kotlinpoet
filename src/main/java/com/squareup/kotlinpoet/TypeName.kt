@@ -404,7 +404,7 @@ object Dynamic : TypeName(false, emptyList()) {
   }
 }
 
-class LambdaTypeName internal constructor(
+class LambdaTypeName private constructor(
     val receiver: TypeName? = null,
     parameters: List<ParameterSpec> = emptyList(),
     val returnType: TypeName = UNIT,
