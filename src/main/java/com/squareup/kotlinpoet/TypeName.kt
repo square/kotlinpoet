@@ -19,6 +19,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.lang.reflect.GenericArrayType
+import java.lang.reflect.Modifier.isStatic
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
@@ -590,7 +591,7 @@ class ParameterizedTypeName internal constructor(
     ): ParameterizedTypeName {
       val rawType = (type.rawType as Class<*>).asClassName()
       val ownerType = if (type.ownerType is ParameterizedType
-          && !java.lang.reflect.Modifier.isStatic((type.rawType as Class<*>).modifiers))
+          && !isStatic((type.rawType as Class<*>).modifiers))
         type.ownerType as ParameterizedType else
         null
 
