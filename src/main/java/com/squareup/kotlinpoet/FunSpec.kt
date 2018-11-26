@@ -193,7 +193,7 @@ class FunSpec private constructor(builder: Builder) {
     emit(
         codeWriter = this,
         enclosingName = "Constructor",
-        implicitModifiers = TypeSpec.Kind.Class().implicitFunctionModifiers,
+        implicitModifiers = TypeSpec.Kind.CLASS.implicitFunctionModifiers(),
         includeKdocTags = true)
   }
 
