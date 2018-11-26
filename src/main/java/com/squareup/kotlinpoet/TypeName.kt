@@ -217,6 +217,9 @@ abstract class TypeName internal constructor(
 @JvmField val FLOAT = ClassName("kotlin", "Float")
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
+/** The wildcard type `*` which is shorthand for `out Any?`. */
+@JvmField val STAR = WildcardTypeName.subtypeOf(ANY.asNullable())
+
 @JvmField val DYNAMIC = object : TypeName(false, emptyList()) {
 
   override fun asNullable() =
