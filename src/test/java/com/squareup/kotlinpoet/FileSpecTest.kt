@@ -571,58 +571,15 @@ class FileSpecTest {
         .addComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
         .build()
     assertThat(source.toString()).isEqualTo("""
-        |/**
-        | *
-        | * GENERATED FILE:
-        | *
-        | * DO NOT EDIT!
-        | */
+        |//
+        |// GENERATED FILE:
+        |//
+        |// DO NOT EDIT!
+        |//
         |package com.squareup.tacos
         |
         |class Taco
         |""".trimMargin())
-  }
-
-  @Test fun multiLineFileHeaderComment() {
-    val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco").build())
-        .addComment(CodeBlock.builder()
-            .addStatement("Copyright (C) 2015 Square, Inc.")
-            .add("\n")
-            .addStatement("Licensed under the Apache License, Version 2.0 (the \"License\");")
-            .addStatement("you may not use this file except in compliance with the License.")
-            .addStatement("You may obtain a copy of the License at")
-            .add("\n")
-            .addStatement("http://www.apache.org/licenses/LICENSE-2.0")
-            .add("\n")
-            .addStatement("Unless required by applicable law or agreed to in writing, software")
-            .addStatement("distributed under the License is distributed on an \"AS IS\" BASIS,")
-            .addStatement("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.")
-            .addStatement("See the License for the specific language governing permissions and")
-            .addStatement("limitations under the License.")
-            .build())
-        .build()
-
-    assertThat(source.toString()).isEqualTo("""
-      |/**
-      | * Copyright (C) 2015 Square, Inc.
-      | *
-      | * Licensed under the Apache License, Version 2.0 (the "License");
-      | * you may not use this file except in compliance with the License.
-      | * You may obtain a copy of the License at
-      | *
-      | * http://www.apache.org/licenses/LICENSE-2.0
-      | *
-      | * Unless required by applicable law or agreed to in writing, software
-      | * distributed under the License is distributed on an "AS IS" BASIS,
-      | * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-      | * See the License for the specific language governing permissions and
-      | * limitations under the License.
-      | */
-      |package com.squareup.tacos
-      |
-      |class Taco
-      |""".trimMargin())
   }
 
   @Test fun packageClassConflictsWithNestedClass() {
