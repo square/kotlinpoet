@@ -56,11 +56,13 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     val importsCollector = CodeWriter(NullAppendable, indent, memberImports,
         columnLimit = Integer.MAX_VALUE)
     emit(importsCollector)
-    val suggestedImports = importsCollector.suggestedImports()
+    val suggestedTypeImports = importsCollector.suggestedTypeImports()
+    val suggestedMemberImports = importsCollector.suggestedMemberImports()
     importsCollector.close()
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports)
+    val codeWriter = CodeWriter(out, indent, memberImports, suggestedTypeImports,
+        suggestedMemberImports)
     emit(codeWriter)
     codeWriter.close()
   }
@@ -107,13 +109,18 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
       codeWriter.emit("\n")
     }
 
-    val imports = codeWriter.importedTypes.values
-        .map { it.canonicalName }
+    val importedTypeNames = codeWriter.importedTypes.values.map { it.canonicalName }
+    val importedMemberNames = codeWriter.importedMembers.values.map { it.canonicalName }
+    // Aliased imports should always appear at the bottom of the imports list.
+    val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
+    val imports = (importedTypeNames + importedMemberNames)
         .filterNot { it in memberImports.keys }
-        .plus(memberImports.map { it.value.toString() })
+        .plus(nonAliasedImports.map { it.toString() })
+        .toSortedSet()
+        .plus(aliasedImports.map { it.toString() }.toSortedSet())
 
     if (imports.isNotEmpty()) {
-      for (className in imports.toSortedSet()) {
+      for (className in imports) {
         codeWriter.emitCode("import·%L", className.escapeKeywords())
         codeWriter.emit("\n")
       }
@@ -274,6 +281,10 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     fun addAliasedImport(className: ClassName, memberName: String, `as`: String) = apply {
       memberImports += Import("${className.canonicalName}.$memberName", `as`)
+    }
+
+    fun addAliasedImport(memberName: MemberName, `as`: String) = apply {
+      memberImports += Import(memberName.canonicalName, `as`)
     }
 
     fun indent(indent: String) = apply {
