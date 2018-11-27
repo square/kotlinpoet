@@ -33,23 +33,23 @@ class AnnotatedTypeNameTest {
     val simpleString = String::class.asTypeName()
     assertFalse(simpleString.isAnnotated)
     assertEquals(simpleString, String::class.asTypeName())
-    val annotated = simpleString.annotated(NEVER_NULL)
+    val annotated = simpleString.copy(annotations = simpleString.annotations + NEVER_NULL)
     assertTrue(annotated.isAnnotated)
-    assertEquals(annotated, annotated.annotated())
   }
 
   @Test fun annotatedType() {
     val expected = "@$NN kotlin.String"
     val type = String::class.asTypeName()
-    val actual = type.annotated(NEVER_NULL).toString()
+    val actual = type.copy(annotations = type.annotations + NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedTwice() {
     val expected = "@$NN @java.lang.Override kotlin.String"
     val type = String::class.asTypeName()
-    val actual = type.annotated(NEVER_NULL)
-        .annotated(AnnotationSpec.builder(Override::class).build())
+    val actual = type
+        .copy(annotations = type.annotations + NEVER_NULL +
+            AnnotationSpec.builder(Override::class).build())
         .toString()
     assertEquals(expected, actual)
   }
@@ -57,13 +57,13 @@ class AnnotatedTypeNameTest {
   @Test fun annotatedParameterizedType() {
     val expected = "@$NN kotlin.collections.List<kotlin.String>"
     val type = List::class.parameterizedBy(String::class)
-    val actual = type.annotated(NEVER_NULL).toString()
+    val actual = type.copy(annotations = type.annotations + NEVER_NULL).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedArgumentOfParameterizedType() {
     val expected = "kotlin.collections.List<@$NN kotlin.String>"
-    val type = String::class.asTypeName().annotated(NEVER_NULL)
+    val type = String::class.asTypeName().copy(annotations = listOf(NEVER_NULL))
     val list = List::class.asClassName()
     val actual = list.parameterizedBy(type).toString()
     assertEquals(expected, actual)
@@ -71,14 +71,14 @@ class AnnotatedTypeNameTest {
 
   @Test fun annotatedWildcardTypeNameWithSuper() {
     val expected = "in @$NN kotlin.String"
-    val type = String::class.asTypeName().annotated(NEVER_NULL)
+    val type = String::class.asTypeName().copy(annotations = listOf(NEVER_NULL))
     val actual = WildcardTypeName.supertypeOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithExtends() {
     val expected = "out @$NN kotlin.String"
-    val type = String::class.asTypeName().annotated(NEVER_NULL)
+    val type = String::class.asTypeName().copy(annotations = listOf(NEVER_NULL))
     val actual = WildcardTypeName.subtypeOf(type).toString()
     assertEquals(expected, actual)
   }
@@ -94,11 +94,14 @@ class AnnotatedTypeNameTest {
   private fun annotatedEquivalence(type: TypeName) {
     assertFalse(type.isAnnotated)
     assertEquals(type, type)
-    assertEquals(type.annotated(NEVER_NULL), type.annotated(NEVER_NULL))
-    assertNotEquals(type, type.annotated(NEVER_NULL))
+    assertEquals(type.copy(annotations = listOf(NEVER_NULL)),
+        type.copy(annotations = listOf(NEVER_NULL)))
+    assertNotEquals(type, type.copy(annotations = listOf(NEVER_NULL)))
     assertEquals(type.hashCode().toLong(), type.hashCode().toLong())
-    assertEquals(type.annotated(NEVER_NULL).hashCode().toLong(), type.annotated(NEVER_NULL).hashCode().toLong())
-    assertNotEquals(type.hashCode().toLong(), type.annotated(NEVER_NULL).hashCode().toLong())
+    assertEquals(type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
+        type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong())
+    assertNotEquals(type.hashCode().toLong(),
+        type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong())
   }
 
   // https://github.com/square/javapoet/issues/431
@@ -109,7 +112,7 @@ class AnnotatedTypeNameTest {
   @Ignore @Test fun annotatedNestedType() {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName + " Entry"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
-    val type = Map.Entry::class.asTypeName().annotated(typeUseAnnotation)
+    val type = Map.Entry::class.asTypeName().copy(annotations = listOf(typeUseAnnotation))
     val actual = type.toString()
     assertEquals(expected, actual)
   }
@@ -120,7 +123,7 @@ class AnnotatedTypeNameTest {
         " Entry<kotlin.Byte, kotlin.Byte>"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
     val type = Map.Entry::class.parameterizedBy(Byte::class, Byte::class)
-        .annotated(typeUseAnnotation)
+        .copy(annotations = listOf(typeUseAnnotation))
     val actual = type.toString()
     assertEquals(expected, actual)
   }

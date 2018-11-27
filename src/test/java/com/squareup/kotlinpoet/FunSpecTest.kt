@@ -138,7 +138,8 @@ class FunSpecTest {
 
   @Test fun nullableParam() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("string", String::class.asTypeName().asNullable())
+        .addParameter(ParameterSpec
+            .builder("string", String::class.asTypeName().copy(nullable = true))
             .build())
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -149,7 +150,7 @@ class FunSpecTest {
 
   @Test fun nullableReturnType() {
     val funSpec = FunSpec.builder("foo")
-        .returns(String::class.asTypeName().asNullable())
+        .returns(String::class.asTypeName().copy(nullable = true))
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |fun foo(): kotlin.String? {
@@ -337,8 +338,9 @@ class FunSpecTest {
     val unitType = Unit::class.asClassName()
     val booleanType = Boolean::class.asClassName()
     val stringType = String::class.asClassName()
-    val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
-        .asNullable()
+    val lambdaTypeName = LambdaTypeName
+        .get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+        .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
         .returns(String::class)
@@ -353,8 +355,10 @@ class FunSpecTest {
   @Test fun functionParamMultipleNullableLambdaParam() {
     val unitType = Unit::class.asClassName()
     val booleanType = Boolean::class.asClassName()
-    val stringType = String::class.asClassName().asNullable()
-    val lambdaTypeName = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType).asNullable()
+    val stringType = String::class.asClassName().copy(nullable = true)
+    val lambdaTypeName = LambdaTypeName
+        .get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+        .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
         .returns(String::class)
@@ -433,7 +437,7 @@ class FunSpecTest {
   @Test fun reifiedTypesOnNonInlineFunctionsForbidden() {
     assertThrows<IllegalArgumentException> {
       FunSpec.builder("foo")
-          .addTypeVariable(TypeVariableName("T").reified())
+          .addTypeVariable(TypeVariableName("T").copy(reified = true))
           .build()
     }.hasMessageThat().isEqualTo("only type parameters of inline functions can be reified!")
   }

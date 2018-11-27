@@ -40,7 +40,9 @@ class LambdaTypeNameTest {
   @Test fun receiverWithAnnotationHasParens() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasSomeAnnotation::class.java)
     val typeName = LambdaTypeName.get(
-            Int::class.asClassName().annotated(AnnotationSpec.get(annotation, true)),
+            Int::class.asClassName().copy(
+                annotations = listOf(AnnotationSpec.get(annotation, includeDefaultValues = true))
+            ),
             listOf(),
             Unit::class.asTypeName())
     assertThat(typeName.toString()).isEqualTo(

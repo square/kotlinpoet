@@ -106,9 +106,10 @@ fun PropertySpec.Builder.transient() = addAnnotation(Transient::class)
 fun PropertySpec.Builder.volatile() = addAnnotation(Volatile::class)
 
 fun TypeName.jvmSuppressWildcards(suppress: Boolean = true) =
-    annotated(jvmSuppressWildcardsAnnotation(suppress))
+    copy(annotations = this.annotations + jvmSuppressWildcardsAnnotation(suppress))
 
-fun TypeName.jvmWildcard() = annotated(AnnotationSpec.builder(JvmWildcard::class).build())
+fun TypeName.jvmWildcard() =
+    copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
 fun PropertySpec.Builder.jvmDefault() = addAnnotation(JvmDefault::class)
 

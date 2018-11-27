@@ -22,13 +22,13 @@ import kotlin.test.Test
 class TypeVariableNameTest {
   @Test fun nullableAnyIsImplicitBound() {
     val typeVariableName = TypeVariableName("T")
-    assertThat(typeVariableName.bounds).containsExactly(ANY.asNullable())
+    assertThat(typeVariableName.bounds).containsExactly(NULLABLE_ANY)
   }
 
   @Test fun oneTypeVariableNoBounds() {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T"))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -40,7 +40,7 @@ class TypeVariableNameTest {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T"))
         .addTypeVariable(TypeVariableName("U"))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -51,7 +51,7 @@ class TypeVariableNameTest {
   @Test fun oneTypeVariableOneBound() {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T", Serializable::class))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -63,7 +63,7 @@ class TypeVariableNameTest {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T", Serializable::class))
         .addTypeVariable(TypeVariableName("U", Runnable::class))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -74,7 +74,7 @@ class TypeVariableNameTest {
   @Test fun oneTypeVariableTwoBounds() {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T", Serializable::class, Runnable::class))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -86,7 +86,7 @@ class TypeVariableNameTest {
     val funSpec = FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T", Serializable::class, Runnable::class))
         .addTypeVariable(TypeVariableName("U", Comparator::class, Cloneable::class))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("fun <T, U> foo(): " +
@@ -99,7 +99,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("T", Serializable::class, Runnable::class))
         .addTypeVariable(TypeVariableName("U", Cloneable::class))
         .addTypeVariable(TypeVariableName("V"))
-        .returns(TypeVariableName("T").asNullable())
+        .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("fun <T, U : kotlin.Cloneable, V> foo(): " +
@@ -108,7 +108,7 @@ class TypeVariableNameTest {
 
   @Test fun addingBoundsRemovesImplicitBound() {
     val typeSpec = TypeSpec.classBuilder("Taco")
-        .addTypeVariable(TypeVariableName("T").withBounds(Number::class))
+        .addTypeVariable(TypeVariableName("T").copy(bounds = listOf(Number::class.asTypeName())))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
       |class Taco<T : kotlin.Number>
@@ -142,7 +142,7 @@ class TypeVariableNameTest {
   @Test fun reified() {
     val funSpec = FunSpec.builder("printMembers")
         .addModifiers(KModifier.INLINE)
-        .addTypeVariable(TypeVariableName("T").reified())
+        .addTypeVariable(TypeVariableName("T").copy(reified = true))
         .addStatement("println(T::class.members)")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -163,7 +163,7 @@ class TypeVariableNameTest {
 
   @Test fun filterOutNullableAnyBounds() {
     val typeSpec = TypeSpec.classBuilder("Taco")
-        .addTypeVariable(TypeVariableName("E", ANY.asNullable()))
+        .addTypeVariable(TypeVariableName("E", NULLABLE_ANY))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
       |class Taco<E>

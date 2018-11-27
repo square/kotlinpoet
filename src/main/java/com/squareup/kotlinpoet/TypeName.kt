@@ -66,7 +66,8 @@ import kotlin.reflect.KVariance
  * and [WildcardTypeName].
  */
 sealed class TypeName constructor(
-  val nullable: Boolean, annotations: List<AnnotationSpec>
+  val nullable: Boolean,
+  annotations: List<AnnotationSpec>
 ) {
   val annotations = annotations.toImmutableList()
 
@@ -79,15 +80,10 @@ sealed class TypeName constructor(
     }
   }
 
-  fun annotated(vararg annotations: AnnotationSpec) = annotated(annotations.toList())
-
-  abstract fun asNullable(): TypeName
-
-  abstract fun asNonNull(): TypeName
-
-  abstract fun annotated(annotations: List<AnnotationSpec>): TypeName
-
-  abstract fun withoutAnnotations(): TypeName
+  abstract fun copy(
+    nullable: Boolean = this.nullable,
+    annotations: List<AnnotationSpec> = this.annotations.toList()
+  ): TypeName
 
   val isAnnotated get() = annotations.isNotEmpty()
 
@@ -165,7 +161,10 @@ sealed class TypeName constructor(
           return ARRAY.parameterizedBy(TypeName.get(t.componentType, typeVariables))
         }
 
-        override fun visitTypeVariable(t: javax.lang.model.type.TypeVariable, p: Void?): TypeName {
+        override fun visitTypeVariable(
+          t: javax.lang.model.type.TypeVariable,
+          p: Void?
+        ): TypeName {
           return TypeVariableName.get(t, typeVariables.toMutableMap())
         }
 
@@ -222,7 +221,7 @@ sealed class TypeName constructor(
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
 /** The wildcard type `*` which is shorthand for `out Any?`. */
-@JvmField val STAR = WildcardTypeName.subtypeOf(ANY.asNullable())
+@JvmField val STAR = WildcardTypeName.subtypeOf(ANY.copy(nullable = true))
 
 /** [Dynamic] is a singleton `object` type, so this is a shorthand for it in Java. */
 @JvmField val DYNAMIC = Dynamic
@@ -278,14 +277,9 @@ class ClassName internal constructor(
     }
   }
 
-  override fun asNullable() = ClassName(names, true, annotations)
-
-  override fun asNonNull() = ClassName(names, false, annotations)
-
-  override fun annotated(annotations: List<AnnotationSpec>)
-      = ClassName(names, nullable, this.annotations + annotations)
-
-  override fun withoutAnnotations() = ClassName(names, nullable)
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): ClassName {
+    return ClassName(names, nullable, annotations)
+  }
 
   /**
    * Returns the enclosing class, like `Map` for `Map.Entry`. Returns null if this class is not
@@ -387,17 +381,8 @@ class ClassName internal constructor(
 
 object Dynamic : TypeName(false, emptyList()) {
 
-  override fun asNullable() =
-      throw UnsupportedOperationException("dynamic can't be nullable")
-
-  override fun asNonNull() =
-      throw UnsupportedOperationException("dynamic can't be non-nullable")
-
-  override fun annotated(annotations: List<AnnotationSpec>) =
-      throw UnsupportedOperationException("dynamic can't have annotations")
-
-  override fun withoutAnnotations() =
-      throw UnsupportedOperationException("dynamic can't have annotations")
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>) =
+      throw UnsupportedOperationException("dynamic doesn't support copying")
 
   override fun emit(out: CodeWriter) = out.apply {
     emit("dynamic")
@@ -422,22 +407,17 @@ class LambdaTypeName private constructor(
     }
   }
 
-  override fun asNullable() = LambdaTypeName(receiver, parameters, returnType, true, suspending,
-      annotations)
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): LambdaTypeName {
+    return copy(nullable, annotations, this.suspending)
+  }
 
-  override fun asNonNull()
-      = LambdaTypeName(receiver, parameters, returnType, false, suspending, annotations)
-
-  fun asSuspending() = LambdaTypeName(receiver, parameters, returnType, nullable, true, annotations)
-
-  fun asNonSuspending() =
-      LambdaTypeName(receiver, parameters, returnType, nullable, false, annotations)
-
-  override fun annotated(annotations: List<AnnotationSpec>)
-      = LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations)
-
-  override fun withoutAnnotations()
-      = LambdaTypeName(receiver, parameters, returnType, nullable, suspending)
+  fun copy(
+    nullable: Boolean = this.nullable,
+    annotations: List<AnnotationSpec> = this.annotations.toList(),
+    suspending: Boolean = this.suspending
+  ): LambdaTypeName {
+    return LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations)
+  }
 
   override fun emit(out: CodeWriter): CodeWriter {
     emitAnnotations(out)
@@ -511,17 +491,9 @@ class ParameterizedTypeName internal constructor(
     }
   }
 
-  override fun asNullable()
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, true, annotations)
-
-  override fun asNonNull()
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, false, annotations)
-
-  override fun annotated(annotations: List<AnnotationSpec>) = ParameterizedTypeName(
-      enclosingType, rawType, typeArguments, nullable, this.annotations + annotations)
-
-  override fun withoutAnnotations()
-      = ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable)
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): ParameterizedTypeName {
+    return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations)
+  }
 
   fun plusParameter(typeArgument: TypeName) = ParameterizedTypeName(enclosingType, rawType,
       typeArguments + typeArgument, nullable, annotations)
@@ -602,7 +574,11 @@ class ParameterizedTypeName internal constructor(
     }
 
     /** Returns a type name equivalent to type with given list of type arguments.  */
-    internal fun get(type: KClass<*>, nullable: Boolean, typeArguments: List<KTypeProjection>): TypeName {
+    internal fun get(
+      type: KClass<*>,
+      nullable: Boolean,
+      typeArguments: List<KTypeProjection>
+    ): TypeName {
       if (typeArguments.isEmpty()) {
         return type.asTypeName()
       }
@@ -641,35 +617,32 @@ class TypeVariableName private constructor(
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
-  override fun asNullable() = TypeVariableName(name, bounds, variance, reified, true, annotations)
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): TypeVariableName {
+    return copy(nullable, annotations, this.bounds, this.reified)
+  }
 
-  override fun asNonNull() = TypeVariableName(name, bounds, variance, reified, false, annotations)
-
-  override fun annotated(annotations: List<AnnotationSpec>) =
-      TypeVariableName(name, bounds, variance, reified, nullable, annotations)
-
-  override fun withoutAnnotations() = TypeVariableName(name, bounds, variance, reified, nullable)
-
-  fun withBounds(vararg bounds: Type) = withBounds(bounds.map { it.asTypeName() })
-
-  fun withBounds(vararg bounds: KClass<*>) = withBounds(bounds.map { it.asTypeName() })
-
-  fun withBounds(vararg bounds: TypeName) = withBounds(bounds.toList())
-
-  fun withBounds(bounds: List<TypeName>) = TypeVariableName(name,
-      (this.bounds + bounds).withoutImplicitBound(), variance, reified, nullable, annotations)
+  fun copy(
+    nullable: Boolean = this.nullable,
+    annotations: List<AnnotationSpec> = this.annotations.toList(),
+    bounds: List<TypeName> = this.bounds.toList(),
+    reified: Boolean = this.reified
+  ): TypeVariableName {
+    return TypeVariableName(name, bounds.withoutImplicitBound(), variance, reified, nullable,
+        annotations)
+  }
 
   private fun List<TypeName>.withoutImplicitBound(): List<TypeName> {
     return if (size == 1) this else filterNot { it == NULLABLE_ANY }
   }
 
-  fun reified(value: Boolean = true) =
-      TypeVariableName(name, bounds, variance, value, nullable, annotations)
-
   override fun emit(out: CodeWriter) = out.emit(name)
 
   companion object {
-    internal fun of(name: String, bounds: List<TypeName>, variance: KModifier?): TypeVariableName {
+    internal fun of(
+      name: String,
+      bounds: List<TypeName>,
+      variance: KModifier?
+    ): TypeVariableName {
       require(variance == null || variance.isOneOf(KModifier.IN, KModifier.OUT)) {
         "$variance is an invalid variance modifier, the only allowed values are in and out!"
       }
@@ -763,15 +736,9 @@ class WildcardTypeName private constructor(
     require(this.upperBounds.size == 1) { "unexpected extends bounds: $upperBounds" }
   }
 
-  override fun asNullable() = WildcardTypeName(upperBounds, lowerBounds, true, annotations)
-
-  override fun asNonNull() = WildcardTypeName(upperBounds, lowerBounds, false, annotations)
-
-  override fun annotated(annotations: List<AnnotationSpec>): WildcardTypeName {
-    return WildcardTypeName(upperBounds, lowerBounds, nullable, this.annotations + annotations)
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): WildcardTypeName {
+    return WildcardTypeName(upperBounds, lowerBounds, nullable, annotations)
   }
-
-  override fun withoutAnnotations() = WildcardTypeName(upperBounds, lowerBounds, nullable)
 
   override fun emit(out: CodeWriter): CodeWriter {
     return when {
