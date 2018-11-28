@@ -219,7 +219,7 @@ class CodeBlockTest {
     assertThat(mapBlock.toString())
         .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
-    val rarr = WildcardTypeName.subtypeOf(String::class.asTypeName().copy(nullable = true))
+    val rarr = WildcardTypeName.producerOf(String::class.asTypeName().copy(nullable = true))
     val rarrBlock = CodeBlock.of("%T", rarr)
     assertThat(rarrBlock.toString()).isEqualTo("out kotlin.String?")
   }

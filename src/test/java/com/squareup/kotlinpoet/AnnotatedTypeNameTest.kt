@@ -72,14 +72,14 @@ class AnnotatedTypeNameTest {
   @Test fun annotatedWildcardTypeNameWithSuper() {
     val expected = "in @$NN kotlin.String"
     val type = String::class.asTypeName().copy(annotations = listOf(NEVER_NULL))
-    val actual = WildcardTypeName.supertypeOf(type).toString()
+    val actual = WildcardTypeName.consumerOf(type).toString()
     assertEquals(expected, actual)
   }
 
   @Test fun annotatedWildcardTypeNameWithExtends() {
     val expected = "out @$NN kotlin.String"
     val type = String::class.asTypeName().copy(annotations = listOf(NEVER_NULL))
-    val actual = WildcardTypeName.subtypeOf(type).toString()
+    val actual = WildcardTypeName.producerOf(type).toString()
     assertEquals(expected, actual)
   }
 
@@ -88,7 +88,7 @@ class AnnotatedTypeNameTest {
     annotatedEquivalence(Any::class.asClassName())
     annotatedEquivalence(List::class.parameterizedBy(Any::class))
     annotatedEquivalence(TypeVariableName("A"))
-    annotatedEquivalence(WildcardTypeName.subtypeOf(Object::class))
+    annotatedEquivalence(WildcardTypeName.producerOf(Object::class))
   }
 
   private fun annotatedEquivalence(type: TypeName) {

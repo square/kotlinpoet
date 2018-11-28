@@ -87,9 +87,9 @@ class TypeSpecTest {
   @Test fun interestingTypes() {
     val listOfAny = List::class.asClassName().parameterizedBy(STAR)
     val listOfExtends = List::class.asClassName()
-        .parameterizedBy(WildcardTypeName.subtypeOf(Serializable::class))
+        .parameterizedBy(WildcardTypeName.producerOf(Serializable::class))
     val listOfSuper = List::class.asClassName()
-        .parameterizedBy(WildcardTypeName.supertypeOf(String::class))
+        .parameterizedBy(WildcardTypeName.consumerOf(String::class))
     val taco = TypeSpec.classBuilder("Taco")
         .addProperty("star", listOfAny)
         .addProperty("outSerializable", listOfExtends)
@@ -119,8 +119,8 @@ class TypeSpecTest {
     val thingThangOfFooBar = thingThang.parameterizedBy(foo, bar)
     val thung = ClassName(tacosPackage, "Thung")
     val simpleThung = ClassName(tacosPackage, "SimpleThung")
-    val thungOfSuperBar = thung.parameterizedBy(WildcardTypeName.supertypeOf(bar))
-    val thungOfSuperFoo = thung.parameterizedBy(WildcardTypeName.supertypeOf(foo))
+    val thungOfSuperBar = thung.parameterizedBy(WildcardTypeName.consumerOf(bar))
+    val thungOfSuperFoo = thung.parameterizedBy(WildcardTypeName.consumerOf(foo))
     val simpleThungOfBar = simpleThung.parameterizedBy(bar)
 
     val thungParameter = ParameterSpec.builder("thung", thungOfSuperFoo)
