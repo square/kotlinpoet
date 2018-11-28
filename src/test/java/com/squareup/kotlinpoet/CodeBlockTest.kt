@@ -202,22 +202,24 @@ class CodeBlockTest {
   }
 
   @Test fun nullableType() {
-    val type = String::class.asTypeName().asNullable()
+    val type = String::class.asTypeName().copy(nullable = true)
     val typeBlock = CodeBlock.of("%T", type)
     assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
-    val list = List::class.asClassName().asNullable()
-        .parameterizedBy(Int::class.asTypeName().asNullable()).asNullable()
+    val list = List::class.asClassName().copy(nullable = true)
+        .parameterizedBy(Int::class.asTypeName().copy(nullable = true))
+        .copy(nullable = true)
     val listBlock = CodeBlock.of("%T", list)
     assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
-    val map = Map::class.asClassName().asNullable()
-        .parameterizedBy(String::class.asTypeName().asNullable(), list).asNullable()
+    val map = Map::class.asClassName().copy(nullable = true)
+        .parameterizedBy(String::class.asTypeName().copy(nullable = true), list)
+        .copy(nullable = true)
     val mapBlock = CodeBlock.of("%T", map)
     assertThat(mapBlock.toString())
         .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
-    val rarr = WildcardTypeName.subtypeOf(String::class.asTypeName().asNullable())
+    val rarr = WildcardTypeName.subtypeOf(String::class.asTypeName().copy(nullable = true))
     val rarrBlock = CodeBlock.of("%T", rarr)
     assertThat(rarrBlock.toString()).isEqualTo("out kotlin.String?")
   }

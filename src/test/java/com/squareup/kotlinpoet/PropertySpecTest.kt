@@ -24,7 +24,7 @@ import kotlin.test.Test
 
 class PropertySpecTest {
   @Test fun nullable() {
-    val type = String::class.asClassName().asNullable()
+    val type = String::class.asClassName().copy(nullable = true)
     val a = PropertySpec.builder("foo", type).build()
     assertThat(a.toString()).isEqualTo("val foo: kotlin.String?\n")
   }
@@ -226,7 +226,7 @@ class PropertySpecTest {
   }
 
   @Test fun reifiedTypeVariable() {
-    val t = TypeVariableName("T").reified(true)
+    val t = TypeVariableName("T").copy(reified = true)
     val prop = PropertySpec.builder("someFunction", t, KModifier.PRIVATE)
         .addTypeVariable(t)
         .receiver(KClass::class.asClassName().parameterizedBy(t))
@@ -244,7 +244,7 @@ class PropertySpecTest {
   @Test fun reifiedTypeVariableNotAllowedWhenNoAccessors() {
     assertThrows<IllegalArgumentException> {
       PropertySpec.builder("property", String::class)
-          .addTypeVariable(TypeVariableName("T").reified(true))
+          .addTypeVariable(TypeVariableName("T").copy(reified = true))
           .build()
     }.hasMessageThat().isEqualTo(
         "only type parameters of properties with inline getters and/or setters can be reified!")
@@ -253,7 +253,7 @@ class PropertySpecTest {
   @Test fun reifiedTypeVariableNotAllowedWhenGetterNotInline() {
     assertThrows<IllegalArgumentException> {
       PropertySpec.builder("property", String::class)
-          .addTypeVariable(TypeVariableName("T").reified(true))
+          .addTypeVariable(TypeVariableName("T").copy(reified = true))
           .getter(FunSpec.getterBuilder()
               .addStatement("return %S", "")
               .build())
@@ -266,7 +266,7 @@ class PropertySpecTest {
     assertThrows<IllegalArgumentException> {
       PropertySpec.builder("property", String::class.asTypeName())
           .mutable()
-          .addTypeVariable(TypeVariableName("T").reified(true))
+          .addTypeVariable(TypeVariableName("T").copy(reified = true))
           .setter(FunSpec.setterBuilder()
               .addParameter("value", String::class)
               .addStatement("println()")
@@ -280,7 +280,7 @@ class PropertySpecTest {
     assertThrows<IllegalArgumentException> {
       PropertySpec.builder("property", String::class.asTypeName())
           .mutable()
-          .addTypeVariable(TypeVariableName("T").reified(true))
+          .addTypeVariable(TypeVariableName("T").copy(reified = true))
           .getter(FunSpec.getterBuilder()
               .addStatement("return %S", "")
               .build())

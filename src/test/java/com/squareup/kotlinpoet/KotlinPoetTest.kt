@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec.Companion.builder
 import com.squareup.kotlinpoet.jvm.jvmField
 import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
 import java.util.concurrent.TimeUnit
@@ -433,8 +432,9 @@ class KotlinPoetTest {
   }
 
   @Test fun nullableTypes() {
-    val list = List::class.asClassName().asNullable()
-        .parameterizedBy(Int::class.asClassName().asNullable()).asNullable()
+    val list = List::class.asClassName().copy(nullable = true)
+        .parameterizedBy(Int::class.asClassName().copy(nullable = true))
+        .copy(nullable = true)
     assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
   }
 
@@ -473,7 +473,8 @@ class KotlinPoetTest {
 
   @Test fun propertyWithLongInitializerWrapping() {
     val source = FileSpec.builder(tacosPackage, "Taco")
-        .addProperty(PropertySpec.builder("foo", ClassName(tacosPackage, "Foo").asNullable())
+        .addProperty(PropertySpec
+            .builder("foo", ClassName(tacosPackage, "Foo").copy(nullable = true))
             .addModifiers(KModifier.PRIVATE)
             .initializer("DefaultFooRegistry.getInstance().getDefaultFooInstanceForPropertiesFiles(file)")
             .build())
@@ -575,13 +576,13 @@ class KotlinPoetTest {
     val barType = ClassName("", "Bar")
     val suspendingLambda = LambdaTypeName
         .get(parameters = *arrayOf(ClassName("", "Foo")), returnType = barType)
-        .asSuspending()
+        .copy(suspending = true)
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("bar", suspendingLambda)
             .mutable()
             .initializer("{ %T() }", barType)
             .build())
-        .addProperty(PropertySpec.builder("nullBar", suspendingLambda.asNullable())
+        .addProperty(PropertySpec.builder("nullBar", suspendingLambda.copy(nullable = true))
             .mutable()
             .initializer("null")
             .build())

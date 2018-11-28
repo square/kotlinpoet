@@ -20,7 +20,7 @@ import java.io.Closeable
 /** Sentinel value that indicates that no user-provided package has been set.  */
 private val NO_PACKAGE = String()
 
-internal val NULLABLE_ANY = ANY.asNullable()
+internal val NULLABLE_ANY = ANY.copy(nullable = true)
 
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
@@ -226,7 +226,7 @@ internal class CodeWriter constructor(
           var typeName = codeBlock.args[a++] as TypeName
           if (typeName.isAnnotated) {
             typeName.emitAnnotations(this)
-            typeName = typeName.withoutAnnotations()
+            typeName = typeName.copy(annotations = emptyList())
           }
           // defer "typeName.emit(this)" if next format part will be handled by the default case
           var defer = false
@@ -332,7 +332,7 @@ internal class CodeWriter constructor(
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
-      if (resolved == c.asNonNull().withoutAnnotations()) {
+      if (resolved == c.copy(nullable = false, annotations = emptyList())) {
         if (alias != null) return alias
         val suffixOffset = c.simpleNames.size - 1
         return className.simpleNames.subList(suffixOffset,
