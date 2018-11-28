@@ -53,7 +53,7 @@ class FunSpec private constructor(builder: Builder) {
     require(name != SETTER || parameters.size <= 1) {
       "$name can have at most one parameter"
     }
-    require(INLINE in modifiers || typeVariables.none { it.reified }) {
+    require(INLINE in modifiers || typeVariables.none { it.isReified }) {
       "only type parameters of inline functions can be reified!"
     }
   }

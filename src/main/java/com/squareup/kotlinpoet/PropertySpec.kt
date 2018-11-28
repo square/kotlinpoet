@@ -37,7 +37,7 @@ class PropertySpec private constructor(builder: Builder) {
   val receiverType = builder.receiverType
 
   init {
-    require(typeVariables.none { it.reified } ||
+    require(typeVariables.none { it.isReified } ||
         (getter != null || setter != null) &&
         (getter == null || KModifier.INLINE in getter.modifiers) &&
         (setter == null || KModifier.INLINE in setter.modifiers)) {
