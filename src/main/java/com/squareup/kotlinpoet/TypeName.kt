@@ -221,7 +221,7 @@ sealed class TypeName constructor(
 @JvmField val DOUBLE = ClassName("kotlin", "Double")
 
 /** The wildcard type `*` which is shorthand for `out Any?`. */
-@JvmField val STAR = WildcardTypeName.subtypeOf(ANY.copy(nullable = true))
+@JvmField val STAR = WildcardTypeName.producerOf(ANY.copy(nullable = true))
 
 /** [Dynamic] is a singleton `object` type, so this is a shorthand for it in Java. */
 @JvmField val DYNAMIC = Dynamic
@@ -596,8 +596,8 @@ class ParameterizedTypeName internal constructor(
             when (paramVariance) {
               null -> STAR
               KVariance.INVARIANT -> typeName
-              KVariance.IN -> WildcardTypeName.supertypeOf(typeName)
-              KVariance.OUT -> WildcardTypeName.subtypeOf(typeName)
+              KVariance.IN -> WildcardTypeName.consumerOf(typeName)
+              KVariance.OUT -> WildcardTypeName.producerOf(typeName)
             }
           },
           nullable,
@@ -724,68 +724,66 @@ class TypeVariableName private constructor(
 }
 
 class WildcardTypeName private constructor(
-    upperBounds: List<TypeName>,
-    lowerBounds: List<TypeName>,
+    outTypes: List<TypeName>,
+    inTypes: List<TypeName>,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
-  val upperBounds = upperBounds.toImmutableList()
-  val lowerBounds = lowerBounds.toImmutableList()
+  val outTypes = outTypes.toImmutableList()
+  val inTypes = inTypes.toImmutableList()
 
   init {
-    require(this.upperBounds.size == 1) { "unexpected extends bounds: $upperBounds" }
+    require(this.outTypes.size == 1) { "unexpected out types: $outTypes" }
   }
 
   override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): WildcardTypeName {
-    return WildcardTypeName(upperBounds, lowerBounds, nullable, annotations)
+    return WildcardTypeName(outTypes, inTypes, nullable, annotations)
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
     return when {
-      lowerBounds.size == 1 -> out.emitCode("in %T", lowerBounds[0])
-      upperBounds == STAR.upperBounds -> out.emit("*")
-      else -> out.emitCode("out %T", upperBounds[0])
+      inTypes.size == 1 -> out.emitCode("in %T", inTypes[0])
+      outTypes == STAR.outTypes -> out.emit("*")
+      else -> out.emitCode("out %T", outTypes[0])
     }
   }
 
   companion object {
     /**
-     * Returns a type that represents an unknown type that extends `upperBound`. For example, if
-     * `upperBound` is `CharSequence`, this returns `out CharSequence`. If `upperBound` is `Any?`,
-     * this returns `*`, which is shorthand for `out Any?`.
+     * Returns a type that represents an unknown type that produces `outType`. For example, if
+     * `outType` is `CharSequence`, this returns `out CharSequence`. If `outType` is `Any?`, this
+     * returns `*`, which is shorthand for `out Any?`.
      */
-    @JvmStatic fun subtypeOf(upperBound: TypeName) =
-        WildcardTypeName(listOf(upperBound), emptyList())
+    @JvmStatic fun producerOf(outType: TypeName) = WildcardTypeName(listOf(outType), emptyList())
 
-    @JvmStatic fun subtypeOf(upperBound: Type) = subtypeOf(upperBound.asTypeName())
+    @JvmStatic fun producerOf(outType: Type) = producerOf(outType.asTypeName())
 
-    @JvmStatic fun subtypeOf(upperBound: KClass<*>) = subtypeOf(upperBound.asTypeName())
+    @JvmStatic fun producerOf(outType: KClass<*>) = producerOf(outType.asTypeName())
 
     /**
-     * Returns a type that represents an unknown supertype of `lowerBound`. For example, if
-     * `lowerBound` is `String`, this returns `in String`.
+     * Returns a type that represents an unknown type that consumes `inType`. For example, if
+     * `inType` is `String`, this returns `in String`.
      */
-    @JvmStatic fun supertypeOf(lowerBound: TypeName) =
-        WildcardTypeName(listOf(ANY), listOf(lowerBound))
+    @JvmStatic fun consumerOf(inType: TypeName) = WildcardTypeName(listOf(ANY), listOf(inType))
 
-    @JvmStatic fun supertypeOf(lowerBound: Type) = supertypeOf(lowerBound.asTypeName())
+    @JvmStatic fun consumerOf(inType: Type) = consumerOf(inType.asTypeName())
 
-    @JvmStatic fun supertypeOf(lowerBound: KClass<*>) = supertypeOf(lowerBound.asTypeName())
+    @JvmStatic fun consumerOf(inType: KClass<*>) = consumerOf(inType.asTypeName())
 
     internal fun get(
         mirror: javax.lang.model.type.WildcardType,
         typeVariables: Map<TypeParameterElement, TypeVariableName>
     ): TypeName {
-      val extendsBound = mirror.extendsBound
-      if (extendsBound == null) {
-        val superBound = mirror.superBound
-        return if (superBound == null) {
+      val outType = mirror.extendsBound
+      if (outType == null) {
+        val inType = mirror.superBound
+        return if (inType == null) {
           STAR
         } else {
-          supertypeOf(TypeName.get(superBound, typeVariables))
+          consumerOf(TypeName.get(inType, typeVariables))
         }
       } else {
-        return subtypeOf(TypeName.get(extendsBound, typeVariables))
+        return producerOf(TypeName.get(outType, typeVariables))
       }
     }
 

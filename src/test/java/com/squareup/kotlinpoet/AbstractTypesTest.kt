@@ -154,7 +154,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun varianceOutType() {
-    val type = WildcardTypeName.subtypeOf(CharSequence::class)
+    val type = WildcardTypeName.producerOf(CharSequence::class)
     assertThat(type.toString()).isEqualTo("out java.lang.CharSequence")
   }
 
@@ -168,7 +168,7 @@ abstract class AbstractTypesTest {
   }
 
   @Test fun varianceInType() {
-    val type = WildcardTypeName.supertypeOf(String::class)
+    val type = WildcardTypeName.consumerOf(String::class)
     assertThat(type.toString()).isEqualTo("in kotlin.String")
   }
 

@@ -144,12 +144,12 @@ public class TypeNameTest {
   }
 
   @Test public void equalsAndHashCodeWildcardTypeName() {
-    assertEqualsHashCodeAndToString(WildcardTypeName.subtypeOf(Object.class),
-        WildcardTypeName.subtypeOf(Object.class));
-    assertEqualsHashCodeAndToString(WildcardTypeName.subtypeOf(Serializable.class),
-        WildcardTypeName.subtypeOf(Serializable.class));
-    assertEqualsHashCodeAndToString(WildcardTypeName.supertypeOf(String.class),
-        WildcardTypeName.supertypeOf(String.class));
+    assertEqualsHashCodeAndToString(WildcardTypeName.producerOf(Object.class),
+        WildcardTypeName.producerOf(Object.class));
+    assertEqualsHashCodeAndToString(WildcardTypeName.producerOf(Serializable.class),
+        WildcardTypeName.producerOf(Serializable.class));
+    assertEqualsHashCodeAndToString(WildcardTypeName.consumerOf(String.class),
+        WildcardTypeName.consumerOf(String.class));
   }
 
   private void assertEqualsHashCodeAndToString(TypeName a, TypeName b) {
