@@ -394,7 +394,7 @@ class LambdaTypeName private constructor(
     parameters: List<ParameterSpec> = emptyList(),
     val returnType: TypeName = UNIT,
     nullable: Boolean = false,
-    val suspending: Boolean = false,
+    val isSuspending: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val parameters = parameters.toImmutableList()
@@ -408,13 +408,13 @@ class LambdaTypeName private constructor(
   }
 
   override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): LambdaTypeName {
-    return copy(nullable, annotations, this.suspending)
+    return copy(nullable, annotations, this.isSuspending)
   }
 
   fun copy(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
-    suspending: Boolean = this.suspending
+    suspending: Boolean = this.isSuspending
   ): LambdaTypeName {
     return LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations)
   }
@@ -426,7 +426,7 @@ class LambdaTypeName private constructor(
       out.emit("(")
     }
 
-    if (suspending) {
+    if (isSuspending) {
       out.emit("suspend ")
     }
 
