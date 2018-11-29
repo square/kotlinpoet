@@ -1,6 +1,29 @@
 Change Log
 ==========
 
+## Version 1.0.0-RC3
+
+_2018-11-28_
+
+ * New: Kotlin 1.3.10.
+ * New: Add `%P` placeholder for string templates.
+ * New: Add support for receiver kdoc.
+ * New: Avoid emitting `Unit` as return type.
+ * New: Add support for empty setters.
+ * New: Add checks for inline classes.
+ * New: Escape property and variable names if keywords.
+ * New: Replace `%>`, `%<`, `%[`, `%]` placeholders with `⇥`, `⇤`, `«`, `»`.
+ * New: Replace `%W` with space, and add `·` as a non-breaking space.
+ * New: Change `TypeName` to sealed class.
+ * New: Documentation improvements.
+ * New: Replace `TypeName` modifier methods with `copy()`.
+ * New: Rename members of `WildcardTypeName` to match with the producer/consumer generics model.
+ * New: Rename `TypeName.nullable` into `TypeName.isNullable`.
+ * New: Rename `LambdaTypeName.suspending` into `LambdaTypeName.isSuspending`.
+ * New: Rename `TypeVariableName.reified` into `TypeVariableName.isReified`.
+ * Fix: Emit star-projection only for types with `Any?` upper bound.
+ * Fix: Fold property with escaped name.
+
 ## Version 1.0.0-RC2
 
 _2018-10-22_
