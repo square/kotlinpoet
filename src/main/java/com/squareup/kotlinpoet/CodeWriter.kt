@@ -168,7 +168,7 @@ internal class CodeWriter constructor(
       if (typeVariable.variance != null) {
         emit("${typeVariable.variance.keyword} ")
       }
-      if (typeVariable.reified) {
+      if (typeVariable.isReified) {
         emit("reified ")
       }
       emitCode("%L", typeVariable.name)

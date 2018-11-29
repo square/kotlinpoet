@@ -612,20 +612,20 @@ class TypeVariableName private constructor(
 
     /** Either [KModifier.IN], [KModifier.OUT], or null. */
     val variance: KModifier? = null,
-    val reified: Boolean = false,
+    val isReified: Boolean = false,
     nullable: Boolean = false,
     annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
   override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): TypeVariableName {
-    return copy(nullable, annotations, this.bounds, this.reified)
+    return copy(nullable, annotations, this.bounds, this.isReified)
   }
 
   fun copy(
     nullable: Boolean = this.nullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     bounds: List<TypeName> = this.bounds.toList(),
-    reified: Boolean = this.reified
+    reified: Boolean = this.isReified
   ): TypeVariableName {
     return TypeVariableName(name, bounds.withoutImplicitBound(), variance, reified, nullable,
         annotations)
