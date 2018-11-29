@@ -176,4 +176,14 @@ class LineWrapperTest {
         |    efgh ij kl mn
         """.trimMargin())
   }
+
+  @Test fun loneUnsafeUnaryOperator() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append(" -1", indentLevel = 2)
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        | -1
+        """.trimMargin())
+  }
 }

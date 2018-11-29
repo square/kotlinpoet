@@ -151,7 +151,7 @@ internal class LineWrapper(
       if (UNSAFE_LINE_START.matches(segment)) {
         segments[i - 1] = segments[i - 1] + " " + segments[i]
         segments.removeAt(i)
-        if (i > 0) i--
+        if (i > 1) i--
       } else {
         i++
       }
