@@ -66,7 +66,7 @@ import kotlin.reflect.KVariance
  * and [WildcardTypeName].
  */
 sealed class TypeName constructor(
-  val nullable: Boolean,
+  val isNullable: Boolean,
   annotations: List<AnnotationSpec>
 ) {
   val annotations = annotations.toImmutableList()
@@ -76,12 +76,12 @@ sealed class TypeName constructor(
     buildCodeString {
       emitAnnotations(this)
       emit(this)
-      if (nullable) emit("?")
+      if (isNullable) emit("?")
     }
   }
 
   abstract fun copy(
-    nullable: Boolean = this.nullable,
+    nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList()
   ): TypeName
 
@@ -108,7 +108,7 @@ sealed class TypeName constructor(
   }
 
   internal fun emitNullable(out: CodeWriter) {
-    if (nullable) {
+    if (isNullable) {
       out.emit("?")
     }
   }
@@ -412,7 +412,7 @@ class LambdaTypeName private constructor(
   }
 
   fun copy(
-    nullable: Boolean = this.nullable,
+    nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     suspending: Boolean = this.suspending
   ): LambdaTypeName {
@@ -422,7 +422,7 @@ class LambdaTypeName private constructor(
   override fun emit(out: CodeWriter): CodeWriter {
     emitAnnotations(out)
 
-    if (nullable) {
+    if (isNullable) {
       out.emit("(")
     }
 
@@ -441,7 +441,7 @@ class LambdaTypeName private constructor(
     parameters.emit(out)
     out.emitCode(if (returnType is LambdaTypeName) " -> (%T)" else " -> %T", returnType)
 
-    if (nullable) {
+    if (isNullable) {
       out.emit(")")
     }
     return out
@@ -496,7 +496,7 @@ class ParameterizedTypeName internal constructor(
   }
 
   fun plusParameter(typeArgument: TypeName) = ParameterizedTypeName(enclosingType, rawType,
-      typeArguments + typeArgument, nullable, annotations)
+      typeArguments + typeArgument, isNullable, annotations)
 
   fun plusParameter(typeArgument: KClass<*>) = plusParameter(typeArgument.asClassName())
 
@@ -622,7 +622,7 @@ class TypeVariableName private constructor(
   }
 
   fun copy(
-    nullable: Boolean = this.nullable,
+    nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     bounds: List<TypeName> = this.bounds.toList(),
     reified: Boolean = this.isReified

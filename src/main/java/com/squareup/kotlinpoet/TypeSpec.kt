@@ -507,7 +507,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         require(isSimpleClass) {
           "delegation only allowed for classes (found $kind '$name')"
         }
-        require(!superinterface.nullable) {
+        require(!superinterface.isNullable) {
           "expected non-nullable type but was '${superinterface.copy(nullable = false)}'"
         }
         require(this.superinterfaces[superinterface] == null) {
