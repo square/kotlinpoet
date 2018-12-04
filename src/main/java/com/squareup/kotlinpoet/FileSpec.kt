@@ -113,7 +113,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
 
     if (imports.isNotEmpty()) {
       for (className in imports.toSortedSet()) {
-        codeWriter.emitCode("import %L", className.escapeKeywords())
+        codeWriter.emitCode("import·%L", className.escapeKeywords())
         codeWriter.emit("\n")
       }
       codeWriter.emit("\n")

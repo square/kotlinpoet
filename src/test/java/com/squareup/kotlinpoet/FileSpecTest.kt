@@ -733,4 +733,16 @@ class FileSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun importLongPackageName() {
+    val spec = FileSpec.builder("testsrc", "Test")
+        .addImport("a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength", "MyClass")
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package testsrc
+      |
+      |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass
+      |
+      |""".trimMargin())
+  }
 }
