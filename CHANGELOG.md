@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 1.0.0
+
+_2018-12-10_
+
+ * New: Kotlin 1.3.11.
+ * Fix: Prevent wrapping in import statements.
+
 ## Version 1.0.0-RC3
 
 _2018-11-28_
