@@ -353,9 +353,7 @@ internal class CodeWriter constructor(
     }
 
     // We'll have to use the fully-qualified name. Mark the type as importable for a future pass.
-    if (!kdoc) {
-      importableType(className)
-    }
+    importableType(className)
 
     return className.canonicalName
   }

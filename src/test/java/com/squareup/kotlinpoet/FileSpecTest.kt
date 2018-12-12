@@ -745,4 +745,59 @@ class FileSpecTest {
       |
       |""".trimMargin())
   }
+
+  @Test fun importTypeInKDoc() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addKdoc("Tacos and [%T]s.\n", String::class)
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |import kotlin.String
+    |
+    |/**
+    | * Tacos and [String]s.
+    | */
+    |class Taco
+    |""".trimMargin())
+  }
+
+  @Test fun kdocWithoutImportedType() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addKdoc("Tacos and [kotlin.String]s.\n")
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |/**
+    | * Tacos and [kotlin.String]s.
+    | */
+    |class Taco
+    |""".trimMargin())
+  }
+
+  @Test fun importTypeInKDocWithClashingImports() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addKdoc("Tacos and [%T]s.\n", String::class)
+            .addProperty("name", String::class)
+            .build())
+        .build()
+    assertThat(source.toString()).isEqualTo("""
+    |package com.squareup.tacos
+    |
+    |import kotlin.String
+    |
+    |/**
+    | * Tacos and [String]s.
+    | */
+    |class Taco {
+    |    val name: String
+    |}
+    |""".trimMargin())
+  }
 }

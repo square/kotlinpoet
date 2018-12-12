@@ -1134,12 +1134,14 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.util.Locale
+        |import java.util.Random
         |import kotlin.Boolean
+        |import kotlin.String
         |
         |/**
         | * A hard or soft tortilla, loosely folded and filled with whatever
-        | * [random][java.util.Random] tex-mex stuff we could find in the pantry
-        | * and some [kotlin.String] cheese.
+        | * [random][Random] tex-mex stuff we could find in the pantry
+        | * and some [String] cheese.
         | */
         |class Taco {
         |    /**
@@ -1192,14 +1194,16 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import java.util.Random
         |import kotlin.Boolean
         |import kotlin.Double
         |import kotlin.Int
+        |import kotlin.String
         |
         |/**
         | * A hard or soft tortilla, loosely folded and filled with whatever
-        | * [random][java.util.Random] tex-mex stuff we could find in the pantry
-        | * and some [kotlin.String] cheese.
+        | * [random][Random] tex-mex stuff we could find in the pantry
+        | * and some [String] cheese.
         | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
         | * the Andes, or hot with lava-like cheese from the depths of
         | * the Ninth Circle.
