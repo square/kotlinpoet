@@ -307,7 +307,9 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
                 ?: constructorProperties[parameterSpec.name]?.kdoc?.takeUnless { it.isEmpty() }
         if (kdoc != null) {
           if (isNotEmpty() && index == 0) add("\n")
-          add("@param %L %L", parameterSpec.name, kdoc.ensureEndsWithNewLine())
+          val isProperty = parameterSpec.name in constructorProperties
+          val tag = if (isProperty) "@property" else "@param"
+          add("$tag %L %L", parameterSpec.name, kdoc.ensureEndsWithNewLine())
         }
       }
       build()
