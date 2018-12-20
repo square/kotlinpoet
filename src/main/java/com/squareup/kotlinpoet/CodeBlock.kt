@@ -436,6 +436,9 @@ class CodeBlock private constructor(
 
     internal fun isMultiCharNoArgPlaceholder(c: Char) = c.isOneOf('%', 'W')
     internal fun isSingleCharNoArgPlaceholder(c: Char) = c.isOneOf('⇥', '⇤', '«', '»')
+    internal fun isPlaceholder(s: String) =
+        (s.length == 1 && isSingleCharNoArgPlaceholder(s.first())) ||
+            (s.length == 2 && isMultiCharNoArgPlaceholder(s.first()))
     internal fun nextPotentialPlaceholderPosition(s: String, startIndex: Int) = s.indexOfAny(
         charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
   }

@@ -301,12 +301,13 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
 
     val constructorProperties = constructorProperties()
 
-    return with(kdoc.toBuilder()) {
-      for (parameterSpec in primaryConstructor.parameters) {
+    return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
+      primaryConstructor.parameters.forEachIndexed { index, parameterSpec ->
         val kdoc = parameterSpec.kdoc.takeUnless { it.isEmpty() }
                 ?: constructorProperties[parameterSpec.name]?.kdoc?.takeUnless { it.isEmpty() }
         if (kdoc != null) {
-          add("@param %L %L", parameterSpec.name, kdoc)
+          if (isNotEmpty() && index == 0) add("\n")
+          add("@param %L %L", parameterSpec.name, kdoc.ensureEndsWithNewLine())
         }
       }
       build()
