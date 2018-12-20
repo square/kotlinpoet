@@ -1193,6 +1193,7 @@ class TypeSpecTest {
         | * A hard or soft tortilla, loosely folded and filled with whatever
         | * [random][java.util.Random] tex-mex stuff we could find in the pantry
         | * and some [kotlin.String] cheese.
+        | *
         | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
         | * the Andes, or hot with lava-like cheese from the depths of
         | * the Ninth Circle.
@@ -3565,6 +3566,48 @@ class TypeSpecTest {
         .build()
     assertThat(spec.toString()).isEqualTo("""
       |enum class Topping
+      |""".trimMargin())
+  }
+
+  // https://github.com/square/kotlinpoet/issues/563
+  @Test fun kdocFormatting() {
+    val typeSpec = TypeSpec.classBuilder("MyType")
+        .addKdoc("This is a thing for stuff.")
+        .addProperty(PropertySpec.builder("first", INT)
+            .initializer("first")
+            .build())
+        .addProperty(PropertySpec.builder("second", INT)
+            .initializer("second")
+            .build())
+        .addProperty(PropertySpec.builder("third", INT)
+            .initializer("third")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addKdoc("Construct a thing!")
+            .addParameter(ParameterSpec.builder("first", INT)
+                .addKdoc("the first thing")
+                .build())
+            .addParameter(ParameterSpec.builder("second", INT)
+                .addKdoc("the second thing")
+                .build())
+            .addParameter(ParameterSpec.builder("third", INT)
+                .addKdoc("the third thing")
+                .build())
+            .build())
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |/**
+      | * This is a thing for stuff.
+      | *
+      | * @param first the first thing
+      | * @param second the second thing
+      | * @param third the third thing
+      | */
+      |class MyType(
+      |    val first: kotlin.Int,
+      |    val second: kotlin.Int,
+      |    val third: kotlin.Int
+      |)
       |""".trimMargin())
   }
 
