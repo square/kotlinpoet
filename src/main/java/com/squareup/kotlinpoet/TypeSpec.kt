@@ -611,10 +611,6 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         "typevariables are forbidden on anonymous types"
       }
 
-      require(!isEnum || enumConstants.isNotEmpty()) {
-        "at least one enum constant is required for $name"
-      }
-
       val isAbstract = ABSTRACT in modifiers || SEALED in modifiers || kind != Kind.CLASS || !isSimpleClass
       for (funSpec in funSpecs) {
         require(isAbstract || ABSTRACT !in funSpec.modifiers) {
