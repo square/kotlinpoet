@@ -546,13 +546,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun enumConstantsRequired() {
-    assertThrows<IllegalArgumentException> {
-      TypeSpec.enumBuilder("Roshambo")
-          .build()
-    }
-  }
-
   @Test fun onlyEnumsMayHaveEnumConstants() {
     assertThrows<IllegalStateException> {
       TypeSpec.classBuilder("Roshambo")
@@ -3564,6 +3557,15 @@ class TypeSpecTest {
     builder.superclassConstructorParameters.add(seasoning)
 
     assertThat(builder.build().superclassConstructorParameters).containsExactly(seasoning)
+  }
+
+  // https://github.com/square/kotlinpoet/issues/565
+  @Test fun markerEnum() {
+    val spec = TypeSpec.enumBuilder("Topping")
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |enum class Topping
+      |""".trimMargin())
   }
 
   companion object {
