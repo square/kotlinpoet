@@ -1197,8 +1197,8 @@ class TypeSpecTest {
         | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
         | * the Andes, or hot with lava-like cheese from the depths of
         | * the Ninth Circle.
-        | * @param soft True for a soft flour tortilla; false for a crunchy corn tortilla.
-        | * @param mild No one likes mild tacos.
+        | * @property soft True for a soft flour tortilla; false for a crunchy corn tortilla.
+        | * @property mild No one likes mild tacos.
         | */
         |class Taco(
         |    temperature: Double,
@@ -2794,7 +2794,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |/**
-        | * @param a KDoc
+        | * @property a KDoc
         | */
         |class Taco(
         |    val a: Int,
@@ -3599,9 +3599,9 @@ class TypeSpecTest {
       |/**
       | * This is a thing for stuff.
       | *
-      | * @param first the first thing
-      | * @param second the second thing
-      | * @param third the third thing
+      | * @property first the first thing
+      | * @property second the second thing
+      | * @property third the third thing
       | */
       |class MyType(
       |    val first: kotlin.Int,
