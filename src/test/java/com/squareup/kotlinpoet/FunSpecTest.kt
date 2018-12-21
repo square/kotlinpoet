@@ -259,6 +259,22 @@ class FunSpecTest {
       |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
   }
 
+  @Test fun functionWithReturnKDocAndMainKdoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter("nodoc", Boolean::class)
+        .returns(String::class, kdoc = "the foo.")
+        .addCode("return %S", "foo")
+        .addKdoc("Do the foo")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * Do the foo
+      | *
+      | * @return the foo.
+      | */
+      |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
+  }
+
   @Test fun functionParamNoLambdaParam() {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
@@ -510,6 +526,24 @@ class FunSpecTest {
 
     assertThat(funSpec.toString()).isEqualTo("""
       |/**
+      | * @receiver the string to transform.
+      | */
+      |fun kotlin.String.toBar(): kotlin.String = "bar"
+      """.trimMargin())
+  }
+
+  @Test fun receiverWithKdocAndMainKDoc() {
+    val funSpec = FunSpec.builder("toBar")
+        .receiver(String::class, kdoc = "the string to transform.")
+        .returns(String::class)
+        .addKdoc("%L", "Converts to bar")
+        .addCode(CodeBlock.of("return %S", "bar"))
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * Converts to bar
+      | *
       | * @receiver the string to transform.
       | */
       |fun kotlin.String.toBar(): kotlin.String = "bar"

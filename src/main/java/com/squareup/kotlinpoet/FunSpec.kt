@@ -144,17 +144,31 @@ class FunSpec private constructor(builder: Builder) {
   val isAccessor get() = name.isAccessor
 
   private fun kdocWithTags(): CodeBlock {
-    return with(kdoc.toBuilder()) {
+    return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
+      var newLineAdded = false
+      val isNotEmpty = isNotEmpty()
       if (receiverKdoc.isNotEmpty()) {
-        add("@receiver %L\n", receiverKdoc)
+        if (isNotEmpty) {
+          add("\n")
+          newLineAdded = true
+        }
+        add("@receiver %L", receiverKdoc.ensureEndsWithNewLine())
       }
-      for (parameterSpec in parameters) {
+      parameters.forEachIndexed { index, parameterSpec ->
         if (parameterSpec.kdoc.isNotEmpty()) {
-          add("@param %L %L\n", parameterSpec.name, parameterSpec.kdoc)
+          if (!newLineAdded && index == 0 && isNotEmpty) {
+            add("\n")
+            newLineAdded = true
+          }
+          add("@param %L %L", parameterSpec.name, parameterSpec.kdoc.ensureEndsWithNewLine())
         }
       }
       if (returnKdoc.isNotEmpty()) {
-        add("@return %L\n", returnKdoc)
+        if (!newLineAdded && isNotEmpty) {
+          add("\n")
+          newLineAdded = true
+        }
+        add("@return %L", returnKdoc.ensureEndsWithNewLine())
       }
       build()
     }
