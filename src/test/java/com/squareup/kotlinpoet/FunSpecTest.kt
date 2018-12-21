@@ -172,12 +172,12 @@ class FunSpecTest {
   @Test fun returnsUnitWithExpressionBody() {
     val funSpec = FunSpec.builder("foo")
         .returns(Unit::class)
-        .addCode(CodeBlock.of("return bar()"))
+        .addStatement("return bar()")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
       |fun foo(): kotlin.Unit = bar()
-      """.trimMargin())
+      |""".trimMargin())
   }
 
   @Test fun functionParamWithKdoc() {
@@ -233,21 +233,22 @@ class FunSpecTest {
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
         .returns(String::class,  kdoc = "the foo.")
-        .addCode("return %S", "foo")
+        .addStatement("return %S", "foo")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
       |/**
       | * @param string A string parameter.
       | * @return the foo.
       | */
-      |fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
+      |fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"
+      |""".trimMargin())
   }
 
   @Test fun functionWithModifiedReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter("nodoc", Boolean::class)
         .returns(String::class, kdoc = "the foo.")
-        .addCode("return %S", "foo")
+        .addStatement("return %S", "foo")
         .build()
         .toBuilder()
         .returns(String::class, kdoc = "the modified foo.")
@@ -256,7 +257,25 @@ class FunSpecTest {
       |/**
       | * @return the modified foo.
       | */
-      |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"""".trimMargin())
+      |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
+      |""".trimMargin())
+  }
+
+  @Test fun functionWithReturnKDocAndMainKdoc() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter("nodoc", Boolean::class)
+        .returns(String::class, kdoc = "the foo.")
+        .addStatement("return %S", "foo")
+        .addKdoc("Do the foo")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * Do the foo
+      | *
+      | * @return the foo.
+      | */
+      |fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
+      |""".trimMargin())
   }
 
   @Test fun functionParamNoLambdaParam() {
@@ -505,7 +524,7 @@ class FunSpecTest {
     val funSpec = FunSpec.builder("toBar")
         .receiver(String::class, kdoc = "the string to transform.")
         .returns(String::class)
-        .addCode(CodeBlock.of("return %S", "bar"))
+        .addStatement("return %S", "bar")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
@@ -513,7 +532,25 @@ class FunSpecTest {
       | * @receiver the string to transform.
       | */
       |fun kotlin.String.toBar(): kotlin.String = "bar"
-      """.trimMargin())
+      |""".trimMargin())
+  }
+
+  @Test fun receiverWithKdocAndMainKDoc() {
+    val funSpec = FunSpec.builder("toBar")
+        .receiver(String::class, kdoc = "the string to transform.")
+        .returns(String::class)
+        .addKdoc("%L", "Converts to bar")
+        .addStatement("return %S", "bar")
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * Converts to bar
+      | *
+      | * @receiver the string to transform.
+      | */
+      |fun kotlin.String.toBar(): kotlin.String = "bar"
+      |""".trimMargin())
   }
 
   @Test fun withAllKdocTags() {
@@ -524,7 +561,7 @@ class FunSpecTest {
             .addKdoc("the index of the character that is returned.")
             .build())
         .addKdoc("Returns the character at the given [position].\n\n")
-        .addCode(CodeBlock.of("return -1"))
+        .addStatement("return -1")
         .build()
 
     assertThat(funSpec.toString()).isEqualTo("""
@@ -536,7 +573,7 @@ class FunSpecTest {
       | * @return The char at the given [position].
       | */
       |fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
-      """.trimMargin())
+      |""".trimMargin())
   }
 
   @Test fun constructorBuilderEqualityTest() {
