@@ -15,7 +15,7 @@ Here's a `HelloWorld` file:
 ```kotlin
 class Greeter(val name: String) {
   fun greet() {
-    println("Hello, $name")
+    println("""Hello, $name""")
   }
 }
 
