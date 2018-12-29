@@ -46,7 +46,7 @@ class StringsTest {
         .addStatement("return %P", stringWithTemplate)
         .build()
     assertThat(funSpec.toString())
-        .isEqualTo("fun getString() = \"\$annoyingUser is annoying.\"\n")
+        .isEqualTo("fun getString() = \"\"\"\$annoyingUser is annoying.\"\"\"\n")
   }
 
   @Test fun multilineStringTemplate() {
@@ -58,5 +58,15 @@ class StringsTest {
         "|Some string\n" +
         "|\$annoyingUser is annoying.\n" +
         "\"\"\".trimMargin()\n")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/572
+  @Test fun templateStringWithStringLiteralReference() {
+    val string = "SELECT * FROM socialFeedItem WHERE message IS NOT NULL AND userId \${ if (userId == null) \"IS\" else \"=\" } ?1 ORDER BY datetime(creation_time) DESC"
+    val funSpec = FunSpec.builder("getString")
+        .addStatement("return %P", string)
+        .build()
+    assertThat(funSpec.toString())
+        .isEqualTo("fun getString() = \"\"\"SELECT * FROM socialFeedItem WHERE message IS NOT NULL AND userId \${ if (userId == null) \"IS\" else \"=\" } ?1 ORDER BY datetime(creation_time) DESC\"\"\"\n")
   }
 }

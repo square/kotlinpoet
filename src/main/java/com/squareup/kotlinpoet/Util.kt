@@ -111,7 +111,9 @@ internal fun stringLiteralWithQuotes(
     return result.toString()
   } else {
     val result = StringBuilder(value.length + 32)
-    result.append('"')
+    // using pre-formatted strings allows us to get away with not escaping symbols that would
+    // normally require escaping, e.g. "foo ${"bar"} baz"
+    if (escapeDollarSign) result.append('"') else result.append("\"\"\"")
     for (i in 0 until value.length) {
       val c = value[i]
       // Trivial case: single quote must not be escaped.
@@ -120,7 +122,7 @@ internal fun stringLiteralWithQuotes(
         continue
       }
       // Trivial case: double quotes must be escaped.
-      if (c == '\"') {
+      if (c == '\"' && escapeDollarSign) {
         result.append("\\\"")
         continue
       }
@@ -133,7 +135,7 @@ internal fun stringLiteralWithQuotes(
       result.append(characterLiteralWithoutSingleQuotes(c))
       // Need to append indent after linefeed?
     }
-    result.append('"')
+    if (escapeDollarSign) result.append('"') else result.append("\"\"\"")
     return result.toString()
   }
 }
