@@ -762,4 +762,34 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/576
+  @Test fun noWrappingBetweenValAndPropertyName() {
+    val wireField = ClassName("com.squareup.wire", "WireField")
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Taco")
+            .addModifiers(KModifier.DATA)
+            .addProperty(PropertySpec.builder("name", String::class)
+                .addAnnotation(AnnotationSpec.builder(wireField)
+                    .addMember("tag = %L", 1)
+                    .addMember("adapter = %S", "CustomStringAdapterWithALongNameThatCauses")
+                    .build())
+                .initializer("name")
+                .build())
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter(ParameterSpec.builder("name", String::class)
+                    .build())
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.wire.WireField
+      |import kotlin.String
+      |
+      |data class Taco(@WireField(tag = 1, adapter = "CustomStringAdapterWithALongNameThatCauses")
+      |        val name: String)
+      |""".trimMargin())
+  }
 }

@@ -59,7 +59,7 @@ class PropertySpec private constructor(builder: Builder) {
     }
     codeWriter.emitAnnotations(annotations, inline)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
-    codeWriter.emit(if (mutable) "var " else "val ")
+    codeWriter.emitCode(if (mutable) "var·" else "val·")
     if (typeVariables.isNotEmpty()) {
       codeWriter.emitTypeVariables(typeVariables)
       codeWriter.emit(" ")
