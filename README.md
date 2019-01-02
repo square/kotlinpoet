@@ -300,10 +300,10 @@ val things = FunSpec.builder("things")
     .returns(producerListOfBoards)
     .addParameter("thingFlies", ClassName("kotlin", "Boolean"))
     .beginControlFlow("if(thingFlies) {")
-    .addStatement("return %N", flyingThings)
+    .addStatement("return %N()", flyingThings)
     .endControlFlow()
     .beginControlFlow("else")
-    .addStatement("return %N", notFlyingThings)
+    .addStatement("return %N()", notFlyingThings)
     .endControlFlow()
     .build()
 ```
@@ -331,10 +331,10 @@ class HelloWorld {
 
     fun things(thingFlies: Boolean): List<out Board> {
         if(thingFlies) {
-            return flyingThings
+            return flyingThings()
         }
         else {
-            return notFlyingThings
+            return notFlyingThings()
         }
     }
 }
