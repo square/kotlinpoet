@@ -272,39 +272,26 @@ KotlinPoet has classes for building each of these:
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 val hoverboard = ClassName("com.mattel", "Hoverboard")
-val skateboard = ClassName("com.mattel", "Skateboard")
-val board = ClassName("com.mattel", "Board")
-
 val list = ClassName("kotlin.collections", "List")
 val arrayList = ClassName("kotlin.collections", "ArrayList")
 val listOfHoverboards = list.parameterizedBy(hoverboard)
 val arrayListOfHoverboards = arrayList.parameterizedBy(hoverboard)
-val listOfSkateboards = list.parameterizedBy(skateboard)
 
-val producerListOfBoards = list.parameterizedBy(WildcardTypeName.producerOf(board))
+val thing = ClassName("com.misc", "Thing")
+val producerArrayOfThings = list.parameterizedBy(WildcardTypeName.producerOf(thing))
 
-val flyingThings = FunSpec.builder("flyingThings")
+val beyond = FunSpec.builder("beyond")
     .returns(listOfHoverboards)
     .addStatement("val result = %T()", arrayListOfHoverboards)
+    .addStatement("result += %T()", hoverboard)
     .addStatement("result += %T()", hoverboard)
     .addStatement("result += %T()", hoverboard)
     .addStatement("return result")
     .build()
 
-val notFlyingThings = FunSpec.builder("notFlyingThings")
-    .returns(listOfSkateboards)
-    .addStatement("return listOf(%T(), %T())", skateboard, skateboard)
-    .build()
-
-val things = FunSpec.builder("things")
-    .returns(producerListOfBoards)
-    .addParameter("thingFlies", ClassName("kotlin", "Boolean"))
-    .beginControlFlow("if(thingFlies) {")
-    .addStatement("return %N()", flyingThings)
-    .endControlFlow()
-    .beginControlFlow("else")
-    .addStatement("return %N()", notFlyingThings)
-    .endControlFlow()
+val printThings = FunSpec.builder("printThings")
+    .addParameter("things", producerArrayOfThings)
+    .addStatement("println(things)")
     .build()
 ```
 
@@ -313,29 +300,22 @@ KotlinPoet will decompose each type and import its components where possible.
 ```kotlin
 package com.example.helloworld
 
-import com.mattel.Board
 import com.mattel.Hoverboard
-import com.mattel.Skateboard
+import com.misc.Thing
 import kotlin.collections.ArrayList
 import kotlin.collections.List
 
 class HelloWorld {
-    fun flyingThings(): List<Hoverboard> {
+    fun beyond(): List<Hoverboard> {
         val result = ArrayList<Hoverboard>()
+        result += Hoverboard()
         result += Hoverboard()
         result += Hoverboard()
         return result
     }
 
-    fun notFlyingThings(): List<Skateboard> = listOf(Skateboard(), Skateboard())
-
-    fun things(thingFlies: Boolean): List<out Board> {
-        if(thingFlies) {
-            return flyingThings()
-        }
-        else {
-            return notFlyingThings()
-        }
+    fun printThings(things: List<out Thing>) {
+        println(things)
     }
 }
 ```
