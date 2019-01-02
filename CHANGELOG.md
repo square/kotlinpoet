@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+## Version 1.0.1
+
+_2019-01-02_
+
+ * New: Allow enums without constants.
+ * New: Improved formatting of TypeSpec KDoc.
+ * New: Support @property and @param KDoc tags in TypeSpec.
+ * Fix: Use pre-formatted strings for arguments to %P.
+
 ## Version 1.0.0
 
 _2018-12-10_
