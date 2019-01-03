@@ -792,4 +792,42 @@ class KotlinPoetTest {
       |        val name: String)
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/578
+  @Test fun wrappingInsideKdocKeepsKdocFormatting() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(TypeSpec.classBuilder("Builder")
+            .addKdoc("Builder class for Foo. Allows creating instances of Foo by initializing " +
+                "a subset of their fields, following the Builder pattern.\n")
+            .addFunction(FunSpec.builder("summary_text")
+                .addKdoc("The description for the choice, e.g. \"Currently unavailable due to " +
+                    "high demand. Please try later.\" May be null.")
+                .addParameter("summary_text", String::class.asClassName().copy(nullable = true))
+                .returns(ClassName("com.squareup.tacos", "Builder"))
+                .addStatement("this.summary_text = summary_text")
+                .addStatement("return this")
+                .build())
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |
+      |/**
+      | * Builder class for Foo. Allows creating instances of Foo by initializing a subset of their fields,
+      | * following the Builder pattern.
+      | */
+      |class Builder {
+      |    /**
+      |     * The description for the choice, e.g. "Currently unavailable due to high demand. Please try
+      |     * later." May be null.
+      |     */
+      |    fun summary_text(summary_text: String?): Builder {
+      |        this.summary_text = summary_text
+      |        return this
+      |    }
+      |}
+      |""".trimMargin())
+  }
 }
