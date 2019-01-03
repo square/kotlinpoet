@@ -277,6 +277,10 @@ val arrayList = ClassName("kotlin.collections", "ArrayList")
 val listOfHoverboards = list.parameterizedBy(hoverboard)
 val arrayListOfHoverboards = arrayList.parameterizedBy(hoverboard)
 
+val thing = ClassName("com.misc", "Thing")
+val array = ClassName("kotlin", "Array")
+val producerArrayOfThings = array.parameterizedBy(WildcardTypeName.producerOf(thing))
+
 val beyond = FunSpec.builder("beyond")
     .returns(listOfHoverboards)
     .addStatement("val result = %T()", arrayListOfHoverboards)
@@ -284,6 +288,11 @@ val beyond = FunSpec.builder("beyond")
     .addStatement("result += %T()", hoverboard)
     .addStatement("result += %T()", hoverboard)
     .addStatement("return result")
+    .build()
+
+val printThings = FunSpec.builder("printThings")
+    .addParameter("things", producerArrayOfThings)
+    .addStatement("println(things)")
     .build()
 ```
 
@@ -293,6 +302,8 @@ KotlinPoet will decompose each type and import its components where possible.
 package com.example.helloworld
 
 import com.mattel.Hoverboard
+import com.misc.Thing
+import kotlin.Array
 import kotlin.collections.ArrayList
 import kotlin.collections.List
 
@@ -303,6 +314,10 @@ class HelloWorld {
         result += Hoverboard()
         result += Hoverboard()
         return result
+    }
+
+    fun printThings(things: Array<out Thing>) {
+        println(things)
     }
 }
 ```
