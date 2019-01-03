@@ -34,7 +34,7 @@ private fun extractMemberName(part: String): String {
 
 internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
   val stringBuilder = StringBuilder()
-  CodeWriter(stringBuilder).use {
+  CodeWriter(stringBuilder, columnLimit = Integer.MAX_VALUE).use {
     it.builderAction()
   }
   return stringBuilder.toString()
@@ -49,9 +49,9 @@ internal class CodeWriter constructor(
   private val indent: String = DEFAULT_INDENT,
   private val memberImports: Map<String, Import> = emptyMap(),
   val importedTypes: Map<String, ClassName> = emptyMap(),
-  private val wrapWhitespace: Boolean = false
+  columnLimit: Int = 100
 ) : Closeable {
-  private val out = LineWrapper(out, indent, 100)
+  private val out = LineWrapper(out, indent, columnLimit)
   private var indentLevel = 0
 
   private var kdoc = false
@@ -447,7 +447,7 @@ internal class CodeWriter constructor(
         }
       }
 
-      if (nonWrapping || !wrapWhitespace) {
+      if (nonWrapping) {
         out.appendNonWrapping(line)
       } else {
         out.append(line, indentLevel + 2)
