@@ -34,7 +34,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     if (name.isNotEmpty()) codeWriter.emitCode("%L", name.escapeIfNecessary())
-    if (name.isNotEmpty() && includeType) codeWriter.emit(": ")
+    if (name.isNotEmpty() && includeType) codeWriter.emitCode(":·")
     if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
   }
