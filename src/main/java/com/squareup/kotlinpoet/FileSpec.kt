@@ -53,13 +53,14 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
-    val importsCollector = CodeWriter(NullAppendable, indent, memberImports)
+    val importsCollector = CodeWriter(NullAppendable, indent, memberImports,
+        columnLimit = Integer.MAX_VALUE)
     emit(importsCollector)
     val suggestedImports = importsCollector.suggestedImports()
     importsCollector.close()
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports, wrapWhitespace = true)
+    val codeWriter = CodeWriter(out, indent, memberImports, suggestedImports)
     emit(codeWriter)
     codeWriter.close()
   }
