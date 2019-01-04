@@ -75,7 +75,7 @@ class FunSpec private constructor(builder: Builder) {
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {
-      codeWriter.emit("fun ")
+      codeWriter.emitCode("fun·")
     }
 
     if (typeVariables.isNotEmpty()) {
@@ -97,7 +97,7 @@ class FunSpec private constructor(builder: Builder) {
     if (asExpressionBody != null) {
       codeWriter.emitCode(" = %L", asExpressionBody)
     } else if (!isEmptySetter) {
-      codeWriter.emit(" {\n")
+      codeWriter.emitCode("·{\n")
       codeWriter.indent()
       codeWriter.emitCode(body)
       codeWriter.unindent()

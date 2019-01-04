@@ -745,4 +745,21 @@ class KotlinPoetTest {
       |class AlarmInfo(val `when`: Float)
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/577
+  @Test fun noWrappingBetweenParamNameAndType() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(FunSpec.builder("functionWithAPrettyLongNameThatWouldCauseWrapping")
+            .addParameter("parameterWithALongNameThatWouldAlsoCauseWrapping", String::class)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |
+      |fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String) {
+      |}
+      |""".trimMargin())
+  }
 }
