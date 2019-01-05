@@ -296,7 +296,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   /** Returns KDoc comments including those of primary constructor parameters. */
   private fun kdocWithConstructorParameters(): CodeBlock {
     if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
-      return kdoc
+      return kdoc.ensureEndsWithNewLine()
     }
 
     val constructorProperties = constructorProperties()

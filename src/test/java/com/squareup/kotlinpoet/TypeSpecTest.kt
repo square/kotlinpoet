@@ -3569,6 +3569,19 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/586
+  @Test fun classKdocWithoutTags() {
+    val typeSpec = TypeSpec.classBuilder("Foo")
+        .addKdoc("blah blah")
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+    |/**
+    | * blah blah
+    | */
+    |class Foo
+    |""".trimMargin())
+  }
+
   // https://github.com/square/kotlinpoet/issues/563
   @Test fun kdocFormatting() {
     val typeSpec = TypeSpec.classBuilder("MyType")
