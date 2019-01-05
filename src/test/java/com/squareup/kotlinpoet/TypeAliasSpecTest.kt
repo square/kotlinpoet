@@ -109,6 +109,20 @@ class TypeAliasSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun kdocWithoutNewLine() {
+    val typeAliasSpec = TypeAliasSpec
+        .builder("Word", String::class)
+        .addKdoc("Word is just a type alias for [String](%T).", String::class)
+        .build()
+
+    assertThat(typeAliasSpec.toString()).isEqualTo("""
+      |/**
+      | * Word is just a type alias for [String](kotlin.String).
+      | */
+      |typealias Word = kotlin.String
+      |""".trimMargin())
+  }
+
   @Test fun equalsAndHashCode() {
     val a = TypeAliasSpec.builder("Word", String::class).addModifiers(KModifier.PUBLIC).build()
     val b = TypeAliasSpec.builder("Word", String::class).addModifiers(KModifier.PUBLIC).build()
