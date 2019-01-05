@@ -3582,6 +3582,22 @@ class TypeSpecTest {
     |""".trimMargin())
   }
 
+  @Test fun classWithPropertyKdoc() {
+    val typeSpec = TypeSpec.classBuilder("Foo")
+        .addProperty(PropertySpec.builder("bar", String::class)
+            .addKdoc("The bar for your foo")
+            .build())
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+    |class Foo {
+    |    /**
+    |     * The bar for your foo
+    |     */
+    |    val bar: kotlin.String
+    |}
+    |""".trimMargin())
+  }
+
   // https://github.com/square/kotlinpoet/issues/563
   @Test fun kdocFormatting() {
     val typeSpec = TypeSpec.classBuilder("MyType")

@@ -31,7 +31,7 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
   val kdoc = builder.kdoc.build()
 
   internal fun emit(codeWriter: CodeWriter) {
-    codeWriter.emitKdoc(kdoc)
+    codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("typealias %L", name)
     codeWriter.emitTypeVariables(typeVariables)
