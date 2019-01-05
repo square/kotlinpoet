@@ -3582,7 +3582,7 @@ class TypeSpecTest {
     |""".trimMargin())
   }
 
-  @Test fun classWithoutPropertyKdoc() {
+  @Test fun classWithPropertyKdoc() {
     val typeSpec = TypeSpec.classBuilder("Foo")
         .addProperty(PropertySpec.builder("bar", String::class)
             .addKdoc("The bar for your foo")
