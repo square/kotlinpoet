@@ -450,7 +450,11 @@ internal class CodeWriter constructor(
       if (nonWrapping) {
         out.appendNonWrapping(line)
       } else {
-        out.append(line, indentLevel + 2)
+        out.append(
+            line,
+            indentLevel = if (kdoc) indentLevel else indentLevel + 2,
+            linePrefix = if (kdoc) " * " else ""
+        )
       }
       trailingNewline = false
     }

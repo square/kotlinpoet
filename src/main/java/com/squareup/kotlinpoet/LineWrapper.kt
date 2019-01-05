@@ -36,8 +36,11 @@ internal class LineWrapper(
   /** Number of indents in wraps. -1 if the current line has no wraps. */
   private var indentLevel = -1
 
+  /** Optional prefix that will be prepended to wrapped lines. */
+  private var linePrefix = ""
+
   /** Emit `s` replacing its spaces with line wraps as necessary. */
-  fun append(s: String, indentLevel: Int) {
+  fun append(s: String, indentLevel: Int = -1, linePrefix: String = "") {
     check(!closed) { "closed" }
 
     var pos = 0
@@ -47,6 +50,7 @@ internal class LineWrapper(
         ' ' -> {
           // Each space starts a new empty segment.
           this.indentLevel = indentLevel
+          this.linePrefix = linePrefix
           segments += ""
           pos++
         }
@@ -130,6 +134,7 @@ internal class LineWrapper(
       for (i in 0 until indentLevel) {
         out.append(indent)
       }
+      out.append(linePrefix)
     }
 
     // Emit each segment separated by spaces.

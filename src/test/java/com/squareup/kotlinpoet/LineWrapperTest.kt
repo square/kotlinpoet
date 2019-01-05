@@ -186,4 +186,21 @@ class LineWrapperTest {
         | -1
         """.trimMargin())
   }
+
+  @Test fun linePrefix() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("/**\n")
+    lineWrapper.append(" * ")
+    lineWrapper.append("a b c d e f g h i j k l m n\n", linePrefix = " * ")
+    lineWrapper.append(" */")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |/**
+        | * a b c d
+        | * e f g h i j
+        | * k l m n
+        | */
+        """.trimMargin())
+  }
 }
