@@ -313,4 +313,30 @@ class PropertySpecTest {
       |
       |""".trimMargin())
   }
+
+  @Test
+  fun propertyKdocWithoutLinebreak() {
+    val property = PropertySpec.builder("topping", String::class)
+        .addKdoc("The topping you want on your pizza")
+        .build()
+    assertThat(property.toString()).isEqualTo("""
+      |/**
+      | * The topping you want on your pizza
+      | */
+      |val topping: kotlin.String
+      |""".trimMargin())
+  }
+
+  @Test
+  fun propertyKdocWithLinebreak() {
+    val property = PropertySpec.builder("topping", String::class)
+        .addKdoc("The topping you want on your pizza\n")
+        .build()
+    assertThat(property.toString()).isEqualTo("""
+      |/**
+      | * The topping you want on your pizza
+      | */
+      |val topping: kotlin.String
+      |""".trimMargin())
+  }
 }
