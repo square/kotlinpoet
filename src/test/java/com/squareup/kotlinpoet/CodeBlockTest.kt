@@ -39,7 +39,7 @@ class CodeBlockTest {
   @Test fun percentEscapeCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1%", "taco").build()
-    }.hasMessageThat().isEqualTo("%% and %W may not have an index")
+    }.hasMessageThat().isEqualTo("%% may not have an index")
   }
 
   @Test fun nameFormatCanBeIndexed() {
@@ -337,7 +337,7 @@ class CodeBlockTest {
   }
 
   @Test fun trimNoArgPlaceholderEnd() {
-    assertThat(CodeBlock.of("return %W").trim())
+    assertThat(CodeBlock.of("return ⇥").trim())
         .isEqualTo(CodeBlock.of("return "))
   }
 
@@ -353,12 +353,12 @@ class CodeBlockTest {
   }
 
   @Test fun trimOnlyNoArgPlaceholders() {
-    assertThat(CodeBlock.of("«%W»⇥⇤").trim())
+    assertThat(CodeBlock.of("«»⇥⇤").trim())
         .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun replaceSimple() {
-    assertThat(CodeBlock.of("%W⇥%W").replaceAll("%W", ""))
+    assertThat(CodeBlock.of("%%⇥%%").replaceAll("%%", ""))
         .isEqualTo(CodeBlock.of("⇥"))
   }
 

@@ -118,7 +118,7 @@ class CodeBlock private constructor(
 
   /**
    * Returns a copy of the code block without leading and trailing no-arg placeholders
-   * (`%W`, `⇥`, `⇤`, `«`, `»`).
+   * (`⇥`, `⇤`, `«`, `»`).
    */
   internal fun trim(): CodeBlock {
     var start = 0
@@ -282,9 +282,7 @@ class CodeBlock private constructor(
 
         // If 'c' doesn't take an argument, we're done.
         if (isMultiCharNoArgPlaceholder(c)) {
-          require(indexStart == indexEnd) {
-            "%% and %W may not have an index"
-          }
+          require(indexStart == indexEnd) { "%% may not have an index" }
           formatParts += "%$c"
           continue
         }
@@ -428,13 +426,13 @@ class CodeBlock private constructor(
     private val LOWERCASE = Regex("[a-z]+[\\w_]*")
     private const val ARG_NAME = 1
     private const val TYPE_NAME = 2
-    private val NO_ARG_PLACEHOLDERS = setOf("%W", "⇥", "⇤", "«", "»")
+    private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
 
-    internal fun isMultiCharNoArgPlaceholder(c: Char) = c.isOneOf('%', 'W')
+    internal fun isMultiCharNoArgPlaceholder(c: Char) = c == '%'
     internal fun isSingleCharNoArgPlaceholder(c: Char) = c.isOneOf('⇥', '⇤', '«', '»')
     internal fun isPlaceholder(s: String) =
         (s.length == 1 && isSingleCharNoArgPlaceholder(s.first())) ||
