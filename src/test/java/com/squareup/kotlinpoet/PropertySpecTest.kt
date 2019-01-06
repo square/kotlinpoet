@@ -314,8 +314,7 @@ class PropertySpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun propertyKdocWithoutLinebreak() {
+  @Test fun propertyKdocWithoutLinebreak() {
     val property = PropertySpec.builder("topping", String::class)
         .addKdoc("The topping you want on your pizza")
         .build()
@@ -327,8 +326,7 @@ class PropertySpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun propertyKdocWithLinebreak() {
+  @Test fun propertyKdocWithLinebreak() {
     val property = PropertySpec.builder("topping", String::class)
         .addKdoc("The topping you want on your pizza\n")
         .build()
