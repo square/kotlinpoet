@@ -69,7 +69,7 @@ class FunSpec private constructor(builder: Builder) {
     if (includeKdocTags) {
       codeWriter.emitKdoc(kdocWithTags())
     } else {
-      codeWriter.emitKdoc(kdoc)
+      codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)

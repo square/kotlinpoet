@@ -314,8 +314,7 @@ class PropertySpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun propertyKdocWithoutLinebreak() {
+  @Test fun propertyKdocWithoutLinebreak() {
     val property = PropertySpec.builder("topping", String::class)
         .addKdoc("The topping you want on your pizza")
         .build()
@@ -327,8 +326,7 @@ class PropertySpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun propertyKdocWithLinebreak() {
+  @Test fun propertyKdocWithLinebreak() {
     val property = PropertySpec.builder("topping", String::class)
         .addKdoc("The topping you want on your pizza\n")
         .build()
@@ -337,6 +335,24 @@ class PropertySpecTest {
       | * The topping you want on your pizza
       | */
       |val topping: kotlin.String
+      |""".trimMargin())
+  }
+
+  @Test fun getterKdoc() {
+    val property = PropertySpec.builder("amount", Int::class)
+        .initializer("4")
+        .getter(FunSpec.getterBuilder()
+            .addKdoc("Simple multiplier")
+            .addStatement("return %L * 5", "field")
+            .build())
+        .build()
+
+    assertThat(property.toString()).isEqualTo("""
+      |val amount: kotlin.Int = 4
+      |    /**
+      |     * Simple multiplier
+      |     */
+      |    get() = field * 5
       |""".trimMargin())
   }
 }
