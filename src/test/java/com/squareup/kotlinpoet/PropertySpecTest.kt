@@ -355,4 +355,22 @@ class PropertySpecTest {
       |    get() = field * 5
       |""".trimMargin())
   }
+
+  @Test fun inferredType_withInitializer() {
+    val withInitializer = PropertySpec.builder("foo").initializer("true").build()
+    assertThat(withInitializer.toString()).isEqualTo("val foo = true\n")
+  }
+
+  @Test fun inferredType_withGetter() {
+    val withGetter = PropertySpec.builder("foo")
+        .getter(FunSpec.builder("get()")
+            .addStatement("return true")
+            .build())
+        .build()
+    assertThat(withGetter.toString()).isEqualTo("val foo\n    get() = true\n")
+  }
+
+  @Test fun inferredType_validation() {
+    assertThrows<IllegalArgumentException> { PropertySpec.builder("foo").build() }
+  }
 }

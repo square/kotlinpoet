@@ -43,6 +43,9 @@ class PropertySpec private constructor(builder: Builder) {
         (setter == null || KModifier.INLINE in setter.modifiers)) {
       "only type parameters of properties with inline getters and/or setters can be reified!"
     }
+    require(type != null || initializer != null || getter != null) {
+      "properties with an inferred type must have an initializer or a custom getter"
+    }
   }
 
   internal fun emit(
@@ -71,7 +74,10 @@ class PropertySpec private constructor(builder: Builder) {
         codeWriter.emitCode("%T.", receiverType)
       }
     }
-    codeWriter.emitCode("%L: %T", name.escapeIfNecessary(), type)
+    codeWriter.emitCode("%L", name.escapeIfNecessary())
+    if (type != null) {
+      codeWriter.emitCode(": %T", type)
+    }
     if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit(" by ")
@@ -134,7 +140,7 @@ class PropertySpec private constructor(builder: Builder) {
     return builder
   }
 
-  class Builder internal constructor(internal val name: String, internal val type: TypeName) {
+  class Builder internal constructor(internal val name: String, internal val type: TypeName?) {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -237,16 +243,16 @@ class PropertySpec private constructor(builder: Builder) {
   }
 
   companion object {
-    @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
+    @JvmStatic fun builder(name: String, type: TypeName? = null, vararg modifiers: KModifier): Builder {
       return Builder(name, type)
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic fun builder(name: String, type: Type?, vararg modifiers: KModifier)
+        = builder(name, type?.asTypeName(), *modifiers)
 
-    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic fun builder(name: String, type: KClass<*>?, vararg modifiers: KModifier)
+        = builder(name, type?.asTypeName(), *modifiers)
 
   }
 }
