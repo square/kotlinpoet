@@ -3640,6 +3640,30 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/594
+  @Test fun longComment() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .addFunction(FunSpec.builder("getAnswer")
+            .returns(Int::class)
+            .addComment("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
+                "eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+            .addStatement("return 42")
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |class Taco {
+        |    fun getAnswer(): Int {
+        |        // Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        |        return 42
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
