@@ -403,7 +403,7 @@ class FunSpec private constructor(builder: Builder) {
     }
 
     fun addComment(format: String, vararg args: Any) = apply {
-      body.add("// $format\n", *args)
+      body.add("//·${format.replace(' ', '·')}\n", *args)
     }
 
     /**
