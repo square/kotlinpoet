@@ -105,7 +105,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     val escapedPackageName = packageName.escapeKeywords()
 
     if (escapedPackageName.isNotEmpty()) {
-      codeWriter.emitCode("package %L\n", escapedPackageName)
+      codeWriter.emitCode("package·%L\n", escapedPackageName)
       codeWriter.emit("\n")
     }
 

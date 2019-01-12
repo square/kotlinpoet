@@ -734,6 +734,19 @@ class FileSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun longFilePackageName() {
+    val spec = FileSpec.builder("com.squareup.taco.enchilada.quesadillas.tamales.burritos.super.burritos.trying.to.get.a.really.large.packagename", "Test")
+        .addFunction(FunSpec.builder("foo")
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.get.a.really.large.packagename
+      |
+      |fun foo() {
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun importLongPackageName() {
     val spec = FileSpec.builder("testsrc", "Test")
         .addImport("a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength", "MyClass")
