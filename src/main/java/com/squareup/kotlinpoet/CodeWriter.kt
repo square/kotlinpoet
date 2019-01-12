@@ -49,6 +49,7 @@ internal class CodeWriter constructor(
   private val indent: String = DEFAULT_INDENT,
   private val memberImports: Map<String, Import> = emptyMap(),
   val importedTypes: Map<String, ClassName> = emptyMap(),
+  val importedMembers: Map<String, MemberName> = emptyMap(),
   columnLimit: Int = 100
 ) : Closeable {
   private val out = LineWrapper(out, indent, columnLimit)
@@ -58,8 +59,9 @@ internal class CodeWriter constructor(
   private var comment = false
   private var packageName = NO_PACKAGE
   private val typeSpecStack = mutableListOf<TypeSpec>()
-  private val memberImportClassNames = mutableSetOf<String>()
+  private val memberImportNames = mutableSetOf<String>()
   private val importableTypes = mutableMapOf<String, ClassName>()
+  private val importableMembers = mutableMapOf<String, MemberName>()
   private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
 
@@ -74,7 +76,7 @@ internal class CodeWriter constructor(
     for ((memberName, _) in memberImports) {
       val lastDotIndex = memberName.lastIndexOf('.')
       if (lastDotIndex >= 0) {
-        memberImportClassNames.add(memberName.substring(0, lastDotIndex))
+        memberImportNames.add(memberName.substring(0, lastDotIndex))
       }
     }
   }
@@ -233,7 +235,7 @@ internal class CodeWriter constructor(
           if (typeName is ClassName && partIterator.hasNext()) {
             if (!codeBlock.formatParts[partIterator.nextIndex()].startsWith("%")) {
               val candidate = typeName
-              if (candidate.canonicalName in memberImportClassNames) {
+              if (candidate.canonicalName in memberImportNames) {
                 check(deferredTypeName == null) { "pending type for static import?!" }
                 deferredTypeName = candidate
                 defer = true
@@ -242,6 +244,11 @@ internal class CodeWriter constructor(
           }
           if (!defer) typeName.emit(this)
           typeName.emitNullable(this)
+        }
+
+        "%M" -> {
+          val memberName = codeBlock.args[a++] as MemberName
+          memberName.emit(this)
         }
 
         "%%" -> emit("%")
@@ -360,15 +367,55 @@ internal class CodeWriter constructor(
     return className.canonicalName
   }
 
+  fun lookupName(memberName: MemberName): String {
+    val simpleName = memberImports[memberName.canonicalName]?.alias ?: memberName.simpleName
+    // Match an imported member.
+    val importedMember = importedMembers[simpleName]
+    if (importedMember == memberName) {
+      return simpleName
+    } else if (importedMember != null && memberName.enclosingClassName != null) {
+      val enclosingClassName = lookupName(memberName.enclosingClassName)
+      return "$enclosingClassName.$simpleName"
+    }
+
+    // If the member is in the same package, we're done.
+    if (packageName == memberName.packageName) {
+      referencedNames.add(memberName.simpleName)
+      return memberName.simpleName
+    }
+
+    // We'll have to use the fully-qualified name. Mark the member as importable for a future pass.
+    if (!kdoc) {
+      importableMember(memberName)
+    }
+
+    return memberName.canonicalName
+  }
+
   private fun importableType(className: ClassName) {
     if (className.packageName.isEmpty()) {
       return
     }
     val topLevelClassName = className.topLevelClassName()
     val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName
-    val replaced = importableTypes.put(simpleName, topLevelClassName)
-    if (replaced != null) {
-      importableTypes[simpleName] = replaced // On collision, prefer the first inserted.
+    // Check for name clashes with members.
+    if (simpleName !in importableMembers) {
+      importableTypes.putIfAbsent(simpleName, topLevelClassName)
+    }
+  }
+
+  private fun importableMember(memberName: MemberName) {
+    if (memberName.packageName.isNotEmpty()) {
+      val simpleName = memberImports[memberName.canonicalName]?.alias ?: memberName.simpleName
+      // Check for name clashes with types.
+      if (simpleName !in importableTypes) {
+        val namesake = importableMembers.putIfAbsent(simpleName, memberName)
+        if (namesake != null && memberName.enclosingClassName != null) {
+          // If there's a name clash and member has an enclosing class, we can mark it as importable
+          // and use its resolved name later instead of the FQ member name.
+          importableType(memberName.enclosingClassName)
+        }
+      }
     }
   }
 
@@ -470,8 +517,16 @@ internal class CodeWriter constructor(
    * Returns the types that should have been imported for this code. If there were any simple name
    * collisions, that type's first use is imported.
    */
-  fun suggestedImports(): Map<String, ClassName> {
+  fun suggestedTypeImports(): Map<String, ClassName> {
     return importableTypes.filterKeys { it !in referencedNames }
+  }
+
+  /**
+   * Returns the members that should have been imported for this code. If there were any simple name
+   * collisions, that member's first use is imported.
+   */
+  fun suggestedMemberImports(): Map<String, MemberName> {
+    return importableMembers.filterKeys { it !in referencedNames }
   }
 
   override fun close() {
