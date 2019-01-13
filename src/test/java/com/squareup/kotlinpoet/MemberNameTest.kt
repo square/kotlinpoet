@@ -219,34 +219,38 @@ class MemberNameTest {
   }
 
   @Test fun memberExtension_className() {
-    val squareTacos = ClassName("com.squareup.tacos", "SquareTacos")
-    assertThat(squareTacos.member("create"))
-        .isEqualTo(MemberName("com.squareup.tacos", squareTacos, "create"))
+    val regex = ClassName("kotlin.text", "Regex")
+    assertThat(regex.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regex, "fromLiteral"))
   }
 
   @Test fun memberExtension_className_nested() {
-    val nested = ClassName("com.squareup.tacos", "SquareTacos", "Helper")
-    assertThat(nested.member("create"))
-        .isEqualTo(MemberName("com.squareup.tacos", nested, "create"))
+    val regexCompanion = ClassName("kotlin.text", "Regex", "Companion")
+    assertThat(regexCompanion.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regexCompanion, "fromLiteral"))
   }
 
   @Test fun memberExtension_kclass() {
+    val regex = ClassName("kotlin.text", "Regex")
     assertThat(Regex::class.member("fromLiteral"))
-        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex"), "fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regex, "fromLiteral"))
   }
 
   @Test fun memberExtension_kclass_nested() {
+    val regexCompanion = ClassName("kotlin.text", "Regex", "Companion")
     assertThat(Regex.Companion::class.member("fromLiteral"))
-        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex", "Companion"), "fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regexCompanion, "fromLiteral"))
   }
 
   @Test fun memberExtension_class() {
+    val regex = ClassName("kotlin.text", "Regex")
     assertThat(Regex::class.java.member("fromLiteral"))
-        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex"), "fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regex, "fromLiteral"))
   }
 
   @Test fun memberExtension_class_nested() {
+    val regexCompanion = ClassName("kotlin.text", "Regex", "Companion")
     assertThat(Regex.Companion::class.java.member("fromLiteral"))
-        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex", "Companion"), "fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", regexCompanion, "fromLiteral"))
   }
 }
