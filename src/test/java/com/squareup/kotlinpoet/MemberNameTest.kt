@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
+import com.squareup.kotlinpoet.MemberName.Companion.member
 
 class MemberNameTest {
   @Test fun memberNames() {
@@ -215,5 +216,37 @@ class MemberNameTest {
       |    TwitterTacos.Companion.`when`()
       |}
       |""".trimMargin())
+  }
+
+  @Test fun memberExtension_className() {
+    val squareTacos = ClassName("com.squareup.tacos", "SquareTacos")
+    assertThat(squareTacos.member("create"))
+        .isEqualTo(MemberName("com.squareup.tacos", squareTacos, "create"))
+  }
+
+  @Test fun memberExtension_className_nested() {
+    val nested = ClassName("com.squareup.tacos", "SquareTacos", "Helper")
+    assertThat(nested.member("create"))
+        .isEqualTo(MemberName("com.squareup.tacos", nested, "create"))
+  }
+
+  @Test fun memberExtension_kclass() {
+    assertThat(Regex::class.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex"), "fromLiteral"))
+  }
+
+  @Test fun memberExtension_kclass_nested() {
+    assertThat(Regex.Companion::class.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex", "Companion"), "fromLiteral"))
+  }
+
+  @Test fun memberExtension_class() {
+    assertThat(Regex::class.java.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex"), "fromLiteral"))
+  }
+
+  @Test fun memberExtension_class_nested() {
+    assertThat(Regex.Companion::class.java.member("fromLiteral"))
+        .isEqualTo(MemberName("kotlin.text", ClassName("kotlin.text", "Regex", "Companion"), "fromLiteral"))
   }
 }
