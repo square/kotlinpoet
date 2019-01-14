@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
  * companion object of the Map.Entry class
  * @param simpleName e.g. `isBlank`, `size`
  */
-data class MemberName(
+data class MemberName internal constructor(
   val packageName: String,
   val enclosingClassName: ClassName?,
   val simpleName: String
