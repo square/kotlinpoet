@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import kotlin.reflect.KClass
+
 /**
  * Represents the name of a member (such as a function or a property) that can be used in a static
  * context.
@@ -48,4 +50,14 @@ data class MemberName(
   internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
 
   override fun toString() = canonicalName
+
+  companion object {
+    @Suppress("NOTHING_TO_INLINE")
+    @JvmSynthetic @JvmStatic inline fun ClassName.member(simpleName: String) =
+        MemberName(this, simpleName)
+    @JvmStatic @JvmName("get") fun KClass<*>.member(simpleName: String) =
+        asClassName().member(simpleName)
+    @JvmStatic @JvmName("get") fun Class<*>.member(simpleName: String) =
+        asClassName().member(simpleName)
+  }
 }

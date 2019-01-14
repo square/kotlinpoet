@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
+import com.squareup.kotlinpoet.MemberName.Companion.member
 
 class MemberNameTest {
   @Test fun memberNames() {
@@ -215,5 +216,21 @@ class MemberNameTest {
       |    TwitterTacos.Companion.`when`()
       |}
       |""".trimMargin())
+  }
+
+  @Test fun memberExtension_className() {
+    val regex = ClassName("kotlin.text", "Regex")
+    assertThat(regex.member("fromLiteral"))
+        .isEqualTo(MemberName(regex, "fromLiteral"))
+  }
+
+  @Test fun memberExtension_kclass() {
+    assertThat(Regex::class.member("fromLiteral"))
+        .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
+  }
+
+  @Test fun memberExtension_class() {
+    assertThat(Regex::class.java.member("fromLiteral"))
+        .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
   }
 }
