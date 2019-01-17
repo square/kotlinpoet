@@ -6,7 +6,7 @@ buildscript {
       'compileTesting': '0.15',
       'jimfs': '1.1',
       'ecj': '4.6.1',
-      'mavenPublish': '0.6.0',
+      'mavenPublish': '0.8.0-SNAPSHOT',
   ]
   ext.deps = [
       'kotlin': [
@@ -29,6 +29,7 @@ buildscript {
   repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
     classpath deps.kotlin.gradle
@@ -54,8 +55,11 @@ jar {
   }
 }
 
-dokka {
-  skipDeprecated = true
+afterEvaluate {
+  dokka {
+    skipDeprecated = true
+    outputFormat = 'html'
+  }
 }
 
 dependencies {
