@@ -354,7 +354,6 @@ class HelloWorld {
 }
 ```
 
-
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
@@ -450,7 +449,8 @@ val map = LinkedHashMap<String, Any>()
 map += "food" to "tacos"
 map += "count" to 3
 CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
-  ```
+```
+  
 ### Functions
 
 All of the above functions have a code body. Use `KModifier.ABSTRACT` to get a function without any
@@ -519,6 +519,46 @@ FunSpec.builder("add")
     .addStatement("print(\"a + b = ${ a + b }\")")
     .build()
 ```
+
+#### Spaces wrap by default!
+
+In order to provide meaningful formatting, KotlinPoet would replace spaces, found in blocks of code,
+with new line symbols, in cases when the line of code exceeds the length limit. Let's take this 
+function for example:
+
+```kotlin
+val funSpec = FunSpec.builder("foo")
+    .addStatement("return (100..10000).map { number -> number * number }.map { number -> number.toString() }.also { string -> println(string) }")
+    .build()
+```
+
+Depending on where it's found in the file, it may end up being printed out like this:
+
+```kotlin
+fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString() }.also 
+{ string -> println(string) }
+```
+
+Unfortunately this code is broken: the compiler expects `also` and `{` to be on the same line. 
+KotlinPoet is unable to understand the context of the expression and fix the formatting for you, but 
+there's a trick you can use to declare a non-breaking space - use the `·` symbol where you would 
+otherwise use a space. Let's apply this to our example:
+
+```kotlin
+val funSpec = FunSpec.builder("foo")
+    .addStatement("return (100..10000).map·{ number -> number * number }.map·{ number -> number.toString() }.also·{ string -> println(string) }")
+    .build()
+```
+
+This will now produce the following result:
+
+```kotlin
+fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString()
+}.also { string -> println(string) }
+```
+
+The code is now correct and will compile properly. It still doesn't look perfect - you can play with
+replacing other spaces in the code block with `·` symbols to achieve better formatting.
 
 ### Constructors
 
