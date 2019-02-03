@@ -830,4 +830,44 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/606
+  @Test fun typeNamesInsideTemplateStringsGetImported() {
+    val taco = ClassName("com.squareup.tacos", "Taco")
+    val file = FileSpec.builder("com.squareup.example", "Tacos")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%P)", CodeBlock.of("Here's a taco: \${%T()}", taco))
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.example
+      |
+      |import com.squareup.tacos.Taco
+      |
+      |fun main() {
+      |    println(${'"'}""Here's a taco: ${'$'}{Taco()}""${'"'})
+      |}
+      |""".trimMargin())
+  }
+
+  // https://github.com/square/kotlinpoet/issues/606
+  @Test fun memberNamesInsideTemplateStringsGetImported() {
+    val contentToString = MemberName("kotlin.collections", "contentToString")
+    val file = FileSpec.builder("com.squareup.example", "Tacos")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("val ints = arrayOf(1, 2, 3)")
+            .addStatement("println(%P)", CodeBlock.of("\${ints.%M()}", contentToString))
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.example
+      |
+      |import kotlin.collections.contentToString
+      |
+      |fun main() {
+      |    val ints = arrayOf(1, 2, 3)
+      |    println(${'"'}""${'$'}{ints.contentToString()}""${'"'})
+      |}
+      |""".trimMargin())
+  }
 }
