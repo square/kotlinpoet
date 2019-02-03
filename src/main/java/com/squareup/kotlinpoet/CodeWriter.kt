@@ -40,6 +40,15 @@ internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): Strin
   return stringBuilder.toString()
 }
 
+internal fun buildCodeString(
+  codeWriter: CodeWriter,
+  builderAction: CodeWriter.() -> Unit
+): String {
+  val stringBuilder = StringBuilder()
+  codeWriter.emitInto(stringBuilder, builderAction)
+  return stringBuilder.toString()
+}
+
 /**
  * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
@@ -52,7 +61,7 @@ internal class CodeWriter constructor(
   val importedMembers: Map<String, MemberName> = emptyMap(),
   columnLimit: Int = 100
 ) : Closeable {
-  private val out = LineWrapper(out, indent, columnLimit)
+  private var out = LineWrapper(out, indent, columnLimit)
   private var indentLevel = 0
 
   private var kdoc = false
@@ -215,12 +224,31 @@ internal class CodeWriter constructor(
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
-        "%S", "%P" -> {
+        "%S" -> {
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
-          val literal = if (string != null)
-            stringLiteralWithQuotes(string, escapeDollarSign = part == "%S") else
+          val literal = if (string != null) {
+            stringLiteralWithQuotes(string, escapeDollarSign = true)
+          } else {
             "null"
+          }
+          emit(literal, nonWrapping = true)
+        }
+
+        "%P" -> {
+          val string = codeBlock.args[a++]?.let { arg ->
+            if (arg is CodeBlock) {
+              arg.toString(this@CodeWriter)
+            } else {
+              arg as String?
+            }
+          }
+          // Emit null as a literal null: no quotes.
+          val literal = if (string != null) {
+            stringLiteralWithQuotes(string, escapeDollarSign = false)
+          } else {
+            "null"
+          }
           emit(literal, nonWrapping = true)
         }
 
@@ -527,6 +555,20 @@ internal class CodeWriter constructor(
    */
   fun suggestedMemberImports(): Map<String, MemberName> {
     return importableMembers.filterKeys { it !in referencedNames }
+  }
+
+  /**
+   * Perform emitting actions on the current [CodeWriter] using a custom [Appendable]. The
+   * [CodeWriter] will continue using the old [Appendable] after this method returns.
+   */
+  inline fun emitInto(out: Appendable, action: CodeWriter.() -> Unit) {
+    val codeWrapper = this
+    LineWrapper(out, indent = DEFAULT_INDENT, columnLimit = Int.MAX_VALUE).use { newOut ->
+      val oldOut = codeWrapper.out
+      codeWrapper.out = newOut
+      action()
+      codeWrapper.out = oldOut
+    }
   }
 
   override fun close() {

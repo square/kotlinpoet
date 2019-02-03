@@ -160,7 +160,11 @@ class CodeBlock private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildCodeString { emitCode(this@CodeBlock) }
+  override fun toString(): String = buildCodeString { emitCode(this@CodeBlock) }
+
+  internal fun toString(codeWriter: CodeWriter): String = buildCodeString(codeWriter) {
+    emitCode(this@CodeBlock)
+  }
 
   fun toBuilder(): Builder {
     val builder = Builder()
@@ -336,7 +340,8 @@ class CodeBlock private constructor(
       when (c) {
         'N' -> this.args += argToName(arg).escapeIfKeyword()
         'L' -> this.args += argToLiteral(arg)
-        'S', 'P' -> this.args += argToString(arg)
+        'S' -> this.args += argToString(arg)
+        'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
         else -> throw IllegalArgumentException(

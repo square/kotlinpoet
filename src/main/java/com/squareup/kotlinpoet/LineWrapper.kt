@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Closeable
+
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
  * [LineWrapper.append], which will replace spaces with newlines where necessary. Use
@@ -24,7 +26,7 @@ internal class LineWrapper(
   private val out: Appendable,
   private val indent: String,
   private val columnLimit: Int
-) {
+): Closeable {
   private var closed = false
 
   /**
@@ -94,7 +96,7 @@ internal class LineWrapper(
   }
 
   /** Flush any outstanding text and forbid future writes to this line wrapper.  */
-  fun close() {
+  override fun close() {
     emitCurrentLine()
     closed = true
   }
