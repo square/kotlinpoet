@@ -57,6 +57,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val initializerBlock = builder.initializerBlock.build()
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
+  internal val nestedTypesSimpleNames = nestedTypesSimpleNames(builder)
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, *modifiers.toTypedArray())
@@ -275,6 +276,14 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     } finally {
       codeWriter.statementLine = previousStatementLine
     }
+  }
+
+  private fun nestedTypesSimpleNames(): Set<String> {
+    var nestedTypesSimpleNames = HashSet<String>(typeSpecs.size)
+    for (typeSpec in typeSpecs) {
+      nestedTypesSimpleNames.add(typeSpec.name)
+    }
+    return nestedTypesSimpleNames
   }
 
   /** Returns the properties that can be declared inline as constructor parameters. */

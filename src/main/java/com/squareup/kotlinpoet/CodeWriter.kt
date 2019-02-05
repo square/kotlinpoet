@@ -456,10 +456,8 @@ internal class CodeWriter constructor(
     // Match a child of the current (potentially nested) class.
     for (i in typeSpecStack.indices.reversed()) {
       val typeSpec = typeSpecStack[i]
-      for (visibleChild in typeSpec.typeSpecs) {
-        if (visibleChild.name == simpleName) {
-          return stackClassName(i, simpleName)
-        }
+      if (typeSpec.nestedTypesSimpleNames.contains(simpleName)) {
+        return stackClassName(i, simpleName)
       }
     }
 
