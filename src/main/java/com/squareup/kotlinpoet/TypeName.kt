@@ -580,7 +580,7 @@ class ParameterizedTypeName internal constructor(
       typeArguments: List<KTypeProjection>
     ): TypeName {
       if (typeArguments.isEmpty()) {
-        return type.asTypeName()
+        return type.asTypeName().run { if (nullable) copy(nullable = true) else this }
       }
 
       val effectiveType = if (type.java.isArray) Array<Unit>::class else type
