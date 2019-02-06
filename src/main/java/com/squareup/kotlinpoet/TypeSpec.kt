@@ -57,6 +57,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val initializerBlock = builder.initializerBlock.build()
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
+  internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, *modifiers.toTypedArray())
