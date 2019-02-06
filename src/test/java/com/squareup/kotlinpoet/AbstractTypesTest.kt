@@ -197,7 +197,6 @@ abstract class AbstractTypesTest {
     assertThat(Any::class.starProjectedType.withNullability(true).asTypeName().toString())
         .isEqualTo("kotlin.Any?")
 
-
     val treeMapClass = java.util.TreeMap::class
     assertThat(treeMapClass.declaredFunctions.find { it.name == "parentOf" }!!.returnType.asTypeName().toString())
         .isEqualTo("java.util.TreeMap.Entry<K, V>")
