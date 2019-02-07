@@ -51,6 +51,12 @@ internal class LineWrapper(
           pos++
         }
 
+        '(', ')' -> {
+          segments += c.toString()
+          segments += ""
+          pos++
+        }
+
         '\n' -> {
           // Each newline emits the current segments.
           newline()
@@ -100,14 +106,23 @@ internal class LineWrapper(
 
     var start = 0
     var columnCount = segments[0].length
+    var idxParen = -1
 
     for (i in 1 until segments.size) {
       val segment = segments[i]
       val newColumnCount = columnCount + 1 + segment.length
 
+      if (segment == "(") {
+        emitSegmentRange(start, i+1, "")
+        out.append("\n${indent.repeat(indentLevel)}")
+        start = i + 1
+        idxParen = i + 1
+        continue
+      }
+
       // If this segment doesn't fit in the current run, print the current run and start a new one.
-      if (newColumnCount > columnLimit) {
-        emitSegmentRange(start, i)
+      if (newColumnCount > columnLimit && idxParen < 0 || segment == ")") {
+        emitSegmentRange(start, i, if (idxParen < 0) " " else "\n${indent.repeat(indentLevel)}")
         start = i
         columnCount = segment.length + indent.length * indentLevel
         continue
@@ -123,9 +138,9 @@ internal class LineWrapper(
     segments += ""
   }
 
-  private fun emitSegmentRange(startIndex: Int, endIndex: Int) {
+  private fun emitSegmentRange(startIndex: Int, endIndex: Int, separator: String = " ") {
     // If this is a wrapped line we need a newline and an indent.
-    if (startIndex > 0) {
+    if (startIndex > 0 && separator == " ") {
       out.append("\n")
       for (i in 0 until indentLevel) {
         out.append(indent)
@@ -135,7 +150,7 @@ internal class LineWrapper(
     // Emit each segment separated by spaces.
     out.append(segments[startIndex])
     for (i in startIndex + 1 until endIndex) {
-      out.append(" ")
+      out.append(separator)
       out.append(segments[i])
     }
   }
@@ -160,6 +175,6 @@ internal class LineWrapper(
 
   companion object {
     private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
-    private val SPECIAL_CHARACTERS = " \n·".toCharArray()
+    private val SPECIAL_CHARACTERS = "() \n·".toCharArray()
   }
 }
