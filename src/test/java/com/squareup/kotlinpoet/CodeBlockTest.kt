@@ -420,4 +420,19 @@ class CodeBlockTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun wrapping() {
+    val codeBlock = buildCodeBlock {
+      add("foo(")
+      add("a".repeat(20).map { CodeBlock.of("%S", it) }.joinToCode(separator = ", "))
+      add(")")
+    }
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, indent = "  ", columnLimit = 100)
+    lineWrapper.append(codeBlock.toString(), indentLevel = 1)
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+    |foo("a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a")
+    """.trimMargin())
+  }
 }
