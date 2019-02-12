@@ -3209,6 +3209,25 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo(expect)
   }
 
+  @Test fun testDelegateOnObject() {
+    val type = TypeSpec.objectBuilder("Guac")
+        .addSuperinterface(
+            Consumer::class.parameterizedBy(String::class),
+            CodeBlock.of("({ println(it) })"))
+        .build()
+
+    val expect = """
+        |package com.squareup.tacos
+        |
+        |import java.util.function.Consumer
+        |import kotlin.String
+        |
+        |object Guac : Consumer<String> by ({ println(it) })
+        |""".trimMargin()
+
+    assertThat(toString(type)).isEqualTo(expect)
+  }
+
   @Test fun testMultipleDelegates() {
     val type = TypeSpec.classBuilder("StringToInteger")
         .primaryConstructor(FunSpec.constructorBuilder()
