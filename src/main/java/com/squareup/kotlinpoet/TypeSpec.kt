@@ -205,11 +205,12 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
         enumConstant.value
             .emit(codeWriter, enumConstant.key)
         firstMember = false
-        if (i.hasNext()) {
-          codeWriter.emit(",\n")
-        } else if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
+        if (i.hasNext()) codeWriter.emit(",\n")
+      }
+      if (isEnum) {
+        if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
           codeWriter.emit(";\n")
-        } else {
+        } else if (!firstMember) {
           codeWriter.emit("\n")
         }
       }
