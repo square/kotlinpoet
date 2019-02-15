@@ -553,6 +553,21 @@ class TypeSpecTest {
           .build()
     }
   }
+  
+  /** https://github.com/square/kotlinpoet/issues/621  */
+  @Test fun enumWithMembersButNoConstansts() {
+    val roshambo = TypeSpec.enumBuilder("RenderPassCreate")
+        .addType(TypeSpec.companionObjectBuilder().build())
+        .build()
+    assertThat(toString(roshambo)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |enum class RenderPassCreate {
+        |    ;
+        |    companion object
+        |}
+        |""".trimMargin())
+  }
 
   @Test fun enumWithMembersButNoConstructorCall() {
     val roshambo = TypeSpec.enumBuilder("Roshambo")
