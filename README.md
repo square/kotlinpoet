@@ -204,6 +204,35 @@ produces:
 fun printTotal(): String = "Your total is $amount"
 ```
 
+You can also use `CodeBlock`s as arguments to `%P`, which is handy when you need to reference
+importable types or members inside the string template:
+
+```kotlin
+val file = FileSpec.builder("com.example", "Digits")
+    .addFunction(FunSpec.builder("print")
+        .addParameter("digits", IntArray::class)
+        .addStatement("println(%P)", buildCodeBlock {
+          val contentToString = MemberName("kotlin.collections", "contentToString")
+          add("These are the digits: \${digits.%M()}", contentToString)
+        })
+        .build())
+    .build()
+println(file)
+```
+
+The snippet above will produce the following output, handling the imports properly:
+
+```kotlin
+package com.example
+
+import kotlin.IntArray
+import kotlin.collections.contentToString
+
+fun print(digits: IntArray) {
+    println("""These are the digits: ${digits.contentToString()}""")
+}
+```
+
 ### %T for Types
 
 KotlinPoet has rich built-in support for types, including automatic generation of `import`
