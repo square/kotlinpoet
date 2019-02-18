@@ -30,7 +30,7 @@ fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this
 fun KType.asTypeName(): TypeName {
   val classifier = this.classifier
   if (classifier is KTypeParameter) {
-    return classifier.asTypeVariableName()
+    return classifier.asTypeVariableName().run { if (isMarkedNullable) copy(nullable = true) else this }
   }
 
   if (classifier == null || classifier !is KClass<*>) {
