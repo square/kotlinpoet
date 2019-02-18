@@ -21,6 +21,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Test
 import java.io.Closeable
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
@@ -84,6 +85,23 @@ class ParameterizedTypeNameTest {
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable>")
   }
 
+  @Test fun arrayPlusNullableParameter() {
+    val typeName = Array<Unit>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Closeable::class.createType(nullable = true)))).asTypeName()
+    assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable?>")
+  }
+
+  @Test fun typeParameter() {
+    val funWithParam: () -> Closeable = this::withParam
+    val typeName = (funWithParam as KFunction<*>).returnType.asTypeName()
+    assertThat(typeName.toString()).isEqualTo("Param")
+  }
+
+  @Test fun nullableTypeParameter() {
+    val funWithParam: () -> Closeable? = this::withNullableParam
+    val typeName = (funWithParam as KFunction<*>).returnType.asTypeName()
+    assertThat(typeName.toString()).isEqualTo("Param?")
+  }
+
   @Test fun classPlusTwoParameters() {
     val typeName = java.util.Map::class.java
         .plusParameter(java.lang.String::class.java)
@@ -114,4 +132,7 @@ class ParameterizedTypeNameTest {
 
   @Test fun kTypeOutAnyOnTypeWithoutBoundsVariance() = assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
 
+  fun <Param: Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
+
+  fun <Param: Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
 }
