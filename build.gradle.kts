@@ -3,7 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
   kotlin("jvm") version "1.3.21"
   id("org.jetbrains.dokka") version "0.9.17"
-  id("com.vanniktech.maven.publish") version "0.8.0-SNAPSHOT"
+  id("com.vanniktech.maven.publish") version "0.8.0"
 }
 
 val GROUP: String by project
