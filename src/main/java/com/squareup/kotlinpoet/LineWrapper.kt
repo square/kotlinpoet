@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import java.io.Closeable
+import java.util.ArrayDeque
 
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
@@ -69,6 +70,17 @@ internal class LineWrapper(
           pos++
         }
 
+        // TODO: Opening bracket -> add it to a new segment
+        '(', ')' -> {
+          if (segments[segments.size - 1].isEmpty()) {
+            segments[segments.size - 1] += c.toString()
+          } else {
+            segments += c.toString()
+          }
+          segments += ""
+          pos++
+        }
+
         else -> {
           var next = s.indexOfAny(SPECIAL_CHARACTERS, pos)
           if (next == -1) next = s.length
@@ -106,15 +118,44 @@ internal class LineWrapper(
 
     var start = 0
     var columnCount = segments[0].length
+    val openingBracketIndices = ArrayDeque<Int>()
 
     for (i in 1 until segments.size) {
       val segment = segments[i]
-      val newColumnCount = columnCount + 1 + segment.length
+      // TODO: If segment is an opening bracket -> push its index into the stack
+      val newColumnCount = if (segment == "(") {
+        openingBracketIndices.push(i)
+        columnCount + segment.length // opening bracket is not followed by a space
+      } else if (segment == ")") {
+        columnCount - 1 + segment.length // closing bracket reclaims space claimed be previous seg
+      } else {
+        columnCount + 1 + segment.length // other segments are followed by space
+      }
 
       // If this segment doesn't fit in the current run, print the current run and start a new one.
+      // TODO: If we've got an unclosed bracket we shouldn't wrap immediately, instead we'll wait
+      // until we see the closing bracket and emit each separate segment on single line
       if (newColumnCount > columnLimit) {
-        emitSegmentRange(start, i)
-        start = i
+        if (openingBracketIndices.isEmpty()) {
+          emitSegmentRange(start, i)
+          start = i
+          columnCount = segment.length + indent.length * indentLevel
+          continue
+        } else if (segment == ")") {
+          val openingBracketIndex = openingBracketIndices.pop()
+          if (openingBracketIndices.isNotEmpty()) continue
+          emitSegmentRange(start, openingBracketIndex)
+          emitStuffBetweenBrackets(openingBracketIndex, i, multiline = true)
+          start = i + 1
+          columnCount = segment.length + indent.length * indentLevel
+          continue
+        }
+      } else if (segment == ")") {
+        val openingBracketIndex = openingBracketIndices.pop()
+        if (openingBracketIndices.isNotEmpty()) continue
+        emitSegmentRange(start, openingBracketIndex)
+        emitStuffBetweenBrackets(openingBracketIndex, i, multiline = false)
+        start = i + 1
         columnCount = segment.length + indent.length * indentLevel
         continue
       }
@@ -131,7 +172,7 @@ internal class LineWrapper(
 
   private fun emitSegmentRange(startIndex: Int, endIndex: Int) {
     // If this is a wrapped line we need a newline and an indent.
-    if (startIndex > 0) {
+    if (startIndex > 0 && segments[startIndex].isNotEmpty()) {
       out.append("\n")
       for (i in 0 until indentLevel) {
         out.append(indent)
@@ -145,6 +186,31 @@ internal class LineWrapper(
       out.append(" ")
       out.append(segments[i])
     }
+  }
+
+  private fun emitStuffBetweenBrackets(
+    openingBracketIndex: Int,
+    closingBracketIndex: Int,
+    multiline: Boolean
+  ) {
+    out.append(segments[openingBracketIndex])
+    for (i in openingBracketIndex + 1 until closingBracketIndex) {
+      if (multiline) {
+        out.append("\n")
+        for (j in 0 until indentLevel + 2) {
+          out.append(indent)
+        }
+        out.append(linePrefix)
+      }
+      out.append(segments[i])
+      if (!multiline && i < closingBracketIndex - 1) {
+        out.append(' ')
+      }
+    }
+    if (multiline) {
+      out.append('\n')
+    }
+    out.append(segments[closingBracketIndex])
   }
 
   /**
@@ -166,7 +232,7 @@ internal class LineWrapper(
   }
 
   companion object {
-    private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
-    private val SPECIAL_CHARACTERS = " \n·".toCharArray()
+    private val UNSAFE_LINE_START = Regex("\\s*[-+][^>=].*")
+    private val SPECIAL_CHARACTERS = "() \n·".toCharArray()
   }
 }

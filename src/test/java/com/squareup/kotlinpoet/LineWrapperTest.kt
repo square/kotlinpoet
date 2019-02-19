@@ -203,4 +203,63 @@ class LineWrapperTest {
         | */
         """.trimMargin())
   }
+
+  @Test fun nonWrappingBrackets() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("(1, 2, 3)")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |(1, 2, 3)
+        """.trimMargin())
+  }
+
+  @Test fun wrappingBrackets() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("(1, 2, 3, 4)")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |(
+        |  1,
+        |  2,
+        |  3,
+        |  4
+        |)
+        """.trimMargin())
+  }
+
+  @Test fun functionSignature() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("fun main(args:·Array<String>) {\n")
+    lineWrapper.append("  println()\n")
+    lineWrapper.append("}")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |fun main(
+        |  args: Array<String>
+        |) {
+        |  println()
+        |}
+        """.trimMargin())
+  }
+
+  @Test fun nestedBrackets() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("fun foo(a:·(Int)·->·String)")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |fun foo(
+        |  a: (Int) -> String
+        |)
+        """.trimMargin())
+  }
+
+  fun foo(
+    a: (
+      Int
+    ) -> String
+  ) {}
 }
