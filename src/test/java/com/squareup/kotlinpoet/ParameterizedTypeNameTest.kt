@@ -76,17 +76,20 @@ class ParameterizedTypeNameTest {
   }
 
   @Test fun arrayPlusPrimitiveParameter() {
-    val typeName = Array<Int>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Int::class.createType()))).asTypeName()
+    val invariantInt = KTypeProjection(KVariance.INVARIANT, Int::class.createType())
+    val typeName = Array<Unit>::class.createType(listOf(invariantInt)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<kotlin.Int>")
   }
 
   @Test fun arrayPlusObjectParameter() {
-    val typeName = Array<Unit>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Closeable::class.createType()))).asTypeName()
+    val invariantCloseable = KTypeProjection(KVariance.INVARIANT, Closeable::class.createType())
+    val typeName = Array<Unit>::class.createType(listOf(invariantCloseable)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable>")
   }
 
   @Test fun arrayPlusNullableParameter() {
-    val typeName = Array<Unit>::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, Closeable::class.createType(nullable = true)))).asTypeName()
+    val invariantNullableCloseable = KTypeProjection(KVariance.INVARIANT, Closeable::class.createType(nullable = true))
+    val typeName = Array<Unit>::class.createType(listOf(invariantNullableCloseable)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable?>")
   }
 
@@ -132,7 +135,7 @@ class ParameterizedTypeNameTest {
 
   @Test fun kTypeOutAnyOnTypeWithoutBoundsVariance() = assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
 
-  fun <Param: Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
+  private fun <Param: Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
 
-  fun <Param: Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
+  private fun <Param: Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
 }
