@@ -269,7 +269,7 @@ internal class LineWrapper(
   }
 
   companion object {
-    private val UNSAFE_LINE_START = Regex("\\s*[-+][^>=].*")
+    private val UNSAFE_LINE_START = Regex("\\s*[-+][^>]*")
     private val SPECIAL_CHARACTERS = "() \n·".toCharArray()
   }
 }
