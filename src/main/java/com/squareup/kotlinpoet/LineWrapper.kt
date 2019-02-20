@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import java.io.Closeable
-import java.util.ArrayDeque
 
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
@@ -27,7 +26,7 @@ internal class LineWrapper(
   private val out: Appendable,
   private val indent: String,
   private val columnLimit: Int
-): Closeable {
+) : Closeable {
   private var closed = false
 
   /**
@@ -115,16 +114,17 @@ internal class LineWrapper(
 
   private fun emitCurrentLine() {
     foldUnsafeBreaks()
+    foldNestedBrackets()
 
     var start = 0
     var columnCount = segments[0].length
-    val openingBracketIndices = ArrayDeque<Int>()
+    var openingBracketIndex = if (segments[0] == "(") 0 else -1
 
     for (i in 1 until segments.size) {
       val segment = segments[i]
       // TODO: If segment is an opening bracket -> push its index into the stack
       val newColumnCount = if (segment == "(") {
-        openingBracketIndices.push(i)
+        openingBracketIndex = i
         columnCount + segment.length // opening bracket is not followed by a space
       } else if (segment == ")") {
         columnCount - 1 + segment.length // closing bracket reclaims space claimed be previous seg
@@ -136,24 +136,24 @@ internal class LineWrapper(
       // TODO: If we've got an unclosed bracket we shouldn't wrap immediately, instead we'll wait
       // until we see the closing bracket and emit each separate segment on single line
       if (newColumnCount > columnLimit) {
-        if (openingBracketIndices.isEmpty()) {
+        if (openingBracketIndex == -1) {
           emitSegmentRange(start, i)
           start = i
           columnCount = segment.length + indent.length * indentLevel
           continue
         } else if (segment == ")") {
-          val openingBracketIndex = openingBracketIndices.pop()
-          if (openingBracketIndices.isNotEmpty()) continue
-          emitSegmentRange(start, openingBracketIndex)
+          if (start < openingBracketIndex) {
+            emitSegmentRange(start, openingBracketIndex)
+          }
           emitStuffBetweenBrackets(openingBracketIndex, i, multiline = true)
           start = i + 1
           columnCount = segment.length + indent.length * indentLevel
           continue
         }
       } else if (segment == ")") {
-        val openingBracketIndex = openingBracketIndices.pop()
-        if (openingBracketIndices.isNotEmpty()) continue
-        emitSegmentRange(start, openingBracketIndex)
+        if (start < openingBracketIndex) {
+          emitSegmentRange(start, openingBracketIndex)
+        }
         emitStuffBetweenBrackets(openingBracketIndex, i, multiline = false)
         start = i + 1
         columnCount = segment.length + indent.length * indentLevel
@@ -225,6 +225,43 @@ internal class LineWrapper(
         segments[i - 1] = segments[i - 1] + " " + segments[i]
         segments.removeAt(i)
         if (i > 1) i--
+      } else {
+        i++
+      }
+    }
+  }
+
+  /**
+   * We only wrap outer brackets, so any nested pairs of brackets should be handled as normal
+   * segments.
+   */
+  private fun foldNestedBrackets() {
+    var outerOpeningBracketIndex = segments.size
+    var outerClosingBracketIndex = -1
+    outer@ for (i in 0 until segments.size) {
+      if (segments[i] == "(") {
+        outerOpeningBracketIndex = i
+        for (j in segments.size - 1 downTo 0) {
+          if (segments[j] == ")") {
+            outerClosingBracketIndex = j
+            break@outer
+          }
+        }
+      }
+    }
+
+    var i = outerOpeningBracketIndex + 1
+    while (i < outerClosingBracketIndex) {
+      val segment = segments[i]
+      if (segment == "(" || segment == ")") {
+        if (i + 1 < outerClosingBracketIndex) {
+          segments[i] += segments[i + 1]
+          segments.removeAt(i + 1)
+          outerClosingBracketIndex--
+        }
+        segments[i - 1] += segments[i]
+        segments.removeAt(i)
+        outerClosingBracketIndex--
       } else {
         i++
       }

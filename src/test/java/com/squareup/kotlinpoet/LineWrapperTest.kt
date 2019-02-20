@@ -256,10 +256,4 @@ class LineWrapperTest {
         |)
         """.trimMargin())
   }
-
-  fun foo(
-    a: (
-      Int
-    ) -> String
-  ) {}
 }
