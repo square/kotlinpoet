@@ -256,4 +256,30 @@ class LineWrapperTest {
         |)
         """.trimMargin())
   }
+
+  @Test fun annotationMembers() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("[")
+    lineWrapper.append("first·=·1, second·=·2, third·=·3")
+    lineWrapper.append("]")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |[
+        |  first = 1,
+        |  second = 2,
+        |  third = 3
+        |]
+        """.trimMargin())
+  }
+
+  @Test fun unclosedBracketsDontWrap() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("(1, 2, 3, 4, 5")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |(1, 2, 3, 4, 5
+        """.trimMargin())
+  }
 }

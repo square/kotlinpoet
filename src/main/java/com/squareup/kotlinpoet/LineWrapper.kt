@@ -69,8 +69,7 @@ internal class LineWrapper(
           pos++
         }
 
-        // TODO: Opening bracket -> add it to a new segment
-        '(', ')' -> {
+        in OPENING_BRACKETS, in CLOSING_BRACKETS -> {
           if (segments[segments.size - 1].isEmpty()) {
             segments[segments.size - 1] += c.toString()
           } else {
@@ -118,43 +117,47 @@ internal class LineWrapper(
 
     var start = 0
     var columnCount = segments[0].length
-    var openingBracketIndex = if (segments[0] == "(") 0 else -1
+    var openingBracketIndex = if (segments[0] in OPENING_BRACKET_SEGMENTS) 0 else -1
 
     for (i in 1 until segments.size) {
       val segment = segments[i]
-      // TODO: If segment is an opening bracket -> push its index into the stack
-      val newColumnCount = if (segment == "(") {
-        openingBracketIndex = i
-        columnCount + segment.length // opening bracket is not followed by a space
-      } else if (segment == ")") {
-        columnCount - 1 + segment.length // closing bracket reclaims space claimed be previous seg
-      } else {
-        columnCount + 1 + segment.length // other segments are followed by space
+      val newColumnCount = when (segment) {
+        in OPENING_BRACKET_SEGMENTS -> {
+          // opening bracket is not followed by a space
+          openingBracketIndex = i
+          columnCount + segment.length
+        }
+        in CLOSING_BRACKET_SEGMENTS -> {
+          // closing bracket reclaims space claimed be previous seg
+          columnCount - 1 + segment.length
+        }
+        else -> {
+          // other segments are followed by space
+          columnCount + 1 + segment.length
+        }
       }
 
       // If this segment doesn't fit in the current run, print the current run and start a new one.
-      // TODO: If we've got an unclosed bracket we shouldn't wrap immediately, instead we'll wait
-      // until we see the closing bracket and emit each separate segment on single line
       if (newColumnCount > columnLimit) {
         if (openingBracketIndex == -1) {
           emitSegmentRange(start, i)
           start = i
           columnCount = segment.length + indent.length * indentLevel
           continue
-        } else if (segment == ")") {
+        } else if (segment in CLOSING_BRACKET_SEGMENTS) {
           if (start < openingBracketIndex) {
             emitSegmentRange(start, openingBracketIndex)
           }
-          emitStuffBetweenBrackets(openingBracketIndex, i, multiline = true)
+          emitSegmentRangeInsideBrackets(openingBracketIndex, i, multiline = true)
           start = i + 1
           columnCount = segment.length + indent.length * indentLevel
           continue
         }
-      } else if (segment == ")") {
+      } else if (segment in CLOSING_BRACKET_SEGMENTS) {
         if (start < openingBracketIndex) {
           emitSegmentRange(start, openingBracketIndex)
         }
-        emitStuffBetweenBrackets(openingBracketIndex, i, multiline = false)
+        emitSegmentRangeInsideBrackets(openingBracketIndex, i, multiline = false)
         start = i + 1
         columnCount = segment.length + indent.length * indentLevel
         continue
@@ -188,7 +191,7 @@ internal class LineWrapper(
     }
   }
 
-  private fun emitStuffBetweenBrackets(
+  private fun emitSegmentRangeInsideBrackets(
     openingBracketIndex: Int,
     closingBracketIndex: Int,
     multiline: Boolean
@@ -232,17 +235,16 @@ internal class LineWrapper(
   }
 
   /**
-   * We only wrap outer brackets, so any nested pairs of brackets should be handled as normal
-   * segments.
+   * Only the contents of outer brackets are wrapped, any nested brackets are currently ignored.
    */
   private fun foldNestedBrackets() {
     var outerOpeningBracketIndex = segments.size
     var outerClosingBracketIndex = -1
     outer@ for (i in 0 until segments.size) {
-      if (segments[i] == "(") {
+      if (segments[i] in OPENING_BRACKET_SEGMENTS) {
         outerOpeningBracketIndex = i
         for (j in segments.size - 1 downTo 0) {
-          if (segments[j] == ")") {
+          if (segments[j] in CLOSING_BRACKET_SEGMENTS) {
             outerClosingBracketIndex = j
             break@outer
           }
@@ -253,7 +255,7 @@ internal class LineWrapper(
     var i = outerOpeningBracketIndex + 1
     while (i < outerClosingBracketIndex) {
       val segment = segments[i]
-      if (segment == "(" || segment == ")") {
+      if (segment in OPENING_BRACKET_SEGMENTS || segment in CLOSING_BRACKET_SEGMENTS) {
         if (i + 1 < outerClosingBracketIndex) {
           segments[i] += segments[i + 1]
           segments.removeAt(i + 1)
@@ -270,6 +272,10 @@ internal class LineWrapper(
 
   companion object {
     private val UNSAFE_LINE_START = Regex("\\s*[-+][^>]*")
-    private val SPECIAL_CHARACTERS = "() \n·".toCharArray()
+    private val OPENING_BRACKETS = "([".toCharArray()
+    private val CLOSING_BRACKETS = ")]".toCharArray()
+    private val SPECIAL_CHARACTERS = OPENING_BRACKETS + CLOSING_BRACKETS + " \n·".toCharArray()
+    private val OPENING_BRACKET_SEGMENTS = OPENING_BRACKETS.mapTo(HashSet()) { it.toString() }
+    private val CLOSING_BRACKET_SEGMENTS = CLOSING_BRACKETS.mapTo(HashSet()) { it.toString() }
   }
 }
