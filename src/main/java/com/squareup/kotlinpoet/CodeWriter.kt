@@ -224,11 +224,11 @@ internal class CodeWriter constructor(
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
-        "%S" -> {
+        "%S", "%C" -> {
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
-            stringLiteralWithQuotes(string, escapeDollarSign = true)
+            stringLiteralWithQuotes(string, escapeDollarSign = true, treatAsConstant = part == "%C")
           } else {
             "null"
           }

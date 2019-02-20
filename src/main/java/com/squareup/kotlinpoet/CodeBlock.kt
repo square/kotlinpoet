@@ -41,6 +41,8 @@ import kotlin.reflect.KClass
  *    (`$`), use `%P` for string templates.
  *  * `%P` - Similar to `%S`, but doesn't escape dollar signs (`$`) to allow creation of string
  *    templates. If the string contains dollar signs that should be escaped - use `%S`.
+ *  * `%C` - Similar to `%S`, but enforces that the string can be a compile-time constant (for use
+ *    in annotations, `const`, etc). If the string does not need to be constant - use `%S`.
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
@@ -340,7 +342,7 @@ class CodeBlock private constructor(
       when (c) {
         'N' -> this.args += argToName(arg).escapeIfKeyword()
         'L' -> this.args += argToLiteral(arg)
-        'S' -> this.args += argToString(arg)
+        'S', 'C' -> this.args += argToString(arg)
         'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg

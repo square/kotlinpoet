@@ -82,8 +82,8 @@ class AnnotationSpecTest {
     var b = AnnotationSpec.builder(AnnotationC::class.java).build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
-    a = AnnotationSpec.builder(AnnotationC::class.java).addMember("value", "%S", "123").build()
-    b = AnnotationSpec.builder(AnnotationC::class.java).addMember("value", "%S", "123").build()
+    a = AnnotationSpec.builder(AnnotationC::class.java).addMember("value", "%C", "123").build()
+    b = AnnotationSpec.builder(AnnotationC::class.java).addMember("value", "%C", "123").build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
   }
@@ -236,8 +236,8 @@ class AnnotationSpecTest {
 
   @Test fun deprecatedTest() {
     val annotation = AnnotationSpec.builder(Deprecated::class)
-        .addMember("%S", "Nope")
-        .addMember("%T(%S)", ReplaceWith::class, "Yep")
+        .addMember("%C", "Nope")
+        .addMember("%T(%C)", ReplaceWith::class, "Yep")
         .build()
 
     assertThat(annotation.toString()).isEqualTo("" +
@@ -246,14 +246,23 @@ class AnnotationSpecTest {
 
   @Test fun modifyMembers() {
     val builder = AnnotationSpec.builder(Deprecated::class)
-        .addMember("%S", "Nope")
-        .addMember("%T(%S)", ReplaceWith::class, "Yep")
+        .addMember("%C", "Nope")
+        .addMember("%T(%C)", ReplaceWith::class, "Yep")
 
     builder.members.removeAt(1)
-    builder.members.add(CodeBlock.of("%T(%S)", ReplaceWith::class, "Nope"))
+    builder.members.add(CodeBlock.of("%T(%C)", ReplaceWith::class, "Nope"))
 
     assertThat(builder.build().toString()).isEqualTo("" +
         "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Nope\"))")
+  }
+
+  @Test fun stringsAreConstants() {
+    val text = "This is a long string with a newline\nin the middle."
+    val builder = AnnotationSpec.builder(Deprecated::class)
+        .addMember("%C", text)
+
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@kotlin.Deprecated(\"${text.replace("\n", "\\n")}\")")
   }
 
   private fun toString(annotationSpec: AnnotationSpec) =
