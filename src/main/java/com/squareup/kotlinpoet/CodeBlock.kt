@@ -59,13 +59,22 @@ import kotlin.reflect.KClass
  */
 class CodeBlock private constructor(
   internal val formatParts: List<String>,
-  internal val args: List<Any?>
+  internal val args: List<Any?>,
+  internal val constantStrings: Boolean = false
 ) {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
   fun isEmpty() = formatParts.isEmpty()
 
   fun isNotEmpty() = !isEmpty()
+
+  internal fun copy(
+      formatParts: List<String> = this.formatParts,
+      args: List<Any?> = this.args,
+      constantStrings: Boolean = this.constantStrings
+  ): CodeBlock {
+    return CodeBlock(formatParts, args, constantStrings)
+  }
 
   /**
    * Returns a code block with `prefix` stripped off, or null if this code block doesn't start with
@@ -116,7 +125,7 @@ class CodeBlock private constructor(
       resultArgs.add(args[i])
     }
 
-    return CodeBlock(resultFormatParts, resultArgs)
+    return copy(formatParts = resultFormatParts, args = resultArgs)
   }
 
   /**
@@ -133,7 +142,7 @@ class CodeBlock private constructor(
       end--
     }
     return when {
-      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args)
+      start > 0 || end < formatParts.size -> copy(formatParts = formatParts.subList(start, end))
       else -> this
     }
   }
@@ -147,7 +156,7 @@ class CodeBlock private constructor(
    * placeholders don't match their arguments.
    */
   internal fun replaceAll(oldValue: String, newValue: String) =
-      CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
+      copy(formatParts = formatParts.map { it.replace(oldValue, newValue) })
 
   internal fun hasStatements() = formatParts.any { "«" in it }
 
@@ -176,6 +185,7 @@ class CodeBlock private constructor(
   class Builder {
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
+    private var constantStrings = false
 
     fun isEmpty() = formatParts.isEmpty()
 
@@ -417,6 +427,10 @@ class CodeBlock private constructor(
     fun add(codeBlock: CodeBlock) = apply {
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
+      if (codeBlock.constantStrings) {
+        // Constant strings are sticky, if one part wants them then they all get them
+        constantStrings = true
+      }
     }
 
     fun indent() = apply {
@@ -427,7 +441,15 @@ class CodeBlock private constructor(
       formatParts += "⇤"
     }
 
-    fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
+    /**
+     * If [enabled], `%S` placeholders will be emitted in a way that is amenable to making them
+     * compile-time constants, such as use with annotation members or [KModifier.CONST].
+     */
+    fun constantStrings(enabled: Boolean = true) = apply {
+      constantStrings = enabled
+    }
+
+    fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList(), constantStrings)
   }
 
   companion object {
@@ -436,7 +458,7 @@ class CodeBlock private constructor(
     private const val ARG_NAME = 1
     private const val TYPE_NAME = 2
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
-    internal val EMPTY = CodeBlock(emptyList(), emptyList())
+    internal val EMPTY = CodeBlock(emptyList(), emptyList(), false)
 
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
