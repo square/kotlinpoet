@@ -28,7 +28,9 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   val className: ClassName = builder.className
-  val members = builder.members.toImmutableList()
+  val members = builder.members
+      .map { it.copy(constantStrings = true) }
+      .toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
