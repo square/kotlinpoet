@@ -81,9 +81,10 @@ private val Char.isIsoControl: Boolean
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
 internal fun stringLiteralWithQuotes(
   value: String,
-  escapeDollarSign: Boolean = true
+  escapeDollarSign: Boolean = true,
+  treatAsConstant: Boolean = false
 ): String {
-  if ('\n' in value) {
+  if (!treatAsConstant && '\n' in value) {
     val result = StringBuilder(value.length + 32)
     result.append("\"\"\"\n|")
     var i = 0

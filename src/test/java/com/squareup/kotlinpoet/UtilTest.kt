@@ -65,6 +65,8 @@ class UtilTest {
         .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
     stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!")
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0")
+    assertThat(stringLiteralWithQuotes("abc();\ndef();", treatAsConstant = true))
+        .isEqualTo("\"abc();\\ndef();\"")
   }
 
   @Test fun legalIdentifiers() {
