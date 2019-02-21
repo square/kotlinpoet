@@ -279,7 +279,19 @@ class LineWrapperTest {
     lineWrapper.append("(1, 2, 3, 4, 5")
     lineWrapper.close()
     assertThat(out.toString()).isEqualTo("""
-        |(1, 2, 3, 4, 5
+        |(1, 2, 3,
+        |4, 5
+        """.trimMargin())
+  }
+
+  @Test fun danglingClosingBracket() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append("1, 2, 3, 4, 5)")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo("""
+        |1, 2, 3,
+        |4, 5)
         """.trimMargin())
   }
 }

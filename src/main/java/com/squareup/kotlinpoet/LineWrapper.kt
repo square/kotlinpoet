@@ -113,7 +113,7 @@ internal class LineWrapper(
 
   private fun emitCurrentLine() {
     foldUnsafeBreaks()
-    foldNestedBrackets()
+    foldDanglingAndNestedBrackets()
 
     var start = 0
     var columnCount = segments[0].length
@@ -153,7 +153,7 @@ internal class LineWrapper(
           columnCount = segment.length + indent.length * indentLevel
           continue
         }
-      } else if (segment in CLOSING_BRACKET_SEGMENTS) {
+      } else if (openingBracketIndex != -1 && segment in CLOSING_BRACKET_SEGMENTS) {
         if (start < openingBracketIndex) {
           emitSegmentRange(start, openingBracketIndex)
         }
@@ -236,18 +236,33 @@ internal class LineWrapper(
 
   /**
    * Only the contents of outer brackets are wrapped, any nested brackets are currently ignored.
+   * Also fixup dangling brackets so that there are no spaces in between.
    */
-  private fun foldNestedBrackets() {
-    var outerOpeningBracketIndex = segments.size
-    var outerClosingBracketIndex = -1
-    outer@ for (i in 0 until segments.size) {
+  private fun foldDanglingAndNestedBrackets() {
+    var outerOpeningBracketIndex = -1
+    for (i in 0 until segments.size) {
       if (segments[i] in OPENING_BRACKET_SEGMENTS) {
         outerOpeningBracketIndex = i
-        for (j in segments.size - 1 downTo 0) {
-          if (segments[j] in CLOSING_BRACKET_SEGMENTS) {
-            outerClosingBracketIndex = j
-            break@outer
-          }
+        break
+      }
+    }
+    var outerClosingBracketIndex = segments.size
+    for (i in segments.size - 1 downTo 0) {
+      if (segments[i] in CLOSING_BRACKET_SEGMENTS) {
+        if (outerOpeningBracketIndex == -1) {
+          // dangling closing bracket
+          outerClosingBracketIndex = i + 1
+        } else {
+          outerClosingBracketIndex = i
+        }
+        break
+      } else if (i == 0) {
+        if (outerOpeningBracketIndex != -1) {
+          // dangling open bracket
+          outerOpeningBracketIndex -= 1
+        } else {
+          // no brackets found
+          return
         }
       }
     }
@@ -261,9 +276,11 @@ internal class LineWrapper(
           segments.removeAt(i + 1)
           outerClosingBracketIndex--
         }
-        segments[i - 1] += segments[i]
-        segments.removeAt(i)
-        outerClosingBracketIndex--
+        if (i > 0) {
+          segments[i - 1] += segments[i]
+          segments.removeAt(i)
+          outerClosingBracketIndex--
+        }
       } else {
         i++
       }
