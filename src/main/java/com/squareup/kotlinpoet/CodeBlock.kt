@@ -428,7 +428,7 @@ class CodeBlock private constructor(
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
       if (codeBlock.constantStrings) {
-        // Constant strings are sticky, if one part wants them then they all get them
+        // Constant strings are sticky, if one part wants them then they all get them.
         constantStrings = true
       }
     }
