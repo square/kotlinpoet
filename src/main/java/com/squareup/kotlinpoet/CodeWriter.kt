@@ -228,7 +228,10 @@ internal class CodeWriter constructor(
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
-            stringLiteralWithQuotes(string, escapeDollarSign = true)
+            stringLiteralWithQuotes(string,
+                escapeDollarSign = true,
+                treatAsConstant = codeBlock.constantStrings
+            )
           } else {
             "null"
           }
@@ -245,7 +248,9 @@ internal class CodeWriter constructor(
           }
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
-            stringLiteralWithQuotes(string, escapeDollarSign = false)
+            stringLiteralWithQuotes(string,
+                escapeDollarSign = false,
+                treatAsConstant = codeBlock.constantStrings)
           } else {
             "null"
           }
