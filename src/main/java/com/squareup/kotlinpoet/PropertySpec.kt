@@ -78,7 +78,12 @@ class PropertySpec private constructor(builder: Builder) {
       } else {
         codeWriter.emitCode(" = ")
       }
-      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "«%L»", initializer)
+      // const strings must be rendered in compile-time-constant-friendly way
+      // Does not account for typealiases, just the String ClassName.
+      val constantStrings = initializer.constantStrings ||
+          (!delegated && KModifier.CONST in modifiers && type == String::class.asClassName())
+      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "«%L»",
+          initializer.copy(constantStrings = constantStrings))
     }
     codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
