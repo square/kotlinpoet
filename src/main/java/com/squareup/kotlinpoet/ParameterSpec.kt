@@ -29,6 +29,25 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val modifiers = builder.modifiers.toImmutableSet()
   val type = builder.type
   val defaultValue = builder.defaultValue
+  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
+
+  /**
+   * Returns the tag attached with [Any] as a key, or `null` if no tag is attached with that key.
+   */
+  fun tag(): Any? = tag(Any::class)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: KClass<out T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return tags[type] as? T
+  }
+
+  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
+  @JvmName("reifiedTag")
+  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
     codeWriter.emitAnnotations(annotations, true)
@@ -62,6 +81,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.defaultValue = defaultValue
+    builder.tags += tags
     return builder
   }
 
@@ -74,6 +94,7 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
     val kdoc = CodeBlock.builder()
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
+    val tags = mutableMapOf<KClass<*>, Any>()
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
@@ -122,6 +143,46 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
       check(this.defaultValue == null) { "initializer was already set" }
       this.defaultValue = codeBlock
     }
+
+    /** Attaches `tag` to the builder using `Any::class` as a key. */
+    fun tag(tag: Any?) = tag(Any::class, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [ParameterSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [ParameterSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
+      if (tag == null) {
+        this.tags.remove(type)
+      } else {
+        this.tags[type] = tag
+      }
+    }
+
+    /**
+     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
+     * request using [ParameterSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [T].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    @JvmName("reifiedTag")
+    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build() = ParameterSpec(this)
   }

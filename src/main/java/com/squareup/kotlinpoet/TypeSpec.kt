@@ -58,6 +58,25 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
+  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
+
+  /**
+   * Returns the tag attached with [Any] as a key, or `null` if no tag is attached with that key.
+   */
+  fun tag(): Any? = tag(Any::class)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: KClass<out T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return tags[type] as? T
+  }
+
+  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
+  @JvmName("reifiedTag")
+  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name, *modifiers.toTypedArray())
@@ -73,6 +92,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.initializerBlock.add(initializerBlock)
     builder.superinterfaces.putAll(superinterfaces)
     builder.primaryConstructor = primaryConstructor
+    builder.tags += tags
     return builder
   }
 
@@ -392,6 +412,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
     internal val isInlineClass get() = kind == Kind.CLASS && INLINE in modifiers
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
+    val tags = mutableMapOf<KClass<*>, Any>()
 
     val modifiers = mutableSetOf(*modifiers)
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
@@ -599,6 +620,46 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     fun addType(typeSpec: TypeSpec) = apply {
       typeSpecs += typeSpec
     }
+
+    /** Attaches `tag` to the builder using `Any::class` as a key. */
+    fun tag(tag: Any?) = tag(Any::class, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [TypeSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [TypeSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
+      if (tag == null) {
+        this.tags.remove(type)
+      } else {
+        this.tags[type] = tag
+      }
+    }
+
+    /**
+     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
+     * request using [TypeSpec.tag]. Use `null` to remove any existing tag assigned for
+     * [T].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    @JvmName("reifiedTag")
+    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): TypeSpec {
       if (enumConstants.isNotEmpty()) {

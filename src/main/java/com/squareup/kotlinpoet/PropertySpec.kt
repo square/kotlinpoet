@@ -35,6 +35,7 @@ class PropertySpec private constructor(builder: Builder) {
   val getter = builder.getter
   val setter = builder.setter
   val receiverType = builder.receiverType
+  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
 
   init {
     require(typeVariables.none { it.isReified } ||
@@ -44,6 +45,24 @@ class PropertySpec private constructor(builder: Builder) {
       "only type parameters of properties with inline getters and/or setters can be reified!"
     }
   }
+
+  /**
+   * Returns the tag attached with [Any] as a key, or `null` if no tag is attached with that key.
+   */
+  fun tag(): Any? = tag(Any::class)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
+
+  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
+  fun <T : Any> tag(type: KClass<out T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return tags[type] as? T
+  }
+
+  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
+  @JvmName("reifiedTag")
+  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -131,6 +150,7 @@ class PropertySpec private constructor(builder: Builder) {
     builder.setter = setter
     builder.getter = getter
     builder.receiverType = receiverType
+    builder.tags += tags
     return builder
   }
 
@@ -147,6 +167,7 @@ class PropertySpec private constructor(builder: Builder) {
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
     val typeVariables = mutableListOf<TypeVariableName>()
+    val tags = mutableMapOf<KClass<*>, Any>()
 
     /** True to create a `var` instead of a `val`. */
     fun mutable(mutable: Boolean = true) = apply {
@@ -223,6 +244,46 @@ class PropertySpec private constructor(builder: Builder) {
     fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
 
     fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
+
+    /** Attaches `tag` to the builder using `Any::class` as a key. */
+    fun tag(tag: Any?) = tag(Any::class, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [PropertySpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
+
+    /**
+     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
+     * request using [PropertySpec.tag]. Use `null` to remove any existing tag assigned for
+     * [type].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
+      if (tag == null) {
+        this.tags.remove(type)
+      } else {
+        this.tags[type] = tag
+      }
+    }
+
+    /**
+     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
+     * request using [PropertySpec.tag]. Use `null` to remove any existing tag assigned for
+     * [T].
+     *
+     * Use this API to attach originating elements, debugging, or other application data to a spec
+     * so that you may read it in other APIs or callbacks.
+     */
+    @JvmName("reifiedTag")
+    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {
