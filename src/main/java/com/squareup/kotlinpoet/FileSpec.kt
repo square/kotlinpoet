@@ -218,7 +218,7 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun addComment(format: String, vararg args: Any) = apply {
-      comment.add(format, *args)
+      comment.add(format.replace(' ', '·'), *args)
     }
 
     fun addType(typeSpec: TypeSpec) = apply {
