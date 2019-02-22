@@ -758,4 +758,16 @@ class FileSpecTest {
       |
       |""".trimMargin())
   }
+
+  @Test fun longComment() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addComment("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
+            "eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      |package com.squareup.tacos
+      |
+      |""".trimMargin())
+  }
 }
