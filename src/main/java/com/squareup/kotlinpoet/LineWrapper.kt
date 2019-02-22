@@ -70,6 +70,7 @@ internal class LineWrapper(
         }
 
         in OPENING_BRACKETS, in CLOSING_BRACKETS -> {
+          // put an opening/closing bracket into its own segment
           if (segments[segments.size - 1].isEmpty()) {
             segments[segments.size - 1] += c.toString()
           } else {
@@ -128,7 +129,7 @@ internal class LineWrapper(
           columnCount + segment.length
         }
         in CLOSING_BRACKET_SEGMENTS -> {
-          // closing bracket reclaims space claimed be previous seg
+          // closing bracket is not preceded by a space so it reclaims space claimed be previous seg
           columnCount - 1 + segment.length
         }
         else -> {
@@ -249,19 +250,19 @@ internal class LineWrapper(
     var outerClosingBracketIndex = segments.size
     for (i in segments.size - 1 downTo 0) {
       if (segments[i] in CLOSING_BRACKET_SEGMENTS) {
-        if (outerOpeningBracketIndex == -1) {
-          // dangling closing bracket
-          outerClosingBracketIndex = i + 1
+        outerClosingBracketIndex = if (outerOpeningBracketIndex == -1) {
+          // dangling closing bracket, fold it along with the next segment
+          i + 2
         } else {
-          outerClosingBracketIndex = i
+          i
         }
         break
       } else if (i == 0) {
         if (outerOpeningBracketIndex != -1) {
-          // dangling open bracket
+          // dangling open bracket, fold
           outerOpeningBracketIndex -= 1
         } else {
-          // no brackets found
+          // no brackets found, nothing to fold
           return
         }
       }
