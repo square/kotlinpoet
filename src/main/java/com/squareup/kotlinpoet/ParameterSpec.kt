@@ -30,7 +30,12 @@ class ParameterSpec private constructor(builder: ParameterSpec.Builder) {
   val type = builder.type
   val defaultValue = builder.defaultValue
 
-  internal fun emit(codeWriter: CodeWriter, includeType: Boolean = true) {
+  internal fun emit(
+    codeWriter: CodeWriter,
+    includeType: Boolean = true,
+    emitKdoc: Boolean = false
+  ) {
+    if (emitKdoc) codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
     if (name.isNotEmpty()) codeWriter.emitCode("%L", name.escapeIfNecessary())
