@@ -59,11 +59,6 @@ class FunSpec private constructor(builder: Builder) {
     }
   }
 
-  /**
-   * Returns the tag attached with [Any] as a key, or `null` if no tag is attached with that key.
-   */
-  fun tag(): Any? = tag(Any::class)
-
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
   fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
 
@@ -450,9 +445,6 @@ class FunSpec private constructor(builder: Builder) {
     fun addStatement(format: String, vararg args: Any) = apply {
       body.addStatement(format, *args)
     }
-
-    /** Attaches `tag` to the builder using `Any::class` as a key. */
-    fun tag(tag: Any?) = tag(Any::class, tag)
 
     /**
      * Attaches [tag] to the request using [type] as a key. Tags can be read from a

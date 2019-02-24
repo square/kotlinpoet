@@ -51,11 +51,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   private val indent = builder.indent
   private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
 
-  /**
-   * Returns the tag attached with [Any] as a key, or `null` if no tag is attached with that key.
-   */
-  fun tag(): Any? = tag(Any::class)
-
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
   fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
 
@@ -311,9 +306,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun indent(indent: String) = apply {
       this.indent = indent
     }
-
-    /** Attaches `tag` to the builder using `Any::class` as a key. */
-    fun tag(tag: Any?) = tag(Any::class, tag)
 
     /**
      * Attaches [tag] to the request using [type] as a key. Tags can be read from a
