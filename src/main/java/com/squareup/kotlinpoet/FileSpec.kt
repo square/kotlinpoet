@@ -61,7 +61,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   }
 
   /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  @JvmName("reifiedTag")
   inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   @Throws(IOException::class)
@@ -341,7 +340,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
      * Use this API to attach originating elements, debugging, or other application data to a spec
      * so that you may read it in other APIs or callbacks.
      */
-    @JvmName("reifiedTag")
     inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): FileSpec {

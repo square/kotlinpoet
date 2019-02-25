@@ -42,7 +42,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
   }
 
   /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  @JvmName("reifiedTag")
   inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
@@ -164,7 +163,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
      * Use this API to attach originating elements, debugging, or other application data to a spec
      * so that you may read it in other APIs or callbacks.
      */
-    @JvmName("reifiedTag")
     inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build() = AnnotationSpec(this)
