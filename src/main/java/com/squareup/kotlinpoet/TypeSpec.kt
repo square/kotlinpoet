@@ -155,7 +155,10 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
           }
 
           val forceNewLines = it.parameters
-              .any { param -> constructorProperties[param.name]?.kdoc?.isNotEmpty() == true }
+              .any { param ->
+                param.kdoc.isNotEmpty() ||
+                    constructorProperties[param.name]?.kdoc?.isNotEmpty() == true
+              }
 
           it.parameters.emit(codeWriter, forceNewLines = forceNewLines) { param ->
             val property = constructorProperties[param.name]
@@ -163,7 +166,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
               property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
               param.emitDefaultValue(codeWriter)
             } else {
-              param.emit(codeWriter)
+              param.emit(codeWriter, emitKdoc = true)
             }
           }
           codeWriter.popType()
@@ -295,24 +298,28 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     return result
   }
 
-  /** Returns KDoc comments including those of primary constructor parameters. */
+  /**
+   * Returns KDoc comments including those of primary constructor parameters.
+   *
+   * If the primary constructor parameter is not mapped to a property, or if the property doesn't
+   * have its own KDoc - the parameter's KDoc will be attached to the parameter. Otherwise, if both
+   * the parameter and the property have KDoc - the property's KDoc will be attached to the
+   * property/parameter, and the parameter's KDoc will be printed in the type header.
+   */
   private fun kdocWithConstructorParameters(): CodeBlock {
     if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
       return kdoc.ensureEndsWithNewLine()
     }
-
     val constructorProperties = constructorProperties()
-
+    val parametersWithKdoc = primaryConstructor.parameters.filter { parameter ->
+      val propertyKdoc = constructorProperties[parameter.name]?.kdoc ?: CodeBlock.EMPTY
+      return@filter parameter.kdoc.isNotEmpty() && propertyKdoc.isNotEmpty() &&
+          parameter.kdoc != propertyKdoc
+    }
     return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
-      primaryConstructor.parameters.forEachIndexed { index, parameterSpec ->
-        val kdoc = parameterSpec.kdoc.takeUnless { it.isEmpty() }
-                ?: constructorProperties[parameterSpec.name]?.kdoc?.takeUnless { it.isEmpty() }
-        if (kdoc != null) {
-          if (isNotEmpty() && index == 0) add("\n")
-          val isProperty = parameterSpec.name in constructorProperties
-          val tag = if (isProperty) "@property" else "@param"
-          add("$tag %L %L", parameterSpec.name, kdoc.ensureEndsWithNewLine())
-        }
+      parametersWithKdoc.forEachIndexed { index, parameter ->
+        if (index == 0) add("\n")
+        add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
       }
       build()
     }

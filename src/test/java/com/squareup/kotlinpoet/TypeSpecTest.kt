@@ -1181,7 +1181,7 @@ class TypeSpecTest {
                 .build())
             .addParameter("soft", Boolean::class)
             .addParameter(ParameterSpec.builder("mild", Boolean::class)
-                .addKdoc(CodeBlock.of("%L", "No one likes mild tacos.\n"))
+                .addKdoc(CodeBlock.of("%L", "Whether the taco is mild (ew) or crunchy (ye).\n"))
                 .build())
             .addParameter("nodoc", Int::class)
             .build())
@@ -1190,7 +1190,7 @@ class TypeSpecTest {
             .initializer("soft")
             .build())
         .addProperty(PropertySpec.builder("mild", Boolean::class)
-            .addKdoc("This property doc comment should be overridden.\n")
+            .addKdoc("No one likes mild tacos.")
             .initializer("mild")
             .build())
         .addProperty(PropertySpec.builder("nodoc", Int::class, KModifier.PRIVATE)
@@ -1209,15 +1209,22 @@ class TypeSpecTest {
         | * [random][java.util.Random] tex-mex stuff we could find in the pantry
         | * and some [kotlin.String] cheese.
         | *
-        | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
-        | * the Andes, or hot with lava-like cheese from the depths of
-        | * the Ninth Circle.
-        | * @property soft True for a soft flour tortilla; false for a crunchy corn tortilla.
-        | * @property mild No one likes mild tacos.
+        | * @param mild Whether the taco is mild (ew) or crunchy (ye).
         | */
         |class Taco(
+        |    /**
+        |     * Taco temperature. Can be as cold as the famous ice tacos from
+        |     * the Andes, or hot with lava-like cheese from the depths of
+        |     * the Ninth Circle.
+        |     */
         |    temperature: Double,
+        |    /**
+        |     * True for a soft flour tortilla; false for a crunchy corn tortilla.
+        |     */
         |    val soft: Boolean,
+        |    /**
+        |     * No one likes mild tacos.
+        |     */
         |    val mild: Boolean,
         |    private val nodoc: Int
         |)
@@ -2808,10 +2815,10 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |/**
-        | * @property a KDoc
-        | */
         |class Taco(
+        |    /**
+        |     * KDoc
+        |     */
         |    val a: Int,
         |    val b: String
         |)
@@ -3661,15 +3668,38 @@ class TypeSpecTest {
     assertThat(typeSpec.toString()).isEqualTo("""
       |/**
       | * This is a thing for stuff.
-      | *
-      | * @property first the first thing
-      | * @property second the second thing
-      | * @property third the third thing
       | */
       |class MyType(
+      |    /**
+      |     * the first thing
+      |     */
       |    val first: kotlin.Int,
+      |    /**
+      |     * the second thing
+      |     */
       |    val second: kotlin.Int,
+      |    /**
+      |     * the third thing
+      |     */
       |    val third: kotlin.Int
+      |)
+      |""".trimMargin())
+  }
+
+  @Test fun primaryConstructorWithOneParameterKdocFormatting() {
+    val typeSpec = TypeSpec.classBuilder("MyType")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("first", INT)
+                .addKdoc("the first thing")
+                .build())
+            .build())
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class MyType(
+      |    /**
+      |     * the first thing
+      |     */
+      |    first: kotlin.Int
       |)
       |""".trimMargin())
   }
