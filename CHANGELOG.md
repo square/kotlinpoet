@@ -1,6 +1,30 @@
 Change Log
 ==========
 
+## Version 1.1.0
+
+_2019-02-28_
+
+ * New: Kotlin 1.3.21.
+ * New: Support referencing members using `%M` and `MemberName` type.
+ * New: Add extensions for getting a `MemberName` from a `ClassName`, `KClass` and `Class`.
+ * New: Allow passing `CodeBlock`s as arguments to `%P`.
+ * New: Allow interface delegation for objects.
+ * Fix: Don't emit visible whitespace in `toString()`.
+ * Fix: Prevent line wrapping in weird places inside function signature.
+ * Fix: No line wrapping between val and property name.
+ * Fix: Allow passing line prefix into `LineWrapper` to enable proper line wrapping in KDoc.
+ * Fix: Add newline for `TypeSpec` Kdoc with no tags.
+ * Fix: Add newline for remaining Specs.
+ * Fix: Fix kdoc formatting for property getter/setters.
+ * Fix: Don't wrap single line comments inside `FunSpec`.
+ * Fix: Add non-wrapping package name.
+ * Fix: Remove n^2 algorithm in `CodeWriter.resolve()` by precomputing all of the nested simple names of a `TypeSpec`.
+ * Fix: Fix edge case with empty enum classes.
+ * Fix: Fix Nullable Type Parameter handling in `KType.asTypeName()`.
+ * Fix: Fix incorrect long comment wrapping in `FileSpec`.
+ * Fix: Attach primary constructor param/property KDoc to the element vs emitting it inside the type header.
+
 ## Version 1.0.1
 
 _2019-01-02_
