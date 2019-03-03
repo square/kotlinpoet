@@ -58,6 +58,8 @@ inline fun <reified T : Any> Taggable.tag(): T? = tag(T::class)
  */
 inline fun <reified T : Any> Taggable.Builder.tag(tag: T?) = tag(T::class, tag)
 
+internal fun Taggable.Builder.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)) // Defensive copy
+
 internal class TagMap(val tags: Map<KClass<*>, Any>) : Taggable {
   override fun <T : Any> tag(type: KClass<out T>): T? {
     @Suppress("UNCHECKED_CAST")

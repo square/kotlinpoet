@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
 class TypeSpec private constructor(builder: TypeSpec.Builder,
-    private val tagMap: TagMap = builder.tags.toTagMap()): Taggable by tagMap {
+    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
   val kind = builder.kind
   val name = builder.name
   val kdoc = builder.kdoc.build()
