@@ -383,7 +383,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder,
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ): TaggableBuilder {
+  ): Taggable.Builder {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -394,8 +394,8 @@ class TypeSpec private constructor(builder: TypeSpec.Builder,
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
     internal val isInlineClass get() = kind == Kind.CLASS && INLINE in modifiers
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
-    override val tags = mutableMapOf<KClass<*>, Any>()
 
+    override val tags = mutableMapOf<KClass<*>, Any>()
     val modifiers = mutableSetOf(*modifiers)
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()
