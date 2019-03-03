@@ -421,9 +421,6 @@ internal class CodeWriter constructor(
   }
 
   private fun importableType(className: ClassName) {
-    if (className.packageName.isEmpty()) {
-      return
-    }
     val topLevelClassName = className.topLevelClassName()
     val simpleName = memberImports[className.canonicalName]?.alias ?: topLevelClassName.simpleName
     // Check for name clashes with members.

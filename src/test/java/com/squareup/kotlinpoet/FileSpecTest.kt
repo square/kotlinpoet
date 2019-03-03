@@ -539,7 +539,7 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun defaultPackageTypesAreNotImported() {
+  @Test fun defaultPackageTypesAreImported() {
     val source = FileSpec.builder("hello", "World")
         .addType(TypeSpec.classBuilder("World")
             .addSuperinterface(ClassName("", "Test"))
@@ -547,6 +547,8 @@ class FileSpecTest {
         .build()
     assertThat(source.toString()).isEqualTo("""
         |package hello
+        |
+        |import Test
         |
         |class World : Test
         |""".trimMargin())
