@@ -22,8 +22,10 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec private constructor(builder: Builder,
-    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
+class PropertySpec private constructor(
+    builder: Builder,
+    private val tagMap: TagMap = builder.buildTagMap()
+): Taggable by tagMap {
   val mutable = builder.mutable
   val name = builder.name
   val type = builder.type
