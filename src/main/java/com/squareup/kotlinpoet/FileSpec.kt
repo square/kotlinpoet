@@ -41,7 +41,8 @@ import kotlin.reflect.KClass
  * - Imports
  * - Members
  */
-class FileSpec private constructor(builder: FileSpec.Builder) {
+class FileSpec private constructor(builder: FileSpec.Builder,
+    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
   val annotations = builder.annotations.toImmutableList()
   val comment = builder.comment.build()
   val packageName = builder.packageName
@@ -49,19 +50,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
   val members = builder.members.toList()
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
-  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: KClass<out T>): T? {
-    @Suppress("UNCHECKED_CAST")
-    return tags[type] as? T
-  }
-
-  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
@@ -190,19 +178,19 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     builder.members.addAll(this.members)
     builder.indent = indent
     builder.memberImports.addAll(memberImports.values)
-    builder.tags += tags
+    builder.tags += tagMap.tags
     return builder
   }
 
   class Builder internal constructor(
     val packageName: String,
     val name: String
-  ) {
+  ): Taggable.Builder {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     internal val members = mutableListOf<Any>()
-    val tags = mutableMapOf<KClass<*>, Any>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     val annotations = mutableListOf<AnnotationSpec>()
 
@@ -305,42 +293,6 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     fun indent(indent: String) = apply {
       this.indent = indent
     }
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [FileSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [FileSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
-      if (tag == null) {
-        this.tags.remove(type)
-      } else {
-        this.tags[type] = tag
-      }
-    }
-
-    /**
-     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
-     * request using [FileSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [T].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): FileSpec {
       for (annotationSpec in annotations) {

@@ -23,25 +23,13 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
-class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
+class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder,
+    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
   val name = builder.name
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
   val kdoc = builder.kdoc.build()
-  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: KClass<out T>): T? {
-    @Suppress("UNCHECKED_CAST")
-    return tags[type] as? T
-  }
-
-  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
@@ -68,19 +56,19 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     builder.kdoc.add(kdoc)
-    builder.tags += tags
+    builder.tags += tagMap.tags
     return builder
   }
 
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ) {
+  ): Taggable.Builder {
     internal val kdoc = CodeBlock.builder()
 
     val modifiers = mutableSetOf<KModifier>()
     val typeVariables = mutableSetOf<TypeVariableName>()
-    val tags = mutableMapOf<KClass<*>, Any>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     init {
       require(name.isName) { "not a valid name: $name" }
@@ -109,42 +97,6 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
     }
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [TypeAliasSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [TypeAliasSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
-      if (tag == null) {
-        this.tags.remove(type)
-      } else {
-        this.tags[type] = tag
-      }
-    }
-
-    /**
-     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
-     * request using [TypeAliasSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [T].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): TypeAliasSpec {
       for (it in modifiers) {

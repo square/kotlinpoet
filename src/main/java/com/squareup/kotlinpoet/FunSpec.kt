@@ -30,7 +30,8 @@ import javax.lang.model.util.Types
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
-class FunSpec private constructor(builder: Builder) {
+class FunSpec private constructor(builder: Builder,
+    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
   val name = builder.name
   val kdoc = builder.kdoc.build()
   val returnKdoc = builder.returnKdoc
@@ -44,7 +45,6 @@ class FunSpec private constructor(builder: Builder) {
   val delegateConstructor = builder.delegateConstructor
   val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
   val body = builder.body.build()
-  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
@@ -58,18 +58,6 @@ class FunSpec private constructor(builder: Builder) {
       "only type parameters of inline functions can be reified!"
     }
   }
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: KClass<out T>): T? {
-    @Suppress("UNCHECKED_CAST")
-    return tags[type] as? T
-  }
-
-  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
@@ -238,11 +226,11 @@ class FunSpec private constructor(builder: Builder) {
     builder.delegateConstructorArguments += delegateConstructorArguments
     builder.body.add(body)
     builder.receiverType = receiverType
-    builder.tags += tags
+    builder.tags += tagMap.tags
     return builder
   }
 
-  class Builder internal constructor(internal val name: String) {
+  class Builder internal constructor(internal val name: String): Taggable.Builder {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
@@ -256,7 +244,7 @@ class FunSpec private constructor(builder: Builder) {
     val modifiers = mutableListOf<KModifier>()
     val typeVariables = mutableListOf<TypeVariableName>()
     val parameters = mutableListOf<ParameterSpec>()
-    val tags = mutableMapOf<KClass<*>, Any>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
@@ -444,42 +432,6 @@ class FunSpec private constructor(builder: Builder) {
     fun addStatement(format: String, vararg args: Any) = apply {
       body.addStatement(format, *args)
     }
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [FunSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [FunSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
-      if (tag == null) {
-        this.tags.remove(type)
-      } else {
-        this.tags[type] = tag
-      }
-    }
-
-    /**
-     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
-     * request using [FunSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [T].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build(): FunSpec {
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }

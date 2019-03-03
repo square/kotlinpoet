@@ -26,23 +26,11 @@ import javax.lang.model.util.SimpleAnnotationValueVisitor7
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration.  */
-class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
+class AnnotationSpec private constructor(builder: AnnotationSpec.Builder,
+    private val tagMap: TagMap = builder.buildTagMap()): Taggable by tagMap {
   val className: ClassName = builder.className
   val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
-  private val tags: Map<KClass<*>, Any> = builder.tags.toImmutableMap()
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: Class<out T>): T? = tag(type.kotlin)
-
-  /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  fun <T : Any> tag(type: KClass<out T>): T? {
-    @Suppress("UNCHECKED_CAST")
-    return tags[type] as? T
-  }
-
-  /** Returns the tag attached with [T] as a key, or null if no tag is attached with that key. */
-  inline fun <reified T : Any> tag(): T? = tag(T::class)
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
@@ -83,7 +71,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val builder = Builder(className)
     builder.members += members
     builder.useSiteTarget = useSiteTarget
-    builder.tags += tags
+    builder.tags += tagMap.tags
     return builder
   }
 
@@ -112,11 +100,11 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     DELEGATE("delegate")
   }
 
-  class Builder internal constructor(internal val className: ClassName) {
+  class Builder internal constructor(internal val className: ClassName): Taggable.Builder {
     internal var useSiteTarget: UseSiteTarget? = null
 
     val members = mutableListOf<CodeBlock>()
-    val tags = mutableMapOf<KClass<*>, Any>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     fun addMember(format: String, vararg args: Any) =
         addMember(CodeBlock.of(format, *args))
@@ -128,42 +116,6 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     fun useSiteTarget(useSiteTarget: UseSiteTarget?) = apply {
       this.useSiteTarget = useSiteTarget
     }
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [AnnotationSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
-
-    /**
-     * Attaches [tag] to the request using [type] as a key. Tags can be read from a
-     * request using [AnnotationSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [type].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
-      if (tag == null) {
-        this.tags.remove(type)
-      } else {
-        this.tags[type] = tag
-      }
-    }
-
-    /**
-     * Attaches [tag] to the request using [T] as a key. Tags can be read from a
-     * request using [AnnotationSpec.tag]. Use `null` to remove any existing tag assigned for
-     * [T].
-     *
-     * Use this API to attach originating elements, debugging, or other application data to a spec
-     * so that you may read it in other APIs or callbacks.
-     */
-    inline fun <reified T : Any> tag(tag: T?) = tag(T::class, tag)
 
     fun build() = AnnotationSpec(this)
 
