@@ -16,12 +16,15 @@
 package com.squareup.kotlinpoet
 
 import java.util.Collections
+import kotlin.reflect.KClass
 
 internal object NullAppendable : Appendable {
   override fun append(charSequence: CharSequence) = this
   override fun append(charSequence: CharSequence, start: Int, end: Int) = this
   override fun append(c: Char) = this
 }
+
+internal fun Map<KClass<*>, Any>.toTagMap(): TagMap = TagMap(LinkedHashMap(this))
 
 internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
     Collections.unmodifiableMap(LinkedHashMap(this))
