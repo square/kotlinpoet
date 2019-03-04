@@ -501,7 +501,7 @@ class KotlinPoetTest {
             .initializer("%S", "a")
             .build())
         .addType(TypeSpec.classBuilder("B")
-            .superclass(ClassName("", "A"))
+            .superclass(ClassName(tacosPackage, "A"))
             .addModifiers(KModifier.ABSTRACT)
             .addProperty(PropertySpec.builder("q", String::class.asTypeName())
                 .mutable()
@@ -573,9 +573,9 @@ class KotlinPoetTest {
   }
 
   @Test fun suspendingLambdas() {
-    val barType = ClassName("", "Bar")
+    val barType = ClassName(tacosPackage, "Bar")
     val suspendingLambda = LambdaTypeName
-        .get(parameters = *arrayOf(ClassName("", "Foo")), returnType = barType)
+        .get(parameters = *arrayOf(ClassName(tacosPackage, "Foo")), returnType = barType)
         .copy(suspending = true)
     val source = FileSpec.builder(tacosPackage, "Taco")
         .addProperty(PropertySpec.builder("bar", suspendingLambda)

@@ -553,7 +553,7 @@ class TypeSpecTest {
           .build()
     }
   }
-  
+
   /** https://github.com/square/kotlinpoet/issues/621  */
   @Test fun enumWithMembersButNoConstansts() {
     val roshambo = TypeSpec.enumBuilder("RenderPassCreate")
@@ -3327,16 +3327,16 @@ class TypeSpecTest {
   }
 
   @Test fun testDelegateIfaceWithOtherParamTypeName() {
-    val entity = ClassName.bestGuess("Entity")
-    val entityBuilder = ClassName.bestGuess("EntityBuilder")
+    val entity = ClassName(tacosPackage, "Entity")
+    val entityBuilder = ClassName(tacosPackage, "EntityBuilder")
     val type = TypeSpec.classBuilder("EntityBuilder")
         .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter(ParameterSpec.builder("argBuilder", ClassName.bestGuess("Payload")
+            .addParameter(ParameterSpec.builder("argBuilder", ClassName(tacosPackage, "Payload")
                 .parameterizedBy(entityBuilder, entity))
                 .defaultValue("Payload.create()")
                 .build())
             .build())
-        .addSuperinterface(ClassName.bestGuess("TypeBuilder")
+        .addSuperinterface(ClassName(tacosPackage, "TypeBuilder")
             .parameterizedBy(entityBuilder, entity),
             "argBuilder")
         .build()
