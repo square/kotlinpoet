@@ -24,6 +24,7 @@ import java.io.Closeable
 import java.io.IOException
 import java.util.concurrent.Callable
 import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.util.ElementFilter.methodsIn
@@ -644,5 +645,37 @@ class FunSpecTest {
     builder.parameters.add(seasoning)
 
     assertThat(builder.build().parameters).containsExactly(seasoning)
+  }
+
+  @Test fun jvmStaticModifier() {
+    val builder = FunSpec.builder("staticMethod")
+    builder.jvmModifiers(listOf(Modifier.STATIC))
+
+    assertThat(builder.build().toString()).isEqualTo("""
+      |@kotlin.jvm.JvmStatic
+      |internal fun staticMethod() {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun jvmFinalModifier() {
+    val builder = FunSpec.builder("finalMethod")
+    builder.jvmModifiers(listOf(Modifier.FINAL))
+
+    assertThat(builder.build().toString()).isEqualTo("""
+      |internal final fun finalMethod() {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun jvmSynchronizedModifier() {
+    val builder = FunSpec.builder("synchronizedMethod")
+    builder.jvmModifiers(listOf(Modifier.SYNCHRONIZED))
+
+    assertThat(builder.build().toString()).isEqualTo("""
+      |@kotlin.jvm.Synchronized
+      |internal fun synchronizedMethod() {
+      |}
+      |""".trimMargin())
   }
 }
