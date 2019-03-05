@@ -12,15 +12,15 @@ class TaggableTest(val builder: Taggable.Builder) {
 
   companion object {
     @JvmStatic
-    @Parameterized.Parameters
-    fun data() = listOf(
-        arrayOf(AnnotationSpec.builder(JvmStatic::class)),
-        arrayOf(FileSpec.builder("test", "Test")),
-        arrayOf(FunSpec.builder("test")),
-        arrayOf(ParameterSpec.builder("test", String::class.asClassName())),
-        arrayOf(PropertySpec.builder("test", String::class.asClassName())),
-        arrayOf(TypeAliasSpec.builder("Test", String::class.asClassName())),
-        arrayOf(TypeSpec.classBuilder("Test"))
+    @Parameterized.Parameters(name = "{0}")
+    fun data() = arrayOf(
+        AnnotationSpec.builder(JvmStatic::class),
+        FileSpec.builder("test", "Test"),
+        FunSpec.builder("test"),
+        ParameterSpec.builder("test", String::class.asClassName()),
+        PropertySpec.builder("test", String::class.asClassName()),
+        TypeAliasSpec.builder("Test", String::class.asClassName()),
+        TypeSpec.classBuilder("Test")
     )
   }
 
