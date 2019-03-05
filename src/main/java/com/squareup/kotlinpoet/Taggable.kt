@@ -63,6 +63,6 @@ internal fun Taggable.Builder.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)
 internal class TagMap(val tags: Map<KClass<*>, Any>) : Taggable {
   override fun <T : Any> tag(type: KClass<out T>): T? {
     @Suppress("UNCHECKED_CAST")
-    return tags[type] as? T
+    return tags[type] as T?
   }
 }
