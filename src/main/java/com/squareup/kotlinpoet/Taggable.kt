@@ -25,7 +25,7 @@ interface Taggable {
      * Use this API to attach originating elements, debugging, or other application data to a spec
      * so that you may read it in other APIs or callbacks.
      */
-    fun <T : Any> tag(type: Class<out T>, tag: T?) = tag(type.kotlin, tag)
+    fun <T : Any> tag(type: Class<out T>, tag: Any?) = tag(type.kotlin, tag)
 
     /**
      * Attaches [tag] to the request using [type] as a key. Tags can be read from a
@@ -35,7 +35,7 @@ interface Taggable {
      * Use this API to attach originating elements, debugging, or other application data to a spec
      * so that you may read it in other APIs or callbacks.
      */
-    fun <T : Any> tag(type: KClass<out T>, tag: T?) = apply {
+    fun <T : Any> tag(type: KClass<out T>, tag: Any?) = apply {
       if (tag == null) {
         this.tags.remove(type)
       } else {
@@ -56,7 +56,7 @@ inline fun <reified T : Any> Taggable.tag(): T? = tag(T::class)
  * Use this API to attach originating elements, debugging, or other application data to a spec
  * so that you may read it in other APIs or callbacks.
  */
-inline fun <reified T : Any> Taggable.Builder.tag(tag: T?) = tag(T::class, tag)
+inline fun <reified T : Any> Taggable.Builder.tag(tag: Any?) = tag(T::class, tag)
 
 internal fun Taggable.Builder.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)) // Defensive copy
 
