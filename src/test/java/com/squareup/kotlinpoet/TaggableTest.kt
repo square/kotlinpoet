@@ -5,7 +5,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import kotlin.test.assertFails
 
 @RunWith(Parameterized::class)
 class TaggableTest(val builder: Taggable.Builder) {
@@ -28,49 +27,40 @@ class TaggableTest(val builder: Taggable.Builder) {
     builder.tags.clear()
   }
 
-  @Test fun classCastOnValueTypeMismatch() {
-    builder.tag<String>("test")
-    val taggable = builder.buildTaggable()
-    assertFails("Should have a class cast exception!") {
-      val tag = taggable.tag<String, Int>()
-    }
-  }
-
   @Test fun builderShouldMakeDefensiveCopy() {
-    builder.tag<String>("test")
+    builder.tag("test")
     val taggable = builder.buildTaggable()
     builder.tags.remove(String::class)
-    assertThat(taggable.tag<String, String>()).isEqualTo("test")
+    assertThat(taggable.tag<String>()).isEqualTo("test")
   }
 
   @Test fun missingShouldBeNull() {
-    builder.tag<String>("test")
     val taggable = builder.buildTaggable()
-    assertThat(taggable.tag<Int, String>()).isNull()
+    assertThat(taggable.tag<Int>()).isNull()
   }
 
   @Test fun kclassParamFlow() {
-    builder.tag(Int::class, "test")
+    builder.tag(String::class, "test")
     val taggable = builder.buildTaggable()
-    assertThat(taggable.tag<String>(Int::class)).isEqualTo("test")
+    assertThat(taggable.tag(String::class)).isEqualTo("test")
   }
 
   @Test fun javaClassParamFlow() {
-    builder.tag(Int::class.java, "test")
+    builder.tag(String::class.java, "test")
     val taggable = builder.buildTaggable()
-    assertThat(taggable.tag<String>(Int::class.java)).isEqualTo("test")
+    assertThat(taggable.tag(String::class.java)).isEqualTo("test")
   }
 
   @Test fun kclassInJavaClassOut() {
-    builder.tag(Int::class, "test")
+    builder.tag(String::class, "test")
     val taggable = builder.buildTaggable()
-    assertThat(taggable.tag<String>(Int::class.java)).isEqualTo("test")
+    assertThat(taggable.tag(String::class.java)).isEqualTo("test")
   }
 
   @Test fun javaClassInkClassOut() {
-    builder.tag(Int::class.java, "test")
+    builder.tag(String::class.java, "test")
     val taggable = builder.buildTaggable()
-    assertThat(taggable.tag<String>(Int::class)).isEqualTo("test")
+    assertThat(taggable.tag(String::class)).isEqualTo("test")
   }
 
   private fun Taggable.Builder.buildTaggable(): Taggable {
