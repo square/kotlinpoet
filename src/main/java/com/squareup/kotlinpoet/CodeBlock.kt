@@ -390,7 +390,7 @@ class CodeBlock private constructor(
           break
         }
       }
-      return "$this {\n"
+      return "$this·{\n"
     }
 
     /**
@@ -399,7 +399,7 @@ class CodeBlock private constructor(
      */
     fun nextControlFlow(controlFlow: String, vararg args: Any?) = apply {
       unindent()
-      add("} $controlFlow {\n", *args)
+      add("}·$controlFlow·{\n", *args)
       indent()
     }
 
