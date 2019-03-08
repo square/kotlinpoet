@@ -420,4 +420,25 @@ class CodeBlockTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun nonWrappingControlFlow() {
+    val file = FileSpec.builder("com.squareup.tacos", "Test")
+        .addFunction(FunSpec.builder("test")
+            .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line")
+            .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2")
+            .endControlFlow()
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |fun test() {
+      |    if ("Very long string that would wrap the line" ==
+      |            "Very long string that would wrap the line") {
+      |    } else if ("Long string that would wrap the line 2" ==
+      |            "Long string that would wrap the line 2") {
+      |    }
+      |}
+      |""".trimMargin())
+  }
 }
