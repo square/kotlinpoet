@@ -441,4 +441,18 @@ class CodeBlockTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun ensureEndsWithNewLineWithNoArgs() {
+    val codeBlock = CodeBlock.builder()
+        .addStatement("Modeling a kdoc")
+        .add("\n")
+        .addStatement("Statement with no args")
+        .build()
+
+    assertThat(codeBlock.ensureEndsWithNewLine().toString()).isEqualTo("""
+      |Modeling a kdoc
+      |
+      |Statement with no args
+      |""".trimMargin())
+  }
 }
