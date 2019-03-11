@@ -161,6 +161,9 @@ internal val String.isName get() = split("\\.").none { it.isKeyword }
 internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
   val lastFormatPart = formatParts.last()
   if (CodeBlock.isPlaceholder(lastFormatPart)) {
+    if (args.isEmpty()) {
+      return@with build()
+    }
     val lastArg = args.last()
     if (lastArg is String) {
       args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
