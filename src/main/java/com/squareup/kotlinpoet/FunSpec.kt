@@ -390,7 +390,7 @@ class FunSpec private constructor(builder: Builder) {
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
         = addParameter(name, type.asTypeName(), *modifiers)
 
-    fun addCode(format: String, vararg args: Any) = apply {
+    fun addCode(format: String, vararg args: Any?) = apply {
       body.add(format, *args)
     }
 
