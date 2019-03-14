@@ -22,6 +22,6 @@ interface OriginatingElementsHolder {
   }
 }
 
-internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements(): OriginatingElementsHolder = OriginatingElements(originatingElements.toImmutableList())
+internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements() = OriginatingElements(originatingElements.toImmutableList())
 
 internal class OriginatingElements(override val originatingElements: List<Element>) : OriginatingElementsHolder
