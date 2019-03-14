@@ -21,7 +21,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Arrays
 import javax.annotation.processing.Filer
+import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ElementVisitor
+import javax.lang.model.element.Modifier
+import javax.lang.model.element.Name
+import javax.lang.model.type.TypeMirror
 import javax.tools.FileObject
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
@@ -68,4 +74,48 @@ internal class TestFiler(
   override fun getResource(
       location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence)
       = throw UnsupportedOperationException("Not implemented.")
+}
+
+internal class FakeElement : Element {
+
+  override fun getModifiers(): MutableSet<Modifier> {
+    TODO()
+  }
+
+  override fun getSimpleName(): Name {
+    TODO()
+  }
+
+  override fun getKind(): ElementKind {
+    TODO()
+  }
+
+  override fun asType(): TypeMirror {
+    TODO()
+  }
+
+  override fun getEnclosingElement(): Element {
+    TODO()
+  }
+
+  override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>?, p: P): R {
+    TODO()
+  }
+
+  override fun <A : Annotation?> getAnnotationsByType(annotationType: Class<A>?): Array<A> {
+    TODO()
+  }
+
+  override fun <A : Annotation?> getAnnotation(annotationType: Class<A>?): A {
+    TODO()
+  }
+
+  override fun getAnnotationMirrors(): MutableList<out AnnotationMirror> {
+    TODO()
+  }
+
+  override fun getEnclosedElements(): MutableList<out Element> {
+    TODO()
+  }
+
 }
