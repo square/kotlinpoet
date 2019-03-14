@@ -34,7 +34,9 @@ import kotlin.reflect.KClass
 class TypeSpec private constructor(
   builder: TypeSpec.Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-  private val delegateOriginatingElements: OriginatingElementsHolder = builder.buildOriginatingElements()
+  private val delegateOriginatingElements: OriginatingElementsHolder = OriginatingElements(
+      builder.originatingElements + builder.typeSpecs.flatMap(TypeSpec::originatingElements)
+  )
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements {
   val kind = builder.kind
   val name = builder.name
