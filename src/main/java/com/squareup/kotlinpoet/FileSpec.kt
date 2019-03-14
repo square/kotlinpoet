@@ -25,9 +25,12 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
+import javax.annotation.processing.Filer
+import javax.lang.model.element.Element
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
+import javax.tools.StandardLocation
 import kotlin.reflect.KClass
 
 /**
@@ -92,6 +95,32 @@ class FileSpec private constructor(
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
   fun writeTo(directory: File) = writeTo(directory.toPath())
+
+  /** Writes this to `filer`.  */
+  @Throws(IOException::class)
+  fun writeTo(filer: Filer) {
+    val originatingElements = mutableListOf<Element>()
+    for (member in members) {
+      when (member) {
+        is OriginatingElementsHolder -> originatingElements += member.originatingElements
+        else -> throw AssertionError()
+      }
+    }
+    val filerSourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT,
+        packageName,
+        "$name.kt",
+        *originatingElements.toTypedArray()
+    )
+    try {
+      filerSourceFile.openWriter().use { writer -> writeTo(writer) }
+    } catch (e: Exception) {
+      try {
+        filerSourceFile.delete()
+      } catch (ignored: Exception) {
+      }
+      throw e
+    }
+  }
 
   private fun emit(codeWriter: CodeWriter) {
     if (comment.isNotEmpty()) {

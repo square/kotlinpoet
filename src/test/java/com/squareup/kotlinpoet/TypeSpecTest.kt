@@ -3728,6 +3728,18 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun originatingElementsIncludesThoseOfNestedTypes() {
+    val outerElement = FakeElement()
+    val innerElement = FakeElement()
+    val outer = TypeSpec.classBuilder("Outer")
+        .addOriginatingElement(outerElement)
+        .addType(TypeSpec.classBuilder("Inner")
+            .addOriginatingElement(innerElement)
+            .build())
+        .build()
+    assertThat(outer.originatingElements).containsExactly(outerElement, innerElement)
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
