@@ -26,7 +26,10 @@ import javax.lang.model.util.SimpleAnnotationValueVisitor7
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration.  */
-class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
+class AnnotationSpec private constructor(
+  builder: AnnotationSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val className: ClassName = builder.className
   val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
@@ -70,6 +73,7 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     val builder = Builder(className)
     builder.members += members
     builder.useSiteTarget = useSiteTarget
+    builder.tags += tagMap.tags
     return builder
   }
 
@@ -98,10 +102,11 @@ class AnnotationSpec private constructor(builder: AnnotationSpec.Builder) {
     DELEGATE("delegate")
   }
 
-  class Builder internal constructor(internal val className: ClassName) {
+  class Builder internal constructor(internal val className: ClassName): Taggable.Builder {
     internal var useSiteTarget: UseSiteTarget? = null
 
     val members = mutableListOf<CodeBlock>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     fun addMember(format: String, vararg args: Any) =
         addMember(CodeBlock.of(format, *args))

@@ -30,7 +30,10 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
-class TypeSpec private constructor(builder: TypeSpec.Builder) {
+class TypeSpec private constructor(
+  builder: TypeSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val kind = builder.kind
   val name = builder.name
   val kdoc = builder.kdoc.build()
@@ -73,6 +76,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     builder.initializerBlock.add(initializerBlock)
     builder.superinterfaces.putAll(superinterfaces)
     builder.primaryConstructor = primaryConstructor
+    builder.tags += tagMap.tags
     return builder
   }
 
@@ -388,7 +392,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ) {
+  ): Taggable.Builder {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -400,6 +404,7 @@ class TypeSpec private constructor(builder: TypeSpec.Builder) {
     internal val isInlineClass get() = kind == Kind.CLASS && INLINE in modifiers
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
 
+    override val tags = mutableMapOf<KClass<*>, Any>()
     val modifiers = mutableSetOf(*modifiers)
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()

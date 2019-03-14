@@ -22,7 +22,10 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
-class PropertySpec private constructor(builder: Builder) {
+class PropertySpec private constructor(
+  builder: Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val mutable = builder.mutable
   val name = builder.name
   val type = builder.type
@@ -134,10 +137,14 @@ class PropertySpec private constructor(builder: Builder) {
     builder.setter = setter
     builder.getter = getter
     builder.receiverType = receiverType
+    builder.tags += tagMap.tags
     return builder
   }
 
-  class Builder internal constructor(internal val name: String, internal val type: TypeName) {
+  class Builder internal constructor(
+      internal val name: String,
+      internal val type: TypeName
+  ): Taggable.Builder {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -150,6 +157,7 @@ class PropertySpec private constructor(builder: Builder) {
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
     val typeVariables = mutableListOf<TypeVariableName>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     /** True to create a `var` instead of a `val`. */
     fun mutable(mutable: Boolean = true) = apply {

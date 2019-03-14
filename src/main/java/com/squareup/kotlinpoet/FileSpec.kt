@@ -41,7 +41,10 @@ import kotlin.reflect.KClass
  * - Imports
  * - Members
  */
-class FileSpec private constructor(builder: FileSpec.Builder) {
+class FileSpec private constructor(
+  builder: FileSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val annotations = builder.annotations.toImmutableList()
   val comment = builder.comment.build()
   val packageName = builder.packageName
@@ -177,17 +180,19 @@ class FileSpec private constructor(builder: FileSpec.Builder) {
     builder.members.addAll(this.members)
     builder.indent = indent
     builder.memberImports.addAll(memberImports.values)
+    builder.tags += tagMap.tags
     return builder
   }
 
   class Builder internal constructor(
     val packageName: String,
     val name: String
-  ) {
+  ): Taggable.Builder {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     internal val members = mutableListOf<Any>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     val annotations = mutableListOf<AnnotationSpec>()
 

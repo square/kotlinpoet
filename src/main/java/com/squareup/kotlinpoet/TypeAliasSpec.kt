@@ -23,7 +23,10 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
-class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
+class TypeAliasSpec private constructor(
+  builder: TypeAliasSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val name = builder.name
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()
@@ -55,17 +58,19 @@ class TypeAliasSpec private constructor(builder: TypeAliasSpec.Builder) {
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     builder.kdoc.add(kdoc)
+    builder.tags += tagMap.tags
     return builder
   }
 
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ) {
+  ): Taggable.Builder {
     internal val kdoc = CodeBlock.builder()
 
     val modifiers = mutableSetOf<KModifier>()
     val typeVariables = mutableSetOf<TypeVariableName>()
+    override val tags = mutableMapOf<KClass<*>, Any>()
 
     init {
       require(name.isName) { "not a valid name: $name" }
