@@ -2402,6 +2402,7 @@ class TypeSpecTest {
   }
 
   @Test fun generalToBuilderEqualityTest() {
+    val originatingElement = FakeElement()
     val comprehensiveTaco = TypeSpec.classBuilder("Taco")
         .addKdoc("SuperTaco")
         .addAnnotation(SuppressWarnings::class)
@@ -2421,10 +2422,14 @@ class TypeSpecTest {
         .addFunction(FunSpec.builder("fold")
             .build())
         .addSuperinterface(ClassName("texmexfood", "Consumable"))
+        .addOriginatingElement(originatingElement)
         .build()
 
-    assertThat(comprehensiveTaco.toBuilder().build()).isEqualTo(comprehensiveTaco)
+    val newTaco = comprehensiveTaco.toBuilder().build()
+    assertThat(newTaco).isEqualTo(comprehensiveTaco)
+    assertThat(newTaco.originatingElements).containsExactly(originatingElement)
   }
+
 
   @Test fun generalEnumToBuilderEqualityTest() {
     val bestTexMexEnum = TypeSpec.enumBuilder("BestTexMex")

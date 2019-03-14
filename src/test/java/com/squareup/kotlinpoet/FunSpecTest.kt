@@ -227,6 +227,16 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun originatingElementToBuilder() {
+    val originatingElement = FakeElement()
+    val funSpec = FunSpec.builder("foo")
+        .addOriginatingElement(originatingElement)
+        .build()
+
+    val newSpec = funSpec.toBuilder().build()
+    assertThat(newSpec.originatingElements).containsExactly(originatingElement)
+  }
+
   @Test fun functionParamWithKdocAndReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("string", String::class)
