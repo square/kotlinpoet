@@ -23,9 +23,9 @@ import kotlin.reflect.KClass
 
 /** A generated parameter declaration.  */
 class ParameterSpec private constructor(
-    builder: ParameterSpec.Builder,
-    private val tagMap: TagMap = builder.buildTagMap()
-): Taggable by tagMap {
+  builder: ParameterSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val name = builder.name
   val kdoc = builder.kdoc.build()
   val annotations = builder.annotations.toImmutableList()

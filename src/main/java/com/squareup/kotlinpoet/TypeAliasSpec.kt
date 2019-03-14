@@ -24,9 +24,9 @@ import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
 class TypeAliasSpec private constructor(
-    builder: TypeAliasSpec.Builder,
-    private val tagMap: TagMap = builder.buildTagMap()
-): Taggable by tagMap {
+  builder: TypeAliasSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val name = builder.name
   val type = builder.type
   val modifiers = builder.modifiers.toImmutableSet()

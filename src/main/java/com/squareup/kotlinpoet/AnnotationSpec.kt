@@ -27,9 +27,9 @@ import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration.  */
 class AnnotationSpec private constructor(
-    builder: AnnotationSpec.Builder,
-    private val tagMap: TagMap = builder.buildTagMap()
-): Taggable by tagMap {
+  builder: AnnotationSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val className: ClassName = builder.className
   val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget

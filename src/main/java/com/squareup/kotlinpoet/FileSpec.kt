@@ -42,9 +42,9 @@ import kotlin.reflect.KClass
  * - Members
  */
 class FileSpec private constructor(
-    builder: FileSpec.Builder,
-    private val tagMap: TagMap = builder.buildTagMap()
-): Taggable by tagMap {
+  builder: FileSpec.Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val annotations = builder.annotations.toImmutableList()
   val comment = builder.comment.build()
   val packageName = builder.packageName

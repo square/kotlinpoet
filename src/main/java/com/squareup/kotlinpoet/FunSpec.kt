@@ -31,9 +31,9 @@ import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
 class FunSpec private constructor(
-    builder: Builder,
-    private val tagMap: TagMap = builder.buildTagMap()
-): Taggable by tagMap {
+  builder: Builder,
+  private val tagMap: TagMap = builder.buildTagMap()
+) : Taggable by tagMap {
   val name = builder.name
   val kdoc = builder.kdoc.build()
   val returnKdoc = builder.returnKdoc
