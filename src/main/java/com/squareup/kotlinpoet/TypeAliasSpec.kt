@@ -65,7 +65,7 @@ class TypeAliasSpec private constructor(
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ): Taggable.Builder {
+  ) : Taggable.Builder<TypeAliasSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
 
     val modifiers = mutableSetOf<KModifier>()

@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class TaggableTest(val builder: Taggable.Builder) {
+class TaggableTest(val builder: Taggable.Builder<*>) {
 
   companion object {
     @JvmStatic
@@ -28,7 +28,7 @@ class TaggableTest(val builder: Taggable.Builder) {
   }
 
   @Test fun builderShouldMakeDefensiveCopy() {
-    builder.tag("test")
+    builder.tag(String::class, "test")
     val taggable = builder.buildTaggable()
     builder.tags.remove(String::class)
     assertThat(taggable.tag<String>()).isEqualTo("test")
@@ -63,7 +63,7 @@ class TaggableTest(val builder: Taggable.Builder) {
     assertThat(taggable.tag(String::class)).isEqualTo("test")
   }
 
-  private fun Taggable.Builder.buildTaggable(): Taggable {
+  private fun Taggable.Builder<*>.buildTaggable(): Taggable {
     return when (this) {
       is AnnotationSpec.Builder -> build()
       is FileSpec.Builder -> build()

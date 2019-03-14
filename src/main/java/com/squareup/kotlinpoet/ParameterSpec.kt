@@ -77,7 +77,7 @@ class ParameterSpec private constructor(
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ): Taggable.Builder {
+  ) : Taggable.Builder<ParameterSpec.Builder> {
     internal var defaultValue: CodeBlock? = null
 
     val kdoc = CodeBlock.builder()

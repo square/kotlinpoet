@@ -144,7 +144,7 @@ class PropertySpec private constructor(
   class Builder internal constructor(
       internal val name: String,
       internal val type: TypeName
-  ): Taggable.Builder {
+  ) : Taggable.Builder<PropertySpec.Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
