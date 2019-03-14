@@ -48,7 +48,7 @@ internal class TestFiler(
 
   override fun createSourceFile(
       name: CharSequence, vararg originatingElements: Element): JavaFileObject {
-    val relative = name.toString().replace(".", separator) + ".java" // Assumes well-formed.
+    val relative = name.toString().replace(".", separator) + ".kt" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
     originatingElementsMap[path] = Arrays.asList(*originatingElements).toImmutableSet()
     return Source(path)
