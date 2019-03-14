@@ -177,6 +177,15 @@ class FileWritingTest {
         .build()
         .writeTo(filer)
 
+    // Mixed
+    FileSpec.builder("example", "Mixed")
+        .addType(test1)
+        .addType(test2)
+        .addFunction(test3)
+        .addProperty(test4)
+        .build()
+        .writeTo(filer)
+
     val testPath1 = fsRoot.resolve(fs.getPath("example", "Test1.kt"))
     assertThat(filer.getOriginatingElements(testPath1)).containsExactly(element1_1)
     val testPath2 = fsRoot.resolve(fs.getPath("example", "Test2.kt"))
@@ -185,6 +194,17 @@ class FileWritingTest {
     assertThat(filer.getOriginatingElements(testPath3)).containsExactly(element3_1, element3_2)
     val testPath4 = fsRoot.resolve(fs.getPath("example", "Test4.kt"))
     assertThat(filer.getOriginatingElements(testPath4)).containsExactly(element4_1, element4_2)
+
+    val mixed = fsRoot.resolve(fs.getPath("example", "Mixed.kt"))
+    assertThat(filer.getOriginatingElements(mixed)).containsExactly(
+        element1_1,
+        element2_1,
+        element2_2,
+        element3_1,
+        element3_2,
+        element4_1,
+        element4_2
+    )
   }
 
   @Test fun filerClassesWithTabIndent() {

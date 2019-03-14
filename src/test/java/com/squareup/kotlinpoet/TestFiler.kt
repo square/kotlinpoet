@@ -50,7 +50,7 @@ internal class TestFiler(
   private val fileSystemProvider = fileSystem.provider()
   private val originatingElementsMap = mutableMapOf<Path, Set<Element>>()
 
-  fun getOriginatingElements(path: Path) = originatingElementsMap[path]!!
+  fun getOriginatingElements(path: Path) = originatingElementsMap[path] ?: throw NullPointerException("Could not find $path")
 
   override fun createSourceFile(
       name: CharSequence, vararg originatingElements: Element): JavaFileObject {
