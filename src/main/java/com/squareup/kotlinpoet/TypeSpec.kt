@@ -27,13 +27,15 @@ import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import java.lang.reflect.Type
+import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration.  */
 class TypeSpec private constructor(
   builder: TypeSpec.Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
-) : Taggable by tagMap {
+  private val tagMap: TagMap = builder.buildTagMap(),
+  private val delegateOriginatingElements: OriginatingElementsHolder = builder.buildOriginatingElements()
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements {
   val kind = builder.kind
   val name = builder.name
   val kdoc = builder.kdoc.build()
@@ -77,6 +79,7 @@ class TypeSpec private constructor(
     builder.superinterfaces.putAll(superinterfaces)
     builder.primaryConstructor = primaryConstructor
     builder.tags += tagMap.tags
+    builder.originatingElements += originatingElements
     return builder
   }
 
@@ -392,7 +395,7 @@ class TypeSpec private constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ) : Taggable.Builder<TypeSpec.Builder> {
+  ): Taggable.Builder<TypeSpec.Builder>, OriginatingElementsHolder.Builder<TypeSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -405,6 +408,7 @@ class TypeSpec private constructor(
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
 
     override val tags = mutableMapOf<KClass<*>, Any>()
+    override val originatingElements = mutableListOf<Element>()
     val modifiers = mutableSetOf(*modifiers)
     val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
     val enumConstants = mutableMapOf<String, TypeSpec>()
