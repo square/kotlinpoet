@@ -1,6 +1,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -64,14 +65,50 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
   }
 
   private fun Taggable.Builder<*>.buildTaggable(): Taggable {
+    // Apply blocks test inline builder tag functions don't break the chain. Result is discarded
     return when (this) {
-      is AnnotationSpec.Builder -> build()
-      is FileSpec.Builder -> build()
-      is FunSpec.Builder -> build()
-      is ParameterSpec.Builder -> build()
-      is PropertySpec.Builder -> build()
-      is TypeAliasSpec.Builder -> build()
-      is TypeSpec.Builder -> build()
+      is AnnotationSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .addMember(CodeBlock.of(""))
+            .build()
+      }
+      is FileSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .addComment("Test")
+            .build()
+      }
+      is FunSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .returns(String::class)
+            .build()
+      }
+      is ParameterSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .addModifiers(PUBLIC)
+            .build()
+      }
+      is PropertySpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .initializer(CodeBlock.of(""))
+            .build()
+      }
+      is TypeAliasSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .addKdoc(CodeBlock.of(""))
+            .build()
+      }
+      is TypeSpec.Builder -> build().apply {
+        toBuilder()
+            .tag(1)
+            .addKdoc(CodeBlock.of(""))
+            .build()
+      }
       else -> TODO("Unsupported type ${this::class.simpleName}")
     }
   }
