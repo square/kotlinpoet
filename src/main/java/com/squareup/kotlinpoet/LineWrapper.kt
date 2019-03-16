@@ -273,11 +273,16 @@ internal class LineWrapper(
       val segment = segments[i]
       if (segment in OPENING_BRACKET_SEGMENTS || segment in CLOSING_BRACKET_SEGMENTS) {
         var next = i
-        if (i + 1 < foldUntil) {
-          segments[i] += segments[i + 1]
+        while (i + 1 < foldUntil) {
+          val nextSegment = segments[i + 1]
+          segments[i] += nextSegment
           segments.removeAt(i + 1)
           foldUntil--
           next = i + 1 // move to the next segment
+          if (nextSegment !in OPENING_BRACKET_SEGMENTS &&
+              nextSegment !in CLOSING_BRACKET_SEGMENTS) {
+            break
+          }
         }
         if (i > 0) {
           segments[i - 1] += segments[i]
