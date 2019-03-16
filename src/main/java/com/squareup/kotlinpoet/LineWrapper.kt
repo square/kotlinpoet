@@ -255,6 +255,10 @@ internal class LineWrapper(
     // - If not found - fold from 0 until `segments.size`
     openBracketLoop@ for (i in 0 until segments.size) {
       if (segments[i] in OPENING_BRACKET_SEGMENTS) {
+        // if opening bracket is followed by a closing bracket we'll fold it
+        if (i + 1 < segments.size && segments[i + 1] in CLOSING_BRACKET_SEGMENTS) {
+          continue
+        }
         for (j in segments.size - 1 downTo i + 1) {
           if (segments[j] in CLOSING_BRACKET_SEGMENTS) {
             // found the pair
@@ -264,7 +268,7 @@ internal class LineWrapper(
           }
         }
         // couldn't find the closing bracket
-        break@openBracketLoop
+        break
       }
     }
 
