@@ -124,6 +124,7 @@ internal class LineWrapper(
     var start = 0
     var columnCount = segments[0].length
     var openingBracketIndex = if (segments[0] in OPENING_BRACKET_SEGMENTS) 0 else -1
+    var startNewLine = false
 
     for (i in 1 until segments.size) {
       val segment = segments[i]
@@ -146,26 +147,28 @@ internal class LineWrapper(
       // If this segment doesn't fit in the current run, print the current run and start a new one.
       if (newColumnCount > columnLimit) {
         if (openingBracketIndex == -1) {
-          emitSegmentRange(start, i)
+          emitSegmentRange(start, i, startNewLine)
           start = i
           columnCount = segment.length + indent.length * indentLevel
+          startNewLine = true
           continue
         } else if (segment in CLOSING_BRACKET_SEGMENTS) {
           if (start < openingBracketIndex) {
-            emitSegmentRange(start, openingBracketIndex)
+            emitSegmentRange(start, openingBracketIndex, startNewLine)
           }
           emitSegmentRangeInsideBrackets(openingBracketIndex, i, multiline = true)
           start = i + 1
           columnCount = segment.length + indent.length * indentLevel
+          startNewLine = true
           continue
         }
       } else if (openingBracketIndex != -1 && segment in CLOSING_BRACKET_SEGMENTS) {
         if (start < openingBracketIndex) {
-          emitSegmentRange(start, openingBracketIndex)
+          emitSegmentRange(start, openingBracketIndex, startNewLine)
         }
         emitSegmentRangeInsideBrackets(openingBracketIndex, i, multiline = false)
         start = i + 1
-        columnCount = segment.length + indent.length * indentLevel
+        startNewLine = false
         continue
       }
 
@@ -173,15 +176,15 @@ internal class LineWrapper(
     }
 
     // Print the last run.
-    emitSegmentRange(start, segments.size)
+    emitSegmentRange(start, segments.size, startNewLine)
 
     segments.clear()
     segments += ""
   }
 
-  private fun emitSegmentRange(startIndex: Int, endIndex: Int) {
+  private fun emitSegmentRange(startIndex: Int, endIndex: Int, startNewLine: Boolean) {
     // If this is a wrapped line we need a newline and an indent.
-    if (startIndex > 0 && segments[startIndex].isNotEmpty()) {
+    if (startNewLine && segments[startIndex].isNotEmpty()) {
       out.append("\n")
       for (i in 0 until indentLevel) {
         out.append(indent)
