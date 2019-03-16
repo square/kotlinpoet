@@ -294,4 +294,12 @@ class LineWrapperTest {
         |4, 5)
         """.trimMargin())
   }
+
+  @Test fun closingBracketOnly() {
+    val out = StringBuffer()
+    val lineWrapper = LineWrapper(out, "  ", 10)
+    lineWrapper.append(")")
+    lineWrapper.close()
+    assertThat(out.toString()).isEqualTo(")")
+  }
 }

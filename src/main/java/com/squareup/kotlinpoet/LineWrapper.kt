@@ -76,6 +76,11 @@ internal class LineWrapper(
           } else {
             segments += c.toString()
           }
+          // if the opening bracket was preceded by a space we'll put it into the previous segment
+          // to preserve it
+          if (c in OPENING_BRACKETS && pos > 0 && s[pos - 1] == ' ') {
+            segments[segments.size - 2] += " "
+          }
           segments += ""
           pos++
         }
@@ -240,48 +245,44 @@ internal class LineWrapper(
    * Also fixup dangling brackets so that there are no spaces in between.
    */
   private fun foldDanglingAndNestedBrackets() {
-    var outerOpeningBracketIndex = -1
-    for (i in 0 until segments.size) {
+    var foldFrom = 0
+    var foldUntil = segments.size
+    // Trying to find a pair of outer brackets:
+    // - If found - fold from `openingBracketIndex + 1` until `closingBracketIndex`
+    // - If not found - fold from 0 until `segments.size`
+    openBracketLoop@ for (i in 0 until segments.size) {
       if (segments[i] in OPENING_BRACKET_SEGMENTS) {
-        outerOpeningBracketIndex = i
-        break
-      }
-    }
-    var outerClosingBracketIndex = segments.size
-    for (i in segments.size - 1 downTo 0) {
-      if (segments[i] in CLOSING_BRACKET_SEGMENTS) {
-        outerClosingBracketIndex = if (outerOpeningBracketIndex == -1) {
-          // dangling closing bracket, fold it along with the next segment
-          i + 2
-        } else {
-          i
+        for (j in segments.size - 1 downTo i + 1) {
+          if (segments[j] in CLOSING_BRACKET_SEGMENTS) {
+            // found the pair
+            foldFrom = i + 1
+            foldUntil = j
+            break@openBracketLoop
+          }
         }
-        break
-      } else if (i == 0) {
-        if (outerOpeningBracketIndex != -1) {
-          // dangling open bracket, fold
-          outerOpeningBracketIndex -= 1
-        } else {
-          // no brackets found, nothing to fold
-          return
-        }
+        // couldn't find the closing bracket
+        break@openBracketLoop
       }
     }
 
-    var i = outerOpeningBracketIndex + 1
-    while (i < outerClosingBracketIndex) {
+    var i = foldFrom
+    while (i < foldUntil) {
       val segment = segments[i]
       if (segment in OPENING_BRACKET_SEGMENTS || segment in CLOSING_BRACKET_SEGMENTS) {
-        if (i + 1 < outerClosingBracketIndex) {
+        var next = i
+        if (i + 1 < foldUntil) {
           segments[i] += segments[i + 1]
           segments.removeAt(i + 1)
-          outerClosingBracketIndex--
+          foldUntil--
+          next = i + 1 // move to the next segment
         }
         if (i > 0) {
           segments[i - 1] += segments[i]
           segments.removeAt(i)
-          outerClosingBracketIndex--
+          foldUntil--
+          next = i // removed previous segment, i becomes the next
         }
+        i = next
       } else {
         i++
       }
