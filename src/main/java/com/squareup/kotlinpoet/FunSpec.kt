@@ -232,7 +232,9 @@ class FunSpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(internal val name: String): Taggable.Builder {
+  class Builder internal constructor(
+    internal val name: String
+): Taggable.Builder<FunSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY

@@ -392,7 +392,7 @@ class TypeSpec private constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ): Taggable.Builder {
+  ) : Taggable.Builder<TypeSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY

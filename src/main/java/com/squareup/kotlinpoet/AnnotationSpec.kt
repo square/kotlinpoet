@@ -102,7 +102,9 @@ class AnnotationSpec private constructor(
     DELEGATE("delegate")
   }
 
-  class Builder internal constructor(internal val className: ClassName): Taggable.Builder {
+  class Builder internal constructor(
+    internal val className: ClassName
+  ) : Taggable.Builder<AnnotationSpec.Builder> {
     internal var useSiteTarget: UseSiteTarget? = null
 
     val members = mutableListOf<CodeBlock>()

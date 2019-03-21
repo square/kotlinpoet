@@ -187,7 +187,7 @@ class FileSpec private constructor(
   class Builder internal constructor(
     val packageName: String,
     val name: String
-  ): Taggable.Builder {
+  ) : Taggable.Builder<FileSpec.Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
