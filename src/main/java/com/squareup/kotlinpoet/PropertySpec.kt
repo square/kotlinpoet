@@ -19,13 +19,15 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
 import java.lang.reflect.Type
+import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated property declaration.  */
 class PropertySpec private constructor(
   builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
-) : Taggable by tagMap {
+  private val tagMap: TagMap = builder.buildTagMap(),
+  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
   val mutable = builder.mutable
   val name = builder.name
   val type = builder.type
@@ -138,13 +140,14 @@ class PropertySpec private constructor(
     builder.getter = getter
     builder.receiverType = receiverType
     builder.tags += tagMap.tags
+    builder.originatingElements += originatingElements
     return builder
   }
 
   class Builder internal constructor(
       internal val name: String,
       internal val type: TypeName
-  ) : Taggable.Builder<PropertySpec.Builder> {
+  ): Taggable.Builder<PropertySpec.Builder>, OriginatingElementsHolder.Builder<PropertySpec.Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -158,6 +161,7 @@ class PropertySpec private constructor(
     val modifiers = mutableListOf<KModifier>()
     val typeVariables = mutableListOf<TypeVariableName>()
     override val tags = mutableMapOf<KClass<*>, Any>()
+    override val originatingElements = mutableListOf<Element>()
 
     /** True to create a `var` instead of a `val`. */
     fun mutable(mutable: Boolean = true) = apply {

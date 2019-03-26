@@ -2402,6 +2402,7 @@ class TypeSpecTest {
   }
 
   @Test fun generalToBuilderEqualityTest() {
+    val originatingElement = FakeElement()
     val comprehensiveTaco = TypeSpec.classBuilder("Taco")
         .addKdoc("SuperTaco")
         .addAnnotation(SuppressWarnings::class)
@@ -2421,9 +2422,12 @@ class TypeSpecTest {
         .addFunction(FunSpec.builder("fold")
             .build())
         .addSuperinterface(ClassName("texmexfood", "Consumable"))
+        .addOriginatingElement(originatingElement)
         .build()
 
-    assertThat(comprehensiveTaco.toBuilder().build()).isEqualTo(comprehensiveTaco)
+    val newTaco = comprehensiveTaco.toBuilder().build()
+    assertThat(newTaco).isEqualTo(comprehensiveTaco)
+    assertThat(newTaco.originatingElements).containsExactly(originatingElement)
   }
 
   @Test fun generalEnumToBuilderEqualityTest() {
@@ -3726,6 +3730,18 @@ class TypeSpecTest {
         |    }
         |}
         |""".trimMargin())
+  }
+
+  @Test fun originatingElementsIncludesThoseOfNestedTypes() {
+    val outerElement = FakeElement()
+    val innerElement = FakeElement()
+    val outer = TypeSpec.classBuilder("Outer")
+        .addOriginatingElement(outerElement)
+        .addType(TypeSpec.classBuilder("Inner")
+            .addOriginatingElement(innerElement)
+            .build())
+        .build()
+    assertThat(outer.originatingElements).containsExactly(outerElement, innerElement)
   }
 
   companion object {

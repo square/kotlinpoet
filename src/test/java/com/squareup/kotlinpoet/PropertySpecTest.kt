@@ -143,6 +143,7 @@ class PropertySpecTest {
   }
 
   @Test fun generalBuilderEqualityTest() {
+    val originatingElement = FakeElement()
     val prop = PropertySpec.builder("tacos", Int::class)
         .mutable()
         .addAnnotation(ClassName("com.squareup.kotlinpoet", "Vegan"))
@@ -159,9 +160,12 @@ class PropertySpecTest {
             .addModifiers(KModifier.INLINE)
             .addParameter("value", Int::class)
             .build())
+        .addOriginatingElement(originatingElement)
         .build()
 
-    assertThat(prop.toBuilder().build()).isEqualTo(prop)
+    val newProp = prop.toBuilder().build()
+    assertThat(newProp).isEqualTo(prop)
+    assertThat(newProp.originatingElements).containsExactly(originatingElement)
   }
 
   @Test fun modifyModifiers() {

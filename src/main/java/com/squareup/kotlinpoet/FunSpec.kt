@@ -21,6 +21,7 @@ import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
+import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.DeclaredType
@@ -32,8 +33,9 @@ import kotlin.reflect.KClass
 /** A generated function declaration.  */
 class FunSpec private constructor(
   builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
-) : Taggable by tagMap {
+  private val tagMap: TagMap = builder.buildTagMap(),
+  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
   val name = builder.name
   val kdoc = builder.kdoc.build()
   val returnKdoc = builder.returnKdoc
@@ -229,12 +231,13 @@ class FunSpec private constructor(
     builder.body.add(body)
     builder.receiverType = receiverType
     builder.tags += tagMap.tags
+    builder.originatingElements += originatingElements
     return builder
   }
 
   class Builder internal constructor(
     internal val name: String
-): Taggable.Builder<FunSpec.Builder> {
+  ) : Taggable.Builder<FunSpec.Builder>, OriginatingElementsHolder.Builder<FunSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
@@ -249,6 +252,7 @@ class FunSpec private constructor(
     val typeVariables = mutableListOf<TypeVariableName>()
     val parameters = mutableListOf<ParameterSpec>()
     override val tags = mutableMapOf<KClass<*>, Any>()
+    override val originatingElements = mutableListOf<Element>()
 
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)

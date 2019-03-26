@@ -24,6 +24,7 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
+import java.util.Date
 
 class FileWritingTest {
   // Used for testing java.io File behavior.
@@ -32,6 +33,9 @@ class FileWritingTest {
   // Used for testing java.nio.file Path behavior.
   private val fs = Jimfs.newFileSystem(Configuration.unix())
   private val fsRoot = fs.rootDirectories.iterator().next()
+
+  // Used for testing annotation processor Filer behavior.
+  private val filer = TestFiler(fs, fsRoot)
 
   @Test fun pathNotDirectory() {
     val type = TypeSpec.classBuilder("Test").build()
@@ -52,6 +56,14 @@ class FileWritingTest {
     assertThrows<IllegalArgumentException> {
       source.writeTo(file)
     }.hasMessageThat().isEqualTo("path ${file.path} exists but is not a directory.")
+  }
+
+  @Test fun filerDefaultPackage() {
+    val type = TypeSpec.classBuilder("Test").build()
+    FileSpec.get("", type).writeTo(filer)
+
+    val testPath = fsRoot.resolve("Test.kt")
+    assertThat(Files.exists(testPath)).isTrue()
   }
 
   @Test fun pathDefaultPackage() {
@@ -107,6 +119,129 @@ class FileWritingTest {
     assertThat(fooFile.exists()).isTrue()
     assertThat(barFile.exists()).isTrue()
     assertThat(bazFile.exists()).isTrue()
+  }
+
+  @Test fun filerNestedClasses() {
+    val type = TypeSpec.classBuilder("Test").build()
+    FileSpec.get("foo", type).writeTo(filer)
+    FileSpec.get("foo.bar", type).writeTo(filer)
+    FileSpec.get("foo.bar.baz", type).writeTo(filer)
+
+    val fooPath = fsRoot.resolve(fs.getPath("foo", "Test.kt"))
+    val barPath = fsRoot.resolve(fs.getPath("foo", "bar", "Test.kt"))
+    val bazPath = fsRoot.resolve(fs.getPath("foo", "bar", "baz", "Test.kt"))
+    assertThat(Files.exists(fooPath)).isTrue()
+    assertThat(Files.exists(barPath)).isTrue()
+    assertThat(Files.exists(bazPath)).isTrue()
+  }
+
+  @Suppress("LocalVariableName")
+  @Test fun filerPassesOriginatingElements() {
+    // TypeSpecs
+    val element1_1 = FakeElement()
+    val test1 = TypeSpec.classBuilder("Test1")
+        .addOriginatingElement(element1_1)
+        .build()
+
+    val element2_1 = FakeElement()
+    val element2_2 = FakeElement()
+    val test2 = TypeSpec.classBuilder("Test2")
+        .addOriginatingElement(element2_1)
+        .addOriginatingElement(element2_2)
+        .build()
+
+    // FunSpecs
+    val element3_1 = FakeElement()
+    val element3_2 = FakeElement()
+    val test3 = FunSpec.builder("fun3")
+        .addOriginatingElement(element3_1)
+        .addOriginatingElement(element3_2)
+        .build()
+
+    // PropertySpecs
+    val element4_1 = FakeElement()
+    val element4_2 = FakeElement()
+    val test4 = PropertySpec.builder("property4", String::class)
+        .addOriginatingElement(element4_1)
+        .addOriginatingElement(element4_2)
+        .build()
+
+    FileSpec.get("example", test1).writeTo(filer)
+    FileSpec.get("example", test2).writeTo(filer)
+    FileSpec.builder("example", "Test3")
+        .addFunction(test3)
+        .build()
+        .writeTo(filer)
+    FileSpec.builder("example", "Test4")
+        .addProperty(test4)
+        .build()
+        .writeTo(filer)
+
+    // Mixed
+    FileSpec.builder("example", "Mixed")
+        .addType(test1)
+        .addType(test2)
+        .addFunction(test3)
+        .addProperty(test4)
+        .build()
+        .writeTo(filer)
+
+    val testPath1 = fsRoot.resolve(fs.getPath("example", "Test1.kt"))
+    assertThat(filer.getOriginatingElements(testPath1)).containsExactly(element1_1)
+    val testPath2 = fsRoot.resolve(fs.getPath("example", "Test2.kt"))
+    assertThat(filer.getOriginatingElements(testPath2)).containsExactly(element2_1, element2_2)
+    val testPath3 = fsRoot.resolve(fs.getPath("example", "Test3.kt"))
+    assertThat(filer.getOriginatingElements(testPath3)).containsExactly(element3_1, element3_2)
+    val testPath4 = fsRoot.resolve(fs.getPath("example", "Test4.kt"))
+    assertThat(filer.getOriginatingElements(testPath4)).containsExactly(element4_1, element4_2)
+
+    val mixed = fsRoot.resolve(fs.getPath("example", "Mixed.kt"))
+    assertThat(filer.getOriginatingElements(mixed)).containsExactly(
+        element1_1,
+        element2_1,
+        element2_2,
+        element3_1,
+        element3_2,
+        element4_1,
+        element4_2
+    )
+  }
+
+  @Test fun filerClassesWithTabIndent() {
+    val test = TypeSpec.classBuilder("Test")
+        .addProperty("madeFreshDate", Date::class)
+        .addFunction(FunSpec.builder("main")
+            .addModifiers(KModifier.PUBLIC)
+            .addParameter("args", Array<String>::class.java)
+            .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
+            .build())
+        .build()
+    FileSpec.builder("foo", "Test")
+        .addType(test)
+        .indent("\t")
+        .build()
+        .writeTo(filer)
+
+    val fooPath = fsRoot.resolve(fs.getPath("foo", "Test.kt"))
+    assertThat(Files.exists(fooPath)).isTrue()
+    val source = String(Files.readAllBytes(fooPath))
+
+    assertThat(source).isEqualTo("""
+        |package foo
+        |
+        |import java.lang.String
+        |import java.lang.System
+        |import java.util.Date
+        |import kotlin.Array
+        |
+        |class Test {
+        |${"\t"}val madeFreshDate: Date
+        |
+        |${"\t"}fun main(args: Array<String>) {
+        |${"\t\t"}System.out.println("Hello World!");
+        |${"\t"}}
+        |}
+        |""".trimMargin())
   }
 
   /**
