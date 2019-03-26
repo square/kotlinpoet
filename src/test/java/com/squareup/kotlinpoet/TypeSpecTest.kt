@@ -2430,7 +2430,6 @@ class TypeSpecTest {
     assertThat(newTaco.originatingElements).containsExactly(originatingElement)
   }
 
-
   @Test fun generalEnumToBuilderEqualityTest() {
     val bestTexMexEnum = TypeSpec.enumBuilder("BestTexMex")
         .addEnumConstant("TACO")
