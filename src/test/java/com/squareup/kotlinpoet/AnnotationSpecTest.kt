@@ -20,6 +20,7 @@ import com.google.testing.compile.CompilationRule
 import org.junit.Rule
 import kotlin.test.Test
 import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 
 class AnnotationSpecTest {
@@ -337,33 +338,33 @@ class AnnotationSpecTest {
           classBuilder.addAnnotation(it)
         }
 
-    assertThat(toString(classBuilder.build())).isEqualTo("""
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        |import com.squareup.kotlinpoet.AnnotationSpecTest
         |import java.lang.Object
         |import kotlin.Boolean
         |
-        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
         |class Result
-        |""".trimMargin())
+        """.trimMargin())
   }
 
   @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
     val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(
-        AnnotationWithArrayValue::class.java)
+        JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java)
     val classBuilder = TypeSpec.classBuilder("Result")
         .addAnnotation(AnnotationSpec.get(annotation))
 
-    assertThat(toString(classBuilder.build())).isEqualTo("""
-        package com.squareup.tacos
-
-        import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-        import java.lang.Boolean
-        import java.lang.Object
-
-        @JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-        class Result
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        |import java.lang.Boolean
+        |import java.lang.Object
+        |
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
         """.trimMargin())
   }
 
@@ -373,22 +374,22 @@ class AnnotationSpecTest {
     val classBuilder = TypeSpec.classBuilder("Result")
         .addAnnotation(AnnotationSpec.get(annotation))
 
-    assertThat(toString(classBuilder.build())).isEqualTo("""
-        package com.squareup.tacos
-
-        import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-        import java.lang.Object
-        import kotlin.Boolean
-
-        @JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-        class Result
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.AnnotationSpecTest
+        |import java.lang.Object
+        |import kotlin.Boolean
+        |
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
         """.trimMargin())
   }
 
   @AnnotationWithArrayValue(Any::class, Boolean::class)
   class KotlinClassWithVarargAnnotation
 
-  @Retention
+  @Retention(RUNTIME)
   internal annotation class AnnotationWithArrayValue(vararg val value: KClass<*>)
 
   private fun toString(annotationSpec: AnnotationSpec) =
