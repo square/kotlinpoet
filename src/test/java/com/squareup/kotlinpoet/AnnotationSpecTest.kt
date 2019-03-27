@@ -256,6 +256,15 @@ class AnnotationSpecTest {
         "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Nope\"))")
   }
 
+  @Test fun annotationStringsAreConstant() {
+    val text = "This is a long string with a newline\nin the middle."
+    val builder = AnnotationSpec.builder(Deprecated::class)
+        .addMember("%S", text)
+
+    assertThat(builder.build().toString()).isEqualTo("" +
+        "@kotlin.Deprecated(\"This is a long string with a newline\\nin the middle.\")")
+  }
+
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
 
