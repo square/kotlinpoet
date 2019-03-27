@@ -277,15 +277,15 @@ class AnnotationSpecTest {
             .build())
         .build()
     assertThat(file.toString().trim()).isEqualTo("""
-      package test
-
-      import kotlin.Suppress
-
-      fun test() {
-          @Suppress("Things")
-          val annotatedString = "AnnotatedString"
-      }
-    """.trimIndent())
+      |package test
+      |
+      |import kotlin.Suppress
+      |
+      |fun test() {
+      |    @Suppress("Things")
+      |    val annotatedString = "AnnotatedString"
+      |}
+    """.trimMargin())
   }
 
   @Test fun functionOnlyLiteralAnnotation() {
@@ -298,10 +298,10 @@ class AnnotationSpecTest {
         .build()
 
     assertThat(funSpec.toString().trim()).isEqualTo("""
-      fun operation() {
-          @Suppress("UNCHECKED_CAST")
-      }
-      """.trimIndent())
+      |fun operation() {
+      |    @Suppress("UNCHECKED_CAST")
+      |}
+      """.trimMargin())
   }
 
   private fun toString(annotationSpec: AnnotationSpec) =
