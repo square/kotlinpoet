@@ -20,6 +20,7 @@ import com.google.testing.compile.CompilationRule
 import org.junit.Rule
 import kotlin.test.Test
 import java.lang.annotation.Inherited
+import javax.xml.bind.annotation.XmlSeeAlso
 import kotlin.reflect.KClass
 
 class AnnotationSpecTest {
@@ -303,6 +304,88 @@ class AnnotationSpecTest {
       |}
       """.trimMargin())
   }
+
+  @Test fun getOnValueArrayTypeMirrorShouldNameValueArg() {
+    val myClazz = compilation.elements
+        .getTypeElement(JavaClassWithArrayValueAnnotation::class.java.canonicalName)
+    val classBuilder = TypeSpec.classBuilder("Result")
+
+    myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
+        .forEach {
+          classBuilder.addAnnotation(it)
+        }
+
+    assertThat(toString(classBuilder.build())).isEqualTo("""
+            |package com.squareup.tacos
+            |
+            |import java.lang.Boolean
+            |import java.lang.Object
+            |import javax.xml.bind.annotation.XmlSeeAlso
+            |
+            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |class Result
+            |""".trimMargin())
+  }
+
+  @Test fun getOnVarargMirrorShouldNameValueArg() {
+    val myClazz = compilation.elements
+        .getTypeElement(KotlinClassWithVarargAnnotation::class.java.canonicalName)
+    val classBuilder = TypeSpec.classBuilder("Result")
+
+    myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
+        .filter { it.className.simpleName == "XmlSeeAlso" }
+        .forEach {
+          classBuilder.addAnnotation(it)
+        }
+
+    assertThat(toString(classBuilder.build())).isEqualTo("""
+            |package com.squareup.tacos
+            |
+            |import java.lang.Object
+            |import javax.xml.bind.annotation.XmlSeeAlso
+            |import kotlin.Boolean
+            |
+            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |class Result
+            |""".trimMargin())
+  }
+
+  @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
+    val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(XmlSeeAlso::class.java)
+    val classBuilder = TypeSpec.classBuilder("Result")
+        .addAnnotation(AnnotationSpec.get(annotation))
+
+    assertThat(toString(classBuilder.build())).isEqualTo("""
+            |package com.squareup.tacos
+            |
+            |import java.lang.Boolean
+            |import java.lang.Object
+            |import javax.xml.bind.annotation.XmlSeeAlso
+            |
+            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |class Result
+            |""".trimMargin())
+  }
+
+  @Test fun getOnVarargAnnotationShouldNameValueArg() {
+    val annotation = KotlinClassWithVarargAnnotation::class.java.getAnnotation(XmlSeeAlso::class.java)
+    val classBuilder = TypeSpec.classBuilder("Result")
+        .addAnnotation(AnnotationSpec.get(annotation))
+
+    assertThat(toString(classBuilder.build())).isEqualTo("""
+            |package com.squareup.tacos
+            |
+            |import java.lang.Object
+            |import javax.xml.bind.annotation.XmlSeeAlso
+            |import kotlin.Boolean
+            |
+            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |class Result
+            |""".trimMargin())
+  }
+
+  @XmlSeeAlso(Any::class, Boolean::class)
+  class KotlinClassWithVarargAnnotation
 
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
