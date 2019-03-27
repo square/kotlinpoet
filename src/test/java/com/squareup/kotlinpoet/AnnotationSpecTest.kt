@@ -338,15 +338,15 @@ class AnnotationSpecTest {
         }
 
     assertThat(toString(classBuilder.build())).isEqualTo("""
-            |package com.squareup.tacos
-            |
-            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-            |import java.lang.Object
-            |import kotlin.Boolean
-            |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-            |class Result
-            |""".trimMargin())
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        |import java.lang.Object
+        |import kotlin.Boolean
+        |
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
+        |""".trimMargin())
   }
 
   @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
@@ -356,15 +356,15 @@ class AnnotationSpecTest {
         .addAnnotation(AnnotationSpec.get(annotation))
 
     assertThat(toString(classBuilder.build())).isEqualTo("""
-            |package com.squareup.tacos
-            |
-            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-            |import java.lang.Boolean
-            |import java.lang.Object
-            |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-            |class Result
-            |""".trimMargin())
+        package com.squareup.tacos
+
+        import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        import java.lang.Boolean
+        import java.lang.Object
+
+        @JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        class Result
+        """.trimMargin())
   }
 
   @Test fun getOnVarargAnnotationShouldNameValueArg() {
@@ -374,15 +374,15 @@ class AnnotationSpecTest {
         .addAnnotation(AnnotationSpec.get(annotation))
 
     assertThat(toString(classBuilder.build())).isEqualTo("""
-            |package com.squareup.tacos
-            |
-            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-            |import java.lang.Object
-            |import kotlin.Boolean
-            |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-            |class Result
-            |""".trimMargin())
+        package com.squareup.tacos
+
+        import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        import java.lang.Object
+        import kotlin.Boolean
+
+        @JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        class Result
+        """.trimMargin())
   }
 
   @AnnotationWithArrayValue(Any::class, Boolean::class)
