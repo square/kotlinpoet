@@ -1,11 +1,18 @@
 package com.squareup.kotlinpoet;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-@XmlSeeAlso({
+import static com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue;
+
+@AnnotationWithArrayValue({
     Object.class, Boolean.class
 })
 public class JavaClassWithArrayValueAnnotation {
 
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface AnnotationWithArrayValue {
+    Class[] value();
+  }
 
 }

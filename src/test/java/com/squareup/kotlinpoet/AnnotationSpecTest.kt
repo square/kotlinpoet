@@ -20,7 +20,6 @@ import com.google.testing.compile.CompilationRule
 import org.junit.Rule
 import kotlin.test.Test
 import java.lang.annotation.Inherited
-import javax.xml.bind.annotation.XmlSeeAlso
 import kotlin.reflect.KClass
 
 class AnnotationSpecTest {
@@ -318,11 +317,11 @@ class AnnotationSpecTest {
     assertThat(toString(classBuilder.build())).isEqualTo("""
             |package com.squareup.tacos
             |
+            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
             |import java.lang.Boolean
             |import java.lang.Object
-            |import javax.xml.bind.annotation.XmlSeeAlso
             |
-            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
             |class Result
             |""".trimMargin())
   }
@@ -333,7 +332,7 @@ class AnnotationSpecTest {
     val classBuilder = TypeSpec.classBuilder("Result")
 
     myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
-        .filter { it.className.simpleName == "XmlSeeAlso" }
+        .filter { it.className.simpleName == "AnnotationWithArrayValue" }
         .forEach {
           classBuilder.addAnnotation(it)
         }
@@ -341,51 +340,56 @@ class AnnotationSpecTest {
     assertThat(toString(classBuilder.build())).isEqualTo("""
             |package com.squareup.tacos
             |
+            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
             |import java.lang.Object
-            |import javax.xml.bind.annotation.XmlSeeAlso
             |import kotlin.Boolean
             |
-            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
             |class Result
             |""".trimMargin())
   }
 
   @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
-    val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(XmlSeeAlso::class.java)
+    val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(
+        AnnotationWithArrayValue::class.java)
     val classBuilder = TypeSpec.classBuilder("Result")
         .addAnnotation(AnnotationSpec.get(annotation))
 
     assertThat(toString(classBuilder.build())).isEqualTo("""
             |package com.squareup.tacos
             |
+            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
             |import java.lang.Boolean
             |import java.lang.Object
-            |import javax.xml.bind.annotation.XmlSeeAlso
             |
-            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
             |class Result
             |""".trimMargin())
   }
 
   @Test fun getOnVarargAnnotationShouldNameValueArg() {
-    val annotation = KotlinClassWithVarargAnnotation::class.java.getAnnotation(XmlSeeAlso::class.java)
+    val annotation = KotlinClassWithVarargAnnotation::class.java
+        .getAnnotation(AnnotationWithArrayValue::class.java)
     val classBuilder = TypeSpec.classBuilder("Result")
         .addAnnotation(AnnotationSpec.get(annotation))
 
     assertThat(toString(classBuilder.build())).isEqualTo("""
             |package com.squareup.tacos
             |
+            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
             |import java.lang.Object
-            |import javax.xml.bind.annotation.XmlSeeAlso
             |import kotlin.Boolean
             |
-            |@XmlSeeAlso(value = [Object::class, Boolean::class])
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
             |class Result
             |""".trimMargin())
   }
 
-  @XmlSeeAlso(Any::class, Boolean::class)
+  @AnnotationWithArrayValue(Any::class, Boolean::class)
   class KotlinClassWithVarargAnnotation
+
+  @Retention
+  internal annotation class AnnotationWithArrayValue(vararg val value: KClass<*>)
 
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
