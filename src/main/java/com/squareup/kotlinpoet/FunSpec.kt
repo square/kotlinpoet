@@ -28,6 +28,7 @@ import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ExecutableType
 import javax.lang.model.type.TypeVariable
 import javax.lang.model.util.Types
+import kotlin.DeprecationLevel.HIDDEN
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
@@ -286,7 +287,19 @@ class FunSpec private constructor(
       this.modifiers += modifiers
     }
 
-    fun jvmModifiers(modifiers: Iterable<Modifier>) {
+    @JvmName("jvmModifiers")
+    @Deprecated(
+        message = "This API was missing the Builder return type and breaks chaining. " +
+            "https://github.com/square/kotlinpoet/issues/638",
+        replaceWith = ReplaceWith("jvmModifiers(modifiers)"),
+        level = HIDDEN
+    )
+    fun jvmModifersOld(modifiers: Iterable<Modifier>) {
+      jvmModifiers(modifiers)
+    }
+
+    @JvmName("jvmModifiersNew")
+    fun jvmModifiers(modifiers: Iterable<Modifier>) = apply {
       var visibility = KModifier.INTERNAL
       for (modifier in modifiers) {
         when (modifier) {

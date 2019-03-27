@@ -671,6 +671,7 @@ class FunSpecTest {
   @Test fun jvmFinalModifier() {
     val builder = FunSpec.builder("finalMethod")
     builder.jvmModifiers(listOf(Modifier.FINAL))
+        .returns(Unit::class) // Ensure chaining works https://github.com/square/kotlinpoet/issues/638
 
     assertThat(builder.build().toString()).isEqualTo("""
       |internal final fun finalMethod() {
@@ -685,6 +686,18 @@ class FunSpecTest {
     assertThat(builder.build().toString()).isEqualTo("""
       |@kotlin.jvm.Synchronized
       |internal fun synchronizedMethod() {
+      |}
+      |""".trimMargin())
+  }
+
+  /** Ensure chaining jvmModifiers() works - https://github.com/square/kotlinpoet/issues/638 */
+  @Test fun newJvmModifierChaining() {
+    val builder = FunSpec.builder("finalMethod")
+    builder.jvmModifiers(listOf(Modifier.FINAL))
+        .returns(Unit::class)
+
+    assertThat(builder.build().toString()).isEqualTo("""
+      |internal final fun finalMethod() {
       |}
       |""".trimMargin())
   }
