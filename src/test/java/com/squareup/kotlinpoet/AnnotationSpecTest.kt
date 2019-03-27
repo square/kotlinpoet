@@ -265,6 +265,45 @@ class AnnotationSpecTest {
         "@kotlin.Deprecated(\"This is a long string with a newline\\nin the middle.\")")
   }
 
+  @Test fun literalAnnotation() {
+    val annotationSpec = AnnotationSpec.builder(Suppress::class)
+        .addMember("%S", "Things")
+        .build()
+
+    val file = FileSpec.builder("test", "Test")
+        .addFunction(FunSpec.builder("test")
+            .addStatement("%L", annotationSpec)
+            .addStatement("val annotatedString = %S", "AnnotatedString")
+            .build())
+        .build()
+    assertThat(file.toString().trim()).isEqualTo("""
+      package test
+
+      import kotlin.Suppress
+
+      fun test() {
+          @Suppress("Things")
+          val annotatedString = "AnnotatedString"
+      }
+    """.trimIndent())
+  }
+
+  @Test fun functionOnlyLiteralAnnotation() {
+    val annotation = AnnotationSpec
+        .builder(ClassName.bestGuess("Suppress"))
+        .addMember("%S", "UNCHECKED_CAST")
+        .build()
+    val funSpec = FunSpec.builder("operation")
+        .addStatement("%L", annotation)
+        .build()
+
+    assertThat(funSpec.toString().trim()).isEqualTo("""
+      fun operation() {
+          @Suppress("UNCHECKED_CAST")
+      }
+      """.trimIndent())
+  }
+
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
 
