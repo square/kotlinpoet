@@ -771,8 +771,10 @@ class TypeVariableName private constructor(
           bounds += TypeName.get(typeMirror, typeVariables)
         }
         bounds.remove(ANY)
-        bounds.remove(NULLABLE_ANY)
         bounds.remove(JAVA_OBJECT)
+        if (bounds.isEmpty()) {
+          bounds.add(NULLABLE_ANY)
+        }
       }
       return typeVariableName
     }
@@ -792,8 +794,10 @@ class TypeVariableName private constructor(
           bounds += TypeName.get(bound, map)
         }
         bounds.remove(ANY)
-        bounds.remove(NULLABLE_ANY)
         bounds.remove(JAVA_OBJECT)
+        if (bounds.isEmpty()) {
+          bounds.add(NULLABLE_ANY)
+        }
       }
       return result
     }
