@@ -192,4 +192,17 @@ class TypeVariableNameTest {
       |class Taco<E>
       |""".trimMargin())
   }
+
+  @Test fun genericClassNoBoundsShouldDefaultToAnyNullable() {
+    val typeVariable = TypeVariableName.get(GenericClass::class.java.typeParameters[0])
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(typeVariable)
+        .build()
+    assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<T>
+      |""".trimMargin())
+  }
+
+  class GenericClass<T>
 }

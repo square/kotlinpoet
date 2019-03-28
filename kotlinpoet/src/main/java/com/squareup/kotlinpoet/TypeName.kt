@@ -771,6 +771,8 @@ class TypeVariableName private constructor(
           bounds += TypeName.get(typeMirror, typeVariables)
         }
         bounds.remove(ANY)
+        bounds.remove(NULLABLE_ANY)
+        bounds.remove(JAVA_OBJECT)
       }
       return typeVariableName
     }
@@ -790,11 +792,14 @@ class TypeVariableName private constructor(
           bounds += TypeName.get(bound, map)
         }
         bounds.remove(ANY)
+        bounds.remove(NULLABLE_ANY)
+        bounds.remove(JAVA_OBJECT)
       }
       return result
     }
 
     internal val NULLABLE_ANY_LIST = listOf(NULLABLE_ANY)
+    private val JAVA_OBJECT = ClassName("java.lang", "Object")
   }
 }
 
