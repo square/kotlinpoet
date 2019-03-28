@@ -20,6 +20,7 @@ import com.google.testing.compile.CompilationRule
 import org.junit.Rule
 import kotlin.test.Test
 import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 
 class AnnotationSpecTest {
@@ -303,6 +304,93 @@ class AnnotationSpecTest {
       |}
       """.trimMargin())
   }
+
+  @Test fun getOnValueArrayTypeMirrorShouldNameValueArg() {
+    val myClazz = compilation.elements
+        .getTypeElement(JavaClassWithArrayValueAnnotation::class.java.canonicalName)
+    val classBuilder = TypeSpec.classBuilder("Result")
+
+    myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
+        .forEach {
+          classBuilder.addAnnotation(it)
+        }
+
+    assertThat(toString(classBuilder.build())).isEqualTo("""
+            |package com.squareup.tacos
+            |
+            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+            |import java.lang.Boolean
+            |import java.lang.Object
+            |
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+            |class Result
+            |""".trimMargin())
+  }
+
+  @Test fun getOnVarargMirrorShouldNameValueArg() {
+    val myClazz = compilation.elements
+        .getTypeElement(KotlinClassWithVarargAnnotation::class.java.canonicalName)
+    val classBuilder = TypeSpec.classBuilder("Result")
+
+    myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
+        .filter { it.className.simpleName == "AnnotationWithArrayValue" }
+        .forEach {
+          classBuilder.addAnnotation(it)
+        }
+
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.AnnotationSpecTest
+        |import java.lang.Object
+        |import kotlin.Boolean
+        |
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
+        """.trimMargin())
+  }
+
+  @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
+    val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(
+        JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java)
+    val classBuilder = TypeSpec.classBuilder("Result")
+        .addAnnotation(AnnotationSpec.get(annotation))
+
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        |import java.lang.Boolean
+        |import java.lang.Object
+        |
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
+        """.trimMargin())
+  }
+
+  @Test fun getOnVarargAnnotationShouldNameValueArg() {
+    val annotation = KotlinClassWithVarargAnnotation::class.java
+        .getAnnotation(AnnotationWithArrayValue::class.java)
+    val classBuilder = TypeSpec.classBuilder("Result")
+        .addAnnotation(AnnotationSpec.get(annotation))
+
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.AnnotationSpecTest
+        |import java.lang.Object
+        |import kotlin.Boolean
+        |
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |class Result
+        """.trimMargin())
+  }
+
+  @AnnotationWithArrayValue(Any::class, Boolean::class)
+  class KotlinClassWithVarargAnnotation
+
+  @Retention(RUNTIME)
+  internal annotation class AnnotationWithArrayValue(vararg val value: KClass<*>)
 
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())

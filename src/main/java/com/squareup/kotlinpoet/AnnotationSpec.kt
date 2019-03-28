@@ -21,6 +21,7 @@ import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.ArrayType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleAnnotationValueVisitor7
 import kotlin.reflect.KClass
@@ -190,7 +191,8 @@ class AnnotationSpec private constructor(
             }
           }
           val member = CodeBlock.builder()
-          if (method.name != "value") {
+          val shouldNameMember = method.name != "value" || method.returnType.isArray
+          if (shouldNameMember) {
             member.add("%L = ", method.name)
           }
           if (value.javaClass.isArray) {
@@ -224,7 +226,8 @@ class AnnotationSpec private constructor(
         val member = CodeBlock.builder()
         val visitor = Visitor(member)
         val name = executableElement.simpleName.toString()
-        if (name != "value") {
+        val shouldNameMember = name != "value" || executableElement.returnType is ArrayType
+        if (shouldNameMember) {
           member.add("%L = ", name)
         }
         val value = annotation.elementValues[executableElement]!!
