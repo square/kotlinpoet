@@ -359,4 +359,20 @@ class PropertySpecTest {
       |    get() = field * 5
       |""".trimMargin())
   }
+
+  @Test fun constProperty() {
+    val text = "This is a long string with a newline\nin the middle."
+    val spec = FileSpec.builder("testsrc", "Test")
+        .addProperty(PropertySpec.builder("FOO", String::class, KModifier.CONST)
+            .initializer("%S", text)
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package testsrc
+      |
+      |import kotlin.String
+      |
+      |const val FOO: String = "This is a long string with a newline\nin the middle."
+      |""".trimMargin())
+  }
 }

@@ -213,14 +213,14 @@ internal class CodeWriter constructor(
 
   fun emitCode(format: String, vararg args: Any?) = emitCode(CodeBlock.of(format, *args))
 
-  fun emitCode(codeBlock: CodeBlock) = apply {
+  fun emitCode(codeBlock: CodeBlock, isConstantContext: Boolean = false) = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
     while (partIterator.hasNext()) {
       val part = partIterator.next()
       when (part) {
-        "%L" -> emitLiteral(codeBlock.args[a++])
+        "%L" -> emitLiteral(codeBlock.args[a++], isConstantContext)
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
@@ -228,7 +228,11 @@ internal class CodeWriter constructor(
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
-            stringLiteralWithQuotes(string, escapeDollarSign = true)
+            stringLiteralWithQuotes(
+                string,
+                escapeDollarSign = true,
+                isConstantContext = isConstantContext
+            )
           } else {
             "null"
           }
@@ -245,7 +249,11 @@ internal class CodeWriter constructor(
           }
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
-            stringLiteralWithQuotes(string, escapeDollarSign = false)
+            stringLiteralWithQuotes(
+                string,
+                escapeDollarSign = false,
+                isConstantContext = isConstantContext
+            )
           } else {
             "null"
           }
@@ -340,12 +348,12 @@ internal class CodeWriter constructor(
     return false
   }
 
-  private fun emitLiteral(o: Any?) {
+  private fun emitLiteral(o: Any?, isConstantContext: Boolean) {
     when (o) {
       is TypeSpec -> o.emit(this, null)
-      is AnnotationSpec -> o.emit(this, inline = true, asParameter = true)
+      is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
       is PropertySpec -> o.emit(this, emptySet())
-      is CodeBlock -> emitCode(o)
+      is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
       else -> emit(o.toString())
     }
   }

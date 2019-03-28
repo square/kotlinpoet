@@ -84,7 +84,11 @@ class PropertySpec private constructor(
       } else {
         codeWriter.emitCode(" = ")
       }
-      codeWriter.emitCode(if (initializer.hasStatements()) "%L" else "«%L»", initializer)
+      val initializerFormat = if (initializer.hasStatements()) "%L" else "«%L»"
+      codeWriter.emitCode(
+          codeBlock = CodeBlock.of(initializerFormat, initializer),
+          isConstantContext = KModifier.CONST in modifiers
+      )
     }
     codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
