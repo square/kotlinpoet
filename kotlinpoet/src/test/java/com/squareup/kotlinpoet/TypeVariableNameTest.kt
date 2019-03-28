@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.TypeVariableName.Companion.NULLABLE_ANY_LIST
 import java.io.Serializable
 import kotlin.test.Test
 
@@ -175,7 +176,18 @@ class TypeVariableNameTest {
     val typeSpec = TypeSpec.classBuilder("Taco")
         .addTypeVariable(typeVariable)
         .build()
-    assertThat(typeVariable.bounds).isEqualTo(listOf(ANY.asNullable()))
+    assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
+    assertThat(typeSpec.toString()).isEqualTo("""
+      |class Taco<E>
+      |""".trimMargin())
+  }
+
+  @Test fun noBoundsShouldDefaultToAnyNullable() {
+    val typeVariable = TypeVariableName("E")
+    val typeSpec = TypeSpec.classBuilder("Taco")
+        .addTypeVariable(typeVariable)
+        .build()
+    assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
     assertThat(typeSpec.toString()).isEqualTo("""
       |class Taco<E>
       |""".trimMargin())
