@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+## Version 1.2.0
+
+_2019-03-28_
+ 
+ * New: Add writeTo(Filer) and originating element API.
+ * New: Make *Spec types taggable.
+ * New: Make FunSpec.Builder#addCode take vararg Any?.
+ * Fix: Import members from default package.
+ * Fix: Add non-wrapping spaces in control flow creation methods.
+ * Fix: Named "value" argument being omitted in annotation array types. 
+
 ## Version 1.1.0
 
 _2019-02-28_
