@@ -713,22 +713,38 @@ class TypeVariableName private constructor(
     /** Returns type variable named `name` with `variance` and without bounds.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, variance: KModifier? = null) =
-        TypeVariableName.of(name, listOf(NULLABLE_ANY), variance)
+        TypeVariableName.of(
+            name = name,
+            bounds = NULLABLE_ANY_LIST,
+            variance = variance
+        )
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, vararg bounds: TypeName, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.toList(), variance)
+        TypeVariableName.of(
+            name = name,
+            bounds = bounds.toList().ifEmpty(::NULLABLE_ANY_LIST),
+            variance = variance
+        )
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, vararg bounds: KClass<*>, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+        TypeVariableName.of(
+            name = name,
+            bounds = bounds.map(KClass<*>::asTypeName).ifEmpty(::NULLABLE_ANY_LIST),
+            variance = variance
+        )
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+        TypeVariableName.of(
+            name = name,
+            bounds = bounds.map(Type::asTypeName).ifEmpty(::NULLABLE_ANY_LIST),
+            variance = variance
+        )
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
@@ -777,6 +793,8 @@ class TypeVariableName private constructor(
       }
       return result
     }
+
+    internal val NULLABLE_ANY_LIST = listOf(NULLABLE_ANY)
   }
 }
 

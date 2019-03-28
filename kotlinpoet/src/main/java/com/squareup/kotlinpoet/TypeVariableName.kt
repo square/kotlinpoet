@@ -18,7 +18,9 @@
 package com.squareup.kotlinpoet
 
 import javax.lang.model.element.TypeParameterElement
+import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 
@@ -31,15 +33,20 @@ fun TypeVariable.asTypeVariableName() =
 @JvmName("get")
 fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()
-  val boundsTypeNames = bounds.map { it.asTypeName() }
+  val boundsTypeNames = bounds.map(TypeMirror::asTypeName)
+      .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST)
   return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }
 
 fun KTypeParameter.asTypeVariableName(): TypeVariableName {
-  return TypeVariableName.of(name, upperBounds.map { it.asTypeName() },
-      when (variance) {
+  return TypeVariableName.of(
+      name = name,
+      bounds = upperBounds.map(KType::asTypeName)
+          .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST),
+      variance = when(variance) {
         KVariance.INVARIANT -> null
         KVariance.IN -> KModifier.IN
         KVariance.OUT -> KModifier.OUT
-      })
+      }
+  )
 }
