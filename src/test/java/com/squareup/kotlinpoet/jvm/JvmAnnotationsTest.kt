@@ -211,8 +211,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Throws
       |
       |@Throws(
-      |        IOException::class,
-      |        IllegalArgumentException::class
+      |    IOException::class,
+      |    IllegalArgumentException::class
       |)
       |fun foo() {
       |}

@@ -103,14 +103,14 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
-        |        o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |        p = 1701,
-        |        f = 11.1,
-        |        m = [9, 8, 1],
-        |        l = Override::class,
-        |        j = AnnotationSpecTest.AnnotationA(),
-        |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [Float::class, Double::class]
+        |    o = AnnotationSpecTest.Breakfast.PANCAKES,
+        |    p = 1701,
+        |    f = 11.1,
+        |    m = [9, 8, 1],
+        |    l = Override::class,
+        |    j = AnnotationSpecTest.AnnotationA(),
+        |    q = AnnotationSpecTest.AnnotationC("bar"),
+        |    r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())
@@ -131,14 +131,14 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
-        |        o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |        p = 1701,
-        |        f = 11.1,
-        |        m = [9, 8, 1],
-        |        l = Override::class,
-        |        j = AnnotationSpecTest.AnnotationA(),
-        |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [Float::class, Double::class]
+        |    o = AnnotationSpecTest.Breakfast.PANCAKES,
+        |    p = 1701,
+        |    f = 11.1,
+        |    m = [9, 8, 1],
+        |    l = Override::class,
+        |    j = AnnotationSpecTest.AnnotationA(),
+        |    q = AnnotationSpecTest.AnnotationC("bar"),
+        |    r = [Float::class, Double::class]
         |)
         |class IsAnnotated
         |""".trimMargin())
@@ -172,13 +172,13 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
-        |        f = 11.1,
-        |        l = Override::class,
-        |        m = [9, 8, 1],
-        |        o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |        p = 1701,
-        |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [Float::class, Double::class]
+        |    f = 11.1,
+        |    l = Override::class,
+        |    m = [9, 8, 1],
+        |    o = AnnotationSpecTest.Breakfast.PANCAKES,
+        |    p = 1701,
+        |    q = AnnotationSpecTest.AnnotationC("bar"),
+        |    r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())
@@ -197,24 +197,24 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
-        |        a = 5,
-        |        b = 6,
-        |        c = 7,
-        |        d = 8,
-        |        e = 9.0f,
-        |        f = 11.1,
-        |        g = ['\u0000', '쫾', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'],
-        |        h = true,
-        |        i = AnnotationSpecTest.Breakfast.WAFFLES,
-        |        j = AnnotationSpecTest.AnnotationA(),
-        |        k = "maple",
-        |        l = Override::class,
-        |        m = [9, 8, 1],
-        |        n = [AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES],
-        |        o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |        p = 1701,
-        |        q = AnnotationSpecTest.AnnotationC("bar"),
-        |        r = [Float::class, Double::class]
+        |    a = 5,
+        |    b = 6,
+        |    c = 7,
+        |    d = 8,
+        |    e = 9.0f,
+        |    f = 11.1,
+        |    g = ['\u0000', '쫾', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'],
+        |    h = true,
+        |    i = AnnotationSpecTest.Breakfast.WAFFLES,
+        |    j = AnnotationSpecTest.AnnotationA(),
+        |    k = "maple",
+        |    l = Override::class,
+        |    m = [9, 8, 1],
+        |    n = [AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES],
+        |    o = AnnotationSpecTest.Breakfast.PANCAKES,
+        |    p = 1701,
+        |    q = AnnotationSpecTest.AnnotationC("bar"),
+        |    r = [Float::class, Double::class]
         |)
         |class Taco
         |""".trimMargin())
