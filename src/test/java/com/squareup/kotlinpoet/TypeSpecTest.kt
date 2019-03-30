@@ -357,8 +357,8 @@ class TypeSpecTest {
         |
         |interface Service {
         |    @Headers(
-        |            "Accept: application/json",
-        |            "User-Agent: foobar"
+        |        "Accept: application/json",
+        |        "User-Agent: foobar"
         |    )
         |    @POST("/foo/bar")
         |    fun fooBar(
@@ -425,9 +425,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@Something(
-        |        SomeType.PROPERTY,
-        |        12,
-        |        "goodbye"
+        |    SomeType.PROPERTY,
+        |    12,
+        |    "goodbye"
         |)
         |class Foo
         |""".trimMargin())
@@ -648,8 +648,8 @@ class TypeSpecTest {
         |    }
         |
         |    @Throws(
-        |            IOException::class,
-        |            SourCreamException::class
+        |        IOException::class,
+        |        SourCreamException::class
         |    )
         |    fun throwTwo() {
         |    }
@@ -1254,8 +1254,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@MealDeal(
-        |        price = 500,
-        |        options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
+        |    price = 500,
+        |    options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
         |)
         |class Menu
         |""".trimMargin())

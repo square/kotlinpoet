@@ -62,13 +62,13 @@ class AnnotationSpec private constructor(
     //   )
 
     codeWriter.emit("(")
-    if (members.size > 1) codeWriter.emit(whitespace).indent(2)
+    if (members.size > 1) codeWriter.emit(whitespace).indent(1)
     codeWriter.emitCode(
         codeBlock = members
             .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
             .joinToCode(separator = memberSeparator),
         isConstantContext = true)
-    if (members.size > 1) codeWriter.unindent(2).emit(whitespace)
+    if (members.size > 1) codeWriter.unindent(1).emit(whitespace)
     codeWriter.emit(")")
   }
 
