@@ -201,9 +201,9 @@ class FunSpecTest {
       | * happen.
       | */
       |fun foo(
-      |    string: kotlin.String,
-      |    number: kotlin.Int,
-      |    nodoc: kotlin.Boolean
+      |  string: kotlin.String,
+      |  number: kotlin.Int,
+      |  nodoc: kotlin.Boolean
       |) {
       |}
       |""".trimMargin())
@@ -442,7 +442,7 @@ class FunSpecTest {
 
     assertThat(funSpec.toString()).isEqualTo("""
       |constructor(a: kotlin.Int) : this(a) {
-      |    println()
+      |  println()
       |}
       |""".trimMargin())
   }

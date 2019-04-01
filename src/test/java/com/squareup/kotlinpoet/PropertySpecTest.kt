@@ -46,7 +46,7 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo("""
       |var foo: kotlin.String
-      |    private set
+      |  private set
       """.trimMargin())
   }
 
@@ -60,7 +60,7 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo("""
       |val foo: kotlin.String
-      |    inline get() = "foo"
+      |  inline get() = "foo"
       |""".trimMargin())
   }
 
@@ -79,9 +79,9 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo("""
       |inline var foo: kotlin.String
-      |    get() = "foo"
-      |    set(value) {
-      |    }
+      |  get() = "foo"
+      |  set(value) {
+      |  }
       |""".trimMargin())
   }
 
@@ -208,7 +208,7 @@ class PropertySpecTest {
         .build()
     assertThat(prop.toString()).isEqualTo("""
       |private val <T : kotlin.Any> kotlin.reflect.KClass<T>.someFunction: T
-      |    inline get() = stuff as T
+      |  inline get() = stuff as T
       |""".trimMargin())
   }
 
@@ -225,7 +225,7 @@ class PropertySpecTest {
         .build()
     assertThat(prop.toString()).isEqualTo("""
       |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.property: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
-      |    get() = ""
+      |  get() = ""
       |""".trimMargin())
   }
 
@@ -241,7 +241,7 @@ class PropertySpecTest {
         .build()
     assertThat(prop.toString()).isEqualTo("""
       |private val <reified T> kotlin.reflect.KClass<T>.someFunction: T
-      |    inline get() = stuff as T
+      |  inline get() = stuff as T
       |""".trimMargin())
   }
 
@@ -312,7 +312,7 @@ class PropertySpecTest {
         .build()
     assertThat(property.toString()).isEqualTo("""
       |val property: com.example.SomeTypeAlias = { arg: kotlin.Any ->
-      |    println("arg=${'$'}arg")
+      |  println("arg=${'$'}arg")
       |}
       |
       |""".trimMargin())
@@ -353,10 +353,10 @@ class PropertySpecTest {
 
     assertThat(property.toString()).isEqualTo("""
       |val amount: kotlin.Int = 4
-      |    /**
-      |     * Simple multiplier
-      |     */
-      |    get() = field * 5
+      |  /**
+      |   * Simple multiplier
+      |   */
+      |  get() = field * 5
       |""".trimMargin())
   }
 

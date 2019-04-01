@@ -99,7 +99,7 @@ class ParameterSpecTest {
         .build()
     assertThat(paramSpec.toString()).isEqualTo("""
       |parameter: com.example.SomeTypeAlias = { arg: kotlin.Any ->
-      |    println("arg=${'$'}arg")
+      |  println("arg=${'$'}arg")
       |}
       |""".trimMargin())
   }

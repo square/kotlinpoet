@@ -38,8 +38,8 @@ class MemberNameTest {
       |import com.squareup.tacos.randomTaco
       |
       |fun makeTastyTacos() {
-      |    val randomTaco = randomTaco()
-      |    val bestTaco = bestTacoEver
+      |  val randomTaco = randomTaco()
+      |  val bestTaco = bestTacoEver
       |}
       |""".trimMargin())
   }
@@ -58,7 +58,7 @@ class MemberNameTest {
       |import com.squareup.tacos.Taco.Companion.createTaco
       |
       |fun makeTastyTacos() {
-      |    createTaco()
+      |  createTaco()
       |}
       |""".trimMargin())
   }
@@ -74,7 +74,7 @@ class MemberNameTest {
       |package com.squareup.tacos
       |
       |fun makeTastyTacos() {
-      |    createTaco()
+      |  createTaco()
       |}
       |""".trimMargin())
   }
@@ -94,8 +94,8 @@ class MemberNameTest {
       |import com.squareup.tacos.createTaco
       |
       |fun makeTastyTacos() {
-      |    createTaco()
-      |    com.twitter.tacos.createTaco()
+      |  createTaco()
+      |  com.twitter.tacos.createTaco()
       |}
       |""".trimMargin())
   }
@@ -118,8 +118,8 @@ class MemberNameTest {
       |import com.twitter.tacos.TwitterTacos
       |
       |fun makeTastyTacos() {
-      |    createTaco()
-      |    TwitterTacos.Companion.createTaco()
+      |  createTaco()
+      |  TwitterTacos.Companion.createTaco()
       |}
       |""".trimMargin())
   }
@@ -139,8 +139,8 @@ class MemberNameTest {
       |import com.squareup.tacos.SquareTacos
       |
       |fun makeTastyTacos() {
-      |    val tacos = SquareTacos()
-      |    com.squareup.tacos.math.SquareTacos(tacos)
+      |  val tacos = SquareTacos()
+      |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
       |""".trimMargin())
   }
@@ -163,8 +163,8 @@ class MemberNameTest {
       |import com.twitter.tacos.createTaco as createTwitterTaco
       |
       |fun makeTastyTacos() {
-      |    createSquareTaco()
-      |    createTwitterTaco()
+      |  createSquareTaco()
+      |  createTwitterTaco()
       |}
       |""".trimMargin())
   }
@@ -186,10 +186,10 @@ class MemberNameTest {
       |import org.mockito.`when`
       |
       |class TacoTest {
-      |    @Before
-      |    fun setUp() {
-      |        `when`(tacoService.createTaco()).thenReturn(tastyTaco())
-      |    }
+      |  @Before
+      |  fun setUp() {
+      |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
+      |  }
       |}
       |""".trimMargin())
   }
@@ -212,8 +212,8 @@ class MemberNameTest {
       |import com.twitter.tacos.TwitterTacos
       |
       |fun whenTastyTacos() {
-      |    `when`()
-      |    TwitterTacos.Companion.`when`()
+      |  `when`()
+      |  TwitterTacos.Companion.`when`()
       |}
       |""".trimMargin())
   }

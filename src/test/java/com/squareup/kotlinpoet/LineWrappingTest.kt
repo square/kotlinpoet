@@ -31,7 +31,7 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |fun wrapMe() = 10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 *
-        |        70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
+        |    70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |""".trimMargin())
   }
 
@@ -47,7 +47,7 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |fun wrapMe() =
-        |        "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
+        |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
         |""".trimMargin())
   }
 
@@ -63,7 +63,7 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |fun wrapMe() =
-        |        10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
+        |    10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |""".trimMargin())
   }
 
@@ -89,31 +89,31 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |fun wrapMe() {
-        |    val a =    8
-        |    val b =   64
-        |    val c =  512
-        |    val d = 4096
+        |  val a =    8
+        |  val b =   64
+        |  val c =  512
+        |  val d = 4096
         |}
         |""".trimMargin())
   }
 
   @Test fun spacesPrecedingUnaryOperatorsDoNotWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
-        .addStatement("val aaaaaa = %S +1", "x".repeat(78))
-        .addStatement("val bbbbbb = %S +1", "x".repeat(79))
-        .addStatement("val cccccc = %S -1", "x".repeat(78))
-        .addStatement("val dddddd = %S -1", "x".repeat(79))
+        .addStatement("val aaaaaa = %S +1", "x".repeat(80))
+        .addStatement("val bbbbbb = %S +1", "x".repeat(81))
+        .addStatement("val cccccc = %S -1", "x".repeat(80))
+        .addStatement("val dddddd = %S -1", "x".repeat(81))
         .build()
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
         |fun wrapMe() {
-        |    val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
-        |    val bbbbbb =
-        |            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
-        |    val cccccc = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
-        |    val dddddd =
-        |            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
+        |  val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
+        |  val bbbbbb =
+        |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
+        |  val cccccc = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
+        |  val dddddd =
+        |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
         |}
         |""".trimMargin())
   }
@@ -137,44 +137,43 @@ class LineWrappingTest {
         |import kotlin.String
         |
         |class Taco {
-        |    fun call(
-        |        s0: String,
-        |        s1: String,
-        |        s2: String,
-        |        s3: String,
-        |        s4: String,
-        |        s5: String,
-        |        s6: String,
-        |        s7: String,
-        |        s8: String,
-        |        s9: String,
-        |        s10: String,
-        |        s11: String,
-        |        s12: String,
-        |        s13: String,
-        |        s14: String,
-        |        s15: String,
-        |        s16: String,
-        |        s17: String,
-        |        s18: String,
-        |        s19: String,
-        |        s20: String,
-        |        s21: String,
-        |        s22: String,
-        |        s23: String,
-        |        s24: String,
-        |        s25: String,
-        |        s26: String,
-        |        s27: String,
-        |        s28: String,
-        |        s29: String,
-        |        s30: String,
-        |        s31: String
-        |    ) {
-        |        call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-        |                "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-        |                "30", "31")
-        |    }
+        |  fun call(
+        |    s0: String,
+        |    s1: String,
+        |    s2: String,
+        |    s3: String,
+        |    s4: String,
+        |    s5: String,
+        |    s6: String,
+        |    s7: String,
+        |    s8: String,
+        |    s9: String,
+        |    s10: String,
+        |    s11: String,
+        |    s12: String,
+        |    s13: String,
+        |    s14: String,
+        |    s15: String,
+        |    s16: String,
+        |    s17: String,
+        |    s18: String,
+        |    s19: String,
+        |    s20: String,
+        |    s21: String,
+        |    s22: String,
+        |    s23: String,
+        |    s24: String,
+        |    s25: String,
+        |    s26: String,
+        |    s27: String,
+        |    s28: String,
+        |    s29: String,
+        |    s30: String,
+        |    s31: String
+        |  ) {
+        |    call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+        |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
+        |  }
         |}
         |""".trimMargin())
   }
