@@ -342,4 +342,4 @@ class FileSpec private constructor(
   }
 }
 
-internal const val DEFAULT_INDENT = "    "
+internal const val DEFAULT_INDENT = "  "

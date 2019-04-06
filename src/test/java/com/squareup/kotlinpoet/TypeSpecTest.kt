@@ -78,10 +78,10 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    final override fun toString(): String = "taco"
+        |  final override fun toString(): String = "taco"
         |}
         |""".trimMargin())
-    assertEquals(-1121473317, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(2021168219, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
@@ -103,11 +103,11 @@ class TypeSpecTest {
         |import kotlin.collections.List
         |
         |class Taco {
-        |    val star: List<*>
+        |  val star: List<*>
         |
-        |    val outSerializable: List<out Serializable>
+        |  val outSerializable: List<out Serializable>
         |
-        |    val inString: List<in String>
+        |  val inString: List<in String>
         |}
         |""".trimMargin())
   }
@@ -154,14 +154,14 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |    val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |        override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object :
-        |                SimpleThung<Bar>(thung) {
-        |            override fun doSomething(bar: Bar) {
-        |                /* code snippets */
-        |            }
-        |        }
+        |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
+        |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
+        |        {
+        |      override fun doSomething(bar: Bar) {
+        |        /* code snippets */
+        |      }
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -185,8 +185,8 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val names: ArrayList<String> = object : ArrayList<String>(4) {
-        |    }
+        |  val names: ArrayList<String> = object : ArrayList<String>(4) {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -215,11 +215,11 @@ class TypeSpecTest {
         |import java.lang.Runnable
         |
         |class Taco {
-        |    val NAME: Runnable = object : Message(), Runnable {
-        |        override fun run() {
-        |            /* code snippets */
-        |        }
+        |  val NAME: Runnable = object : Message(), Runnable {
+        |    override fun run() {
+        |      /* code snippets */
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -238,8 +238,8 @@ class TypeSpecTest {
         |import kotlin.Any
         |
         |class Taco {
-        |    val NAME: Any = object {
-        |    }
+        |  val NAME: Any = object {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -274,15 +274,15 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Foo {
-        |    constructor(
-        |        id: Long,
-        |        @Ping one: String,
-        |        @Ping two: String,
-        |        @Pong("pong") three: String,
-        |        @Ping four: String
-        |    ) {
-        |        /* code snippets */
-        |    }
+        |  constructor(
+        |    id: Long,
+        |    @Ping one: String,
+        |    @Ping two: String,
+        |    @Pong("pong") three: String,
+        |    @Ping four: String
+        |  ) {
+        |    /* code snippets */
+        |  }
         |}
         |""".trimMargin())
   }
@@ -305,7 +305,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class EthicalTaco {
-        |    val meat: @FreeRange String
+        |  val meat: @FreeRange String
         |}
         |""".trimMargin())
   }
@@ -356,16 +356,16 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |interface Service {
-        |    @Headers(
-        |        "Accept: application/json",
-        |        "User-Agent: foobar"
-        |    )
-        |    @POST("/foo/bar")
-        |    fun fooBar(
-        |        @Body things: Things<Thing>,
-        |        @QueryMap(encodeValues = false) query: Map<String, String>,
-        |        @Header("Authorization") authorization: String
-        |    ): Observable<FooBar>
+        |  @Headers(
+        |    "Accept: application/json",
+        |    "User-Agent: foobar"
+        |  )
+        |  @POST("/foo/bar")
+        |  fun fooBar(
+        |    @Body things: Things<Thing>,
+        |    @QueryMap(encodeValues = false) query: Map<String, String>,
+        |    @Header("Authorization") authorization: String
+        |  ): Observable<FooBar>
         |}
         |""".trimMargin())
   }
@@ -384,8 +384,8 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    @JsonAdapter(Foo::class)
-        |    private val thing: String
+        |  @JsonAdapter(Foo::class)
+        |  private val thing: String
         |}
         |""".trimMargin())
   }
@@ -405,8 +405,8 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    @field:JsonAdapter(Foo::class)
-        |    private val thing: String
+        |  @field:JsonAdapter(Foo::class)
+        |  private val thing: String
         |}
         |""".trimMargin())
   }
@@ -425,9 +425,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@Something(
-        |    SomeType.PROPERTY,
-        |    12,
-        |    "goodbye"
+        |  SomeType.PROPERTY,
+        |  12,
+        |  "goodbye"
         |)
         |class Foo
         |""".trimMargin())
@@ -466,20 +466,20 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |enum class Roshambo(private val handPosition: String) {
-        |    /**
-        |     * Avalanche!
-        |     */
-        |    ROCK,
+        |  /**
+        |   * Avalanche!
+        |   */
+        |  ROCK,
         |
-        |    PAPER("flat") {
-        |        override fun toString(): String = "paper airplane!"
-        |    },
+        |  PAPER("flat") {
+        |    override fun toString(): String = "paper airplane!"
+        |  },
         |
-        |    SCISSORS("peace sign");
+        |  SCISSORS("peace sign");
         |
-        |    constructor() {
-        |        this("fist")
-        |    }
+        |  constructor() {
+        |    this("fist")
+        |  }
         |}
         |""".trimMargin())
   }
@@ -501,12 +501,12 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |enum class Tortilla {
-        |    CORN {
-        |        override fun fold() {
-        |        }
-        |    };
+        |  CORN {
+        |    override fun fold() {
+        |    }
+        |  };
         |
-        |    abstract fun fold()
+        |  abstract fun fold()
         |}
         |""".trimMargin())
   }
@@ -523,9 +523,9 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |sealed class Sealed {
-        |    abstract val name: String
+        |  abstract val name: String
         |
-        |    abstract fun fold()
+        |  abstract fun fold()
         |}
         |""".trimMargin())
   }
@@ -563,8 +563,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |enum class RenderPassCreate {
-        |    ;
-        |    companion object
+        |  ;
+        |  companion object
         |}
         |""".trimMargin())
   }
@@ -585,9 +585,9 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |enum class Roshambo {
-        |    SPOCK {
-        |        override fun toString(): String = "west side"
-        |    }
+        |  SPOCK {
+        |    override fun toString(): String = "west side"
+        |  }
         |}
         |""".trimMargin())
   }
@@ -608,12 +608,12 @@ class TypeSpecTest {
         |import java.lang.Deprecated
         |
         |enum class Roshambo {
-        |    @Deprecated
-        |    ROCK,
+        |  @Deprecated
+        |  ROCK,
         |
-        |    PAPER,
+        |  PAPER,
         |
-        |    SCISSORS
+        |  SCISSORS
         |}
         |""".trimMargin())
   }
@@ -643,22 +643,22 @@ class TypeSpecTest {
         |import kotlin.jvm.Throws
         |
         |abstract class Taco {
-        |    @Throws(IOException::class)
-        |    fun throwOne() {
-        |    }
+        |  @Throws(IOException::class)
+        |  fun throwOne() {
+        |  }
         |
-        |    @Throws(
-        |        IOException::class,
-        |        SourCreamException::class
-        |    )
-        |    fun throwTwo() {
-        |    }
+        |  @Throws(
+        |    IOException::class,
+        |    SourCreamException::class
+        |  )
+        |  fun throwTwo() {
+        |  }
         |
-        |    @Throws(IOException::class)
-        |    abstract fun abstractThrow()
+        |  @Throws(IOException::class)
+        |  abstract fun abstractThrow()
         |
-        |    @Throws(IOException::class)
-        |    external fun nativeThrow()
+        |  @Throws(IOException::class)
+        |  external fun nativeThrow()
         |}
         |""".trimMargin())
   }
@@ -700,21 +700,21 @@ class TypeSpecTest {
         |import kotlin.Number
         |
         |class Location<T, P : Number> : Comparable<P> {
-        |    val label: T
+        |  val label: T
         |
-        |    val x: P
+        |  val x: P
         |
-        |    val y: P
+        |  val y: P
         |
-        |    override fun compareTo(p: P): Int = 0
+        |  override fun compareTo(p: P): Int = 0
         |
-        |    fun <T, P : Number> of(
-        |        label: T,
-        |        x: P,
-        |        y: P
-        |    ): Location<T, P> {
-        |        throw new UnsupportedOperationException("TODO")
-        |    }
+        |  fun <T, P : Number> of(
+        |    label: T,
+        |    x: P,
+        |    y: P
+        |  ): Location<T, P> {
+        |    throw new UnsupportedOperationException("TODO")
+        |  }
         |}
         |""".trimMargin())
   }
@@ -739,10 +739,10 @@ class TypeSpecTest {
         |import kotlin.Number
         |
         |class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q :
-        |        Comparable {
-        |    val x: P
+        |    Comparable {
+        |  val x: P
         |
-        |    val y: @A Q
+        |  val y: @A Q
         |}
         |""".trimMargin())
   }
@@ -802,7 +802,7 @@ class TypeSpecTest {
         |import java.util.concurrent.Callable
         |
         |class Outer : Callable<Outer.Inner>() {
-        |    inner class Inner
+        |  inner class Inner
         |}
         |""".trimMargin())
   }
@@ -821,9 +821,9 @@ class TypeSpecTest {
         |import kotlin.Cloneable
         |
         |enum class Food : Serializable, Cloneable {
-        |    LEAN_GROUND_BEEF,
+        |  LEAN_GROUND_BEEF,
         |
-        |    SHREDDED_CHEESE
+        |  SHREDDED_CHEESE
         |}
         |""".trimMargin())
   }
@@ -879,39 +879,39 @@ class TypeSpecTest {
         |import kotlin.collections.List
         |
         |class Combo {
-        |    val taco: Taco
+        |  val taco: Taco
         |
-        |    val chips: Chips
+        |  val chips: Chips
         |
-        |    class Taco {
-        |        val toppings: List<Topping>
+        |  class Taco {
+        |    val toppings: List<Topping>
         |
-        |        val sauce: Sauce
+        |    val sauce: Sauce
         |
-        |        enum class Topping {
-        |            SHREDDED_CHEESE,
+        |    enum class Topping {
+        |      SHREDDED_CHEESE,
         |
-        |            LEAN_GROUND_BEEF
-        |        }
+        |      LEAN_GROUND_BEEF
         |    }
+        |  }
         |
-        |    class Chips {
-        |        val topping: Taco.Topping
+        |  class Chips {
+        |    val topping: Taco.Topping
         |
-        |        val dippingSauce: Sauce
-        |    }
+        |    val dippingSauce: Sauce
+        |  }
         |
-        |    enum class Sauce {
-        |        SOUR_CREAM,
+        |  enum class Sauce {
+        |    SOUR_CREAM,
         |
-        |        SALSA,
+        |    SALSA,
         |
-        |        QUESO,
+        |    QUESO,
         |
-        |        MILD,
+        |    MILD,
         |
-        |        FIRE
-        |    }
+        |    FIRE
+        |  }
         |}
         |""".trimMargin())
   }
@@ -970,7 +970,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |interface Taco {
-        |    val v: Int
+        |  val v: Int
         |}
         |""".trimMargin())
   }
@@ -990,13 +990,13 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |interface Taco {
-        |    fun aMethod()
+        |  fun aMethod()
         |
-        |    fun aDefaultMethod() {
-        |    }
+        |  fun aDefaultMethod() {
+        |  }
         |
-        |    private fun aPrivateMethod() {
-        |    }
+        |  private fun aPrivateMethod() {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1034,33 +1034,33 @@ class TypeSpecTest {
         |import com.squareup.donuts.Bottom
         |
         |class Top {
+        |  val internalTop: Top
+        |
+        |  val internalBottom: Middle.Bottom
+        |
+        |  val externalTop: com.squareup.donuts.Top
+        |
+        |  val externalBottom: Bottom
+        |
+        |  class Middle {
         |    val internalTop: Top
         |
-        |    val internalBottom: Middle.Bottom
+        |    val internalBottom: Bottom
         |
         |    val externalTop: com.squareup.donuts.Top
         |
-        |    val externalBottom: Bottom
+        |    val externalBottom: com.squareup.donuts.Bottom
         |
-        |    class Middle {
-        |        val internalTop: Top
+        |    class Bottom {
+        |      val internalTop: Top
         |
-        |        val internalBottom: Bottom
+        |      val internalBottom: Bottom
         |
-        |        val externalTop: com.squareup.donuts.Top
+        |      val externalTop: com.squareup.donuts.Top
         |
-        |        val externalBottom: com.squareup.donuts.Bottom
-        |
-        |        class Bottom {
-        |            val internalTop: Top
-        |
-        |            val internalBottom: Bottom
-        |
-        |            val externalTop: com.squareup.donuts.Top
-        |
-        |            val externalBottom: com.squareup.donuts.Bottom
-        |        }
+        |      val externalBottom: com.squareup.donuts.Bottom
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1078,9 +1078,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Gen {
-        |    val internalOther: Other
+        |  val internalOther: Other
         |
-        |    val externalOther: com.squareup.donuts.Other
+        |  val externalOther: com.squareup.donuts.Other
         |}
         |""".trimMargin())
   }
@@ -1101,7 +1101,7 @@ class TypeSpecTest {
         |import java.util.Comparator
         |
         |class Taco {
-        |    fun <T> getComparator(): T where T : Comparator, T : Serializable = null
+        |  fun <T> getComparator(): T where T : Comparator, T : Serializable = null
         |}
         |""".trimMargin())
   }
@@ -1116,7 +1116,7 @@ class TypeSpecTest {
         |import kotlin.IntArray
         |
         |class Taco {
-        |    val ints: IntArray
+        |  val ints: IntArray
         |}
         |""".trimMargin())
   }
@@ -1150,18 +1150,18 @@ class TypeSpecTest {
         | * and some [kotlin.String] cheese.
         | */
         |class Taco {
-        |    /**
-        |     * True for a soft flour tortilla; false for a crunchy corn tortilla.
-        |     */
-        |    val soft: Boolean
+        |  /**
+        |   * True for a soft flour tortilla; false for a crunchy corn tortilla.
+        |   */
+        |  val soft: Boolean
         |
-        |    /**
-        |     * Folds the back of this taco to reduce sauce leakage.
-        |     *
-        |     * For [Locale#KOREAN], the front may also be folded.
-        |     */
-        |    fun refold(locale: Locale) {
-        |    }
+        |  /**
+        |   * Folds the back of this taco to reduce sauce leakage.
+        |   *
+        |   * For [Locale#KOREAN], the front may also be folded.
+        |   */
+        |  fun refold(locale: Locale) {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1212,21 +1212,21 @@ class TypeSpecTest {
         | * @param mild Whether the taco is mild (ew) or crunchy (ye).
         | */
         |class Taco(
-        |    /**
-        |     * Taco temperature. Can be as cold as the famous ice tacos from
-        |     * the Andes, or hot with lava-like cheese from the depths of
-        |     * the Ninth Circle.
-        |     */
-        |    temperature: Double,
-        |    /**
-        |     * True for a soft flour tortilla; false for a crunchy corn tortilla.
-        |     */
-        |    val soft: Boolean,
-        |    /**
-        |     * No one likes mild tacos.
-        |     */
-        |    val mild: Boolean,
-        |    private val nodoc: Int
+        |  /**
+        |   * Taco temperature. Can be as cold as the famous ice tacos from
+        |   * the Andes, or hot with lava-like cheese from the depths of
+        |   * the Ninth Circle.
+        |   */
+        |  temperature: Double,
+        |  /**
+        |   * True for a soft flour tortilla; false for a crunchy corn tortilla.
+        |   */
+        |  val soft: Boolean,
+        |  /**
+        |   * No one likes mild tacos.
+        |   */
+        |  val mild: Boolean,
+        |  private val nodoc: Int
         |)
         |""".trimMargin())
   }
@@ -1254,8 +1254,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |@MealDeal(
-        |    price = 500,
-        |    options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
+        |  price = 500,
+        |  options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
         |)
         |class Menu
         |""".trimMargin())
@@ -1275,8 +1275,8 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taqueria {
-        |    fun prepare(workers: Int, vararg jobs: Runnable) {
-        |    }
+        |  fun prepare(workers: Int, vararg jobs: Runnable) {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1297,12 +1297,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taqueria {
-        |    fun prepare(
-        |        workers: Int,
-        |        vararg jobs: Runnable,
-        |        start: Boolean
-        |    ) {
-        |    }
+        |  fun prepare(
+        |    workers: Int,
+        |    vararg jobs: Runnable,
+        |    start: Boolean
+        |  ) {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1355,24 +1355,24 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |class Util {
-        |    private val ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
-        |            .add("'", "&#39;")
-        |            .add("&", "&amp;")
-        |            .add("<", "&lt;")
-        |            .add(">", "&gt;")
-        |            .build()
+        |  private val ESCAPE_HTML: Map<String, String> = ImmutableMap.<String, String>builder()
+        |      .add("'", "&#39;")
+        |      .add("&", "&amp;")
+        |      .add("<", "&lt;")
+        |      .add(">", "&gt;")
+        |      .build()
         |
-        |    fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
-        |        val size = Math.min(listA.size, listB.size)
-        |        for (i in 0 until size) {
-        |            val a = listA[i]
-        |            val b = listB[i]
-        |            if (a != b) {
-        |                return i
-        |            }
-        |        }
-        |        return size
+        |  fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
+        |    val size = Math.min(listA.size, listB.size)
+        |    for (i in 0 until size) {
+        |      val a = listA[i]
+        |      val b = listB[i]
+        |      if (a != b) {
+        |        return i
+        |      }
         |    }
+        |    return size
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1393,13 +1393,13 @@ class TypeSpecTest {
         |import java.lang.System
         |
         |class Taco {
-        |    fun choices() {
-        |        if (taco != null || taco == otherTaco) {
-        |            System.out.println("only one taco? NOO!")
-        |        } else if (taco.isSupreme() && otherTaco.isSupreme()) {
-        |            System.out.println("taco heaven")
-        |        }
+        |  fun choices() {
+        |    if (taco != null || taco == otherTaco) {
+        |      System.out.println("only one taco? NOO!")
+        |    } else if (taco.isSupreme() && otherTaco.isSupreme()) {
+        |      System.out.println("taco heaven")
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1420,13 +1420,13 @@ class TypeSpecTest {
         |import java.lang.System
         |
         |class Taco {
-        |    fun choices() {
-        |        if (5 < 4)  {
-        |            System.out.println("wat")
-        |        } else if (5 < 6) {
-        |            System.out.println("hello")
-        |        }
+        |  fun choices() {
+        |    if (5 < 4)  {
+        |      System.out.println("wat")
+        |    } else if (5 < 6) {
+        |      System.out.println("hello")
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1443,11 +1443,11 @@ class TypeSpecTest {
         |import java.lang.System
         |
         |class Taco {
-        |    fun inlineIndent() {
-        |        if (3 < 4) {
-        |            System.out.println("hello");
-        |        }
+        |  fun inlineIndent() {
+        |    if (3 < 4) {
+        |      System.out.println("hello");
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1466,13 +1466,13 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |    class Meat
+        |  class Meat
         |
-        |    interface Tortilla
+        |  interface Tortilla
         |
-        |    enum class Topping {
-        |        SALSA
-        |    }
+        |  enum class Topping {
+        |    SALSA
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1504,29 +1504,29 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Members {
-        |    val W: String
+        |  val W: String
         |
-        |    val U: String
+        |  val U: String
         |
-        |    constructor(p: Int)
+        |  constructor(p: Int)
         |
-        |    constructor(o: Long)
+        |  constructor(o: Long)
         |
-        |    fun T() {
-        |    }
+        |  fun T() {
+        |  }
         |
-        |    fun S() {
-        |    }
+        |  fun S() {
+        |  }
         |
-        |    fun R() {
-        |    }
+        |  fun R() {
+        |  }
         |
-        |    fun Q() {
-        |    }
+        |  fun Q() {
+        |  }
         |
-        |    class Z
+        |  class Z
         |
-        |    class Y
+        |  class Y
         |}
         |""".trimMargin())
   }
@@ -1544,7 +1544,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |    external fun nativeInt(): Int
+        |  external fun nativeInt(): Int
         |}
         |""".trimMargin())
   }
@@ -1561,7 +1561,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val NULL: String = null
+        |  val NULL: String = null
         |}
         |""".trimMargin())
   }
@@ -1606,7 +1606,7 @@ class TypeSpecTest {
         .build()
     assertThat(constructor.toString()).isEqualTo(""
         + "constructor(taco: com.squareup.tacos.Taco) {\n"
-        + "    this.taco = taco\n"
+        + "  this.taco = taco\n"
         + "}\n")
   }
 
@@ -1635,8 +1635,8 @@ class TypeSpecTest {
         .build()
     assertThat(type.toString()).isEqualTo("""
         |object : java.lang.Runnable {
-        |    override fun run() {
-        |    }
+        |  override fun run() {
+        |  }
         |}""".trimMargin())
   }
 
@@ -1676,14 +1676,14 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    override fun toString(): String {
-        |        val result = "Taco("
-        |                + "beef,"
-        |                + "lettuce,"
-        |                + "cheese"
-        |                + ")"
-        |        return result
-        |    }
+        |  override fun toString(): String {
+        |    val result = "Taco("
+        |        + "beef,"
+        |        + "lettuce,"
+        |        + "cheese"
+        |        + ")"
+        |    return result
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1725,28 +1725,28 @@ class TypeSpecTest {
         |import kotlin.collections.List
         |
         |class Taco {
-        |    fun comparePrefix(final length: Int): Comparator<String> {
-        |        // Return a new comparator for the target length.
-        |        return object : Comparator<String> {
-        |            override fun compare(a: String, b: String): Int {
-        |                // Prefix the strings and compare them
-        |                return a.substring(0, length)
-        |                        .compareTo(b.substring(0, length))
-        |            }
-        |        }
+        |  fun comparePrefix(final length: Int): Comparator<String> {
+        |    // Return a new comparator for the target length.
+        |    return object : Comparator<String> {
+        |      override fun compare(a: String, b: String): Int {
+        |        // Prefix the strings and compare them
+        |        return a.substring(0, length)
+        |            .compareTo(b.substring(0, length))
+        |      }
         |    }
+        |  }
         |
-        |    fun sortPrefix(list: List<String>, final length: Int) {
-        |        Collections.sort(
-        |                list,
-        |                object : Comparator<String> {
-        |                    override fun compare(a: String, b: String): Int {
-        |                        // Prefix the strings and compare them
-        |                        return a.substring(0, length)
-        |                                .compareTo(b.substring(0, length))
-        |                    }
-        |                })
-        |    }
+        |  fun sortPrefix(list: List<String>, final length: Int) {
+        |    Collections.sort(
+        |        list,
+        |        object : Comparator<String> {
+        |          override fun compare(a: String, b: String): Int {
+        |            // Prefix the strings and compare them
+        |            return a.substring(0, length)
+        |                .compareTo(b.substring(0, length))
+        |          }
+        |        })
+        |  }
         |}
         |""".trimMargin())
   }
@@ -1763,12 +1763,12 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val toppings: String = ${"\"\"\""}
-        |            |shell
-        |            |beef
-        |            |lettuce
-        |            |cheese
-        |            |${"\"\"\""}.trimMargin()
+        |  val toppings: String = ${"\"\"\""}
+        |      |shell
+        |      |beef
+        |      |lettuce
+        |      |cheese
+        |      |${"\"\"\""}.trimMargin()
         |}
         |""".trimMargin())
   }
@@ -1911,9 +1911,9 @@ class TypeSpecTest {
         .build()
     assertThat(guacamole.toString()).isEqualTo("""
       |enum inline class Foo(val x: kotlin.Int) {
-      |    A(1),
+      |  A(1),
       |
-      |    B(2);
+      |  B(2);
       |}
       |""".trimMargin())
   }
@@ -1967,9 +1967,9 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |    const val ANSWER: Int
+        |  const val ANSWER: Int
         |
-        |    private val price: BigDecimal
+        |  private val price: BigDecimal
         |}
         |""".trimMargin())
   }
@@ -1995,12 +1995,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |    fun getAnswer(): Int = 42
+        |  fun getAnswer(): Int = 42
         |
-        |    /**
-        |     * chosen by fair dice roll ;)
-        |     */
-        |    fun getRandomQuantity(): Int = 4
+        |  /**
+        |   * chosen by fair dice roll ;)
+        |   */
+        |  fun getRandomQuantity(): Int = 4
         |}
         |""".trimMargin())
   }
@@ -2046,9 +2046,9 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |    class Topping
+        |  class Topping
         |
-        |    class Sauce
+        |  class Sauce
         |}
         |""".trimMargin())
   }
@@ -2068,12 +2068,12 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |    fun addTopping(topping: Topping) {
-        |        try {
-        |            /* do something tricky with the topping */
-        |        } catch (e: IllegalToppingException) {
-        |        }
+        |  fun addTopping(topping: Topping) {
+        |    try {
+        |      /* do something tricky with the topping */
+        |    } catch (e: IllegalToppingException) {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2097,13 +2097,13 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |    fun isDelicious(count: Int): Boolean {
-        |        if (count > 0) {
-        |            return true
-        |        } else {
-        |            return false
-        |        }
+        |  fun isDelicious(count: Int): Boolean {
+        |    if (count > 0) {
+        |      return true
+        |    } else {
+        |      return false
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2126,12 +2126,12 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    fun toppingPrice(topping: String) = when(topping) {
-        |        "beef" -> 1
-        |        "lettuce" -> 2
-        |        "cheese" -> 3
-        |        else -> throw IllegalToppingException(topping)
-        |    }
+        |  fun toppingPrice(topping: String) = when(topping) {
+        |    "beef" -> 1
+        |    "lettuce" -> 2
+        |    "cheese" -> 3
+        |    else -> throw IllegalToppingException(topping)
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2310,11 +2310,11 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    private val foo: String
+        |  private val foo: String
         |
-        |    private const val FOO: String = "FOO"
+        |  private const val FOO: String = "FOO"
         |
-        |    override fun toString(): String = FOO
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -2341,17 +2341,17 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    private val foo: String
+        |  private val foo: String
         |
-        |    private const val FOO: String = "FOO"
+        |  private const val FOO: String = "FOO"
         |
-        |    init {
-        |        foo = "FOO"
-        |    }
+        |  init {
+        |    foo = "FOO"
+        |  }
         |
-        |    constructor()
+        |  constructor()
         |
-        |    override fun toString(): String = FOO
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -2386,17 +2386,17 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    private val foo: String
+        |  private val foo: String
         |
-        |    private const val FOO: String = "FOO"
+        |  private const val FOO: String = "FOO"
         |
-        |    init {
-        |        foo = "instanceFoo"
-        |    }
+        |  init {
+        |    foo = "instanceFoo"
+        |  }
         |
-        |    constructor()
+        |  constructor()
         |
-        |    override fun toString(): String = FOO
+        |  override fun toString(): String = FOO
         |}
         |""".trimMargin())
   }
@@ -2554,13 +2554,13 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |object MyObject {
-        |    val tacos: Int
+        |  val tacos: Int
         |
-        |    init {
-        |    }
+        |  init {
+        |  }
         |
-        |    fun test() {
-        |    }
+        |  fun test() {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2582,11 +2582,11 @@ class TypeSpecTest {
         |import com.squareup.wire.Message
         |
         |object MyObject : Message() {
-        |    init {
-        |    }
+        |  init {
+        |  }
         |
-        |    fun test() {
-        |    }
+        |  fun test() {
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2612,12 +2612,12 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class MyClass {
-        |    companion object {
-        |        val tacos: Int = 42
+        |  companion object {
+        |    val tacos: Int = 42
         |
-        |        fun test() {
-        |        }
+        |    fun test() {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2644,13 +2644,13 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class MyClass {
-        |    companion object {
-        |        var tacos: Int = 24
+        |  companion object {
+        |    var tacos: Int = 24
         |
-        |        init {
-        |            tacos = 42
-        |        }
+        |    init {
+        |      tacos = 42
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2668,10 +2668,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |class MyClass {
-        |    companion object Factory {
-        |        fun tacos() {
-        |        }
+        |  companion object Factory {
+        |    fun tacos() {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2692,10 +2692,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |interface MyInterface {
-        |    companion object {
-        |        fun test() {
-        |        }
+        |  companion object {
+        |    fun test() {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2718,14 +2718,14 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |enum class MyEnum {
-        |    FOO,
+        |  FOO,
         |
-        |    BAR;
+        |  BAR;
         |
-        |    companion object {
-        |        fun test() {
-        |        }
+        |  companion object {
+        |    fun test() {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2766,10 +2766,10 @@ class TypeSpecTest {
         |import com.squareup.wire.Message
         |
         |class MyClass {
-        |    companion object : Message() {
-        |        fun test() {
-        |        }
+        |  companion object : Message() {
+        |    fun test() {
         |    }
+        |  }
         |}
         |""".trimMargin())
   }
@@ -2820,11 +2820,11 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco(
-        |    /**
-        |     * KDoc
-        |     */
-        |    val a: Int,
-        |    val b: String
+        |  /**
+        |   * KDoc
+        |   */
+        |  val a: Int,
+        |  val b: String
         |)
         |""".trimMargin())
   }
@@ -2920,9 +2920,9 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    val taco: String = "taco"
+        |  val taco: String = "taco"
         |
-        |    val nullTaco: String? = null
+        |  val nullTaco: String? = null
         |}
         |""".trimMargin())
   }
@@ -2960,7 +2960,7 @@ class TypeSpecTest {
       |import java.lang.Exception
       |
       |class IoException : Exception {
-      |    constructor()
+      |  constructor()
       |}
       |""".trimMargin())
   }
@@ -3051,11 +3051,11 @@ class TypeSpecTest {
         |import kotlin.collections.Map
         |
         |class Taco(
-        |    val a: String?,
-        |    val b: String?,
-        |    val c: String?
+        |  val a: String?,
+        |  val b: String?,
+        |  val c: String?
         |) {
-        |    constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
+        |  constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
         |""".trimMargin())
   }
@@ -3146,9 +3146,9 @@ class TypeSpecTest {
       |import kotlin.String
       |
       |data class Person(
-      |    override val id: Int,
-      |    override val name: String,
-      |    override val surname: String
+      |  override val id: Int,
+      |  override val name: String,
+      |  override val surname: String
       |)
       |""".trimMargin())
   }
@@ -3204,11 +3204,11 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class Taco {
-        |    fun shell() {
-        |        val taco1: String = "Taco!"
-        |        val taco2: String? = null
-        |        lateinit var taco3: String
-        |    }
+        |  fun shell() {
+        |    val taco1: String = "Taco!"
+        |    val taco2: String? = null
+        |    lateinit var taco3: String
+        |  }
         |}
         |""".trimMargin())
   }
@@ -3274,7 +3274,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
-        |        Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
+        |    Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -3349,7 +3349,7 @@ class TypeSpecTest {
           |package com.squareup.tacos
           |
           |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) :
-          |        TypeBuilder<EntityBuilder, Entity> by argBuilder
+          |    TypeBuilder<EntityBuilder, Entity> by argBuilder
           |""".trimMargin())
   }
 
@@ -3363,7 +3363,7 @@ class TypeSpecTest {
       |package com.squareup.tacos
       |
       |external class Foo {
-      |    fun bar()
+      |  fun bar()
       |}
       |""".trimMargin())
   }
@@ -3381,9 +3381,9 @@ class TypeSpecTest {
       |import kotlin.String
       |
       |external interface Foo {
-      |    val baz: String
+      |  val baz: String
       |
-      |    fun bar()
+      |  fun bar()
       |}
       |""".trimMargin())
   }
@@ -3402,9 +3402,9 @@ class TypeSpecTest {
       |import kotlin.String
       |
       |external object Foo {
-      |    val baz: String
+      |  val baz: String
       |
-      |    fun bar()
+      |  fun bar()
       |}
       |""".trimMargin())
   }
@@ -3430,17 +3430,17 @@ class TypeSpecTest {
       |package com.squareup.tacos
       |
       |external class Foo {
-      |    class Nested1 {
-      |        fun baz()
+      |  class Nested1 {
+      |    fun baz()
       |
-      |        object Nested2 {
-      |            fun bar()
-      |        }
+      |    object Nested2 {
+      |      fun bar()
       |    }
+      |  }
       |
-      |    companion object {
-      |        fun qux()
-      |    }
+      |  companion object {
+      |    fun qux()
+      |  }
       |}
       |""".trimMargin())
   }
@@ -3508,7 +3508,7 @@ class TypeSpecTest {
       |import kotlin.Int
       |
       |data class Taco(val madeFreshDatabaseDate: java.sql.Taco, fooNt: Int) {
-      |    constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
+      |  constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
       |}
       |""".trimMargin())
   }
@@ -3635,10 +3635,10 @@ class TypeSpecTest {
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
     |class Foo {
-    |    /**
-    |     * The bar for your foo
-    |     */
-    |    val bar: kotlin.String
+    |  /**
+    |   * The bar for your foo
+    |   */
+    |  val bar: kotlin.String
     |}
     |""".trimMargin())
   }
@@ -3674,18 +3674,18 @@ class TypeSpecTest {
       | * This is a thing for stuff.
       | */
       |class MyType(
-      |    /**
-      |     * the first thing
-      |     */
-      |    val first: kotlin.Int,
-      |    /**
-      |     * the second thing
-      |     */
-      |    val second: kotlin.Int,
-      |    /**
-      |     * the third thing
-      |     */
-      |    val third: kotlin.Int
+      |  /**
+      |   * the first thing
+      |   */
+      |  val first: kotlin.Int,
+      |  /**
+      |   * the second thing
+      |   */
+      |  val second: kotlin.Int,
+      |  /**
+      |   * the third thing
+      |   */
+      |  val third: kotlin.Int
       |)
       |""".trimMargin())
   }
@@ -3700,10 +3700,10 @@ class TypeSpecTest {
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
       |class MyType(
-      |    /**
-      |     * the first thing
-      |     */
-      |    first: kotlin.Int
+      |  /**
+      |   * the first thing
+      |   */
+      |  first: kotlin.Int
       |)
       |""".trimMargin())
   }
@@ -3724,10 +3724,10 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |class Taco {
-        |    fun getAnswer(): Int {
-        |        // Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        |        return 42
-        |    }
+        |  fun getAnswer(): Int {
+        |    // Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        |    return 42
+        |  }
         |}
         |""".trimMargin())
   }

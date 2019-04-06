@@ -63,14 +63,14 @@ class FileSpecTest {
         |import kotlin.collections.List
         |
         |class HelloWorld {
-        |    fun beyond(): List<Hoverboard> {
-        |        val result = ArrayList<Hoverboard>()
-        |        result.add(createNimbus(2000))
-        |        result.add(createNimbus("2001"))
-        |        result.add(createNimbus(THUNDERBOLT))
-        |        sort(result)
-        |        return if (result.isEmpty()) emptyList() else result
-        |    }
+        |  fun beyond(): List<Hoverboard> {
+        |    val result = ArrayList<Hoverboard>()
+        |    result.add(createNimbus(2000))
+        |    result.add(createNimbus("2001"))
+        |    result.add(createNimbus(THUNDERBOLT))
+        |    sort(result)
+        |    return if (result.isEmpty()) emptyList() else result
+        |  }
         |}
         |""".trimMargin())
   }
@@ -102,13 +102,13 @@ class FileSpecTest {
         |import java.lang.Thread.State.valueOf
         |
         |class Taco {
-        |    init {
-        |        assert valueOf("BLOCKED") == BLOCKED
-        |        gc()
-        |        out.println(nanoTime())
-        |    }
+        |  init {
+        |    assert valueOf("BLOCKED") == BLOCKED
+        |    gc()
+        |    out.println(nanoTime())
+        |  }
         |
-        |    constructor(vararg states: Thread.State)
+        |  constructor(vararg states: Thread.State)
         |}
         |""".trimMargin())
   }
@@ -169,10 +169,10 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |    fun minutesToSeconds(minutes: Long): Long {
-        |        System.gc()
-        |        return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
-        |    }
+        |  fun minutesToSeconds(minutes: Long): Long {
+        |    System.gc()
+        |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
+        |  }
         |}
         |""".trimMargin())
   }
@@ -190,10 +190,10 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |    fun minutesToSeconds(minutes: Long): Long {
-        |        System.gc()
-        |        return SECONDS.convert(minutes, TimeUnit.MINUTES)
-        |    }
+        |  fun minutesToSeconds(minutes: Long): Long {
+        |    System.gc()
+        |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
+        |  }
         |}
         |""".trimMargin())
   }
@@ -213,10 +213,10 @@ class FileSpecTest {
         |import kotlin.Long
         |
         |class Util {
-        |    fun minutesToSeconds(minutes: Long): Long {
-        |        System.gc()
-        |        return SECONDS.convert(minutes, MINUTES)
-        |    }
+        |  fun minutesToSeconds(minutes: Long): Long {
+        |    System.gc()
+        |    return SECONDS.convert(minutes, MINUTES)
+        |  }
         |}
         |""".trimMargin())
   }
@@ -263,7 +263,7 @@ class FileSpecTest {
         |import java.util.Date
         |
         |class Taco {
-        |    val madeFreshDate: Date
+        |  val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -280,7 +280,7 @@ class FileSpecTest {
         |import com.squareup.`is`.`fun`.`in`.Date
         |
         |class Taco {
-        |    val madeFreshDate: Date
+        |  val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -298,9 +298,9 @@ class FileSpecTest {
         |import java.util.Date
         |
         |class Taco {
-        |    val madeFreshDate: Date
+        |  val madeFreshDate: Date
         |
-        |    val madeFreshDatabaseDate: java.sql.Date
+        |  val madeFreshDatabaseDate: java.sql.Date
         |}
         |""".trimMargin())
   }
@@ -318,9 +318,9 @@ class FileSpecTest {
         |import com.squareup.`is`.`fun`.`in`.Date
         |
         |class Taco {
-        |    val madeFreshDate1: Date
+        |  val madeFreshDate1: Date
         |
-        |    val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
+        |  val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
         |""".trimMargin())
   }
@@ -362,7 +362,7 @@ class FileSpecTest {
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
       |fun sleepForFiveMins() {
-      |    MINS.sleep(5)
+      |  MINS.sleep(5)
       |}
       |""".trimMargin())
   }
@@ -386,17 +386,17 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |    class B {
-        |        class Twin
+        |  class B {
+        |    class Twin
         |
-        |        class C {
-        |            val d: A.Twin.D
-        |        }
+        |    class C {
+        |      val d: A.Twin.D
         |    }
+        |  }
         |
-        |    class Twin {
-        |        class D
-        |    }
+        |  class Twin {
+        |    class D
+        |  }
         |}
         |""".trimMargin())
   }
@@ -420,17 +420,17 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |    class B {
-        |        class C {
-        |            val d: A.Twin.D
+        |  class B {
+        |    class C {
+        |      val d: A.Twin.D
         |
-        |            class Twin
-        |        }
+        |      class Twin
         |    }
+        |  }
         |
-        |    class Twin {
-        |        class D
-        |    }
+        |  class Twin {
+        |    class D
+        |  }
         |}
         |""".trimMargin())
   }
@@ -456,19 +456,19 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class A {
-        |    class B {
-        |        class C {
-        |            val d: Twin.D
+        |  class B {
+        |    class C {
+        |      val d: Twin.D
         |
-        |            class Nested {
-        |                class Twin
-        |            }
-        |        }
+        |      class Nested {
+        |        class Twin
+        |      }
         |    }
+        |  }
         |
-        |    class Twin {
-        |        class D
-        |    }
+        |  class Twin {
+        |    class D
+        |  }
         |}
         |""".trimMargin())
   }
@@ -488,7 +488,7 @@ class FileSpecTest {
         |import com.squareup.wire.Message
         |
         |class Taco : Message() {
-        |    class Builder : Message.Builder()
+        |  class Builder : Message.Builder()
         |}
         |""".trimMargin())
   }
@@ -510,8 +510,8 @@ class FileSpecTest {
         |
         |@Component
         |class TestComponent {
-        |    @Component.Builder
-        |    class Builder
+        |  @Component.Builder
+        |  class Builder
         |}
         |""".trimMargin())
   }
@@ -532,9 +532,9 @@ class FileSpecTest {
         |import kotlin.String
         |
         |class HelloWorld {
-        |    fun main(args: Array<String>) {
-        |        System.out.println("Hello World!");
-        |    }
+        |  fun main(args: Array<String>) {
+        |    System.out.println("Hello World!");
+        |  }
         |}
         |""".trimMargin())
   }
@@ -595,9 +595,9 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |class Taco {
-        |    val a: com.squareup.tacos.A
+        |  val a: com.squareup.tacos.A
         |
-        |    class A
+        |  class A
         |}
         |""".trimMargin())
   }
@@ -730,8 +730,8 @@ class FileSpecTest {
       |import kotlin.Int
       |
       |fun add5ToInput(input: Int): BigInteger {
-      |    val inputBigInt = bigInt(input)
-      |    return inputBigInt.add(5)
+      |  val inputBigInt = bigInt(input)
+      |  return inputBigInt.add(5)
       |}
       |""".trimMargin())
   }

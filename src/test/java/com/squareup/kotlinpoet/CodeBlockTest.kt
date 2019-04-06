@@ -84,7 +84,7 @@ class CodeBlockTest {
     map.put("text", "tacos")
     val block = CodeBlock.builder()
         .addNamed("⇥\n%text:L for\n⇤%%3.50", map).build()
-    assertThat(block.toString()).isEqualTo("\n    tacos for\n%3.50")
+    assertThat(block.toString()).isEqualTo("\n  tacos for\n%3.50")
   }
 
   @Test fun missingNamedArgument() {
@@ -386,7 +386,7 @@ class CodeBlockTest {
         .build()
     assertThat(controlFlow.toString()).isEqualTo("""
       |list.forEach { element ->
-      |    println(element)
+      |  println(element)
       |}
       |""".trimMargin())
   }
@@ -399,7 +399,7 @@ class CodeBlockTest {
         .build()
     assertThat(controlFlow.toString()).isEqualTo("""
       |listOf("${'$'}{1.toString()}").forEach { element ->
-      |    println(element)
+      |  println(element)
       |}
       |""".trimMargin())
   }
@@ -414,9 +414,9 @@ class CodeBlockTest {
     }
     assertThat(codeBlock.toString()).isEqualTo("""
       |if (2 == 2) {
-      |    println("foo")
+      |  println("foo")
       |} else {
-      |    println("bar")
+      |  println("bar")
       |}
       |""".trimMargin())
   }
@@ -424,8 +424,8 @@ class CodeBlockTest {
   @Test fun nonWrappingControlFlow() {
     val file = FileSpec.builder("com.squareup.tacos", "Test")
         .addFunction(FunSpec.builder("test")
-            .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line")
-            .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2")
+            .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line ")
+            .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2 ")
             .endControlFlow()
             .build())
         .build()
@@ -433,11 +433,11 @@ class CodeBlockTest {
       |package com.squareup.tacos
       |
       |fun test() {
-      |    if ("Very long string that would wrap the line" ==
-      |            "Very long string that would wrap the line") {
-      |    } else if ("Long string that would wrap the line 2" ==
-      |            "Long string that would wrap the line 2") {
-      |    }
+      |  if ("Very long string that would wrap the line " ==
+      |      "Very long string that would wrap the line ") {
+      |  } else if ("Long string that would wrap the line 2 " ==
+      |      "Long string that would wrap the line 2 ") {
+      |  }
       |}
       |""".trimMargin())
   }
