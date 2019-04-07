@@ -27,6 +27,9 @@ afterEvaluate {
 
 dependencies {
   api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+  implementation("com.github.shyiko.ktlint:ktlint-core:0.31.0")
+  implementation("com.github.shyiko.ktlint:ktlint-ruleset-standard:0.31.0")
+  implementation("com.github.shyiko.ktlint:ktlint-ruleset-experimental:0.31.0")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
   testImplementation("com.google.truth:truth:0.42")
