@@ -148,4 +148,17 @@ class ClassNameTest {
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("a.b.c.Foo\$Bar\$Baz")
   }
+
+  @Test fun constructorReferences() {
+    assertThat(String::class.asClassName().constructorReference().toString())
+        .isEqualTo("::kotlin.String")
+    assertThat(Thread.State::class.asClassName().constructorReference().toString())
+        .isEqualTo("java.lang.Thread::State")
+    assertThat(ClassName("", "Foo").constructorReference().toString())
+        .isEqualTo("::Foo")
+    assertThat(ClassName("", "Foo", "Bar", "Baz").constructorReference().toString())
+        .isEqualTo("Foo.Bar::Baz")
+    assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").constructorReference().toString())
+        .isEqualTo("a.b.c.Foo.Bar::Baz")
+  }
 }
