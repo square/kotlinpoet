@@ -334,6 +334,43 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun escapeSpacesInImports() {
+    val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
+    val file = FileSpec.builder("com.example", "TacoFactoryDemo")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%T.produceTacos())", tacoFactory)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.`taco factory`.TacoFactory
+      |
+      |fun main() {
+      |  println(TacoFactory.produceTacos())
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun escapeSpacesInAliasedImports() {
+    val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
+    val file = FileSpec.builder("com.example", "TacoFactoryDemo")
+        .addAliasedImport(tacoFactory, "Taqueria")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%T.produceTacos())", tacoFactory)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.`taco factory`.TacoFactory as Taqueria
+      |
+      |fun main() {
+      |  println(Taqueria.produceTacos())
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun aliasedImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addAliasedImport(java.lang.String::class.java, "JString")
