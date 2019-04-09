@@ -142,13 +142,14 @@ class FileSpec private constructor(
     val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
     val imports = (importedTypeNames + importedMemberNames)
         .filterNot { it in memberImports.keys }
+        .map { it.escapeSegmentsIfNecessary() }
         .plus(nonAliasedImports.map { it.toString() })
         .toSortedSet()
         .plus(aliasedImports.map { it.toString() }.toSortedSet())
 
     if (imports.isNotEmpty()) {
-      for (className in imports) {
-        codeWriter.emitCode("import·%L", className.escapeKeywords())
+      for (import in imports) {
+        codeWriter.emitCode("import·%L", import)
         codeWriter.emit("\n")
       }
       codeWriter.emit("\n")
