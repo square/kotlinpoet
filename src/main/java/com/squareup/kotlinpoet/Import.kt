@@ -24,7 +24,7 @@ internal data class Import(
   private val importString = buildString {
     append(qualifiedName.escapeSegmentsIfNecessary())
     if (alias != null) {
-      append(" as $alias")
+      append(" as ${alias.escapeIfNecessary()}")
     }
   }
 

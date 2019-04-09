@@ -355,7 +355,7 @@ class FileSpecTest {
   @Test fun escapeSpacesInAliasedImports() {
     val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
     val file = FileSpec.builder("com.example", "TacoFactoryDemo")
-        .addAliasedImport(tacoFactory, "Taqueria")
+        .addAliasedImport(tacoFactory, "La Taqueria")
         .addFunction(FunSpec.builder("main")
             .addStatement("println(%T.produceTacos())", tacoFactory)
             .build())
@@ -363,10 +363,10 @@ class FileSpecTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.example
       |
-      |import com.squareup.`taco factory`.TacoFactory as Taqueria
+      |import com.squareup.`taco factory`.TacoFactory as `La Taqueria`
       |
       |fun main() {
-      |  println(Taqueria.produceTacos())
+      |  println(`La Taqueria`.produceTacos())
       |}
       |""".trimMargin())
   }
