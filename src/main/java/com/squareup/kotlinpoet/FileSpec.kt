@@ -129,7 +129,7 @@ class FileSpec private constructor(
 
     codeWriter.pushPackage(packageName)
 
-    val escapedPackageName = packageName.escapeKeywords()
+    val escapedPackageName = packageName.escapeSegmentsIfNecessary()
 
     if (escapedPackageName.isNotEmpty()) {
       codeWriter.emitCode("package·%L\n", escapedPackageName)

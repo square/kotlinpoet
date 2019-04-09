@@ -153,6 +153,10 @@ internal fun String.escapeIfNotJavaIdentifier() =
 
 internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword()
 
+internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
+    .filter { it.isNotEmpty() }
+    .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 internal val String.isKeyword get() = this in KEYWORDS
