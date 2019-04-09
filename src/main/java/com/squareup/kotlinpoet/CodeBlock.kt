@@ -338,7 +338,7 @@ class CodeBlock private constructor(
 
     private fun addArgument(format: String, c: Char, arg: Any?) {
       when (c) {
-        'N' -> this.args += argToName(arg).escapeIfKeyword()
+        'N' -> this.args += argToName(arg).escapeIfNecessary()
         'L' -> this.args += argToLiteral(arg)
         'S' -> this.args += argToString(arg)
         'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)

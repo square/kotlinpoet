@@ -41,7 +41,7 @@ class ParameterSpec private constructor(
     if (emitKdoc) codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     codeWriter.emitAnnotations(annotations, true)
     codeWriter.emitModifiers(modifiers)
-    if (name.isNotEmpty()) codeWriter.emitCode("%L", name.escapeIfNecessary())
+    if (name.isNotEmpty()) codeWriter.emitCode("%N", this)
     if (name.isNotEmpty() && includeType) codeWriter.emitCode(":·")
     if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
