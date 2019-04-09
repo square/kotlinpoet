@@ -343,7 +343,7 @@ class ClassName internal constructor(
    */
   override fun compareTo(other: ClassName) = canonicalName.compareTo(other.canonicalName)
 
-  override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
+  override fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
   companion object {
     /**

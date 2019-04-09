@@ -148,4 +148,22 @@ class ClassNameTest {
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
         .isEqualTo("a.b.c.Foo\$Bar\$Baz")
   }
+
+  @Test fun spacesEscaping() {
+    val tacoFactory = ClassName("com.squareup.taco factory", "Taco Factory")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%T.produceTacos())", tacoFactory)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.`taco factory`.`Taco Factory`
+      |
+      |fun main() {
+      |  println(`Taco Factory`.produceTacos())
+      |}
+      |""".trimMargin())
+  }
 }
