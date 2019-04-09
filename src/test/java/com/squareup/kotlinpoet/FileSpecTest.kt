@@ -285,6 +285,15 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun escapeSpacesInPackageName() {
+    val file = FileSpec.builder("com.squareup.taco factory", "TacoFactory")
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.`taco factory`
+      |
+      |""".trimMargin())
+  }
+
   @Test fun conflictingImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
