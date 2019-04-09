@@ -47,7 +47,7 @@ data class MemberName internal constructor(
     append(simpleName)
   }
 
-  internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeKeywords())
+  internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
   override fun toString() = canonicalName
 

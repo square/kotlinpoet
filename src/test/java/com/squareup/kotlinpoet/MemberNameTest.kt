@@ -16,9 +16,9 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import org.junit.Before
 import org.junit.Test
-import com.squareup.kotlinpoet.MemberName.Companion.member
 
 class MemberNameTest {
   @Test fun memberNames() {
@@ -214,6 +214,24 @@ class MemberNameTest {
       |fun whenTastyTacos() {
       |  `when`()
       |  TwitterTacos.Companion.`when`()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun spacesEscaping() {
+    val produceTacos = MemberName("com.squareup.taco factory", "produce tacos")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%M())", produceTacos)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.`taco factory`.`produce tacos`
+      |
+      |fun main() {
+      |  println(`produce tacos`())
       |}
       |""".trimMargin())
   }
