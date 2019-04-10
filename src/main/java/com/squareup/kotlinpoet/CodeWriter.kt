@@ -409,13 +409,13 @@ internal class CodeWriter constructor(
     val importedMember = importedMembers[simpleName]
     if (importedMember == memberName) {
       return simpleName
-    } else if (memberName.enclosingClassName != null) {
+    } else if (importedMember != null && memberName.enclosingClassName != null) {
       val enclosingClassName = lookupName(memberName.enclosingClassName)
       return "$enclosingClassName.$simpleName"
     }
 
     // If the member is in the same package, we're done.
-    if (packageName == memberName.packageName) {
+    if (packageName == memberName.packageName && memberName.enclosingClassName == null) {
       referencedNames.add(memberName.simpleName)
       return memberName.simpleName
     }

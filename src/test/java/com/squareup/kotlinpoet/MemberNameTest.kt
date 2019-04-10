@@ -92,8 +92,10 @@ class MemberNameTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import com.squareup.tacos.Town.createTaco
+      |
       |fun makeTastyTacos() {
-      |  Town.createTaco()
+      |  createTaco()
       |}
       |""".trimMargin())
   }
