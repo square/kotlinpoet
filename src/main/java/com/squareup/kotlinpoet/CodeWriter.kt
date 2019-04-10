@@ -409,7 +409,7 @@ internal class CodeWriter constructor(
     val importedMember = importedMembers[simpleName]
     if (importedMember == memberName) {
       return simpleName
-    } else if (importedMember != null && memberName.enclosingClassName != null) {
+    } else if (memberName.enclosingClassName != null) {
       val enclosingClassName = lookupName(memberName.enclosingClassName)
       return "$enclosingClassName.$simpleName"
     }
