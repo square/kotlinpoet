@@ -415,7 +415,7 @@ internal class CodeWriter constructor(
     }
 
     // If the member is in the same package, we're done.
-    if (packageName == memberName.packageName) {
+    if (packageName == memberName.packageName && memberName.enclosingClassName == null) {
       referencedNames.add(memberName.simpleName)
       return memberName.simpleName
     }

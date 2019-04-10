@@ -79,6 +79,27 @@ class MemberNameTest {
       |""".trimMargin())
   }
 
+  @Test fun memberInsideClassInSamePackage() {
+    val createTaco = MemberName(
+        ClassName("com.squareup.tacos", "Town"),
+        "createTaco"
+    )
+    val file = FileSpec.builder("com.squareup.tacos", "Tacos")
+        .addFunction(FunSpec.builder("makeTastyTacos")
+            .addStatement("%M()", createTaco)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.tacos.Town.createTaco
+      |
+      |fun makeTastyTacos() {
+      |  createTaco()
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun memberNamesClash() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
