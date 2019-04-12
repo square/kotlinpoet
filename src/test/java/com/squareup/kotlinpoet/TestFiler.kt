@@ -48,7 +48,7 @@ internal class TestFiler(
 
   private val separator = fileSystem.separator
   private val fileSystemProvider = fileSystem.provider()
-  private val originatingElementsMap = mutableMapOf<Path, Set<Element>>()
+  private val originatingElementsMap = mutableMapOf<Path, List<Element>>()
 
   fun getOriginatingElements(path: Path) = originatingElementsMap[path] ?: throw NullPointerException("Could not find $path")
 
@@ -56,7 +56,7 @@ internal class TestFiler(
       name: CharSequence, vararg originatingElements: Element): JavaFileObject {
     val relative = name.toString().replace(".", separator) + ".kt" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap[path] = Arrays.asList(*originatingElements).toImmutableSet()
+    originatingElementsMap[path] = originatingElements.toList()
     return Source(path)
   }
 
@@ -67,7 +67,7 @@ internal class TestFiler(
       relativeName: CharSequence, vararg originatingElements: Element): FileObject {
     val relative = pkg.toString().replace(".", separator) + separator + relativeName
     val path = fileSystemRoot.resolve(relative)
-    originatingElementsMap[path] = Arrays.asList(*originatingElements).toImmutableSet()
+    originatingElementsMap[path] = originatingElements.toList()
     return Source(path)
   }
 
