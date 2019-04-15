@@ -99,8 +99,10 @@ class FileSpec private constructor(
   /** Writes this to `filer`.  */
   @Throws(IOException::class)
   fun writeTo(filer: Filer) {
-    val originatingElements = members.filterIsInstance<OriginatingElementsHolder>()
-        .flatMap(OriginatingElementsHolder::originatingElements)
+    val originatingElements = members.asSequence()
+        .filterIsInstance<OriginatingElementsHolder>()
+        .flatMap { it.originatingElements.asSequence() }
+        .toSet()
     val filerSourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT,
         packageName,
         "$name.kt",
