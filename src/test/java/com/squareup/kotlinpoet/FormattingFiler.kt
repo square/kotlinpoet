@@ -3,7 +3,6 @@ package com.squareup.kotlinpoet
 import com.github.shyiko.ktlint.core.KtLint
 import com.github.shyiko.ktlint.core.ParseException
 import com.github.shyiko.ktlint.core.RuleExecutionException
-import com.github.shyiko.ktlint.core.RuleSet
 import com.github.shyiko.ktlint.core.RuleSetProvider
 import java.io.Writer
 import java.util.ServiceLoader
@@ -20,39 +19,39 @@ import javax.tools.JavaFileObject
  * while writing them out and delegates to [this] for anything else.
  *
  * @receiver the filer to decorate.
- * @param ruleSets optional custom [RuleSets][RuleSet] to use. Default is to load via the
- *                 [RuleSetProvider] SPI.
+ * @param ruleSetProviders optional custom [RuleSetProviders][RuleSetProvider] to use. Default is
+ *                         to load via the [RuleSetProvider] SPI. Note we must accept providers
+ *                         because individual [RuleSets][RuleSet] are not threadsafe.
  * @param userData optional custom user data mapping to supply. Default is to just specify 2 space
  *                 (continuation) indent sizes.
  * @param messager An optional [Messager] may be specified to make logs more visible.
  */
 fun Filer.asFormatting(
-    ruleSets: Iterable<RuleSet> = ServiceLoader.load(RuleSetProvider::class.java)
-        .asIterable()
-        .map(RuleSetProvider::get),
+    ruleSetProviders: Iterable<RuleSetProvider> = ServiceLoader.load(RuleSetProvider::class.java)
+        .asIterable(),
     userData: Map<String, String> = mapOf(
         "indent_size" to "2",
         "continuation_indent_size" to "2"
     ),
     messager: Messager? = null
-): Filer = FormattingFiler(this, ruleSets, userData, messager)
+): Filer = FormattingFiler(this, ruleSetProviders, userData, messager)
 
 private class FormattingFiler(
     private val delegate: Filer,
-    private val ruleSets: Iterable<RuleSet>,
+    private val ruleSetProviders: Iterable<RuleSetProvider>,
     private val userData: Map<String, String>,
     private val messager: Messager? = null
 ) : Filer by delegate {
   override fun createSourceFile(name: CharSequence,
       vararg originatingElements: Element): JavaFileObject {
     return FormattingJavaFileObject(
-        delegate.createSourceFile(name, *originatingElements), ruleSets, userData, messager)
+        delegate.createSourceFile(name, *originatingElements), ruleSetProviders, userData, messager)
   }
 }
 
 private class FormattingJavaFileObject(
     private val delegate: JavaFileObject,
-    private val ruleSets: Iterable<RuleSet>,
+    private val ruleSetProviders: Iterable<RuleSetProvider>,
     private val userData: Map<String, String>,
     private val messager: Messager?) : JavaFileObject by delegate {
 
@@ -75,7 +74,7 @@ private class FormattingJavaFileObject(
         try {
           val formatted = KtLint.format(
               unformatted,
-              ruleSets,
+              ruleSetProviders.map(RuleSetProvider::get),
               userData
           ) { _, _ ->
             // TODO in CR: Optionally record corrections here?
