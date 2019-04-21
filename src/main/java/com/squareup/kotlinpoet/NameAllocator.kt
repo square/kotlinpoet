@@ -100,9 +100,7 @@ class NameAllocator private constructor(
   }
 
   /** Retrieve a name created with [NameAllocator.newName]. */
-  operator fun get(tag: Any): String {
-    return tagToName[tag] ?: throw IllegalArgumentException("unknown tag: $tag")
-  }
+  operator fun get(tag: Any): String = requireNotNull(tagToName[tag]) { "unknown tag: $tag" }
 
   /**
    * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
