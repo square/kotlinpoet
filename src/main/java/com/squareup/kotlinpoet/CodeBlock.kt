@@ -355,6 +355,7 @@ class CodeBlock private constructor(
       is PropertySpec -> o.name
       is FunSpec -> o.name
       is TypeSpec -> o.name!!
+      is MemberName -> o.simpleName
       else -> throw IllegalArgumentException("expected name but was $o")
     }
 

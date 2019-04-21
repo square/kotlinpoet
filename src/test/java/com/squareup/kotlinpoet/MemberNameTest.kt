@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.MemberName.Companion.member
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.junit.Before
 import org.junit.Test
 
@@ -295,5 +296,28 @@ class MemberNameTest {
   @Test fun memberExtension_class() {
     assertThat(Regex::class.java.member("fromLiteral"))
         .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
+  }
+
+  @Test fun `%N escapes MemberNames`() {
+    val taco = ClassName("com.squareup.tacos", "Taco")
+    val packager = ClassName("com.squareup.tacos", "TacoPackager")
+    val file = FileSpec.builder("com.example", "Test")
+        .addFunction(FunSpec.builder("packageTacos")
+            .addParameter("tacos", LIST.parameterizedBy(taco))
+            .addParameter("packager", packager)
+            .addStatement("packager.%N(tacos)", packager.member("package"))
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.tacos.Taco
+      |import com.squareup.tacos.TacoPackager
+      |import kotlin.collections.List
+      |
+      |fun packageTacos(tacos: List<Taco>, packager: TacoPackager) {
+      |  packager.`package`(tacos)
+      |}
+      |""".trimMargin())
   }
 }
