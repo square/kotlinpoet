@@ -247,6 +247,14 @@ sealed class TypeName constructor(
 @JvmField val FLOAT_ARRAY = ClassName("kotlin", "FloatArray")
 @JvmField val DOUBLE_ARRAY = ClassName("kotlin", "DoubleArray")
 @JvmField val ENUM = ClassName("kotlin", "Enum")
+@JvmField val U_BYTE = ClassName("kotlin", "UByte")
+@JvmField val U_SHORT = ClassName("kotlin", "UShort")
+@JvmField val U_INT = ClassName("kotlin", "UInt")
+@JvmField val U_LONG = ClassName("kotlin", "ULong")
+@JvmField val U_BYTE_ARRAY = ClassName("kotlin", "UByteArray")
+@JvmField val U_SHORT_ARRAY = ClassName("kotlin", "UShortArray")
+@JvmField val U_INT_ARRAY = ClassName("kotlin", "UIntArray")
+@JvmField val U_LONG_ARRAY = ClassName("kotlin", "ULongArray")
 
 /** The wildcard type `*` which is shorthand for `out Any?`. */
 @JvmField val STAR = WildcardTypeName.producerOf(ANY.copy(nullable = true))
