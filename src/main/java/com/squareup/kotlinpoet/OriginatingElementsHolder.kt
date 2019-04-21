@@ -44,5 +44,5 @@ internal fun List<Element>.buildOriginatingElements() =
     OriginatingElements(toImmutableList())
 
 internal class OriginatingElements(
-    override val originatingElements: List<Element>
+  override val originatingElements: List<Element>
 ) : OriginatingElementsHolder

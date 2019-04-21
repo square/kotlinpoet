@@ -71,7 +71,9 @@ class TypesEclipseTest : AbstractTypesTest() {
             }
 
             override fun process(
-                annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+              annotations: Set<TypeElement>,
+              roundEnv: RoundEnvironment
+            ): Boolean {
               // just run the test on the last round after compilation is over
               if (roundEnv.processingOver()) {
                 try {

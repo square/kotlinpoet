@@ -189,7 +189,7 @@ class TypeSpec private constructor(
           }
         }
         val superTypes = types + superinterfaces.entries.map { (type, init) ->
-            if (init == null)  CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type)
+            if (init == null) CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type)
         }
 
         if (superTypes.isNotEmpty()) {
@@ -397,7 +397,7 @@ class TypeSpec private constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ): Taggable.Builder<TypeSpec.Builder>, OriginatingElementsHolder.Builder<TypeSpec.Builder> {
+  ) : Taggable.Builder<TypeSpec.Builder>, OriginatingElementsHolder.Builder<TypeSpec.Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -441,8 +441,8 @@ class TypeSpec private constructor(
       annotationSpecs += annotationSpec
     }
 
-    fun addAnnotation(annotation: ClassName)
-        = addAnnotation(AnnotationSpec.builder(annotation).build())
+    fun addAnnotation(annotation: ClassName) =
+        addAnnotation(AnnotationSpec.builder(annotation).build())
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
@@ -541,11 +541,11 @@ class TypeSpec private constructor(
       }
     }
 
-    fun addSuperinterface(superinterface: Type, delegate: CodeBlock = CodeBlock.EMPTY)
-        = addSuperinterface(superinterface.asTypeName(), delegate)
+    fun addSuperinterface(superinterface: Type, delegate: CodeBlock = CodeBlock.EMPTY) =
+        addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY)
-        = addSuperinterface(superinterface.asTypeName(), delegate)
+    fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY) =
+        addSuperinterface(superinterface.asTypeName(), delegate)
 
     fun addSuperinterface(superinterface: KClass<*>, constructorParameterName: String) =
         addSuperinterface(superinterface.asTypeName(), constructorParameterName)
@@ -584,14 +584,14 @@ class TypeSpec private constructor(
       propertySpecs += propertySpec
     }
 
-    fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier)
-        = addProperty(PropertySpec.builder(name, type, *modifiers).build())
+    fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier) =
+        addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
-    fun addProperty(name: String, type: Type, vararg modifiers: KModifier)
-        = addProperty(name, type.asTypeName(), *modifiers)
+    fun addProperty(name: String, type: Type, vararg modifiers: KModifier) =
+        addProperty(name, type.asTypeName(), *modifiers)
 
-    fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = addProperty(name, type.asTypeName(), *modifiers)
+    fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+        addProperty(name, type.asTypeName(), *modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
       checkCanHaveInitializerBlocks()
@@ -739,7 +739,7 @@ class TypeSpec private constructor(
 
     @JvmStatic fun annotationBuilder(name: String) = Builder(Kind.CLASS, name, ANNOTATION)
 
-    @JvmStatic fun annotationBuilder(className: ClassName)
-        = annotationBuilder(className.simpleName)
+    @JvmStatic fun annotationBuilder(className: ClassName) =
+        annotationBuilder(className.simpleName)
   }
 }

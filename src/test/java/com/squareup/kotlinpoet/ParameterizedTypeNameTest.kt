@@ -135,7 +135,7 @@ class ParameterizedTypeNameTest {
 
   @Test fun kTypeOutAnyOnTypeWithoutBoundsVariance() = assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
 
-  private fun <Param: Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
+  private fun <Param : Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
 
-  private fun <Param: Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
+  private fun <Param : Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
 }

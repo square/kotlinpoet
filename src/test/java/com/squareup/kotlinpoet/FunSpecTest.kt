@@ -49,8 +49,8 @@ class FunSpecTest {
   }
 
   private fun findFirst(elements: Collection<ExecutableElement>, name: String) =
-      elements.firstOrNull { it.simpleName.toString() == name } ?:
-          throw IllegalArgumentException("$name not found in $elements")
+      elements.firstOrNull { it.simpleName.toString() == name }
+          ?: throw IllegalArgumentException("$name not found in $elements")
 
   @Target(AnnotationTarget.VALUE_PARAMETER)
   internal annotation class Nullable
@@ -58,7 +58,9 @@ class FunSpecTest {
   internal abstract class Everything {
     @Deprecated("") @Throws(IOException::class, SecurityException::class)
     protected abstract fun <T> everything(
-        @Nullable thing: String, things: List<T>): Runnable where T : Runnable, T : Closeable
+      @Nullable thing: String,
+      things: List<T>
+    ): Runnable where T : Runnable, T : Closeable
   }
 
   internal abstract class HasAnnotation {
@@ -243,7 +245,7 @@ class FunSpecTest {
             .addKdoc("A string parameter.")
             .build())
         .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
-        .returns(String::class,  kdoc = "the foo.")
+        .returns(String::class, kdoc = "the foo.")
         .addStatement("return %S", "foo")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
@@ -526,9 +528,9 @@ class FunSpecTest {
         .addStatement("    override is String -> config + override")
         .addStatement("    else -> config + %S", "{ttl:500}")
         .endControlFlow()
-        .build();
+        .build()
 
-    assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec);
+    assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
 
   @Test fun receiverWithKdoc() {

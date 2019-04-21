@@ -1130,9 +1130,9 @@ class TypeSpecTest {
             .addKdoc("True for a soft flour tortilla; false for a crunchy corn tortilla.\n")
             .build())
         .addFunction(FunSpec.builder("refold")
-            .addKdoc("Folds the back of this taco to reduce sauce leakage.\n"
-                + "\n"
-                + "For [%T#KOREAN], the front may also be folded.\n", Locale::class)
+            .addKdoc("Folds the back of this taco to reduce sauce leakage.\n" +
+                "\n" +
+                "For [%T#KOREAN], the front may also be folded.\n", Locale::class)
             .addParameter("locale", Locale::class)
             .build())
         .build()
@@ -1604,10 +1604,10 @@ class TypeSpecTest {
         .addParameter("taco", ClassName(tacosPackage, "Taco"))
         .addStatement("this.%N = %N", "taco", "taco")
         .build()
-    assertThat(constructor.toString()).isEqualTo(""
-        + "constructor(taco: com.squareup.tacos.Taco) {\n"
-        + "  this.taco = taco\n"
-        + "}\n")
+    assertThat(constructor.toString()).isEqualTo("" +
+        "constructor(taco: com.squareup.tacos.Taco) {\n" +
+        "  this.taco = taco\n" +
+        "}\n")
   }
 
   @Test fun parameterToString() {
@@ -1622,8 +1622,8 @@ class TypeSpecTest {
   @Test fun classToString() {
     val type = TypeSpec.classBuilder("Taco")
         .build()
-    assertThat(type.toString()).isEqualTo(""
-        + "class Taco\n")
+    assertThat(type.toString()).isEqualTo("" +
+        "class Taco\n")
   }
 
   @Test fun anonymousClassToString() {
@@ -3387,7 +3387,6 @@ class TypeSpecTest {
       |}
       |""".trimMargin())
   }
-
 
   @Test fun externalObjectWithMembers() {
     val typeSpec = TypeSpec.objectBuilder("Foo")

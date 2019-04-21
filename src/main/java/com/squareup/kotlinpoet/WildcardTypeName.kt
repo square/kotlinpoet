@@ -20,8 +20,8 @@ package com.squareup.kotlinpoet
 import java.lang.reflect.WildcardType
 
 @JvmName("get")
-fun javax.lang.model.type.WildcardType.asWildcardTypeName()
-    = WildcardTypeName.get(this, mutableMapOf())
+fun javax.lang.model.type.WildcardType.asWildcardTypeName() =
+    WildcardTypeName.get(this, mutableMapOf())
 
 @JvmName("get")
 fun WildcardType.asWildcardTypeName() = WildcardTypeName.get(this, mutableMapOf())

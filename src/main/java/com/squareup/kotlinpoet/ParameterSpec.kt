@@ -145,18 +145,18 @@ class ParameterSpec private constructor(
           .build()
     }
 
-    @JvmStatic fun parametersOf(method: ExecutableElement)
-        = method.parameters.map { ParameterSpec.get(it) }
+    @JvmStatic fun parametersOf(method: ExecutableElement) =
+        method.parameters.map { ParameterSpec.get(it) }
 
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       return Builder(name, type).addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier) =
+        builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+        builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic fun unnamed(type: KClass<*>) = unnamed(type.asTypeName())
 

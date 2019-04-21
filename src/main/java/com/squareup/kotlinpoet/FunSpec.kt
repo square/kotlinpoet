@@ -357,8 +357,8 @@ class FunSpec private constructor(
 
     @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
 
-    fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any)
-        = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+    fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any) =
+        returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
       for (parameterSpec in parameterSpecs) {
@@ -392,14 +392,14 @@ class FunSpec private constructor(
       delegateConstructorArguments = args.toList()
     }
 
-    fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier)
-        = addParameter(ParameterSpec.builder(name, type, *modifiers).build())
+    fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier) =
+        addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
-    fun addParameter(name: String, type: Type, vararg modifiers: KModifier)
-        = addParameter(name, type.asTypeName(), *modifiers)
+    fun addParameter(name: String, type: Type, vararg modifiers: KModifier) =
+        addParameter(name, type.asTypeName(), *modifiers)
 
-    fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = addParameter(name, type.asTypeName(), *modifiers)
+    fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+        addParameter(name, type.asTypeName(), *modifiers)
 
     fun addCode(format: String, vararg args: Any?) = apply {
       body.add(format, *args)
@@ -476,9 +476,9 @@ class FunSpec private constructor(
      */
     @JvmStatic fun overriding(method: ExecutableElement): Builder {
       var modifiers: Set<Modifier> = method.modifiers
-      require(Modifier.PRIVATE !in modifiers
-          && Modifier.FINAL !in modifiers
-          && Modifier.STATIC !in modifiers) {
+      require(Modifier.PRIVATE !in modifiers &&
+          Modifier.FINAL !in modifiers &&
+          Modifier.STATIC !in modifiers) {
         "cannot override method with modifiers: $modifiers"
       }
 

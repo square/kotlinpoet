@@ -136,8 +136,8 @@ sealed class TypeName constructor(
         override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
           val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
           val enclosingType = t.enclosingType
-          val enclosing = if (enclosingType.kind != TypeKind.NONE
-              && Modifier.STATIC !in t.asElement().modifiers)
+          val enclosing = if (enclosingType.kind != TypeKind.NONE &&
+              Modifier.STATIC !in t.asElement().modifiers)
             enclosingType.accept(this, null) else
             null
           if (t.typeArguments.isEmpty() && enclosing !is ParameterizedTypeName) {
@@ -276,16 +276,16 @@ fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
 
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName internal constructor(
-    names: List<String>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  names: List<String>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations), Comparable<ClassName> {
   /**
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
    */
-  constructor(packageName: String, simpleName: String, vararg simpleNames: String)
-      : this(listOf(packageName, simpleName, *simpleNames))
+  constructor(packageName: String, simpleName: String, vararg simpleNames: String) :
+      this(listOf(packageName, simpleName, *simpleNames))
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`.  */
   private val names = names.toImmutableList()
@@ -443,12 +443,12 @@ object Dynamic : TypeName(false, emptyList()) {
 }
 
 class LambdaTypeName private constructor(
-    val receiver: TypeName? = null,
-    parameters: List<ParameterSpec> = emptyList(),
-    val returnType: TypeName = UNIT,
-    nullable: Boolean = false,
-    val isSuspending: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  val receiver: TypeName? = null,
+  parameters: List<ParameterSpec> = emptyList(),
+  val returnType: TypeName = UNIT,
+  nullable: Boolean = false,
+  val isSuspending: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val parameters = parameters.toImmutableList()
 
@@ -503,16 +503,16 @@ class LambdaTypeName private constructor(
   companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        parameters: List<ParameterSpec> = emptyList(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      parameters: List<ParameterSpec> = emptyList(),
+      returnType: TypeName
     ) = LambdaTypeName(receiver, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        vararg parameters: TypeName = emptyArray(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      vararg parameters: TypeName = emptyArray(),
+      returnType: TypeName
     ): LambdaTypeName {
       return LambdaTypeName(
           receiver,
@@ -522,19 +522,19 @@ class LambdaTypeName private constructor(
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
-        receiver: TypeName? = null,
-        vararg parameters: ParameterSpec = emptyArray(),
-        returnType: TypeName
+      receiver: TypeName? = null,
+      vararg parameters: ParameterSpec = emptyArray(),
+      returnType: TypeName
     ) = LambdaTypeName(receiver, parameters.toList(), returnType)
   }
 }
 
 class ParameterizedTypeName internal constructor(
-    private val enclosingType: TypeName?,
-    val rawType: ClassName,
-    typeArguments: List<TypeName>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  private val enclosingType: TypeName?,
+  val rawType: ClassName,
+  typeArguments: List<TypeName>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val typeArguments = typeArguments.toImmutableList()
 
@@ -581,17 +581,17 @@ class ParameterizedTypeName internal constructor(
    * Returns a new [ParameterizedTypeName] instance for the specified `name` as nested inside this
    * class, with the specified `typeArguments`.
    */
-  fun nestedClass(name: String, typeArguments: List<TypeName>)
-      = ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
+  fun nestedClass(name: String, typeArguments: List<TypeName>) =
+      ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
 
   companion object {
     /** Returns a parameterized type, applying `typeArguments` to `this`.  */
-    @JvmStatic @JvmName("get") fun ClassName.parameterizedBy(vararg typeArguments: TypeName)
-        = ParameterizedTypeName(null, this, typeArguments.toList())
+    @JvmStatic @JvmName("get") fun ClassName.parameterizedBy(vararg typeArguments: TypeName) =
+        ParameterizedTypeName(null, this, typeArguments.toList())
 
     /** Returns a parameterized type, applying `typeArguments` to `this`.  */
-    @JvmStatic @JvmName("get") fun KClass<*>.parameterizedBy(vararg typeArguments: KClass<*>)
-        = ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
+    @JvmStatic @JvmName("get") fun KClass<*>.parameterizedBy(vararg typeArguments: KClass<*>) =
+        ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `this`.  */
     @JvmStatic @JvmName("get") fun Class<*>.parameterizedBy(vararg typeArguments: Type) =
@@ -611,12 +611,12 @@ class ParameterizedTypeName internal constructor(
 
     /** Returns a parameterized type equivalent to `type`.  */
     internal fun get(
-        type: ParameterizedType,
-        map: MutableMap<Type, TypeVariableName>
+      type: ParameterizedType,
+      map: MutableMap<Type, TypeVariableName>
     ): ParameterizedTypeName {
       val rawType = (type.rawType as Class<*>).asClassName()
-      val ownerType = if (type.ownerType is ParameterizedType
-          && !isStatic((type.rawType as Class<*>).modifiers))
+      val ownerType = if (type.ownerType is ParameterizedType &&
+          !isStatic((type.rawType as Class<*>).modifiers))
         type.ownerType as ParameterizedType else
         null
 
@@ -660,14 +660,14 @@ class ParameterizedTypeName internal constructor(
 }
 
 class TypeVariableName private constructor(
-    val name: String,
-    val bounds: List<TypeName>,
+  val name: String,
+  val bounds: List<TypeName>,
 
-    /** Either [KModifier.IN], [KModifier.OUT], or null. */
-    val variance: KModifier? = null,
-    val isReified: Boolean = false,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  /** Either [KModifier.IN], [KModifier.OUT], or null. */
+  val variance: KModifier? = null,
+  val isReified: Boolean = false,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
 
   override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): TypeVariableName {
@@ -735,8 +735,8 @@ class TypeVariableName private constructor(
      * in `variables` will make sure that the bounds are filled in before returning.
      */
     internal fun get(
-        mirror: javax.lang.model.type.TypeVariable,
-        typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+      mirror: javax.lang.model.type.TypeVariable,
+      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
     ): TypeVariableName {
       val element = mirror.asElement() as TypeParameterElement
       var typeVariableName: TypeVariableName? = typeVariables[element]
@@ -757,8 +757,8 @@ class TypeVariableName private constructor(
 
     /** Returns type variable equivalent to `type`.  */
     internal fun get(
-        type: TypeVariable<*>,
-        map: MutableMap<Type, TypeVariableName> = mutableMapOf()
+      type: TypeVariable<*>,
+      map: MutableMap<Type, TypeVariableName> = mutableMapOf()
     ): TypeVariableName {
       var result: TypeVariableName? = map[type]
       if (result == null) {
@@ -777,10 +777,10 @@ class TypeVariableName private constructor(
 }
 
 class WildcardTypeName private constructor(
-    outTypes: List<TypeName>,
-    inTypes: List<TypeName>,
-    nullable: Boolean = false,
-    annotations: List<AnnotationSpec> = emptyList()
+  outTypes: List<TypeName>,
+  inTypes: List<TypeName>,
+  nullable: Boolean = false,
+  annotations: List<AnnotationSpec> = emptyList()
 ) : TypeName(nullable, annotations) {
   val outTypes = outTypes.toImmutableList()
   val inTypes = inTypes.toImmutableList()
@@ -824,8 +824,8 @@ class WildcardTypeName private constructor(
     @JvmStatic fun consumerOf(inType: KClass<*>) = consumerOf(inType.asTypeName())
 
     internal fun get(
-        mirror: javax.lang.model.type.WildcardType,
-        typeVariables: Map<TypeParameterElement, TypeVariableName>
+      mirror: javax.lang.model.type.WildcardType,
+      typeVariables: Map<TypeParameterElement, TypeVariableName>
     ): TypeName {
       val outType = mirror.extendsBound
       if (outType == null) {
@@ -841,8 +841,8 @@ class WildcardTypeName private constructor(
     }
 
     internal fun get(
-        wildcardName: WildcardType,
-        map: MutableMap<Type, TypeVariableName>
+      wildcardName: WildcardType,
+      map: MutableMap<Type, TypeVariableName>
     ): TypeName {
       return WildcardTypeName(
           wildcardName.upperBounds.map { TypeName.get(it, map = map) },
