@@ -18,8 +18,7 @@ package com.squareup.kotlinpoet
 import kotlin.reflect.KClass
 
 /**
- * Represents the name of a member (such as a function or a property) that can be used in a static
- * context.
+ * Represents the name of a member (such as a function or a property).
  *
  * @param packageName e.g. `kotlin.collections`
  * @param enclosingClassName e.g. `Map.Entry.Companion`, if the member is declared inside the
