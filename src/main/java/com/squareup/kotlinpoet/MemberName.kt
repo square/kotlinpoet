@@ -47,6 +47,19 @@ data class MemberName internal constructor(
     append(simpleName)
   }
 
+  /**
+   * Callable reference to this member. Emits [enclosingClassName] if it exists, followed by
+   * the reference operator `::`, followed by either [simpleName] or the fully-qualified
+   * name if this is a top-level member.
+   *
+   * Note: As `::$packageName.$simpleName` is not valid syntax, an aliased import may be
+   * required for a top-level member with a conflicting name.
+   */
+  fun reference(): CodeBlock = when (enclosingClassName) {
+    null -> CodeBlock.of("::%M", this)
+    else -> CodeBlock.of("%T::%N", enclosingClassName, simpleName)
+  }
+
   internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
   override fun toString() = canonicalName

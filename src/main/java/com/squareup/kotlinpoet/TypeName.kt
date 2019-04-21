@@ -317,6 +317,23 @@ class ClassName internal constructor(
     }
   }
 
+  /**
+   * Callable reference to the constructor of this class. Emits the enclosing class if one exists,
+   * followed by the reference operator `::`, followed by either [simpleName] or the
+   * fully-qualified name if this is a top-level class.
+   *
+   * Note: As `::$packageName.$simpleName` is not valid syntax, an aliased import may be required
+   * for a top-level class with a conflicting name.
+   */
+  fun constructorReference(): CodeBlock {
+    val enclosing = enclosingClassName()
+    return if (enclosing != null) {
+      CodeBlock.of("%T::%N", enclosing, simpleName)
+    } else {
+      CodeBlock.of("::%T", this)
+    }
+  }
+
   /** Returns a new [ClassName] instance for the specified `name` as nested inside this class. */
   fun nestedClass(name: String) = ClassName(names + name)
 

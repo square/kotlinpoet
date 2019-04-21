@@ -239,6 +239,30 @@ class MemberNameTest {
       |""".trimMargin())
   }
 
+  @Test fun memberReferences() {
+    val randomTaco = MemberName("com.squareup.tacos", "randomTaco")
+    val bestTacoEver = ClassName("com.squareup.tacos", "TacoTruck")
+        .member("bestTacoEver")
+    val funSpec = FunSpec.builder("makeTastyTacos")
+        .addStatement("val randomTacoFactory = %L", randomTaco.reference())
+        .addStatement("val bestTacoFactory = %L", bestTacoEver.reference())
+        .build()
+    val file = FileSpec.builder("com.example", "Tacos")
+        .addFunction(funSpec)
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.tacos.TacoTruck
+      |import com.squareup.tacos.randomTaco
+      |
+      |fun makeTastyTacos() {
+      |  val randomTacoFactory = ::randomTaco
+      |  val bestTacoFactory = TacoTruck::bestTacoEver
+      |}
+      |""".trimMargin())
+  }
+  
   @Test fun spacesEscaping() {
     val produceTacos = MemberName("com.squareup.taco factory", "produce tacos")
     val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
