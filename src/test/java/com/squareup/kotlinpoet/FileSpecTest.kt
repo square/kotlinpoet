@@ -285,6 +285,15 @@ class FileSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun escapeSpacesInPackageName() {
+    val file = FileSpec.builder("com.squareup.taco factory", "TacoFactory")
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.`taco factory`
+      |
+      |""".trimMargin())
+  }
+
   @Test fun conflictingImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco")
@@ -323,6 +332,43 @@ class FileSpecTest {
         |  val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
         |""".trimMargin())
+  }
+
+  @Test fun escapeSpacesInImports() {
+    val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
+    val file = FileSpec.builder("com.example", "TacoFactoryDemo")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%T.produceTacos())", tacoFactory)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.`taco factory`.TacoFactory
+      |
+      |fun main() {
+      |  println(TacoFactory.produceTacos())
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun escapeSpacesInAliasedImports() {
+    val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
+    val file = FileSpec.builder("com.example", "TacoFactoryDemo")
+        .addAliasedImport(tacoFactory, "La Taqueria")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%T.produceTacos())", tacoFactory)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.`taco factory`.TacoFactory as `La Taqueria`
+      |
+      |fun main() {
+      |  println(`La Taqueria`.produceTacos())
+      |}
+      |""".trimMargin())
   }
 
   @Test fun aliasedImports() {

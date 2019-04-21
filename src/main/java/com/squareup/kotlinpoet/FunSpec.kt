@@ -125,7 +125,7 @@ class FunSpec private constructor(
           codeWriter.emitCode("%T.", receiverType)
         }
       }
-      codeWriter.emitCode("%L", name.escapeIfNecessary())
+      codeWriter.emitCode("%N", this)
     }
 
     if (!isEmptySetter) {

@@ -99,8 +99,10 @@ class FileSpec private constructor(
   /** Writes this to `filer`.  */
   @Throws(IOException::class)
   fun writeTo(filer: Filer) {
-    val originatingElements = members.filterIsInstance<OriginatingElementsHolder>()
-        .flatMap(OriginatingElementsHolder::originatingElements)
+    val originatingElements = members.asSequence()
+        .filterIsInstance<OriginatingElementsHolder>()
+        .flatMap { it.originatingElements.asSequence() }
+        .toSet()
     val filerSourceFile = filer.createResource(StandardLocation.SOURCE_OUTPUT,
         packageName,
         "$name.kt",
@@ -129,7 +131,7 @@ class FileSpec private constructor(
 
     codeWriter.pushPackage(packageName)
 
-    val escapedPackageName = packageName.escapeKeywords()
+    val escapedPackageName = packageName.escapeSegmentsIfNecessary()
 
     if (escapedPackageName.isNotEmpty()) {
       codeWriter.emitCode("package·%L\n", escapedPackageName)
@@ -142,13 +144,14 @@ class FileSpec private constructor(
     val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
     val imports = (importedTypeNames + importedMemberNames)
         .filterNot { it in memberImports.keys }
+        .map { it.escapeSegmentsIfNecessary() }
         .plus(nonAliasedImports.map { it.toString() })
         .toSortedSet()
         .plus(aliasedImports.map { it.toString() }.toSortedSet())
 
     if (imports.isNotEmpty()) {
-      for (className in imports) {
-        codeWriter.emitCode("import·%L", className.escapeKeywords())
+      for (import in imports) {
+        codeWriter.emitCode("import·%L", import)
         codeWriter.emit("\n")
       }
       codeWriter.emit("\n")

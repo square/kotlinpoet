@@ -16,9 +16,9 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import org.junit.Before
 import org.junit.Test
-import com.squareup.kotlinpoet.MemberName.Companion.member
 
 class MemberNameTest {
   @Test fun memberNames() {
@@ -72,6 +72,27 @@ class MemberNameTest {
         .build()
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
+      |
+      |fun makeTastyTacos() {
+      |  createTaco()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun memberInsideClassInSamePackage() {
+    val createTaco = MemberName(
+        ClassName("com.squareup.tacos", "Town"),
+        "createTaco"
+    )
+    val file = FileSpec.builder("com.squareup.tacos", "Tacos")
+        .addFunction(FunSpec.builder("makeTastyTacos")
+            .addStatement("%M()", createTaco)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.tacos.Town.createTaco
       |
       |fun makeTastyTacos() {
       |  createTaco()
@@ -238,6 +259,24 @@ class MemberNameTest {
       |fun makeTastyTacos() {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
+      |}
+      |""".trimMargin())
+  }
+  
+  @Test fun spacesEscaping() {
+    val produceTacos = MemberName("com.squareup.taco factory", "produce tacos")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+        .addFunction(FunSpec.builder("main")
+            .addStatement("println(%M())", produceTacos)
+            .build())
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import com.squareup.`taco factory`.`produce tacos`
+      |
+      |fun main() {
+      |  println(`produce tacos`())
       |}
       |""".trimMargin())
   }

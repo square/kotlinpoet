@@ -207,6 +207,28 @@ class FileWritingTest {
     )
   }
 
+  @Test fun filerPassesOnlyUniqueOriginatingElements() {
+    val element1 = FakeElement()
+    val fun1 = FunSpec.builder("test1")
+        .addOriginatingElement(element1)
+        .build()
+
+    val element2 = FakeElement()
+    val fun2 = FunSpec.builder("test2")
+        .addOriginatingElement(element1)
+        .addOriginatingElement(element2)
+        .build()
+
+    FileSpec.builder("example", "File")
+        .addFunction(fun1)
+        .addFunction(fun2)
+        .build()
+        .writeTo(filer)
+
+    val file = fsRoot.resolve(fs.getPath("example", "File.kt"))
+    assertThat(filer.getOriginatingElements(file)).containsExactly(element1, element2)
+  }
+
   @Test fun filerClassesWithTabIndent() {
     val test = TypeSpec.classBuilder("Test")
         .addProperty("madeFreshDate", Date::class)

@@ -22,9 +22,9 @@ internal data class Import(
 ) : Comparable<Import> {
 
   private val importString = buildString {
-    append(qualifiedName)
+    append(qualifiedName.escapeSegmentsIfNecessary())
     if (alias != null) {
-      append(" as $alias")
+      append(" as ${alias.escapeIfNecessary()}")
     }
   }
 
