@@ -1,9 +1,11 @@
 import org.jetbrains.dokka.gradle.DokkaTask
+import kotlin.collections.mapOf
 
 plugins {
   kotlin("jvm") version "1.3.30"
   id("org.jetbrains.dokka") version "0.9.18"
   id("com.vanniktech.maven.publish") version "0.8.0"
+  id("com.diffplug.gradle.spotless") version "3.22.0"
 }
 
 val GROUP: String by project
@@ -22,6 +24,15 @@ afterEvaluate {
   tasks.named<DokkaTask>("dokka") {
     skipDeprecated = true
     outputFormat = "html"
+  }
+}
+
+spotless {
+  kotlin {
+    target("**/*.kt")
+    ktlint("0.31.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    trimTrailingWhitespace()
+    endWithNewline()
   }
 }
 
