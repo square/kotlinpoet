@@ -23,11 +23,11 @@ import java.util.UUID
  * mix of user-supplied names and constants:
  *
  * ```
- *   val nameAllocator = NameAllocator()
- *   for (property in properties) {
- *     nameAllocator.newName(property.name, property)
- *   }
- *   nameAllocator.newName("sb", "string builder")
+ * val nameAllocator = NameAllocator()
+ * for (property in properties) {
+ *   nameAllocator.newName(property.name, property)
+ * }
+ * nameAllocator.newName("sb", "string builder")
  * ```
  *
  * Pass a unique tag object to each allocation. The tag scopes the name, and can be used to look up
@@ -38,19 +38,19 @@ import java.util.UUID
  * Once we've allocated names we can use them when generating code:
  *
  * ```
- *   val builder = FunSpec.builder("toString")
- *       .addModifiers(KModifier.OVERRIDE)
- *       .returns(String::class)
+ * val builder = FunSpec.builder("toString")
+ *     .addModifiers(KModifier.OVERRIDE)
+ *     .returns(String::class)
  *
- *   builder.addStatement("val %N = %T()",
- *       nameAllocator.get("string builder"), StringBuilder::class)
+ * builder.addStatement("val %N = %T()",
+ *     nameAllocator.get("string builder"), StringBuilder::class)
  *
- *   for (property in properties) {
- *     builder.addStatement("%N.append(%N)",
- *         nameAllocator.get("string builder"), nameAllocator.get(property))
- *   }
- *   builder.addStatement("return %N.toString()", nameAllocator.get("string builder"))
- *   return builder.build()
+ * for (property in properties) {
+ *   builder.addStatement("%N.append(%N)",
+ *       nameAllocator.get("string builder"), nameAllocator.get(property))
+ * }
+ * builder.addStatement("return %N.toString()", nameAllocator.get("string builder"))
+ * return builder.build()
  * ```
  *
  * The above code generates unique names if presented with conflicts. Given user-supplied properties
@@ -58,10 +58,10 @@ import java.util.UUID
  *
  * ```
  * override fun toString(): kotlin.String {
- *     val sb_ = java.lang.StringBuilder()
- *     sb_.append(ab)
- *     sb_.append(sb)
- *     return sb_.toString()
+ *   val sb_ = java.lang.StringBuilder()
+ *   sb_.append(ab)
+ *   sb_.append(sb)
+ *   return sb_.toString()
  * }
  * ```
  *
@@ -118,15 +118,17 @@ private fun toJavaIdentifier(suggestion: String) = buildString {
   var i = 0
   while (i < suggestion.length) {
     val codePoint = suggestion.codePointAt(i)
-    if (i == 0
-        && !Character.isJavaIdentifierStart(codePoint)
-        && Character.isJavaIdentifierPart(codePoint)) {
+    if (i == 0 &&
+        !Character.isJavaIdentifierStart(codePoint) &&
+        Character.isJavaIdentifierPart(codePoint)) {
       append("_")
     }
 
-    val validCodePoint: Int = if (Character.isJavaIdentifierPart(codePoint))
-      codePoint else
+    val validCodePoint: Int = if (Character.isJavaIdentifierPart(codePoint)) {
+      codePoint
+    } else {
       '_'.toInt()
+    }
     appendCodePoint(validCodePoint)
     i += Character.charCount(codePoint)
   }
