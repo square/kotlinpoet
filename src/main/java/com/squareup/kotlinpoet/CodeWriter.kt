@@ -100,13 +100,13 @@ internal class CodeWriter constructor(
   }
 
   fun pushPackage(packageName: String) = apply {
-    require(this.packageName === NO_PACKAGE) { "package already set: ${this.packageName}" }
+    check(this.packageName === NO_PACKAGE) { "package already set: ${this.packageName}" }
     this.packageName = packageName
   }
 
   fun popPackage() = apply {
-    require(this.packageName !== NO_PACKAGE) { "package already set: ${this.packageName}" }
-    this.packageName = NO_PACKAGE
+    check(packageName !== NO_PACKAGE) { "package already set: $packageName" }
+    packageName = NO_PACKAGE
   }
 
   fun pushType(type: TypeSpec) = apply {
