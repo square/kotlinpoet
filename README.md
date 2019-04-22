@@ -386,7 +386,7 @@ class HelloWorld {
 ### %M for Members
 
 Similar to types, KotlinPoet has a special placeholder for **members** (functions and properties),
-which comes handy when your code needs to access  top-level members and members declared inside
+which comes handy when your code needs to access top-level members and members declared inside
 objects. Use **`%M`** to reference members, pass an instance of `MemberName` as the argument for the
 placeholder, and KotlinPoet will handle imports automatically:
 
