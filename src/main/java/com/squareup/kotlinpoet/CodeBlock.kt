@@ -44,9 +44,9 @@ import kotlin.reflect.KClass
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
- *  * `%M` emits a *member* reference. A member is either a function or a property that can be
- *    accessed in a static context, e.g. a top-level function or a property inside an object.
- *    Members will be imported if possible. Arguments for members must be of type [MemberName].
+ *  * `%M` emits a *member* reference. A member is either a function or a property. If the member is
+ *    importable, e.g. it's a top-level function or a property declared inside an object, the import
+ *    will be resolved if possible. Arguments for members must be of type [MemberName].
  *  * `%%` emits a percent sign.
  *  * `·` emits a space that never wraps. KotlinPoet prefers to wrap lines longer than 100 columns.
  *    It does this by replacing normal spaces with a newline and indent. Note that spaces in strings
