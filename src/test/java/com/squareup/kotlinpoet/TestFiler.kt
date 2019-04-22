@@ -81,8 +81,7 @@ internal class TestFiler(
     location: JavaFileManager.Location,
     pkg: CharSequence,
     relativeName: CharSequence
-  ) =
-      throw UnsupportedOperationException("Not implemented.")
+  ) = throw UnsupportedOperationException("Not implemented.")
 }
 
 internal class FakeElement : Element {
