@@ -30,7 +30,7 @@ afterEvaluate {
 spotless {
   kotlin {
     target("**/*.kt")
-    ktlint("0.31.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    ktlint("0.31.0").userData(mapOf("indent_size" to "2"))
     trimTrailingWhitespace()
     endWithNewline()
   }
