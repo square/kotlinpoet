@@ -496,6 +496,36 @@ val byteToHex = FunSpec.builder("byteToHex")
     .build()
 ```
 
+Another handy feature that `%N` provides is automatically escaping names that contain illegal 
+identifier characters with double ticks. Suppose your code creates a `MemberName` with a Kotlin
+keyword as the simple name:
+
+```kotlin
+val taco = ClassName("com.squareup.tacos", "Taco")
+val packager = ClassName("com.squareup.tacos", "TacoPackager")
+val file = FileSpec.builder("com.example", "Test")
+    .addFunction(FunSpec.builder("packageTacos")
+        .addParameter("tacos", LIST.parameterizedBy(taco))
+        .addParameter("packager", packager)
+        .addStatement("packager.%N(tacos)", packager.member("package"))
+        .build())
+    .build()
+```
+
+`%N` will escape the name for you, ensuring that the output will pass compilation:
+
+```kotlin
+package com.example
+
+import com.squareup.tacos.Taco
+import com.squareup.tacos.TacoPackager
+import kotlin.collections.List
+
+fun packageTacos(tacos: List<Taco>, packager: TacoPackager) {
+  packager.`package`(tacos)
+}
+```
+
 ### %L for Literals
 
 Although Kotlin's string templates usually work well in cases when you want to include literals into 
