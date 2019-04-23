@@ -149,9 +149,9 @@ class PropertySpec private constructor(
   }
 
   class Builder internal constructor(
-      internal val name: String,
-      internal val type: TypeName
-  ): Taggable.Builder<PropertySpec.Builder>, OriginatingElementsHolder.Builder<PropertySpec.Builder> {
+    internal val name: String,
+    internal val type: TypeName
+  ) : Taggable.Builder<PropertySpec.Builder>, OriginatingElementsHolder.Builder<PropertySpec.Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -261,11 +261,10 @@ class PropertySpec private constructor(
           .addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier) =
+        builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier)
-        = builder(name, type.asTypeName(), *modifiers)
-
+    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+        builder(name, type.asTypeName(), *modifiers)
   }
 }

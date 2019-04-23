@@ -151,17 +151,17 @@ class AnnotationSpec private constructor(
     internal val builder: CodeBlock.Builder
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
-    override fun defaultAction(o: Any, name: String)
-        = builder.add(Builder.memberForValue(o))
+    override fun defaultAction(o: Any, name: String) =
+        builder.add(Builder.memberForValue(o))
 
-    override fun visitAnnotation(a: AnnotationMirror, name: String)
-        = builder.add("%L", get(a))
+    override fun visitAnnotation(a: AnnotationMirror, name: String) =
+        builder.add("%L", get(a))
 
-    override fun visitEnumConstant(c: VariableElement, name: String)
-        = builder.add("%T.%L", c.asType(), c.simpleName)
+    override fun visitEnumConstant(c: VariableElement, name: String) =
+        builder.add("%T.%L", c.asType(), c.simpleName)
 
-    override fun visitType(t: TypeMirror, name: String)
-        = builder.add("%T::class", t)
+    override fun visitType(t: TypeMirror, name: String) =
+        builder.add("%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
       builder.add("[⇥⇥")

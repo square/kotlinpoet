@@ -24,8 +24,8 @@ import kotlin.reflect.KVariance
 
 /** Returns type variable equivalent to `mirror`.  */
 @JvmName("get")
-fun TypeVariable.asTypeVariableName()
-    = (asElement() as TypeParameterElement).asTypeVariableName()
+fun TypeVariable.asTypeVariableName() =
+    (asElement() as TypeParameterElement).asTypeVariableName()
 
 /** Returns type variable equivalent to `element`.  */
 @JvmName("get")
@@ -37,7 +37,7 @@ fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
 
 fun KTypeParameter.asTypeVariableName(): TypeVariableName {
   return TypeVariableName.of(name, upperBounds.map { it.asTypeName() },
-      when(variance) {
+      when (variance) {
         KVariance.INVARIANT -> null
         KVariance.IN -> KModifier.IN
         KVariance.OUT -> KModifier.OUT

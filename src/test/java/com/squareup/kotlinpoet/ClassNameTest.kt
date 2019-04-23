@@ -129,9 +129,9 @@ class ClassNameTest {
     }
 
     // TODO
-    //assertThrows<IllegalArgumentException> {
+    // assertThrows<IllegalArgumentException> {
     //  Array<Int>::class.asClassName()
-    //}
+    // }
   }
 
   @Test fun reflectionName() {

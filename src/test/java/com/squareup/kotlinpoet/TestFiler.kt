@@ -19,7 +19,6 @@ import java.io.OutputStream
 import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Arrays
 import javax.annotation.processing.Filer
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
@@ -34,11 +33,12 @@ import javax.tools.JavaFileObject
 import javax.tools.SimpleJavaFileObject
 
 internal class TestFiler(
-    fileSystem: FileSystem,
-    private val fileSystemRoot: Path) : Filer {
+  fileSystem: FileSystem,
+  private val fileSystemRoot: Path
+) : Filer {
 
-  internal inner class Source(private val path: Path)
-    : SimpleJavaFileObject(path.toUri(), JavaFileObject.Kind.SOURCE) {
+  internal inner class Source(private val path: Path) :
+    SimpleJavaFileObject(path.toUri(), JavaFileObject.Kind.SOURCE) {
     override fun openOutputStream(): OutputStream {
       val parent = path.parent
       if (!Files.exists(parent)) fileSystemProvider.createDirectory(parent)
@@ -53,18 +53,24 @@ internal class TestFiler(
   fun getOriginatingElements(path: Path) = originatingElementsMap[path] ?: throw NullPointerException("Could not find $path")
 
   override fun createSourceFile(
-      name: CharSequence, vararg originatingElements: Element): JavaFileObject {
+    name: CharSequence,
+    vararg originatingElements: Element
+  ): JavaFileObject {
     val relative = name.toString().replace(".", separator) + ".kt" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
     originatingElementsMap[path] = originatingElements.toList()
     return Source(path)
   }
 
-  override fun createClassFile(name: CharSequence, vararg originatingElements: Element)
-      = throw UnsupportedOperationException("Not implemented.")
+  override fun createClassFile(name: CharSequence, vararg originatingElements: Element) =
+      throw UnsupportedOperationException("Not implemented.")
 
-  override fun createResource(location: JavaFileManager.Location, pkg: CharSequence,
-      relativeName: CharSequence, vararg originatingElements: Element): FileObject {
+  override fun createResource(
+    location: JavaFileManager.Location,
+    pkg: CharSequence,
+    relativeName: CharSequence,
+    vararg originatingElements: Element
+  ): FileObject {
     val relative = pkg.toString().replace(".", separator) + separator + relativeName
     val path = fileSystemRoot.resolve(relative)
     originatingElementsMap[path] = originatingElements.toList()
@@ -72,8 +78,10 @@ internal class TestFiler(
   }
 
   override fun getResource(
-      location: JavaFileManager.Location, pkg: CharSequence, relativeName: CharSequence)
-      = throw UnsupportedOperationException("Not implemented.")
+    location: JavaFileManager.Location,
+    pkg: CharSequence,
+    relativeName: CharSequence
+  ) = throw UnsupportedOperationException("Not implemented.")
 }
 
 internal class FakeElement : Element {
@@ -117,5 +125,4 @@ internal class FakeElement : Element {
   override fun getEnclosedElements(): MutableList<out Element> {
     TODO()
   }
-
 }

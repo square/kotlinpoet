@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.annotation.processing.Filer
-import javax.lang.model.element.Element
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
@@ -85,7 +84,7 @@ class FileSpec private constructor(
         outputDirectory = outputDirectory.resolve(packageComponent)
       }
     }
-    
+
     Files.createDirectories(outputDirectory)
 
     val outputPath = outputDirectory.resolve("$name.kt")
@@ -242,8 +241,8 @@ class FileSpec private constructor(
       }
     }
 
-    fun addAnnotation(annotation: ClassName)
-        = addAnnotation(AnnotationSpec.builder(annotation).build())
+    fun addAnnotation(annotation: ClassName) =
+        addAnnotation(AnnotationSpec.builder(annotation).build())
 
     fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
 
@@ -275,11 +274,11 @@ class FileSpec private constructor(
     fun addImport(constant: Enum<*>) = addImport(
         (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
-    fun addImport(`class`: Class<*>, vararg names: String)
-        = addImport(`class`.asClassName(), *names)
+    fun addImport(`class`: Class<*>, vararg names: String) =
+        addImport(`class`.asClassName(), *names)
 
-    fun addImport(`class`: KClass<*>, vararg names: String)
-        = addImport(`class`.asClassName(), *names)
+    fun addImport(`class`: KClass<*>, vararg names: String) =
+        addImport(`class`.asClassName(), *names)
 
     fun addImport(className: ClassName, vararg names: String) = apply {
       require(names.isNotEmpty()) { "names array is empty" }

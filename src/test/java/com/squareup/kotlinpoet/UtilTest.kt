@@ -99,6 +99,6 @@ class UtilTest {
 
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
-  private fun stringLiteral(expected: String, value: String)
-      = assertEquals("\"$expected\"", stringLiteralWithQuotes(value))
+  private fun stringLiteral(expected: String, value: String) =
+      assertEquals("\"$expected\"", stringLiteralWithQuotes(value))
 }

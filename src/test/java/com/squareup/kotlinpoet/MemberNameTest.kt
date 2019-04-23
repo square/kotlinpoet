@@ -262,7 +262,7 @@ class MemberNameTest {
       |}
       |""".trimMargin())
   }
-  
+
   @Test fun spacesEscaping() {
     val produceTacos = MemberName("com.squareup.taco factory", "produce tacos")
     val file = FileSpec.builder("com.squareup.tacos", "TacoTest")

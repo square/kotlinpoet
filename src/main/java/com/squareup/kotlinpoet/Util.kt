@@ -62,13 +62,13 @@ internal fun <T> Collection<T>.containsAnyOf(vararg t: T) = t.any(this::contains
 
 // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
 internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
-  c == '\b' -> "\\b"   // \u0008: backspace (BS)
-  c == '\t' -> "\\t"   // \u0009: horizontal tab (HT)
-  c == '\n' -> "\\n"   // \u000a: linefeed (LF)
-  c == '\r' -> "\\r"   // \u000d: carriage return (CR)
-  c == '\"' -> "\""    // \u0022: double quote (")
-  c == '\'' -> "\\'"   // \u0027: single quote (')
-  c == '\\' -> "\\\\"  // \u005c: backslash (\)
+  c == '\b' -> "\\b" // \u0008: backspace (BS)
+  c == '\t' -> "\\t" // \u0009: horizontal tab (HT)
+  c == '\n' -> "\\n" // \u000a: linefeed (LF)
+  c == '\r' -> "\\r" // \u000d: carriage return (CR)
+  c == '\"' -> "\"" // \u0022: double quote (")
+  c == '\'' -> "\\'" // \u0027: single quote (')
+  c == '\\' -> "\\\\" // \u005c: backslash (\)
   c.isIsoControl -> String.format("\\u%04x", c.toInt())
   else -> Character.toString(c)
 }
@@ -179,8 +179,8 @@ internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(t
   return@with build()
 }
 
-private val IDENTIFIER_REGEX
-    = ("((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
+private val IDENTIFIER_REGEX =
+    ("((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
     "\\d*" +
     "\\p{gc=Lu}*\\p{gc=Ll}*\\p{gc=Lt}*\\p{gc=Lm}*\\p{gc=Lo}*\\p{gc=Nl}*)" +
     "|" +

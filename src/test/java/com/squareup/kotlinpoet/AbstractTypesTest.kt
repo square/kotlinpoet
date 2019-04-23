@@ -211,16 +211,13 @@ abstract class AbstractTypesTest {
 
     override fun getKind() = declaredType.kind
 
-    override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P)
-        = typeVisitor.visitError(this, p)
+    override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P) = typeVisitor.visitError(this, p)
 
-    override fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A>
-        = throw UnsupportedOperationException()
+    override fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A> =
+        throw UnsupportedOperationException()
 
-    override fun <A : Annotation> getAnnotation(annotationType: Class<A>): A
-        = throw UnsupportedOperationException()
+    override fun <A : Annotation> getAnnotation(annotationType: Class<A>): A = throw UnsupportedOperationException()
 
-    override fun getAnnotationMirrors()
-        = throw UnsupportedOperationException()
+    override fun getAnnotationMirrors() = throw UnsupportedOperationException()
   }
 }
