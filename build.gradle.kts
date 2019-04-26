@@ -2,7 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import kotlin.collections.mapOf
 
 plugins {
-  kotlin("jvm") version "1.3.30"
+  kotlin("jvm") version "1.3.31"
   id("org.jetbrains.dokka") version "0.9.18"
   id("com.vanniktech.maven.publish") version "0.8.0"
   id("com.diffplug.gradle.spotless") version "3.22.0"
