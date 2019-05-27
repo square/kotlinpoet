@@ -55,7 +55,8 @@ class PropertySpec private constructor(
     implicitModifiers: Set<KModifier>,
     withInitializer: Boolean = true,
     emitKdoc: Boolean = true,
-    inline: Boolean = false
+    inline: Boolean = false,
+    inlineAnnotations: Boolean = inline
   ) {
     val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
         setter?.modifiers?.contains(KModifier.INLINE) ?: false
@@ -63,7 +64,7 @@ class PropertySpec private constructor(
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
-    codeWriter.emitAnnotations(annotations, inline)
+    codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emitCode(if (mutable) "var·" else "val·")
     if (typeVariables.isNotEmpty()) {

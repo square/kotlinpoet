@@ -73,7 +73,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmField
       |
       |class Taco(
-      |  @JvmField val foo: String
+      |  @JvmField
+      |  val foo: String
       |)
       |""".trimMargin())
   }
@@ -697,7 +698,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Transient
       |
       |class Taco(
-      |  @Transient val foo: String
+      |  @Transient
+      |  val foo: String
       |)
       |""".trimMargin())
   }
@@ -743,7 +745,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Volatile
       |
       |class Taco(
-      |  @Volatile val foo: String
+      |  @Volatile
+      |  val foo: String
       |)
       |""".trimMargin())
   }

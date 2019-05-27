@@ -36,10 +36,11 @@ class ParameterSpec private constructor(
   internal fun emit(
     codeWriter: CodeWriter,
     includeType: Boolean = true,
-    emitKdoc: Boolean = false
+    emitKdoc: Boolean = false,
+    inlineAnnotations: Boolean = true
   ) {
     if (emitKdoc) codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
-    codeWriter.emitAnnotations(annotations, true)
+    codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(modifiers)
     if (name.isNotEmpty()) codeWriter.emitCode("%N", this)
     if (name.isNotEmpty() && includeType) codeWriter.emitCode(":·")
