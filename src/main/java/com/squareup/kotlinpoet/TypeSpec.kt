@@ -166,10 +166,11 @@ class TypeSpec private constructor(
           it.parameters.emit(codeWriter, forceNewLines = true) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
-              property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true)
+              property.emit(codeWriter, setOf(PUBLIC), withInitializer = false, inline = true,
+                  inlineAnnotations = false)
               param.emitDefaultValue(codeWriter)
             } else {
-              param.emit(codeWriter, emitKdoc = true)
+              param.emit(codeWriter, emitKdoc = true, inlineAnnotations = false)
             }
           }
           codeWriter.popType()

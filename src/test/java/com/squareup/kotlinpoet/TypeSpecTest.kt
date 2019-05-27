@@ -3198,7 +3198,9 @@ class TypeSpecTest {
       |import kotlin.Int
       |
       |data class Person(
-      |  @OrderBy @Id private val id: Int = 1
+      |  @OrderBy
+      |  @Id
+      |  private val id: Int = 1
       |)
       |""".trimMargin())
   }

@@ -670,7 +670,8 @@ class KotlinPoetTest {
       |import kotlin.jvm.JvmField
       |
       |class Taco(
-      |  @JvmField val foo: String
+      |  @JvmField
+      |  val foo: String
       |)
       |""".trimMargin())
   }
@@ -797,7 +798,11 @@ class KotlinPoetTest {
       |import kotlin.String
       |
       |data class Taco(
-      |  @WireField(tag = 1, adapter = "CustomStringAdapterWithALongNameThatCauses") val name: String
+      |  @WireField(
+      |    tag = 1,
+      |    adapter = "CustomStringAdapterWithALongNameThatCauses"
+      |  )
+      |  val name: String
       |)
       |""".trimMargin())
   }
