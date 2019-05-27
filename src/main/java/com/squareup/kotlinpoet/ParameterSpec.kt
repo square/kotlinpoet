@@ -171,25 +171,21 @@ internal fun List<ParameterSpec>.emit(
   forceNewLines: Boolean = false,
   emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
 ) = with(codeWriter) {
-  val params = this@emit
   emit("(")
-  when {
-    size > 2 || forceNewLines -> {
+  if (size > 0) {
+    val emitNewLines = size > 2 || forceNewLines
+    if (emitNewLines) {
       emit("\n")
       indent(1)
-      forEachIndexed { index, parameter ->
-        if (index > 0) emit(",\n")
-        emitBlock(parameter)
-      }
+    }
+    val delimiter = if (emitNewLines) ",\n" else ", "
+    forEachIndexed { index, parameter ->
+      if (index > 0) emit(delimiter)
+      emitBlock(parameter)
+    }
+    if (emitNewLines) {
       unindent(1)
       emit("\n")
-    }
-    size == 0 -> emit("")
-    size == 1 -> emitBlock(params[0])
-    size == 2 -> {
-      emitBlock(params[0])
-      emit(", ")
-      emitBlock(params[1])
     }
   }
   emit(")")

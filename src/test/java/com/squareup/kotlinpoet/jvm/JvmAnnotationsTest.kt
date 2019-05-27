@@ -72,7 +72,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmField
       |
-      |class Taco(@JvmField val foo: String)
+      |class Taco(
+      |  @JvmField val foo: String
+      |)
       |""".trimMargin())
   }
 
@@ -252,7 +254,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Throws
       |
-      |class Taco @Throws(IOException::class) constructor(foo: String)
+      |class Taco @Throws(IOException::class) constructor(
+      |  foo: String
+      |)
       |""".trimMargin())
   }
 
@@ -345,7 +349,10 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmOverloads
       |
-      |class Taco @JvmOverloads constructor(bar: Int, baz: String = "baz")
+      |class Taco @JvmOverloads constructor(
+      |  bar: Int,
+      |  baz: String = "baz"
+      |)
       |""".trimMargin())
   }
 
@@ -689,7 +696,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Transient
       |
-      |class Taco(@Transient val foo: String)
+      |class Taco(
+      |  @Transient val foo: String
+      |)
       |""".trimMargin())
   }
 
@@ -733,7 +742,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Volatile
       |
-      |class Taco(@Volatile val foo: String)
+      |class Taco(
+      |  @Volatile val foo: String
+      |)
       |""".trimMargin())
   }
 
@@ -769,7 +780,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Strictfp
       |
-      |class Taco @Strictfp constructor(foo: String)
+      |class Taco @Strictfp constructor(
+      |  foo: String
+      |)
       |""".trimMargin())
   }
 
