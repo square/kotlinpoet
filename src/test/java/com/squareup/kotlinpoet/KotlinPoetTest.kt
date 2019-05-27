@@ -80,7 +80,9 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |class Taco(cheese: String) {
+        |class Taco(
+        |  cheese: String
+        |) {
         |  init {
         |    require(cheese.isNotEmpty()) {
         |      "cheese cannot be empty"
@@ -667,7 +669,9 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.jvm.JvmField
       |
-      |class Taco(@JvmField val foo: String)
+      |class Taco(
+      |  @JvmField val foo: String
+      |)
       |""".trimMargin())
   }
 
@@ -718,9 +722,11 @@ class KotlinPoetTest {
       |
       |import com.example.SomeTypeAlias
       |
-      |class Taco(val foo: SomeTypeAlias = { arg: kotlin.Any ->
-      |  println("arg=${'$'}arg")
-      |}
+      |class Taco(
+      |  val foo: SomeTypeAlias = { arg: kotlin.Any ->
+      |    println("arg=${'$'}arg")
+      |  }
+      |
       |)
       |""".trimMargin())
   }
@@ -742,7 +748,9 @@ class KotlinPoetTest {
       |
       |import kotlin.Float
       |
-      |class AlarmInfo(val `when`: Float)
+      |class AlarmInfo(
+      |  val `when`: Float
+      |)
       |""".trimMargin())
   }
 
@@ -788,8 +796,9 @@ class KotlinPoetTest {
       |import com.squareup.wire.WireField
       |import kotlin.String
       |
-      |data class Taco(@WireField(tag = 1, adapter = "CustomStringAdapterWithALongNameThatCauses")
-      |    val name: String)
+      |data class Taco(
+      |  @WireField(tag = 1, adapter = "CustomStringAdapterWithALongNameThatCauses") val name: String
+      |)
       |""".trimMargin())
   }
 

@@ -63,7 +63,9 @@ class CrossplatformTest {
       |import java.util.concurrent.atomic.AtomicReference
       |import kotlin.Boolean
       |
-      |internal expect class AtomicRef<V>(value: V) {
+      |internal expect class AtomicRef<V>(
+      |  value: V
+      |) {
       |  val value: V
       |
       |  fun get(): V

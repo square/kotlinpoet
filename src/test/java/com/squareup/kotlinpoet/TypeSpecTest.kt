@@ -465,7 +465,9 @@ class TypeSpecTest {
         |
         |import kotlin.String
         |
-        |enum class Roshambo(private val handPosition: String) {
+        |enum class Roshambo(
+        |  private val handPosition: String
+        |) {
         |  /**
         |   * Avalanche!
         |   */
@@ -542,7 +544,9 @@ class TypeSpecTest {
         |
         |import kotlin.String
         |
-        |class Variable(vararg val name: String)
+        |class Variable(
+        |  vararg val name: String
+        |)
         |""".trimMargin())
   }
 
@@ -933,7 +937,9 @@ class TypeSpecTest {
         |
         |import kotlin.Int
         |
-        |annotation class MyAnnotation(val test: Int)
+        |annotation class MyAnnotation(
+        |  val test: Int
+        |)
         |""".trimMargin())
   }
 
@@ -1785,7 +1791,9 @@ class TypeSpecTest {
         .build()
 
     assertThat(guacamole.toString()).isEqualTo("""
-      |inline class Guacamole(val avacado: kotlin.String)
+      |inline class Guacamole(
+      |  val avacado: kotlin.String
+      |)
       |""".trimMargin())
   }
 
@@ -1836,7 +1844,9 @@ class TypeSpecTest {
         .build()
 
     assertThat(guacamole.toString()).isEqualTo("""
-      |inline class Guacamole(val avocado: kotlin.String) : com.squareup.kotlinpoet.TypeSpecTest.InlineSuperInterface
+      |inline class Guacamole(
+      |  val avocado: kotlin.String
+      |) : com.squareup.kotlinpoet.TypeSpecTest.InlineSuperInterface
       |""".trimMargin())
   }
 
@@ -1910,7 +1920,9 @@ class TypeSpecTest {
         .addModifiers(INLINE)
         .build()
     assertThat(guacamole.toString()).isEqualTo("""
-      |enum inline class Foo(val x: kotlin.Int) {
+      |enum inline class Foo(
+      |  val x: kotlin.Int
+      |) {
       |  A(1),
       |
       |  B(2);
@@ -2794,7 +2806,10 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |class Taco(val a: Int, val b: String)
+        |class Taco(
+        |  val a: Int,
+        |  val b: String
+        |)
         |""".trimMargin())
   }
 
@@ -3015,7 +3030,10 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |class Taco(val a: Int = 1, val b: String? = null)
+        |class Taco(
+        |  val a: Int = 1,
+        |  val b: String? = null
+        |)
         |""".trimMargin())
   }
 
@@ -3179,7 +3197,9 @@ class TypeSpecTest {
       |import com.squareup.kotlinpoet.OrderBy
       |import kotlin.Int
       |
-      |data class Person(@OrderBy @Id private val id: Int = 1)
+      |data class Person(
+      |  @OrderBy @Id private val id: Int = 1
+      |)
       |""".trimMargin())
   }
 
@@ -3229,7 +3249,9 @@ class TypeSpecTest {
         |import java.util.function.Consumer
         |import kotlin.String
         |
-        |class Guac(somethingElse: String) : Consumer<String> by ({ println(it) })
+        |class Guac(
+        |  somethingElse: String
+        |) : Consumer<String> by ({ println(it) })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -3312,7 +3334,9 @@ class TypeSpecTest {
           |
           |import kotlin.Function
           |
-          |class Taco(superString: Function) : Function by superString
+          |class Taco(
+          |  superString: Function
+          |) : Function by superString
           |""".trimMargin())
   }
 
@@ -3348,8 +3372,9 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
           |package com.squareup.tacos
           |
-          |class EntityBuilder(argBuilder: Payload<EntityBuilder, Entity> = Payload.create()) :
-          |    TypeBuilder<EntityBuilder, Entity> by argBuilder
+          |class EntityBuilder(
+          |  argBuilder: Payload<EntityBuilder, Entity> = Payload.create()
+          |) : TypeBuilder<EntityBuilder, Entity> by argBuilder
           |""".trimMargin())
   }
 
@@ -3506,7 +3531,10 @@ class TypeSpecTest {
       |
       |import kotlin.Int
       |
-      |data class Taco(val madeFreshDatabaseDate: java.sql.Taco, fooNt: Int) {
+      |data class Taco(
+      |  val madeFreshDatabaseDate: java.sql.Taco,
+      |  fooNt: Int
+      |) {
       |  constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
       |}
       |""".trimMargin())
