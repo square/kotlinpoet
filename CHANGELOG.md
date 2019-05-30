@@ -1,6 +1,26 @@
 Change Log
 ==========
 
+## Version 1.3.0
+
+_2019-05-30_
+
+ * New: Don't inline annotations in the primary constructor.
+ * New: Force new lines when emitting primary constructors.
+ * New: Support using MemberNames as arguments to %N.
+ * New: Add more ClassName constants: ClassName.STRING, ClassName.LIST, etc.
+ * New: Add ClassName.constructorReference() and MemberName.reference().
+ * New: Make %N accept MemberNames.
+ * New: Escape spaces in import aliases.
+ * New: Escape spaces in ClassNames.
+ * New: Escape spaces in MemberNames.
+ * New: Escape imports containing spaces.
+ * New: Escape package name containing spaces.
+ * New: Use 2-space indents.
+ * New: Only indent one level on annotation values.
+ * Fix: Pass only unique originating elements to Filer.
+ * Fix: Fix bug with MemberNames in same package nested inside a class.
+
 ## Version 1.2.0
 
 _2019-03-28_
