@@ -3773,6 +3773,21 @@ class TypeSpecTest {
     assertThat(outer.originatingElements).containsExactly(outerElement, innerElement)
   }
 
+  // https://github.com/square/kotlinpoet/issues/698
+  @Test fun escapeEnumConstants() {
+    val enum = TypeSpec.enumBuilder("MyEnum")
+        .addEnumConstant("test test")
+        .addEnumConstant("0constants")
+        .build()
+    assertThat(enum.toString()).isEqualTo("""
+      |enum class MyEnum {
+      |  `test test`,
+      |
+      |  `0constants`
+      |}
+      |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
