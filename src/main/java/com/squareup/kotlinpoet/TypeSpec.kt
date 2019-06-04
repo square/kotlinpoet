@@ -98,7 +98,7 @@ class TypeSpec private constructor(
       if (enumName != null) {
         codeWriter.emitKdoc(kdocWithConstructorParameters())
         codeWriter.emitAnnotations(annotationSpecs, false)
-        codeWriter.emitCode("%L", enumName)
+        codeWriter.emitCode("%N", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
           codeWriter.emit("(")
           codeWriter.emitCode(superclassConstructorParametersBlock)
@@ -209,8 +209,7 @@ class TypeSpec private constructor(
       while (i.hasNext()) {
         val enumConstant = i.next()
         if (!firstMember) codeWriter.emit("\n")
-        enumConstant.value
-            .emit(codeWriter, enumConstant.key)
+        enumConstant.value.emit(codeWriter, enumConstant.key)
         firstMember = false
         if (i.hasNext()) codeWriter.emit(",\n")
       }
