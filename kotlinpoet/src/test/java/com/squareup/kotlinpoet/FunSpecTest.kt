@@ -274,6 +274,16 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionWithThrows() {
+    val funSpec = FunSpec.builder("foo")
+        .addParameter("nodoc", Boolean::class)
+        .addStatement("throw %T()", AssertionError::class)
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(nodoc: kotlin.Boolean) = throw java.lang.AssertionError()
+      |""".trimMargin())
+  }
+
   @Test fun functionWithReturnKDocAndMainKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter("nodoc", Boolean::class)

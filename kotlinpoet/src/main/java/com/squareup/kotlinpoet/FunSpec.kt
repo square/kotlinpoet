@@ -97,7 +97,7 @@ class FunSpec private constructor(
       return
     }
 
-    val asExpressionBody = body.trim().withoutPrefix(EXPRESSION_BODY_PREFIX)
+    val asExpressionBody = asExpressionBody(body)
 
     if (asExpressionBody != null) {
       codeWriter.emitCode(" = %L", asExpressionBody)
@@ -108,6 +108,17 @@ class FunSpec private constructor(
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
+  }
+
+  private fun asExpressionBody(codeBlock: CodeBlock): CodeBlock? {
+    val asReturnExpressionBody = codeBlock.trim().withoutPrefix(EXPRESSION_BODY_PREFIX)
+    if (asReturnExpressionBody != null) {
+      return asReturnExpressionBody
+    }
+    if (codeBlock.trim().withoutPrefix(CodeBlock.of("throw ")) != null) {
+      return codeBlock
+    }
+    return null
   }
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
