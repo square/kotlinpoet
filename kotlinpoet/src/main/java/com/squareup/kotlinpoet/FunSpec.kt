@@ -97,7 +97,7 @@ class FunSpec private constructor(
       return
     }
 
-    val asExpressionBody = asExpressionBody(body)
+    val asExpressionBody = body.asExpressionBody()
 
     if (asExpressionBody != null) {
       codeWriter.emitCode(" = %L", asExpressionBody)
@@ -108,17 +108,6 @@ class FunSpec private constructor(
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
-  }
-
-  private fun asExpressionBody(codeBlock: CodeBlock): CodeBlock? {
-    val asReturnExpressionBody = codeBlock.trim().withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX)
-    if (asReturnExpressionBody != null) {
-      return asReturnExpressionBody
-    }
-    if (codeBlock.trim().withoutPrefix(THROW_EXPRESSION_BODY_PREFIX) != null) {
-      return codeBlock
-    }
-    return null
   }
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
@@ -201,13 +190,21 @@ class FunSpec private constructor(
    */
   private fun emitReturnType(returnType: TypeName?): Boolean {
     if (returnType != null) {
-      return returnType != Unit::class.asTypeName() || isExpressionBody()
+      return returnType != Unit::class.asTypeName() || body.asExpressionBody() != null
     }
     return false
   }
 
-  private fun isExpressionBody(): Boolean {
-    return asExpressionBody(body) != null
+  private fun CodeBlock.asExpressionBody(): CodeBlock? {
+    val codeBlock = this.trim()
+    val asReturnExpressionBody = codeBlock.withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX)
+    if (asReturnExpressionBody != null) {
+      return asReturnExpressionBody
+    }
+    if (codeBlock.withoutPrefix(THROW_EXPRESSION_BODY_PREFIX) != null) {
+      return codeBlock
+    }
+    return null
   }
 
   override fun equals(other: Any?): Boolean {
