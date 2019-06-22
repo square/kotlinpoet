@@ -274,6 +274,31 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun functionWithThrows() {
+    val funSpec = FunSpec.builder("foo")
+        .addStatement("throw %T()", AssertionError::class)
+        .returns(NOTHING)
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo(): kotlin.Nothing = throw java.lang.AssertionError()
+      |""".trimMargin())
+  }
+
+  @Test fun functionWithWordThrowDoesntConvertToExpressionFunction() {
+    val throwSomethingElseFun = FunSpec.builder("throwOrDoSomethingElse")
+        .build()
+
+    val funSpec = FunSpec.builder("foo")
+        .addStatement("%N()", throwSomethingElseFun)
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun foo() {
+      |  throwOrDoSomethingElse()
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun functionWithReturnKDocAndMainKdoc() {
     val funSpec = FunSpec.builder("foo")
         .addParameter("nodoc", Boolean::class)

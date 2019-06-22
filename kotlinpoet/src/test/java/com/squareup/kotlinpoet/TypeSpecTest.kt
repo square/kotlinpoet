@@ -692,7 +692,7 @@ class TypeSpecTest {
             .addParameter("label", t)
             .addParameter("x", p)
             .addParameter("y", p)
-            .addStatement("throw new %T(%S)", UnsupportedOperationException::class, "TODO")
+            .addStatement("throw %T(%S)", UnsupportedOperationException::class, "TODO")
             .build())
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
@@ -716,9 +716,7 @@ class TypeSpecTest {
         |    label: T,
         |    x: P,
         |    y: P
-        |  ): Location<T, P> {
-        |    throw new UnsupportedOperationException("TODO")
-        |  }
+        |  ): Location<T, P> = throw UnsupportedOperationException("TODO")
         |}
         |""".trimMargin())
   }
