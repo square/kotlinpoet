@@ -111,11 +111,11 @@ class FunSpec private constructor(
   }
 
   private fun asExpressionBody(codeBlock: CodeBlock): CodeBlock? {
-    val asReturnExpressionBody = codeBlock.trim().withoutPrefix(EXPRESSION_BODY_PREFIX)
+    val asReturnExpressionBody = codeBlock.trim().withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX)
     if (asReturnExpressionBody != null) {
       return asReturnExpressionBody
     }
-    if (codeBlock.trim().withoutPrefix(CodeBlock.of("throw ")) != null) {
+    if (codeBlock.trim().withoutPrefix(THROW_EXPRESSION_BODY_PREFIX) != null) {
       return codeBlock
     }
     return null
@@ -207,7 +207,7 @@ class FunSpec private constructor(
   }
 
   private fun isExpressionBody(): Boolean {
-    return body.trim().withoutPrefix(EXPRESSION_BODY_PREFIX) != null
+    return body.trim().withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX) != null
   }
 
   override fun equals(other: Any?): Boolean {
@@ -468,7 +468,8 @@ class FunSpec private constructor(
     internal val String.isConstructor get() = this == CONSTRUCTOR
     internal val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
-    private val EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
+    private val RETURN_EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
+    private val THROW_EXPRESSION_BODY_PREFIX = CodeBlock.of("throw")
 
     @JvmStatic fun builder(name: String) = Builder(name)
 
