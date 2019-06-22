@@ -466,7 +466,7 @@ class FunSpec private constructor(
     internal val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
     private val RETURN_EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
-    private val THROW_EXPRESSION_BODY_PREFIX = CodeBlock.of("throw")
+    private val THROW_EXPRESSION_BODY_PREFIX = CodeBlock.of("throw ")
 
     @JvmStatic fun builder(name: String) = Builder(name)
 
