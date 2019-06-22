@@ -207,7 +207,7 @@ class FunSpec private constructor(
   }
 
   private fun isExpressionBody(): Boolean {
-    return body.trim().withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX) != null
+    return asExpressionBody(body) != null
   }
 
   override fun equals(other: Any?): Boolean {
