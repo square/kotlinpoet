@@ -31,11 +31,7 @@ shadowJar {
   }
   archiveClassifier.set('')
   configurations = [shadedConfig]
-  relocate 'com.google', 'com.squareup.kotlinpoet.km.shaded.com.google'
-  relocate 'afu', 'com.squareup.kotlinpoet.km.shaded.afu'
-  relocate 'org', 'com.squareup.kotlinpoet.km.shaded.org'
   relocate 'kotlinx.metadata', 'com.squareup.kotlinpoet.km.shaded.kotlinx.metadata'
-  exclude 'javax/**'
 
   // Service files are not included by default.
   mergeServiceFiles {
@@ -48,7 +44,6 @@ artifacts {
 }
 
 dependencies {
-  implementationShaded "com.google.auto:auto-common:0.10"
   implementationShaded(kotlinxMetadata) {
     transitive = false
   }
