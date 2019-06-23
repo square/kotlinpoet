@@ -18,6 +18,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
+  id("com.github.johnrengelman.shadow") version "5.0.0" apply false
   id("com.vanniktech.maven.publish") version "0.8.0"
 }
 
@@ -39,6 +40,8 @@ afterEvaluate {
     outputFormat = "html"
   }
 }
+
+apply(from = "shadowjar.gradle")
 
 dependencies {
   api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
