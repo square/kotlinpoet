@@ -15,5 +15,6 @@
  */
 
 include(
-    ":kotlinpoet"
+    ":kotlinpoet",
+    ":kotlinpoet-km"
 )
