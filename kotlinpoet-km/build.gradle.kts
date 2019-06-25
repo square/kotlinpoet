@@ -41,10 +41,9 @@ afterEvaluate {
   }
 }
 
-apply(from = "shadowjar.gradle")
-
 dependencies {
   api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+  api("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
   testImplementation("com.google.truth:truth:0.42")
 }
