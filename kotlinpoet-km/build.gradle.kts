@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
@@ -38,6 +39,12 @@ afterEvaluate {
   tasks.named<DokkaTask>("dokka") {
     skipDeprecated = true
     outputFormat = "html"
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xuse-experimental=kotlin.Experimental")
   }
 }
 
