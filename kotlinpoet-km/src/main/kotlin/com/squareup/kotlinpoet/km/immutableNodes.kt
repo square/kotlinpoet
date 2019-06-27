@@ -96,9 +96,9 @@ fun KmClass.asImmutable(): ImmutableKmClass {
       typeAliases.map { it.asImmutable() },
       constructors.map { it.asImmutable() },
       companionObject,
-      nestedClasses.unmodifiable(),
-      enumEntries.unmodifiable(),
-      sealedSubclasses.unmodifiable(),
+      nestedClasses.toImmutableList(),
+      enumEntries.toImmutableList(),
+      sealedSubclasses.toImmutableList(),
       versionRequirements.map { it.asImmutable() },
       localDelegatedProperties.map { it.asImmutable() },
       moduleName,
@@ -454,7 +454,7 @@ fun KmTypeAlias.asImmutable(): ImmutableKmTypeAlias {
       typeParameters.map { it.asImmutable() },
       underlyingType.asImmutable(),
       expandedType.asImmutable(),
-      annotations.unmodifiable(),
+      annotations.toImmutableList(),
       versionRequirements.map { it.asImmutable() }
   )
 }
@@ -543,7 +543,7 @@ fun KmTypeParameter.asImmutable(): ImmutableKmTypeParameter {
       id,
       variance,
       upperBounds.map { it.asImmutable() },
-      annotations.unmodifiable()
+      annotations.toImmutableList()
   )
 }
 
@@ -588,7 +588,7 @@ fun KmType.asImmutable(): ImmutableKmType {
       outerType?.asImmutable(),
       flexibleTypeUpperBound?.asImmutable(),
       isRaw,
-      annotations.unmodifiable()
+      annotations.toImmutableList()
   )
 }
 
@@ -884,4 +884,5 @@ data class ImmutableKmFlexibleTypeUpperBound internal constructor(val type: Immu
   }
 }
 
-private fun <E> List<E>.unmodifiable(): List<E> = Collections.unmodifiableList(this)
+@Suppress("NOTHING_TO_INLINE")
+private inline fun <E> List<E>.toImmutableList(): List<E> = Collections.unmodifiableList(this)
