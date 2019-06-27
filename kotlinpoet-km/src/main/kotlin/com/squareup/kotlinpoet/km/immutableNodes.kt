@@ -114,7 +114,7 @@ fun KmClass.asImmutable(): ImmutableKmClass {
  * @property flags Class flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Class] flags.
  * @property name Name of the class.
  * @property typeParameters Type parameters of the class.
- * @property supertypes Supertypes of the class. The first element is the superclass (or [Any])
+ * @property supertypes Supertypes of the class. The first element is the superclass (or [Any]).
  * @property functions Functions in the class.
  * @property properties Properties in the class.
  * @property typeAliases Type aliases in the class.
