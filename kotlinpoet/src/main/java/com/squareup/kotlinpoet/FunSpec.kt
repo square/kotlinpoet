@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ContractEffectType.CALLS
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
@@ -49,6 +50,7 @@ class FunSpec private constructor(
   val delegateConstructor = builder.delegateConstructor
   val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
   val body = builder.body.build()
+  val contractSpec = builder.contractSpec
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
@@ -60,6 +62,11 @@ class FunSpec private constructor(
     }
     require(INLINE in modifiers || typeVariables.none { it.isReified }) {
       "only type parameters of inline functions can be reified!"
+    }
+    if (contractSpec != null && contractSpec.effects.any { it.type == CALLS }) {
+      require(INLINE in modifiers) {
+        "functions with callsInPlace effects must be inline!"
+      }
     }
   }
 
@@ -104,6 +111,7 @@ class FunSpec private constructor(
     } else if (!isEmptySetter) {
       codeWriter.emitCode("·{\n")
       codeWriter.indent()
+      contractSpec?.emit(codeWriter, this)
       codeWriter.emitCode(body)
       codeWriter.unindent()
       codeWriter.emit("}\n")
@@ -196,6 +204,7 @@ class FunSpec private constructor(
   }
 
   private fun CodeBlock.asExpressionBody(): CodeBlock? {
+    if (contractSpec != null) return null
     val codeBlock = this.trim()
     val asReturnExpressionBody = codeBlock.withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX)
     if (asReturnExpressionBody != null) {
@@ -240,6 +249,7 @@ class FunSpec private constructor(
     builder.receiverType = receiverType
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
+    builder.contractSpec = contractSpec
     return builder
   }
 
@@ -254,6 +264,7 @@ class FunSpec private constructor(
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
+    internal var contractSpec: ContractSpec? = null
 
     val annotations = mutableListOf<AnnotationSpec>()
     val modifiers = mutableListOf<KModifier>()
@@ -447,6 +458,10 @@ class FunSpec private constructor(
 
     fun addStatement(format: String, vararg args: Any) = apply {
       body.addStatement(format, *args)
+    }
+
+    fun contract(spec: ContractSpec) = apply {
+      this.contractSpec = spec
     }
 
     fun build(): FunSpec {
