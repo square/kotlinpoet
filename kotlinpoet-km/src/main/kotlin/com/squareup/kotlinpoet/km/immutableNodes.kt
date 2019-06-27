@@ -383,12 +383,12 @@ fun KmProperty.asImmutable(): ImmutableKmProperty {
  *
  * Represents a Kotlin property declaration.
  *
- * @property flags property flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Property] flags
- * @property name the name of the property
- * @property getterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
- *   and [Flag.PropertyAccessor] flags
- * @property setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
- *   and [Flag.PropertyAccessor] flags
+ * @property flags Property flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Property] flags.
+ * @property name The name of the property.
+ * @property getterFlags Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+ *   and [Flag.PropertyAccessor] flags.
+ * @property setterFlags Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+ *   and [Flag.PropertyAccessor] flags.
  * @property typeParameters Type parameters of the property.
  * @property receiverParameterType Type of the receiver of the property, if this is an extension property.
  * @property setterParameter Value parameter of the setter of this property, if this is a `var` property.
@@ -464,8 +464,8 @@ fun KmTypeAlias.asImmutable(): ImmutableKmTypeAlias {
  *
  * Represents a Kotlin type alias declaration.
  *
- * @property flags type alias flags, consisting of [Flag.HAS_ANNOTATIONS] and visibility flag
- * @property name the name of the type alias
+ * @property flags TypeAlias flags, consisting of [Flag.HAS_ANNOTATIONS] and visibility flag.
+ * @property name The name of the type alias.
  * @property typeParameters Type parameters of the type alias.
  * @property underlyingType Underlying type of the type alias, i.e. the type in the right-hand side of the type alias declaration.
  * @property expandedType Expanded type of the type alias, i.e. the full expansion of the underlying
@@ -513,8 +513,8 @@ fun KmValueParameter.asImmutable(): ImmutableKmValueParameter {
  *
  * Represents a value parameter of a Kotlin constructor, function or property setter.
  *
- * @property flags value parameter flags, consisting of [Flag.ValueParameter] flags
- * @property name the name of the value parameter
+ * @property flags Value parameter flags, consisting of [Flag.ValueParameter] flags.
+ * @property name The name of the value parameter.
  * @property type Type of the value parameter, if this is **not** a `vararg` parameter.
  * @property varargElementType Type of the value parameter, if this is a `vararg` parameter.
  */
@@ -552,11 +552,11 @@ fun KmTypeParameter.asImmutable(): ImmutableKmTypeParameter {
  *
  * Represents a type parameter of a Kotlin class, function, property or type alias.
  *
- * @property flags type parameter flags, consisting of [Flag.TypeParameter] flags
- * @property name the name of the type parameter
- * @property id the id of the type parameter, useful to be able to uniquely identify the type parameter in different contexts where
- *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
- * @property variance the declaration-site variance of the type parameter
+ * @property flags Type parameter flags, consisting of [Flag.TypeParameter] flags.
+ * @property name The name of the type parameter.
+ * @property id The id of the type parameter, useful to be able to uniquely identify the type parameter in different contexts where
+ *           the name isn't enough (e.g. `class A<T> { fun <T> foo(t: T) }`).
+ * @property variance The declaration-site variance of the type parameter.
  * @property upperBounds Upper bounds of the type parameter.
  * @property annotations Annotations on the type parameter.
  */
@@ -597,7 +597,7 @@ fun KmType.asImmutable(): ImmutableKmType {
  *
  * Represents a type.
  *
- * @property flags type flags, consisting of [Flag.Type] flags
+ * @property flags Type flags, consisting of [Flag.Type] flags.
  * @property classifier Classifier of the type.
  * @property arguments Arguments of the type, if the type's classifier is a class or a type alias.
  * @property isRaw `true` if the type is seen as a raw type in Java.
