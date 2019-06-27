@@ -47,7 +47,6 @@ fun TypeElement.asImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnot
 @KotlinPoetKm
 fun Metadata.asImmutableKmClass(): ImmutableKmClass {
   return when (val metadata = readKotlinClassMetadata()) {
-    //  return when (metadata) {
     is KotlinClassMetadata.Class -> {
       metadata.toImmutableKmClass()
     }
