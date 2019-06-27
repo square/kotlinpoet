@@ -641,7 +641,7 @@ data class ImmutableKmType internal constructor(
   /**
    * `true` if this is an extension type (i.e. String.() -> Unit vs (String) -> Unit).
    *
-   * See details: https://discuss.kotlinlang.org/t/announcing-kotlinx-metadata-jvm-library-for-reading-modifying-metadata-of-kotlin-jvm-class-files/7980/27?u=hzsweers
+   * See details: https://discuss.kotlinlang.org/t/announcing-kotlinx-metadata-jvm-library-for-reading-modifying-metadata-of-kotlin-jvm-class-files/7980/27
    */
   val isExtensionType: Boolean by lazy {
     annotations.any { it.className == "kotlin/ExtensionFunctionType" }
