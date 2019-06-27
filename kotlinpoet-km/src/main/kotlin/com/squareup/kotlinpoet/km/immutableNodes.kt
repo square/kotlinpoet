@@ -266,7 +266,7 @@ fun KmConstructor.asImmutable(): ImmutableKmConstructor {
  *
  * Represents a constructor of a Kotlin class.
  *
- * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags
+ * @property flags Constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags.
  * @property valueParameters Value parameters of the constructor.
  * @property versionRequirements Version requirements on the constructor.
  */
