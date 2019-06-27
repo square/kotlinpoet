@@ -750,9 +750,9 @@ fun KmEffect.asImmutable(): ImmutableKmEffect {
  * Contracts are an internal feature of the standard Kotlin library, and their behavior and/or binary format
  * may change in a subsequent release.
  *
- * @property type type of the effect
- * @property invocationKind optional number of invocations of the lambda parameter of this function,
- *   specified further in the effect expression
+ * @property type Type of the effect
+ * @property invocationKind Optional number of invocations of the lambda parameter of this function,
+ *   specified further in the effect expression.
  * @property constructorArguments Arguments of the effect constructor, i.e. the constant value for
  *                                the [KmEffectType.RETURNS_CONSTANT] effect, or the parameter
  *                                reference for the [KmEffectType.CALLS] effect.
@@ -840,8 +840,8 @@ fun KmTypeProjection.asImmutable(): ImmutableKmTypeProjection {
  * Represents type projection used in a type argument of the type based on a class or on a type alias.
  * For example, in `MutableMap<in String?, *>`, `in String?` is the type projection which is the first type argument of the type.
  *
- * @property variance the variance of the type projection, or `null` if this is a star projection
- * @property type the projected type, or `null` if this is a star projection
+ * @property variance The variance of the type projection, or `null` if this is a star projection.
+ * @property type The projected type, or `null` if this is a star projection.
  */
 @KotlinPoetKm
 data class ImmutableKmTypeProjection internal constructor(val variance: KmVariance?, val type: ImmutableKmType?) {
@@ -872,9 +872,9 @@ fun KmFlexibleTypeUpperBound.asImmutable(): ImmutableKmFlexibleTypeUpperBound {
  *
  * Represents an upper bound of a flexible Kotlin type.
  *
- * @property type upper bound of the flexible type
- * @property typeFlexibilityId id of the kind of flexibility this type has. For example, "kotlin.jvm.PlatformType" for JVM platform types,
- *                          or "kotlin.DynamicType" for JS dynamic type
+ * @property type Upper bound of the flexible type.
+ * @property typeFlexibilityId Id of the kind of flexibility this type has. For example, "kotlin.jvm.PlatformType" for JVM platform types,
+ *                          or "kotlin.DynamicType" for JS dynamic type.
  */
 @KotlinPoetKm
 data class ImmutableKmFlexibleTypeUpperBound internal constructor(val type: ImmutableKmType,
