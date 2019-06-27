@@ -196,7 +196,7 @@ fun KmPackage.asImmutable(): ImmutableKmPackage {
  * Represents a Kotlin package fragment, including single file facades and multi-file class parts.
  *
  * @property functions Functions in the package fragment.
- * @property properties properties in the package fragment.
+ * @property properties Properties in the package fragment.
  * @property typeAliases typeAliases in the package fragment.
  * @property moduleName Name of the module where this class is declared.
  */
