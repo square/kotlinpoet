@@ -314,7 +314,7 @@ fun KmFunction.asImmutable(): ImmutableKmFunction {
  * Represents a Kotlin function declaration.
  *
  * @property flags Function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags.
- * @property name he name of the function
+ * @property name The name of the function
  * @property typeParameters Type parameters of the function.
  * @property receiverParameterType Type of the receiver of the function, if this is an extension function.
  * @property valueParameters Value parameters of the function.
