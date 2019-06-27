@@ -36,16 +36,16 @@ annotation class KotlinPoetKm
 
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetKm
-fun KClass<*>.asImmutableKmClass(): ImmutableKmClass = java.asImmutableKmClass()
+fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetKm
-fun Class<*>.asImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).asImmutableKmClass()
+fun Class<*>.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
 @KotlinPoetKm
-fun TypeElement.asImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).asImmutableKmClass()
+fun TypeElement.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 
 @KotlinPoetKm
-fun Metadata.asImmutableKmClass(): ImmutableKmClass {
+fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   return when (val metadata = readKotlinClassMetadata()) {
     is KotlinClassMetadata.Class -> {
       metadata.toImmutableKmClass()
