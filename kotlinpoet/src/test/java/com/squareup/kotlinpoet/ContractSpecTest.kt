@@ -158,16 +158,15 @@ class ContractSpecTest {
         )
         .build()
     val function = FunSpec.builder("test")
-        .returns(UNIT.copy(nullable = true))
         .addParameter(param)
         .contract(contractSpec)
         .build()
 
     //language=kotlin
     assertThat(function.toString().trim()).isEqualTo("""
-      fun test(param: kotlin.String?): kotlin.Unit? {
+      fun test(param: kotlin.Any) {
         kotlin.contracts.contract {
-          returns() implies (param != null)
+          returns() implies (param !is kotlin.String)
         }
       }
     """.trimIndent())
