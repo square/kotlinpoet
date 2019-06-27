@@ -197,7 +197,7 @@ fun KmPackage.asImmutable(): ImmutableKmPackage {
  *
  * @property functions Functions in the package fragment.
  * @property properties Properties in the package fragment.
- * @property typeAliases typeAliases in the package fragment.
+ * @property typeAliases TypeAliases in the package fragment.
  * @property moduleName Name of the module where this class is declared.
  */
 @KotlinPoetKm
