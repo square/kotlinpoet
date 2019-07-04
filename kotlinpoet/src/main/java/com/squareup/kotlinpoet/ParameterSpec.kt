@@ -27,7 +27,7 @@ class ParameterSpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
   
-  constructor(name: String, type: TypeName, vararg modifiers: KModifier): this(builder(name, type, *modifiers))
+  constructor(name: String, type: TypeName, vararg modifiers: KModifier) : this(builder(name, type, *modifiers))
   
   val name = builder.name
   val kdoc = builder.kdoc.build()
