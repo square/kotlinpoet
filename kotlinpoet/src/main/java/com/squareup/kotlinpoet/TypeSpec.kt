@@ -85,7 +85,7 @@ class TypeSpec private constructor(
     return builder
   }
 
-  internal fun emit(codeWriter: CodeWriter, enumName: String?, isNestedExternal: Boolean = false) {
+  internal fun emit(codeWriter: CodeWriter, enumName: String?, implicitModifiers: Set<KModifier> = emptySet(), isNestedExternal: Boolean = false) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -258,7 +258,7 @@ class TypeSpec private constructor(
       for (funSpec in funSpecs) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers), true)
+        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers + implicitModifiers), true)
         firstMember = false
       }
 
@@ -267,7 +267,7 @@ class TypeSpec private constructor(
 
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null, isNestedExternal = areNestedExternal)
+        typeSpec.emit(codeWriter, null, kind.implicitTypeModifiers(modifiers), isNestedExternal = areNestedExternal)
         firstMember = false
       }
 
@@ -362,11 +362,12 @@ class TypeSpec private constructor(
   enum class Kind(
     internal val declarationKeyword: String,
     internal val defaultImplicitPropertyModifiers: Set<KModifier>,
-    internal val defaultImplicitFunctionModifiers: Set<KModifier>
+    internal val defaultImplicitFunctionModifiers: Set<KModifier>,
+    internal val defaultImplicitTypeModifiers: Set<KModifier>
   ) {
-    CLASS("class", setOf(PUBLIC), setOf(PUBLIC)),
-    OBJECT("object", setOf(PUBLIC), setOf(PUBLIC)),
-    INTERFACE("interface", setOf(PUBLIC), setOf(PUBLIC, ABSTRACT));
+    CLASS("class", setOf(PUBLIC), setOf(PUBLIC), setOf()),
+    OBJECT("object", setOf(PUBLIC), setOf(PUBLIC), setOf()),
+    INTERFACE("interface", setOf(PUBLIC), setOf(PUBLIC, ABSTRACT), setOf());
 
     internal fun implicitPropertyModifiers(modifiers: Set<KModifier>): Set<KModifier> {
       return defaultImplicitPropertyModifiers + when {
@@ -380,6 +381,14 @@ class TypeSpec private constructor(
     internal fun implicitFunctionModifiers(modifiers: Set<KModifier> = setOf()): Set<KModifier> {
       return defaultImplicitFunctionModifiers + when {
         ANNOTATION in modifiers -> setOf(ABSTRACT)
+        EXPECT in modifiers -> setOf(EXPECT)
+        EXTERNAL in modifiers -> setOf(EXTERNAL)
+        else -> emptySet()
+      }
+    }
+
+    internal fun implicitTypeModifiers(modifiers: Set<KModifier> = setOf()): Set<KModifier> {
+      return defaultImplicitTypeModifiers + when {
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         else -> emptySet()
