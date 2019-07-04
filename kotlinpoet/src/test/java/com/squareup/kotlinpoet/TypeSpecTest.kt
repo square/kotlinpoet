@@ -979,6 +979,53 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun expectClass() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addFunction(FunSpec.builder("test")
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  fun test()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun nestedExpectCompanionObjectWithFunction() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.companionObjectBuilder()
+            .addFunction(FunSpec.builder("test")
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  companion object {
+      |    fun test()
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun nestedExpectClassWithFunction() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.classBuilder("ClassB")
+            .addFunction(FunSpec.builder("test")
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  class ClassB {
+      |    fun test()
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun interfaceWithMethods() {
     val taco = TypeSpec.interfaceBuilder("Taco")
         .addFunction(FunSpec.builder("aMethod")
