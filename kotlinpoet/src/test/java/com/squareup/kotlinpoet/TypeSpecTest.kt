@@ -1026,21 +1026,6 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
-  @Test
-  fun test () {
-    val fileSpec = FileSpec.builder("com", "Example")
-        .addType(TypeSpec.expectClassBuilder("ClassA")
-            .addType(TypeSpec.classBuilder("ClassB")
-                .addFunction(FunSpec.builder("test")
-                    .build())
-                .build())
-            .build())
-        .build()
-
-    assertThat(fileSpec.toString()).isEqualTo("""
-      |""".trimMargin())
-  }
-
   @Test fun interfaceWithMethods() {
     val taco = TypeSpec.interfaceBuilder("Taco")
         .addFunction(FunSpec.builder("aMethod")
