@@ -40,16 +40,7 @@ markdown_extensions:
 
 nav:
   - 'Overview': index.md
-  - 'API': api/kotlinpoet/com.squareup.kotlinpoet/index.md
-#  - 'Getting Started': getting_started.md
-#  - 'Fundamentals': fundamentals.md
-#  - 'Code recipes': recipes.md
-#  - 'FAQ': faq.md
-#  - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/leakcanary?sort=active
+  - 'API': 1.x/kotlinpoet/com.squareup.kotlinpoet/index.md
+  - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
   - 'Change Log': changelog.md
-#  - 'Support': support.md
-#  - 'Upgrading to LeakCanary 2': upgrading-to-leakcanary-2.0.md
-#  - 'Blog Articles': blog-articles.md
-#  - 'Recorded Presentations': recorded-presentations.md
   - 'Contributing': contributing.md
-#  - 'Code of Conduct': code_of_conduct.md

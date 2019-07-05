@@ -32,6 +32,7 @@ cp CHANGELOG.md docs/changelog.md
 cp CONTRIBUTING.md docs/contributing.md
 
 # Build the site and push the new files up to GitHub
+cp ../mkdocs.yml mkdocs.yml
 mkdocs gh-deploy
 
 ## Restore Javadocs from 1.x, 2.x, and 3.x.
