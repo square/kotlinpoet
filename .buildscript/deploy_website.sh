@@ -8,7 +8,7 @@
 
 set -ex
 
-REPO="git@github.com:square/kotlinpoet.git"
+REPO="git@github.com:ShaishavGandhi/kotlinpoet.git"
 DIR=temp-clone
 
 # Delete any existing temporary website clone
@@ -19,19 +19,20 @@ git clone $REPO $DIR
 
 # Move working directory into temp folder
 cd $DIR
+# Temporary
+git checkout sg/docs
 
 # Generate the API docs
-./gradlew \
-  :kotlinpoet:dokka
+./gradlew :kotlinpoet:dokka
 
 
 # Copy in special files that GitHub wants in the project root.
-cat README.md > ../docs/index.md
-cp CHANGELOG.md ../docs/changelog.md
-cp CONTRIBUTING.md ../docs/contributing.md
+cat README.md > docs/index.md
+cp CHANGELOG.md docs/changelog.md
+cp CONTRIBUTING.md docs/contributing.md
 
 # Build the site and push the new files up to GitHub
-#mkdocs gh-deploy
+mkdocs gh-deploy
 
 ## Restore Javadocs from 1.x, 2.x, and 3.x.
 #git checkout gh-pages

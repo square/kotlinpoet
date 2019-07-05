@@ -40,6 +40,7 @@ markdown_extensions:
 
 nav:
   - 'Overview': index.md
+  - 'API': api/kotlinpoet/com.squareup.kotlinpoet/index.md
 #  - 'Getting Started': getting_started.md
 #  - 'Fundamentals': fundamentals.md
 #  - 'Code recipes': recipes.md
