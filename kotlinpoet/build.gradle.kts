@@ -36,7 +36,8 @@ tasks.named<Jar>("jar") {
 afterEvaluate {
   tasks.named<DokkaTask>("dokka") {
     skipDeprecated = true
-    outputFormat = "html"
+    outputDirectory = "$rootDir/docs/1.x"
+    outputFormat = "gfm"
   }
 }
 

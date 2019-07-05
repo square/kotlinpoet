@@ -1,0 +1,49 @@
+# pip install mkdocs mkdocs-material
+# mkdocs serve
+# mkdocs gh-deploy
+
+site_name: KotlinPoet
+repo_name: KotlinPoet
+repo_url: https://github.com/square/kotlinpoet
+site_description: "A Kotlin API for generating .kt source files"
+site_author: Square, Inc.
+remote_branch: gh-pages
+
+copyright: 'Copyright &copy; 2015 Square, Inc.'
+
+theme:
+  name: 'material'
+  logo: 'images/icon-square.png'
+  favicon: 'images/icon-square.png'
+  palette:
+    primary: 'cyan'
+    accent: 'deep-purple'
+
+extra_css:
+  - 'css/app.css'
+
+markdown_extensions:
+  - smarty
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.emoji
+  - tables
+  - admonition
+
+nav:
+  - 'Overview': index.md
+  - 'API': 1.x/kotlinpoet/com.squareup.kotlinpoet/index.md
+  - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
+  - 'Change Log': changelog.md
+  - 'Contributing': contributing.md

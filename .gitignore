@@ -15,6 +15,12 @@ reports
 *.iml
 classes
 
+# Mkdocs files
+docs/1.x/*
+docs/changelog.md
+docs/contributing.md
+docs/index.md
+
 obj
 
 .DS_Store
