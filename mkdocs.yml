@@ -19,6 +19,9 @@ theme:
     primary: 'cyan'
     accent: 'deep-purple'
 
+extra_css:
+  - 'css/app.css'
+
 markdown_extensions:
   - smarty
   - codehilite:
