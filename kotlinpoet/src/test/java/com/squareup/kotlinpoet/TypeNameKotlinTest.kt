@@ -31,6 +31,12 @@ class TypeNameKotlinTest {
   }
 
   @Test
+  fun typeNameOf_nullable() {
+    val type = typeNameOf<String?>()
+    assertThat(type.toString()).isEqualTo("kotlin.String?")
+  }
+
+  @Test
   fun typeNameOf_generic() {
     val type = typeNameOf<List<String>>()
     assertThat(type.toString()).isEqualTo("kotlin.collections.List<kotlin.String>")
@@ -50,8 +56,8 @@ class TypeNameKotlinTest {
 
   @Test
   fun typeNameOf_complex() {
-    val type = typeNameOf<Map<String, List<Map<*, GenericType<in Set<Array<GenericType<out String>>>>>>>>()
-    assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.collections.Map<*, com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.collections.Set<kotlin.Array<com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>>>>>>>")
+    val type = typeNameOf<Map<String, List<Map<*, GenericType<in Set<Array<GenericType<out String>?>>>>>>>()
+    assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.collections.Map<*, com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.collections.Set<kotlin.Array<com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>?>>>>>>")
   }
 
   @Suppress("unused")
