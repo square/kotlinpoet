@@ -56,5 +56,4 @@ class TypeNameKotlinTest {
 
   @Suppress("unused")
   class GenericType<T>
-
 }
