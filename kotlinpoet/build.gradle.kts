@@ -45,7 +45,7 @@ dependencies {
   api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-  testImplementation("com.google.truth:truth:0.42")
+  testImplementation("com.google.truth:truth:1.0")
   testImplementation("com.google.testing.compile:compile-testing:0.15")
   testImplementation("com.google.jimfs:jimfs:1.1")
   testImplementation("org.eclipse.jdt.core.compiler:ecj:4.6.1")
