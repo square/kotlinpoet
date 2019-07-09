@@ -17,9 +17,16 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
+import com.squareup.kotlinpoet.km.ImmutableKmType
 import com.squareup.kotlinpoet.km.ImmutableKmTypeProjection
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import com.squareup.kotlinpoet.km.isNullable
 import com.squareup.kotlinpoet.km.isPrimary
+import com.squareup.kotlinpoet.km.isSuspend
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmClassifier.TypeAlias
+import kotlinx.metadata.KmClassifier.TypeParameter
 import kotlinx.metadata.KmVariance
 import kotlinx.metadata.KmVariance.IN
 import kotlinx.metadata.KmVariance.INVARIANT
@@ -56,4 +63,70 @@ internal fun ImmutableKmTypeProjection.asTypeName(
     INVARIANT -> typename
     null -> STAR
   }
+}
+
+@KotlinPoetKm
+internal fun ImmutableKmType.asTypeName(
+    typeParamResolver: ((index: Int) -> TypeName),
+    useTypeAlias: Boolean = false
+): TypeName {
+  val argumentList = arguments.map { it.asTypeName(typeParamResolver) }
+  val type: TypeName = when (val valClassifier = classifier) {
+    is TypeParameter -> {
+      typeParamResolver(valClassifier.id)
+    }
+    is KmClassifier.Class -> {
+      flexibleTypeUpperBound?.asTypeName(typeParamResolver)?.let { return it }
+      outerType?.asTypeName(typeParamResolver)?.let { return it }
+      var finalType: TypeName = ClassName.bestGuess(valClassifier.name.replace("/", "."))
+      if (argumentList.isNotEmpty()) {
+        val finalTypeString = finalType.toString()
+        if (finalTypeString.startsWith("kotlin.Function")) {
+          // It's a lambda type!
+          finalType = if (finalTypeString == "kotlin.FunctionN") {
+            TODO("unclear how to express this one since it has arity")
+          } else {
+            val (parameters, returnType) = if (isSuspend) {
+              // Coroutines always adds an `Any?` return type, but we kind of just want the
+              // source representation, so we trick it here and ignore the last.
+              argumentList.dropLast(2).toTypedArray() to argumentList.dropLast(1).last().let {
+                // Coroutines makes these a `Continuation<T>` of the type, so we want the parameterized type
+                check(it is ParameterizedTypeName)
+                it.typeArguments[0]
+              }
+            } else {
+              argumentList.dropLast(1).toTypedArray() to argumentList.last()
+            }
+            val lambdaType = if (isExtensionType) {
+              // Extension function type! T.(). First parameter is actually the receiver.
+              LambdaTypeName.get(
+                  receiver = parameters[0],
+                  parameters = *parameters.drop(1).toTypedArray(),
+                  returnType = returnType
+              )
+            } else {
+              LambdaTypeName.get(
+                  receiver = null,
+                  parameters = *parameters,
+                  returnType = returnType
+              )
+            }
+            lambdaType.copy(suspending = isSuspend)
+          }
+        } else {
+          finalType = (finalType as ClassName).parameterizedBy(*argumentList.toTypedArray())
+        }
+      }
+      finalType
+    }
+    is TypeAlias -> {
+      if (useTypeAlias) {
+        ClassName.bestGuess(valClassifier.name)
+      } else {
+        checkNotNull(abbreviatedType).asTypeName(typeParamResolver)
+      }
+    }
+  }
+
+  return type.copy(nullable = isNullable)
 }
