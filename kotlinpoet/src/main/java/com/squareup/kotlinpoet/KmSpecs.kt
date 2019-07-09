@@ -39,7 +39,7 @@ import kotlinx.metadata.KmVariance.OUT
 internal val ImmutableKmClass.primaryConstructor: ImmutableKmConstructor?
   get() = constructors.find { it.isPrimary }
 
-internal fun KmVariance.asKModifier(): KModifier? {
+internal fun KmVariance.toKModifier(): KModifier? {
   return when (this) {
     IN -> KModifier.IN
     OUT -> KModifier.OUT
@@ -48,10 +48,10 @@ internal fun KmVariance.asKModifier(): KModifier? {
 }
 
 @KotlinPoetKm
-internal fun ImmutableKmTypeProjection.asTypeName(
+internal fun ImmutableKmTypeProjection.toTypeName(
     typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
-  val typename = type?.asTypeName(typeParamResolver) ?: STAR
+  val typename = type?.toTypeName(typeParamResolver) ?: STAR
   return when (variance) {
     IN -> WildcardTypeName.consumerOf(typename)
     OUT -> {
@@ -74,18 +74,18 @@ internal fun ImmutableKmTypeProjection.asTypeName(
  * types to appropriate [lambda representations][LambdaTypeName].
  */
 @KotlinPoetKm
-internal fun ImmutableKmType.asTypeName(
+internal fun ImmutableKmType.toTypeName(
     typeParamResolver: ((index: Int) -> TypeName),
     useTypeAlias: Boolean = false
 ): TypeName {
-  val argumentList = arguments.map { it.asTypeName(typeParamResolver) }
+  val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
   val type: TypeName = when (val valClassifier = classifier) {
     is TypeParameter -> {
       typeParamResolver(valClassifier.id)
     }
     is KmClassifier.Class -> {
-      flexibleTypeUpperBound?.asTypeName(typeParamResolver)?.let { return it }
-      outerType?.asTypeName(typeParamResolver)?.let { return it }
+      flexibleTypeUpperBound?.toTypeName(typeParamResolver)?.let { return it }
+      outerType?.toTypeName(typeParamResolver)?.let { return it }
       var finalType: TypeName = ClassName.bestGuess(valClassifier.name.replace("/", "."))
       if (argumentList.isNotEmpty()) {
         val finalTypeString = finalType.toString()
@@ -131,7 +131,7 @@ internal fun ImmutableKmType.asTypeName(
       if (useTypeAlias) {
         ClassName.bestGuess(valClassifier.name)
       } else {
-        checkNotNull(abbreviatedType).asTypeName(typeParamResolver)
+        checkNotNull(abbreviatedType).toTypeName(typeParamResolver)
       }
     }
   }
@@ -140,10 +140,10 @@ internal fun ImmutableKmType.asTypeName(
 }
 
 @KotlinPoetKm
-internal fun ImmutableKmTypeParameter.asTypeVariableName(
+internal fun ImmutableKmTypeParameter.toTypeVariableName(
     typeParamResolver: ((index: Int) -> TypeName)
 ): TypeVariableName {
-  val finalVariance = variance.asKModifier().let {
+  val finalVariance = variance.toKModifier().let {
     if (it == KModifier.OUT) {
       // We don't redeclare out variance here
       null
@@ -159,7 +159,7 @@ internal fun ImmutableKmTypeParameter.asTypeVariableName(
   } else {
     TypeVariableName(
         name = name,
-        bounds = *(upperBounds.map { it.asTypeName(typeParamResolver) }.toTypedArray()),
+        bounds = *(upperBounds.map { it.toTypeName(typeParamResolver) }.toTypedArray()),
         variance = finalVariance
     )
   }
@@ -167,9 +167,9 @@ internal fun ImmutableKmTypeParameter.asTypeVariableName(
 }
 
 @KotlinPoetKm
-private fun ImmutableKmFlexibleTypeUpperBound.asTypeName(
+private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
     typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
   // TODO tag typeFlexibilityId somehow?
-  return WildcardTypeName.producerOf(type.asTypeName(typeParamResolver))
+  return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
 }
