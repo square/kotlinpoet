@@ -196,7 +196,7 @@ class KmSpecsTest {
     //language=kotlin
     assertThat(typeSpec.toString().trim()).isEqualTo("""
       class SuspendTypes {
-        val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String
+        val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = TODO("Stub!")
       
         suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
         }
@@ -283,10 +283,24 @@ class KmSpecsTest {
     }
   }
 
+  @Test
+  fun nestedTypeAlias() {
+    val typeSpec = NestedTypeAliasTest::class.toTypeSpec()
+
+    assertThat(typeSpec.toString().trim()).isEqualTo("""
+      class NestedTypeAliasTest {
+        val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = TODO("Stub!")
+      }
+    """.trimIndent())
+  }
+
+  class NestedTypeAliasTest {
+    val prop: NestedTypeAlias = listOf(listOf(""))
+  }
+
   // TODO Functions referencing class type parameter
   // TODO Overridden properties and functions
   // TODO Delegation (class, properties, local vars)
-  // TODO Nested typealiases
   // TODO Enums (simple and complex)
   // TODO Inline classes
   // TODO Complex companion objects (implementing interfaces)
@@ -297,3 +311,4 @@ class KmSpecsTest {
 
 typealias TypeAliasName = String
 typealias GenericTypeAlias = List<String>
+typealias NestedTypeAlias = List<GenericTypeAlias>

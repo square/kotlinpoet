@@ -96,6 +96,8 @@ fun TypeElement.toFileSpec(): FileSpec = FileSpec.get(
     typeSpec = toTypeSpec()
 )
 
+private const val TODO_BLOCK = "TODO(\"Stub!\")"
+
 @KotlinPoetKm
 private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
@@ -225,7 +227,7 @@ private fun ImmutableKmFunction.toFunSpec(
         val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamResolver)
         if (returnTypeName != UNIT) {
           returns(returnTypeName)
-          addStatement("TODO(\"Stub!\")")
+          addStatement(TODO_BLOCK)
         }
         receiverParameterType?.toTypeName(typeParamResolver)?.let { receiver(it) }
       }
@@ -250,7 +252,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
           addModifiers(KModifier.NOINLINE)
         }
         if (declaresDefaultValue) {
-          defaultValue("TODO(\"Stub!\")")
+          defaultValue(TODO_BLOCK)
         }
       }
       .tag(this)
@@ -291,6 +293,14 @@ private fun ImmutableKmProperty.toPropertySpec(
       }
       if (isSynthesized) {
         addAnnotation(JvmSynthetic::class)
+      }
+      if (!isDelegated && !isLateinit) {
+        // TODO if hasConstant + elements, we could look up the constant initializer
+        if (type.isNullable) {
+          initializer("null")
+        } else {
+          initializer(TODO_BLOCK)
+        }
       }
       if (hasGetter) {
         val visibility = setterFlags.visibility
