@@ -15,18 +15,18 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
+import com.squareup.kotlinpoet.km.ImmutableKmFlexibleTypeUpperBound
 import com.squareup.kotlinpoet.km.ImmutableKmType
+import com.squareup.kotlinpoet.km.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.km.ImmutableKmTypeProjection
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import com.squareup.kotlinpoet.km.isNullable
 import com.squareup.kotlinpoet.km.isPrimary
-import com.squareup.kotlinpoet.km.isSuspend
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.km.ImmutableKmFlexibleTypeUpperBound
-import com.squareup.kotlinpoet.km.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.km.isReified
+import com.squareup.kotlinpoet.km.isSuspend
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmClassifier.TypeAlias
 import kotlinx.metadata.KmClassifier.TypeParameter
@@ -68,6 +68,11 @@ internal fun ImmutableKmTypeProjection.asTypeName(
   }
 }
 
+/**
+ * Converts a given [ImmutableKmType] into a KotlinPoet representation, attempting to give a correct
+ * "source" representation. This includes converting [functions][kotlin.Function] and `suspend`
+ * types to appropriate [lambda representations][LambdaTypeName].
+ */
 @KotlinPoetKm
 internal fun ImmutableKmType.asTypeName(
     typeParamResolver: ((index: Int) -> TypeName),
