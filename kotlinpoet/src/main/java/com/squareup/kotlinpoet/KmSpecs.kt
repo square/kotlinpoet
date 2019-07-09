@@ -16,21 +16,25 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
+import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_NOT_DEFAULT
+import com.squareup.kotlinpoet.km.declaresDefaultValue
 import com.squareup.kotlinpoet.km.hasGetter
 import com.squareup.kotlinpoet.km.hasSetter
 import com.squareup.kotlinpoet.km.isAbstract
 import com.squareup.kotlinpoet.km.isConst
+import com.squareup.kotlinpoet.km.isCrossInline
 import com.squareup.kotlinpoet.km.isDelegated
 import com.squareup.kotlinpoet.km.isExpect
 import com.squareup.kotlinpoet.km.isExternal
 import com.squareup.kotlinpoet.km.isFinal
 import com.squareup.kotlinpoet.km.isInternal
 import com.squareup.kotlinpoet.km.isLateinit
+import com.squareup.kotlinpoet.km.isNoInline
 import com.squareup.kotlinpoet.km.isOpen
 import com.squareup.kotlinpoet.km.isOverride
 import com.squareup.kotlinpoet.km.isOverrideProperty
@@ -43,6 +47,30 @@ import com.squareup.kotlinpoet.km.isVal
 import com.squareup.kotlinpoet.km.isVar
 import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import kotlinx.metadata.Flags
+
+@KotlinPoetKm
+private fun ImmutableKmValueParameter.asParameterSpec(
+    typeParamResolver: ((index: Int) -> TypeName)
+): ParameterSpec {
+  val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
+  return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
+      .apply {
+        if (varargElementType != null) {
+          addModifiers(KModifier.VARARG)
+        }
+        if (isCrossInline) {
+          addModifiers(KModifier.CROSSINLINE)
+        }
+        if (isNoInline) {
+          addModifiers(KModifier.NOINLINE)
+        }
+        if (declaresDefaultValue) {
+          defaultValue("TODO(\"Stub!\")")
+        }
+      }
+      .tag(this)
+      .build()
+}
 
 @KotlinPoetKm
 private fun ImmutableKmProperty.toPropertySpec(
