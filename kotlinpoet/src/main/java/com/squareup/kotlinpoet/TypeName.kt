@@ -39,6 +39,7 @@ import javax.lang.model.util.SimpleTypeVisitor7
 import kotlin.reflect.KClass
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
+import kotlin.reflect.typeOf
 
 /**
  * Any type in Kotlin's type system. This class identifies simple types like `Int` and `String`,
@@ -273,6 +274,9 @@ fun KClass<*>.asTypeName() = asClassName()
 /** Returns a [TypeName] equivalent to this [Type].  */
 @JvmName("get")
 fun Type.asTypeName() = TypeName.get(this, mutableMapOf())
+
+@ExperimentalStdlibApi
+inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
 
 /** A fully-qualified class name for top-level and member classes.  */
 class ClassName internal constructor(

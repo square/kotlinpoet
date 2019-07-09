@@ -21,10 +21,6 @@ import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
-import kotlin.reflect.typeOf
-
-@ExperimentalStdlibApi
-inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
 
 /** Returns a parameterized type equivalent to `type`.  */
 @JvmName("get")
