@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
@@ -28,25 +29,85 @@ import com.squareup.kotlinpoet.km.hasSetter
 import com.squareup.kotlinpoet.km.isAbstract
 import com.squareup.kotlinpoet.km.isConst
 import com.squareup.kotlinpoet.km.isCrossInline
+import com.squareup.kotlinpoet.km.isDeclaration
 import com.squareup.kotlinpoet.km.isDelegated
+import com.squareup.kotlinpoet.km.isDelegation
 import com.squareup.kotlinpoet.km.isExpect
 import com.squareup.kotlinpoet.km.isExternal
+import com.squareup.kotlinpoet.km.isFakeOverride
 import com.squareup.kotlinpoet.km.isFinal
+import com.squareup.kotlinpoet.km.isInfix
+import com.squareup.kotlinpoet.km.isInline
 import com.squareup.kotlinpoet.km.isInternal
 import com.squareup.kotlinpoet.km.isLateinit
 import com.squareup.kotlinpoet.km.isNoInline
 import com.squareup.kotlinpoet.km.isOpen
+import com.squareup.kotlinpoet.km.isOperator
 import com.squareup.kotlinpoet.km.isOverride
 import com.squareup.kotlinpoet.km.isOverrideProperty
 import com.squareup.kotlinpoet.km.isPrivate
 import com.squareup.kotlinpoet.km.isProtected
 import com.squareup.kotlinpoet.km.isPublic
 import com.squareup.kotlinpoet.km.isSealed
+import com.squareup.kotlinpoet.km.isSuspend
 import com.squareup.kotlinpoet.km.isSynthesized
+import com.squareup.kotlinpoet.km.isTailRec
 import com.squareup.kotlinpoet.km.isVal
 import com.squareup.kotlinpoet.km.isVar
 import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import kotlinx.metadata.Flags
+
+@KotlinPoetKm
+fun ImmutableKmFunction.asFunSpec(
+    typeParamResolver: ((index: Int) -> TypeName)
+): FunSpec {
+  return FunSpec.builder(name)
+      .apply {
+        addModifiers(flags.visibility)
+        addParameters(this@asFunSpec.valueParameters.map { it.asParameterSpec(typeParamResolver) })
+        if (isDeclaration) {
+          // TODO
+        }
+        if (isFakeOverride) {
+          addModifiers(KModifier.OVERRIDE)
+        }
+        if (isDelegation) {
+          // TODO
+        }
+        if (isSynthesized) {
+          addAnnotation(JvmSynthetic::class)
+        }
+        if (isOperator) {
+          addModifiers(KModifier.OPERATOR)
+        }
+        if (isInfix) {
+          addModifiers(KModifier.INFIX)
+        }
+        if (isInline) {
+          addModifiers(KModifier.INLINE)
+        }
+        if (isTailRec) {
+          addModifiers(KModifier.TAILREC)
+        }
+        if (isExternal) {
+          addModifiers(KModifier.EXTERNAL)
+        }
+        if (isExpect) {
+          addModifiers(KModifier.EXPECT)
+        }
+        if (isSuspend) {
+          addModifiers(KModifier.SUSPEND)
+        }
+        val returnTypeName = this@asFunSpec.returnType.toTypeName(typeParamResolver)
+        if (returnTypeName != UNIT) {
+          returns(returnTypeName)
+          addStatement("TODO(\"Stub!\")")
+        }
+        receiverParameterType?.toTypeName(typeParamResolver)?.let { receiver(it) }
+      }
+      .tag(this)
+      .build()
+}
 
 @KotlinPoetKm
 private fun ImmutableKmValueParameter.asParameterSpec(
