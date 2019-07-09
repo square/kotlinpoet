@@ -59,7 +59,7 @@ import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import kotlinx.metadata.Flags
 
 @KotlinPoetKm
-fun ImmutableKmConstructor.asFunSpec(
+private fun ImmutableKmConstructor.asFunSpec(
     typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.constructorBuilder()
@@ -72,7 +72,7 @@ fun ImmutableKmConstructor.asFunSpec(
 }
 
 @KotlinPoetKm
-fun ImmutableKmFunction.asFunSpec(
+private fun ImmutableKmFunction.asFunSpec(
     typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.builder(name)
