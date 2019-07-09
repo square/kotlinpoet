@@ -308,7 +308,10 @@ private val Flags.visibility: KModifier
     isPrivate -> KModifier.PRIVATE
     isProtected -> KModifier.PROTECTED
     isPublic -> KModifier.PUBLIC
-    else -> TODO("Flag not supported!") // IS_PRIVATE_TO_THIS or IS_LOCAL
+    else -> {
+      // IS_PRIVATE_TO_THIS or IS_LOCAL, so just default to public
+      KModifier.PUBLIC
+    }
   }
 
 @KotlinPoetKm
