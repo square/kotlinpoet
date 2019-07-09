@@ -165,6 +165,9 @@ private fun ImmutableKmConstructor.toFunSpec(
       .apply {
         addModifiers(flags.visibility)
         addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
+        if (!isPrimary) {
+          // TODO How do we know when to add callSuperConstructor()?
+        }
       }
       .tag(this)
       .build()
