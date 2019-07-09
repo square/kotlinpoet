@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
@@ -56,6 +57,19 @@ import com.squareup.kotlinpoet.km.isVal
 import com.squareup.kotlinpoet.km.isVar
 import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import kotlinx.metadata.Flags
+
+@KotlinPoetKm
+fun ImmutableKmConstructor.asFunSpec(
+    typeParamResolver: ((index: Int) -> TypeName)
+): FunSpec {
+  return FunSpec.constructorBuilder()
+      .apply {
+        addModifiers(flags.visibility)
+        addParameters(this@asFunSpec.valueParameters.map { it.asParameterSpec(typeParamResolver) })
+      }
+      .tag(this)
+      .build()
+}
 
 @KotlinPoetKm
 fun ImmutableKmFunction.asFunSpec(
