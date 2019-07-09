@@ -292,6 +292,7 @@ class KmSpecsTest {
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)
+  // TODO Excluding delegated, only including declared
 }
 
 typealias TypeAliasName = String
