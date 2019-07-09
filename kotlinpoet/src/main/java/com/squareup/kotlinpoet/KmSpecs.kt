@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
+import com.squareup.kotlinpoet.km.ImmutableKmTypeProjection
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import com.squareup.kotlinpoet.km.isPrimary
 import kotlinx.metadata.KmVariance
@@ -33,5 +34,26 @@ internal fun KmVariance.asKModifier(): KModifier? {
     IN -> KModifier.IN
     OUT -> KModifier.OUT
     INVARIANT -> null
+  }
+}
+
+@KotlinPoetKm
+internal fun ImmutableKmTypeProjection.asTypeName(
+    typeParamResolver: ((index: Int) -> TypeName)
+): TypeName {
+  val typename = type?.asTypeName(typeParamResolver) ?: STAR
+  return when (variance) {
+    IN -> WildcardTypeName.consumerOf(typename)
+    OUT -> {
+      if (typename == ANY) {
+        // This becomes a *, which we actually don't want here.
+        // List<Any> works with List<*>, but List<*> doesn't work with List<Any>
+        typename
+      } else {
+        WildcardTypeName.producerOf(typename)
+      }
+    }
+    INVARIANT -> typename
+    null -> STAR
   }
 }
