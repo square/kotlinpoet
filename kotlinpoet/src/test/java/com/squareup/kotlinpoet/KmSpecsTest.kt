@@ -287,6 +287,7 @@ class KmSpecsTest {
   fun nestedTypeAlias() {
     val typeSpec = NestedTypeAliasTest::class.toTypeSpec()
 
+    //language=kotlin
     assertThat(typeSpec.toString().trim()).isEqualTo("""
       class NestedTypeAliasTest {
         val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = TODO("Stub!")
@@ -298,16 +299,29 @@ class KmSpecsTest {
     val prop: NestedTypeAlias = listOf(listOf(""))
   }
 
+  @Test
+  fun inlineClass() {
+    val typeSpec = InlineClass::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.toString().trim()).isEqualTo("""
+      inline class InlineClass(
+        val value: kotlin.String
+      )
+    """.trimIndent())
+  }
+
   // TODO Functions referencing class type parameter
   // TODO Overridden properties and functions
   // TODO Delegation (class, properties, local vars)
   // TODO Enums (simple and complex)
-  // TODO Inline classes
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)
   // TODO Excluding delegated, only including declared
 }
+
+inline class InlineClass(val value: String)
 
 typealias TypeAliasName = String
 typealias GenericTypeAlias = List<String>

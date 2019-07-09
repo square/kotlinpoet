@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
@@ -55,4 +56,9 @@ dependencies {
 repositories {
   mavenCentral()
   jcenter()
+}
+
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
 }
