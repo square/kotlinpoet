@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.km.isNullable
 import com.squareup.kotlinpoet.km.isPrimary
 import com.squareup.kotlinpoet.km.isSuspend
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.km.ImmutableKmFlexibleTypeUpperBound
 import com.squareup.kotlinpoet.km.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.km.isReified
 import kotlinx.metadata.KmClassifier
@@ -158,4 +159,12 @@ internal fun ImmutableKmTypeParameter.asTypeVariableName(
     )
   }
   return typeVariableName.copy(reified = isReified)
+}
+
+@KotlinPoetKm
+private fun ImmutableKmFlexibleTypeUpperBound.asTypeName(
+    typeParamResolver: ((index: Int) -> TypeName)
+): TypeName {
+  // TODO tag typeFlexibilityId somehow?
+  return WildcardTypeName.producerOf(type.asTypeName(typeParamResolver))
 }
