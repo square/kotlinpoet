@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
@@ -28,24 +29,33 @@ import com.squareup.kotlinpoet.km.declaresDefaultValue
 import com.squareup.kotlinpoet.km.hasGetter
 import com.squareup.kotlinpoet.km.hasSetter
 import com.squareup.kotlinpoet.km.isAbstract
+import com.squareup.kotlinpoet.km.isAnnotation
+import com.squareup.kotlinpoet.km.isCompanionObject
 import com.squareup.kotlinpoet.km.isConst
 import com.squareup.kotlinpoet.km.isCrossInline
+import com.squareup.kotlinpoet.km.isData
 import com.squareup.kotlinpoet.km.isDeclaration
 import com.squareup.kotlinpoet.km.isDelegated
 import com.squareup.kotlinpoet.km.isDelegation
+import com.squareup.kotlinpoet.km.isEnum
+import com.squareup.kotlinpoet.km.isEnumEntry
 import com.squareup.kotlinpoet.km.isExpect
 import com.squareup.kotlinpoet.km.isExternal
 import com.squareup.kotlinpoet.km.isFakeOverride
 import com.squareup.kotlinpoet.km.isFinal
 import com.squareup.kotlinpoet.km.isInfix
 import com.squareup.kotlinpoet.km.isInline
+import com.squareup.kotlinpoet.km.isInner
+import com.squareup.kotlinpoet.km.isInterface
 import com.squareup.kotlinpoet.km.isInternal
 import com.squareup.kotlinpoet.km.isLateinit
 import com.squareup.kotlinpoet.km.isNoInline
+import com.squareup.kotlinpoet.km.isObject
 import com.squareup.kotlinpoet.km.isOpen
 import com.squareup.kotlinpoet.km.isOperator
 import com.squareup.kotlinpoet.km.isOverride
 import com.squareup.kotlinpoet.km.isOverrideProperty
+import com.squareup.kotlinpoet.km.isPrimary
 import com.squareup.kotlinpoet.km.isPrivate
 import com.squareup.kotlinpoet.km.isProtected
 import com.squareup.kotlinpoet.km.isPublic
@@ -59,26 +69,87 @@ import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import kotlinx.metadata.Flags
 
 @KotlinPoetKm
-private fun ImmutableKmConstructor.asFunSpec(
+internal fun ImmutableKmClass.toTypeSpec(): TypeSpec {
+  // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
+  val parametersMap = mutableMapOf<Int, TypeName>()
+  val typeParamResolver = { id: Int -> parametersMap.getValue(id) }
+  typeParameters.forEach { parametersMap[it.id] = it.toTypeVariableName(typeParamResolver) }
+
+  val simpleName = name.substringAfterLast(".")
+  val builder = when {
+    isAnnotation -> TypeSpec.annotationBuilder(simpleName)
+    isCompanionObject -> TypeSpec.companionObjectBuilder(simpleName)
+    isEnum -> TypeSpec.enumBuilder(simpleName)
+    isExpect -> TypeSpec.expectClassBuilder(simpleName)
+    isObject -> TypeSpec.objectBuilder(simpleName)
+    isInterface -> TypeSpec.interfaceBuilder(simpleName)
+    else -> TypeSpec.classBuilder(simpleName)
+  }
+  builder.addModifiers(flags.visibility)
+  builder.addModifiers(*flags.modalities
+      .filterNot { it == KModifier.FINAL } // Default
+      .toTypedArray()
+  )
+  if (isData) {
+    builder.addModifiers(KModifier.DATA)
+  }
+  if (isExternal) {
+    builder.addModifiers(KModifier.EXTERNAL)
+  }
+  if (isInline) {
+    builder.addModifiers(KModifier.INLINE)
+  }
+  if (isInner) {
+    builder.addModifiers(KModifier.INNER)
+  }
+  if (isEnumEntry) {
+    // TODO handle typespec arg for complex enums
+    enumEntries.forEach {
+      builder.addEnumConstant(it)
+    }
+  }
+
+  builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
+  supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
+  builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
+  builder.addProperties(properties.map { it.toPropertySpec(typeParamResolver) })
+  primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
+    builder.primaryConstructor(it.toFunSpec(typeParamResolver))
+  }
+  constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
+    builder.addFunctions(secondaryConstructors.map { it.toFunSpec(typeParamResolver) })
+  }
+  companionObject?.let {
+    builder.addType(TypeSpec.companionObjectBuilder(it).build())
+  }
+  builder.addFunctions(functions.map { it.toFunSpec(typeParamResolver) })
+
+  return builder
+      .tag(this)
+      .build()
+}
+
+@KotlinPoetKm
+private fun ImmutableKmConstructor.toFunSpec(
     typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
         addModifiers(flags.visibility)
-        addParameters(this@asFunSpec.valueParameters.map { it.asParameterSpec(typeParamResolver) })
+        addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
       }
       .tag(this)
       .build()
 }
 
 @KotlinPoetKm
-private fun ImmutableKmFunction.asFunSpec(
+private fun ImmutableKmFunction.toFunSpec(
     typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
         addModifiers(flags.visibility)
-        addParameters(this@asFunSpec.valueParameters.map { it.asParameterSpec(typeParamResolver) })
+        addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
         if (isDeclaration) {
           // TODO
         }
@@ -112,7 +183,7 @@ private fun ImmutableKmFunction.asFunSpec(
         if (isSuspend) {
           addModifiers(KModifier.SUSPEND)
         }
-        val returnTypeName = this@asFunSpec.returnType.toTypeName(typeParamResolver)
+        val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamResolver)
         if (returnTypeName != UNIT) {
           returns(returnTypeName)
           addStatement("TODO(\"Stub!\")")
@@ -124,7 +195,7 @@ private fun ImmutableKmFunction.asFunSpec(
 }
 
 @KotlinPoetKm
-private fun ImmutableKmValueParameter.asParameterSpec(
+private fun ImmutableKmValueParameter.toParameterSpec(
     typeParamResolver: ((index: Int) -> TypeName)
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
