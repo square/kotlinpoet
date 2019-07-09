@@ -142,21 +142,24 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
   supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
   builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
+  val primaryConstructorSpec = primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
+    it.toFunSpec(typeParamResolver).also {
+      builder.primaryConstructor(it)
+    }
+  }
+  constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
+    builder.addFunctions(secondaryConstructors.map { it.toFunSpec(typeParamResolver) })
+  }
+  val primaryConstructorParams = primaryConstructorSpec?.parameters.orEmpty().associateBy { it.name }
   builder.addProperties(
       properties
           .asSequence()
           .filter { it.isDeclaration }
           .filterNot { it.isDelegated }
           .filterNot { it.isSynthesized }
-          .map { it.toPropertySpec(typeParamResolver) }
+          .map { it.toPropertySpec(typeParamResolver, it.name in primaryConstructorParams) }
           .asIterable()
   )
-  primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
-    builder.primaryConstructor(it.toFunSpec(typeParamResolver))
-  }
-  constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-    builder.addFunctions(secondaryConstructors.map { it.toFunSpec(typeParamResolver) })
-  }
   companionObject?.let {
     builder.addType(TypeSpec.companionObjectBuilder(it).build())
   }
@@ -263,7 +266,8 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 
 @KotlinPoetKm
 private fun ImmutableKmProperty.toPropertySpec(
-    typeParamResolver: ((index: Int) -> TypeName)
+    typeParamResolver: ((index: Int) -> TypeName),
+    isConstructorParam: Boolean
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       addModifiers(flags.visibility)
@@ -293,12 +297,12 @@ private fun ImmutableKmProperty.toPropertySpec(
       if (isLateinit) {
         addModifiers(KModifier.LATEINIT)
       }
-      if (!isDelegated && !isLateinit) {
+      if (isConstructorParam || (!isDelegated && !isLateinit)) {
         // TODO if hasConstant + elements, we could look up the constant initializer
-        if (type.isNullable) {
-          initializer("null")
-        } else {
-          initializer(TODO_BLOCK)
+        when {
+          isConstructorParam -> initializer(name)
+          type.isNullable -> initializer("null")
+          else -> initializer(TODO_BLOCK)
         }
       }
       if (hasGetter) {
