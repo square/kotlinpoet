@@ -43,6 +43,7 @@ afterEvaluate {
 
 dependencies {
   api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+  api(rootProject.project("kotlinpoet-km"))
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
   testImplementation("com.google.truth:truth:1.0")
