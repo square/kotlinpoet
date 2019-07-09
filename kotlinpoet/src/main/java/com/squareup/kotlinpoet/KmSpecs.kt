@@ -66,10 +66,38 @@ import com.squareup.kotlinpoet.km.isTailRec
 import com.squareup.kotlinpoet.km.isVal
 import com.squareup.kotlinpoet.km.isVar
 import com.squareup.kotlinpoet.km.propertyAccessorFlags
+import com.squareup.kotlinpoet.km.toImmutableKmClass
 import kotlinx.metadata.Flags
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.PackageElement
+import javax.lang.model.element.TypeElement
+import kotlin.reflect.KClass
+
+/** @return a [TypeSpec] ABI representation of this [KClass]. */
+@KotlinPoetKm
+fun KClass<*>.toTypeSpec(): TypeSpec = java.toTypeSpec()
+/** @return a [TypeSpec] ABI representation of this [KClass]. */
+@KotlinPoetKm
+fun Class<*>.toTypeSpec(): TypeSpec = toImmutableKmClass().toTypeSpec()
+/** @return a [TypeSpec] ABI representation of this [TypeElement]. */
+@KotlinPoetKm
+fun TypeElement.toTypeSpec(): TypeSpec = toImmutableKmClass().toTypeSpec()
+/** @return a [FileSpec] ABI representation of this [KClass]. */
+@KotlinPoetKm
+fun KClass<*>.toFileSpec(): FileSpec = java.toFileSpec()
+/** @return a [FileSpec] ABI representation of this [KClass]. */
+@KotlinPoetKm
+fun Class<*>.toFileSpec(): FileSpec = FileSpec.get(`package`.name, toTypeSpec())
+/** @return a [FileSpec] ABI representation of this [TypeElement]. */
+@KotlinPoetKm
+fun TypeElement.toFileSpec(): FileSpec = FileSpec.get(
+    packageName = packageName.toString(),
+    typeSpec = toTypeSpec()
+)
 
 @KotlinPoetKm
-internal fun ImmutableKmClass.toTypeSpec(): TypeSpec {
+private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
   val parametersMap = mutableMapOf<Int, TypeName>()
   val typeParamResolver = { id: Int -> parametersMap.getValue(id) }
@@ -334,3 +362,13 @@ private val Flags.modalities: Set<KModifier>
 private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
 }
+
+@PublishedApi
+internal val Element.packageName: PackageElement
+  get() {
+      var element = this
+      while (element.kind != ElementKind.PACKAGE) {
+        element = element.enclosingElement
+      }
+      return element as PackageElement
+  }
