@@ -20,6 +20,7 @@ import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
+import com.squareup.kotlinpoet.km.ImmutableKmWithFlags
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_EXTERNAL
@@ -105,7 +106,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   val typeParamResolver = { id: Int -> parametersMap.getValue(id) }
   typeParameters.forEach { parametersMap[it.id] = it.toTypeVariableName(typeParamResolver) }
 
-  val simpleName = name.substringAfterLast(".")
+  val simpleName = name.substringAfterLast(if (isInline) "/" else ".")
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
     isCompanionObject -> TypeSpec.companionObjectBuilder(simpleName)
@@ -115,7 +116,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     isInterface -> TypeSpec.interfaceBuilder(simpleName)
     else -> TypeSpec.classBuilder(simpleName)
   }
-  builder.addModifiers(flags.visibility)
+  addVisibility { builder.addModifiers(it) }
   builder.addModifiers(*flags.modalities
       .filterNot { it == KModifier.FINAL } // Default
       .toTypedArray()
@@ -128,6 +129,8 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   }
   if (isInline) {
     builder.addModifiers(KModifier.INLINE)
+    // TODO these are special.
+    //  - Name is the fqcn
   }
   if (isInner) {
     builder.addModifiers(KModifier.INNER)
@@ -184,7 +187,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
-        addModifiers(flags.visibility)
+        addVisibility { addModifiers(it) }
         addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
         if (!isPrimary) {
           // TODO How do we know when to add callSuperConstructor()?
@@ -200,7 +203,7 @@ private fun ImmutableKmFunction.toFunSpec(
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
-        addModifiers(flags.visibility)
+        addVisibility { addModifiers(it) }
         addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
         if (isFakeOverride) {
           addModifiers(KModifier.OVERRIDE)
@@ -270,7 +273,7 @@ private fun ImmutableKmProperty.toPropertySpec(
     isConstructorParam: Boolean
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
-      addModifiers(flags.visibility)
+      addVisibility { addModifiers(it) }
       addModifiers(*flags.modalities
           .filterNot { it == KModifier.FINAL && !isOverride }
           .toTypedArray())
@@ -361,6 +364,14 @@ private val Flags.visibility: KModifier
       KModifier.PUBLIC
     }
   }
+
+@KotlinPoetKm
+private fun ImmutableKmWithFlags.addVisibility(body: (KModifier) -> Unit) {
+  val modifierVisibility = flags.visibility
+  if (modifierVisibility != KModifier.PUBLIC) {
+    body(modifierVisibility)
+  }
+}
 
 @KotlinPoetKm
 private val Flags.modalities: Set<KModifier>
