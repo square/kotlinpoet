@@ -147,6 +147,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
           .asSequence()
           .filter { it.isDeclaration }
           .filterNot { it.isDelegated }
+          .filterNot { it.isSynthesized }
           .map { it.toPropertySpec(typeParamResolver) }
           .asIterable()
   )
@@ -164,6 +165,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
           .asSequence()
           .filter { it.isDeclaration }
           .filterNot { it.isDelegation }
+          .filterNot { it.isSynthesized }
           .map { it.toFunSpec(typeParamResolver) }
           .asIterable()
   )
@@ -290,9 +292,6 @@ private fun ImmutableKmProperty.toPropertySpec(
       }
       if (isLateinit) {
         addModifiers(KModifier.LATEINIT)
-      }
-      if (isSynthesized) {
-        addAnnotation(JvmSynthetic::class)
       }
       if (!isDelegated && !isLateinit) {
         // TODO if hasConstant + elements, we could look up the constant initializer
