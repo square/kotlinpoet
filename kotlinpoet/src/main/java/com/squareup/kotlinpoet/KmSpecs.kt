@@ -24,6 +24,8 @@ import com.squareup.kotlinpoet.km.isNullable
 import com.squareup.kotlinpoet.km.isPrimary
 import com.squareup.kotlinpoet.km.isSuspend
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.km.ImmutableKmTypeParameter
+import com.squareup.kotlinpoet.km.isReified
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmClassifier.TypeAlias
 import kotlinx.metadata.KmClassifier.TypeParameter
@@ -129,4 +131,31 @@ internal fun ImmutableKmType.asTypeName(
   }
 
   return type.copy(nullable = isNullable)
+}
+
+@KotlinPoetKm
+internal fun ImmutableKmTypeParameter.asTypeVariableName(
+    typeParamResolver: ((index: Int) -> TypeName)
+): TypeVariableName {
+  val finalVariance = variance.asKModifier().let {
+    if (it == KModifier.OUT) {
+      // We don't redeclare out variance here
+      null
+    } else {
+      it
+    }
+  }
+  val typeVariableName = if (upperBounds.isEmpty()) {
+    TypeVariableName(
+        name = name,
+        variance = finalVariance
+    )
+  } else {
+    TypeVariableName(
+        name = name,
+        bounds = *(upperBounds.map { it.asTypeName(typeParamResolver) }.toTypedArray()),
+        variance = finalVariance
+    )
+  }
+  return typeVariableName.copy(reified = isReified)
 }
