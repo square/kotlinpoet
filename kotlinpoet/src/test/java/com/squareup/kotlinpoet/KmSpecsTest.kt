@@ -197,13 +197,13 @@ class KmSpecsTest {
     assertThat(typeSpec.toString().trim()).isEqualTo("""
       class SuspendTypes {
         val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = TODO("Stub!")
-      
+
         suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
         }
-      
+
         fun testFun(body: suspend (kotlin.Int, kotlin.Long) -> kotlin.String) {
         }
-      
+
         suspend fun testSuspendFun(param1: kotlin.String) {
         }
       }
@@ -231,10 +231,10 @@ class KmSpecsTest {
       class Parameters {
         inline fun hasDefault(param1: kotlin.String = TODO("Stub!")) {
         }
-      
+
         inline fun inline(crossinline param1: () -> kotlin.String) {
         }
-      
+
         inline fun noinline(noinline param1: () -> kotlin.String): kotlin.String {
           TODO("Stub!")
         }
@@ -244,7 +244,6 @@ class KmSpecsTest {
 
   class Parameters {
     inline fun inline(crossinline param1: () -> String) {
-
     }
 
     inline fun noinline(noinline param1: () -> String): String {
@@ -252,7 +251,6 @@ class KmSpecsTest {
     }
 
     inline fun hasDefault(param1: String = "Nope") {
-
     }
   }
 

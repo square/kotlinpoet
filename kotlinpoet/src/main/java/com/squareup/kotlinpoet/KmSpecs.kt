@@ -183,7 +183,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
 
 @KotlinPoetKm
 private fun ImmutableKmConstructor.toFunSpec(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
@@ -199,7 +199,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 
 @KotlinPoetKm
 private fun ImmutableKmFunction.toFunSpec(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
@@ -245,7 +245,7 @@ private fun ImmutableKmFunction.toFunSpec(
 
 @KotlinPoetKm
 private fun ImmutableKmValueParameter.toParameterSpec(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
@@ -269,8 +269,8 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 
 @KotlinPoetKm
 private fun ImmutableKmProperty.toPropertySpec(
-    typeParamResolver: ((index: Int) -> TypeName),
-    isConstructorParam: Boolean
+  typeParamResolver: ((index: Int) -> TypeName),
+  isConstructorParam: Boolean
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       addVisibility { addModifiers(it) }

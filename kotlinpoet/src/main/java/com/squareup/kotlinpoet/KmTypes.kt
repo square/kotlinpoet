@@ -49,7 +49,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
 
 @KotlinPoetKm
 internal fun ImmutableKmTypeProjection.toTypeName(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
   val typename = type?.toTypeName(typeParamResolver) ?: STAR
   return when (variance) {
@@ -75,8 +75,8 @@ internal fun ImmutableKmTypeProjection.toTypeName(
  */
 @KotlinPoetKm
 internal fun ImmutableKmType.toTypeName(
-    typeParamResolver: ((index: Int) -> TypeName),
-    useTypeAlias: Boolean = false
+  typeParamResolver: ((index: Int) -> TypeName),
+  useTypeAlias: Boolean = false
 ): TypeName {
   val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
   val type: TypeName = when (val valClassifier = classifier) {
@@ -141,7 +141,7 @@ internal fun ImmutableKmType.toTypeName(
 
 @KotlinPoetKm
 internal fun ImmutableKmTypeParameter.toTypeVariableName(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): TypeVariableName {
   val finalVariance = variance.toKModifier().let {
     if (it == KModifier.OUT) {
@@ -168,7 +168,7 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
 
 @KotlinPoetKm
 private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
-    typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
   // TODO tag typeFlexibilityId somehow?
   return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
