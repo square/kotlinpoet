@@ -140,7 +140,14 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
   supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
   builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
-  builder.addProperties(properties.map { it.toPropertySpec(typeParamResolver) })
+  builder.addProperties(
+      properties
+          .asSequence()
+          .filter { it.isDeclaration }
+          .filterNot { it.isDelegated }
+          .map { it.toPropertySpec(typeParamResolver) }
+          .asIterable()
+  )
   primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
     builder.primaryConstructor(it.toFunSpec(typeParamResolver))
   }
@@ -150,7 +157,14 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   companionObject?.let {
     builder.addType(TypeSpec.companionObjectBuilder(it).build())
   }
-  builder.addFunctions(functions.map { it.toFunSpec(typeParamResolver) })
+  builder.addFunctions(
+      functions
+          .asSequence()
+          .filter { it.isDeclaration }
+          .filterNot { it.isDelegation }
+          .map { it.toFunSpec(typeParamResolver) }
+          .asIterable()
+  )
 
   return builder
       .tag(this)
@@ -181,14 +195,8 @@ private fun ImmutableKmFunction.toFunSpec(
       .apply {
         addModifiers(flags.visibility)
         addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
-        if (isDeclaration) {
-          // TODO
-        }
         if (isFakeOverride) {
           addModifiers(KModifier.OVERRIDE)
-        }
-        if (isDelegation) {
-          // TODO
         }
         if (isSynthesized) {
           addAnnotation(JvmSynthetic::class)
@@ -314,10 +322,6 @@ private fun ImmutableKmProperty.toPropertySpec(
               .build())
         }
       }
-      // TODO Available in tags
-      //hasConstant
-      //isDeclaration
-      //isDelegation
     }
     .tag(this)
     .build()
