@@ -4,6 +4,7 @@ object versions {
   const val ktlint = "0.31.0"
   const val mavenPublish = "0.8.0"
   const val shadowPlugin = "5.0.0"
+  const val dokka = "0.9.18"
 }
 
 object deps {

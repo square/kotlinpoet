@@ -16,7 +16,7 @@
 
 plugins {
   kotlin("jvm") version versions.kotlin apply false
-  id("org.jetbrains.dokka") version "0.9.18" apply false
+  id("org.jetbrains.dokka") version versions.dokka apply false
   id("com.diffplug.gradle.spotless") version versions.spotless
 }
 
