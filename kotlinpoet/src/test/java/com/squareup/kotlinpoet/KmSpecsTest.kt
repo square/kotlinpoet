@@ -471,7 +471,27 @@ class KmSpecsTest {
     }
   }
 
-  // TODO Interfaces
+  @Test
+  fun interfaces() {
+    val typeSpec = SomeInterface::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      interface SomeInterface : com.squareup.kotlinpoet.KmSpecsTest.SomeInterfaceBase {
+        fun testFunction() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  interface SomeInterfaceBase
+
+  interface SomeInterface : SomeInterfaceBase {
+    fun testFunction() {
+
+    }
+  }
+
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)

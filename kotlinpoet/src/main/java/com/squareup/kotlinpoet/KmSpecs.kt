@@ -119,6 +119,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   addVisibility { builder.addModifiers(it) }
   builder.addModifiers(*flags.modalities
       .filterNot { it == KModifier.FINAL } // Default
+      .filterNot { isInterface && it == KModifier.ABSTRACT } // Abstract is a default on interfaces
       .toTypedArray()
   )
   if (isData) {
@@ -146,10 +147,10 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   }
 
   builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
-  if (!isEnum) {
+  if (!isEnum && !isInterface) {
     supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
   }
-  builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
+  builder.addSuperinterfaces(supertypes.drop(if (isInterface) 0 else 1).map { it.toTypeName(typeParamResolver) })
   val primaryConstructorSpec = primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
     it.toFunSpec(typeParamResolver).also {
       builder.primaryConstructor(it)
