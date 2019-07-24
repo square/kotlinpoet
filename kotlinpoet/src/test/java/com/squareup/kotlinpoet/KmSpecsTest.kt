@@ -493,9 +493,20 @@ class KmSpecsTest {
     }
   }
 
+  @Test
+  fun backwardReferencingTypeVars() {
+    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      interface BackwardReferencingTypeVars<T> : kotlin.collections.List<kotlin.collections.Set<T>>
+    """.trimIndent())
+  }
+
+  interface BackwardReferencingTypeVars<T> : List<Set<T>>
+
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
-  // TODO Backward referencing type arguments (T, B<T>)
 }
 
 private fun TypeSpec.trimmedToString(): String {
