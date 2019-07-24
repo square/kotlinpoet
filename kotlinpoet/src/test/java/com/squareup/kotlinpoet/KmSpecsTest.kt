@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import org.junit.Ignore
 import org.junit.Test
 
 @KotlinPoetKm
@@ -307,7 +308,51 @@ class KmSpecsTest {
     }
   }
 
-  // TODO Overridden properties and functions
+  @Ignore("We need to read @Override annotations off of these in metadata parsing")
+  @Test
+  fun overriddenThings() {
+    val typeSpec = OverriddenThings::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
+        override var openProp: String = TODO("Stub!")
+        override var openPropInterface: String = TODO("Stub!")
+    
+        override fun openFunction() {
+        }
+    
+        override fun openFunctionInterface() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  abstract class OverriddenThingsBase {
+    abstract var openProp: String
+
+    abstract fun openFunction()
+  }
+
+  interface OverriddenThingsInterface {
+    var openPropInterface: String
+
+    fun openFunctionInterface()
+  }
+
+  abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
+    override var openProp: String = ""
+    override var openPropInterface: String = ""
+
+    override fun openFunction() {
+
+    }
+
+    override fun openFunctionInterface() {
+
+    }
+  }
+
   // TODO Delegation (class, properties, local vars)
   // TODO Enums (simple and complex)
   // TODO Complex companion objects (implementing interfaces)
