@@ -391,6 +391,21 @@ class KmSpecsTest {
     var mutableNullable: String? by Delegates.observable(null) { _, _, _ -> }
   }
 
+  @Ignore("Need to be able to know about class delegation in metadata")
+  @Test
+  fun classDelegation() {
+    val typeSpec = ClassDelegation::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ClassDelegation<T>(
+        delegate: List<T>
+      ): List<T> by delegate
+    """.trimIndent())
+  }
+
+  class ClassDelegation<T>(delegate: List<T>): List<T> by delegate
+
   // TODO Delegation (class, properties, local vars)
   // TODO Enums (simple and complex)
   // TODO Complex companion objects (implementing interfaces)
