@@ -27,7 +27,7 @@ class KmSpecsTest {
   fun constructorData() {
     val typeSpec = ConstructorClass::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ConstructorClass(
         val foo: kotlin.String,
         vararg bar: kotlin.Int
@@ -48,7 +48,7 @@ class KmSpecsTest {
     val typeSpec = Supertype::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Supertype : com.squareup.kotlinpoet.KmSpecsTest.BaseType(), com.squareup.kotlinpoet.KmSpecsTest.BaseInterface
     """.trimIndent())
   }
@@ -62,7 +62,7 @@ class KmSpecsTest {
     val typeSpec = Properties::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Properties {
         var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
       
@@ -86,7 +86,7 @@ class KmSpecsTest {
   fun companionObject() {
     val typeSpec = CompanionObject::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CompanionObject {
         companion object
       }
@@ -101,7 +101,7 @@ class KmSpecsTest {
   fun namedCompanionObject() {
     val typeSpec = NamedCompanionObject::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NamedCompanionObject {
         companion object Named
       }
@@ -116,7 +116,7 @@ class KmSpecsTest {
   fun generics() {
     val typeSpec = Generics::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Generics<T, in R, V>(
         val genericInput: T
       )
@@ -131,7 +131,7 @@ class KmSpecsTest {
 
     // We always resolve the underlying type of typealiases
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class TypeAliases(
         val foo: kotlin.String,
         val bar: kotlin.collections.List<kotlin.String>
@@ -145,7 +145,7 @@ class KmSpecsTest {
   fun propertyMutability() {
     val typeSpec = PropertyMutability::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class PropertyMutability(
         val foo: kotlin.String,
         var mutableFoo: kotlin.String
@@ -159,7 +159,7 @@ class KmSpecsTest {
   fun collectionMutability() {
     val typeSpec = CollectionMutability::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CollectionMutability(
         val immutableList: kotlin.collections.List<kotlin.String>,
         val mutableList: kotlin.collections.MutableList<kotlin.String>
@@ -173,7 +173,7 @@ class KmSpecsTest {
   fun suspendTypes() {
     val typeSpec = SuspendTypes::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class SuspendTypes {
         val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = TODO("Stub!")
 
@@ -206,7 +206,7 @@ class KmSpecsTest {
   fun parameters() {
     val typeSpec = Parameters::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
         inline fun hasDefault(param1: kotlin.String = TODO("Stub!")) {
         }
@@ -237,7 +237,7 @@ class KmSpecsTest {
   fun lambdaReceiver() {
     val typeSpec = LambdaReceiver::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class LambdaReceiver {
         fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit) {
         }
@@ -265,7 +265,7 @@ class KmSpecsTest {
     val typeSpec = NestedTypeAliasTest::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NestedTypeAliasTest {
         val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = TODO("Stub!")
       }
@@ -281,7 +281,7 @@ class KmSpecsTest {
     val typeSpec = InlineClass::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       inline class InlineClass(
         val value: kotlin.String
       )
@@ -296,6 +296,10 @@ class KmSpecsTest {
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)
   // TODO Excluding delegated, only including declared
+}
+
+private fun TypeSpec.trimmedToString(): String {
+  return toString().trim()
 }
 
 inline class InlineClass(val value: String)
