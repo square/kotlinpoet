@@ -158,7 +158,6 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
       properties
           .asSequence()
           .filter { it.isDeclaration }
-          .filterNot { it.isDelegated }
           .filterNot { it.isSynthesized }
           .map { it.toPropertySpec(typeParamResolver, it.name in primaryConstructorParams) }
           .asIterable()
@@ -294,7 +293,17 @@ private fun ImmutableKmProperty.toPropertySpec(
         mutable(false)
       }
       if (isDelegated) {
-        delegate("") // Placeholder
+        // Placeholders for these are tricky
+        addKdoc("Note: delegation is ABI stub only and not guaranteed to match source code.")
+        if (isVal) {
+          delegate("%M { %L }", MemberName("kotlin", "lazy"), TODO_BLOCK) // Placeholder
+        } else {
+          if (type.isNullable) {
+            delegate("%T.observable(null) { _, _, _ -> }", ClassName("kotlin.properties", "Delegates"))
+          } else {
+            delegate("%T.notNull()", ClassName("kotlin.properties", "Delegates")) // Placeholder
+          }
+        }
       }
       if (isExpect) {
         addModifiers(KModifier.EXPECT)
@@ -313,10 +322,12 @@ private fun ImmutableKmProperty.toPropertySpec(
           else -> initializer(TODO_BLOCK)
         }
       }
-      if (hasGetter) {
+      // Delegated properties have setters/getters defined for some reason, ignore here
+      // since the delegate handles it
+      if (hasGetter && !isDelegated) {
         propertyAccessor(getterFlags, FunSpec.getterBuilder())?.let(::getter)
       }
-      if (hasSetter) {
+      if (hasSetter && !isDelegated) {
         propertyAccessor(setterFlags, FunSpec.setterBuilder())?.let(::setter)
       }
     }
@@ -343,11 +354,11 @@ private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): Fu
 }
 
 private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
-  return map {
+  return mapNotNull {
     when (it) {
       IS_EXTERNAL -> KModifier.EXTERNAL
       IS_INLINE -> KModifier.INLINE
-      IS_NOT_DEFAULT -> TODO("Wat")
+      IS_NOT_DEFAULT -> null // Gracefully skip over these
     }
   }.toTypedArray()
 }

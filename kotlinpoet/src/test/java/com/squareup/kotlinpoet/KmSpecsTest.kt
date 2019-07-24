@@ -19,6 +19,7 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import org.junit.Ignore
 import org.junit.Test
+import kotlin.properties.Delegates
 
 @KotlinPoetKm
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -351,6 +352,43 @@ class KmSpecsTest {
     override fun openFunctionInterface() {
 
     }
+  }
+
+  @Test
+  fun delegatedProperties() {
+    val typeSpec = DelegatedProperties::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class DelegatedProperties {
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        val immutable: kotlin.String by kotlin.lazy { TODO("Stub!") }
+      
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        val immutableNullable: kotlin.String? by kotlin.lazy { TODO("Stub!") }
+      
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        var mutable: kotlin.String by kotlin.properties.Delegates.notNull()
+      
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        var mutableNullable: kotlin.String? by kotlin.properties.Delegates.observable(null) { _, _, _ -> }
+      }
+    """.trimIndent())
+  }
+
+  class DelegatedProperties {
+    val immutable: String by lazy { "" }
+    val immutableNullable: String? by lazy { "" }
+    var mutable: String by Delegates.notNull()
+    var mutableNullable: String? by Delegates.observable(null) { _, _, _ -> }
   }
 
   // TODO Delegation (class, properties, local vars)
