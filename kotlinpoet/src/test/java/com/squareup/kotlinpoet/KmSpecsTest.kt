@@ -288,7 +288,25 @@ class KmSpecsTest {
     """.trimIndent())
   }
 
-  // TODO Functions referencing class type parameter
+  @Test
+  fun functionReferencingTypeParam() {
+    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class FunctionsReferencingTypeParameters<T> {
+        fun test(param: T) {
+        }
+      }
+    """.trimIndent())
+  }
+
+  class FunctionsReferencingTypeParameters<T> {
+    fun test(param: T) {
+
+    }
+  }
+
   // TODO Overridden properties and functions
   // TODO Delegation (class, properties, local vars)
   // TODO Enums (simple and complex)
