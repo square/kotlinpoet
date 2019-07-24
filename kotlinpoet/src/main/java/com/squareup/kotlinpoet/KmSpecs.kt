@@ -279,7 +279,8 @@ private fun ImmutableKmProperty.toPropertySpec(
     .apply {
       addVisibility { addModifiers(it) }
       addModifiers(*flags.modalities
-          .filterNot { it == KModifier.FINAL && !isOverride }
+          .filterNot { it == KModifier.FINAL && !isOverride } // Final is the default
+          .filterNot { it == KModifier.OPEN && isOverride } // Overrides are implicitly open
           .toTypedArray())
       if (isOverride) {
         addModifiers(KModifier.OVERRIDE)
