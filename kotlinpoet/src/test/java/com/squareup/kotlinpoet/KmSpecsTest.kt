@@ -183,9 +183,8 @@ class KmSpecsTest {
 
     val (immutableProp, mutableListProp) = typeSpec.primaryConstructor!!.parameters
     assertThat(immutableProp.type).isEqualTo(List::class.parameterizedBy(String::class))
-    assertThat(mutableListProp.type).isEqualTo(
-        ClassName.bestGuess("kotlin.collections.MutableList").parameterizedBy(
-            String::class.asTypeName()))
+    assertThat(mutableListProp.type)
+        .isEqualTo(MUTABLE_LIST.parameterizedBy(String::class.asTypeName()))
   }
 
   class CollectionMutability(val immutableList: List<String>, val mutableList: MutableList<String>)
