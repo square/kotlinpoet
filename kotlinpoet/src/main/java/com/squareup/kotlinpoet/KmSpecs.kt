@@ -309,38 +309,33 @@ private fun ImmutableKmProperty.toPropertySpec(
         }
       }
       if (hasGetter) {
-        val visibility = setterFlags.visibility
-        val modalities = setterFlags.modalities
-            .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
-        val propertyAccessorFlags = setterFlags.propertyAccessorFlags
-        if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
-          getter(FunSpec.setterBuilder()
-              .apply {
-                addModifiers(visibility)
-                addModifiers(*modalities.toTypedArray())
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
-              }
-              .build())
-        }
+        propertyAccessor(getterFlags, FunSpec.getterBuilder())?.let(::getter)
       }
       if (hasSetter) {
-        val visibility = setterFlags.visibility
-        val modalities = setterFlags.modalities
-            .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
-        val propertyAccessorFlags = setterFlags.propertyAccessorFlags
-        if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
-          setter(FunSpec.setterBuilder()
-              .apply {
-                addModifiers(visibility)
-                addModifiers(*modalities.toTypedArray())
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
-              }
-              .build())
-        }
+        propertyAccessor(setterFlags, FunSpec.setterBuilder())?.let(::setter)
       }
     }
     .tag(this)
     .build()
+
+@KotlinPoetKm
+private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): FunSpec? {
+  val visibility = flags.visibility
+  val modalities = flags.modalities
+      .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
+  val propertyAccessorFlags = flags.propertyAccessorFlags
+  return if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
+    functionBuilder
+        .apply {
+          addModifiers(visibility)
+          addModifiers(*modalities.toTypedArray())
+          addModifiers(*propertyAccessorFlags.toKModifiersArray())
+        }
+        .build()
+  } else {
+    null
+  }
+}
 
 private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
   return map {
