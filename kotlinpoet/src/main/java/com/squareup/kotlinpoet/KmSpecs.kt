@@ -109,7 +109,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   val simpleName = name.substringAfterLast(if (isInline) "/" else ".")
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
-    isCompanionObject -> TypeSpec.companionObjectBuilder(simpleName)
+    isCompanionObject -> TypeSpec.companionObjectBuilder(companionObjectName(simpleName))
     isEnum -> TypeSpec.enumBuilder(simpleName)
     isExpect -> TypeSpec.expectClassBuilder(simpleName)
     isObject -> TypeSpec.objectBuilder(simpleName)
@@ -164,7 +164,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
           .asIterable()
   )
   companionObject?.let {
-    builder.addType(TypeSpec.companionObjectBuilder(it).build())
+    builder.addType(TypeSpec.companionObjectBuilder(companionObjectName(it)).build())
   }
   builder.addFunctions(
       functions
@@ -179,6 +179,10 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   return builder
       .tag(this)
       .build()
+}
+
+private fun companionObjectName(name: String): String? {
+  return if (name == "Companion") null else name
 }
 
 @KotlinPoetKm
