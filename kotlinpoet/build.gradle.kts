@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
-  id("com.vanniktech.maven.publish") version "0.8.0"
+  id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
 
 val GROUP: String by project
@@ -43,14 +43,14 @@ afterEvaluate {
 }
 
 dependencies {
-  api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
   api(rootProject.project("kotlinpoet-km"))
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-  testImplementation("com.google.truth:truth:1.0")
-  testImplementation("com.google.testing.compile:compile-testing:0.15")
-  testImplementation("com.google.jimfs:jimfs:1.1")
-  testImplementation("org.eclipse.jdt.core.compiler:ecj:4.6.1")
+  api(deps.kotlin.stdlib)
+  implementation(deps.kotlin.reflect)
+  testImplementation(deps.kotlin.junit)
+  testImplementation(deps.test.truth)
+  testImplementation(deps.test.compileTesting)
+  testImplementation(deps.test.jimfs)
+  testImplementation(deps.test.ecj)
 }
 
 repositories {

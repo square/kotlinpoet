@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
-  id("com.github.johnrengelman.shadow") version "5.0.0" apply false
-  id("com.vanniktech.maven.publish") version "0.8.0"
+  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
+  id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
 
 val GROUP: String by project
@@ -49,10 +49,10 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-  api("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
-  api("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-  testImplementation("com.google.truth:truth:1.0")
+  api(deps.kotlin.stdlib)
+  api(deps.kotlin.metadata)
+  testImplementation(deps.kotlin.junit)
+  testImplementation(deps.test.truth)
 }
 
 repositories {

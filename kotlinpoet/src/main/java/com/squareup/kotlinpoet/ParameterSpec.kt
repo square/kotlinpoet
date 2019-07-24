@@ -33,6 +33,8 @@ class ParameterSpec private constructor(
   val type = builder.type
   val defaultValue = builder.defaultValue
 
+  constructor(name: String, type: TypeName, vararg modifiers: KModifier) : this(builder(name, type, *modifiers))
+
   internal fun emit(
     codeWriter: CodeWriter,
     includeType: Boolean = true,

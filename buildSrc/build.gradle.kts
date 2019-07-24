@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 plugins {
-  kotlin("jvm") version versions.kotlin apply false
-  id("org.jetbrains.dokka") version versions.dokka apply false
-  id("com.diffplug.gradle.spotless") version versions.spotless
+  `kotlin-dsl`
 }
 
-spotless {
-  kotlin {
-    target("**/*.kt")
-    ktlint(versions.ktlint).userData(mapOf("indent_size" to "2"))
-    trimTrailingWhitespace()
-    endWithNewline()
-  }
+repositories {
+  jcenter()
 }
 
-subprojects {
-  repositories {
-    mavenCentral()
-    jcenter()
-  }
+kotlinDslPluginOptions {
+  experimentalWarning.set(false)
 }
