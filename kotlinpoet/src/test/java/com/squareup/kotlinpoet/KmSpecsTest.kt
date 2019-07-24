@@ -396,6 +396,7 @@ class KmSpecsTest {
   fun classDelegation() {
     val typeSpec = ClassDelegation::class.toTypeSpec()
 
+    // TODO Assert this also excludes functions handled by the delegate
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ClassDelegation<T>(
@@ -495,7 +496,6 @@ class KmSpecsTest {
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)
-  // TODO Excluding delegated, only including declared
 }
 
 private fun TypeSpec.trimmedToString(): String {
