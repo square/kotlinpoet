@@ -136,6 +136,9 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     builder.addModifiers(KModifier.INNER)
   }
   if (isEnumEntry) {
+    // TODO
+  }
+  if (isEnum) {
     // TODO handle typespec arg for complex enums
     enumEntries.forEach {
       builder.addEnumConstant(it)
@@ -143,7 +146,9 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   }
 
   builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
-  supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
+  if (!isEnum) {
+    supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
+  }
   builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
   val primaryConstructorSpec = primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
     it.toFunSpec(typeParamResolver).also {

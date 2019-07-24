@@ -406,8 +406,28 @@ class KmSpecsTest {
 
   class ClassDelegation<T>(delegate: List<T>): List<T> by delegate
 
-  // TODO Delegation (class, properties, local vars)
-  // TODO Enums (simple and complex)
+  @Test
+  fun simpleEnum() {
+    val typeSpec = SimpleEnum::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class SimpleEnum {
+        FOO,
+
+        BAR,
+
+        BAZ
+      }
+    """.trimIndent())
+  }
+
+  enum class SimpleEnum {
+    FOO, BAR, BAZ
+  }
+
+  // TODO Enums (complex)
+  // TODO Interfaces
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
   // TODO Backward referencing type arguments (T, B<T>)
