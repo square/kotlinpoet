@@ -426,7 +426,51 @@ class KmSpecsTest {
     FOO, BAR, BAZ
   }
 
-  // TODO Enums (complex)
+  @Ignore("Requires recursively reading metadata for each enum entry")
+  @Test
+  fun complexEnum() {
+    val typeSpec = ComplexEnum::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class SimpleEnum {
+        FOO("foo") {
+          override fun toString(): String {
+            return "foo1"
+          }
+        },
+        BAR("bar") {
+          override fun toString(): String {
+            return "bar1"
+          }
+        },
+        BAZ("baz") {
+          override fun toString(): String {
+            return "baz1"
+          }
+        }
+      }
+    """.trimIndent())
+  }
+
+  enum class ComplexEnum(val value: String) {
+    FOO("foo") {
+      override fun toString(): String {
+        return "foo1"
+      }
+    },
+    BAR("bar") {
+      override fun toString(): String {
+        return "bar1"
+      }
+    },
+    BAZ("baz") {
+      override fun toString(): String {
+        return "baz1"
+      }
+    }
+  }
+
   // TODO Interfaces
   // TODO Complex companion objects (implementing interfaces)
   // TODO Tagged km types
