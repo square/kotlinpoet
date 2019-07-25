@@ -73,11 +73,11 @@ class KmSpecsTest {
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Properties {
         var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
-      
+
         val bar: kotlin.String? = null
-      
+
         var baz: kotlin.Int = TODO("Stub!")
-      
+
         val foo: kotlin.String = TODO("Stub!")
       }
     """.trimIndent())
@@ -311,7 +311,6 @@ class KmSpecsTest {
 
   class FunctionsReferencingTypeParameters<T> {
     fun test(param: T) {
-
     }
   }
 
@@ -325,10 +324,10 @@ class KmSpecsTest {
       abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
         override var openProp: String = TODO("Stub!")
         override var openPropInterface: String = TODO("Stub!")
-    
+
         override fun openFunction() {
         }
-    
+
         override fun openFunctionInterface() {
         }
       }
@@ -352,11 +351,9 @@ class KmSpecsTest {
     override var openPropInterface: String = ""
 
     override fun openFunction() {
-
     }
 
     override fun openFunctionInterface() {
-
     }
   }
 
@@ -371,17 +368,17 @@ class KmSpecsTest {
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
         val immutable: kotlin.String by kotlin.lazy { TODO("Stub!") }
-      
+
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
         val immutableNullable: kotlin.String? by kotlin.lazy { TODO("Stub!") }
-      
+
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
         var mutable: kotlin.String by kotlin.properties.Delegates.notNull()
-      
+
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
@@ -411,7 +408,7 @@ class KmSpecsTest {
     """.trimIndent())
   }
 
-  class ClassDelegation<T>(delegate: List<T>): List<T> by delegate
+  class ClassDelegation<T>(delegate: List<T>) : List<T> by delegate
 
   @Test
   fun simpleEnum() {
@@ -495,7 +492,6 @@ class KmSpecsTest {
 
   interface SomeInterface : SomeInterfaceBase {
     fun testFunction() {
-
     }
   }
 
@@ -537,7 +533,6 @@ class KmSpecsTest {
     val property: String = ""
 
     fun function() {
-
     }
   }
 
