@@ -321,9 +321,9 @@ class ClassName internal constructor(
   }
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ): ClassName {
     return ClassName(names, nullable, annotations, tags)
   }
@@ -446,9 +446,9 @@ class ClassName internal constructor(
 object Dynamic : TypeName(false, emptyList(), TagMap(emptyMap())) {
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ) = throw UnsupportedOperationException("dynamic doesn't support copying")
 
   override fun emit(out: CodeWriter) = out.apply {
@@ -476,9 +476,9 @@ class LambdaTypeName private constructor(
   }
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ): LambdaTypeName {
     return copy(nullable, annotations, this.isSuspending, tags)
   }
@@ -566,9 +566,9 @@ class ParameterizedTypeName internal constructor(
   }
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ): ParameterizedTypeName {
     return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations, tags)
   }
@@ -697,9 +697,9 @@ class TypeVariableName private constructor(
 ) : TypeName(nullable, annotations, TagMap(tags)) {
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ): TypeVariableName {
     return copy(nullable, annotations, this.bounds, this.isReified, tags)
   }
@@ -822,9 +822,9 @@ class WildcardTypeName private constructor(
   }
 
   override fun copy(
-      nullable: Boolean,
-      annotations: List<AnnotationSpec>,
-      tags: Map<KClass<*>, Any>
+    nullable: Boolean,
+    annotations: List<AnnotationSpec>,
+    tags: Map<KClass<*>, Any>
   ): WildcardTypeName {
     return WildcardTypeName(outTypes, inTypes, nullable, annotations, tags)
   }
