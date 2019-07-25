@@ -43,7 +43,7 @@ fun KTypeParameter.asTypeVariableName(): TypeVariableName {
       name = name,
       bounds = upperBounds.map(KType::asTypeName)
           .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST),
-      variance = when(variance) {
+      variance = when (variance) {
         KVariance.INVARIANT -> null
         KVariance.IN -> KModifier.IN
         KVariance.OUT -> KModifier.OUT
