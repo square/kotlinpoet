@@ -16,10 +16,16 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.km.ImmutableKmClass
+import com.squareup.kotlinpoet.km.ImmutableKmConstructor
+import com.squareup.kotlinpoet.km.ImmutableKmFunction
+import com.squareup.kotlinpoet.km.ImmutableKmProperty
+import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.properties.Delegates
+import kotlin.test.fail
 
 @KotlinPoetKm
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -505,8 +511,37 @@ class KmSpecsTest {
 
   interface BackwardReferencingTypeVars<T> : List<Set<T>>
 
+  @Test
+  fun taggedTypes() {
+    val typeSpec = TaggedTypes::class.toTypeSpec()
+    assertThat(typeSpec.tag<ImmutableKmClass>()).isNotNull()
+
+    val constructorSpec = typeSpec.primaryConstructor ?: fail("No constructor found!")
+    assertThat(constructorSpec.tag<ImmutableKmConstructor>()).isNotNull()
+
+    val parameterSpec = constructorSpec.parameters[0]
+    assertThat(parameterSpec.tag<ImmutableKmValueParameter>()).isNotNull()
+
+    // TODO taggable TypeNames
+//    val typeVar = typeSpec.typeVariables[0]
+//    assertThat(typeVar.tag<ImmutableKmTypeParameter>()).isNotNull()
+
+    val funSpec = typeSpec.funSpecs[0]
+    assertThat(funSpec.tag<ImmutableKmFunction>()).isNotNull()
+
+    val propertySpec = typeSpec.propertySpecs[0]
+    assertThat(propertySpec.tag<ImmutableKmProperty>()).isNotNull()
+  }
+
+  class TaggedTypes<T>(val param: T) {
+    val property: String = ""
+
+    fun function() {
+
+    }
+  }
+
   // TODO Complex companion objects (implementing interfaces)
-  // TODO Tagged km types
 }
 
 private fun TypeSpec.trimmedToString(): String {
