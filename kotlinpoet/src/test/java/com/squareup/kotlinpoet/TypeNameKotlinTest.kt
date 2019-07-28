@@ -62,4 +62,10 @@ class TypeNameKotlinTest {
 
   @Suppress("unused")
   class GenericType<T>
+
+  @Test
+  fun tag() {
+    val type = typeNameOf<String>().copy(tags = mapOf(String::class to "Test"))
+    assertThat(type.tag<String>()).isEqualTo("Test")
+  }
 }
