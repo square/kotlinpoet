@@ -288,8 +288,27 @@ class ClassName internal constructor(
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
    */
+  @Deprecated("", level = DeprecationLevel.HIDDEN)
   constructor(packageName: String, simpleName: String, vararg simpleNames: String) :
       this(listOf(packageName, simpleName, *simpleNames))
+
+  /**
+   * Returns a class name created from the given parts. For example, calling this with package name
+   * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
+   */
+  constructor(packageName: String, vararg simpleNames: String) :
+      this(listOf(packageName, *simpleNames)) {
+    require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
+  }
+
+  /**
+   * Returns a class name created from the given parts. For example, calling this with package name
+   * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
+   */
+  constructor(packageName: String, simpleNames: List<String>) :
+      this(mutableListOf(packageName).apply { addAll(simpleNames) }) {
+    require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
+  }
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`.  */
   private val names = names.toImmutableList()

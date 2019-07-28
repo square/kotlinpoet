@@ -134,6 +134,12 @@ class ClassNameTest {
     // }
   }
 
+  @Test fun fromEmptySimpleName() {
+    assertThrows<IllegalArgumentException> {
+      ClassName("foo" /* no simple name */)
+    }
+  }
+
   @Test fun reflectionName() {
     assertThat(ANY.reflectionName())
         .isEqualTo("kotlin.Any")
