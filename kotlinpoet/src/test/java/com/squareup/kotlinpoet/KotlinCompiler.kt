@@ -57,8 +57,8 @@ object KotlinCompiler {
     class MessageCollectorImpl : MessageCollector {
         private val errorCount = AtomicInteger(0)
         override fun hasErrors(): Boolean { return (errorCount.get() > 0) }
-        override fun clear(): Unit { errorCount.set(0) }
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?): Unit {
+        override fun clear() { errorCount.set(0) }
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             if (severity.isError) {
                 errorCount.incrementAndGet()
                 System.err.println("KotlinTestHelper ERROR: " + message + " " + location)
