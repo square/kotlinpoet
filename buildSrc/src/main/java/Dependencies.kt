@@ -25,6 +25,7 @@ object versions {
 object deps {
   object kotlin {
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
+    const val compiler = "org.jetbrains.kotlin:kotlin-compiler"
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect"
     const val junit = "org.jetbrains.kotlin:kotlin-test-junit"
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"

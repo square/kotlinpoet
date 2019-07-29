@@ -47,6 +47,7 @@ dependencies {
   api(deps.kotlin.stdlib)
   implementation(deps.kotlin.reflect)
   testImplementation(deps.kotlin.junit)
+  testImplementation(deps.kotlin.compiler)
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
   testImplementation(deps.test.jimfs)
