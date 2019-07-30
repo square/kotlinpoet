@@ -274,14 +274,28 @@ class FileSpec private constructor(
     fun addImport(constant: Enum<*>) = addImport(
         (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
-    fun addImport(`class`: Class<*>, vararg names: String) =
-        addImport(`class`.asClassName(), *names)
+    fun addImport(`class`: Class<*>, vararg names: String) = apply {
+      require(names.isNotEmpty()) { "names array is empty" }
+      addImport(`class`.asClassName(), names.toList())
+    }
 
-    fun addImport(`class`: KClass<*>, vararg names: String) =
-        addImport(`class`.asClassName(), *names)
+    fun addImport(`class`: KClass<*>, vararg names: String) = apply {
+      require(names.isNotEmpty()) { "names array is empty" }
+      addImport(`class`.asClassName(), names.toList())
+    }
 
     fun addImport(className: ClassName, vararg names: String) = apply {
       require(names.isNotEmpty()) { "names array is empty" }
+      addImport(className, names.toList())
+    }
+
+    fun addImport(`class`: Class<*>, names: Iterable<String>) =
+        addImport(`class`.asClassName(), names)
+
+    fun addImport(`class`: KClass<*>, names: Iterable<String>) =
+        addImport(`class`.asClassName(), names)
+
+    fun addImport(className: ClassName, names: Iterable<String>) = apply {
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += Import(className.canonicalName + "." + name)
@@ -290,6 +304,10 @@ class FileSpec private constructor(
 
     fun addImport(packageName: String, vararg names: String) = apply {
       require(names.isNotEmpty()) { "names array is empty" }
+      addImport(packageName, names.toList())
+    }
+
+    fun addImport(packageName: String, names: Iterable<String>) = apply {
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += if (packageName.isNotEmpty()) {
