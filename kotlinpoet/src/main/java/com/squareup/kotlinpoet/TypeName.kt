@@ -541,6 +541,19 @@ class LambdaTypeName private constructor(
 
   companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @JvmName("getWithTypeNames")
+    @JvmStatic fun get(
+            receiver: TypeName? = null,
+            parameters: List<TypeName> = emptyList(),
+            returnType: TypeName
+    ): LambdaTypeName {
+      return LambdaTypeName(
+          receiver,
+          parameters.toList().map { ParameterSpec.unnamed(it) },
+          returnType)
+    }
+
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
