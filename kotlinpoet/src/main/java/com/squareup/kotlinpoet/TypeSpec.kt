@@ -456,6 +456,11 @@ class TypeSpec private constructor(
       this.modifiers += modifiers
     }
 
+    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+      check(!isAnonymousClass) { "forbidden on anonymous types." }
+      this.modifiers += modifiers
+    }
+
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
       this.typeVariables += typeVariables
     }
@@ -595,6 +600,15 @@ class TypeSpec private constructor(
 
     fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier) =
         addProperty(name, type.asTypeName(), *modifiers)
+
+    fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>) =
+        addProperty(PropertySpec.builder(name, type, modifiers).build())
+
+    fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>) =
+        addProperty(name, type.asTypeName(), modifiers)
+
+    fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+        addProperty(name, type.asTypeName(), modifiers)
 
     fun addInitializerBlock(block: CodeBlock) = apply {
       checkCanHaveInitializerBlocks()

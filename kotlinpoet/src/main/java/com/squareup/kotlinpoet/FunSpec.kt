@@ -409,6 +409,15 @@ class FunSpec private constructor(
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier) =
         addParameter(name, type.asTypeName(), *modifiers)
 
+    fun addParameter(name: String, type: TypeName, modifiers: Iterable<KModifier>) =
+        addParameter(ParameterSpec.builder(name, type, modifiers).build())
+
+    fun addParameter(name: String, type: Type, modifiers: Iterable<KModifier>) =
+        addParameter(name, type.asTypeName(), modifiers)
+
+    fun addParameter(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+        addParameter(name, type.asTypeName(), modifiers)
+
     fun addCode(format: String, vararg args: Any?) = apply {
       body.add(format, *args)
     }

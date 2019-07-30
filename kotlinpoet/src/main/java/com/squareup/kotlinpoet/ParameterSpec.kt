@@ -34,6 +34,7 @@ class ParameterSpec private constructor(
   val defaultValue = builder.defaultValue
 
   constructor(name: String, type: TypeName, vararg modifiers: KModifier) : this(builder(name, type, *modifiers))
+  constructor(name: String, type: TypeName, modifiers: Iterable<KModifier>) : this(builder(name, type, modifiers))
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -160,6 +161,16 @@ class ParameterSpec private constructor(
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier) =
         builder(name, type.asTypeName(), *modifiers)
+
+    @JvmStatic fun builder(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder {
+      return Builder(name, type).addModifiers(modifiers)
+    }
+
+    @JvmStatic fun builder(name: String, type: Type, modifiers: Iterable<KModifier>) =
+        builder(name, type.asTypeName(), modifiers)
+
+    @JvmStatic fun builder(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+        builder(name, type.asTypeName(), modifiers)
 
     @JvmStatic fun unnamed(type: KClass<*>) = unnamed(type.asTypeName())
 
