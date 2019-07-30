@@ -788,6 +788,21 @@ class TypeVariableName private constructor(
     operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, bounds: List<TypeName>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds, variance)
+
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("getWithClasses") @JvmOverloads
+    operator fun invoke(name: String, bounds: Iterable<KClass<*>>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("getWithTypes") @JvmOverloads
+    operator fun invoke(name: String, bounds: Iterable<Type>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
      * infinite recursion in cases like `Enum<E extends Enum<E>>`. When we encounter such a
