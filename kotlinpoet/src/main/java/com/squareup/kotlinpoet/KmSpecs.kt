@@ -313,7 +313,7 @@ private fun ImmutableKmProperty.toPropertySpec(
               .apply {
                 addModifiers(visibility)
                 addModifiers(modalities)
-                addModifiers(propertyAccessorFlags)
+                addModifiers(*propertyAccessorFlags.toKModifiersArray())
               }
               .build())
         }
@@ -328,7 +328,7 @@ private fun ImmutableKmProperty.toPropertySpec(
               .apply {
                 addModifiers(visibility)
                 addModifiers(modalities)
-                addModifiers(propertyAccessorFlags)
+                addModifiers(*propertyAccessorFlags.toKModifiersArray())
               }
               .build())
         }

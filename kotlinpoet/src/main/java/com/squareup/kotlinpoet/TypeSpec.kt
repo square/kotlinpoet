@@ -68,7 +68,7 @@ class TypeSpec private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(kind, name)
-    builder.modifiers += , modifiers
+    builder.modifiers += modifiers
     builder.kdoc.add(kdoc)
     builder.annotationSpecs += annotationSpecs
     builder.typeVariables += typeVariables
