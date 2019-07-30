@@ -117,10 +117,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     else -> TypeSpec.classBuilder(simpleName)
   }
   addVisibility { builder.addModifiers(it) }
-  builder.addModifiers(*flags.modalities
-      .filterNot { it == KModifier.FINAL } // Default
-      .toTypedArray()
-  )
+  builder.addModifiers(flags.modalities.filterNot { it == KModifier.FINAL } /* Default modifier */)
   if (isData) {
     builder.addModifiers(KModifier.DATA)
   }
@@ -274,9 +271,7 @@ private fun ImmutableKmProperty.toPropertySpec(
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       addVisibility { addModifiers(it) }
-      addModifiers(*flags.modalities
-          .filterNot { it == KModifier.FINAL && !isOverride }
-          .toTypedArray())
+      addModifiers(flags.modalities.filterNot { it == KModifier.FINAL && !isOverride })
       if (isOverride) {
         addModifiers(KModifier.OVERRIDE)
       }
@@ -317,8 +312,8 @@ private fun ImmutableKmProperty.toPropertySpec(
           getter(FunSpec.setterBuilder()
               .apply {
                 addModifiers(visibility)
-                addModifiers(*modalities.toTypedArray())
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
+                addModifiers(modalities)
+                addModifiers(propertyAccessorFlags)
               }
               .build())
         }
@@ -332,8 +327,8 @@ private fun ImmutableKmProperty.toPropertySpec(
           setter(FunSpec.setterBuilder()
               .apply {
                 addModifiers(visibility)
-                addModifiers(*modalities.toTypedArray())
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
+                addModifiers(modalities)
+                addModifiers(propertyAccessorFlags)
               }
               .build())
         }

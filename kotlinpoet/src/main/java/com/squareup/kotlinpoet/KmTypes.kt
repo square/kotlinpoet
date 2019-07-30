@@ -109,7 +109,7 @@ internal fun ImmutableKmType.toTypeName(
               // Extension function type! T.(). First parameter is actually the receiver.
               LambdaTypeName.get(
                   receiver = parameters[0],
-                  parameters = *parameters.drop(1).toTypedArray(),
+                  parameters = parameters.drop(1),
                   returnType = returnType
               )
             } else {
@@ -122,7 +122,7 @@ internal fun ImmutableKmType.toTypeName(
             lambdaType.copy(suspending = isSuspend)
           }
         } else {
-          finalType = (finalType as ClassName).parameterizedBy(*argumentList.toTypedArray())
+          finalType = (finalType as ClassName).parameterizedBy(argumentList)
         }
       }
       finalType
@@ -159,7 +159,7 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
   } else {
     TypeVariableName(
         name = name,
-        bounds = *(upperBounds.map { it.toTypeName(typeParamResolver) }.toTypedArray()),
+        bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
         variance = finalVariance
     )
   }

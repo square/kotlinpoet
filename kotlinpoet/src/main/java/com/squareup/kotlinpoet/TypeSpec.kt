@@ -67,7 +67,8 @@ class TypeSpec private constructor(
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
   fun toBuilder(): Builder {
-    val builder = Builder(kind, name, *modifiers.toTypedArray())
+    val builder = Builder(kind, name)
+    builder.modifiers += , modifiers
     builder.kdoc.add(kdoc)
     builder.annotationSpecs += annotationSpecs
     builder.typeVariables += typeVariables
