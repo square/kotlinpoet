@@ -378,26 +378,52 @@ class FunSpec private constructor(
       parameters += parameterSpec
     }
 
+    @JvmName("callThisConstructorWithStrings")
+    fun callThisConstructor(args: Iterable<String>) = apply {
+      callConstructor("this", args.map { CodeBlock.of(it) })
+    }
+
+    fun callThisConstructor(args: List<CodeBlock>) = apply {
+      callConstructor("this", args)
+    }
+
+    fun callThisConstructor(args: Iterable<CodeBlock>) = apply {
+      callConstructor("this", args.toList())
+    }
+
     fun callThisConstructor(vararg args: String) = apply {
-      callConstructor("this", *args.map { CodeBlock.of(it) }.toTypedArray())
+      callConstructor("this", args.map { CodeBlock.of(it) })
     }
 
     fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
-      callConstructor("this", *args)
+      callConstructor("this", args.toList())
+    }
+
+    @JvmName("callSuperConstructorWithStrings")
+    fun callSuperConstructor(args: Iterable<String>) = apply {
+      callConstructor("super", args.map { CodeBlock.of(it) })
+    }
+
+    fun callSuperConstructor(args: Iterable<CodeBlock>) = apply {
+      callConstructor("super", args.toList())
+    }
+
+    fun callSuperConstructor(args: List<CodeBlock>) = apply {
+      callConstructor("super", args)
     }
 
     fun callSuperConstructor(vararg args: String) = apply {
-      callConstructor("super", *args.map { CodeBlock.of(it) }.toTypedArray())
+      callConstructor("super", args.map { CodeBlock.of(it) })
     }
 
     fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
-      callConstructor("super", *args)
+      callConstructor("super", args.toList())
     }
 
-    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
+    private fun callConstructor(constructor: String, args: List<CodeBlock>) {
       check(name.isConstructor) { "only constructors can delegate to other constructors!" }
       delegateConstructor = constructor
-      delegateConstructorArguments = args.toList()
+      delegateConstructorArguments = args
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier) =
