@@ -109,7 +109,7 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   val simpleName = name.substringAfterLast(if (isInline) "/" else ".")
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
-    isCompanionObject -> TypeSpec.companionObjectBuilder(simpleName)
+    isCompanionObject -> TypeSpec.companionObjectBuilder(companionObjectName(simpleName))
     isEnum -> TypeSpec.enumBuilder(simpleName)
     isExpect -> TypeSpec.expectClassBuilder(simpleName)
     isObject -> TypeSpec.objectBuilder(simpleName)
@@ -117,7 +117,10 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     else -> TypeSpec.classBuilder(simpleName)
   }
   addVisibility { builder.addModifiers(it) }
-  builder.addModifiers(flags.modalities.filterNot { it == KModifier.FINAL } /* Default modifier */)
+  builder.addModifiers(flags.modalities
+      .filterNot { it == KModifier.FINAL } // Default
+      .filterNot { isInterface && it == KModifier.ABSTRACT } // Abstract is a default on interfaces
+  )
   if (isData) {
     builder.addModifiers(KModifier.DATA)
   }
@@ -133,6 +136,9 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     builder.addModifiers(KModifier.INNER)
   }
   if (isEnumEntry) {
+    // TODO
+  }
+  if (isEnum) {
     // TODO handle typespec arg for complex enums
     enumEntries.forEach {
       builder.addEnumConstant(it)
@@ -140,8 +146,10 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   }
 
   builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
-  supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
-  builder.addSuperinterfaces(supertypes.drop(1).map { it.toTypeName(typeParamResolver) })
+  if (!isEnum && !isInterface) {
+    supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
+  }
+  builder.addSuperinterfaces(supertypes.drop(if (isInterface) 0 else 1).map { it.toTypeName(typeParamResolver) })
   val primaryConstructorSpec = primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
     it.toFunSpec(typeParamResolver).also {
       builder.primaryConstructor(it)
@@ -155,13 +163,12 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
       properties
           .asSequence()
           .filter { it.isDeclaration }
-          .filterNot { it.isDelegated }
           .filterNot { it.isSynthesized }
           .map { it.toPropertySpec(typeParamResolver, it.name in primaryConstructorParams) }
           .asIterable()
   )
   companionObject?.let {
-    builder.addType(TypeSpec.companionObjectBuilder(it).build())
+    builder.addType(TypeSpec.companionObjectBuilder(companionObjectName(it)).build())
   }
   builder.addFunctions(
       functions
@@ -176,6 +183,10 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
   return builder
       .tag(this)
       .build()
+}
+
+private fun companionObjectName(name: String): String? {
+  return if (name == "Companion") null else name
 }
 
 @KotlinPoetKm
@@ -271,7 +282,10 @@ private fun ImmutableKmProperty.toPropertySpec(
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       addVisibility { addModifiers(it) }
-      addModifiers(flags.modalities.filterNot { it == KModifier.FINAL && !isOverride })
+      addModifiers(flags.modalities
+          .filterNot { it == KModifier.FINAL && !isOverride } // Final is the default
+          .filterNot { it == KModifier.OPEN && isOverride } // Overrides are implicitly open
+      )
       if (isOverride) {
         addModifiers(KModifier.OVERRIDE)
       }
@@ -284,7 +298,17 @@ private fun ImmutableKmProperty.toPropertySpec(
         mutable(false)
       }
       if (isDelegated) {
-        delegate("") // Placeholder
+        // Placeholders for these are tricky
+        addKdoc("Note: delegation is ABI stub only and not guaranteed to match source code.")
+        if (isVal) {
+          delegate("%M { %L }", MemberName("kotlin", "lazy"), TODO_BLOCK) // Placeholder
+        } else {
+          if (type.isNullable) {
+            delegate("%T.observable(null) { _, _, _ -> }", ClassName("kotlin.properties", "Delegates"))
+          } else {
+            delegate("%T.notNull()", ClassName("kotlin.properties", "Delegates")) // Placeholder
+          }
+        }
       }
       if (isExpect) {
         addModifiers(KModifier.EXPECT)
@@ -303,46 +327,43 @@ private fun ImmutableKmProperty.toPropertySpec(
           else -> initializer(TODO_BLOCK)
         }
       }
-      if (hasGetter) {
-        val visibility = setterFlags.visibility
-        val modalities = setterFlags.modalities
-            .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
-        val propertyAccessorFlags = setterFlags.propertyAccessorFlags
-        if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
-          getter(FunSpec.setterBuilder()
-              .apply {
-                addModifiers(visibility)
-                addModifiers(modalities)
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
-              }
-              .build())
-        }
+      // Delegated properties have setters/getters defined for some reason, ignore here
+      // since the delegate handles it
+      if (hasGetter && !isDelegated) {
+        propertyAccessor(getterFlags, FunSpec.getterBuilder())?.let(::getter)
       }
-      if (hasSetter) {
-        val visibility = setterFlags.visibility
-        val modalities = setterFlags.modalities
-            .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
-        val propertyAccessorFlags = setterFlags.propertyAccessorFlags
-        if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
-          setter(FunSpec.setterBuilder()
-              .apply {
-                addModifiers(visibility)
-                addModifiers(modalities)
-                addModifiers(*propertyAccessorFlags.toKModifiersArray())
-              }
-              .build())
-        }
+      if (hasSetter && !isDelegated) {
+        propertyAccessor(setterFlags, FunSpec.setterBuilder())?.let(::setter)
       }
     }
     .tag(this)
     .build()
 
+@KotlinPoetKm
+private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): FunSpec? {
+  val visibility = flags.visibility
+  val modalities = flags.modalities
+      .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
+  val propertyAccessorFlags = flags.propertyAccessorFlags
+  return if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
+    functionBuilder
+        .apply {
+          addModifiers(visibility)
+          addModifiers(modalities)
+          addModifiers(*propertyAccessorFlags.toKModifiersArray())
+        }
+        .build()
+  } else {
+    null
+  }
+}
+
 private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
-  return map {
+  return mapNotNull {
     when (it) {
       IS_EXTERNAL -> KModifier.EXTERNAL
       IS_INLINE -> KModifier.INLINE
-      IS_NOT_DEFAULT -> TODO("Wat")
+      IS_NOT_DEFAULT -> null // Gracefully skip over these
     }
   }.toTypedArray()
 }

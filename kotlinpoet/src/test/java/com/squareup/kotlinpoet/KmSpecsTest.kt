@@ -16,9 +16,16 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.km.ImmutableKmClass
+import com.squareup.kotlinpoet.km.ImmutableKmConstructor
+import com.squareup.kotlinpoet.km.ImmutableKmFunction
+import com.squareup.kotlinpoet.km.ImmutableKmProperty
+import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import org.junit.Ignore
 import org.junit.Test
+import kotlin.properties.Delegates
+import kotlin.test.fail
 
 @KotlinPoetKm
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -27,17 +34,15 @@ class KmSpecsTest {
   @Test
   fun constructorData() {
     val typeSpec = ConstructorClass::class.toTypeSpec()
-
-    assertThat(typeSpec.primaryConstructor).isNotNull()
-    assertThat(typeSpec.primaryConstructor?.parameters).hasSize(2)
-    val fooParam = typeSpec.primaryConstructor!!.parameters[0]
-    assertThat(fooParam.name).isEqualTo("foo")
-    assertThat(fooParam.type).isEqualTo(String::class.asClassName())
-    assertThat(fooParam.modifiers).doesNotContain(KModifier.VARARG)
-    val barParam = typeSpec.primaryConstructor!!.parameters[1]
-    assertThat(barParam.name).isEqualTo("bar")
-    assertThat(barParam.modifiers).contains(KModifier.VARARG)
-    assertThat(barParam.type).isEqualTo(INT)
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ConstructorClass(
+        val foo: kotlin.String,
+        vararg bar: kotlin.Int
+      ) {
+        constructor(bar: kotlin.Int)
+      }
+    """.trimIndent())
   }
 
   class ConstructorClass(val foo: String, vararg bar: Int) {
@@ -50,8 +55,10 @@ class KmSpecsTest {
   fun supertype() {
     val typeSpec = Supertype::class.toTypeSpec()
 
-    assertThat(typeSpec.superclass).isEqualTo(BaseType::class.asClassName())
-    assertThat(typeSpec.superinterfaces).containsKey(BaseInterface::class.asClassName())
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Supertype : com.squareup.kotlinpoet.KmSpecsTest.BaseType(), com.squareup.kotlinpoet.KmSpecsTest.BaseInterface
+    """.trimIndent())
   }
 
   abstract class BaseType
@@ -62,24 +69,18 @@ class KmSpecsTest {
   fun properties() {
     val typeSpec = Properties::class.toTypeSpec()
 
-    assertThat(typeSpec.propertySpecs).hasSize(4)
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Properties {
+        var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
 
-    val fooProp = typeSpec.propertySpecs.find { it.name == "foo" } ?: throw AssertionError(
-        "Missing foo property")
-    assertThat(fooProp.type).isEqualTo(String::class.asClassName())
-    assertThat(fooProp.mutable).isFalse()
-    val barProp = typeSpec.propertySpecs.find { it.name == "bar" } ?: throw AssertionError(
-        "Missing bar property")
-    assertThat(barProp.type).isEqualTo(String::class.asClassName().copy(nullable = true))
-    assertThat(barProp.mutable).isFalse()
-    val bazProp = typeSpec.propertySpecs.find { it.name == "baz" } ?: throw AssertionError(
-        "Missing baz property")
-    assertThat(bazProp.type).isEqualTo(Int::class.asClassName())
-    assertThat(bazProp.mutable).isTrue()
-    val listProp = typeSpec.propertySpecs.find { it.name == "aList" } ?: throw AssertionError(
-        "Missing baz property")
-    assertThat(listProp.type).isEqualTo(List::class.parameterizedBy(Int::class))
-    assertThat(listProp.mutable).isTrue()
+        val bar: kotlin.String? = null
+
+        var baz: kotlin.Int = TODO("Stub!")
+
+        val foo: kotlin.String = TODO("Stub!")
+      }
+    """.trimIndent())
   }
 
   class Properties {
@@ -92,10 +93,12 @@ class KmSpecsTest {
   @Test
   fun companionObject() {
     val typeSpec = CompanionObject::class.toTypeSpec()
-    assertThat(typeSpec.typeSpecs).hasSize(1)
-    val companionObject = typeSpec.typeSpecs.find { it.isCompanion }
-    checkNotNull(companionObject)
-    assertThat(companionObject.name).isEqualTo("Companion")
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class CompanionObject {
+        companion object
+      }
+    """.trimIndent())
   }
 
   class CompanionObject {
@@ -105,10 +108,12 @@ class KmSpecsTest {
   @Test
   fun namedCompanionObject() {
     val typeSpec = NamedCompanionObject::class.toTypeSpec()
-    assertThat(typeSpec.typeSpecs).hasSize(1)
-    val companionObject = typeSpec.typeSpecs.find { it.isCompanion }
-    checkNotNull(companionObject)
-    assertThat(companionObject.name).isEqualTo("Named")
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class NamedCompanionObject {
+        companion object Named
+      }
+    """.trimIndent())
   }
 
   class NamedCompanionObject {
@@ -118,29 +123,12 @@ class KmSpecsTest {
   @Test
   fun generics() {
     val typeSpec = Generics::class.toTypeSpec()
-
-    assertThat(typeSpec.typeVariables).hasSize(3)
-    val tType = typeSpec.typeVariables[0]
-    assertThat(tType.name).isEqualTo("T")
-    assertThat(tType.isReified).isFalse()
-    assertThat(tType.variance).isNull() // we don't redeclare out variance
-    val rType = typeSpec.typeVariables[1]
-    assertThat(rType.name).isEqualTo("R")
-    assertThat(rType.isReified).isFalse()
-    assertThat(rType.variance).isEqualTo(KModifier.IN)
-    val vType = typeSpec.typeVariables[2]
-    assertThat(vType.name).isEqualTo("V")
-    assertThat(vType.isReified).isFalse()
-    assertThat(vType.variance).isNull() // invariance is routed to null
-
-    assertThat(typeSpec.propertySpecs).hasSize(1)
-    assertThat(typeSpec.primaryConstructor?.parameters).hasSize(1)
-
-    val param = typeSpec.primaryConstructor!!.parameters[0]
-    val property = typeSpec.propertySpecs[0]
-
-    assertThat(param.type).isEqualTo(tType)
-    assertThat(property.type).isEqualTo(tType)
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Generics<T, in R, V>(
+        val genericInput: T
+      )
+    """.trimIndent())
   }
 
   class Generics<out T, in R, V>(val genericInput: T)
@@ -149,12 +137,14 @@ class KmSpecsTest {
   fun typeAliases() {
     val typeSpec = TypeAliases::class.toTypeSpec()
 
-    assertThat(typeSpec.primaryConstructor?.parameters).hasSize(2)
-
-    val (param1, param2) = typeSpec.primaryConstructor!!.parameters
     // We always resolve the underlying type of typealiases
-    assertThat(param1.type).isEqualTo(String::class.asClassName())
-    assertThat(param2.type).isEqualTo(List::class.parameterizedBy(String::class))
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class TypeAliases(
+        val foo: kotlin.String,
+        val bar: kotlin.collections.List<kotlin.String>
+      )
+    """.trimIndent())
   }
 
   class TypeAliases(val foo: TypeAliasName, val bar: GenericTypeAlias)
@@ -162,15 +152,13 @@ class KmSpecsTest {
   @Test
   fun propertyMutability() {
     val typeSpec = PropertyMutability::class.toTypeSpec()
-
-    assertThat(typeSpec.primaryConstructor?.parameters).hasSize(2)
-
-    val fooProp = typeSpec.propertySpecs.find { it.name == "foo" } ?: throw AssertionError(
-        "foo property not found!")
-    val mutableFooProp = typeSpec.propertySpecs.find { it.name == "mutableFoo" }
-        ?: throw AssertionError("mutableFoo property not found!")
-    assertThat(fooProp.mutable).isFalse()
-    assertThat(mutableFooProp.mutable).isTrue()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class PropertyMutability(
+        val foo: kotlin.String,
+        var mutableFoo: kotlin.String
+      )
+    """.trimIndent())
   }
 
   class PropertyMutability(val foo: String, var mutableFoo: String)
@@ -178,14 +166,13 @@ class KmSpecsTest {
   @Test
   fun collectionMutability() {
     val typeSpec = CollectionMutability::class.toTypeSpec()
-
-    assertThat(typeSpec.primaryConstructor?.parameters).hasSize(2)
-
-    val (immutableProp, mutableListProp) = typeSpec.primaryConstructor!!.parameters
-    assertThat(immutableProp.type).isEqualTo(List::class.parameterizedBy(String::class))
-    assertThat(mutableListProp.type).isEqualTo(
-        ClassName.bestGuess("kotlin.collections.MutableList").parameterizedBy(
-            String::class.asTypeName()))
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class CollectionMutability(
+        val immutableList: kotlin.collections.List<kotlin.String>,
+        val mutableList: kotlin.collections.MutableList<kotlin.String>
+      )
+    """.trimIndent())
   }
 
   class CollectionMutability(val immutableList: List<String>, val mutableList: MutableList<String>)
@@ -194,7 +181,7 @@ class KmSpecsTest {
   fun suspendTypes() {
     val typeSpec = SuspendTypes::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class SuspendTypes {
         val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = TODO("Stub!")
 
@@ -227,7 +214,7 @@ class KmSpecsTest {
   fun parameters() {
     val typeSpec = Parameters::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
         inline fun hasDefault(param1: kotlin.String = TODO("Stub!")) {
         }
@@ -258,7 +245,7 @@ class KmSpecsTest {
   fun lambdaReceiver() {
     val typeSpec = LambdaReceiver::class.toTypeSpec()
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class LambdaReceiver {
         fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit) {
         }
@@ -286,7 +273,7 @@ class KmSpecsTest {
     val typeSpec = NestedTypeAliasTest::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NestedTypeAliasTest {
         val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = TODO("Stub!")
       }
@@ -302,21 +289,258 @@ class KmSpecsTest {
     val typeSpec = InlineClass::class.toTypeSpec()
 
     //language=kotlin
-    assertThat(typeSpec.toString().trim()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
       inline class InlineClass(
         val value: kotlin.String
       )
     """.trimIndent())
   }
 
-  // TODO Functions referencing class type parameter
-  // TODO Overridden properties and functions
-  // TODO Delegation (class, properties, local vars)
-  // TODO Enums (simple and complex)
+  @Test
+  fun functionReferencingTypeParam() {
+    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class FunctionsReferencingTypeParameters<T> {
+        fun test(param: T) {
+        }
+      }
+    """.trimIndent())
+  }
+
+  class FunctionsReferencingTypeParameters<T> {
+    fun test(param: T) {
+    }
+  }
+
+  @Ignore("We need to read @Override annotations off of these in metadata parsing")
+  @Test
+  fun overriddenThings() {
+    val typeSpec = OverriddenThings::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
+        override var openProp: String = TODO("Stub!")
+        override var openPropInterface: String = TODO("Stub!")
+
+        override fun openFunction() {
+        }
+
+        override fun openFunctionInterface() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  abstract class OverriddenThingsBase {
+    abstract var openProp: String
+
+    abstract fun openFunction()
+  }
+
+  interface OverriddenThingsInterface {
+    var openPropInterface: String
+
+    fun openFunctionInterface()
+  }
+
+  abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
+    override var openProp: String = ""
+    override var openPropInterface: String = ""
+
+    override fun openFunction() {
+    }
+
+    override fun openFunctionInterface() {
+    }
+  }
+
+  @Test
+  fun delegatedProperties() {
+    val typeSpec = DelegatedProperties::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class DelegatedProperties {
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        val immutable: kotlin.String by kotlin.lazy { TODO("Stub!") }
+
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        val immutableNullable: kotlin.String? by kotlin.lazy { TODO("Stub!") }
+
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        var mutable: kotlin.String by kotlin.properties.Delegates.notNull()
+
+        /**
+         * Note: delegation is ABI stub only and not guaranteed to match source code.
+         */
+        var mutableNullable: kotlin.String? by kotlin.properties.Delegates.observable(null) { _, _, _ -> }
+      }
+    """.trimIndent())
+  }
+
+  class DelegatedProperties {
+    val immutable: String by lazy { "" }
+    val immutableNullable: String? by lazy { "" }
+    var mutable: String by Delegates.notNull()
+    var mutableNullable: String? by Delegates.observable(null) { _, _, _ -> }
+  }
+
+  @Ignore("Need to be able to know about class delegation in metadata")
+  @Test
+  fun classDelegation() {
+    val typeSpec = ClassDelegation::class.toTypeSpec()
+
+    // TODO Assert this also excludes functions handled by the delegate
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ClassDelegation<T>(
+        delegate: List<T>
+      ): List<T> by delegate
+    """.trimIndent())
+  }
+
+  class ClassDelegation<T>(delegate: List<T>) : List<T> by delegate
+
+  @Test
+  fun simpleEnum() {
+    val typeSpec = SimpleEnum::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class SimpleEnum {
+        FOO,
+
+        BAR,
+
+        BAZ
+      }
+    """.trimIndent())
+  }
+
+  enum class SimpleEnum {
+    FOO, BAR, BAZ
+  }
+
+  @Ignore("Requires recursively reading metadata for each enum entry")
+  @Test
+  fun complexEnum() {
+    val typeSpec = ComplexEnum::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class SimpleEnum {
+        FOO("foo") {
+          override fun toString(): String {
+            return "foo1"
+          }
+        },
+        BAR("bar") {
+          override fun toString(): String {
+            return "bar1"
+          }
+        },
+        BAZ("baz") {
+          override fun toString(): String {
+            return "baz1"
+          }
+        }
+      }
+    """.trimIndent())
+  }
+
+  enum class ComplexEnum(val value: String) {
+    FOO("foo") {
+      override fun toString(): String {
+        return "foo1"
+      }
+    },
+    BAR("bar") {
+      override fun toString(): String {
+        return "bar1"
+      }
+    },
+    BAZ("baz") {
+      override fun toString(): String {
+        return "baz1"
+      }
+    }
+  }
+
+  @Test
+  fun interfaces() {
+    val typeSpec = SomeInterface::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      interface SomeInterface : com.squareup.kotlinpoet.KmSpecsTest.SomeInterfaceBase {
+        fun testFunction() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  interface SomeInterfaceBase
+
+  interface SomeInterface : SomeInterfaceBase {
+    fun testFunction() {
+    }
+  }
+
+  @Test
+  fun backwardReferencingTypeVars() {
+    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpec()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      interface BackwardReferencingTypeVars<T> : kotlin.collections.List<kotlin.collections.Set<T>>
+    """.trimIndent())
+  }
+
+  interface BackwardReferencingTypeVars<T> : List<Set<T>>
+
+  @Test
+  fun taggedTypes() {
+    val typeSpec = TaggedTypes::class.toTypeSpec()
+    assertThat(typeSpec.tag<ImmutableKmClass>()).isNotNull()
+
+    val constructorSpec = typeSpec.primaryConstructor ?: fail("No constructor found!")
+    assertThat(constructorSpec.tag<ImmutableKmConstructor>()).isNotNull()
+
+    val parameterSpec = constructorSpec.parameters[0]
+    assertThat(parameterSpec.tag<ImmutableKmValueParameter>()).isNotNull()
+
+    // TODO taggable TypeNames
+//    val typeVar = typeSpec.typeVariables[0]
+//    assertThat(typeVar.tag<ImmutableKmTypeParameter>()).isNotNull()
+
+    val funSpec = typeSpec.funSpecs[0]
+    assertThat(funSpec.tag<ImmutableKmFunction>()).isNotNull()
+
+    val propertySpec = typeSpec.propertySpecs[0]
+    assertThat(propertySpec.tag<ImmutableKmProperty>()).isNotNull()
+  }
+
+  class TaggedTypes<T>(val param: T) {
+    val property: String = ""
+
+    fun function() {
+    }
+  }
+
   // TODO Complex companion objects (implementing interfaces)
-  // TODO Tagged km types
-  // TODO Backward referencing type arguments (T, B<T>)
-  // TODO Excluding delegated, only including declared
+}
+
+private fun TypeSpec.trimmedToString(): String {
+  return toString().trim()
 }
 
 inline class InlineClass(val value: String)
