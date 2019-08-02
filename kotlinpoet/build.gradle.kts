@@ -60,5 +60,6 @@ repositories {
 
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-  freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
+  freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xjvm-default=enable")
+  jvmTarget = "1.8"
 }
