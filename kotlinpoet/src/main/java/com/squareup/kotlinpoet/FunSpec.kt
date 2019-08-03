@@ -378,11 +378,6 @@ class FunSpec private constructor(
       parameters += parameterSpec
     }
 
-    @JvmName("callThisConstructorWithStrings")
-    fun callThisConstructor(args: Iterable<String>) = apply {
-      callConstructor("this", args.map { CodeBlock.of(it) })
-    }
-
     fun callThisConstructor(args: List<CodeBlock>) = apply {
       callConstructor("this", args)
     }
@@ -397,11 +392,6 @@ class FunSpec private constructor(
 
     fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
       callConstructor("this", args.toList())
-    }
-
-    @JvmName("callSuperConstructorWithStrings")
-    fun callSuperConstructor(args: Iterable<String>) = apply {
-      callConstructor("super", args.map { CodeBlock.of(it) })
     }
 
     fun callSuperConstructor(args: Iterable<CodeBlock>) = apply {
