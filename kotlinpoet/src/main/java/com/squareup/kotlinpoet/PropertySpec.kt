@@ -132,7 +132,8 @@ class PropertySpec private constructor(
 
   override fun toString() = buildCodeString { emit(this, emptySet()) }
 
-  fun toBuilder(): Builder {
+  @JvmOverloads
+  fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)
     builder.mutable = mutable
     builder.kdoc.add(kdoc)

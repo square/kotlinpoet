@@ -199,7 +199,8 @@ class FileSpec private constructor(
     }
   }
 
-  fun toBuilder(): Builder {
+  @JvmOverloads
+  fun toBuilder(packageName: String = this.packageName, name: String = this.name): Builder {
     val builder = Builder(packageName, name)
     builder.annotations.addAll(annotations)
     builder.comment.add(comment)

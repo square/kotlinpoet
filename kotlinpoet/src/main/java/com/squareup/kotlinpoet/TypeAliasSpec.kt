@@ -53,7 +53,8 @@ class TypeAliasSpec private constructor(
 
   override fun toString() = buildCodeString { emit(this) }
 
-  fun toBuilder(): Builder {
+  @JvmOverloads
+  fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables

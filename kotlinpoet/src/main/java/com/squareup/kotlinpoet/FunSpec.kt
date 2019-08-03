@@ -224,7 +224,8 @@ class FunSpec private constructor(
         includeKdocTags = true)
   }
 
-  fun toBuilder(): Builder {
+  @JvmOverloads
+  fun toBuilder(name: String = this.name): Builder {
     val builder = Builder(name)
     builder.kdoc.add(kdoc)
     builder.returnKdoc = returnKdoc
