@@ -69,12 +69,15 @@ fun FunSpec.Builder.jvmName(name: String) = apply {
 }
 
 fun FunSpec.Builder.throws(vararg exceptionClasses: KClass<out Throwable>) =
-    throws(*(exceptionClasses.map(KClass<*>::asTypeName).toTypedArray()))
+    throws(exceptionClasses.map(KClass<*>::asTypeName))
 
 fun FunSpec.Builder.throws(vararg exceptionClasses: Type) =
-    throws(*(exceptionClasses.map(Type::asTypeName).toTypedArray()))
+    throws(exceptionClasses.map(Type::asTypeName))
 
-fun FunSpec.Builder.throws(vararg exceptionClasses: TypeName) = addAnnotation(
+fun FunSpec.Builder.throws(vararg exceptionClasses: TypeName) =
+    throws(exceptionClasses.toList())
+
+fun FunSpec.Builder.throws(exceptionClasses: Iterable<TypeName>) = addAnnotation(
     AnnotationSpec.builder(Throws::class)
         .apply { exceptionClasses.forEach { addMember("%T::class", it) } }
         .build())

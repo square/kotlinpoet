@@ -641,6 +641,18 @@ class ParameterizedTypeName internal constructor(
     @JvmStatic @JvmName("get") fun Class<*>.parameterizedBy(vararg typeArguments: Type) =
         ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun ClassName.parameterizedBy(typeArguments: List<TypeName>) =
+        ParameterizedTypeName(null, this, typeArguments)
+
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun KClass<*>.parameterizedBy(typeArguments: Iterable<KClass<*>>) =
+        ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
+
+    /** Returns a parameterized type, applying `typeArguments` to `this`.  */
+    @JvmStatic @JvmName("get") fun Class<*>.parameterizedBy(typeArguments: Iterable<Type>) =
+        ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
+
     /** Returns a parameterized type, applying `typeArgument` to `this`.  */
     @JvmStatic @JvmName("get") fun ClassName.plusParameter(typeArgument: TypeName) =
         parameterizedBy(typeArgument)
@@ -774,6 +786,21 @@ class TypeVariableName private constructor(
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, vararg bounds: Type, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("get") @JvmOverloads
+    operator fun invoke(name: String, bounds: List<TypeName>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds, variance)
+
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("getWithClasses") @JvmOverloads
+    operator fun invoke(name: String, bounds: Iterable<KClass<*>>, variance: KModifier? = null) =
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+
+    /** Returns type variable named `name` with `variance` and `bounds`.  */
+    @JvmStatic @JvmName("getWithTypes") @JvmOverloads
+    operator fun invoke(name: String, bounds: Iterable<Type>, variance: KModifier? = null) =
         TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
 
     /**

@@ -202,6 +202,10 @@ class PropertySpec private constructor(
       this.modifiers += modifiers
     }
 
+    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+      this.modifiers += modifiers
+    }
+
     fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
       this.typeVariables += typeVariables
     }
@@ -268,5 +272,16 @@ class PropertySpec private constructor(
 
     @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier) =
         builder(name, type.asTypeName(), *modifiers)
+
+    @JvmStatic fun builder(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder {
+      return Builder(name, type)
+          .addModifiers(modifiers)
+    }
+
+    @JvmStatic fun builder(name: String, type: Type, modifiers: Iterable<KModifier>) =
+        builder(name, type.asTypeName(), modifiers)
+
+    @JvmStatic fun builder(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+        builder(name, type.asTypeName(), modifiers)
   }
 }

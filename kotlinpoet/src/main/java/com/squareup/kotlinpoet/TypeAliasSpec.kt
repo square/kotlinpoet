@@ -81,6 +81,10 @@ class TypeAliasSpec private constructor(
       modifiers.forEach(this::addModifier)
     }
 
+    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+      modifiers.forEach(this::addModifier)
+    }
+
     private fun addModifier(modifier: KModifier) {
       this.modifiers.add(modifier)
     }

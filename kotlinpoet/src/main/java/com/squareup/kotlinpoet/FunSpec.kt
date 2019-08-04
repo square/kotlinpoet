@@ -379,26 +379,42 @@ class FunSpec private constructor(
       parameters += parameterSpec
     }
 
+    fun callThisConstructor(args: List<CodeBlock>) = apply {
+      callConstructor("this", args)
+    }
+
+    fun callThisConstructor(args: Iterable<CodeBlock>) = apply {
+      callConstructor("this", args.toList())
+    }
+
     fun callThisConstructor(vararg args: String) = apply {
-      callConstructor("this", *args.map { CodeBlock.of(it) }.toTypedArray())
+      callConstructor("this", args.map { CodeBlock.of(it) })
     }
 
     fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
-      callConstructor("this", *args)
+      callConstructor("this", args.toList())
+    }
+
+    fun callSuperConstructor(args: Iterable<CodeBlock>) = apply {
+      callConstructor("super", args.toList())
+    }
+
+    fun callSuperConstructor(args: List<CodeBlock>) = apply {
+      callConstructor("super", args)
     }
 
     fun callSuperConstructor(vararg args: String) = apply {
-      callConstructor("super", *args.map { CodeBlock.of(it) }.toTypedArray())
+      callConstructor("super", args.map { CodeBlock.of(it) })
     }
 
     fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
-      callConstructor("super", *args)
+      callConstructor("super", args.toList())
     }
 
-    private fun callConstructor(constructor: String, vararg args: CodeBlock) {
+    private fun callConstructor(constructor: String, args: List<CodeBlock>) {
       check(name.isConstructor) { "only constructors can delegate to other constructors!" }
       delegateConstructor = constructor
-      delegateConstructorArguments = args.toList()
+      delegateConstructorArguments = args
     }
 
     fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier) =
@@ -409,6 +425,15 @@ class FunSpec private constructor(
 
     fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier) =
         addParameter(name, type.asTypeName(), *modifiers)
+
+    fun addParameter(name: String, type: TypeName, modifiers: Iterable<KModifier>) =
+        addParameter(ParameterSpec.builder(name, type, modifiers).build())
+
+    fun addParameter(name: String, type: Type, modifiers: Iterable<KModifier>) =
+        addParameter(name, type.asTypeName(), modifiers)
+
+    fun addParameter(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+        addParameter(name, type.asTypeName(), modifiers)
 
     fun addCode(format: String, vararg args: Any?) = apply {
       body.add(format, *args)

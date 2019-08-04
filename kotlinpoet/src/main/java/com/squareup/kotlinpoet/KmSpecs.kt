@@ -117,10 +117,9 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     else -> TypeSpec.classBuilder(simpleName)
   }
   addVisibility { builder.addModifiers(it) }
-  builder.addModifiers(*flags.modalities
+  builder.addModifiers(flags.modalities
       .filterNot { it == KModifier.FINAL } // Default
       .filterNot { isInterface && it == KModifier.ABSTRACT } // Abstract is a default on interfaces
-      .toTypedArray()
   )
   if (isData) {
     builder.addModifiers(KModifier.DATA)
@@ -283,10 +282,10 @@ private fun ImmutableKmProperty.toPropertySpec(
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       addVisibility { addModifiers(it) }
-      addModifiers(*flags.modalities
+      addModifiers(flags.modalities
           .filterNot { it == KModifier.FINAL && !isOverride } // Final is the default
           .filterNot { it == KModifier.OPEN && isOverride } // Overrides are implicitly open
-          .toTypedArray())
+      )
       if (isOverride) {
         addModifiers(KModifier.OVERRIDE)
       }
@@ -350,7 +349,7 @@ private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): Fu
     functionBuilder
         .apply {
           addModifiers(visibility)
-          addModifiers(*modalities.toTypedArray())
+          addModifiers(modalities)
           addModifiers(*propertyAccessorFlags.toKModifiersArray())
         }
         .build()
