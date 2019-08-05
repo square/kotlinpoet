@@ -428,6 +428,11 @@ class CodeBlock private constructor(
       formatParts += "⇤"
     }
 
+    fun clear() = apply {
+      formatParts.clear()
+      args.clear()
+    }
+
     fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
   }
 
