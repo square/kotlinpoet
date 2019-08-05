@@ -465,4 +465,12 @@ class CodeBlockTest {
     val funSpec = FunSpec.builder("create taco").build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("`create taco`")
   }
+
+  @Test fun clear() {
+    val blockBuilder = CodeBlock.builder().addStatement("%S is some existing code", "This")
+
+    blockBuilder.clear()
+
+    assertThat(blockBuilder.build().toString()).isEmpty()
+  }
 }
