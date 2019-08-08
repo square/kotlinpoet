@@ -332,7 +332,7 @@ internal class CodeWriter constructor(
         }
       }
     }
-    if (ensureTrailingNewline && out.lastChar != '\n') {
+    if (ensureTrailingNewline && out.hasPendingSegments) {
       emit("\n")
     }
   }
