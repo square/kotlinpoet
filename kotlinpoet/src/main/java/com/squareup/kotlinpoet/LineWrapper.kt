@@ -23,10 +23,13 @@ import java.io.Closeable
  * [LineWrapper.appendNonWrapping] to append a string that never wraps.
  */
 internal class LineWrapper(
-  private val out: Appendable,
+  sourceAppendable: Appendable,
   private val indent: String,
   private val columnLimit: Int
 ) : Closeable {
+
+  private val out = RecordingAppendable(sourceAppendable)
+
   private var closed = false
 
   /**
@@ -40,6 +43,9 @@ internal class LineWrapper(
 
   /** Optional prefix that will be prepended to wrapped lines. */
   private var linePrefix = ""
+
+  /** @return the last emitted char or [Character.MIN_VALUE] if nothing emitted yet. */
+  val lastChar: Char get() = out.lastChar
 
   /** Emit `s` replacing its spaces with line wraps as necessary. */
   fun append(s: String, indentLevel: Int = -1, linePrefix: String = "") {
@@ -168,5 +174,28 @@ internal class LineWrapper(
   companion object {
     private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
     private val SPECIAL_CHARACTERS = " \n·".toCharArray()
+  }
+
+  /** A delegating [Appendable] that records info about the chars passing through it.  */
+  private class RecordingAppendable(val delegate: Appendable) : Appendable {
+
+    var lastChar: Char = Character.MIN_VALUE
+
+    override fun append(csq: CharSequence): Appendable {
+      val length = csq.length
+      if (length != 0) {
+        lastChar = csq[length - 1]
+      }
+      return delegate.append(csq)
+    }
+
+    override fun append(csq: CharSequence, start: Int, end: Int): Appendable {
+      return append(csq.subSequence(start, end))
+    }
+
+    override fun append(c: Char): Appendable {
+      lastChar = c
+      return delegate.append(c)
+    }
   }
 }
