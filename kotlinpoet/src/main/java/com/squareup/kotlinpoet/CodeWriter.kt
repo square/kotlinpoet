@@ -134,7 +134,7 @@ internal class CodeWriter constructor(
     emit("/**\n")
     kdoc = true
     try {
-      emitCode(kdocCodeBlock)
+      emitCode(kdocCodeBlock, ensureTrailingNewline = true)
     } finally {
       kdoc = false
     }
@@ -213,7 +213,11 @@ internal class CodeWriter constructor(
 
   fun emitCode(format: String, vararg args: Any?) = emitCode(CodeBlock.of(format, *args))
 
-  fun emitCode(codeBlock: CodeBlock, isConstantContext: Boolean = false) = apply {
+  fun emitCode(
+    codeBlock: CodeBlock,
+    isConstantContext: Boolean = false,
+    ensureTrailingNewline: Boolean = false
+  ) = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
@@ -327,6 +331,9 @@ internal class CodeWriter constructor(
           }
         }
       }
+    }
+    if (ensureTrailingNewline && out.lastChar != '\n') {
+      emit("\n")
     }
   }
 

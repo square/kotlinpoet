@@ -104,7 +104,7 @@ class FunSpec private constructor(
     } else if (!isEmptySetter) {
       codeWriter.emitCode("·{\n")
       codeWriter.indent()
-      codeWriter.emitCode(body)
+      codeWriter.emitCode(body, ensureTrailingNewline = true)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
