@@ -544,19 +544,19 @@ class KmSpecsTest(
         val value: kotlin.String
       ) {
         FOO {
-          fun toString(): kotlin.String {
+          override fun toString(): kotlin.String {
             TODO("Stub!")
           }
         },
 
         BAR {
-          fun toString(): kotlin.String {
+          override fun toString(): kotlin.String {
             TODO("Stub!")
           }
         },
 
         BAZ {
-          fun toString(): kotlin.String {
+          override fun toString(): kotlin.String {
             TODO("Stub!")
           }
         };
