@@ -461,10 +461,11 @@ interface ElementHandler {
 
         override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
           return lookupTypeElement(enumClassJvmName)?.let { enumType ->
-            val member = variableElementCache.getOrPut(enumType to memberName) {
-              ElementFilter.fieldsIn(enumType.enclosedElements)
+            val enumTypeAsType = enumType.asType()
+            val member = typeElementCache.getOrPut("$enumClassJvmName.$memberName") {
+              ElementFilter.typesIn(enumType.enclosedElements)
                   .asSequence()
-                  .filter { it.kind == ENUM_CONSTANT }
+                  .filter { types.isSubtype(enumTypeAsType, it.superclass) }
                   .find { it.simpleName.contentEquals(memberName) }.toOptional()
             }.nullableValue
             member?.getAnnotation(Metadata::class.java)
