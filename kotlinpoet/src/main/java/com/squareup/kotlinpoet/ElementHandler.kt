@@ -28,7 +28,6 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind.ENUM_CONSTANT
 import javax.lang.model.element.ElementKind.INTERFACE
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
@@ -52,6 +51,9 @@ interface ElementHandler {
 
   /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
   enum class JvmFieldModifier : JvmModifier {
+    STATIC {
+      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
+    },
     TRANSIENT {
       override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(Transient::class.asClassName()).build()
     },
@@ -62,6 +64,9 @@ interface ElementHandler {
 
   /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
   enum class JvmMethodModifier : JvmModifier {
+    STATIC {
+      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
+    },
     SYNCHRONIZED {
       override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(Synchronized::class.asClassName()).build()
     }
@@ -296,10 +301,16 @@ interface ElementHandler {
         methodSignature: JvmMethodSignature
       ): Set<JvmMethodModifier> {
         return lookupMethod(classJvmName, methodSignature)?.modifiers.let { modifiers ->
-          if (modifiers != null && Modifier.isSynchronized(modifiers)) {
-            return@let setOf(JvmMethodModifier.SYNCHRONIZED)
+          val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
+          if (modifiers != null) {
+            if (Modifier.isSynchronized(modifiers)) {
+              jvmMethodModifiers += JvmMethodModifier.SYNCHRONIZED
+            }
+            if (Modifier.isStatic(modifiers)) {
+              jvmMethodModifiers += JvmMethodModifier.STATIC
+            }
           }
-          return@let emptySet()
+          return@let jvmMethodModifiers
         }
       }
 
@@ -406,6 +417,7 @@ interface ElementHandler {
               when (it) {
                 javax.lang.model.element.Modifier.TRANSIENT -> JvmFieldModifier.TRANSIENT
                 javax.lang.model.element.Modifier.VOLATILE -> JvmFieldModifier.VOLATILE
+                javax.lang.model.element.Modifier.STATIC -> JvmFieldModifier.STATIC
                 else -> null
               }
             }
@@ -431,6 +443,7 @@ interface ElementHandler {
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
                 javax.lang.model.element.Modifier.SYNCHRONIZED -> JvmMethodModifier.SYNCHRONIZED
+                javax.lang.model.element.Modifier.STATIC -> JvmMethodModifier.STATIC
                 else -> null
               }
             }
