@@ -15,6 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
+import com.google.auto.common.MoreElements
+import com.google.auto.common.MoreTypes
+import com.google.auto.common.Visibility
+import com.google.common.collect.LinkedHashMultimap
+import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.ElementHandler.Companion.fromElements
 import com.squareup.kotlinpoet.ElementHandler.Companion.reflective
 import com.squareup.kotlinpoet.km.ImmutableKmClass
@@ -30,8 +35,10 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
 import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeKind
 import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -158,6 +165,17 @@ interface ElementHandler {
    */
   fun fieldConstant(classJvmName: String, fieldSignature: JvmFieldSignature): CodeBlock?
 
+  /**
+   * Looks up if a given [methodSignature] within [classJvmName] is an override of another method.
+   * Implementers should search for a matching method signature in the supertypes/classes of
+   * [classJvmName] to see if there are matches.
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param methodSignature The method signature to check.
+   * @return whether or not the method is an override.
+   */
+  fun isMethodOverride(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
+
   companion object {
     private fun Any.asLiteralCodeBlock(): CodeBlock {
       return when (this) {
@@ -243,10 +261,15 @@ interface ElementHandler {
         classJvmName: String,
         methodSignature: JvmMethodSignature
       ): Method? {
-        val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+        return lookupClass(classJvmName)?.lookupMethod(methodSignature) ?: error("No class found for: $classJvmName.")
+      }
+
+      private fun Class<*>.lookupMethod(
+        methodSignature: JvmMethodSignature
+      ): Method? {
         val signatureString = methodSignature.asString()
-        return methodCache.getOrPut(clazz to signatureString) {
-          clazz.declaredMethods
+        return methodCache.getOrPut(this to signatureString) {
+          declaredMethods
               .asSequence()
               .onEach { it.isAccessible = true }
               .find { signatureString == it.jvmMethodSignature }.toOptional()
@@ -358,6 +381,13 @@ interface ElementHandler {
             .get(null) // Constant means we can do a static get on it.
             .asLiteralCodeBlock()
       }
+
+      override fun isMethodOverride(classJvmName: String,
+          methodSignature: JvmMethodSignature): Boolean {
+        val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+        return clazz.lookupMethod(methodSignature)?.declaringClass == clazz
+
+      }
     }
 
     /** @return an [Elements]-based implementation of [ElementHandler]. */
@@ -375,7 +405,8 @@ interface ElementHandler {
         }
 
         override fun classFor(jvmName: String): ImmutableKmClass {
-          return lookupTypeElement(jvmName)?.toImmutableKmClass() ?: error("No type element found for: $jvmName.")
+          return lookupTypeElement(jvmName)?.toImmutableKmClass() ?: error(
+              "No type element found for: $jvmName.")
         }
 
         override fun isInterface(jvmName: String): Boolean {
@@ -385,7 +416,8 @@ interface ElementHandler {
           return lookupTypeElement(jvmName)?.kind == INTERFACE
         }
 
-        private fun lookupField(classJvmName: String, fieldSignature: JvmFieldSignature): VariableElement? {
+        private fun lookupField(classJvmName: String,
+            fieldSignature: JvmFieldSignature): VariableElement? {
           return lookupTypeElement(classJvmName)?.let {
             val signatureString = fieldSignature.asString()
             variableElementCache.getOrPut(it to signatureString) {
@@ -399,18 +431,22 @@ interface ElementHandler {
             methodSignature: JvmMethodSignature,
             elementFilter: (Iterable<Element>) -> List<ExecutableElement>
         ): ExecutableElement? {
-          return lookupTypeElement(classJvmName)?.let {
-            val signatureString = methodSignature.asString()
-            methodCache.getOrPut(it to signatureString) {
-              elementFilter(it.enclosedElements)
-                  .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
-            }.nullableValue
-          }
+          return lookupTypeElement(classJvmName)?.lookupMethod(methodSignature, elementFilter)
+        }
+
+        private fun TypeElement.lookupMethod(methodSignature: JvmMethodSignature,
+            elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+        ): ExecutableElement? {
+          val signatureString = methodSignature.asString()
+          return methodCache.getOrPut(this to signatureString) {
+            elementFilter(enclosedElements)
+                .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
+          }.nullableValue
         }
 
         override fun fieldJvmModifiers(
-          classJvmName: String,
-          fieldSignature: JvmFieldSignature
+            classJvmName: String,
+            fieldSignature: JvmFieldSignature
         ): Set<JvmFieldModifier> {
           return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
@@ -425,8 +461,8 @@ interface ElementHandler {
         }
 
         override fun fieldAnnotations(
-          classJvmName: String,
-          fieldSignature: JvmFieldSignature
+            classJvmName: String,
+            fieldSignature: JvmFieldSignature
         ): List<AnnotationSpec> {
           return lookupField(classJvmName, fieldSignature)
               ?.annotationMirrors
@@ -436,10 +472,11 @@ interface ElementHandler {
         }
 
         override fun methodJvmModifiers(
-          classJvmName: String,
-          methodSignature: JvmMethodSignature
+            classJvmName: String,
+            methodSignature: JvmMethodSignature
         ): Set<JvmMethodModifier> {
-          return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
+          return lookupMethod(classJvmName, methodSignature,
+              ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
                 javax.lang.model.element.Modifier.SYNCHRONIZED -> JvmMethodModifier.SYNCHRONIZED
@@ -451,25 +488,25 @@ interface ElementHandler {
         }
 
         override fun constructorAnnotations(
-          classJvmName: String,
-          constructorSignature: JvmMethodSignature
+            classJvmName: String,
+            constructorSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
           return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
-                ?.annotationMirrors
-                .orEmpty()
-                .map { AnnotationSpec.get(it) }
-                .filterOutNullabilityAnnotations()
+              ?.annotationMirrors
+              .orEmpty()
+              .map { AnnotationSpec.get(it) }
+              .filterOutNullabilityAnnotations()
         }
 
         override fun methodAnnotations(
-          classJvmName: String,
-          methodSignature: JvmMethodSignature
+            classJvmName: String,
+            methodSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
           return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
-                ?.annotationMirrors
-                .orEmpty()
-                .map { AnnotationSpec.get(it) }
-                .filterOutNullabilityAnnotations()
+              ?.annotationMirrors
+              .orEmpty()
+              .map { AnnotationSpec.get(it) }
+              .filterOutNullabilityAnnotations()
         }
 
         override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
@@ -487,14 +524,97 @@ interface ElementHandler {
         }
 
         override fun fieldConstant(
-          classJvmName: String,
-          fieldSignature: JvmFieldSignature
+            classJvmName: String,
+            fieldSignature: JvmFieldSignature
         ): CodeBlock? {
           return lookupField(classJvmName, fieldSignature)?.constantValue
               ?.asLiteralCodeBlock()
               ?: error("No field $fieldSignature found in $classJvmName.")
         }
+
+        override fun isMethodOverride(classJvmName: String,
+            methodSignature: JvmMethodSignature): Boolean {
+          val typeElement = lookupTypeElement(classJvmName)
+              ?: error("No type element found for: $classJvmName.")
+          val method = typeElement.lookupMethod(methodSignature, ElementFilter::methodsIn)
+              ?: error("No ExecutableElement found for: $methodSignature.")
+          return method.isOverriddenIn(typeElement)
+        }
+
+        /**
+         * Detects whether [this] given method is overriden in [type].
+         *
+         * Adapted and simplified from AutoCommon's private
+         * [MoreElements.getLocalAndInheritedMethods] methods implementations for detecting
+         * overrides.
+         */
+        private fun ExecutableElement.isOverriddenIn(type: TypeElement): Boolean {
+          val methodMap = LinkedHashMultimap.create<String, ExecutableElement>()
+          type.getAllMethods(MoreElements.getPackage(type), methodMap)
+          // Find methods that are overridden using `Elements.overrides`. We reduce the performance
+          // impact by:
+          //   (a) grouping methods by name, since a method cannot override another method with a
+          //       different name. Since we know the target name, we just inspect the methods with
+          //       that name.
+          //   (b) making sure that methods in ancestor types precede those in descendant types,
+          //       which means we only have to check a method against the ones that follow it in
+          //       that order. Below, this means we just need to find the index of our target method
+          //       and compare against only preceding ones.
+          val methodList = methodMap.asMap()[simpleName.toString()]?.toList()
+              ?: error("No method $simpleName in available ${methodMap.keys()}")
+          val indexOfPossibleOverrider = methodList.indexOf(this)
+          return (indexOfPossibleOverrider downTo 0)
+              .asSequence()
+              .map { methodList[it] }
+              .any { elements.overrides(this, it, type) }
+        }
+
+        /**
+         * Add to [methodsAccumulator] the instance methods from [this] that are visible to code in
+         * the package [pkg]. This means all the instance methods from [this] itself and all
+         * instance methods it inherits from its ancestors, except private methods and
+         * package-private methods in other packages. This method does not take overriding into
+         * account, so it will add both an ancestor method and a descendant method that overrides
+         * it. [methodsAccumulator] is a multimap from a method name to all of the methods with
+         * that name, including methods that override or overload one another. Within those
+         * methods, those in ancestor types always precede those in descendant types.
+         *
+         * Adapted from AutoCommon's private [MoreElements.getLocalAndInheritedMethods] methods'
+         * implementations, before overridden methods are stripped.
+         */
+        private fun TypeElement.getAllMethods(
+          pkg: PackageElement,
+          methodsAccumulator: SetMultimap<String, ExecutableElement>
+        ) {
+          for (superInterface in interfaces) {
+            MoreTypes.asTypeElement(superInterface).getAllMethods(pkg, methodsAccumulator)
+          }
+          if (superclass.kind != TypeKind.NONE) {
+            // Visit the superclass after superinterfaces so we will always see the implementation of a
+            // method after any interfaces that declared it.
+            MoreTypes.asTypeElement(superclass).getAllMethods(pkg, methodsAccumulator)
+          }
+          for (method in ElementFilter.methodsIn(enclosedElements)) {
+            if (!method.modifiers.contains(
+                    javax.lang.model.element.Modifier.STATIC) && method.isVisibleFrom(pkg)) {
+              methodsAccumulator.put(method.simpleName.toString(), method)
+            }
+          }
+        }
+
+        private fun ExecutableElement.isVisibleFrom(pkg: PackageElement): Boolean {
+          // We use Visibility.ofElement rather than [MoreElements.effectiveVisibilityOfElement]
+          // because it doesn't really matter whether the containing class is visible. If you
+          // inherit a public method then you have a public method, regardless of whether you
+          // inherit it from a public class.
+          return when (Visibility.ofElement(this)) {
+            Visibility.PRIVATE -> false
+            Visibility.DEFAULT -> MoreElements.getPackage(this) == pkg
+            else -> true
+          }
+        }
       }
+
     }
   }
 }

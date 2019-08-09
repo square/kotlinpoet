@@ -46,6 +46,7 @@ dependencies {
   api(rootProject.project("kotlinpoet-km"))
   api(deps.kotlin.stdlib)
   implementation(deps.kotlin.reflect)
+  implementation(deps.autoCommon)
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
