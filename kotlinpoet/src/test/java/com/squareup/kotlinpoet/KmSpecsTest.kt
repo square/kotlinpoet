@@ -418,20 +418,20 @@ class KmSpecsTest(
     }
   }
 
-  @Ignore("We need to read @Override annotations off of these in metadata parsing")
   @Test
   fun overriddenThings() {
     val typeSpec = OverriddenThings::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
-        override var openProp: String = TODO("Stub!")
-        override var openPropInterface: String = TODO("Stub!")
-
+      abstract class OverriddenThings : com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsInterface {
+        override var openProp: kotlin.String = TODO("Stub!")
+      
+        override var openPropInterface: kotlin.String = TODO("Stub!")
+      
         override fun openFunction() {
         }
-
+      
         override fun openFunctionInterface() {
         }
       }
