@@ -261,7 +261,8 @@ interface ElementHandler {
         classJvmName: String,
         methodSignature: JvmMethodSignature
       ): Method? {
-        return lookupClass(classJvmName)?.lookupMethod(methodSignature) ?: error("No class found for: $classJvmName.")
+        val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+        return clazz.lookupMethod(methodSignature)
       }
 
       private fun Class<*>.lookupMethod(
