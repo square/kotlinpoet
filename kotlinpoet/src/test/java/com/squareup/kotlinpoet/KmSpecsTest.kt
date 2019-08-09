@@ -17,6 +17,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
@@ -24,7 +25,10 @@ import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
@@ -32,13 +36,47 @@ import kotlin.test.fail
 
 @KotlinPoetKm
 @Suppress("unused", "UNUSED_PARAMETER")
-class KmSpecsTest {
+@RunWith(Parameterized::class)
+class KmSpecsTest(
+  private val elementHandlerType: ElementHandlerType,
+  private val elementHandlerFactoryCreator: (KmSpecsTest) -> (() -> ElementHandler)
+) {
 
-  private fun KClass<*>.toTypeSpecWithReflectiveHandler() = toTypeSpec(ElementHandler.reflective())
+  enum class ElementHandlerType {
+    REFLECTIVE, ELEMENTS
+  }
+
+  companion object {
+    @Suppress("RedundantLambdaArrow") // Needed for lambda type resolution
+    @JvmStatic
+    @Parameterized.Parameters(name = "{0}")
+    fun data() : Collection<Array<*>> {
+      return listOf(
+          arrayOf<Any>(
+              ElementHandlerType.REFLECTIVE,
+              { _: KmSpecsTest -> { ElementHandler.reflective() } }
+          ),
+          arrayOf<Any>(
+              ElementHandlerType.ELEMENTS,
+              { test: KmSpecsTest -> {
+                ElementHandler.fromElements(test.compilation.elements, test.compilation.types)
+              } }
+          )
+      )
+    }
+  }
+
+  @Rule
+  @JvmField
+  val compilation = CompilationRule()
+
+  private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
+    return toTypeSpec(elementHandlerFactoryCreator(this@KmSpecsTest)())
+  }
 
   @Test
   fun constructorData() {
-    val typeSpec = ConstructorClass::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = ConstructorClass::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ConstructorClass(
@@ -58,7 +96,7 @@ class KmSpecsTest {
 
   @Test
   fun supertype() {
-    val typeSpec = Supertype::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = Supertype::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -72,7 +110,7 @@ class KmSpecsTest {
 
   @Test
   fun properties() {
-    val typeSpec = Properties::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = Properties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -97,7 +135,7 @@ class KmSpecsTest {
 
   @Test
   fun companionObject() {
-    val typeSpec = CompanionObject::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = CompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CompanionObject {
@@ -112,7 +150,7 @@ class KmSpecsTest {
 
   @Test
   fun namedCompanionObject() {
-    val typeSpec = NamedCompanionObject::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = NamedCompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NamedCompanionObject {
@@ -127,7 +165,7 @@ class KmSpecsTest {
 
   @Test
   fun generics() {
-    val typeSpec = Generics::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = Generics::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Generics<T, in R, V>(
@@ -140,7 +178,7 @@ class KmSpecsTest {
 
   @Test
   fun typeAliases() {
-    val typeSpec = TypeAliases::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = TypeAliases::class.toTypeSpecWithTestHandler()
 
     // We always resolve the underlying type of typealiases
     //language=kotlin
@@ -156,7 +194,7 @@ class KmSpecsTest {
 
   @Test
   fun propertyMutability() {
-    val typeSpec = PropertyMutability::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = PropertyMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class PropertyMutability(
@@ -170,7 +208,7 @@ class KmSpecsTest {
 
   @Test
   fun collectionMutability() {
-    val typeSpec = CollectionMutability::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = CollectionMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CollectionMutability(
@@ -184,7 +222,7 @@ class KmSpecsTest {
 
   @Test
   fun suspendTypes() {
-    val typeSpec = SuspendTypes::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = SuspendTypes::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class SuspendTypes {
@@ -217,7 +255,7 @@ class KmSpecsTest {
 
   @Test
   fun parameters() {
-    val typeSpec = Parameters::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = Parameters::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
@@ -248,7 +286,7 @@ class KmSpecsTest {
 
   @Test
   fun lambdaReceiver() {
-    val typeSpec = LambdaReceiver::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = LambdaReceiver::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class LambdaReceiver {
@@ -275,7 +313,7 @@ class KmSpecsTest {
 
   @Test
   fun nestedTypeAlias() {
-    val typeSpec = NestedTypeAliasTest::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = NestedTypeAliasTest::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -291,7 +329,7 @@ class KmSpecsTest {
 
   @Test
   fun inlineClass() {
-    val typeSpec = InlineClass::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = InlineClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -303,7 +341,7 @@ class KmSpecsTest {
 
   @Test
   fun functionReferencingTypeParam() {
-    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -322,7 +360,7 @@ class KmSpecsTest {
   @Ignore("We need to read @Override annotations off of these in metadata parsing")
   @Test
   fun overriddenThings() {
-    val typeSpec = OverriddenThings::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = OverriddenThings::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -364,7 +402,7 @@ class KmSpecsTest {
 
   @Test
   fun delegatedProperties() {
-    val typeSpec = DelegatedProperties::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = DelegatedProperties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -402,7 +440,7 @@ class KmSpecsTest {
   @Ignore("Need to be able to know about class delegation in metadata")
   @Test
   fun classDelegation() {
-    val typeSpec = ClassDelegation::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = ClassDelegation::class.toTypeSpecWithTestHandler()
 
     // TODO Assert this also excludes functions handled by the delegate
     //language=kotlin
@@ -417,7 +455,7 @@ class KmSpecsTest {
 
   @Test
   fun simpleEnum() {
-    val typeSpec = SimpleEnum::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = SimpleEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -437,7 +475,7 @@ class KmSpecsTest {
 
   @Test
   fun complexEnum() {
-    val typeSpec = ComplexEnum::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = ComplexEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -485,7 +523,7 @@ class KmSpecsTest {
 
   @Test
   fun interfaces() {
-    val typeSpec = SomeInterface::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = SomeInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -504,7 +542,7 @@ class KmSpecsTest {
 
   @Test
   fun backwardReferencingTypeVars() {
-    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -516,7 +554,7 @@ class KmSpecsTest {
 
   @Test
   fun taggedTypes() {
-    val typeSpec = TaggedTypes::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = TaggedTypes::class.toTypeSpecWithTestHandler()
     assertThat(typeSpec.tag<ImmutableKmClass>()).isNotNull()
 
     val constructorSpec = typeSpec.primaryConstructor ?: fail("No constructor found!")
@@ -545,7 +583,7 @@ class KmSpecsTest {
 
   @Test
   fun annotations() {
-    val typeSpec = MyAnnotation::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = MyAnnotation::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -559,7 +597,7 @@ class KmSpecsTest {
 
   @Test
   fun functionTypeArgsSupersedeClass() {
-    val typeSpec = GenericClass::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = GenericClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -592,7 +630,7 @@ class KmSpecsTest {
 
   @Test
   fun complexCompanionObject() {
-    val typeSpec = ComplexCompanionObject::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = ComplexCompanionObject::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -611,7 +649,7 @@ class KmSpecsTest {
 
   @Test
   fun annotationsAreCopied() {
-    val typeSpec = AnnotationHolders::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = AnnotationHolders::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -673,7 +711,7 @@ class KmSpecsTest {
 
   @Test
   fun constantValues() {
-    val typeSpec = Constants::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = Constants::class.toTypeSpecWithTestHandler()
 
     // TODO: Regular properties are not resolved with reflection, but should be accessible via
     //  elements-based API
@@ -802,7 +840,7 @@ class KmSpecsTest {
 
   @Test
   fun jvmAnnotations() {
-    val typeSpec = JvmAnnotations::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = JvmAnnotations::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -828,7 +866,7 @@ class KmSpecsTest {
       }
     """.trimIndent())
 
-    val interfaceSpec = JvmAnnotationsInterface::class.toTypeSpecWithReflectiveHandler()
+    val interfaceSpec = JvmAnnotationsInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(interfaceSpec.trimmedToString()).isEqualTo("""
@@ -862,7 +900,7 @@ class KmSpecsTest {
 
   @Test
   fun nestedClasses() {
-    val typeSpec = NestedClasses::class.toTypeSpecWithReflectiveHandler()
+    val typeSpec = NestedClasses::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
