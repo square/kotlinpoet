@@ -181,6 +181,13 @@ interface ElementHandler {
         "kotlin.collections.MutableMap.Entry"
     )
 
+    private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
+        "org.jetbrains.annotations.NotNull",
+        "org.jetbrains.annotations.Nullable"
+    )
+
+    private fun List<AnnotationSpec>.filterOutNullabilityAnnotations() = filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
+
     /** A reflection-based implementation of [ElementHandler]. */
     fun reflective(): ElementHandler = object : ElementHandler {
 
@@ -263,6 +270,7 @@ interface ElementHandler {
         return lookupField(classJvmName, fieldSignature)?.declaredAnnotations
             .orEmpty()
             .map { AnnotationSpec.get(it, true) }
+            .filterOutNullabilityAnnotations()
       }
 
       override fun constructorAnnotations(
@@ -277,7 +285,9 @@ interface ElementHandler {
               .onEach { it.isAccessible = true }
               .find { signatureString == it.jvmMethodSignature }.toOptional()
         }.nullableValue
-        return constructor?.declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) }
+        return constructor?.declaredAnnotations.orEmpty()
+            .map { AnnotationSpec.get(it, true) }
+            .filterOutNullabilityAnnotations()
       }
 
       override fun methodJvmModifiers(
@@ -298,6 +308,7 @@ interface ElementHandler {
               ?.declaredAnnotations
               .orEmpty()
               .map { AnnotationSpec.get(it, true) }
+              .filterOutNullabilityAnnotations()
         } catch (e: ClassNotFoundException) {
           emptyList()
         }
@@ -405,6 +416,7 @@ interface ElementHandler {
               ?.annotationMirrors
               .orEmpty()
               .map { AnnotationSpec.get(it) }
+              .filterOutNullabilityAnnotations()
         }
 
         override fun methodJvmModifiers(
@@ -429,6 +441,7 @@ interface ElementHandler {
                 ?.annotationMirrors
                 .orEmpty()
                 .map { AnnotationSpec.get(it) }
+                .filterOutNullabilityAnnotations()
         }
 
         override fun methodAnnotations(
@@ -439,6 +452,7 @@ interface ElementHandler {
                 ?.annotationMirrors
                 .orEmpty()
                 .map { AnnotationSpec.get(it) }
+                .filterOutNullabilityAnnotations()
         }
 
         override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
