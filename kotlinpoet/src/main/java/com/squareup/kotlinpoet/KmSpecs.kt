@@ -244,7 +244,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .filter { it.isDeclaration }
             .filterNot { it.isSynthesized }
             .map {
-              val annotations = mutableListOf<AnnotationSpec>()
+              val annotations = LinkedHashSet<AnnotationSpec>()
               var constant: CodeBlock? = null
               if (elementHandler != null) {
                 if (it.hasAnnotations) {
@@ -257,6 +257,11 @@ private fun ImmutableKmClass.toTypeSpec(
                       .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
                   annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature)
                       .map { it.annotationSpec() }
+                  if (isCompanionObject && parentName != null) {
+                    // These are copied into the parent
+                    annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature)
+                        .map { it.annotationSpec() }
+                  }
                   if (it.hasConstant) {
                     constant = if (isCompanionObject && parentName != null) {
                       // Constants are relocated to the enclosing class!
@@ -278,6 +283,12 @@ private fun ImmutableKmClass.toTypeSpec(
                         .map {
                           it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.GET).build()
                         }
+
+                    if (isCompanionObject && parentName != null) {
+                      // These are copied into the parent
+                      annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
+                          .map { it.annotationSpec() }
+                    }
                   }
                 }
                 if (it.hasSetter) {
@@ -292,6 +303,12 @@ private fun ImmutableKmClass.toTypeSpec(
                         .map {
                           it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.SET).build()
                         }
+                    if (isCompanionObject && parentName != null) {
+                      // These are copied into the parent
+                      annotations += elementHandler.methodJvmModifiers(jvmInternalName,
+                          setterSignature)
+                          .map { it.annotationSpec() }
+                    }
                   }
                 }
               }
@@ -326,7 +343,7 @@ private fun ImmutableKmClass.toTypeSpec(
           .map { func ->
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
-            val annotations = mutableListOf<AnnotationSpec>()
+            val annotations = LinkedHashSet<AnnotationSpec>()
             if (elementHandler != null) {
               func.signature?.let { signature ->
                 if (func.hasAnnotations) {
@@ -414,7 +431,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 @KotlinPoetKm
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: List<AnnotationSpec>
+  annotations: Iterable<AnnotationSpec>
 ): FunSpec {
   // Only visisble from Elements API as Override is not available at runtime for reflection
   val isOverride = annotations.any { it.className == OVERRIDE }
@@ -494,11 +511,16 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
   isConstructorParam: Boolean,
-  annotations: List<AnnotationSpec>,
+  annotations: Iterable<AnnotationSpec>,
   constant: CodeBlock?
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
-      addAnnotations(annotations)
+      val finalAnnotations = if (isConst) {
+        annotations.filterNot { it.className == JVM_STATIC }
+      } else {
+        annotations
+      }
+      addAnnotations(finalAnnotations)
       addVisibility { addModifiers(it) }
       addModifiers(flags.modalities
           .filterNot { it == KModifier.FINAL && !isOverride } // Final is the default
@@ -632,6 +654,7 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 
 private val OVERRIDE = Override::class.asClassName()
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
+private val JVM_STATIC = JvmStatic::class.asClassName()
 
 @PublishedApi
 internal val Element.packageName: String
