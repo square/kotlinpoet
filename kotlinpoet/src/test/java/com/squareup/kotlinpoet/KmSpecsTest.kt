@@ -18,17 +18,24 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.ELEMENTS
+import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.REFLECTIVE
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.Description
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.junit.runners.model.Statement
+import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
@@ -38,13 +45,9 @@ import kotlin.test.fail
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KmSpecsTest(
-  private val elementHandlerType: ElementHandlerType,
+  elementHandlerType: ElementHandlerType,
   private val elementHandlerFactoryCreator: (KmSpecsTest) -> (() -> ElementHandler)
 ) {
-
-  enum class ElementHandlerType {
-    REFLECTIVE, ELEMENTS
-  }
 
   companion object {
     @Suppress("RedundantLambdaArrow") // Needed for lambda type resolution
@@ -66,9 +69,41 @@ class KmSpecsTest(
     }
   }
 
+  enum class ElementHandlerType {
+    REFLECTIVE, ELEMENTS
+  }
+
+  @Retention(RUNTIME)
+  @Target(AnnotationTarget.FUNCTION)
+  @Inherited
+  annotation class IgnoreForHandlerType(
+      val reason: String,
+      val handlerType: ElementHandlerType
+  )
+
+  class IgnoreForElementsRule(private val handlerType: ElementHandlerType) : TestRule {
+    override fun apply(base: Statement, description: Description): Statement {
+      return object : Statement() {
+        override fun evaluate() {
+          val annotation = description.getAnnotation(IgnoreForHandlerType::class.java)
+          val shouldIgnore = annotation?.handlerType == handlerType
+          Assume.assumeTrue(
+              "Ignoring ${description.methodName}: ${annotation?.reason}",
+              !shouldIgnore
+          )
+          base.evaluate()
+        }
+      }
+    }
+  }
+
   @Rule
   @JvmField
   val compilation = CompilationRule()
+
+  @Rule
+  @JvmField
+  val ignoreForElementsRule = IgnoreForElementsRule(elementHandlerType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
     return toTypeSpec(elementHandlerFactoryCreator(this@KmSpecsTest)())
@@ -108,8 +143,12 @@ class KmSpecsTest(
   interface BaseInterface
   class Supertype : BaseType(), BaseInterface
 
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the string constant",
+      handlerType = ELEMENTS
+  )
   @Test
-  fun properties() {
+  fun propertiesReflective() {
     val typeSpec = Properties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
@@ -122,6 +161,28 @@ class KmSpecsTest(
         var baz: kotlin.Int = TODO("Stub!")
 
         val foo: kotlin.String = TODO("Stub!")
+      }
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the string constant",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun propertiesElements() {
+    val typeSpec = Properties::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Properties {
+        var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
+
+        val bar: kotlin.String? = null
+
+        var baz: kotlin.Int = TODO("Stub!")
+
+        val foo: kotlin.String = ""
       }
     """.trimIndent())
   }
@@ -647,6 +708,10 @@ class KmSpecsTest(
     companion object ComplexObject : CompanionBase(), CompanionInterface
   }
 
+  @IgnoreForHandlerType(
+      reason = "TODO Synthetic methods that hold annotations aren't visible in these tests",
+      handlerType = ELEMENTS
+  )
   @Test
   fun annotationsAreCopied() {
     val typeSpec = AnnotationHolders::class.toTypeSpecWithTestHandler()
@@ -709,14 +774,107 @@ class KmSpecsTest(
   @Retention(RUNTIME)
   annotation class FunctionAnnotation
 
+
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+      handlerType = REFLECTIVE
+  )
   @Test
-  fun constantValues() {
+  fun constantValuesElements() {
     val typeSpec = Constants::class.toTypeSpecWithTestHandler()
 
-    // TODO: Regular properties are not resolved with reflection, but should be accessible via
-    //  elements-based API
-
     // Note: formats like hex/binary/underscore are not available as formatted at runtime
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Constants(
+        val param: kotlin.String = TODO("Stub!")
+      ) {
+        val binaryProp: kotlin.Int = 11
+
+        val boolProp: kotlin.Boolean = false
+      
+        val doubleProp: kotlin.Double = 1.0
+      
+        val floatProp: kotlin.Float = 1.0F
+      
+        val hexProp: kotlin.Int = 15
+      
+        val intProp: kotlin.Int = 1
+      
+        val longProp: kotlin.Long = 1L
+      
+        val stringProp: kotlin.String = "prop"
+      
+        val underscoresHexProp: kotlin.Long = 4293713502L
+      
+        val underscoresProp: kotlin.Int = 1000000
+
+        companion object {
+          const val CONST_BINARY_PROP: kotlin.Int = 11
+
+          const val CONST_BOOL_PROP: kotlin.Boolean = false
+
+          const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          const val CONST_HEX_PROP: kotlin.Int = 15
+
+          const val CONST_INT_PROP: kotlin.Int = 1
+
+          const val CONST_LONG_PROP: kotlin.Long = 1L
+
+          const val CONST_STRING_PROP: kotlin.String = "prop"
+
+          const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BINARY_PROP: kotlin.Int = 11
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BOOL_PROP: kotlin.Boolean = false
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_HEX_PROP: kotlin.Int = 15
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_INT_PROP: kotlin.Int = 1
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_LONG_PROP: kotlin.Long = 1L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_STRING_PROP: kotlin.String = "prop"
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+        }
+      }
+    """.trimIndent())
+
+    // TODO check with objects
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun constantValuesReflective() {
+    val typeSpec = Constants::class.toTypeSpecWithTestHandler()
+
+    // Note: formats like hex/binary/underscore are not available as formatted in elements
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Constants(
