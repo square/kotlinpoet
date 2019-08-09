@@ -53,7 +53,7 @@ class KmSpecsTest(
     @Suppress("RedundantLambdaArrow") // Needed for lambda type resolution
     @JvmStatic
     @Parameterized.Parameters(name = "{0}")
-    fun data() : Collection<Array<*>> {
+    fun data(): Collection<Array<*>> {
       return listOf(
           arrayOf<Any>(
               ElementHandlerType.REFLECTIVE,
@@ -77,8 +77,8 @@ class KmSpecsTest(
   @Target(AnnotationTarget.FUNCTION)
   @Inherited
   annotation class IgnoreForHandlerType(
-      val reason: String,
-      val handlerType: ElementHandlerType
+    val reason: String,
+    val handlerType: ElementHandlerType
   )
 
   class IgnoreForElementsRule(private val handlerType: ElementHandlerType) : TestRule {
@@ -426,12 +426,12 @@ class KmSpecsTest(
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       abstract class OverriddenThings : com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsInterface {
         override var openProp: kotlin.String = TODO("Stub!")
-      
+
         override var openPropInterface: kotlin.String = TODO("Stub!")
-      
+
         override fun openFunction() {
         }
-      
+
         override fun openFunctionInterface() {
         }
       }
@@ -774,7 +774,6 @@ class KmSpecsTest(
   @Retention(RUNTIME)
   annotation class FunctionAnnotation
 
-
   @IgnoreForHandlerType(
       reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
       handlerType = REFLECTIVE
@@ -792,21 +791,21 @@ class KmSpecsTest(
         val binaryProp: kotlin.Int = 11
 
         val boolProp: kotlin.Boolean = false
-      
+
         val doubleProp: kotlin.Double = 1.0
-      
+
         val floatProp: kotlin.Float = 1.0F
-      
+
         val hexProp: kotlin.Int = 15
-      
+
         val intProp: kotlin.Int = 1
-      
+
         val longProp: kotlin.Long = 1L
-      
+
         val stringProp: kotlin.String = "prop"
-      
+
         val underscoresHexProp: kotlin.Long = 4293713502L
-      
+
         val underscoresProp: kotlin.Int = 1000000
 
         companion object {

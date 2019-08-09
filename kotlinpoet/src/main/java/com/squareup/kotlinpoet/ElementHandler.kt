@@ -382,11 +382,12 @@ interface ElementHandler {
             .asLiteralCodeBlock()
       }
 
-      override fun isMethodOverride(classJvmName: String,
-          methodSignature: JvmMethodSignature): Boolean {
+      override fun isMethodOverride(
+        classJvmName: String,
+        methodSignature: JvmMethodSignature
+      ): Boolean {
         val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
         return clazz.lookupMethod(methodSignature)?.declaringClass == clazz
-
       }
     }
 
@@ -416,8 +417,10 @@ interface ElementHandler {
           return lookupTypeElement(jvmName)?.kind == INTERFACE
         }
 
-        private fun lookupField(classJvmName: String,
-            fieldSignature: JvmFieldSignature): VariableElement? {
+        private fun lookupField(
+          classJvmName: String,
+          fieldSignature: JvmFieldSignature
+        ): VariableElement? {
           return lookupTypeElement(classJvmName)?.let {
             val signatureString = fieldSignature.asString()
             variableElementCache.getOrPut(it to signatureString) {
@@ -427,15 +430,17 @@ interface ElementHandler {
           }
         }
 
-        private fun lookupMethod(classJvmName: String,
-            methodSignature: JvmMethodSignature,
-            elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+        private fun lookupMethod(
+          classJvmName: String,
+          methodSignature: JvmMethodSignature,
+          elementFilter: (Iterable<Element>) -> List<ExecutableElement>
         ): ExecutableElement? {
           return lookupTypeElement(classJvmName)?.lookupMethod(methodSignature, elementFilter)
         }
 
-        private fun TypeElement.lookupMethod(methodSignature: JvmMethodSignature,
-            elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+        private fun TypeElement.lookupMethod(
+          methodSignature: JvmMethodSignature,
+          elementFilter: (Iterable<Element>) -> List<ExecutableElement>
         ): ExecutableElement? {
           val signatureString = methodSignature.asString()
           return methodCache.getOrPut(this to signatureString) {
@@ -445,8 +450,8 @@ interface ElementHandler {
         }
 
         override fun fieldJvmModifiers(
-            classJvmName: String,
-            fieldSignature: JvmFieldSignature
+          classJvmName: String,
+          fieldSignature: JvmFieldSignature
         ): Set<JvmFieldModifier> {
           return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
@@ -461,8 +466,8 @@ interface ElementHandler {
         }
 
         override fun fieldAnnotations(
-            classJvmName: String,
-            fieldSignature: JvmFieldSignature
+          classJvmName: String,
+          fieldSignature: JvmFieldSignature
         ): List<AnnotationSpec> {
           return lookupField(classJvmName, fieldSignature)
               ?.annotationMirrors
@@ -472,8 +477,8 @@ interface ElementHandler {
         }
 
         override fun methodJvmModifiers(
-            classJvmName: String,
-            methodSignature: JvmMethodSignature
+          classJvmName: String,
+          methodSignature: JvmMethodSignature
         ): Set<JvmMethodModifier> {
           return lookupMethod(classJvmName, methodSignature,
               ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
@@ -488,8 +493,8 @@ interface ElementHandler {
         }
 
         override fun constructorAnnotations(
-            classJvmName: String,
-            constructorSignature: JvmMethodSignature
+          classJvmName: String,
+          constructorSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
           return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
               ?.annotationMirrors
@@ -499,8 +504,8 @@ interface ElementHandler {
         }
 
         override fun methodAnnotations(
-            classJvmName: String,
-            methodSignature: JvmMethodSignature
+          classJvmName: String,
+          methodSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
           return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
               ?.annotationMirrors
@@ -524,16 +529,18 @@ interface ElementHandler {
         }
 
         override fun fieldConstant(
-            classJvmName: String,
-            fieldSignature: JvmFieldSignature
+          classJvmName: String,
+          fieldSignature: JvmFieldSignature
         ): CodeBlock? {
           return lookupField(classJvmName, fieldSignature)?.constantValue
               ?.asLiteralCodeBlock()
               ?: error("No field $fieldSignature found in $classJvmName.")
         }
 
-        override fun isMethodOverride(classJvmName: String,
-            methodSignature: JvmMethodSignature): Boolean {
+        override fun isMethodOverride(
+          classJvmName: String,
+          methodSignature: JvmMethodSignature
+        ): Boolean {
           val typeElement = lookupTypeElement(classJvmName)
               ?: error("No type element found for: $classJvmName.")
           val method = typeElement.lookupMethod(methodSignature, ElementFilter::methodsIn)
@@ -614,7 +621,6 @@ interface ElementHandler {
           }
         }
       }
-
     }
   }
 }
