@@ -27,6 +27,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.concurrent.ConcurrentHashMap
+import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.ENUM_CONSTANT
 import javax.lang.model.element.ElementKind.INTERFACE
 import javax.lang.model.element.ExecutableElement
@@ -383,11 +384,14 @@ interface ElementHandler {
           }
         }
 
-        private fun lookupMethod(classJvmName: String, methodSignature: JvmMethodSignature): ExecutableElement? {
+        private fun lookupMethod(classJvmName: String,
+            methodSignature: JvmMethodSignature,
+            elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+        ): ExecutableElement? {
           return lookupTypeElement(classJvmName)?.let {
             val signatureString = methodSignature.asString()
             methodCache.getOrPut(it to signatureString) {
-              ElementFilter.methodsIn(it.enclosedElements)
+              elementFilter(it.enclosedElements)
                   .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
             }.nullableValue
           }
@@ -423,7 +427,7 @@ interface ElementHandler {
           classJvmName: String,
           methodSignature: JvmMethodSignature
         ): Set<JvmMethodModifier> {
-          return lookupMethod(classJvmName, methodSignature)?.modifiers?.let { modifiers ->
+          return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
                 javax.lang.model.element.Modifier.SYNCHRONIZED -> JvmMethodModifier.SYNCHRONIZED
@@ -437,7 +441,7 @@ interface ElementHandler {
           classJvmName: String,
           constructorSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
-          return lookupMethod(classJvmName, constructorSignature)
+          return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
                 ?.annotationMirrors
                 .orEmpty()
                 .map { AnnotationSpec.get(it) }
@@ -448,7 +452,7 @@ interface ElementHandler {
           classJvmName: String,
           methodSignature: JvmMethodSignature
         ): List<AnnotationSpec> {
-          return lookupMethod(classJvmName, methodSignature)
+          return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
                 ?.annotationMirrors
                 .orEmpty()
                 .map { AnnotationSpec.get(it) }
