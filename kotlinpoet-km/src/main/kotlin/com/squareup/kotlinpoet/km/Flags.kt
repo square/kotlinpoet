@@ -259,8 +259,6 @@ val ImmutableKmValueParameter.isNoInline: Boolean get() = Flag.ValueParameter.IS
 @KotlinPoetKm
 val Flags.isFakeOverrideProperty: Boolean get() = Flag.Property.IS_FAKE_OVERRIDE(this)
 @KotlinPoetKm
-val Flags.isOverrideProperty: Boolean get() = false // TODO This isn't contained in metadata. Likely have to read an annotation
-@KotlinPoetKm
 val KmProperty.hasConstant: Boolean get() = Flag.Property.HAS_CONSTANT(flags)
 @KotlinPoetKm
 val KmProperty.hasGetter: Boolean get() = Flag.Property.HAS_GETTER(flags)
@@ -308,8 +306,6 @@ val ImmutableKmProperty.isExpect: Boolean get() = Flag.Property.IS_EXPECT(flags)
 val ImmutableKmProperty.isExternal: Boolean get() = Flag.Property.IS_EXTERNAL(flags)
 @KotlinPoetKm
 val ImmutableKmProperty.isFakeOverride: Boolean get() = flags.isFakeOverrideProperty
-@KotlinPoetKm
-val ImmutableKmProperty.isOverride: Boolean get() = flags.isOverrideProperty
 @KotlinPoetKm
 val ImmutableKmProperty.isLateinit: Boolean get() = Flag.Property.IS_LATEINIT(flags)
 @KotlinPoetKm

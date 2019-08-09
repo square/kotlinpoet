@@ -58,8 +58,6 @@ import com.squareup.kotlinpoet.km.isNoInline
 import com.squareup.kotlinpoet.km.isObject
 import com.squareup.kotlinpoet.km.isOpen
 import com.squareup.kotlinpoet.km.isOperator
-import com.squareup.kotlinpoet.km.isOverride
-import com.squareup.kotlinpoet.km.isOverrideProperty
 import com.squareup.kotlinpoet.km.isPrimary
 import com.squareup.kotlinpoet.km.isPrivate
 import com.squareup.kotlinpoet.km.isProtected
@@ -246,6 +244,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .map {
               val annotations = LinkedHashSet<AnnotationSpec>()
               var constant: CodeBlock? = null
+              var isOverride = false
               if (elementHandler != null) {
                 if (it.hasAnnotations) {
                   annotations += it.syntheticMethodForAnnotations?.let {
@@ -273,6 +272,9 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
                 if (it.hasGetter) {
                   it.getterSignature?.let { getterSignature ->
+                    if (!isOverride) {
+                      isOverride = elementHandler.isMethodOverride(jvmInternalName, getterSignature)
+                    }
                     if (it.getterFlags.hasAnnotations) {
                       annotations += elementHandler.methodAnnotations(jvmInternalName,
                           getterSignature)
@@ -293,6 +295,9 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
                 if (it.hasSetter) {
                   it.setterSignature?.let { setterSignature ->
+                    if (!isOverride) {
+                      isOverride = elementHandler.isMethodOverride(jvmInternalName, setterSignature)
+                    }
                     if (it.setterFlags.hasAnnotations) {
                       annotations += elementHandler.methodAnnotations(jvmInternalName,
                           setterSignature)
@@ -316,7 +321,8 @@ private fun ImmutableKmClass.toTypeSpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = it.name in primaryConstructorParams,
                   annotations = annotations,
-                  constant = constant
+                  constant = constant,
+                  isOverride = isOverride
               )
             }
             .asIterable()
@@ -344,6 +350,7 @@ private fun ImmutableKmClass.toTypeSpec(
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
             val annotations = LinkedHashSet<AnnotationSpec>()
+            var isOverride = false
             if (elementHandler != null) {
               func.signature?.let { signature ->
                 if (func.hasAnnotations) {
@@ -351,9 +358,10 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
                 annotations += elementHandler.methodJvmModifiers(jvmInternalName, signature)
                     .map { it.annotationSpec() }
+                isOverride = elementHandler.isMethodOverride(jvmInternalName, signature)
               }
             }
-            func.toFunSpec(functionTypeParamsResolver, annotations).let {
+            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride).let {
               // For interface methods, remove any body and mark the methods as abstracte
               // TODO kotlin interface methods _can_ be implemented. How do we detect that?
               if (isInterface && annotations.none { it.className == JVM_DEFAULT }) {
@@ -431,10 +439,10 @@ private fun ImmutableKmConstructor.toFunSpec(
 @KotlinPoetKm
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: Iterable<AnnotationSpec>
+  annotations: Iterable<AnnotationSpec>,
+  isOverride: Boolean
 ): FunSpec {
   // Only visisble from Elements API as Override is not available at runtime for reflection
-  val isOverride = annotations.any { it.className == OVERRIDE }
   return FunSpec.builder(name)
       .apply {
         addAnnotations(annotations)
@@ -512,7 +520,8 @@ private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
   isConstructorParam: Boolean,
   annotations: Iterable<AnnotationSpec>,
-  constant: CodeBlock?
+  constant: CodeBlock?,
+  isOverride: Boolean
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
       val finalAnnotations = if (isConst) {
@@ -571,21 +580,22 @@ private fun ImmutableKmProperty.toPropertySpec(
       // Delegated properties have setters/getters defined for some reason, ignore here
       // since the delegate handles it
       if (hasGetter && !isDelegated) {
-        propertyAccessor(getterFlags, FunSpec.getterBuilder().addStatement(TODO_BLOCK))?.let(
+        propertyAccessor(getterFlags, FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(
             ::getter)
       }
       if (hasSetter && !isDelegated) {
-        propertyAccessor(setterFlags, FunSpec.setterBuilder())?.let(::setter)
+        propertyAccessor(setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
     .tag(this)
     .build()
 
 @KotlinPoetKm
-private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): FunSpec? {
+private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder, isOverride: Boolean): FunSpec? {
   val visibility = flags.visibility
   val modalities = flags.modalities
-      .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
+      .filterNot { it == KModifier.FINAL && !isOverride }
+      .filterNot { it == KModifier.OPEN && isOverride }
   val propertyAccessorFlags = flags.propertyAccessorFlags
   return if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
     functionBuilder
