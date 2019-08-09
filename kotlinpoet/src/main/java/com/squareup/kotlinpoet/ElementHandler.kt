@@ -296,7 +296,10 @@ interface ElementHandler {
         }
       }
 
-      override fun fieldAnnotations(classJvmName: String, fieldSignature: JvmFieldSignature): List<AnnotationSpec> {
+      override fun fieldAnnotations(
+        classJvmName: String,
+        fieldSignature: JvmFieldSignature
+      ): List<AnnotationSpec> {
         return lookupField(classJvmName, fieldSignature)?.declaredAnnotations
             .orEmpty()
             .map { AnnotationSpec.get(it, true) }
@@ -338,7 +341,10 @@ interface ElementHandler {
         }
       }
 
-      override fun methodAnnotations(classJvmName: String, methodSignature: JvmMethodSignature): List<AnnotationSpec> {
+      override fun methodAnnotations(
+        classJvmName: String,
+        methodSignature: JvmMethodSignature
+      ): List<AnnotationSpec> {
         return try {
           lookupMethod(classJvmName, methodSignature)
               ?.declaredAnnotations
@@ -374,7 +380,8 @@ interface ElementHandler {
         classJvmName: String,
         fieldSignature: JvmFieldSignature
       ): CodeBlock? {
-        val field = lookupField(classJvmName, fieldSignature) ?: error("No field $fieldSignature found in $classJvmName.")
+        val field = lookupField(classJvmName, fieldSignature) ?: error(
+            "No field $fieldSignature found in $classJvmName.")
         if (!Modifier.isStatic(field.modifiers)) {
           return null
         }
@@ -388,7 +395,22 @@ interface ElementHandler {
         methodSignature: JvmMethodSignature
       ): Boolean {
         val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
-        return clazz.lookupMethod(methodSignature)?.declaringClass == clazz
+        val signatureString = methodSignature.asString()
+        val classPackage = clazz.`package`.name
+        val interfaceMethods = clazz.interfaces.asSequence()
+            .flatMap { it.methods.asSequence() }
+        val superClassMethods = clazz.superclass?.methods.orEmpty().asSequence()
+        return interfaceMethods.plus(superClassMethods)
+            .filterNot { Modifier.isStatic(it.modifiers) }
+            .filterNot { Modifier.isPrivate(it.modifiers) }
+            .filter {
+              Modifier.isPublic(it.modifiers) ||
+                  Modifier.isProtected(it.modifiers) ||
+                  // Package private
+                  it.declaringClass.`package`.name == classPackage
+            }
+            .map { it.jvmMethodSignature }
+            .any { it == signatureString }
       }
     }
 
