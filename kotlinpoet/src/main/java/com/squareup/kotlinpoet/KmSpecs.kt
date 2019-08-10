@@ -15,10 +15,13 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
+import com.squareup.kotlinpoet.km.ImmutableKmType
+import com.squareup.kotlinpoet.km.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.ImmutableKmWithFlags
 import com.squareup.kotlinpoet.km.KotlinPoetKm
@@ -27,6 +30,8 @@ import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.km.PropertyAccessorFlag.IS_NOT_DEFAULT
 import com.squareup.kotlinpoet.km.declaresDefaultValue
+import com.squareup.kotlinpoet.km.hasAnnotations
+import com.squareup.kotlinpoet.km.hasConstant
 import com.squareup.kotlinpoet.km.hasGetter
 import com.squareup.kotlinpoet.km.hasSetter
 import com.squareup.kotlinpoet.km.isAbstract
@@ -42,7 +47,6 @@ import com.squareup.kotlinpoet.km.isEnum
 import com.squareup.kotlinpoet.km.isEnumEntry
 import com.squareup.kotlinpoet.km.isExpect
 import com.squareup.kotlinpoet.km.isExternal
-import com.squareup.kotlinpoet.km.isFakeOverride
 import com.squareup.kotlinpoet.km.isFinal
 import com.squareup.kotlinpoet.km.isInfix
 import com.squareup.kotlinpoet.km.isInline
@@ -54,8 +58,6 @@ import com.squareup.kotlinpoet.km.isNoInline
 import com.squareup.kotlinpoet.km.isObject
 import com.squareup.kotlinpoet.km.isOpen
 import com.squareup.kotlinpoet.km.isOperator
-import com.squareup.kotlinpoet.km.isOverride
-import com.squareup.kotlinpoet.km.isOverrideProperty
 import com.squareup.kotlinpoet.km.isPrimary
 import com.squareup.kotlinpoet.km.isPrivate
 import com.squareup.kotlinpoet.km.isProtected
@@ -69,6 +71,8 @@ import com.squareup.kotlinpoet.km.isVar
 import com.squareup.kotlinpoet.km.propertyAccessorFlags
 import com.squareup.kotlinpoet.km.toImmutableKmClass
 import kotlinx.metadata.Flags
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.jvm.jvmInternalName
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
@@ -77,36 +81,69 @@ import kotlin.reflect.KClass
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetKm
-fun KClass<*>.toTypeSpec(): TypeSpec = java.toTypeSpec()
+fun KClass<*>.toTypeSpec(
+  elementHandler: ElementHandler? = null
+): TypeSpec = java.toTypeSpec(elementHandler)
+
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetKm
-fun Class<*>.toTypeSpec(): TypeSpec = toImmutableKmClass().toTypeSpec()
+fun Class<*>.toTypeSpec(
+  elementHandler: ElementHandler? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
+
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetKm
-fun TypeElement.toTypeSpec(): TypeSpec = toImmutableKmClass().toTypeSpec()
+fun TypeElement.toTypeSpec(
+  elementHandler: ElementHandler? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
+
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetKm
-fun KClass<*>.toFileSpec(): FileSpec = java.toFileSpec()
+fun KClass<*>.toFileSpec(
+  elementHandler: ElementHandler? = null
+): FileSpec = java.toFileSpec(elementHandler)
+
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetKm
-fun Class<*>.toFileSpec(): FileSpec = FileSpec.get(`package`.name, toTypeSpec())
+fun Class<*>.toFileSpec(
+  elementHandler: ElementHandler? = null
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(elementHandler))
+
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetKm
-fun TypeElement.toFileSpec(): FileSpec = FileSpec.get(
-    packageName = packageName.toString(),
-    typeSpec = toTypeSpec()
+fun TypeElement.toFileSpec(
+  elementHandler: ElementHandler? = null
+): FileSpec = FileSpec.get(
+    packageName = packageName,
+    typeSpec = toTypeSpec(elementHandler)
 )
 
 private const val TODO_BLOCK = "TODO(\"Stub!\")"
 
 @KotlinPoetKm
-private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
+private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
+  fallback: ((Int) -> TypeVariableName)? = null
+): (Int) -> TypeVariableName {
+  val parametersMap = mutableMapOf<Int, TypeVariableName>()
+  val typeParamResolver = { id: Int ->
+    parametersMap[id]
+        ?: fallback?.invoke(id)
+        ?: throw IllegalStateException("No type argument found for $id!")
+  }
   // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
-  val parametersMap = mutableMapOf<Int, TypeName>()
-  val typeParamResolver = { id: Int -> parametersMap.getValue(id) }
-  typeParameters.forEach { parametersMap[it.id] = it.toTypeVariableName(typeParamResolver) }
+  forEach { parametersMap[it.id] = it.toTypeVariableName(typeParamResolver) }
+  return typeParamResolver
+}
+
+@KotlinPoetKm
+private fun ImmutableKmClass.toTypeSpec(
+  elementHandler: ElementHandler?,
+  parentName: String? = null
+): TypeSpec {
+  val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
 
   val simpleName = name.substringAfterLast(if (isInline) "/" else ".")
+  val jvmInternalName = name.jvmInternalName
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
     isCompanionObject -> TypeSpec.companionObjectBuilder(companionObjectName(simpleName))
@@ -114,61 +151,194 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
     isExpect -> TypeSpec.expectClassBuilder(simpleName)
     isObject -> TypeSpec.objectBuilder(simpleName)
     isInterface -> TypeSpec.interfaceBuilder(simpleName)
+    isEnumEntry -> TypeSpec.anonymousClassBuilder()
     else -> TypeSpec.classBuilder(simpleName)
   }
-  addVisibility { builder.addModifiers(it) }
-  builder.addModifiers(flags.modalities
-      .filterNot { it == KModifier.FINAL } // Default
-      .filterNot { isInterface && it == KModifier.ABSTRACT } // Abstract is a default on interfaces
-  )
-  if (isData) {
-    builder.addModifiers(KModifier.DATA)
-  }
-  if (isExternal) {
-    builder.addModifiers(KModifier.EXTERNAL)
-  }
-  if (isInline) {
-    builder.addModifiers(KModifier.INLINE)
-    // TODO these are special.
-    //  - Name is the fqcn
-  }
-  if (isInner) {
-    builder.addModifiers(KModifier.INNER)
-  }
-  if (isEnumEntry) {
-    // TODO
-  }
+
   if (isEnum) {
-    // TODO handle typespec arg for complex enums
-    enumEntries.forEach {
-      builder.addEnumConstant(it)
+    enumEntries.forEach { entryName ->
+      val typeSpec = if (elementHandler != null) {
+        elementHandler.enumEntry(jvmInternalName, entryName)?.toTypeSpec(elementHandler)
+      } else {
+        TypeSpec.anonymousClassBuilder()
+            .addKdoc(
+                "No ElementHandler was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
+            .build()
+      }
+      if (typeSpec != null) {
+        builder.addEnumConstant(entryName, typeSpec)
+      } else {
+        builder.addEnumConstant(entryName)
+      }
     }
   }
 
-  builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
-  if (!isEnum && !isInterface) {
-    supertypes.first().toTypeName(typeParamResolver).takeIf { it != ANY }?.let(builder::superclass)
-  }
-  builder.addSuperinterfaces(supertypes.drop(if (isInterface) 0 else 1).map { it.toTypeName(typeParamResolver) })
-  val primaryConstructorSpec = primaryConstructor?.takeIf { it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC }?.let {
-    it.toFunSpec(typeParamResolver).also {
-      builder.primaryConstructor(it)
+  if (!isEnumEntry) {
+    addVisibility { builder.addModifiers(it) }
+    builder.addModifiers(*flags.modalities
+        .filterNot { it == KModifier.FINAL } // Default
+        .filterNot { isInterface && it == KModifier.ABSTRACT } // Abstract is a default on interfaces
+        .toTypedArray()
+    )
+    if (isData) {
+      builder.addModifiers(KModifier.DATA)
     }
-  }
-  constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-    builder.addFunctions(secondaryConstructors.map { it.toFunSpec(typeParamResolver) })
-  }
-  val primaryConstructorParams = primaryConstructorSpec?.parameters.orEmpty().associateBy { it.name }
-  builder.addProperties(
-      properties
-          .asSequence()
-          .filter { it.isDeclaration }
-          .filterNot { it.isSynthesized }
-          .map { it.toPropertySpec(typeParamResolver, it.name in primaryConstructorParams) }
-          .asIterable()
-  )
-  companionObject?.let {
-    builder.addType(TypeSpec.companionObjectBuilder(companionObjectName(it)).build())
+    if (isExternal) {
+      builder.addModifiers(KModifier.EXTERNAL)
+    }
+    if (isInline) {
+      builder.addModifiers(KModifier.INLINE)
+      // TODO these are special.
+      //  - Name is the fqcn
+    }
+    if (isInner) {
+      builder.addModifiers(KModifier.INNER)
+    }
+    builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(classTypeParamsResolver) })
+    // If we have an element handler, we can check exactly which "supertype" is an interface vs
+    // class. Without a handler though, we have to best-effort guess. Usually, the flow is:
+    // - First element of a non-interface type is the superclass (can be `Any`)
+    // - First element of an interface type is the first superinterface
+    val superClassFilter = elementHandler?.let { handler ->
+      { type: ImmutableKmType ->
+        !handler.isInterface((type.classifier as KmClassifier.Class).name.jvmInternalName)
+      }
+    } ?: { true }
+    val superClass = supertypes.asSequence()
+        .filter { it.classifier is KmClassifier.Class }
+        .find(superClassFilter)
+    if (superClass != null && !isEnum && !isInterface && !isAnnotation) {
+      superClass.toTypeName(classTypeParamsResolver).takeIf { it != ANY }
+          ?.let(builder::superclass)
+    }
+    builder.addSuperinterfaces(
+        supertypes.asSequence()
+            .filterNot { it == superClass }
+            .map { it.toTypeName(classTypeParamsResolver) }
+            .filterNot { it == ANY }
+            .asIterable()
+    )
+    val primaryConstructorSpec = primaryConstructor?.takeIf {
+      it.valueParameters.isNotEmpty() || flags.visibility != KModifier.PUBLIC || it.hasAnnotations
+    }?.let {
+      it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+          .also { spec ->
+            val finalSpec = if (isEnum) {
+              // Metadata specifies the constructor as private, but that's implicit so we can omit it
+              spec.toBuilder().apply { modifiers.remove(KModifier.PRIVATE) }.build()
+            } else spec
+            builder.primaryConstructor(finalSpec)
+          }
+    }
+    constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
+      builder.addFunctions(secondaryConstructors.map {
+        it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+      })
+    }
+    val primaryConstructorParams = primaryConstructorSpec?.parameters.orEmpty().associateBy { it.name }
+    builder.addProperties(
+        properties
+            .asSequence()
+            .filter { it.isDeclaration }
+            .filterNot { it.isSynthesized }
+            .map {
+              val annotations = LinkedHashSet<AnnotationSpec>()
+              var constant: CodeBlock? = null
+              var isOverride = false
+              if (elementHandler != null) {
+                if (it.hasAnnotations) {
+                  annotations += it.syntheticMethodForAnnotations?.let {
+                    elementHandler.methodAnnotations(jvmInternalName, it)
+                  }.orEmpty()
+                }
+                it.fieldSignature?.let { fieldSignature ->
+                  annotations += elementHandler.fieldAnnotations(jvmInternalName, fieldSignature)
+                      .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
+                  annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature)
+                      .map { it.annotationSpec() }
+                  if (isCompanionObject && parentName != null) {
+                    // These are copied into the parent
+                    annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature)
+                        .map { it.annotationSpec() }
+                  }
+                  if (it.hasConstant) {
+                    constant = if (isCompanionObject && parentName != null) {
+                      // Constants are relocated to the enclosing class!
+                      elementHandler.fieldConstant(parentName, fieldSignature)
+                    } else {
+                      elementHandler.fieldConstant(jvmInternalName, fieldSignature)
+                    }
+                  }
+                }
+                if (it.hasGetter) {
+                  it.getterSignature?.let { getterSignature ->
+                    if (!isOverride) {
+                      isOverride = elementHandler.isMethodOverride(jvmInternalName, getterSignature)
+                    }
+                    if (it.getterFlags.hasAnnotations) {
+                      annotations += elementHandler.methodAnnotations(jvmInternalName,
+                          getterSignature)
+                          .map { it.toBuilder().useSiteTarget(UseSiteTarget.GET).build() }
+                    }
+                    annotations += elementHandler.methodJvmModifiers(jvmInternalName,
+                        getterSignature)
+                        .map {
+                          it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.GET).build()
+                        }
+
+                    if (isCompanionObject && parentName != null) {
+                      // These are copied into the parent
+                      annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
+                          .map { it.annotationSpec() }
+                    }
+                  }
+                }
+                if (it.hasSetter) {
+                  it.setterSignature?.let { setterSignature ->
+                    if (!isOverride) {
+                      isOverride = elementHandler.isMethodOverride(jvmInternalName, setterSignature)
+                    }
+                    if (it.setterFlags.hasAnnotations) {
+                      annotations += elementHandler.methodAnnotations(jvmInternalName,
+                          setterSignature)
+                          .map { it.toBuilder().useSiteTarget(UseSiteTarget.SET).build() }
+                    }
+                    annotations += elementHandler.methodJvmModifiers(jvmInternalName,
+                        setterSignature)
+                        .map {
+                          it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.SET).build()
+                        }
+                    if (isCompanionObject && parentName != null) {
+                      // These are copied into the parent
+                      annotations += elementHandler.methodJvmModifiers(jvmInternalName,
+                          setterSignature)
+                          .map { it.annotationSpec() }
+                    }
+                  }
+                }
+              }
+              it.toPropertySpec(
+                  typeParamResolver = classTypeParamsResolver,
+                  isConstructorParam = it.name in primaryConstructorParams,
+                  annotations = annotations,
+                  constant = constant,
+                  isOverride = isOverride
+              )
+            }
+            .asIterable()
+    )
+    companionObject?.let { objectName ->
+      val companionType = if (elementHandler != null) {
+        elementHandler.classFor("$jvmInternalName$$objectName")
+            .toTypeSpec(elementHandler, jvmInternalName)
+      } else {
+        TypeSpec.companionObjectBuilder(companionObjectName(objectName))
+            .addKdoc(
+                "No ElementHandler was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.")
+            .build()
+      }
+      builder.addType(companionType)
+    }
   }
   builder.addFunctions(
       functions
@@ -176,13 +346,72 @@ private fun ImmutableKmClass.toTypeSpec(): TypeSpec {
           .filter { it.isDeclaration }
           .filterNot { it.isDelegation }
           .filterNot { it.isSynthesized }
-          .map { it.toFunSpec(typeParamResolver) }
+          .map { func ->
+            val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
+                fallback = classTypeParamsResolver)
+            val annotations = LinkedHashSet<AnnotationSpec>()
+            var isOverride = false
+            if (elementHandler != null) {
+              func.signature?.let { signature ->
+                if (func.hasAnnotations) {
+                  annotations += elementHandler.methodAnnotations(jvmInternalName, signature)
+                }
+                annotations += elementHandler.methodJvmModifiers(jvmInternalName, signature)
+                    .map { it.annotationSpec() }
+                isOverride = elementHandler.isMethodOverride(jvmInternalName, signature)
+              }
+            }
+            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride).let {
+              // For interface methods, remove any body and mark the methods as abstracte
+              // TODO kotlin interface methods _can_ be implemented. How do we detect that?
+              if (isInterface && annotations.none { it.className == JVM_DEFAULT }) {
+                it.toBuilder()
+                    .addModifiers(KModifier.ABSTRACT)
+                    .apply {
+                      body.clear()
+                    }
+                    .build()
+              } else {
+                it
+              }
+            }
+          }
           .asIterable()
   )
+
+  for (it in nestedClasses) {
+    val nestedClass = elementHandler?.classFor("$jvmInternalName$$it")
+    val nestedType = if (nestedClass != null) {
+      if (nestedClass.isCompanionObject) {
+        // We handle these separately
+        continue
+      } else {
+        nestedClass.toTypeSpec(elementHandler, jvmInternalName)
+      }
+    } else {
+      TypeSpec.classBuilder(it)
+          .addKdoc(
+              "No ElementHandler was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.")
+          .build()
+    }
+    builder.addType(nestedType)
+  }
 
   return builder
       .tag(this)
       .build()
+}
+
+@KotlinPoetKm
+private fun ImmutableKmConstructor.annotations(
+  classJvmName: String,
+  elementHandler: ElementHandler?
+): List<AnnotationSpec> {
+  return if (elementHandler != null && hasAnnotations && signature != null) {
+    elementHandler.constructorAnnotations(classJvmName, signature!!)
+  } else {
+    emptyList()
+  }
 }
 
 private fun companionObjectName(name: String): String? {
@@ -191,10 +420,12 @@ private fun companionObjectName(name: String): String? {
 
 @KotlinPoetKm
 private fun ImmutableKmConstructor.toFunSpec(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName),
+  annotations: List<AnnotationSpec>
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
+        addAnnotations(annotations)
         addVisibility { addModifiers(it) }
         addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
         if (!isPrimary) {
@@ -207,13 +438,22 @@ private fun ImmutableKmConstructor.toFunSpec(
 
 @KotlinPoetKm
 private fun ImmutableKmFunction.toFunSpec(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName),
+  annotations: Iterable<AnnotationSpec>,
+  isOverride: Boolean
 ): FunSpec {
+  // Only visisble from Elements API as Override is not available at runtime for reflection
   return FunSpec.builder(name)
       .apply {
+        addAnnotations(annotations)
         addVisibility { addModifiers(it) }
-        addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
-        if (isFakeOverride) {
+        if (valueParameters.isNotEmpty()) {
+          addParameters(valueParameters.map { it.toParameterSpec(typeParamResolver) })
+        }
+        if (typeParameters.isNotEmpty()) {
+          addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
+        }
+        if (isOverride) {
           addModifiers(KModifier.OVERRIDE)
         }
         if (isSynthesized) {
@@ -278,9 +518,18 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 @KotlinPoetKm
 private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  isConstructorParam: Boolean
+  isConstructorParam: Boolean,
+  annotations: Iterable<AnnotationSpec>,
+  constant: CodeBlock?,
+  isOverride: Boolean
 ) = PropertySpec.builder(name, returnType.toTypeName(typeParamResolver))
     .apply {
+      val finalAnnotations = if (isConst) {
+        annotations.filterNot { it.className == JVM_STATIC }
+      } else {
+        annotations
+      }
+      addAnnotations(finalAnnotations)
       addVisibility { addModifiers(it) }
       addModifiers(flags.modalities
           .filterNot { it == KModifier.FINAL && !isOverride } // Final is the default
@@ -304,7 +553,8 @@ private fun ImmutableKmProperty.toPropertySpec(
           delegate("%M { %L }", MemberName("kotlin", "lazy"), TODO_BLOCK) // Placeholder
         } else {
           if (type.isNullable) {
-            delegate("%T.observable(null) { _, _, _ -> }", ClassName("kotlin.properties", "Delegates"))
+            delegate("%T.observable(null) { _, _, _ -> }",
+                ClassName("kotlin.properties", "Delegates"))
           } else {
             delegate("%T.notNull()", ClassName("kotlin.properties", "Delegates")) // Placeholder
           }
@@ -320,8 +570,8 @@ private fun ImmutableKmProperty.toPropertySpec(
         addModifiers(KModifier.LATEINIT)
       }
       if (isConstructorParam || (!isDelegated && !isLateinit)) {
-        // TODO if hasConstant + elements, we could look up the constant initializer
         when {
+          constant != null -> initializer(constant)
           isConstructorParam -> initializer(name)
           type.isNullable -> initializer("null")
           else -> initializer(TODO_BLOCK)
@@ -330,20 +580,22 @@ private fun ImmutableKmProperty.toPropertySpec(
       // Delegated properties have setters/getters defined for some reason, ignore here
       // since the delegate handles it
       if (hasGetter && !isDelegated) {
-        propertyAccessor(getterFlags, FunSpec.getterBuilder())?.let(::getter)
+        propertyAccessor(getterFlags, FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(
+            ::getter)
       }
       if (hasSetter && !isDelegated) {
-        propertyAccessor(setterFlags, FunSpec.setterBuilder())?.let(::setter)
+        propertyAccessor(setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
     .tag(this)
     .build()
 
 @KotlinPoetKm
-private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder): FunSpec? {
+private fun propertyAccessor(flags: Flags, functionBuilder: FunSpec.Builder, isOverride: Boolean): FunSpec? {
   val visibility = flags.visibility
   val modalities = flags.modalities
-      .filterNot { it == KModifier.FINAL && !flags.isOverrideProperty }
+      .filterNot { it == KModifier.FINAL && !isOverride }
+      .filterNot { it == KModifier.OPEN && isOverride }
   val propertyAccessorFlags = flags.propertyAccessorFlags
   return if (visibility != KModifier.PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
     functionBuilder
@@ -410,12 +662,16 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
 }
 
+private val OVERRIDE = Override::class.asClassName()
+private val JVM_DEFAULT = JvmDefault::class.asClassName()
+private val JVM_STATIC = JvmStatic::class.asClassName()
+
 @PublishedApi
-internal val Element.packageName: PackageElement
+internal val Element.packageName: String
   get() {
-      var element = this
-      while (element.kind != ElementKind.PACKAGE) {
-        element = element.enclosingElement
-      }
-      return element as PackageElement
+    var element = this
+    while (element.kind != ElementKind.PACKAGE) {
+      element = element.enclosingElement
+    }
+    return (element as PackageElement).toString()
   }

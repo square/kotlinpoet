@@ -23,6 +23,7 @@ object versions {
 }
 
 object deps {
+  const val autoCommon = "com.google.auto:auto-common:0.10"
   object kotlin {
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect"

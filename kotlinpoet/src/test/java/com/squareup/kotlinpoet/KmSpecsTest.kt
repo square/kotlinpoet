@@ -13,27 +13,105 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("RemoveRedundantQualifierName", "RedundantSuspendModifier", "NOTHING_TO_INLINE")
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.ELEMENTS
+import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.REFLECTIVE
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import org.junit.Assume
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.Description
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import org.junit.runners.model.Statement
+import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.properties.Delegates
+import kotlin.reflect.KClass
 import kotlin.test.fail
 
 @KotlinPoetKm
 @Suppress("unused", "UNUSED_PARAMETER")
-class KmSpecsTest {
+@RunWith(Parameterized::class)
+class KmSpecsTest(
+  elementHandlerType: ElementHandlerType,
+  private val elementHandlerFactoryCreator: (KmSpecsTest) -> (() -> ElementHandler)
+) {
+
+  companion object {
+    @Suppress("RedundantLambdaArrow") // Needed for lambda type resolution
+    @JvmStatic
+    @Parameterized.Parameters(name = "{0}")
+    fun data(): Collection<Array<*>> {
+      return listOf(
+          arrayOf<Any>(
+              ElementHandlerType.REFLECTIVE,
+              { _: KmSpecsTest -> { ElementHandler.reflective() } }
+          ),
+          arrayOf<Any>(
+              ElementHandlerType.ELEMENTS,
+              { test: KmSpecsTest -> {
+                ElementHandler.fromElements(test.compilation.elements, test.compilation.types)
+              } }
+          )
+      )
+    }
+  }
+
+  enum class ElementHandlerType {
+    REFLECTIVE, ELEMENTS
+  }
+
+  @Retention(RUNTIME)
+  @Target(AnnotationTarget.FUNCTION)
+  @Inherited
+  annotation class IgnoreForHandlerType(
+    val reason: String,
+    val handlerType: ElementHandlerType
+  )
+
+  class IgnoreForElementsRule(private val handlerType: ElementHandlerType) : TestRule {
+    override fun apply(base: Statement, description: Description): Statement {
+      return object : Statement() {
+        override fun evaluate() {
+          val annotation = description.getAnnotation(IgnoreForHandlerType::class.java)
+          val shouldIgnore = annotation?.handlerType == handlerType
+          Assume.assumeTrue(
+              "Ignoring ${description.methodName}: ${annotation?.reason}",
+              !shouldIgnore
+          )
+          base.evaluate()
+        }
+      }
+    }
+  }
+
+  @Rule
+  @JvmField
+  val compilation = CompilationRule()
+
+  @Rule
+  @JvmField
+  val ignoreForElementsRule = IgnoreForElementsRule(elementHandlerType)
+
+  private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
+    return toTypeSpec(elementHandlerFactoryCreator(this@KmSpecsTest)())
+  }
 
   @Test
   fun constructorData() {
-    val typeSpec = ConstructorClass::class.toTypeSpec()
+    val typeSpec = ConstructorClass::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ConstructorClass(
@@ -53,7 +131,7 @@ class KmSpecsTest {
 
   @Test
   fun supertype() {
-    val typeSpec = Supertype::class.toTypeSpec()
+    val typeSpec = Supertype::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -65,9 +143,13 @@ class KmSpecsTest {
   interface BaseInterface
   class Supertype : BaseType(), BaseInterface
 
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the string constant",
+      handlerType = ELEMENTS
+  )
   @Test
-  fun properties() {
-    val typeSpec = Properties::class.toTypeSpec()
+  fun propertiesReflective() {
+    val typeSpec = Properties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -83,6 +165,28 @@ class KmSpecsTest {
     """.trimIndent())
   }
 
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the string constant",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun propertiesElements() {
+    val typeSpec = Properties::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Properties {
+        var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
+
+        val bar: kotlin.String? = null
+
+        var baz: kotlin.Int = TODO("Stub!")
+
+        val foo: kotlin.String = ""
+      }
+    """.trimIndent())
+  }
+
   class Properties {
     val foo: String = ""
     val bar: String? = null
@@ -92,7 +196,7 @@ class KmSpecsTest {
 
   @Test
   fun companionObject() {
-    val typeSpec = CompanionObject::class.toTypeSpec()
+    val typeSpec = CompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CompanionObject {
@@ -107,7 +211,7 @@ class KmSpecsTest {
 
   @Test
   fun namedCompanionObject() {
-    val typeSpec = NamedCompanionObject::class.toTypeSpec()
+    val typeSpec = NamedCompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NamedCompanionObject {
@@ -122,7 +226,7 @@ class KmSpecsTest {
 
   @Test
   fun generics() {
-    val typeSpec = Generics::class.toTypeSpec()
+    val typeSpec = Generics::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Generics<T, in R, V>(
@@ -135,7 +239,7 @@ class KmSpecsTest {
 
   @Test
   fun typeAliases() {
-    val typeSpec = TypeAliases::class.toTypeSpec()
+    val typeSpec = TypeAliases::class.toTypeSpecWithTestHandler()
 
     // We always resolve the underlying type of typealiases
     //language=kotlin
@@ -151,7 +255,7 @@ class KmSpecsTest {
 
   @Test
   fun propertyMutability() {
-    val typeSpec = PropertyMutability::class.toTypeSpec()
+    val typeSpec = PropertyMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class PropertyMutability(
@@ -165,7 +269,7 @@ class KmSpecsTest {
 
   @Test
   fun collectionMutability() {
-    val typeSpec = CollectionMutability::class.toTypeSpec()
+    val typeSpec = CollectionMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class CollectionMutability(
@@ -179,7 +283,7 @@ class KmSpecsTest {
 
   @Test
   fun suspendTypes() {
-    val typeSpec = SuspendTypes::class.toTypeSpec()
+    val typeSpec = SuspendTypes::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class SuspendTypes {
@@ -212,7 +316,7 @@ class KmSpecsTest {
 
   @Test
   fun parameters() {
-    val typeSpec = Parameters::class.toTypeSpec()
+    val typeSpec = Parameters::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
@@ -243,7 +347,7 @@ class KmSpecsTest {
 
   @Test
   fun lambdaReceiver() {
-    val typeSpec = LambdaReceiver::class.toTypeSpec()
+    val typeSpec = LambdaReceiver::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class LambdaReceiver {
@@ -270,7 +374,7 @@ class KmSpecsTest {
 
   @Test
   fun nestedTypeAlias() {
-    val typeSpec = NestedTypeAliasTest::class.toTypeSpec()
+    val typeSpec = NestedTypeAliasTest::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -286,7 +390,7 @@ class KmSpecsTest {
 
   @Test
   fun inlineClass() {
-    val typeSpec = InlineClass::class.toTypeSpec()
+    val typeSpec = InlineClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -298,7 +402,7 @@ class KmSpecsTest {
 
   @Test
   fun functionReferencingTypeParam() {
-    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpec()
+    val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -314,16 +418,16 @@ class KmSpecsTest {
     }
   }
 
-  @Ignore("We need to read @Override annotations off of these in metadata parsing")
   @Test
   fun overriddenThings() {
-    val typeSpec = OverriddenThings::class.toTypeSpec()
+    val typeSpec = OverriddenThings::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      abstract class OverriddenThings : OverriddenThingsBase(), OverriddenThingsInterface {
-        override var openProp: String = TODO("Stub!")
-        override var openPropInterface: String = TODO("Stub!")
+      abstract class OverriddenThings : com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsInterface {
+        override var openProp: kotlin.String = TODO("Stub!")
+
+        override var openPropInterface: kotlin.String = TODO("Stub!")
 
         override fun openFunction() {
         }
@@ -359,7 +463,7 @@ class KmSpecsTest {
 
   @Test
   fun delegatedProperties() {
-    val typeSpec = DelegatedProperties::class.toTypeSpec()
+    val typeSpec = DelegatedProperties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -397,7 +501,7 @@ class KmSpecsTest {
   @Ignore("Need to be able to know about class delegation in metadata")
   @Test
   fun classDelegation() {
-    val typeSpec = ClassDelegation::class.toTypeSpec()
+    val typeSpec = ClassDelegation::class.toTypeSpecWithTestHandler()
 
     // TODO Assert this also excludes functions handled by the delegate
     //language=kotlin
@@ -412,7 +516,7 @@ class KmSpecsTest {
 
   @Test
   fun simpleEnum() {
-    val typeSpec = SimpleEnum::class.toTypeSpec()
+    val typeSpec = SimpleEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -430,29 +534,32 @@ class KmSpecsTest {
     FOO, BAR, BAZ
   }
 
-  @Ignore("Requires recursively reading metadata for each enum entry")
   @Test
   fun complexEnum() {
-    val typeSpec = ComplexEnum::class.toTypeSpec()
+    val typeSpec = ComplexEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      enum class SimpleEnum {
-        FOO("foo") {
-          override fun toString(): String {
-            return "foo1"
+      enum class ComplexEnum(
+        val value: kotlin.String
+      ) {
+        FOO {
+          override fun toString(): kotlin.String {
+            TODO("Stub!")
           }
         },
-        BAR("bar") {
-          override fun toString(): String {
-            return "bar1"
+
+        BAR {
+          override fun toString(): kotlin.String {
+            TODO("Stub!")
           }
         },
-        BAZ("baz") {
-          override fun toString(): String {
-            return "baz1"
+
+        BAZ {
+          override fun toString(): kotlin.String {
+            TODO("Stub!")
           }
-        }
+        };
       }
     """.trimIndent())
   }
@@ -477,13 +584,12 @@ class KmSpecsTest {
 
   @Test
   fun interfaces() {
-    val typeSpec = SomeInterface::class.toTypeSpec()
+    val typeSpec = SomeInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       interface SomeInterface : com.squareup.kotlinpoet.KmSpecsTest.SomeInterfaceBase {
-        fun testFunction() {
-        }
+        fun testFunction()
       }
     """.trimIndent())
   }
@@ -497,7 +603,7 @@ class KmSpecsTest {
 
   @Test
   fun backwardReferencingTypeVars() {
-    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpec()
+    val typeSpec = BackwardReferencingTypeVars::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
@@ -509,7 +615,7 @@ class KmSpecsTest {
 
   @Test
   fun taggedTypes() {
-    val typeSpec = TaggedTypes::class.toTypeSpec()
+    val typeSpec = TaggedTypes::class.toTypeSpecWithTestHandler()
     assertThat(typeSpec.tag<ImmutableKmClass>()).isNotNull()
 
     val constructorSpec = typeSpec.primaryConstructor ?: fail("No constructor found!")
@@ -536,7 +642,437 @@ class KmSpecsTest {
     }
   }
 
-  // TODO Complex companion objects (implementing interfaces)
+  @Test
+  fun annotations() {
+    val typeSpec = MyAnnotation::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      annotation class MyAnnotation(
+        val value: kotlin.String
+      )
+    """.trimIndent())
+  }
+
+  annotation class MyAnnotation(val value: String)
+
+  @Test
+  fun functionTypeArgsSupersedeClass() {
+    val typeSpec = GenericClass::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class GenericClass<T> {
+        fun <T> functionAlsoWithT(param: T) {
+        }
+
+        fun <R> functionWithADifferentType(param: R) {
+        }
+
+        fun functionWithT(param: T) {
+        }
+      }
+    """.trimIndent())
+
+    val func1TypeVar = typeSpec.funSpecs.find { it.name == "functionAlsoWithT" }!!.typeVariables.first()
+    val classTypeVar = typeSpec.typeVariables.first()
+
+    assertThat(func1TypeVar).isNotSameInstanceAs(classTypeVar)
+  }
+
+  class GenericClass<T> {
+    fun functionWithT(param: T) {
+    }
+    fun <T> functionAlsoWithT(param: T) {
+    }
+    fun <R> functionWithADifferentType(param: R) {
+    }
+  }
+
+  @Test
+  fun complexCompanionObject() {
+    val typeSpec = ComplexCompanionObject::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ComplexCompanionObject {
+        companion object ComplexObject : com.squareup.kotlinpoet.KmSpecsTest.CompanionBase(), com.squareup.kotlinpoet.KmSpecsTest.CompanionInterface
+      }
+    """.trimIndent())
+  }
+
+  interface CompanionInterface
+  open class CompanionBase
+
+  class ComplexCompanionObject {
+    companion object ComplexObject : CompanionBase(), CompanionInterface
+  }
+
+  @IgnoreForHandlerType(
+      reason = "TODO Synthetic methods that hold annotations aren't visible in these tests",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun annotationsAreCopied() {
+    val typeSpec = AnnotationHolders::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class AnnotationHolders @com.squareup.kotlinpoet.KmSpecsTest.ConstructorAnnotation constructor() {
+        @field:com.squareup.kotlinpoet.KmSpecsTest.FieldAnnotation
+        var field: kotlin.String? = null
+
+        @get:com.squareup.kotlinpoet.KmSpecsTest.GetterAnnotation
+        var getter: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+
+        @com.squareup.kotlinpoet.KmSpecsTest.HolderAnnotation
+        var holder: kotlin.String? = null
+
+        @set:com.squareup.kotlinpoet.KmSpecsTest.SetterAnnotation
+        var setter: kotlin.String? = null
+          set
+        @com.squareup.kotlinpoet.KmSpecsTest.ConstructorAnnotation
+        constructor(value: kotlin.String)
+
+        @com.squareup.kotlinpoet.KmSpecsTest.FunctionAnnotation
+        fun function() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  class AnnotationHolders @ConstructorAnnotation constructor() {
+
+    @ConstructorAnnotation constructor(value: String) : this()
+
+    @field:FieldAnnotation var field: String? = null
+    @get:GetterAnnotation var getter: String? = null
+    @set:SetterAnnotation var setter: String? = null
+    @HolderAnnotation @JvmField var holder: String? = null
+    @FunctionAnnotation fun function() {
+    }
+  }
+
+  @Retention(RUNTIME)
+  annotation class ConstructorAnnotation
+
+  @Retention(RUNTIME)
+  annotation class FieldAnnotation
+
+  @Retention(RUNTIME)
+  annotation class GetterAnnotation
+
+  @Retention(RUNTIME)
+  annotation class SetterAnnotation
+
+  @Retention(RUNTIME)
+  annotation class HolderAnnotation
+
+  @Retention(RUNTIME)
+  annotation class FunctionAnnotation
+
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun constantValuesElements() {
+    val typeSpec = Constants::class.toTypeSpecWithTestHandler()
+
+    // Note: formats like hex/binary/underscore are not available as formatted at runtime
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Constants(
+        val param: kotlin.String = TODO("Stub!")
+      ) {
+        val binaryProp: kotlin.Int = 11
+
+        val boolProp: kotlin.Boolean = false
+
+        val doubleProp: kotlin.Double = 1.0
+
+        val floatProp: kotlin.Float = 1.0F
+
+        val hexProp: kotlin.Int = 15
+
+        val intProp: kotlin.Int = 1
+
+        val longProp: kotlin.Long = 1L
+
+        val stringProp: kotlin.String = "prop"
+
+        val underscoresHexProp: kotlin.Long = 4293713502L
+
+        val underscoresProp: kotlin.Int = 1000000
+
+        companion object {
+          const val CONST_BINARY_PROP: kotlin.Int = 11
+
+          const val CONST_BOOL_PROP: kotlin.Boolean = false
+
+          const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          const val CONST_HEX_PROP: kotlin.Int = 15
+
+          const val CONST_INT_PROP: kotlin.Int = 1
+
+          const val CONST_LONG_PROP: kotlin.Long = 1L
+
+          const val CONST_STRING_PROP: kotlin.String = "prop"
+
+          const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BINARY_PROP: kotlin.Int = 11
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BOOL_PROP: kotlin.Boolean = false
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_HEX_PROP: kotlin.Int = 15
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_INT_PROP: kotlin.Int = 1
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_LONG_PROP: kotlin.Long = 1L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_STRING_PROP: kotlin.String = "prop"
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+        }
+      }
+    """.trimIndent())
+
+    // TODO check with objects
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun constantValuesReflective() {
+    val typeSpec = Constants::class.toTypeSpecWithTestHandler()
+
+    // Note: formats like hex/binary/underscore are not available as formatted in elements
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Constants(
+        val param: kotlin.String = TODO("Stub!")
+      ) {
+        val binaryProp: kotlin.Int = TODO("Stub!")
+
+        val boolProp: kotlin.Boolean = TODO("Stub!")
+
+        val doubleProp: kotlin.Double = TODO("Stub!")
+
+        val floatProp: kotlin.Float = TODO("Stub!")
+
+        val hexProp: kotlin.Int = TODO("Stub!")
+
+        val intProp: kotlin.Int = TODO("Stub!")
+
+        val longProp: kotlin.Long = TODO("Stub!")
+
+        val stringProp: kotlin.String = TODO("Stub!")
+
+        val underscoresHexProp: kotlin.Long = TODO("Stub!")
+
+        val underscoresProp: kotlin.Int = TODO("Stub!")
+
+        companion object {
+          const val CONST_BINARY_PROP: kotlin.Int = 11
+
+          const val CONST_BOOL_PROP: kotlin.Boolean = false
+
+          const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          const val CONST_HEX_PROP: kotlin.Int = 15
+
+          const val CONST_INT_PROP: kotlin.Int = 1
+
+          const val CONST_LONG_PROP: kotlin.Long = 1L
+
+          const val CONST_STRING_PROP: kotlin.String = "prop"
+
+          const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BINARY_PROP: kotlin.Int = 11
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_BOOL_PROP: kotlin.Boolean = false
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_HEX_PROP: kotlin.Int = 15
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_INT_PROP: kotlin.Int = 1
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_LONG_PROP: kotlin.Long = 1L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_STRING_PROP: kotlin.String = "prop"
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+
+          @kotlin.jvm.JvmStatic
+          val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+        }
+      }
+    """.trimIndent())
+
+    // TODO check with objects
+  }
+
+  class Constants(
+    val param: String = "param"
+  ) {
+    val boolProp = false
+    val binaryProp = 0b00001011
+    val intProp = 1
+    val underscoresProp = 1_000_000
+    val hexProp = 0x0F
+    val underscoresHexProp = 0xFF_EC_DE_5E
+    val longProp = 1L
+    val floatProp = 1.0F
+    val doubleProp = 1.0
+    val stringProp = "prop"
+
+    companion object {
+      @JvmStatic val STATIC_CONST_BOOL_PROP = false
+      @JvmStatic val STATIC_CONST_BINARY_PROP = 0b00001011
+      @JvmStatic val STATIC_CONST_INT_PROP = 1
+      @JvmStatic val STATIC_CONST_UNDERSCORES_PROP = 1_000_000
+      @JvmStatic val STATIC_CONST_HEX_PROP = 0x0F
+      @JvmStatic val STATIC_CONST_UNDERSCORES_HEX_PROP = 0xFF_EC_DE_5E
+      @JvmStatic val STATIC_CONST_LONG_PROP = 1L
+      @JvmStatic val STATIC_CONST_FLOAT_PROP = 1.0f
+      @JvmStatic val STATIC_CONST_DOUBLE_PROP = 1.0
+      @JvmStatic val STATIC_CONST_STRING_PROP = "prop"
+
+      const val CONST_BOOL_PROP = false
+      const val CONST_BINARY_PROP = 0b00001011
+      const val CONST_INT_PROP = 1
+      const val CONST_UNDERSCORES_PROP = 1_000_000
+      const val CONST_HEX_PROP = 0x0F
+      const val CONST_UNDERSCORES_HEX_PROP = 0xFF_EC_DE_5E
+      const val CONST_LONG_PROP = 1L
+      const val CONST_FLOAT_PROP = 1.0f
+      const val CONST_DOUBLE_PROP = 1.0
+      const val CONST_STRING_PROP = "prop"
+    }
+  }
+
+  @Test
+  fun jvmAnnotations() {
+    val typeSpec = JvmAnnotations::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class JvmAnnotations {
+        @get:kotlin.jvm.Synchronized
+        val synchronizedGetProp: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+
+        @set:kotlin.jvm.Synchronized
+        var synchronizedSetProp: kotlin.String? = null
+          set
+        @kotlin.jvm.Transient
+        val transientProp: kotlin.String? = null
+
+        @kotlin.jvm.Volatile
+        var volatileProp: kotlin.String? = null
+
+        @kotlin.jvm.Synchronized
+        fun synchronizedFun() {
+        }
+      }
+    """.trimIndent())
+
+    val interfaceSpec = JvmAnnotationsInterface::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(interfaceSpec.trimmedToString()).isEqualTo("""
+      interface JvmAnnotationsInterface {
+        @kotlin.jvm.JvmDefault
+        fun defaultMethod() {
+        }
+
+        fun notDefaultMethod()
+      }
+    """.trimIndent())
+  }
+
+  class JvmAnnotations {
+    @Transient val transientProp: String? = null
+    @Volatile var volatileProp: String? = null
+    @get:Synchronized val synchronizedGetProp: String? = null
+    @set:Synchronized var synchronizedSetProp: String? = null
+
+    @Synchronized
+    fun synchronizedFun() {
+    }
+  }
+
+  interface JvmAnnotationsInterface {
+    @JvmDefault
+    fun defaultMethod() {
+    }
+    fun notDefaultMethod()
+  }
+
+  @Test
+  fun nestedClasses() {
+    val typeSpec = NestedClasses::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class NestedClasses {
+        abstract class NestedClass<T> : kotlin.collections.List<T>
+
+        inner class NestedInnerClass
+      }
+    """.trimIndent())
+  }
+
+  class NestedClasses {
+    abstract class NestedClass<T> : List<T>
+    inner class NestedInnerClass
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
