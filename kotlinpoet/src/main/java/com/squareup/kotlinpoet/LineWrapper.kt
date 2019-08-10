@@ -27,6 +27,7 @@ internal class LineWrapper(
   private val indent: String,
   private val columnLimit: Int
 ) : Closeable {
+
   private var closed = false
 
   /**
@@ -40,6 +41,9 @@ internal class LineWrapper(
 
   /** Optional prefix that will be prepended to wrapped lines. */
   private var linePrefix = ""
+
+  /** @return whether or not there are pending segments for the current line. */
+  val hasPendingSegments get() = segments.size != 1 || segments[0].isNotEmpty()
 
   /** Emit `s` replacing its spaces with line wraps as necessary. */
   fun append(s: String, indentLevel: Int = -1, linePrefix: String = "") {

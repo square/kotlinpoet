@@ -715,4 +715,58 @@ class FunSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun ensureTrailingNewline() {
+    val methodSpec = FunSpec.builder("function")
+        .addCode("codeWithNoNewline()")
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |fun function() {
+      |  codeWithNoNewline()
+      |}
+      |""".trimMargin())
+  }
+
+  /** Ensures that we don't add a duplicate newline if one is already present.  */
+  @Test fun ensureTrailingNewlineWithExistingNewline() {
+    val methodSpec = FunSpec.builder("function")
+        .addCode("codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |fun function() {
+      |  codeWithNoNewline()
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun ensureKdocTrailingNewline() {
+    val methodSpec = FunSpec.builder("function")
+        .addKdoc("This is a comment with no initial newline")
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |/**
+      | * This is a comment with no initial newline
+      | */
+      |fun function() {
+      |}
+      |""".trimMargin())
+  }
+
+  /** Ensures that we don't add a duplicate newline if one is already present.  */
+  @Test fun ensureKdocTrailingNewlineWithExistingNewline() {
+    val methodSpec = FunSpec.builder("function")
+        .addKdoc("This is a comment with an initial newline\n")
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |/**
+      | * This is a comment with an initial newline
+      | */
+      |fun function() {
+      |}
+      |""".trimMargin())
+  }
 }
