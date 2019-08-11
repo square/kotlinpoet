@@ -47,6 +47,12 @@ tasks.withType<KotlinCompile> {
   }
 }
 
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xjvm-default=enable")
+  jvmTarget = "1.8"
+}
+
 dependencies {
   api(deps.kotlin.stdlib)
   api(project(":kotlinpoet"))
