@@ -53,7 +53,7 @@ internal val Element.internalName: String
           enclosingElement.internalName + "$" + simpleName
         NestingKind.LOCAL, NestingKind.ANONYMOUS ->
           error("Unsupported nesting $nestingKind")
-        else ->
+        null ->
           error("Unsupported, nestingKind == null")
       }
     }
