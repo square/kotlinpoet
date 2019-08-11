@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 @file:Suppress("RemoveRedundantQualifierName", "RedundantSuspendModifier", "NOTHING_TO_INLINE")
-package com.squareup.kotlinpoet
+package com.squareup.kotlinpoet.km.specs
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.ELEMENTS
-import com.squareup.kotlinpoet.KmSpecsTest.ElementHandlerType.REFLECTIVE
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.ImmutableKmConstructor
 import com.squareup.kotlinpoet.km.ImmutableKmFunction
 import com.squareup.kotlinpoet.km.ImmutableKmProperty
 import com.squareup.kotlinpoet.km.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import com.squareup.kotlinpoet.km.specs.KmSpecsTest.ElementHandlerType.ELEMENTS
+import com.squareup.kotlinpoet.km.specs.KmSpecsTest.ElementHandlerType.REFLECTIVE
+import com.squareup.kotlinpoet.tag
 import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Rule
@@ -135,7 +137,7 @@ class KmSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class Supertype : com.squareup.kotlinpoet.KmSpecsTest.BaseType(), com.squareup.kotlinpoet.KmSpecsTest.BaseInterface
+      class Supertype : com.squareup.kotlinpoet.km.specs.KmSpecsTest.BaseType(), com.squareup.kotlinpoet.km.specs.KmSpecsTest.BaseInterface
     """.trimIndent())
   }
 
@@ -424,7 +426,7 @@ class KmSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      abstract class OverriddenThings : com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.KmSpecsTest.OverriddenThingsInterface {
+      abstract class OverriddenThings : com.squareup.kotlinpoet.km.specs.KmSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.km.specs.KmSpecsTest.OverriddenThingsInterface {
         override var openProp: kotlin.String = TODO("Stub!")
 
         override var openPropInterface: kotlin.String = TODO("Stub!")
@@ -588,7 +590,7 @@ class KmSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      interface SomeInterface : com.squareup.kotlinpoet.KmSpecsTest.SomeInterfaceBase {
+      interface SomeInterface : com.squareup.kotlinpoet.km.specs.KmSpecsTest.SomeInterfaceBase {
         fun testFunction()
       }
     """.trimIndent())
@@ -696,7 +698,7 @@ class KmSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ComplexCompanionObject {
-        companion object ComplexObject : com.squareup.kotlinpoet.KmSpecsTest.CompanionBase(), com.squareup.kotlinpoet.KmSpecsTest.CompanionInterface
+        companion object ComplexObject : com.squareup.kotlinpoet.km.specs.KmSpecsTest.CompanionBase(), com.squareup.kotlinpoet.km.specs.KmSpecsTest.CompanionInterface
       }
     """.trimIndent())
   }
@@ -718,26 +720,26 @@ class KmSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class AnnotationHolders @com.squareup.kotlinpoet.KmSpecsTest.ConstructorAnnotation constructor() {
-        @field:com.squareup.kotlinpoet.KmSpecsTest.FieldAnnotation
+      class AnnotationHolders @com.squareup.kotlinpoet.km.specs.KmSpecsTest.ConstructorAnnotation constructor() {
+        @field:com.squareup.kotlinpoet.km.specs.KmSpecsTest.FieldAnnotation
         var field: kotlin.String? = null
 
-        @get:com.squareup.kotlinpoet.KmSpecsTest.GetterAnnotation
+        @get:com.squareup.kotlinpoet.km.specs.KmSpecsTest.GetterAnnotation
         var getter: kotlin.String? = null
           get() {
             TODO("Stub!")
           }
 
-        @com.squareup.kotlinpoet.KmSpecsTest.HolderAnnotation
+        @com.squareup.kotlinpoet.km.specs.KmSpecsTest.HolderAnnotation
         var holder: kotlin.String? = null
 
-        @set:com.squareup.kotlinpoet.KmSpecsTest.SetterAnnotation
+        @set:com.squareup.kotlinpoet.km.specs.KmSpecsTest.SetterAnnotation
         var setter: kotlin.String? = null
           set
-        @com.squareup.kotlinpoet.KmSpecsTest.ConstructorAnnotation
+        @com.squareup.kotlinpoet.km.specs.KmSpecsTest.ConstructorAnnotation
         constructor(value: kotlin.String)
 
-        @com.squareup.kotlinpoet.KmSpecsTest.FunctionAnnotation
+        @com.squareup.kotlinpoet.km.specs.KmSpecsTest.FunctionAnnotation
         fun function() {
         }
       }
@@ -746,13 +748,19 @@ class KmSpecsTest(
 
   class AnnotationHolders @ConstructorAnnotation constructor() {
 
-    @ConstructorAnnotation constructor(value: String) : this()
+    @ConstructorAnnotation
+    constructor(value: String) : this()
 
-    @field:FieldAnnotation var field: String? = null
-    @get:GetterAnnotation var getter: String? = null
-    @set:SetterAnnotation var setter: String? = null
-    @HolderAnnotation @JvmField var holder: String? = null
-    @FunctionAnnotation fun function() {
+    @field:FieldAnnotation
+    var field: String? = null
+    @get:GetterAnnotation
+    var getter: String? = null
+    @set:SetterAnnotation
+    var setter: String? = null
+    @HolderAnnotation
+    @JvmField var holder: String? = null
+    @FunctionAnnotation
+    fun function() {
     }
   }
 
