@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet
+package com.squareup.kotlinpoet.km.specs
 
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
