@@ -16,5 +16,6 @@
 
 include(
     ":kotlinpoet",
-    ":kotlinpoet-km"
+    ":kotlinpoet-km",
+    ":kotlinpoet-km-specs"
 )

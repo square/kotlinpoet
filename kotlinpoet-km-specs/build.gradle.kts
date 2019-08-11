@@ -30,7 +30,7 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km.specs")
   }
 }
 
@@ -49,7 +49,8 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
   api(deps.kotlin.stdlib)
-  api(deps.kotlin.metadata)
+  api(project(":kotlinpoet"))
+  api(project(":kotlinpoet-km"))
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
 }
