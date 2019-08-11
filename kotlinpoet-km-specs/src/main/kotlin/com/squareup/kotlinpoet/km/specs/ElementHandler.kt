@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet
+package com.squareup.kotlinpoet.km.specs
 
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
 import com.google.auto.common.Visibility
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
-import com.squareup.kotlinpoet.ElementHandler.Companion.fromElements
-import com.squareup.kotlinpoet.ElementHandler.Companion.reflective
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.km.ImmutableKmClass
 import com.squareup.kotlinpoet.km.KotlinPoetKm
+import com.squareup.kotlinpoet.km.specs.ElementHandler.Companion.fromElements
+import com.squareup.kotlinpoet.km.specs.ElementHandler.Companion.reflective
+import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.TRANSIENT
+import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.VOLATILE
+import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.STATIC
+import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.km.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -285,10 +292,10 @@ interface ElementHandler {
           if (modifiers != null) {
             return mutableSetOf<JvmFieldModifier>().apply {
               if (Modifier.isTransient(modifiers)) {
-                add(JvmFieldModifier.TRANSIENT)
+                add(TRANSIENT)
               }
               if (Modifier.isVolatile(modifiers)) {
-                add(JvmFieldModifier.VOLATILE)
+                add(VOLATILE)
               }
             }
           }
@@ -331,10 +338,10 @@ interface ElementHandler {
           val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
           if (modifiers != null) {
             if (Modifier.isSynchronized(modifiers)) {
-              jvmMethodModifiers += JvmMethodModifier.SYNCHRONIZED
+              jvmMethodModifiers += SYNCHRONIZED
             }
             if (Modifier.isStatic(modifiers)) {
-              jvmMethodModifiers += JvmMethodModifier.STATIC
+              jvmMethodModifiers += STATIC
             }
           }
           return@let jvmMethodModifiers
@@ -479,8 +486,8 @@ interface ElementHandler {
           return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
-                javax.lang.model.element.Modifier.TRANSIENT -> JvmFieldModifier.TRANSIENT
-                javax.lang.model.element.Modifier.VOLATILE -> JvmFieldModifier.VOLATILE
+                javax.lang.model.element.Modifier.TRANSIENT -> TRANSIENT
+                javax.lang.model.element.Modifier.VOLATILE -> VOLATILE
                 javax.lang.model.element.Modifier.STATIC -> JvmFieldModifier.STATIC
                 else -> null
               }
@@ -507,8 +514,8 @@ interface ElementHandler {
               ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
-                javax.lang.model.element.Modifier.SYNCHRONIZED -> JvmMethodModifier.SYNCHRONIZED
-                javax.lang.model.element.Modifier.STATIC -> JvmMethodModifier.STATIC
+                javax.lang.model.element.Modifier.SYNCHRONIZED -> SYNCHRONIZED
+                javax.lang.model.element.Modifier.STATIC -> STATIC
                 else -> null
               }
             }
