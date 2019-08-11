@@ -475,6 +475,10 @@ class FunSpec private constructor(
       body.addStatement(format, *args)
     }
 
+    fun clearBody() = apply {
+      body.clear()
+    }
+
     fun build(): FunSpec {
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
