@@ -53,6 +53,7 @@ dependencies {
   api(project(":kotlinpoet-km"))
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
+  testImplementation(deps.test.compileTesting)
 }
 
 repositories {
