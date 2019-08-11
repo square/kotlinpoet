@@ -50,6 +50,8 @@ import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
+private typealias ElementsModifier = javax.lang.model.element.Modifier
+
 /**
  * A basic interface for looking up information about JVM elements.
  *
@@ -486,9 +488,9 @@ interface ElementHandler {
           return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
-                javax.lang.model.element.Modifier.TRANSIENT -> TRANSIENT
-                javax.lang.model.element.Modifier.VOLATILE -> VOLATILE
-                javax.lang.model.element.Modifier.STATIC -> JvmFieldModifier.STATIC
+                ElementsModifier.TRANSIENT -> TRANSIENT
+                ElementsModifier.VOLATILE -> VOLATILE
+                ElementsModifier.STATIC -> JvmFieldModifier.STATIC
                 else -> null
               }
             }
@@ -514,8 +516,8 @@ interface ElementHandler {
               ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
             modifiers.mapNotNullTo(mutableSetOf()) {
               when (it) {
-                javax.lang.model.element.Modifier.SYNCHRONIZED -> SYNCHRONIZED
-                javax.lang.model.element.Modifier.STATIC -> STATIC
+                ElementsModifier.SYNCHRONIZED -> SYNCHRONIZED
+                ElementsModifier.STATIC -> STATIC
                 else -> null
               }
             }
@@ -632,8 +634,7 @@ interface ElementHandler {
             MoreTypes.asTypeElement(superclass).getAllMethods(pkg, methodsAccumulator)
           }
           for (method in ElementFilter.methodsIn(enclosedElements)) {
-            if (!method.modifiers.contains(
-                    javax.lang.model.element.Modifier.STATIC) && method.isVisibleFrom(pkg)) {
+            if (ElementsModifier.STATIC !in method.modifiers && method.isVisibleFrom(pkg)) {
               methodsAccumulator.put(method.simpleName.toString(), method)
             }
           }
