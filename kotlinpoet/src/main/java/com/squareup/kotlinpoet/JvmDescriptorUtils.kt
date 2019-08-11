@@ -60,6 +60,7 @@ internal val Element.internalName: String
     is QualifiedNameable -> qualifiedName.toString().replace('.', '/')
     else -> simpleName.toString()
   }
+
 /**
  * @return the "field descriptor" of this type.
  * @see [JvmDescriptorTypeVisitor]
