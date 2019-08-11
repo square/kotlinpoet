@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet
+package com.squareup.kotlinpoet.km.specs
 
 /**
  * Simple `Optional` implementation for use in collections that don't allow `null` values.
