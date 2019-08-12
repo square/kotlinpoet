@@ -19,5 +19,6 @@ include(
     ":kotlinpoet-elementhandler-elements",
     ":kotlinpoet-elementhandler-reflective",
     ":kotlinpoet-km",
-    ":kotlinpoet-km-specs"
+    ":kotlinpoet-km-specs",
+    ":km-specs-tests"
 )

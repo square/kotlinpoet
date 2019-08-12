@@ -13,44 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  id("org.jetbrains.dokka")
-  id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
 
-val GROUP: String by project
-val VERSION_NAME: String by project
-
-group = GROUP
-version = VERSION_NAME
-
-tasks.named<Jar>("jar") {
-  manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km.specs")
-  }
-}
-
-afterEvaluate {
-  tasks.named<DokkaTask>("dokka") {
-    skipDeprecated = true
-    outputFormat = "html"
-  }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xuse-experimental=kotlin.Experimental")
-  }
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xjvm-default=enable")
+  jvmTarget = "1.8"
 }
 
 dependencies {
-  api(deps.kotlin.stdlib)
-  api(project(":kotlinpoet"))
-  api(project(":kotlinpoet-km"))
+  testImplementation(deps.kotlin.stdlib)
+  testImplementation(project(":kotlinpoet"))
+  testImplementation(project(":kotlinpoet-km"))
+  testImplementation(project(":kotlinpoet-km-specs"))
+  testImplementation(project(":kotlinpoet-elementhandler-elements"))
+  testImplementation(project(":kotlinpoet-elementhandler-reflective"))
+  testImplementation(deps.kotlin.junit)
+  testImplementation(deps.test.truth)
+  testImplementation(deps.test.compileTesting)
 }
 
 repositories {
