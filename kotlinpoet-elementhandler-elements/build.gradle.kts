@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
+  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
   id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
+
+apply(from = "shading-config.gradle")
 
 val GROUP: String by project
 val VERSION_NAME: String by project
@@ -50,7 +53,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   api(deps.kotlin.stdlib)
   api(project(":kotlinpoet-km-specs"))
-  implementation(deps.autoCommon)
+  add("compileShaded", deps.autoCommon)
 }
 
 repositories {

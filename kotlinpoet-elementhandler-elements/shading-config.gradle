@@ -1,0 +1,43 @@
+/*
+ * Copyright (C) 2019 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+apply plugin: "com.github.johnrengelman.shadow"
+
+//<editor-fold desc="ShadowJar configuration">
+// disable default jar tasks
+configurations.runtimeOnly.artifacts.removeAll { it.archiveTask.is jar }
+tasks.getByName('jar').enabled = false
+// create extra configuration for shaded dependencies, so they're not included in the pom
+def shadedConfig = configurations.create('compileShaded')
+configurations.compileOnly.extendsFrom(shadedConfig)
+shadowJar {
+  minimize()
+  classifier = ''
+  configurations = [shadedConfig]
+  relocate 'com.google.auto.common', 'kotlinpoet.elementhandler.elements.shaded.com.google.auto.common'
+  relocate 'com.google.common', 'kotlinpoet.elementhandler.elements.shaded.com.google.common'
+  relocate 'com.google.thirdparty', 'kotlinpoet.elementhandler.elements.shaded.com.google.thirdparty'
+  exclude 'afu/**'
+  exclude 'org/**'
+  exclude 'com/google/errorprone/annotations/**'
+  exclude 'com/google/j2objc/annotations/**'
+  exclude 'javax/**'
+  exclude 'META-INF/maven/**'
+}
+artifacts {
+  runtime shadowJar
+  archives shadowJar
+}
+//</editor-fold>
