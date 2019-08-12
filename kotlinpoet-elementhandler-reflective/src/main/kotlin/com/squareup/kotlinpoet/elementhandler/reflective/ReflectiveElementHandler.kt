@@ -66,15 +66,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun lookupMethod(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): Method? {
     val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
     return clazz.lookupMethod(methodSignature)
   }
 
   private fun Class<*>.lookupMethod(
-      methodSignature: JvmMethodSignature
+    methodSignature: JvmMethodSignature
   ): Method? {
     val signatureString = methodSignature.asString()
     return methodCache.getOrPut(this to signatureString) {
@@ -86,8 +86,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun fieldJvmModifiers(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): Set<JvmFieldModifier> {
     return lookupField(classJvmName, fieldSignature)?.modifiers.let { modifiers ->
       if (modifiers != null) {
@@ -105,8 +105,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun fieldAnnotations(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): List<AnnotationSpec> {
     return lookupField(classJvmName, fieldSignature)?.declaredAnnotations
         .orEmpty()
@@ -115,8 +115,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun constructorAnnotations(
-      classJvmName: String,
-      constructorSignature: JvmMethodSignature
+    classJvmName: String,
+    constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
     val signatureString = constructorSignature.asString()
@@ -132,8 +132,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun methodJvmModifiers(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): Set<JvmMethodModifier> {
     return lookupMethod(classJvmName, methodSignature)?.modifiers.let { modifiers ->
       val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
@@ -150,8 +150,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun methodAnnotations(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return try {
       lookupMethod(classJvmName, methodSignature)
@@ -185,8 +185,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun fieldConstant(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): CodeBlock? {
     val field = lookupField(classJvmName, fieldSignature) ?: error(
         "No field $fieldSignature found in $classJvmName.")
@@ -199,8 +199,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun isMethodOverride(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): Boolean {
     val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
     val signatureString = methodSignature.asString()

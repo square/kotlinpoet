@@ -16,8 +16,6 @@ import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.VOLATILE
 import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier
 import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
-import com.squareup.kotlinpoet.elementhandler.elements.jvmFieldSignature
-import com.squareup.kotlinpoet.elementhandler.elements.jvmMethodSignature
 import com.squareup.kotlinpoet.km.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -66,8 +64,8 @@ class ElementsElementHandler private constructor(
   }
 
   private fun lookupField(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): VariableElement? {
     return lookupTypeElement(classJvmName)?.let {
       val signatureString = fieldSignature.asString()
@@ -79,16 +77,16 @@ class ElementsElementHandler private constructor(
   }
 
   private fun lookupMethod(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature,
-      elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    elementFilter: (Iterable<Element>) -> List<ExecutableElement>
   ): ExecutableElement? {
     return lookupTypeElement(classJvmName)?.lookupMethod(methodSignature, elementFilter)
   }
 
   private fun TypeElement.lookupMethod(
-      methodSignature: JvmMethodSignature,
-      elementFilter: (Iterable<Element>) -> List<ExecutableElement>
+    methodSignature: JvmMethodSignature,
+    elementFilter: (Iterable<Element>) -> List<ExecutableElement>
   ): ExecutableElement? {
     val signatureString = methodSignature.asString()
     return methodCache.getOrPut(this to signatureString) {
@@ -98,8 +96,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun fieldJvmModifiers(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): Set<JvmFieldModifier> {
     return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
       modifiers.mapNotNullTo(mutableSetOf()) {
@@ -114,8 +112,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun fieldAnnotations(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): List<AnnotationSpec> {
     return lookupField(classJvmName, fieldSignature)
         ?.annotationMirrors
@@ -125,8 +123,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun methodJvmModifiers(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): Set<JvmMethodModifier> {
     return lookupMethod(classJvmName, methodSignature,
         ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
@@ -141,8 +139,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun constructorAnnotations(
-      classJvmName: String,
-      constructorSignature: JvmMethodSignature
+    classJvmName: String,
+    constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
         ?.annotationMirrors
@@ -152,8 +150,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun methodAnnotations(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
         ?.annotationMirrors
@@ -177,8 +175,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun fieldConstant(
-      classJvmName: String,
-      fieldSignature: JvmFieldSignature
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature
   ): CodeBlock? {
     return lookupField(classJvmName, fieldSignature)?.constantValue
         ?.asLiteralCodeBlock()
@@ -186,8 +184,8 @@ class ElementsElementHandler private constructor(
   }
 
   override fun isMethodOverride(
-      classJvmName: String,
-      methodSignature: JvmMethodSignature
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
   ): Boolean {
     val typeElement = lookupTypeElement(classJvmName)
         ?: error("No type element found for: $classJvmName.")
@@ -238,8 +236,8 @@ class ElementsElementHandler private constructor(
    * implementations, before overridden methods are stripped.
    */
   private fun TypeElement.getAllMethods(
-      pkg: PackageElement,
-      methodsAccumulator: SetMultimap<String, ExecutableElement>
+    pkg: PackageElement,
+    methodsAccumulator: SetMultimap<String, ExecutableElement>
   ) {
     for (superInterface in interfaces) {
       MoreTypes.asTypeElement(superInterface).getAllMethods(pkg, methodsAccumulator)
