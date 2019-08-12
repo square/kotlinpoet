@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.km.specs
+package com.squareup.kotlinpoet.elementhandler.elements
 
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -166,8 +166,10 @@ internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>()
   override fun visitExecutable(t: ExecutableType, types: Types): String = t.descriptor(types)
   override fun visitTypeVariable(t: TypeVariable, types: Types): String = t.descriptor(types)
 
-  override fun visitNull(t: NullType, types: Types): String = visitUnknown(t, types)
-  override fun visitError(t: ErrorType, types: Types): String = visitUnknown(t, types)
+  override fun visitNull(t: NullType, types: Types): String = visitUnknown(
+      t, types)
+  override fun visitError(t: ErrorType, types: Types): String = visitUnknown(
+      t, types)
 
   override fun visitUnknown(t: TypeMirror, types: Types): String = error("Unsupported type $t")
 }
