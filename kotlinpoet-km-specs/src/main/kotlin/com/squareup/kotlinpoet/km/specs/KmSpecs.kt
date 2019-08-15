@@ -479,7 +479,6 @@ private fun ImmutableKmFunction.toFunSpec(
   annotations: Iterable<AnnotationSpec>,
   isOverride: Boolean
 ): FunSpec {
-  // Only visisble from Elements API as Override is not available at runtime for reflection
   return FunSpec.builder(name)
       .apply {
         addAnnotations(annotations)
