@@ -54,6 +54,7 @@ class FileSpec private constructor(
   val members = builder.members.toList()
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
+  private val columnLimit = builder.columnLimit
 
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
@@ -67,7 +68,7 @@ class FileSpec private constructor(
 
     // Second pass: write the code, taking advantage of the imports.
     val codeWriter = CodeWriter(out, indent, memberImports, suggestedTypeImports,
-        suggestedMemberImports)
+        suggestedMemberImports, columnLimit = columnLimit)
     emit(codeWriter)
     codeWriter.close()
   }
@@ -218,6 +219,7 @@ class FileSpec private constructor(
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
+    internal var columnLimit = DEFAULT_COLUMN_LIMIT
     internal val members = mutableListOf<Any>()
     override val tags = mutableMapOf<KClass<*>, Any>()
 
@@ -341,6 +343,10 @@ class FileSpec private constructor(
       this.indent = indent
     }
 
+    fun columnLimit(columnLimit: Int) = apply {
+      this.columnLimit = columnLimit
+    }
+
     fun build(): FileSpec {
       for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
@@ -364,3 +370,4 @@ class FileSpec private constructor(
 }
 
 internal const val DEFAULT_INDENT = "  "
+internal const val DEFAULT_COLUMN_LIMIT = 100

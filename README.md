@@ -657,7 +657,7 @@ FunSpec.builder("add")
 #### Spaces wrap by default!
 
 In order to provide meaningful formatting, KotlinPoet would replace spaces, found in blocks of code,
-with new line symbols, in cases when the line of code exceeds the length limit. Let's take this 
+with new line symbols, in cases when the line of code exceeds the length. Let's take this 
 function for example:
 
 ```kotlin
@@ -693,6 +693,9 @@ fun foo() = (100..10000).map { number -> number * number }.map { number -> numbe
 
 The code is now correct and will compile properly. It still doesn't look perfect - you can play with
 replacing other spaces in the code block with `·` symbols to achieve better formatting.
+
+Line wrapping limit can be specified using `FileSpec.columnLimit()`
+
 
 ### Constructors
 
