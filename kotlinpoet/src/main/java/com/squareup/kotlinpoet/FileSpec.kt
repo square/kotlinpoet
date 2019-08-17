@@ -44,7 +44,7 @@ import kotlin.reflect.KClass
  * - Members
  */
 class FileSpec private constructor(
-  builder: FileSpec.Builder,
+  builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
   val annotations = builder.annotations.toImmutableList()
@@ -207,6 +207,7 @@ class FileSpec private constructor(
     builder.comment.add(comment)
     builder.members.addAll(this.members)
     builder.indent = indent
+    builder.columnLimit = columnLimit
     builder.memberImports.addAll(memberImports.values)
     builder.tags += tagMap.tags
     return builder
@@ -215,7 +216,7 @@ class FileSpec private constructor(
   class Builder internal constructor(
     val packageName: String,
     val name: String
-  ) : Taggable.Builder<FileSpec.Builder> {
+  ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT

@@ -729,6 +729,7 @@ class FileSpecTest {
         .addImport("com.squareup.tacos.internal", "INGREDIENTS")
         .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
         .indent("  ")
+        .columnLimit(200)
         .addFunction(FunSpec.builder("defaultIngredients")
             .addCode("println(INGREDIENTS)\n")
             .build())

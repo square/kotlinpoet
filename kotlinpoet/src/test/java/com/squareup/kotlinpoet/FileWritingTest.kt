@@ -241,6 +241,7 @@ class FileWritingTest {
     FileSpec.builder("foo", "Test")
         .addType(test)
         .indent("\t")
+        .columnLimit(100)
         .build()
         .writeTo(filer)
 
