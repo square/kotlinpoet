@@ -214,7 +214,7 @@ class ElementsElementHandler private constructor(
     //       that order. Below, this means we just need to find the index of our target method
     //       and compare against only preceding ones.
     val methodList = methodMap.asMap()[simpleName.toString()]?.toList()
-        ?: error("No method $simpleName in available ${methodMap.keys()}")
+        ?: return false
     val indexOfPossibleOverrider = methodList.indexOf(this)
     return (indexOfPossibleOverrider downTo 0)
         .asSequence()
