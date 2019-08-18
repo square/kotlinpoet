@@ -209,6 +209,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .flatMap { it.methods.asSequence() }
     val superClassMethods = clazz.superclass?.methods.orEmpty().asSequence()
     return interfaceMethods.plus(superClassMethods)
+        .filterNot { Modifier.isFinal(it.modifiers) }
         .filterNot { Modifier.isStatic(it.modifiers) }
         .filterNot { Modifier.isPrivate(it.modifiers) }
         .filter {
