@@ -36,7 +36,3 @@ dependencies {
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
 }
-
-repositories {
-  mavenCentral()
-}

@@ -51,8 +51,3 @@ dependencies {
   testImplementation(deps.test.jimfs)
   testImplementation(deps.test.ecj)
 }
-
-repositories {
-  mavenCentral()
-  jcenter()
-}

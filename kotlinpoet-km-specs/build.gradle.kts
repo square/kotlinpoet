@@ -52,7 +52,3 @@ dependencies {
   api(project(":kotlinpoet"))
   api(project(":kotlinpoet-km"))
 }
-
-repositories {
-  mavenCentral()
-}

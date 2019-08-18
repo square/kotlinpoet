@@ -55,7 +55,3 @@ dependencies {
   api(project(":kotlinpoet-km-specs"))
   add("compileShaded", deps.autoCommon)
 }
-
-repositories {
-  mavenCentral()
-}

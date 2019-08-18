@@ -53,7 +53,3 @@ dependencies {
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
 }
-
-repositories {
-  mavenCentral()
-}

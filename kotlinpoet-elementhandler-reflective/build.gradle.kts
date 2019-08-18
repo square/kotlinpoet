@@ -51,7 +51,3 @@ dependencies {
   api(deps.kotlin.stdlib)
   api(project(":kotlinpoet-km-specs"))
 }
-
-repositories {
-  mavenCentral()
-}
