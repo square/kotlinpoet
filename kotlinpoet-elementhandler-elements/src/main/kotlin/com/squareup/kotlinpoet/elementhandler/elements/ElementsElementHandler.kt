@@ -248,10 +248,10 @@ class ElementsElementHandler private constructor(
       MoreTypes.asTypeElement(superclass).getAllMethods(pkg, methodsAccumulator)
     }
     for (method in ElementFilter.methodsIn(enclosedElements)) {
-      if (ElementsModifier.STATIC !in method.modifiers
-          && ElementsModifier.FINAL !in method.modifiers
-          && ElementsModifier.PRIVATE !in method.modifiers
-          && method.isVisibleFrom(pkg)) {
+      if (ElementsModifier.STATIC !in method.modifiers &&
+          ElementsModifier.FINAL !in method.modifiers &&
+          ElementsModifier.PRIVATE !in method.modifiers &&
+          method.isVisibleFrom(pkg)) {
         methodsAccumulator.put(method.simpleName.toString(), method)
       }
     }
