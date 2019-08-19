@@ -669,17 +669,6 @@ private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
   }.toTypedArray()
 }
 
-private fun JvmFieldSignature.jvmNameAnnotation(metadataName: String): AnnotationSpec? {
-  return if (name == metadataName) {
-    null
-  } else {
-    return AnnotationSpec.builder(JvmName::class)
-        .addMember("%S", name)
-        .useSiteTarget(FIELD)
-        .build()
-  }
-}
-
 private fun JvmMethodSignature.jvmNameAnnotation(
   metadataName: String,
   useSiteTarget: UseSiteTarget? = null
