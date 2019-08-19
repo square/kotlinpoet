@@ -677,7 +677,7 @@ private fun JvmMethodSignature.jvmNameAnnotation(
     null
   } else {
     return AnnotationSpec.builder(JvmName::class)
-        .addMember("%S", name)
+        .addMember("name = %S", name)
         .useSiteTarget(useSiteTarget)
         .build()
   }
