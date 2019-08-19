@@ -1117,6 +1117,18 @@ class KmSpecsTest(
         @kotlin.jvm.JvmName(name = "jvmFunction")
         fun function() {
         }
+
+        interface InterfaceWithJvmName {
+          companion object {
+            @kotlin.jvm.JvmStatic
+            val FOO_BOOL: kotlin.Boolean = false
+
+            @kotlin.jvm.JvmStatic
+            @kotlin.jvm.JvmName(name = "jvmStaticFunction")
+            fun staticFunction() {
+            }
+          }
+        }
       }
     """.trimIndent())
   }
@@ -1137,6 +1149,22 @@ class KmSpecsTest(
 
     @JvmName("jvmFunction")
     fun function() {
+    }
+
+    // Interfaces can't have JvmName, but covering a potential edge case of having a companion
+    // object with JvmName elements. Also covers an edge case where constants have getters
+    interface InterfaceWithJvmName {
+      companion object {
+        @JvmStatic
+        @get:JvmName("fooBoolJvm")
+        val FOO_BOOL = false
+
+        @JvmName("jvmStaticFunction")
+        @JvmStatic
+        fun staticFunction() {
+
+        }
+      }
     }
   }
 }
