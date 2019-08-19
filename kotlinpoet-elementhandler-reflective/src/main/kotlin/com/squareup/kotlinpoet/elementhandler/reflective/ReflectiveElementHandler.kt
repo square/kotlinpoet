@@ -39,6 +39,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }.nullableValue
   }
 
+  override val supportsNonRuntimeRetainedAnnotations: Boolean = false
+
   override fun classFor(jvmName: String): ImmutableKmClass {
     return lookupClass(jvmName)?.toImmutableKmClass() ?: error("No class found for: $jvmName.")
   }

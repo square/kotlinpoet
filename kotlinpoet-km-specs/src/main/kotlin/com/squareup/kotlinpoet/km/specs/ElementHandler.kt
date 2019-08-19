@@ -57,6 +57,13 @@ interface ElementHandler {
   }
 
   /**
+   * Indicates if this element handler supports [AnnotationRetention.RUNTIME]-retained annotations.
+   * This is used to indicate if manual inference of certain non-RUNTIME-retained annotations should
+   * be done, such as [JvmName].
+   */
+  val supportsNonRuntimeRetainedAnnotations: Boolean
+
+  /**
    * Looks up other classes, such as for nested members. Note that this class would always be
    * Kotlin, so Metadata can be relied on for this.
    *
