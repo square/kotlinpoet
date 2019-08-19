@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
-  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
   id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
 
@@ -53,8 +52,4 @@ dependencies {
   api(deps.kotlin.metadata)
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
-}
-
-repositories {
-  mavenCentral()
 }

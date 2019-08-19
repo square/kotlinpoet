@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
+  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
   id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
+
+apply(from = "shading-config.gradle")
 
 val GROUP: String by project
 val VERSION_NAME: String by project
@@ -29,25 +33,25 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.elementhandler.elements")
   }
 }
 
 afterEvaluate {
   tasks.named<DokkaTask>("dokka") {
     skipDeprecated = true
-    outputDirectory = "$rootDir/docs/1.x"
-    outputFormat = "gfm"
+    outputFormat = "html"
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xuse-experimental=kotlin.Experimental")
   }
 }
 
 dependencies {
-  api(rootProject.project("kotlinpoet-km"))
   api(deps.kotlin.stdlib)
-  implementation(deps.kotlin.reflect)
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
-  testImplementation(deps.test.compileTesting)
-  testImplementation(deps.test.jimfs)
-  testImplementation(deps.test.ecj)
+  api(project(":kotlinpoet-km-specs"))
+  add("compileShaded", deps.autoCommon)
 }
