@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet.km.specs
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -111,6 +112,8 @@ import com.squareup.kotlinpoet.km.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.Flags
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.jvmInternalName
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -398,6 +401,12 @@ private fun ImmutableKmClass.toTypeSpec(
                 annotations += elementHandler.methodJvmModifiers(jvmInternalName, signature)
                     .map { it.annotationSpec() }
                 isOverride = elementHandler.isMethodOverride(jvmInternalName, signature)
+                if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                  // Infer if JvmName was used
+                  signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
+                    annotations += jvmNameAnnotation
+                  }
+                }
               }
             }
             func.toFunSpec(functionTypeParamsResolver, annotations, isOverride).let {
@@ -658,6 +667,31 @@ private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
       IS_NOT_DEFAULT -> null // Gracefully skip over these
     }
   }.toTypedArray()
+}
+
+private fun JvmFieldSignature.jvmNameAnnotation(metadataName: String): AnnotationSpec? {
+  return if (name == metadataName) {
+    null
+  } else {
+    return AnnotationSpec.builder(JvmName::class)
+        .addMember("%S", name)
+        .useSiteTarget(FIELD)
+        .build()
+  }
+}
+
+private fun JvmMethodSignature.jvmNameAnnotation(
+  metadataName: String,
+  useSiteTarget: UseSiteTarget? = null
+): AnnotationSpec? {
+  return if (name == metadataName) {
+    null
+  } else {
+    return AnnotationSpec.builder(JvmName::class)
+        .addMember("%S", name)
+        .useSiteTarget(useSiteTarget)
+        .build()
+  }
 }
 
 @KotlinPoetKm
