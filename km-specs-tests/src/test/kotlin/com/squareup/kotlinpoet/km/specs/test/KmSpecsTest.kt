@@ -1087,6 +1087,59 @@ class KmSpecsTest(
     abstract class NestedClass<T> : List<T>
     inner class NestedInnerClass
   }
+
+  @Test
+  fun jvmNames() {
+    val typeSpec = JvmNameData::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class JvmNameData(
+        @get:kotlin.jvm.JvmName(name = "jvmParam")
+        val param: kotlin.String
+      ) {
+        @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
+        val propertyGet: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+      
+        @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
+        @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
+        var propertyGetAndSet: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+          set
+        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
+        var propertySet: kotlin.String? = null
+          set
+        @kotlin.jvm.JvmName(name = "jvmFunction")
+        fun function() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  class JvmNameData(
+    @get:JvmName("jvmParam") val param: String
+  ) {
+
+    @get:JvmName("jvmPropertyGet")
+    val propertyGet: String? = null
+
+    @set:JvmName("jvmPropertySet")
+    var propertySet: String? = null
+
+    @set:JvmName("jvmPropertyGetAndSet")
+    @get:JvmName("jvmPropertyGetAndSet")
+    var propertyGetAndSet: String? = null
+
+    @JvmName("jvmFunction")
+    fun function() {
+
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
