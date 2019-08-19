@@ -335,10 +335,19 @@ private fun ImmutableKmClass.toTypeSpec(
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
                           .map { it.annotationSpec() }
                     }
-                    if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                    if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
                       // Infer if JvmName was used
+                      // We skip interface types for this because they can't have @JvmName.
+                      // For annotation properties, kotlinc puts JvmName annotations by default in
+                      // bytecode but they're implicit in source, so we expect the simple name for
+                      // annotation types.
+                      val expectedMetadataName = if (isAnnotation) {
+                        property.name
+                      } else {
+                        "get${property.name.safeCapitalize(Locale.US)}"
+                      }
                       getterSignature.jvmNameAnnotation(
-                          metadataName = "get${property.name.safeCapitalize(Locale.US)}",
+                          metadataName = expectedMetadataName,
                           useSiteTarget = UseSiteTarget.GET
                       )?.let { jvmNameAnnotation ->
                         annotations += jvmNameAnnotation
@@ -367,8 +376,12 @@ private fun ImmutableKmClass.toTypeSpec(
                           setterSignature)
                           .map { it.annotationSpec() }
                     }
-                    if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                    if (!isAnnotation &&
+                        !isInterface &&
+                        !elementHandler.supportsNonRuntimeRetainedAnnotations) {
                       // Infer if JvmName was used
+                      // We skip annotation types for this because they can't have vars.
+                      // We skip interface types for this because they can't have @JvmName.
                       setterSignature.jvmNameAnnotation(
                           metadataName = "set${property.name.safeCapitalize(Locale.US)}",
                           useSiteTarget = UseSiteTarget.SET
@@ -421,8 +434,9 @@ private fun ImmutableKmClass.toTypeSpec(
                 annotations += elementHandler.methodJvmModifiers(jvmInternalName, signature)
                     .map { it.annotationSpec() }
                 isOverride = elementHandler.isMethodOverride(jvmInternalName, signature)
-                if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
                   // Infer if JvmName was used
+                  // We skip interface types for this because they can't have @JvmName.
                   signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
                     annotations += jvmNameAnnotation
                   }
