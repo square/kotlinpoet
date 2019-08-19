@@ -311,7 +311,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     }
                   }
                 }
-                if (property.hasGetter) {
+                if (property.hasGetter && property.canHaveGetterBody) {
                   property.getterSignature?.let { getterSignature ->
                     if (!isOverride) {
                       isOverride = elementHandler.isMethodOverride(jvmInternalName, getterSignature)
@@ -642,7 +642,8 @@ private fun ImmutableKmProperty.toPropertySpec(
         }
         // Delegated properties have setters/getters defined for some reason, ignore here
         // since the delegate handles it
-        if (hasGetter && !isDelegated) {
+        // vals with initialized constants have a getter in bytecode but not a body in kotlin source
+        if (hasGetter && !isDelegated && canHaveGetterBody) {
           propertyAccessor(getterFlags, FunSpec.getterBuilder().addStatement(
               TODO_BLOCK), isOverride)?.let(
               ::getter)
@@ -755,6 +756,9 @@ private val Flags.modalities: Set<KModifier>
       add(SEALED)
     }
   }
+
+@KotlinPoetKm
+private inline val ImmutableKmProperty.canHaveGetterBody: Boolean get() = !(isVal && hasConstant)
 
 private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
