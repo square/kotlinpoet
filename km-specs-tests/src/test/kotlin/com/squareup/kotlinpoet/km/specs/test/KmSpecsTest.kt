@@ -1103,7 +1103,7 @@ class KmSpecsTest(
           get() {
             TODO("Stub!")
           }
-      
+
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         var propertyGetAndSet: kotlin.String? = null
@@ -1137,7 +1137,6 @@ class KmSpecsTest(
 
     @JvmName("jvmFunction")
     fun function() {
-
     }
   }
 }
