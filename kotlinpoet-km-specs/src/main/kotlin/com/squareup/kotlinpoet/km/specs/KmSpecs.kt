@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet.km.specs
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
-import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -112,7 +111,6 @@ import com.squareup.kotlinpoet.km.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.Flags
 import kotlinx.metadata.KmClassifier
-import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.jvmInternalName
 import javax.lang.model.element.Element
@@ -283,17 +281,17 @@ private fun ImmutableKmClass.toTypeSpec(
             .asSequence()
             .filter { it.isDeclaration }
             .filterNot { it.isSynthesized }
-            .map {
+            .map { property ->
               val annotations = LinkedHashSet<AnnotationSpec>()
               var constant: CodeBlock? = null
               var isOverride = false
               if (elementHandler != null) {
-                if (it.hasAnnotations) {
-                  annotations += it.syntheticMethodForAnnotations?.let {
+                if (property.hasAnnotations) {
+                  annotations += property.syntheticMethodForAnnotations?.let {
                     elementHandler.methodAnnotations(jvmInternalName, it)
                   }.orEmpty()
                 }
-                it.fieldSignature?.let { fieldSignature ->
+                property.fieldSignature?.let { fieldSignature ->
                   annotations += elementHandler.fieldAnnotations(jvmInternalName, fieldSignature)
                       .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
                   annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature)
@@ -303,7 +301,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature)
                         .map { it.annotationSpec() }
                   }
-                  if (it.hasConstant) {
+                  if (property.hasConstant) {
                     constant = if (isCompanionObject && parentName != null) {
                       // Constants are relocated to the enclosing class!
                       elementHandler.fieldConstant(parentName, fieldSignature)
@@ -312,12 +310,12 @@ private fun ImmutableKmClass.toTypeSpec(
                     }
                   }
                 }
-                if (it.hasGetter) {
-                  it.getterSignature?.let { getterSignature ->
+                if (property.hasGetter) {
+                  property.getterSignature?.let { getterSignature ->
                     if (!isOverride) {
                       isOverride = elementHandler.isMethodOverride(jvmInternalName, getterSignature)
                     }
-                    if (it.getterFlags.hasAnnotations) {
+                    if (property.getterFlags.hasAnnotations) {
                       annotations += elementHandler.methodAnnotations(jvmInternalName,
                           getterSignature)
                           .map { it.toBuilder().useSiteTarget(UseSiteTarget.GET).build() }
@@ -327,7 +325,6 @@ private fun ImmutableKmClass.toTypeSpec(
                         .map {
                           it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.GET).build()
                         }
-
                     if (isCompanionObject && parentName != null) {
                       // These are copied into the parent
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
@@ -335,12 +332,12 @@ private fun ImmutableKmClass.toTypeSpec(
                     }
                   }
                 }
-                if (it.hasSetter) {
-                  it.setterSignature?.let { setterSignature ->
+                if (property.hasSetter) {
+                  property.setterSignature?.let { setterSignature ->
                     if (!isOverride) {
                       isOverride = elementHandler.isMethodOverride(jvmInternalName, setterSignature)
                     }
-                    if (it.setterFlags.hasAnnotations) {
+                    if (property.setterFlags.hasAnnotations) {
                       annotations += elementHandler.methodAnnotations(jvmInternalName,
                           setterSignature)
                           .map { it.toBuilder().useSiteTarget(UseSiteTarget.SET).build() }
@@ -359,9 +356,9 @@ private fun ImmutableKmClass.toTypeSpec(
                   }
                 }
               }
-              it.toPropertySpec(
+              property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
-                  isConstructorParam = it.name in primaryConstructorParams,
+                  isConstructorParam = property.name in primaryConstructorParams,
                   annotations = annotations,
                   constant = constant,
                   isOverride = isOverride
