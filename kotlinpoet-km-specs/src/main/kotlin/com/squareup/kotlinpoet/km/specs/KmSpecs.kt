@@ -304,8 +304,12 @@ private fun ImmutableKmClass.toTypeSpec(
                   }
                   if (property.hasConstant) {
                     constant = if (isCompanionObject && parentName != null) {
-                      // Constants are relocated to the enclosing class!
-                      elementHandler.fieldConstant(parentName, fieldSignature)
+                      if (elementHandler.classFor(parentName).isInterface) {
+                        elementHandler.fieldConstant(jvmInternalName, fieldSignature)
+                      } else {
+                        // const properties are relocated to the enclosing class
+                        elementHandler.fieldConstant(parentName, fieldSignature)
+                      }
                     } else {
                       elementHandler.fieldConstant(jvmInternalName, fieldSignature)
                     }
