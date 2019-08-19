@@ -113,6 +113,7 @@ import kotlinx.metadata.Flags
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.jvmInternalName
+import java.util.Locale
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
@@ -330,6 +331,15 @@ private fun ImmutableKmClass.toTypeSpec(
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
                           .map { it.annotationSpec() }
                     }
+                    if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                      // Infer if JvmName was used
+                      getterSignature.jvmNameAnnotation(
+                          metadataName = "get${property.name.safeCapitalize(Locale.US)}",
+                          useSiteTarget = UseSiteTarget.GET
+                      )?.let { jvmNameAnnotation ->
+                        annotations += jvmNameAnnotation
+                      }
+                    }
                   }
                 }
                 if (property.hasSetter) {
@@ -352,6 +362,15 @@ private fun ImmutableKmClass.toTypeSpec(
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName,
                           setterSignature)
                           .map { it.annotationSpec() }
+                    }
+                    if (!elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                      // Infer if JvmName was used
+                      setterSignature.jvmNameAnnotation(
+                          metadataName = "set${property.name.safeCapitalize(Locale.US)}",
+                          useSiteTarget = UseSiteTarget.SET
+                      )?.let { jvmNameAnnotation ->
+                        annotations += jvmNameAnnotation
+                      }
                     }
                   }
                 }
@@ -699,6 +718,25 @@ private fun ImmutableKmWithFlags.addVisibility(body: (KModifier) -> Unit) {
   if (modifierVisibility != PUBLIC) {
     body(modifierVisibility)
   }
+}
+
+// TODO This is a copy of the stdlib version. Use it directly once it's out of experimental
+private fun String.safeCapitalize(locale: Locale): String {
+  if (isNotEmpty()) {
+    val firstChar = this[0]
+    if (firstChar.isLowerCase()) {
+      return buildString {
+        val titleChar = firstChar.toTitleCase()
+        if (titleChar != firstChar.toUpperCase()) {
+          append(titleChar)
+        } else {
+          append(this@safeCapitalize.substring(0, 1).toUpperCase(locale))
+        }
+        append(this@safeCapitalize.substring(1))
+      }
+    }
+  }
+  return this
 }
 
 @KotlinPoetKm
