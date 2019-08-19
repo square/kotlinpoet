@@ -1162,7 +1162,6 @@ class KmSpecsTest(
         @JvmName("jvmStaticFunction")
         @JvmStatic
         fun staticFunction() {
-
         }
       }
     }
