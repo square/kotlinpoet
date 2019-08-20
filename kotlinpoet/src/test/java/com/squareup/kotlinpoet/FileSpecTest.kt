@@ -244,6 +244,7 @@ class FileSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
         .addType(TypeSpec.classBuilder("Taco").build())
         .build()
+    assertCodeCompiles(source)
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
@@ -257,6 +258,7 @@ class FileSpecTest {
             .addProperty("madeFreshDate", Date::class)
             .build())
         .build()
+    assertCodeCompiles(source)
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |

@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.ThrowableSubject
 import com.google.common.truth.Truth.assertThat
+import io.github.sullis.kotlin.compiler.KotlinCompiler
 
 inline fun <reified T> assertThrows(block: () -> Unit): ThrowableSubject {
   try {
@@ -29,4 +30,9 @@ inline fun <reified T> assertThrows(block: () -> Unit): ThrowableSubject {
     }
   }
   throw AssertionError("Expected ${T::class.simpleName}")
+}
+
+fun assertCodeCompiles(fileSpec: FileSpec) {
+  val compileResult = KotlinCompiler().compileSourceCode(fileSpec.toString())
+  assertThat(compileResult.isSuccess()).isTrue()
 }

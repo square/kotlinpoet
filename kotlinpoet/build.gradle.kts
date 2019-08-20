@@ -50,4 +50,5 @@ dependencies {
   testImplementation(deps.test.compileTesting)
   testImplementation(deps.test.jimfs)
   testImplementation(deps.test.ecj)
+  testImplementation(deps.test.kotlinCompilerUtil)
 }
