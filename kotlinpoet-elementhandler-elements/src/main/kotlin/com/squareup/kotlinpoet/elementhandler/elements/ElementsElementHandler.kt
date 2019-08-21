@@ -51,6 +51,8 @@ class ElementsElementHandler private constructor(
     }.nullableValue
   }
 
+  override val supportsNonRuntimeRetainedAnnotations: Boolean = true
+
   override fun classFor(jvmName: String): ImmutableKmClass {
     return lookupTypeElement(jvmName)?.toImmutableKmClass() ?: error(
         "No type element found for: $jvmName.")

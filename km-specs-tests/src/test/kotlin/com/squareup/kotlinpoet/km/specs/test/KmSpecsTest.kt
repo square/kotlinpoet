@@ -1087,6 +1087,85 @@ class KmSpecsTest(
     abstract class NestedClass<T> : List<T>
     inner class NestedInnerClass
   }
+
+  @Test
+  fun jvmNames() {
+    val typeSpec = JvmNameData::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class JvmNameData(
+        @get:kotlin.jvm.JvmName(name = "jvmParam")
+        val param: kotlin.String
+      ) {
+        @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
+        val propertyGet: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+
+        @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
+        @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
+        var propertyGetAndSet: kotlin.String? = null
+          get() {
+            TODO("Stub!")
+          }
+          set
+        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
+        var propertySet: kotlin.String? = null
+          set
+        @kotlin.jvm.JvmName(name = "jvmFunction")
+        fun function() {
+        }
+
+        interface InterfaceWithJvmName {
+          companion object {
+            @kotlin.jvm.JvmStatic
+            val FOO_BOOL: kotlin.Boolean = false
+
+            @kotlin.jvm.JvmStatic
+            @kotlin.jvm.JvmName(name = "jvmStaticFunction")
+            fun staticFunction() {
+            }
+          }
+        }
+      }
+    """.trimIndent())
+  }
+
+  class JvmNameData(
+    @get:JvmName("jvmParam") val param: String
+  ) {
+
+    @get:JvmName("jvmPropertyGet")
+    val propertyGet: String? = null
+
+    @set:JvmName("jvmPropertySet")
+    var propertySet: String? = null
+
+    @set:JvmName("jvmPropertyGetAndSet")
+    @get:JvmName("jvmPropertyGetAndSet")
+    var propertyGetAndSet: String? = null
+
+    @JvmName("jvmFunction")
+    fun function() {
+    }
+
+    // Interfaces can't have JvmName, but covering a potential edge case of having a companion
+    // object with JvmName elements. Also covers an edge case where constants have getters
+    interface InterfaceWithJvmName {
+      companion object {
+        @JvmStatic
+        @get:JvmName("fooBoolJvm")
+        val FOO_BOOL = false
+
+        @JvmName("jvmStaticFunction")
+        @JvmStatic
+        fun staticFunction() {
+        }
+      }
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
