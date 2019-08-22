@@ -50,4 +50,5 @@ val mutableKmClass: KmClass = kmClass.toMutable()
 
 ### Interop with KotlinPoet
 
-There is a separate `kotlinpoet-km-specs` artifact that offers 
+There is a separate `kotlinpoet-km-specs` artifact that offers interop APIs to create 
+`TypeSpec`/`FileSpec` representations of classes using this artifact for intermediary parsing.
