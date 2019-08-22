@@ -27,7 +27,7 @@ features like lambdas or delegation will be coerced to their idiomatic source fo
 
 To aid with this, `toTypeSpec()` and `toFileSpec()` accept optional `ElementHandler` instances
 to assist in parsing/understanding the underlying JVM code. This is important for things like
-annotations, companion objects, certain jvm modifiers, overrides, and more. While it is optional,
+annotations, companion objects, certain JVM modifiers, overrides, and more. While it is optional,
  represented sources can be incomplete without this information available. Reflective and javax
 `Elements` implementations are available under the `kotlinpoet-elementhandler-*` artifacts.
 
