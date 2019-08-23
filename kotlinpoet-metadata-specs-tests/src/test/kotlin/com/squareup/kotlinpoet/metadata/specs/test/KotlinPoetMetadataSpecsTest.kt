@@ -26,7 +26,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.REFLECTIVE
@@ -47,7 +47,7 @@ import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 import kotlin.test.fail
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
@@ -143,7 +143,7 @@ class KotlinPoetMetadataSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class Supertype : com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.BaseType(), com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.BaseInterface
+      class Supertype : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseType(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseInterface
     """.trimIndent())
   }
 
@@ -432,7 +432,7 @@ class KotlinPoetMetadataSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      abstract class OverriddenThings : com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
+      abstract class OverriddenThings : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
         override var openProp: kotlin.String = TODO("Stub!")
 
         override var openPropInterface: kotlin.String = TODO("Stub!")
@@ -596,7 +596,7 @@ class KotlinPoetMetadataSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      interface SomeInterface : com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.SomeInterfaceBase {
+      interface SomeInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SomeInterfaceBase {
         fun testFunction()
       }
     """.trimIndent())
@@ -704,7 +704,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class ComplexCompanionObject {
-        companion object ComplexObject : com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.CompanionBase(), com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.CompanionInterface
+        companion object ComplexObject : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionInterface
       }
     """.trimIndent())
   }
@@ -726,26 +726,26 @@ class KotlinPoetMetadataSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class AnnotationHolders @com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation constructor() {
-        @field:com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
+      class AnnotationHolders @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation constructor() {
+        @field:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         var field: kotlin.String? = null
 
-        @get:com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.GetterAnnotation
+        @get:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.GetterAnnotation
         var getter: kotlin.String? = null
           get() {
             TODO("Stub!")
           }
 
-        @com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.HolderAnnotation
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.HolderAnnotation
         var holder: kotlin.String? = null
 
-        @set:com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.SetterAnnotation
+        @set:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SetterAnnotation
         var setter: kotlin.String? = null
           set
-        @com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation
         constructor(value: kotlin.String)
 
-        @com.squareup.kotlinpoet.km.specs.test.KotlinPoetMetadataSpecsTest.FunctionAnnotation
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FunctionAnnotation
         fun function() {
         }
       }

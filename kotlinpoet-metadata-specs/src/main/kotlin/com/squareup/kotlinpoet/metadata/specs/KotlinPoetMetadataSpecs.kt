@@ -64,7 +64,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmWithFlags
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_INLINE
@@ -123,37 +123,37 @@ import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun KClass<*>.toTypeSpec(
   elementHandler: ElementHandler? = null
 ): TypeSpec = java.toTypeSpec(elementHandler)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun Class<*>.toTypeSpec(
   elementHandler: ElementHandler? = null
 ): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun TypeElement.toTypeSpec(
   elementHandler: ElementHandler? = null
 ): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun KClass<*>.toFileSpec(
   elementHandler: ElementHandler? = null
 ): FileSpec = java.toFileSpec(elementHandler)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun Class<*>.toFileSpec(
   elementHandler: ElementHandler? = null
 ): FileSpec = FileSpec.get(`package`.name, toTypeSpec(elementHandler))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun TypeElement.toFileSpec(
   elementHandler: ElementHandler? = null
 ): FileSpec = FileSpec.get(
@@ -163,7 +163,7 @@ fun TypeElement.toFileSpec(
 
 private const val TODO_BLOCK = "TODO(\"Stub!\")"
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
   fallback: ((Int) -> TypeVariableName)? = null
 ): (Int) -> TypeVariableName {
@@ -178,7 +178,7 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
   return typeParamResolver
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
   elementHandler: ElementHandler?,
   parentName: String? = null
@@ -484,7 +484,7 @@ private fun ImmutableKmClass.toTypeSpec(
       .build()
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.annotations(
   classJvmName: String,
   elementHandler: ElementHandler?
@@ -500,7 +500,7 @@ private fun companionObjectName(name: String): String? {
   return if (name == "Companion") null else name
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: List<AnnotationSpec>
@@ -518,7 +518,7 @@ private fun ImmutableKmConstructor.toFunSpec(
       .build()
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: Iterable<AnnotationSpec>,
@@ -572,7 +572,7 @@ private fun ImmutableKmFunction.toFunSpec(
       .build()
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmValueParameter.toParameterSpec(
   typeParamResolver: ((index: Int) -> TypeName)
 ): ParameterSpec {
@@ -596,7 +596,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
       .build()
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
   isConstructorParam: Boolean,
@@ -676,7 +676,7 @@ private fun ImmutableKmProperty.toPropertySpec(
       .build()
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun propertyAccessor(flags: Flags, functionBuilder: Builder, isOverride: Boolean): FunSpec? {
   val visibility = flags.visibility
   val modalities = flags.modalities
@@ -720,7 +720,7 @@ private fun JvmMethodSignature.jvmNameAnnotation(
   }
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private val Flags.visibility: KModifier
   get() = when {
     isInternal -> INTERNAL
@@ -733,7 +733,7 @@ private val Flags.visibility: KModifier
     }
   }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmWithFlags.addVisibility(body: (KModifier) -> Unit) {
   val modifierVisibility = flags.visibility
   if (modifierVisibility != PUBLIC) {
@@ -760,7 +760,7 @@ private fun String.safeCapitalize(locale: Locale): String {
   return this
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private val Flags.modalities: Set<KModifier>
   get() = setOf {
     if (isFinal) {
@@ -777,7 +777,7 @@ private val Flags.modalities: Set<KModifier>
     }
   }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private inline val ImmutableKmProperty.canHaveGetterBody: Boolean get() = !(isVal && hasConstant)
 
 private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {

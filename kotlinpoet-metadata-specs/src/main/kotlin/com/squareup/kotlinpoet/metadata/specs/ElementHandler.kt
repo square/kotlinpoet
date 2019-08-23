@@ -19,14 +19,14 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 
 /**
  * A basic interface for looking up information about JVM elements.
  */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 interface ElementHandler {
 
   interface JvmModifier {

@@ -31,7 +31,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmFlexibleTypeUpperBound
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeProjection
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isReified
@@ -44,7 +44,7 @@ import kotlinx.metadata.KmVariance.IN
 import kotlinx.metadata.KmVariance.INVARIANT
 import kotlinx.metadata.KmVariance.OUT
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 internal val ImmutableKmClass.primaryConstructor: ImmutableKmConstructor?
   get() = constructors.find { it.isPrimary }
 
@@ -56,7 +56,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
   }
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 internal fun ImmutableKmTypeProjection.toTypeName(
   typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
@@ -82,7 +82,7 @@ internal fun ImmutableKmTypeProjection.toTypeName(
  * "source" representation. This includes converting [functions][kotlin.Function] and `suspend`
  * types to appropriate [lambda representations][LambdaTypeName].
  */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 internal fun ImmutableKmType.toTypeName(
   typeParamResolver: ((index: Int) -> TypeName),
   useTypeAlias: Boolean = false
@@ -148,7 +148,7 @@ internal fun ImmutableKmType.toTypeName(
   return type.copy(nullable = isNullable)
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 internal fun ImmutableKmTypeParameter.toTypeVariableName(
   typeParamResolver: ((index: Int) -> TypeName)
 ): TypeVariableName {
@@ -175,7 +175,7 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
   return typeVariableName.copy(reified = isReified)
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
   typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {

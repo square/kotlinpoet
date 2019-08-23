@@ -28,307 +28,307 @@ import kotlinx.metadata.KmTypeParameter
 import kotlinx.metadata.KmValueParameter
 
 // Common flags for any element with flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.hasAnnotations: Boolean get() = Flag.HAS_ANNOTATIONS(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isAbstract: Boolean get() = Flag.IS_ABSTRACT(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isFinal: Boolean get() = Flag.IS_FINAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInternal: Boolean get() = Flag.IS_INTERNAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isLocal: Boolean get() = Flag.IS_LOCAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isOpen: Boolean get() = Flag.IS_OPEN(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPrivate: Boolean get() = Flag.IS_PRIVATE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPrivate_to_this: Boolean get() = Flag.IS_PRIVATE_TO_THIS(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isProtected: Boolean get() = Flag.IS_PROTECTED(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPublic: Boolean get() = Flag.IS_PUBLIC(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isSealed: Boolean get() = Flag.IS_SEALED(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.hasAnnotations: Boolean get() = flags.hasAnnotations
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isAbstract: Boolean get() = flags.isAbstract
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isFinal: Boolean get() = flags.isFinal
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isInternal: Boolean get() = flags.isInternal
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isLocal: Boolean get() = flags.isLocal
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isOpen: Boolean get() = flags.isOpen
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isPrivate: Boolean get() = flags.isPrivate
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isPrivate_to_this: Boolean get() = flags.isPrivate_to_this
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isProtected: Boolean get() = flags.isProtected
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isPublic: Boolean get() = flags.isPublic
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmWithFlags.isSealed: Boolean get() = flags.isSealed
 
 // Type flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isNullableType: Boolean get() = Flag.Type.IS_NULLABLE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isSuspendType: Boolean get() = Flag.Type.IS_SUSPEND(this)
 
 // Class flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isAnnotationClass: Boolean get() = Flag.Class.IS_ANNOTATION_CLASS(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isClass: Boolean get() = Flag.Class.IS_CLASS(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isCompanionObjectClass: Boolean get() = Flag.Class.IS_COMPANION_OBJECT(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isDataClass: Boolean get() = Flag.Class.IS_DATA(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isEnumClass: Boolean get() = Flag.Class.IS_ENUM_CLASS(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isEnumEntryClass: Boolean get() = Flag.Class.IS_ENUM_ENTRY(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isExpectClass: Boolean get() = Flag.Class.IS_EXPECT(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isExternalClass: Boolean get() = Flag.Class.IS_EXTERNAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInlineClass: Boolean get() = Flag.Class.IS_INLINE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInnerClass: Boolean get() = Flag.Class.IS_INNER(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isObjectClass: Boolean get() = Flag.Class.IS_OBJECT(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInterface: Boolean get() = Flag.Class.IS_INTERFACE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isAnnotation: Boolean get() = flags.isAnnotationClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isClass: Boolean get() = flags.isClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isCompanionObject: Boolean get() = flags.isCompanionObjectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isData: Boolean get() = flags.isDataClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isEnum: Boolean get() = flags.isEnumClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isEnumEntry: Boolean get() = flags.isEnumEntryClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isExpect: Boolean get() = flags.isExpectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isExternal: Boolean get() = flags.isExternalClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isInline: Boolean get() = flags.isInlineClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isInner: Boolean get() = flags.isInnerClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isObject: Boolean get() = flags.isObjectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmClass.isInterface: Boolean get() = flags.isInterface
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmType.isSuspend: Boolean get() = flags.isSuspendType
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmType.isNullable: Boolean get() = flags.isNullableType
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isAnnotation: Boolean get() = flags.isAnnotationClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isClass: Boolean get() = flags.isClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isCompanionObject: Boolean get() = flags.isCompanionObjectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isData: Boolean get() = flags.isDataClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isEnum: Boolean get() = flags.isEnumClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isEnumEntry: Boolean get() = flags.isEnumEntryClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isExpect: Boolean get() = flags.isExpectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isExternal: Boolean get() = flags.isExternalClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isInline: Boolean get() = flags.isInlineClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isInner: Boolean get() = flags.isInnerClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isObject: Boolean get() = flags.isObjectClass
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmClass.isInterface: Boolean get() = flags.isInterface
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmType.isSuspend: Boolean get() = flags.isSuspendType
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmType.isNullable: Boolean get() = flags.isNullableType
 
 // Constructor flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPrimaryConstructor: Boolean get() = Flag.Constructor.IS_PRIMARY(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmConstructor.isPrimary: Boolean get() = flags.isPrimaryConstructor
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmConstructor.isSecondary: Boolean get() = !isPrimary
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmConstructor.isPrimary: Boolean get() = flags.isPrimaryConstructor
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmConstructor.isSecondary: Boolean get() = !isPrimary
 
 // Function flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isDeclarationFunction: Boolean get() = Flag.Function.IS_DECLARATION(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isFakeOverrideFunction: Boolean get() = Flag.Function.IS_FAKE_OVERRIDE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isDelegationFunction: Boolean get() = Flag.Function.IS_DELEGATION(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isSynthesizedFunction: Boolean get() = Flag.Function.IS_SYNTHESIZED(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isOperatorFunction: Boolean get() = Flag.Function.IS_OPERATOR(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInfixFunction: Boolean get() = Flag.Function.IS_INFIX(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isInlineFunction: Boolean get() = Flag.Function.IS_INLINE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isTailRecFunction: Boolean get() = Flag.Function.IS_TAILREC(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isExternalFunction: Boolean get() = Flag.Function.IS_EXTERNAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isSuspendFunction: Boolean get() = Flag.Function.IS_SUSPEND(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isExpectFunction: Boolean get() = Flag.Function.IS_EXPECT(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isDeclaration: Boolean get() = flags.isDeclarationFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isFakeOverride: Boolean get() = flags.isFakeOverrideFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isDelegation: Boolean get() = flags.isDelegationFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isSynthesized: Boolean get() = flags.isSynthesizedFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isOperator: Boolean get() = flags.isOperatorFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isInfix: Boolean get() = flags.isInfixFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isInline: Boolean get() = flags.isInlineFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isTailRec: Boolean get() = flags.isTailRecFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isExternal: Boolean get() = flags.isExternalFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isSuspend: Boolean get() = flags.isSuspendFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmFunction.isExpect: Boolean get() = flags.isExpectFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isDeclaration: Boolean get() = flags.isDeclarationFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isFakeOverride: Boolean get() = flags.isFakeOverrideFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isDelegation: Boolean get() = flags.isDelegationFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isSynthesized: Boolean get() = flags.isSynthesizedFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isOperator: Boolean get() = flags.isOperatorFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isInfix: Boolean get() = flags.isInfixFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isInline: Boolean get() = flags.isInlineFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isTailRec: Boolean get() = flags.isTailRecFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isExternal: Boolean get() = flags.isExternalFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isSuspend: Boolean get() = flags.isSuspendFunction
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmFunction.isExpect: Boolean get() = flags.isExpectFunction
 
 // Parameter flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmValueParameter.declaresDefaultValue: Boolean get() = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmValueParameter.isCrossInline: Boolean get() = Flag.ValueParameter.IS_CROSSINLINE(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmValueParameter.isNoInline: Boolean get() = Flag.ValueParameter.IS_NOINLINE(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmValueParameter.declaresDefaultValue: Boolean get() = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmValueParameter.isCrossInline: Boolean get() = Flag.ValueParameter.IS_CROSSINLINE(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmValueParameter.isNoInline: Boolean get() = Flag.ValueParameter.IS_NOINLINE(flags)
 
 // Property flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isFakeOverrideProperty: Boolean get() = Flag.Property.IS_FAKE_OVERRIDE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.hasConstant: Boolean get() = Flag.Property.HAS_CONSTANT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.hasGetter: Boolean get() = Flag.Property.HAS_GETTER(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.hasSetter: Boolean get() = Flag.Property.HAS_SETTER(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isConst: Boolean get() = Flag.Property.IS_CONST(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isDeclaration: Boolean get() = Flag.Property.IS_DECLARATION(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isDelegated: Boolean get() = Flag.Property.IS_DELEGATED(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isDelegation: Boolean get() = Flag.Property.IS_DELEGATION(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isExpect: Boolean get() = Flag.Property.IS_EXPECT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isExternal: Boolean get() = Flag.Property.IS_EXTERNAL(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isFakeOverride: Boolean get() = flags.isFakeOverrideProperty
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isLateinit: Boolean get() = Flag.Property.IS_LATEINIT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isSynthesized: Boolean get() = Flag.Property.IS_SYNTHESIZED(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isVar: Boolean get() = Flag.Property.IS_VAR(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmProperty.isVal: Boolean get() = !isVar
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.hasConstant: Boolean get() = Flag.Property.HAS_CONSTANT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.hasGetter: Boolean get() = Flag.Property.HAS_GETTER(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.hasSetter: Boolean get() = Flag.Property.HAS_SETTER(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isConst: Boolean get() = Flag.Property.IS_CONST(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isDeclaration: Boolean get() = Flag.Property.IS_DECLARATION(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isDelegated: Boolean get() = Flag.Property.IS_DELEGATED(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isDelegation: Boolean get() = Flag.Property.IS_DELEGATION(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isExpect: Boolean get() = Flag.Property.IS_EXPECT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isExternal: Boolean get() = Flag.Property.IS_EXTERNAL(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isFakeOverride: Boolean get() = flags.isFakeOverrideProperty
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isLateinit: Boolean get() = Flag.Property.IS_LATEINIT(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isSynthesized: Boolean get() = Flag.Property.IS_SYNTHESIZED(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isVar: Boolean get() = Flag.Property.IS_VAR(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.isVal: Boolean get() = !isVar
 
 // Property Accessor Flags
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPropertyAccessorExternal: Boolean
   get() = Flag.PropertyAccessor.IS_EXTERNAL(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPropertyAccessorInline: Boolean get() = Flag.PropertyAccessor.IS_INLINE(this)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.isPropertyAccessorNotDefault: Boolean
   get() = Flag.PropertyAccessor.IS_NOT_DEFAULT(this)
 
 // TypeParameter flags.
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val KmTypeParameter.isReified: Boolean get() = Flag.TypeParameter.IS_REIFIED(flags)
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmTypeParameter.isReified: Boolean get() = Flag.TypeParameter.IS_REIFIED(flags)
 
 // Property Accessor Flags
@@ -336,15 +336,15 @@ enum class PropertyAccessorFlag {
   IS_EXTERNAL, IS_INLINE, IS_NOT_DEFAULT
 }
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.setterPropertyAccessorFlags: Set<PropertyAccessorFlag>
   get() = setterFlags.propertyAccessorFlags
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val ImmutableKmProperty.getterPropertyAccessorFlags: Set<PropertyAccessorFlag>
   get() = getterFlags.propertyAccessorFlags
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 val Flags.propertyAccessorFlags: Set<PropertyAccessorFlag>
   get() = setOf {
     if (Flag.PropertyAccessor.IS_EXTERNAL(this@propertyAccessorFlags)) {

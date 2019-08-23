@@ -33,19 +33,19 @@ import kotlin.reflect.KClass
 @Experimental
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY)
-annotation class KotlinPoetMetadata
+annotation class KotlinPoetMetadataPreview
 
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun Class<*>.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun TypeElement.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   return when (val metadata = readKotlinClassMetadata()) {
     is KotlinClassMetadata.Class -> {

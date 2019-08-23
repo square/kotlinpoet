@@ -8,7 +8,7 @@ import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
@@ -36,7 +36,7 @@ private typealias ElementsModifier = javax.lang.model.element.Modifier
 /**
  * An [Elements]-based implementation of [ElementHandler].
  */
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 class ElementsElementHandler private constructor(
   private val elements: Elements,
   private val types: Types
@@ -274,7 +274,7 @@ class ElementsElementHandler private constructor(
   companion object {
     /** @return an [Elements]-based implementation of [ElementHandler]. */
     @JvmStatic
-    @KotlinPoetMetadata
+    @KotlinPoetMetadataPreview
     fun create(elements: Elements, types: Types): ElementHandler {
       return ElementsElementHandler(elements, types)
     }

@@ -3,7 +3,7 @@ package com.squareup.kotlinpoet.elementhandler.reflective
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
@@ -20,7 +20,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.concurrent.ConcurrentHashMap
 
-@KotlinPoetMetadata
+@KotlinPoetMetadataPreview
 class ReflectiveElementHandler private constructor() : ElementHandler {
 
   private val classCache = ConcurrentHashMap<String, Optional<Class<*>>>()
@@ -226,7 +226,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   companion object {
     @JvmStatic
-    @KotlinPoetMetadata
+    @KotlinPoetMetadataPreview
     fun create(): ElementHandler {
       return ReflectiveElementHandler()
     }
