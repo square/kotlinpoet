@@ -42,7 +42,6 @@ afterEvaluate {
 }
 
 dependencies {
-  api(rootProject.project("kotlinpoet-metadata"))
   api(deps.kotlin.stdlib)
   implementation(deps.kotlin.reflect)
   testImplementation(deps.kotlin.junit)
