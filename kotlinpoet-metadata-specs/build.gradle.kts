@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("org.jetbrains.dokka")
-  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
   id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
-
-apply(from = "shading-config.gradle")
 
 val GROUP: String by project
 val VERSION_NAME: String by project
@@ -33,7 +30,7 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.elementhandler.elements")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km.specs")
   }
 }
 
@@ -52,6 +49,6 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
   api(deps.kotlin.stdlib)
-  api(project(":kotlinpoet-metadata-specs"))
-  add("compileShaded", deps.autoCommon)
+  api(project(":kotlinpoet"))
+  api(project(":kotlinpoet-metadata"))
 }
