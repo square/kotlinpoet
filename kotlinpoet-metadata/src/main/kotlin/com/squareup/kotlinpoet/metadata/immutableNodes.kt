@@ -69,7 +69,7 @@ import java.util.Collections
 /**
  * Represents an immutable kotlinx-metadata type with a common [Flags] property.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 interface ImmutableKmWithFlags {
   val flags: Flags
 }
@@ -78,12 +78,12 @@ interface ImmutableKmWithFlags {
  * Visits metadata of this class with a new [KmClass] instance and returns an [ImmutableKmClass]
  * instance of its values.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 fun KotlinClassMetadata.Class.toImmutableKmClass(): ImmutableKmClass =
     toKmClass().toImmutable()
 
 /** @return an immutable representation of this [KmClass]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmClass.toImmutable(): ImmutableKmClass {
   return ImmutableKmClass(
@@ -126,7 +126,7 @@ fun KmClass.toImmutable(): ImmutableKmClass {
  * @property versionRequirements Version requirements on this class.
  * @property moduleName Name of the module where this class is declared.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmClass internal constructor(
   override val flags: Flags,
   val name: ClassName,
@@ -178,7 +178,7 @@ data class ImmutableKmClass internal constructor(
 }
 
 /** @return an immutable representation of this [KmPackage]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmPackage.toImmutable(): ImmutableKmPackage {
   return ImmutableKmPackage(
@@ -200,7 +200,7 @@ fun KmPackage.toImmutable(): ImmutableKmPackage {
  * @property typeAliases TypeAliases in the package fragment.
  * @property moduleName Name of the module where this class is declared.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmPackage internal constructor(
   val functions: List<ImmutableKmFunction>,
   val properties: List<ImmutableKmProperty>,
@@ -227,7 +227,7 @@ data class ImmutableKmPackage internal constructor(
 }
 
 /** @return an immutable representation of this [KmLambda]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmLambda.toImmutable(): ImmutableKmLambda {
   return ImmutableKmLambda(function.toImmutable())
@@ -240,7 +240,7 @@ fun KmLambda.toImmutable(): ImmutableKmLambda {
  *
  * @property function Signature of the synthetic anonymous function, representing the lambda.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmLambda internal constructor(val function: ImmutableKmFunction) {
   fun toMutable(): KmLambda {
     return KmLambda().apply {
@@ -250,7 +250,7 @@ data class ImmutableKmLambda internal constructor(val function: ImmutableKmFunct
 }
 
 /** @return an immutable representation of this [KmConstructor]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmConstructor.toImmutable(): ImmutableKmConstructor {
   return ImmutableKmConstructor(
@@ -270,7 +270,7 @@ fun KmConstructor.toImmutable(): ImmutableKmConstructor {
  * @property valueParameters Value parameters of the constructor.
  * @property versionRequirements Version requirements on the constructor.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmConstructor internal constructor(
   override val flags: Flags,
   val valueParameters: List<ImmutableKmValueParameter>,
@@ -291,7 +291,7 @@ data class ImmutableKmConstructor internal constructor(
 }
 
 /** @return an immutable representation of this [KmFunction]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmFunction.toImmutable(): ImmutableKmFunction {
   return ImmutableKmFunction(
@@ -322,7 +322,7 @@ fun KmFunction.toImmutable(): ImmutableKmFunction {
  * @property versionRequirements Version requirements on the function.
  * @property contract Contract of the function.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmFunction internal constructor(
   override val flags: Flags,
   val name: String,
@@ -357,7 +357,7 @@ data class ImmutableKmFunction internal constructor(
 }
 
 /** @return an immutable representation of this [KmProperty]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmProperty.toImmutable(): ImmutableKmProperty {
   return ImmutableKmProperty(
@@ -396,7 +396,7 @@ fun KmProperty.toImmutable(): ImmutableKmProperty {
  * @property versionRequirements Version requirements on the property.
  * @property jvmFlags JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmProperty internal constructor(
   override val flags: Flags,
   val name: String,
@@ -445,7 +445,7 @@ data class ImmutableKmProperty internal constructor(
 }
 
 /** @return an immutable representation of this [KmTypeAlias]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmTypeAlias.toImmutable(): ImmutableKmTypeAlias {
   return ImmutableKmTypeAlias(
@@ -475,7 +475,7 @@ fun KmTypeAlias.toImmutable(): ImmutableKmTypeAlias {
  * @property annotations Annotations on the type alias.
  * @property versionRequirements Version requirements on the type alias.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmTypeAlias internal constructor(
   override val flags: Flags,
   val name: String,
@@ -497,7 +497,7 @@ data class ImmutableKmTypeAlias internal constructor(
 }
 
 /** @return an immutable representation of this [KmValueParameter]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmValueParameter.toImmutable(): ImmutableKmValueParameter {
   return ImmutableKmValueParameter(
@@ -518,7 +518,7 @@ fun KmValueParameter.toImmutable(): ImmutableKmValueParameter {
  * @property type Type of the value parameter, if this is **not** a `vararg` parameter.
  * @property varargElementType Type of the value parameter, if this is a `vararg` parameter.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmValueParameter internal constructor(
   override val flags: Flags,
   val name: String,
@@ -534,7 +534,7 @@ data class ImmutableKmValueParameter internal constructor(
 }
 
 /** @return an immutable representation of this [KmTypeParameter]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmTypeParameter.toImmutable(): ImmutableKmTypeParameter {
   return ImmutableKmTypeParameter(
@@ -560,7 +560,7 @@ fun KmTypeParameter.toImmutable(): ImmutableKmTypeParameter {
  * @property upperBounds Upper bounds of the type parameter.
  * @property annotations Annotations on the type parameter.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmTypeParameter internal constructor(
   override val flags: Flags,
   val name: String,
@@ -577,7 +577,7 @@ data class ImmutableKmTypeParameter internal constructor(
 }
 
 /** @return an immutable representation of this [KmType]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmType.toImmutable(): ImmutableKmType {
   return ImmutableKmType(
@@ -603,7 +603,7 @@ fun KmType.toImmutable(): ImmutableKmType {
  * @property isRaw `true` if the type is seen as a raw type in Java.
  * @property annotations Annotations on the type.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmType internal constructor(
   override val flags: Flags,
   val classifier: KmClassifier,
@@ -659,7 +659,7 @@ data class ImmutableKmType internal constructor(
 }
 
 /** @return an immutable representation of this [KmVersionRequirement]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmVersionRequirement.toImmutable(): ImmutableKmVersionRequirement {
   return ImmutableKmVersionRequirement(
@@ -685,7 +685,7 @@ fun KmVersionRequirement.toImmutable(): ImmutableKmVersionRequirement {
  * @property message Optional message to be displayed in the diagnostic.
  * @property version Version required by this requirement.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmVersionRequirement internal constructor(
   val kind: KmVersionRequirementVersionKind,
   val level: KmVersionRequirementLevel,
@@ -705,7 +705,7 @@ data class ImmutableKmVersionRequirement internal constructor(
 }
 
 /** @return an immutable representation of this [KmContract]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmContract.toImmutable(): ImmutableKmContract {
   return ImmutableKmContract(effects.map { it.toImmutable() })
@@ -721,7 +721,7 @@ fun KmContract.toImmutable(): ImmutableKmContract {
  *
  * @property effects Effects of this contract.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmContract internal constructor(val effects: List<ImmutableKmEffect>) {
   fun toMutable(): KmContract {
     return KmContract().apply {
@@ -731,7 +731,7 @@ data class ImmutableKmContract internal constructor(val effects: List<ImmutableK
 }
 
 /** @return an immutable representation of this [KmEffect]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmEffect.toImmutable(): ImmutableKmEffect {
   return ImmutableKmEffect(
@@ -758,7 +758,7 @@ fun KmEffect.toImmutable(): ImmutableKmEffect {
  *                                reference for the [KmEffectType.CALLS] effect.
  * @property conclusion Conclusion of the effect. If this value is set, the effect represents an implication with this value as the right-hand side.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmEffect internal constructor(
   val type: KmEffectType,
   val invocationKind: KmEffectInvocationKind?,
@@ -774,7 +774,7 @@ data class ImmutableKmEffect internal constructor(
 }
 
 /** @return an immutable representation of this [KmEffectExpression]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmEffectExpression.toImmutable(): ImmutableKmEffectExpression {
   return ImmutableKmEffectExpression(
@@ -806,7 +806,7 @@ fun KmEffectExpression.toImmutable(): ImmutableKmEffectExpression {
  * @property orArguments Arguments of an `||`-expression. If this list is non-empty, the resulting
  *                       effect expression is a disjunction of this expression and elements of the list.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmEffectExpression internal constructor(
   override val flags: Flags,
   val parameterIndex: Int?,
@@ -828,7 +828,7 @@ data class ImmutableKmEffectExpression internal constructor(
 }
 
 /** @return an immutable representation of this [KmTypeProjection]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmTypeProjection.toImmutable(): ImmutableKmTypeProjection {
   return ImmutableKmTypeProjection(variance, type?.toImmutable())
@@ -843,7 +843,7 @@ fun KmTypeProjection.toImmutable(): ImmutableKmTypeProjection {
  * @property variance The variance of the type projection, or `null` if this is a star projection.
  * @property type The projected type, or `null` if this is a star projection.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmTypeProjection internal constructor(val variance: KmVariance?, val type: ImmutableKmType?) {
 
   fun toMutable(): KmTypeProjection {
@@ -861,7 +861,7 @@ data class ImmutableKmTypeProjection internal constructor(val variance: KmVarian
 }
 
 /** @return an immutable representation of this [KmFlexibleTypeUpperBound]. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 @JvmName("immutableOf")
 fun KmFlexibleTypeUpperBound.toImmutable(): ImmutableKmFlexibleTypeUpperBound {
   return ImmutableKmFlexibleTypeUpperBound(type.toImmutable(), typeFlexibilityId)
@@ -876,7 +876,7 @@ fun KmFlexibleTypeUpperBound.toImmutable(): ImmutableKmFlexibleTypeUpperBound {
  * @property typeFlexibilityId Id of the kind of flexibility this type has. For example, "kotlin.jvm.PlatformType" for JVM platform types,
  *                          or "kotlin.DynamicType" for JS dynamic type.
  */
-@KotlinPoetKm
+@KotlinPoetMetadata
 data class ImmutableKmFlexibleTypeUpperBound internal constructor(
   val type: ImmutableKmType,
   val typeFlexibilityId: String?

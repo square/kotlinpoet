@@ -26,25 +26,25 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.reflect.KClass
 
 /**
- * Indicates that a given API is part of the experimental KotlinPoet km support. This exists because
- * kotlinx-metadata is not a stable API, and will remain in place until it is.
+ * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
+ * because kotlinx-metadata is not a stable API, and will remain in place until it is.
  */
 @Experimental
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY)
-annotation class KotlinPoetKm
+annotation class KotlinPoetMetadata
 
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 fun Class<*>.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
-@KotlinPoetKm
+@KotlinPoetMetadata
 fun TypeElement.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
 
-@KotlinPoetKm
+@KotlinPoetMetadata
 fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   return when (val metadata = readKotlinClassMetadata()) {
     is KotlinClassMetadata.Class -> {

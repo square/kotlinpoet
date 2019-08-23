@@ -26,7 +26,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
-import com.squareup.kotlinpoet.metadata.KotlinPoetKm
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadata
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.test.KmSpecsTest.ElementHandlerType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.KmSpecsTest.ElementHandlerType.REFLECTIVE
@@ -47,7 +47,7 @@ import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 import kotlin.test.fail
 
-@KotlinPoetKm
+@KotlinPoetMetadata
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KmSpecsTest(
