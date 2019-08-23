@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("KotlinPoetMetadataSpecs")
+
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ANY
