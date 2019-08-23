@@ -2,16 +2,16 @@ package com.squareup.kotlinpoet.elementhandler.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.km.ImmutableKmClass
-import com.squareup.kotlinpoet.km.KotlinPoetKm
-import com.squareup.kotlinpoet.km.specs.ElementHandler
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.TRANSIENT
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.VOLATILE
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.STATIC
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
-import com.squareup.kotlinpoet.km.toImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.VOLATILE
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.STATIC
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import java.lang.reflect.Constructor
@@ -20,7 +20,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.concurrent.ConcurrentHashMap
 
-@KotlinPoetKm
+@KotlinPoetMetadataPreview
 class ReflectiveElementHandler private constructor() : ElementHandler {
 
   private val classCache = ConcurrentHashMap<String, Optional<Class<*>>>()
@@ -226,7 +226,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   companion object {
     @JvmStatic
-    @KotlinPoetKm
+    @KotlinPoetMetadataPreview
     fun create(): ElementHandler {
       return ReflectiveElementHandler()
     }

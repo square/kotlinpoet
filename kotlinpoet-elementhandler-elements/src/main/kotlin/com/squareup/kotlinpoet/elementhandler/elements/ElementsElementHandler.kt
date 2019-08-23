@@ -7,16 +7,16 @@ import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.km.ImmutableKmClass
-import com.squareup.kotlinpoet.km.KotlinPoetKm
-import com.squareup.kotlinpoet.km.specs.ElementHandler
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.TRANSIENT
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmFieldModifier.VOLATILE
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.STATIC
-import com.squareup.kotlinpoet.km.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
-import com.squareup.kotlinpoet.km.toImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.VOLATILE
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.STATIC
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import java.util.concurrent.ConcurrentHashMap
@@ -36,7 +36,7 @@ private typealias ElementsModifier = javax.lang.model.element.Modifier
 /**
  * An [Elements]-based implementation of [ElementHandler].
  */
-@KotlinPoetKm
+@KotlinPoetMetadataPreview
 class ElementsElementHandler private constructor(
   private val elements: Elements,
   private val types: Types
@@ -274,7 +274,7 @@ class ElementsElementHandler private constructor(
   companion object {
     /** @return an [Elements]-based implementation of [ElementHandler]. */
     @JvmStatic
-    @KotlinPoetKm
+    @KotlinPoetMetadataPreview
     fun create(elements: Elements, types: Types): ElementHandler {
       return ElementsElementHandler(elements, types)
     }

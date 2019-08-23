@@ -49,5 +49,5 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
   api(deps.kotlin.stdlib)
-  api(project(":kotlinpoet-km-specs"))
+  api(project(":kotlinpoet-metadata-specs"))
 }
