@@ -164,7 +164,7 @@ fun TypeElement.toFileSpec(
 /** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toTypeSpec(
-    elementHandler: ElementHandler?
+  elementHandler: ElementHandler?
 ): TypeSpec {
   return toTypeSpec(elementHandler, null)
 }
@@ -172,7 +172,7 @@ fun ImmutableKmClass.toTypeSpec(
 /** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toFileSpec(
-    elementHandler: ElementHandler?
+  elementHandler: ElementHandler?
 ): FileSpec {
   return FileSpec.get(
       packageName = name.jvmInternalName.substringBeforeLast("/"),
