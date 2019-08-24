@@ -161,6 +161,25 @@ fun TypeElement.toFileSpec(
     typeSpec = toTypeSpec(elementHandler)
 )
 
+/** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
+@KotlinPoetMetadataPreview
+fun ImmutableKmClass.toTypeSpec(
+  elementHandler: ElementHandler?
+): TypeSpec {
+  return toTypeSpec(elementHandler, null)
+}
+
+/** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
+@KotlinPoetMetadataPreview
+fun ImmutableKmClass.toFileSpec(
+  elementHandler: ElementHandler?
+): FileSpec {
+  return FileSpec.get(
+      packageName = name.jvmInternalName.substringBeforeLast("/"),
+      typeSpec = toTypeSpec(elementHandler)
+  )
+}
+
 private const val TODO_BLOCK = "TODO(\"Stub!\")"
 
 @KotlinPoetMetadataPreview
@@ -181,7 +200,7 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
   elementHandler: ElementHandler?,
-  parentName: String? = null
+  parentName: String?
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
 
