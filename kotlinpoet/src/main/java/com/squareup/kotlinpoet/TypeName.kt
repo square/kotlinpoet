@@ -743,7 +743,7 @@ class TypeVariableName private constructor(
     tags: Map<KClass<*>, Any> = this.tagMap.tags
   ): TypeVariableName {
     return TypeVariableName(name, bounds.withoutImplicitBound(), variance, reified, nullable,
-        annotations)
+        annotations, tags)
   }
 
   private fun List<TypeName>.withoutImplicitBound(): List<TypeName> {
