@@ -165,7 +165,10 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
       bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
       variance = finalVariance
   )
-  return typeVariableName.copy(reified = isReified)
+  return typeVariableName.copy(
+      reified = isReified,
+      tags = mapOf(ImmutableKmTypeParameter::class to this)
+  )
 }
 
 @KotlinPoetMetadataPreview
