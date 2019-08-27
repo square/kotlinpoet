@@ -807,17 +807,17 @@ class TypeVariableName private constructor(
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("get") @JvmOverloads
     operator fun invoke(name: String, bounds: List<TypeName>, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds, variance)
+        TypeVariableName.of(name, bounds.ifEmpty(::NULLABLE_ANY_LIST), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("getWithClasses") @JvmOverloads
     operator fun invoke(name: String, bounds: Iterable<KClass<*>>, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }.ifEmpty(::NULLABLE_ANY_LIST), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`.  */
     @JvmStatic @JvmName("getWithTypes") @JvmOverloads
     operator fun invoke(name: String, bounds: Iterable<Type>, variance: KModifier? = null) =
-        TypeVariableName.of(name, bounds.map { it.asTypeName() }, variance)
+        TypeVariableName.of(name, bounds.map { it.asTypeName() }.ifEmpty(::NULLABLE_ANY_LIST), variance)
 
     /**
      * Make a TypeVariableName for the given TypeMirror. This form is used internally to avoid
