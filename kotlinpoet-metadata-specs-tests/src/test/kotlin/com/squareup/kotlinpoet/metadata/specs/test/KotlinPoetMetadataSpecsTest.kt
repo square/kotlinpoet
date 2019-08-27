@@ -732,16 +732,13 @@ class KotlinPoetMetadataSpecsTest(
 
         @get:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.GetterAnnotation
         var getter: kotlin.String? = null
-          get() {
-            TODO("Stub!")
-          }
 
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.HolderAnnotation
         var holder: kotlin.String? = null
 
         @set:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SetterAnnotation
         var setter: kotlin.String? = null
-          set
+
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation
         constructor(value: kotlin.String)
 
@@ -966,8 +963,6 @@ class KotlinPoetMetadataSpecsTest(
         }
       }
     """.trimIndent())
-
-    // TODO check with objects
   }
 
   class Constants(
@@ -1018,13 +1013,10 @@ class KotlinPoetMetadataSpecsTest(
       class JvmAnnotations {
         @get:kotlin.jvm.Synchronized
         val synchronizedGetProp: kotlin.String? = null
-          get() {
-            TODO("Stub!")
-          }
 
         @set:kotlin.jvm.Synchronized
         var synchronizedSetProp: kotlin.String? = null
-          set
+
         @kotlin.jvm.Transient
         val transientProp: kotlin.String? = null
 
@@ -1100,20 +1092,14 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         val propertyGet: kotlin.String? = null
-          get() {
-            TODO("Stub!")
-          }
 
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         var propertyGetAndSet: kotlin.String? = null
-          get() {
-            TODO("Stub!")
-          }
-          set
+  
         @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
         var propertySet: kotlin.String? = null
-          set
+
         @kotlin.jvm.JvmName(name = "jvmFunction")
         fun function() {
         }
