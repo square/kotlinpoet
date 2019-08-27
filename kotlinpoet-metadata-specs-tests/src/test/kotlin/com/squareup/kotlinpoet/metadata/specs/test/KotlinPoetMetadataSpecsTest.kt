@@ -1096,7 +1096,7 @@ class KotlinPoetMetadataSpecsTest(
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         var propertyGetAndSet: kotlin.String? = null
-  
+
         @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
         var propertySet: kotlin.String? = null
 
