@@ -682,13 +682,13 @@ private fun ImmutableKmProperty.toPropertySpec(
         // Delegated properties have setters/getters defined for some reason, ignore here
         // since the delegate handles it
         // vals with initialized constants have a getter in bytecode but not a body in kotlin source
+        val modifierSet = modifiers.toSet()
         if (hasGetter && !isDelegated && canHaveGetterBody) {
-          propertyAccessor(getterFlags, FunSpec.getterBuilder().addStatement(
-              TODO_BLOCK), isOverride)?.let(
-              ::getter)
+          propertyAccessor(modifierSet, getterFlags,
+              FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(::getter)
         }
         if (hasSetter && !isDelegated) {
-          propertyAccessor(setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
+          propertyAccessor(modifierSet, setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
         }
       }
       .tag(this)
@@ -696,8 +696,18 @@ private fun ImmutableKmProperty.toPropertySpec(
 }
 
 @KotlinPoetMetadataPreview
-private fun propertyAccessor(flags: Flags, functionBuilder: Builder, isOverride: Boolean): FunSpec? {
+private fun propertyAccessor(
+  propertyModifiers: Set<KModifier>,
+  flags: Flags,
+  functionBuilder: Builder,
+  isOverride: Boolean
+): FunSpec? {
   val visibility = flags.visibility
+  if (visibility == PUBLIC || visibility !in propertyModifiers) {
+    // This is redundant and just a stub
+    // For annotations on this accessor, we declare them on the property with site target instead
+    return null
+  }
   val modalities = flags.modalities
       .filterNot { it == FINAL && !isOverride }
       .filterNot { it == OPEN && isOverride }
