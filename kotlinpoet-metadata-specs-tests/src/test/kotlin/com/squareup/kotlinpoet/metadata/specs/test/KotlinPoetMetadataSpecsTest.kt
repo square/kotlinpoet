@@ -1152,6 +1152,47 @@ class KotlinPoetMetadataSpecsTest(
       }
     }
   }
+
+  @IgnoreForHandlerType(
+      reason = "JvmOverloads is not runtime retained and thus not visible to reflection.",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun overloads() {
+    val typeSpec = Overloads::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Overloads @kotlin.jvm.JvmOverloads constructor(
+        val param1: kotlin.String,
+        val optionalParam2: kotlin.String = TODO("Stub!"),
+        val nullableParam3: kotlin.String? = TODO("Stub!")
+      ) {
+        @kotlin.jvm.JvmOverloads
+        fun testFunction(
+          param1: kotlin.String,
+          optionalParam2: kotlin.String = TODO("Stub!"),
+          nullableParam3: kotlin.String? = TODO("Stub!")
+        ) {
+        }
+      }
+    """.trimIndent())
+  }
+
+  class Overloads @JvmOverloads constructor(
+      val param1: String,
+      val optionalParam2: String = "",
+      val nullableParam3: String? = null
+  ) {
+    @JvmOverloads
+    fun testFunction(
+        param1: String,
+        optionalParam2: String = "",
+        nullableParam3: String? = null
+    ) {
+
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
