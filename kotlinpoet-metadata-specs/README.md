@@ -39,3 +39,4 @@ placeholders.
 
 - Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@file:` annotations are not supported yet.
+- `@JvmOverloads` annotations are only supported with `kotlinpoet-elemnethandler-reflective` and not reflection.
