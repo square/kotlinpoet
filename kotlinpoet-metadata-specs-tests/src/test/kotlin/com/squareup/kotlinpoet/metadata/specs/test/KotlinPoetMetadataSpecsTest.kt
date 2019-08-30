@@ -1180,17 +1180,16 @@ class KotlinPoetMetadataSpecsTest(
   }
 
   class Overloads @JvmOverloads constructor(
-      val param1: String,
-      val optionalParam2: String = "",
-      val nullableParam3: String? = null
+    val param1: String,
+    val optionalParam2: String = "",
+    val nullableParam3: String? = null
   ) {
     @JvmOverloads
     fun testFunction(
-        param1: String,
-        optionalParam2: String = "",
-        nullableParam3: String? = null
+      param1: String,
+      optionalParam2: String = "",
+      nullableParam3: String? = null
     ) {
-
     }
   }
 }
