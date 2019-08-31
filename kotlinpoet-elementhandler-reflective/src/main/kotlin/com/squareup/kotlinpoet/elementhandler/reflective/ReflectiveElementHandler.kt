@@ -89,7 +89,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   override fun fieldJvmModifiers(
     classJvmName: String,
-    fieldSignature: JvmFieldSignature
+    fieldSignature: JvmFieldSignature,
+    isJvmField: Boolean
   ): Set<JvmFieldModifier> {
     return lookupField(classJvmName, fieldSignature)?.modifiers.let { modifiers ->
       if (modifiers != null) {

@@ -1192,6 +1192,78 @@ class KotlinPoetMetadataSpecsTest(
     ) {
     }
   }
+
+  @IgnoreForHandlerType(
+      reason = "Elements generates initializer values.",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun jvmFields_reflective() {
+    val typeSpec = Fields::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Fields(
+        @kotlin.jvm.JvmField
+        val param1: kotlin.String
+      ) {
+        @kotlin.jvm.JvmField
+        val fieldProp: kotlin.String = TODO("Stub!")
+
+        companion object {
+          @kotlin.jvm.JvmField
+          val companionProp: kotlin.String = ""
+
+          const val constCompanionProp: kotlin.String = ""
+
+          @kotlin.jvm.JvmStatic
+          val staticCompanionProp: kotlin.String = ""
+        }
+      }
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Elements generates initializer values.",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun jvmFields_elements() {
+    val typeSpec = Fields::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Fields(
+        @field:kotlin.jvm.JvmField
+        val param1: kotlin.String
+      ) {
+        @field:kotlin.jvm.JvmField
+        val fieldProp: kotlin.String = ""
+
+        companion object {
+          @kotlin.jvm.JvmField
+          val companionProp: kotlin.String = ""
+
+          const val constCompanionProp: kotlin.String = ""
+
+          @kotlin.jvm.JvmStatic
+          val staticCompanionProp: kotlin.String = ""
+        }
+      }
+    """.trimIndent())
+  }
+
+  class Fields(
+    @JvmField val param1: String
+  ) {
+    @JvmField val fieldProp: String = ""
+
+    companion object {
+      @JvmField val companionProp: String = ""
+      @JvmStatic val staticCompanionProp: String = ""
+      const val constCompanionProp: String = ""
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {

@@ -313,14 +313,34 @@ private fun ImmutableKmClass.toTypeSpec(
                     elementHandler.methodAnnotations(jvmInternalName, it)
                   }.orEmpty()
                 }
+                val isJvmField: Boolean
+                if (property.getterSignature == null &&
+                    property.setterSignature == null &&
+                    property.fieldSignature != null &&
+                    !property.isConst) {
+                  if (elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject) {
+                    // Throwaway value as this kind of element handler should be automatically be
+                    // picking up the jvm field annotation.
+                    //
+                    // We don't do this for companion object fields though as they appear to not
+                    // have the JvmField annotation copied over though
+                    //
+                    isJvmField = false
+                  } else {
+                    isJvmField = true
+                    annotations += AnnotationSpec.builder(JvmField::class).build()
+                  }
+                } else {
+                  isJvmField = false
+                }
                 property.fieldSignature?.let { fieldSignature ->
                   annotations += elementHandler.fieldAnnotations(jvmInternalName, fieldSignature)
                       .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
-                  annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature)
+                  annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature, isJvmField)
                       .map { it.annotationSpec() }
                   if (isCompanionObject && parentName != null) {
                     // These are copied into the parent
-                    annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature)
+                    annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature, isJvmField)
                         .map { it.annotationSpec() }
                   }
                   if (property.hasConstant) {
