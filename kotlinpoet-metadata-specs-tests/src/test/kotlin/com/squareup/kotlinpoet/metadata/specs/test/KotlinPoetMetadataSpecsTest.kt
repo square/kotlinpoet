@@ -734,6 +734,7 @@ class KotlinPoetMetadataSpecsTest(
         var getter: kotlin.String? = null
 
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.HolderAnnotation
+        @kotlin.jvm.JvmField
         var holder: kotlin.String? = null
 
         @set:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SetterAnnotation
