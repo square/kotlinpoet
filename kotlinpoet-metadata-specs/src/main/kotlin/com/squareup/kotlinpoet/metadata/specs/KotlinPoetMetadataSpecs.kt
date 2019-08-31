@@ -250,8 +250,6 @@ private fun ImmutableKmClass.toTypeSpec(
     }
     if (isInline) {
       builder.addModifiers(INLINE)
-      // TODO these are special.
-      //  - Name is the fqcn
     }
     if (isInner) {
       builder.addModifiers(INNER)
