@@ -108,6 +108,15 @@ interface ElementHandler {
   fun fieldAnnotations(classJvmName: String, fieldSignature: JvmFieldSignature): List<AnnotationSpec>
 
   /**
+   * Looks up a [JvmFieldSignature] and returns whether or not it is synthetic.
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param fieldSignature The field to look up.
+   * @return whether or not the field is synthetic.
+   */
+  fun isFieldSynthetic(classJvmName: String, fieldSignature: JvmFieldSignature): Boolean
+
+  /**
    * Looks up a given class method given its [JvmMethodSignature] and returns any [JvmMethodModifier]s
    * found on it.
    *
@@ -134,6 +143,15 @@ interface ElementHandler {
    * @return the [AnnotationSpec] representations of the annotations on the target method.
    */
   fun methodAnnotations(classJvmName: String, methodSignature: JvmMethodSignature): List<AnnotationSpec>
+
+  /**
+   * Looks up a [JvmMethodSignature] and returns whether or not it is synthetic.
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param methodSignature The method to look up.
+   * @return whether or not the method is synthetic.
+   */
+  fun isMethodSynthetic(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
 
   /**
    * Looks up the enum entry on a given enum given its member name.

@@ -117,6 +117,10 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .filterOutNullabilityAnnotations()
   }
 
+  override fun isFieldSynthetic(classJvmName: String, fieldSignature: JvmFieldSignature): Boolean {
+    return lookupField(classJvmName, fieldSignature)?.isSynthetic ?: false
+  }
+
   override fun constructorAnnotations(
     classJvmName: String,
     constructorSignature: JvmMethodSignature
@@ -165,6 +169,13 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     } catch (e: ClassNotFoundException) {
       emptyList()
     }
+  }
+
+  override fun isMethodSynthetic(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
+  ): Boolean {
+    return lookupMethod(classJvmName, methodSignature)?.isSynthetic ?: false
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
