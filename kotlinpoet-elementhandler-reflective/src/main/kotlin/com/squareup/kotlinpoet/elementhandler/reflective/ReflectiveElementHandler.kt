@@ -224,6 +224,10 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .any { it == signatureString }
   }
 
+  override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
+    return lookupMethod(classJvmName, methodSignature) != null
+  }
+
   companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview

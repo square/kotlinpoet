@@ -159,4 +159,13 @@ interface ElementHandler {
    * @return whether or not the method is an override.
    */
   fun isMethodOverride(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
+
+  /**
+   * Looks up if a given [methodSignature] within [classJvmName] exists.
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param methodSignature The method signature to check.
+   * @return whether or not the method exists.
+   */
+  fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
 }
