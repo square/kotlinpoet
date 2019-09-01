@@ -225,7 +225,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
-    return lookupMethod(classJvmName, methodSignature) != null
+    return lookupClass(classJvmName)?.lookupMethod(methodSignature) != null
   }
 
   companion object {
