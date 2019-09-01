@@ -336,15 +336,20 @@ private fun ImmutableKmClass.toTypeSpec(
                       .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
                   annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature, isJvmField)
                       .map { it.annotationSpec() }
-                  if (elementHandler.isFieldSynthetic(jvmInternalName, fieldSignature)) {
-                    annotations += AnnotationSpec.builder(JvmSynthetic::class)
-                        .useSiteTarget(UseSiteTarget.FIELD)
-                        .build()
-                  }
                   if (isCompanionObject && parentName != null) {
                     // These are copied into the parent
                     annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature, isJvmField)
                         .map { it.annotationSpec() }
+                  }
+                  if (!(isCompanionObject &&
+                          (property.isConst || annotations.any { it.className == JVM_STATIC })) &&
+                      elementHandler.isFieldSynthetic(jvmInternalName, fieldSignature)) {
+                    // For static or const fields in a companion object, the companion object's
+                    // field is marked as synthetic to hide it from Java, but in this case it's a
+                    // false positive for this check in kotlin.
+                    annotations += AnnotationSpec.builder(JvmSynthetic::class)
+                        .useSiteTarget(UseSiteTarget.FIELD)
+                        .build()
                   }
                   if (property.hasConstant) {
                     constant = if (isCompanionObject && parentName != null) {
