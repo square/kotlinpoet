@@ -469,10 +469,11 @@ private fun ImmutableKmClass.toTypeSpec(
               fun isKotlinDefaultInterfaceMethod(): Boolean {
                 elementHandler?.let { handler ->
                   func.signature?.let { signature ->
+                    val suffix = signature.desc.removePrefix("(")
                     return handler.methodExists(
                         "${jvmInternalName}\$DefaultImpls",
                         signature.copy(
-                            desc = "(L$jvmInternalName;" + signature.desc.removePrefix("(")
+                            desc = "(L$jvmInternalName;$suffix"
                     ))
                   }
                 }
