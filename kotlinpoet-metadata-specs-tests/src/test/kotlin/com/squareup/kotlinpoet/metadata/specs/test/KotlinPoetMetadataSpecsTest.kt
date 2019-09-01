@@ -592,20 +592,122 @@ class KotlinPoetMetadataSpecsTest(
 
   @Test
   fun interfaces() {
-    val typeSpec = SomeInterface::class.toTypeSpecWithTestHandler()
+    val testInterfaceSpec = TestInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      interface SomeInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SomeInterfaceBase {
-        fun testFunction()
+    assertThat(testInterfaceSpec.trimmedToString()).isEqualTo("""
+      interface TestInterface {
+        fun complex(input: kotlin.String, input2: kotlin.String = TODO("Stub!")): kotlin.String {
+          TODO("Stub!")
+        }
+      
+        fun hasDefault() {
+        }
+      
+        fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String {
+          TODO("Stub!")
+        }
+      
+        fun hasDefaultSingleParam(input: kotlin.String): kotlin.String {
+          TODO("Stub!")
+        }
+      
+        @kotlin.jvm.JvmDefault
+        fun hasJvmDefault() {
+        }
+      
+        fun noDefault()
+      
+        fun noDefaultWithInput(input: kotlin.String)
+      
+        fun noDefaultWithInputDefault(input: kotlin.String = TODO("Stub!"))
+      }
+    """.trimIndent())
+
+    val subInterfaceSpec = SubInterface::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(subInterfaceSpec.trimmedToString()).isEqualTo("""
+      interface SubInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TestInterface {
+        override fun hasDefault() {
+        }
+      
+        @kotlin.jvm.JvmDefault
+        override fun hasJvmDefault() {
+        }
+      
+        fun subInterfaceFunction() {
+        }
+      }
+    """.trimIndent())
+
+    val implSpec = TestSubInterfaceImpl::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(implSpec.trimmedToString()).isEqualTo("""
+      class TestSubInterfaceImpl : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
+        override fun noDefault() {
+        }
+      
+        override fun noDefaultWithInput(input: kotlin.String) {
+        }
+      
+        override fun noDefaultWithInputDefault(input: kotlin.String) {
+        }
       }
     """.trimIndent())
   }
 
-  interface SomeInterfaceBase
+  interface TestInterface {
 
-  interface SomeInterface : SomeInterfaceBase {
-    fun testFunction() {
+    fun noDefault()
+
+    fun noDefaultWithInput(input: String)
+
+    fun noDefaultWithInputDefault(input: String = "")
+
+    @JvmDefault
+    fun hasJvmDefault() {
+    }
+
+    fun hasDefault() {
+    }
+
+    fun hasDefaultSingleParam(input: String): String {
+      return "1234"
+    }
+
+    fun hasDefaultMultiParam(input: String, input2: String): String {
+      return "1234"
+    }
+
+    fun complex(input: String, input2: String = ""): String {
+      return "5678"
+    }
+  }
+
+  interface SubInterface : TestInterface {
+    fun subInterfaceFunction() {
+    }
+
+    @JvmDefault
+    override fun hasJvmDefault() {
+      super.hasJvmDefault()
+    }
+
+    override fun hasDefault() {
+      super.hasDefault()
+    }
+  }
+
+  class TestSubInterfaceImpl : SubInterface {
+    override fun noDefault() {
+    }
+
+    override fun noDefaultWithInput(input: String) {
+    }
+
+    override fun noDefaultWithInputDefault(input: String) {
     }
   }
 
