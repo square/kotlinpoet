@@ -600,26 +600,26 @@ class KotlinPoetMetadataSpecsTest(
         fun complex(input: kotlin.String, input2: kotlin.String = TODO("Stub!")): kotlin.String {
           TODO("Stub!")
         }
-      
+
         fun hasDefault() {
         }
-      
+
         fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String {
           TODO("Stub!")
         }
-      
+
         fun hasDefaultSingleParam(input: kotlin.String): kotlin.String {
           TODO("Stub!")
         }
-      
+
         @kotlin.jvm.JvmDefault
         fun hasJvmDefault() {
         }
-      
+
         fun noDefault()
-      
+
         fun noDefaultWithInput(input: kotlin.String)
-      
+
         fun noDefaultWithInputDefault(input: kotlin.String = TODO("Stub!"))
       }
     """.trimIndent())
@@ -631,11 +631,11 @@ class KotlinPoetMetadataSpecsTest(
       interface SubInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TestInterface {
         override fun hasDefault() {
         }
-      
+
         @kotlin.jvm.JvmDefault
         override fun hasJvmDefault() {
         }
-      
+
         fun subInterfaceFunction() {
         }
       }
@@ -648,10 +648,10 @@ class KotlinPoetMetadataSpecsTest(
       class TestSubInterfaceImpl : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
         override fun noDefault() {
         }
-      
+
         override fun noDefaultWithInput(input: kotlin.String) {
         }
-      
+
         override fun noDefaultWithInputDefault(input: kotlin.String) {
         }
       }
