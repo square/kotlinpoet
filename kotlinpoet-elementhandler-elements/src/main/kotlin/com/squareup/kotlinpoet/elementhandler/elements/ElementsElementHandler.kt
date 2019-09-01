@@ -7,6 +7,8 @@ import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
@@ -176,6 +178,25 @@ class ElementsElementHandler private constructor(
     // Elements can't see synthetic methods since they don't exist yet, so their absence here
     // makes them implicitly synthetic
     return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn) == null
+  }
+
+  override fun methodExceptions(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    isConstructor: Boolean
+  ): Set<TypeName>? {
+    val elementFilter: (Iterable<Element>) -> List<ExecutableElement> = if (isConstructor) {
+      ElementFilter::constructorsIn
+    } else {
+      ElementFilter::methodsIn
+    }
+    val exceptions = lookupMethod(classJvmName, methodSignature, elementFilter)?.thrownTypes
+    return if (exceptions.isNullOrEmpty()) {
+      // We have to check for empty because Kotlinc sometimes puts empty ones!
+      null
+    } else {
+      exceptions.mapTo(mutableSetOf()) { it.asTypeName() }
+    }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {

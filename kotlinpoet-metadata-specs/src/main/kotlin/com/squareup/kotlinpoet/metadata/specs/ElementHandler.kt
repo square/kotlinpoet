@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -152,6 +153,21 @@ interface ElementHandler {
    * @return whether or not the method is synthetic.
    */
   fun isMethodSynthetic(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
+
+  /**
+   * Looks up a given class method given its [JvmMethodSignature] and returns any thrown types
+   * found on it. Used for [Throws][@Throws]
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param methodSignature The method with annotations to look up.
+   * @param isConstructor Indicates if [methodSignature] is a constructor.
+   * @return the set of found thrown types, or null.
+   */
+  fun methodExceptions(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    isConstructor: Boolean
+  ): Set<TypeName>?
 
   /**
    * Looks up the enum entry on a given enum given its member name.

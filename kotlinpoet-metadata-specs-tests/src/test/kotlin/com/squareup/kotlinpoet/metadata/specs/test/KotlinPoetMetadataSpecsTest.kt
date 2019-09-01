@@ -1312,13 +1312,10 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         @kotlin.jvm.JvmField
         val fieldProp: kotlin.String = TODO("Stub!")
-
         companion object {
           @kotlin.jvm.JvmField
           val companionProp: kotlin.String = ""
-
           const val constCompanionProp: kotlin.String = ""
-
           @kotlin.jvm.JvmStatic
           val staticCompanionProp: kotlin.String = ""
         }
@@ -1342,13 +1339,10 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         @field:kotlin.jvm.JvmField
         val fieldProp: kotlin.String = ""
-
         companion object {
           @kotlin.jvm.JvmField
           val companionProp: kotlin.String = ""
-
           const val constCompanionProp: kotlin.String = ""
-
           @kotlin.jvm.JvmStatic
           val staticCompanionProp: kotlin.String = ""
         }
@@ -1520,6 +1514,7 @@ class KotlinPoetMetadataSpecsTest(
     interface InterfaceWithJvmName {
       @JvmSynthetic
       fun interfaceFunction()
+
       companion object {
         @JvmStatic
         @get:JvmSynthetic
@@ -1530,6 +1525,47 @@ class KotlinPoetMetadataSpecsTest(
         fun staticFunction() {
         }
       }
+    }
+  }
+
+  @Test
+  fun throws() {
+    val typeSpec = Throwing::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Throwing {
+        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        var getterAndSetterThrows: kotlin.String? = null
+
+        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        val getterThrows: kotlin.String? = null
+
+        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        var setterThrows: kotlin.String? = null
+
+        @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        fun testFunction() {
+        }
+      }
+      """.trimIndent())
+  }
+
+  class Throwing @Throws(IllegalStateException::class) constructor() {
+
+    @get:Throws(IllegalStateException::class)
+    val getterThrows: String? = null
+
+    @set:Throws(IllegalStateException::class)
+    var setterThrows: String? = null
+
+    @get:Throws(IllegalStateException::class)
+    @set:Throws(IllegalStateException::class)
+    var getterAndSetterThrows: String? = null
+
+    @Throws(IllegalStateException::class)
+    fun testFunction() {
     }
   }
 }

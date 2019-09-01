@@ -56,6 +56,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -407,6 +408,9 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
+                    elementHandler.methodExceptions(jvmInternalName, getterSignature, false)?.let { exceptions ->
+                      annotations += createThrowsSpec(exceptions, UseSiteTarget.GET)
+                    }
                   }
                 }
                 if (property.hasSetter) {
@@ -447,6 +451,9 @@ private fun ImmutableKmClass.toTypeSpec(
                       )?.let { jvmNameAnnotation ->
                         annotations += jvmNameAnnotation
                       }
+                    }
+                    elementHandler.methodExceptions(jvmInternalName, setterSignature, false)?.let { exceptions ->
+                      annotations += createThrowsSpec(exceptions, UseSiteTarget.SET)
                     }
                   }
                 }
@@ -504,6 +511,9 @@ private fun ImmutableKmClass.toTypeSpec(
                   signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
                     annotations += jvmNameAnnotation
                   }
+                }
+                elementHandler.methodExceptions(jvmInternalName, signature, false)?.let { exceptions ->
+                  annotations += createThrowsSpec(exceptions)
                 }
               }
             }
@@ -877,6 +887,20 @@ private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 private val JVM_FIELD = JvmField::class.asClassName()
 private val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
+
+private fun createThrowsSpec(
+  exceptions: Set<TypeName>,
+  useSiteTarget: UseSiteTarget? = null
+): AnnotationSpec {
+  return AnnotationSpec.builder(Throws::class)
+      .addMember(
+          "exceptionClasses = %L",
+          exceptions.map { CodeBlock.of("%T::class", it) }
+              .joinToCode(prefix = "[", suffix = "]")
+      )
+      .useSiteTarget(useSiteTarget)
+      .build()
+}
 
 @PublishedApi
 internal val Element.packageName: String

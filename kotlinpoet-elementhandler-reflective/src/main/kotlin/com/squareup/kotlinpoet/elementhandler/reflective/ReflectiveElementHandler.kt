@@ -2,6 +2,8 @@ package com.squareup.kotlinpoet.elementhandler.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
@@ -176,6 +178,20 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     methodSignature: JvmMethodSignature
   ): Boolean {
     return lookupMethod(classJvmName, methodSignature)?.isSynthetic ?: false
+  }
+
+  override fun methodExceptions(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    isConstructor: Boolean
+  ): Set<TypeName>? {
+    val exceptions = lookupMethod(classJvmName, methodSignature)?.exceptionTypes
+    return if (exceptions.isNullOrEmpty()) {
+      // We have to check for empty because Kotlinc sometimes puts empty ones!
+      null
+    } else {
+      exceptions.mapTo(mutableSetOf()) { it.asTypeName() }
+    }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
