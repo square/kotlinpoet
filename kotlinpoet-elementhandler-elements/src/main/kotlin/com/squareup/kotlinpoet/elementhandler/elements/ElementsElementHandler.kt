@@ -99,14 +99,15 @@ class ElementsElementHandler private constructor(
 
   override fun fieldJvmModifiers(
     classJvmName: String,
-    fieldSignature: JvmFieldSignature
+    fieldSignature: JvmFieldSignature,
+    isJvmField: Boolean
   ): Set<JvmFieldModifier> {
     return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
       modifiers.mapNotNullTo(mutableSetOf()) {
-        when (it) {
-          ElementsModifier.TRANSIENT -> TRANSIENT
-          ElementsModifier.VOLATILE -> VOLATILE
-          ElementsModifier.STATIC -> JvmFieldModifier.STATIC
+        when {
+          it == ElementsModifier.TRANSIENT -> TRANSIENT
+          it == ElementsModifier.VOLATILE -> VOLATILE
+          !isJvmField && it == ElementsModifier.STATIC -> JvmFieldModifier.STATIC
           else -> null
         }
       }

@@ -88,9 +88,15 @@ interface ElementHandler {
    *
    * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
    * @param fieldSignature The field to look up.
+   * @param isJvmField Indicates if this field is a JvmField, in which case it should not be marked
+   *                   as JvmStatic.
    * @return the set of found modifiers.
    */
-  fun fieldJvmModifiers(classJvmName: String, fieldSignature: JvmFieldSignature): Set<JvmFieldModifier>
+  fun fieldJvmModifiers(
+    classJvmName: String,
+    fieldSignature: JvmFieldSignature,
+    isJvmField: Boolean
+  ): Set<JvmFieldModifier>
 
   /**
    * Looks up the annotations on a given class field given its [JvmFieldSignature].
