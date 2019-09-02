@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
+import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
@@ -632,9 +633,8 @@ class KotlinPoetMetadataSpecsTest(
     val parameterSpec = constructorSpec.parameters[0]
     assertThat(parameterSpec.tag<ImmutableKmValueParameter>()).isNotNull()
 
-    // TODO taggable TypeNames
-//    val typeVar = typeSpec.typeVariables[0]
-//    assertThat(typeVar.tag<ImmutableKmTypeParameter>()).isNotNull()
+    val typeVar = typeSpec.typeVariables[0]
+    assertThat(typeVar.tag<ImmutableKmTypeParameter>()).isNotNull()
 
     val funSpec = typeSpec.funSpecs[0]
     assertThat(funSpec.tag<ImmutableKmFunction>()).isNotNull()

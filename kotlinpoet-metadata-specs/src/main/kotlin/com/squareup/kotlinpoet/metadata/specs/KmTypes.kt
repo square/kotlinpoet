@@ -160,19 +160,15 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
       it
     }
   }
-  val typeVariableName = if (upperBounds.isEmpty()) {
-    TypeVariableName(
-        name = name,
-        variance = finalVariance
-    )
-  } else {
-    TypeVariableName(
-        name = name,
-        bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
-        variance = finalVariance
-    )
-  }
-  return typeVariableName.copy(reified = isReified)
+  val typeVariableName = TypeVariableName(
+      name = name,
+      bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
+      variance = finalVariance
+  )
+  return typeVariableName.copy(
+      reified = isReified,
+      tags = mapOf(ImmutableKmTypeParameter::class to this)
+  )
 }
 
 @KotlinPoetMetadataPreview
