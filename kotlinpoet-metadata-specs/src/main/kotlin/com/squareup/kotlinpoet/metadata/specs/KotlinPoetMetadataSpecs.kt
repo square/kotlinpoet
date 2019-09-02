@@ -279,9 +279,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .filterNot { it == ANY }
             .asIterable()
     )
-    val primaryConstructorSpec = primaryConstructor?.takeIf {
-      it.valueParameters.isNotEmpty() || flags.visibility != PUBLIC || it.hasAnnotations
-    }?.let {
+    val primaryConstructorSpec = primaryConstructor?.let {
       it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
           .also { spec ->
             val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
@@ -581,11 +579,19 @@ private fun ImmutableKmConstructor.annotations(
   classJvmName: String,
   elementHandler: ElementHandler?
 ): List<AnnotationSpec> {
-  return if (elementHandler != null && hasAnnotations && signature != null) {
-    elementHandler.constructorAnnotations(classJvmName, signature!!)
-  } else {
-    emptyList()
+  if (elementHandler != null) {
+    signature?.let { signature ->
+      val annotations = mutableListOf<AnnotationSpec>()
+      if (hasAnnotations) {
+        annotations += elementHandler.constructorAnnotations(classJvmName, signature)
+      }
+      elementHandler.methodExceptions(classJvmName, signature, true)?.let {
+        annotations += createThrowsSpec(it)
+      }
+      return annotations
+    }
   }
+  return emptyList()
 }
 
 private fun companionObjectName(name: String): String? {
