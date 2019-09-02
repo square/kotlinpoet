@@ -284,7 +284,7 @@ private fun ImmutableKmClass.toTypeSpec(
     }?.let {
       it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
           .also { spec ->
-            val finalSpec = if (isEnum) {
+            val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
               // Metadata specifies the constructor as private, but that's implicit so we can omit it
               spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
             } else spec
