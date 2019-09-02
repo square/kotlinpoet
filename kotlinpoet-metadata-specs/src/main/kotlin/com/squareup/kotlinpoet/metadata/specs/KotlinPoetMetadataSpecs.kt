@@ -406,9 +406,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
-                    elementHandler.methodExceptions(jvmInternalName, getterSignature, false)?.let { exceptions ->
-                      annotations += createThrowsSpec(exceptions, UseSiteTarget.GET)
-                    }
+                    elementHandler.methodExceptions(jvmInternalName, getterSignature, false)
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { exceptions ->
+                          annotations += createThrowsSpec(exceptions, UseSiteTarget.GET)
+                        }
                   }
                 }
                 if (property.hasSetter) {
@@ -450,9 +452,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
-                    elementHandler.methodExceptions(jvmInternalName, setterSignature, false)?.let { exceptions ->
-                      annotations += createThrowsSpec(exceptions, UseSiteTarget.SET)
-                    }
+                    elementHandler.methodExceptions(jvmInternalName, setterSignature, false)
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { exceptions ->
+                          annotations += createThrowsSpec(exceptions, UseSiteTarget.SET)
+                        }
                   }
                 }
               }
@@ -510,9 +514,11 @@ private fun ImmutableKmClass.toTypeSpec(
                     annotations += jvmNameAnnotation
                   }
                 }
-                elementHandler.methodExceptions(jvmInternalName, signature, false)?.let { exceptions ->
-                  annotations += createThrowsSpec(exceptions)
-                }
+                elementHandler.methodExceptions(jvmInternalName, signature, false)
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { exceptions ->
+                      annotations += createThrowsSpec(exceptions)
+                    }
               }
             }
             func.toFunSpec(functionTypeParamsResolver, annotations, isOverride)
@@ -585,9 +591,11 @@ private fun ImmutableKmConstructor.annotations(
       if (hasAnnotations) {
         annotations += elementHandler.constructorAnnotations(classJvmName, signature)
       }
-      elementHandler.methodExceptions(classJvmName, signature, true)?.let {
-        annotations += createThrowsSpec(it)
-      }
+      elementHandler.methodExceptions(classJvmName, signature, true)
+          .takeIf { it.isNotEmpty() }
+          ?.let {
+            annotations += createThrowsSpec(it)
+          }
       return annotations
     }
   }

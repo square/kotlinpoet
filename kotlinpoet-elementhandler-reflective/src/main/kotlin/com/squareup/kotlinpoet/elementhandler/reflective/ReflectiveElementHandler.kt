@@ -197,18 +197,13 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     classJvmName: String,
     methodSignature: JvmMethodSignature,
     isConstructor: Boolean
-  ): Set<TypeName>? {
+  ): Set<TypeName> {
     val exceptions = if (isConstructor) {
       lookupConstructor(classJvmName, methodSignature)?.exceptionTypes
     } else {
       lookupMethod(classJvmName, methodSignature)?.exceptionTypes
     }
-    return if (exceptions.isNullOrEmpty()) {
-      // We have to check for empty because Kotlinc sometimes puts empty ones!
-      null
-    } else {
-      exceptions.mapTo(mutableSetOf()) { it.asTypeName() }
-    }
+    return exceptions.orEmpty().mapTo(mutableSetOf()) { it.asTypeName() }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {

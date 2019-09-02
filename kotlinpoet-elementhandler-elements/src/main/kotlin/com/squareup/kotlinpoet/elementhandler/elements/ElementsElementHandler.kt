@@ -184,19 +184,14 @@ class ElementsElementHandler private constructor(
     classJvmName: String,
     methodSignature: JvmMethodSignature,
     isConstructor: Boolean
-  ): Set<TypeName>? {
+  ): Set<TypeName> {
     val elementFilter: (Iterable<Element>) -> List<ExecutableElement> = if (isConstructor) {
       ElementFilter::constructorsIn
     } else {
       ElementFilter::methodsIn
     }
     val exceptions = lookupMethod(classJvmName, methodSignature, elementFilter)?.thrownTypes
-    return if (exceptions.isNullOrEmpty()) {
-      // We have to check for empty because Kotlinc sometimes puts empty ones!
-      null
-    } else {
-      exceptions.mapTo(mutableSetOf()) { it.asTypeName() }
-    }
+    return exceptions.orEmpty().mapTo(mutableSetOf()) { it.asTypeName() }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {

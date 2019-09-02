@@ -161,13 +161,13 @@ interface ElementHandler {
    * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
    * @param methodSignature The method with annotations to look up.
    * @param isConstructor Indicates if [methodSignature] is a constructor.
-   * @return the set of found thrown types, or null.
+   * @return the set of found thrown types, or empty.
    */
   fun methodExceptions(
     classJvmName: String,
     methodSignature: JvmMethodSignature,
     isConstructor: Boolean
-  ): Set<TypeName>?
+  ): Set<TypeName>
 
   /**
    * Looks up the enum entry on a given enum given its member name.
