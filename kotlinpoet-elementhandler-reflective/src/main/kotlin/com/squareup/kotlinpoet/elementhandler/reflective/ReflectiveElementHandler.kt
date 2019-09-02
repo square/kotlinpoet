@@ -90,15 +90,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun lookupConstructor(
-      classJvmName: String,
-      constructorSignature: JvmMethodSignature
+    classJvmName: String,
+    constructorSignature: JvmMethodSignature
   ): Constructor<*>? {
     val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
     return clazz.lookupConstructor(constructorSignature)
   }
 
   private fun Class<*>.lookupConstructor(
-      constructorSignature: JvmMethodSignature
+    constructorSignature: JvmMethodSignature
   ): Constructor<*>? {
     val signatureString = constructorSignature.asString()
     return constructorCache.getOrPut(this to signatureString) {
