@@ -1367,6 +1367,171 @@ class KotlinPoetMetadataSpecsTest(
       const val constCompanionProp: String = ""
     }
   }
+
+  @IgnoreForHandlerType(
+      reason = "Synthetic constructs aren't available in elements, so some information like " +
+          "JvmStatic can't be deduced.",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun synthetics_reflective() {
+    val typeSpec = Synthetics::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Synthetics(
+        @get:kotlin.jvm.JvmSynthetic
+        val param: kotlin.String
+      ) {
+        @field:kotlin.jvm.JvmSynthetic
+        val fieldProperty: kotlin.String? = null
+
+        @field:kotlin.jvm.JvmSynthetic
+        val property: kotlin.String? = null
+
+        @get:kotlin.jvm.JvmSynthetic
+        val propertyGet: kotlin.String? = null
+
+        @get:kotlin.jvm.JvmSynthetic
+        @set:kotlin.jvm.JvmSynthetic
+        var propertyGetAndSet: kotlin.String? = null
+
+        @set:kotlin.jvm.JvmSynthetic
+        var propertySet: kotlin.String? = null
+
+        /**
+         * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+         */
+        @kotlin.jvm.JvmSynthetic
+        fun function() {
+        }
+
+        interface InterfaceWithJvmName {
+          /**
+           * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+           */
+          @kotlin.jvm.JvmSynthetic
+          fun interfaceFunction()
+
+          companion object {
+            @kotlin.jvm.JvmStatic
+            val FOO_BOOL: kotlin.Boolean = false
+
+            /**
+             * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+             */
+            @kotlin.jvm.JvmSynthetic
+            @kotlin.jvm.JvmStatic
+            fun staticFunction() {
+            }
+          }
+        }
+      }
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Synthetic constructs aren't available in elements, so some information like " +
+          "JvmStatic can't be deduced.",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun synthetics_elements() {
+    val typeSpec = Synthetics::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Synthetics(
+        @get:kotlin.jvm.JvmSynthetic
+        val param: kotlin.String
+      ) {
+        @field:kotlin.jvm.JvmSynthetic
+        val fieldProperty: kotlin.String? = null
+
+        @field:kotlin.jvm.JvmSynthetic
+        val property: kotlin.String? = null
+
+        @get:kotlin.jvm.JvmSynthetic
+        val propertyGet: kotlin.String? = null
+
+        @get:kotlin.jvm.JvmSynthetic
+        @set:kotlin.jvm.JvmSynthetic
+        var propertyGetAndSet: kotlin.String? = null
+
+        @set:kotlin.jvm.JvmSynthetic
+        var propertySet: kotlin.String? = null
+
+        /**
+         * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+         */
+        @kotlin.jvm.JvmSynthetic
+        fun function() {
+        }
+
+        interface InterfaceWithJvmName {
+          /**
+           * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+           */
+          @kotlin.jvm.JvmSynthetic
+          fun interfaceFunction()
+
+          companion object {
+            @kotlin.jvm.JvmStatic
+            val FOO_BOOL: kotlin.Boolean = false
+
+            /**
+             * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+             */
+            @kotlin.jvm.JvmSynthetic
+            fun staticFunction() {
+            }
+          }
+        }
+      }
+    """.trimIndent())
+  }
+
+  class Synthetics(
+    @get:JvmSynthetic val param: String
+  ) {
+
+    @JvmSynthetic
+    val property: String? = null
+
+    @field:JvmSynthetic
+    val fieldProperty: String? = null
+
+    @get:JvmSynthetic
+    val propertyGet: String? = null
+
+    @set:JvmSynthetic
+    var propertySet: String? = null
+
+    @set:JvmSynthetic
+    @get:JvmSynthetic
+    var propertyGetAndSet: String? = null
+
+    @JvmSynthetic
+    fun function() {
+    }
+
+    // Interfaces can have JvmSynthetic, so covering a potential edge case of having a companion
+    // object with JvmSynthetic elements. Also covers an edge case where constants have getters
+    interface InterfaceWithJvmName {
+      @JvmSynthetic
+      fun interfaceFunction()
+      companion object {
+        @JvmStatic
+        @get:JvmSynthetic
+        val FOO_BOOL = false
+
+        @JvmSynthetic
+        @JvmStatic
+        fun staticFunction() {
+        }
+      }
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {

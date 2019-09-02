@@ -326,7 +326,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     isJvmField = false
                   } else {
                     isJvmField = true
-                    annotations += AnnotationSpec.builder(JvmField::class).build()
+                    annotations += AnnotationSpec.builder(JVM_FIELD).build()
                   }
                 } else {
                   isJvmField = false
@@ -340,6 +340,16 @@ private fun ImmutableKmClass.toTypeSpec(
                     // These are copied into the parent
                     annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature, isJvmField)
                         .map { it.annotationSpec() }
+                  }
+                  if (!(isCompanionObject && (property.isConst ||
+                          annotations.any { it.className == JVM_STATIC || it.className == JVM_FIELD })) &&
+                      elementHandler.isFieldSynthetic(jvmInternalName, fieldSignature)) {
+                    // For static, const, or JvmField fields in a companion object, the companion
+                    // object's field is marked as synthetic to hide it from Java, but in this case
+                    // it's a false positive for this check in kotlin.
+                    annotations += AnnotationSpec.builder(JVM_SYNTHETIC)
+                        .useSiteTarget(UseSiteTarget.FIELD)
+                        .build()
                   }
                   if (property.hasConstant) {
                     constant = if (isCompanionObject && parentName != null) {
@@ -369,6 +379,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         .map {
                           it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.GET).build()
                         }
+                    if (elementHandler.isMethodSynthetic(jvmInternalName, getterSignature)) {
+                      annotations += AnnotationSpec.builder(JvmSynthetic::class)
+                          .useSiteTarget(UseSiteTarget.GET)
+                          .build()
+                    }
                     if (isCompanionObject && parentName != null) {
                       // These are copied into the parent
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
@@ -409,6 +424,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         .map {
                           it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.SET).build()
                         }
+                    if (elementHandler.isMethodSynthetic(jvmInternalName, setterSignature)) {
+                      annotations += AnnotationSpec.builder(JvmSynthetic::class)
+                          .useSiteTarget(UseSiteTarget.SET)
+                          .build()
+                    }
                     if (isCompanionObject && parentName != null) {
                       // These are copied into the parent
                       annotations += elementHandler.methodJvmModifiers(jvmInternalName,
@@ -465,8 +485,13 @@ private fun ImmutableKmClass.toTypeSpec(
                 fallback = classTypeParamsResolver)
             val annotations = LinkedHashSet<AnnotationSpec>()
             var isOverride = false
+            var isSynthetic = false
             if (elementHandler != null) {
               func.signature?.let { signature ->
+                isSynthetic = elementHandler.isMethodSynthetic(jvmInternalName, signature)
+                if (isSynthetic) {
+                  annotations += AnnotationSpec.builder(JvmSynthetic::class).build()
+                }
                 if (func.hasAnnotations) {
                   annotations += elementHandler.methodAnnotations(jvmInternalName, signature)
                 }
@@ -482,33 +507,38 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
               }
             }
-            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride).let {
-              // For interface methods, remove any body and mark the methods as abstract
-              fun isKotlinDefaultInterfaceMethod(): Boolean {
-                elementHandler?.let { handler ->
-                  func.signature?.let { signature ->
-                    val suffix = signature.desc.removePrefix("(")
-                    return handler.methodExists(
-                        "${jvmInternalName}\$DefaultImpls",
-                        signature.copy(
-                            desc = "(L$jvmInternalName;$suffix"
-                    ))
+            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride)
+                .toBuilder()
+                .apply {
+                  // For interface methods, remove any body and mark the methods as abstract
+                  fun isKotlinDefaultInterfaceMethod(): Boolean {
+                    elementHandler?.let { handler ->
+                      func.signature?.let { signature ->
+                        val suffix = signature.desc.removePrefix("(")
+                        return handler.methodExists(
+                            "${jvmInternalName}\$DefaultImpls",
+                            signature.copy(
+                                desc = "(L$jvmInternalName;$suffix"
+                            ))
+                      }
+                    }
+                    return false
+                  }
+                  // For interface methods, remove any body and mark the methods as abstract
+                  // IFF it doesn't have a default interface body.
+                  if (isInterface &&
+                      annotations.none { it.className == JVM_DEFAULT } &&
+                      !isKotlinDefaultInterfaceMethod()
+                  ) {
+                    addModifiers(ABSTRACT)
+                    clearBody()
+                  }
+                  if (isSynthetic) {
+                    addKdoc("Note: Since this is a synthetic function, some JVM information " +
+                        "(annotations, modifiers) may be missing.")
                   }
                 }
-                return false
-              }
-              if (isInterface &&
-                  annotations.none { it.className == JVM_DEFAULT } &&
-                  !isKotlinDefaultInterfaceMethod()
-              ) {
-                it.toBuilder()
-                    .addModifiers(ABSTRACT)
-                    .clearBody()
-                    .build()
-              } else {
-                it
-              }
-            }
+                .build()
           }
           .asIterable()
   )
@@ -845,6 +875,8 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
+private val JVM_FIELD = JvmField::class.asClassName()
+private val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
 
 @PublishedApi
 internal val Element.packageName: String

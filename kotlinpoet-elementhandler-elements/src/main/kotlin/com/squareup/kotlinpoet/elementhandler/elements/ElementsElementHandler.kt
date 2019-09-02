@@ -125,6 +125,12 @@ class ElementsElementHandler private constructor(
         .filterOutNullabilityAnnotations()
   }
 
+  override fun isFieldSynthetic(classJvmName: String, fieldSignature: JvmFieldSignature): Boolean {
+    // Elements can't see synthetic methods since they don't exist yet, so their absence here
+    // makes them implicitly synthetic
+    return lookupField(classJvmName, fieldSignature) == null
+  }
+
   override fun methodJvmModifiers(
     classJvmName: String,
     methodSignature: JvmMethodSignature
@@ -163,6 +169,15 @@ class ElementsElementHandler private constructor(
         .filterOutNullabilityAnnotations()
   }
 
+  override fun isMethodSynthetic(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature
+  ): Boolean {
+    // Elements can't see synthetic methods since they don't exist yet, so their absence here
+    // makes them implicitly synthetic
+    return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn) == null
+  }
+
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
     return lookupTypeElement(enumClassJvmName)?.let { enumType ->
       val enumTypeAsType = enumType.asType()
@@ -190,6 +205,9 @@ class ElementsElementHandler private constructor(
     classJvmName: String,
     methodSignature: JvmMethodSignature
   ): Boolean {
+    if (isMethodSynthetic(classJvmName, methodSignature)) {
+      return false
+    }
     val typeElement = lookupTypeElement(classJvmName)
         ?: error("No type element found for: $classJvmName.")
     val method = typeElement.lookupMethod(methodSignature, ElementFilter::methodsIn)
@@ -202,7 +220,7 @@ class ElementsElementHandler private constructor(
   }
 
   /**
-   * Detects whether [this] given method is overriden in [type].
+   * Detects whether [this] given method is overridden in [type].
    *
    * Adapted and simplified from AutoCommon's private
    * [MoreElements.getLocalAndInheritedMethods] methods implementations for detecting
