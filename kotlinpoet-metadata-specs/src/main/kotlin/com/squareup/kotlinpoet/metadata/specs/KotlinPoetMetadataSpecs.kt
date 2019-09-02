@@ -250,8 +250,6 @@ private fun ImmutableKmClass.toTypeSpec(
     }
     if (isInline) {
       builder.addModifiers(INLINE)
-      // TODO these are special.
-      //  - Name is the fqcn
     }
     if (isInner) {
       builder.addModifiers(INNER)
@@ -556,9 +554,6 @@ private fun ImmutableKmFunction.toFunSpec(
         if (isOverride) {
           addModifiers(KModifier.OVERRIDE)
         }
-        if (isSynthesized) {
-          addAnnotation(JvmSynthetic::class)
-        }
         if (isOperator) {
           addModifiers(OPERATOR)
         }
@@ -813,7 +808,6 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
 }
 
-private val OVERRIDE = Override::class.asClassName()
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 
