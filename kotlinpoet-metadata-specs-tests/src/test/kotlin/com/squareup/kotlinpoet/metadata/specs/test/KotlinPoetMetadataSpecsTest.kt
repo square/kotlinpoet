@@ -1534,7 +1534,7 @@ class KotlinPoetMetadataSpecsTest(
 
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class Throwing {
+      class Throwing @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class]) constructor() {
         @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         var getterAndSetterThrows: kotlin.String? = null
