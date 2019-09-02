@@ -77,6 +77,7 @@ import com.squareup.kotlinpoet.metadata.hasGetter
 import com.squareup.kotlinpoet.metadata.hasSetter
 import com.squareup.kotlinpoet.metadata.isAbstract
 import com.squareup.kotlinpoet.metadata.isAnnotation
+import com.squareup.kotlinpoet.metadata.isClass
 import com.squareup.kotlinpoet.metadata.isCompanionObject
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isCrossInline
@@ -279,22 +280,25 @@ private fun ImmutableKmClass.toTypeSpec(
             .filterNot { it == ANY }
             .asIterable()
     )
-    val primaryConstructorSpec = primaryConstructor?.let {
-      it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
-          .also { spec ->
-            val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
-              // Metadata specifies the constructor as private, but that's implicit so we can omit it
-              spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
-            } else spec
-            builder.primaryConstructor(finalSpec)
-          }
-    }
-    constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-      builder.addFunctions(secondaryConstructors.map {
+    val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
+    if (isClass || isAnnotation || isEnum) {
+      primaryConstructor?.let {
         it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
-      })
+            .also { spec ->
+              val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
+                // Metadata specifies the constructor as private, but that's implicit so we can omit it
+                spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
+              } else spec
+              builder.primaryConstructor(finalSpec)
+              primaryConstructorParams.putAll(spec.parameters.associateBy { it.name })
+            }
+      }
+      constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
+        builder.addFunctions(secondaryConstructors.map {
+          it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+        })
+      }
     }
-    val primaryConstructorParams = primaryConstructorSpec?.parameters.orEmpty().associateBy { it.name }
     builder.addProperties(
         properties
             .asSequence()
