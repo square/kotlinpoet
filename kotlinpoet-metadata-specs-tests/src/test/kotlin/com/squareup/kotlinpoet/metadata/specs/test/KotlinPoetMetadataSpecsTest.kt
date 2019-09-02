@@ -1357,7 +1357,7 @@ class KotlinPoetMetadataSpecsTest(
   }
 
   class Fields(
-      @JvmField val param1: String
+    @JvmField val param1: String
   ) {
     @JvmField val fieldProp: String = ""
 
