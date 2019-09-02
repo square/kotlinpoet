@@ -326,7 +326,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     isJvmField = false
                   } else {
                     isJvmField = true
-                    annotations += AnnotationSpec.builder(JvmField::class).build()
+                    annotations += AnnotationSpec.builder(JVM_FIELD).build()
                   }
                 } else {
                   isJvmField = false
@@ -341,13 +341,13 @@ private fun ImmutableKmClass.toTypeSpec(
                     annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature, isJvmField)
                         .map { it.annotationSpec() }
                   }
-                  if (!(isCompanionObject &&
-                          (property.isConst || annotations.any { it.className == JVM_STATIC })) &&
+                  if (!(isCompanionObject && (property.isConst ||
+                          annotations.any { it.className == JVM_STATIC || it.className == JVM_FIELD })) &&
                       elementHandler.isFieldSynthetic(jvmInternalName, fieldSignature)) {
-                    // For static or const fields in a companion object, the companion object's
-                    // field is marked as synthetic to hide it from Java, but in this case it's a
-                    // false positive for this check in kotlin.
-                    annotations += AnnotationSpec.builder(JvmSynthetic::class)
+                    // For static, const, or JvmField fields in a companion object, the companion
+                    // object's field is marked as synthetic to hide it from Java, but in this case
+                    // it's a false positive for this check in kotlin.
+                    annotations += AnnotationSpec.builder(JVM_SYNTHETIC)
                         .useSiteTarget(UseSiteTarget.FIELD)
                         .build()
                   }
@@ -875,6 +875,8 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
+private val JVM_FIELD = JvmField::class.asClassName()
+private val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
 
 @PublishedApi
 internal val Element.packageName: String
