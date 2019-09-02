@@ -740,7 +740,7 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q :
+        |class Location<P, Q> : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q :
         |    Comparable {
         |  val x: P
         |
@@ -3342,7 +3342,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
+        |class StringToInteger : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
         |    Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
         |""".trimMargin()
 
