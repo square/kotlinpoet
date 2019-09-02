@@ -89,6 +89,26 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }.nullableValue
   }
 
+  private fun lookupConstructor(
+      classJvmName: String,
+      constructorSignature: JvmMethodSignature
+  ): Constructor<*>? {
+    val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+    return clazz.lookupConstructor(constructorSignature)
+  }
+
+  private fun Class<*>.lookupConstructor(
+      constructorSignature: JvmMethodSignature
+  ): Constructor<*>? {
+    val signatureString = constructorSignature.asString()
+    return constructorCache.getOrPut(this to signatureString) {
+      declaredConstructors
+          .asSequence()
+          .onEach { it.isAccessible = true }
+          .find { signatureString == it.jvmMethodSignature }.toOptional()
+    }.nullableValue
+  }
+
   override fun fieldJvmModifiers(
     classJvmName: String,
     fieldSignature: JvmFieldSignature,
@@ -127,15 +147,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     classJvmName: String,
     constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
-    val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
-    val signatureString = constructorSignature.asString()
-    val constructor = constructorCache.getOrPut(clazz to signatureString) {
-      clazz.declaredConstructors
-          .asSequence()
-          .onEach { it.isAccessible = true }
-          .find { signatureString == it.jvmMethodSignature }.toOptional()
-    }.nullableValue
-    return constructor?.declaredAnnotations.orEmpty()
+    return lookupConstructor(classJvmName, constructorSignature)
+        ?.declaredAnnotations.orEmpty()
         .map { AnnotationSpec.get(it, true) }
         .filterOutNullabilityAnnotations()
   }
@@ -185,7 +198,11 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     methodSignature: JvmMethodSignature,
     isConstructor: Boolean
   ): Set<TypeName>? {
-    val exceptions = lookupMethod(classJvmName, methodSignature)?.exceptionTypes
+    val exceptions = if (isConstructor) {
+      lookupConstructor(classJvmName, methodSignature)?.exceptionTypes
+    } else {
+      lookupMethod(classJvmName, methodSignature)?.exceptionTypes
+    }
     return if (exceptions.isNullOrEmpty()) {
       // We have to check for empty because Kotlinc sometimes puts empty ones!
       null
