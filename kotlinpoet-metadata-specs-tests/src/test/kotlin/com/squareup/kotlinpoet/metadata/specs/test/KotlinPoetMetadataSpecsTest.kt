@@ -1312,10 +1312,13 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         @kotlin.jvm.JvmField
         val fieldProp: kotlin.String = TODO("Stub!")
+
         companion object {
           @kotlin.jvm.JvmField
           val companionProp: kotlin.String = ""
+
           const val constCompanionProp: kotlin.String = ""
+
           @kotlin.jvm.JvmStatic
           val staticCompanionProp: kotlin.String = ""
         }
@@ -1339,10 +1342,13 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         @field:kotlin.jvm.JvmField
         val fieldProp: kotlin.String = ""
+
         companion object {
           @kotlin.jvm.JvmField
           val companionProp: kotlin.String = ""
+
           const val constCompanionProp: kotlin.String = ""
+
           @kotlin.jvm.JvmStatic
           val staticCompanionProp: kotlin.String = ""
         }
