@@ -463,9 +463,24 @@ private fun ImmutableKmClass.toTypeSpec(
               }
             }
             func.toFunSpec(functionTypeParamsResolver, annotations, isOverride).let {
-              // For interface methods, remove any body and mark the methods as abstracte
-              // TODO kotlin interface methods _can_ be implemented. How do we detect that?
-              if (isInterface && annotations.none { it.className == JVM_DEFAULT }) {
+              // For interface methods, remove any body and mark the methods as abstract
+              fun isKotlinDefaultInterfaceMethod(): Boolean {
+                elementHandler?.let { handler ->
+                  func.signature?.let { signature ->
+                    val suffix = signature.desc.removePrefix("(")
+                    return handler.methodExists(
+                        "${jvmInternalName}\$DefaultImpls",
+                        signature.copy(
+                            desc = "(L$jvmInternalName;$suffix"
+                    ))
+                  }
+                }
+                return false
+              }
+              if (isInterface &&
+                  annotations.none { it.className == JVM_DEFAULT } &&
+                  !isKotlinDefaultInterfaceMethod()
+              ) {
                 it.toBuilder()
                     .addModifiers(ABSTRACT)
                     .clearBody()

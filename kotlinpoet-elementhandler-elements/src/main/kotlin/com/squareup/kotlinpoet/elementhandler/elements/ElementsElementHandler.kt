@@ -196,6 +196,10 @@ class ElementsElementHandler private constructor(
     return method.isOverriddenIn(typeElement)
   }
 
+  override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
+    return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn) != null
+  }
+
   /**
    * Detects whether [this] given method is overriden in [type].
    *

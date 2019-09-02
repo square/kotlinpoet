@@ -224,6 +224,10 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .any { it == signatureString }
   }
 
+  override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
+    return lookupClass(classJvmName)?.lookupMethod(methodSignature) != null
+  }
+
   companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
@@ -288,7 +292,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     private val Method.descriptor: String get() {
       return buildString {
         append('(')
-        parameterTypes.joinTo(this, transform = { it.descriptor })
+        parameterTypes.joinTo(this, separator = "", transform = { it.descriptor })
         append(')')
         append(returnType.descriptor)
       }
@@ -306,7 +310,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     private val Constructor<*>.descriptor: String get() {
       return buildString {
         append('(')
-        parameterTypes.joinTo(this, transform = { it.descriptor })
+        parameterTypes.joinTo(this, separator = "", transform = { it.descriptor })
         append(')')
         append('V')
       }
