@@ -56,6 +56,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -76,6 +77,7 @@ import com.squareup.kotlinpoet.metadata.hasGetter
 import com.squareup.kotlinpoet.metadata.hasSetter
 import com.squareup.kotlinpoet.metadata.isAbstract
 import com.squareup.kotlinpoet.metadata.isAnnotation
+import com.squareup.kotlinpoet.metadata.isClass
 import com.squareup.kotlinpoet.metadata.isCompanionObject
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isCrossInline
@@ -278,24 +280,25 @@ private fun ImmutableKmClass.toTypeSpec(
             .filterNot { it == ANY }
             .asIterable()
     )
-    val primaryConstructorSpec = primaryConstructor?.takeIf {
-      it.valueParameters.isNotEmpty() || flags.visibility != PUBLIC || it.hasAnnotations
-    }?.let {
-      it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
-          .also { spec ->
-            val finalSpec = if (isEnum) {
-              // Metadata specifies the constructor as private, but that's implicit so we can omit it
-              spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
-            } else spec
-            builder.primaryConstructor(finalSpec)
-          }
-    }
-    constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-      builder.addFunctions(secondaryConstructors.map {
+    val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
+    if (isClass || isAnnotation || isEnum) {
+      primaryConstructor?.let {
         it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
-      })
+            .also { spec ->
+              val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
+                // Metadata specifies the constructor as private, but that's implicit so we can omit it
+                spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
+              } else spec
+              builder.primaryConstructor(finalSpec)
+              primaryConstructorParams.putAll(spec.parameters.associateBy { it.name })
+            }
+      }
+      constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
+        builder.addFunctions(secondaryConstructors.map {
+          it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+        })
+      }
     }
-    val primaryConstructorParams = primaryConstructorSpec?.parameters.orEmpty().associateBy { it.name }
     builder.addProperties(
         properties
             .asSequence()
@@ -407,6 +410,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
+                    elementHandler.methodExceptions(jvmInternalName, getterSignature, false)
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { exceptions ->
+                          annotations += createThrowsSpec(exceptions, UseSiteTarget.GET)
+                        }
                   }
                 }
                 if (property.hasSetter) {
@@ -448,6 +456,11 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
+                    elementHandler.methodExceptions(jvmInternalName, setterSignature, false)
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { exceptions ->
+                          annotations += createThrowsSpec(exceptions, UseSiteTarget.SET)
+                        }
                   }
                 }
               }
@@ -505,6 +518,11 @@ private fun ImmutableKmClass.toTypeSpec(
                     annotations += jvmNameAnnotation
                   }
                 }
+                elementHandler.methodExceptions(jvmInternalName, signature, false)
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { exceptions ->
+                      annotations += createThrowsSpec(exceptions)
+                    }
               }
             }
             func.toFunSpec(functionTypeParamsResolver, annotations, isOverride)
@@ -571,11 +589,21 @@ private fun ImmutableKmConstructor.annotations(
   classJvmName: String,
   elementHandler: ElementHandler?
 ): List<AnnotationSpec> {
-  return if (elementHandler != null && hasAnnotations && signature != null) {
-    elementHandler.constructorAnnotations(classJvmName, signature!!)
-  } else {
-    emptyList()
+  if (elementHandler != null) {
+    signature?.let { signature ->
+      val annotations = mutableListOf<AnnotationSpec>()
+      if (hasAnnotations) {
+        annotations += elementHandler.constructorAnnotations(classJvmName, signature)
+      }
+      elementHandler.methodExceptions(classJvmName, signature, true)
+          .takeIf { it.isNotEmpty() }
+          ?.let {
+            annotations += createThrowsSpec(it)
+          }
+      return annotations
+    }
   }
+  return emptyList()
 }
 
 private fun companionObjectName(name: String): String? {
@@ -877,6 +905,20 @@ private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 private val JVM_FIELD = JvmField::class.asClassName()
 private val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
+
+private fun createThrowsSpec(
+  exceptions: Set<TypeName>,
+  useSiteTarget: UseSiteTarget? = null
+): AnnotationSpec {
+  return AnnotationSpec.builder(Throws::class)
+      .addMember(
+          "exceptionClasses = %L",
+          exceptions.map { CodeBlock.of("%T::class", it) }
+              .joinToCode(prefix = "[", suffix = "]")
+      )
+      .useSiteTarget(useSiteTarget)
+      .build()
+}
 
 @PublishedApi
 internal val Element.packageName: String

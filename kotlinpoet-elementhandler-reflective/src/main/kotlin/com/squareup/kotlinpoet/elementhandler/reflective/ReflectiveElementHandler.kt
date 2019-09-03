@@ -2,6 +2,8 @@ package com.squareup.kotlinpoet.elementhandler.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
@@ -87,6 +89,26 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }.nullableValue
   }
 
+  private fun lookupConstructor(
+    classJvmName: String,
+    constructorSignature: JvmMethodSignature
+  ): Constructor<*>? {
+    val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+    return clazz.lookupConstructor(constructorSignature)
+  }
+
+  private fun Class<*>.lookupConstructor(
+    constructorSignature: JvmMethodSignature
+  ): Constructor<*>? {
+    val signatureString = constructorSignature.asString()
+    return constructorCache.getOrPut(this to signatureString) {
+      declaredConstructors
+          .asSequence()
+          .onEach { it.isAccessible = true }
+          .find { signatureString == it.jvmMethodSignature }.toOptional()
+    }.nullableValue
+  }
+
   override fun fieldJvmModifiers(
     classJvmName: String,
     fieldSignature: JvmFieldSignature,
@@ -125,15 +147,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     classJvmName: String,
     constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
-    val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
-    val signatureString = constructorSignature.asString()
-    val constructor = constructorCache.getOrPut(clazz to signatureString) {
-      clazz.declaredConstructors
-          .asSequence()
-          .onEach { it.isAccessible = true }
-          .find { signatureString == it.jvmMethodSignature }.toOptional()
-    }.nullableValue
-    return constructor?.declaredAnnotations.orEmpty()
+    return lookupConstructor(classJvmName, constructorSignature)
+        ?.declaredAnnotations.orEmpty()
         .map { AnnotationSpec.get(it, true) }
         .filterOutNullabilityAnnotations()
   }
@@ -176,6 +191,19 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     methodSignature: JvmMethodSignature
   ): Boolean {
     return lookupMethod(classJvmName, methodSignature)?.isSynthetic ?: false
+  }
+
+  override fun methodExceptions(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    isConstructor: Boolean
+  ): Set<TypeName> {
+    val exceptions = if (isConstructor) {
+      lookupConstructor(classJvmName, methodSignature)?.exceptionTypes
+    } else {
+      lookupMethod(classJvmName, methodSignature)?.exceptionTypes
+    }
+    return exceptions.orEmpty().mapTo(mutableSetOf()) { it.asTypeName() }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {

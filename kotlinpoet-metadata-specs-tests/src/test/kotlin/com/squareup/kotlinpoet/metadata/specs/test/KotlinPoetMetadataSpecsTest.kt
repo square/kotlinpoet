@@ -1520,6 +1520,7 @@ class KotlinPoetMetadataSpecsTest(
     interface InterfaceWithJvmName {
       @JvmSynthetic
       fun interfaceFunction()
+
       companion object {
         @JvmStatic
         @get:JvmSynthetic
@@ -1530,6 +1531,47 @@ class KotlinPoetMetadataSpecsTest(
         fun staticFunction() {
         }
       }
+    }
+  }
+
+  @Test
+  fun throws() {
+    val typeSpec = Throwing::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Throwing @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class]) constructor() {
+        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        var getterAndSetterThrows: kotlin.String? = null
+
+        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        val getterThrows: kotlin.String? = null
+
+        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        var setterThrows: kotlin.String? = null
+
+        @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        fun testFunction() {
+        }
+      }
+      """.trimIndent())
+  }
+
+  class Throwing @Throws(IllegalStateException::class) constructor() {
+
+    @get:Throws(IllegalStateException::class)
+    val getterThrows: String? = null
+
+    @set:Throws(IllegalStateException::class)
+    var setterThrows: String? = null
+
+    @get:Throws(IllegalStateException::class)
+    @set:Throws(IllegalStateException::class)
+    var getterAndSetterThrows: String? = null
+
+    @Throws(IllegalStateException::class)
+    fun testFunction() {
     }
   }
 }
