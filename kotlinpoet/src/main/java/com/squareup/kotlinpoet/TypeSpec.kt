@@ -473,7 +473,7 @@ class TypeSpec private constructor(
 
     fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
       check(kind == Kind.CLASS) {
-        "$kind can't have initializer blocks"
+        "$kind can't have a primary constructor"
       }
       if (primaryConstructor != null) {
         require(primaryConstructor.isConstructor) {
