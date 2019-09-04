@@ -209,11 +209,11 @@ private fun ImmutableKmClass.toTypeSpec(
   // Top-level: package/of/class/MyClass
   // Nested A:  package/of/class/MyClass.InnerClass
   // Nested B:  package/of/class/MyClass$InnerClass
-  val simpleName = name.substringAfterLast(charArrayOf(
+  val simpleName = name.substringAfterLast(
       '/', // Drop the package name, e.g. "package/of/class/"
       '.', // Drop any enclosing classes, e.g. "MyClass."
       '$'  // Drop any enclosing classes, e.g. "MyClass$"
-  ))
+  )
   val jvmInternalName = name.jvmInternalName
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -927,7 +927,7 @@ private fun createThrowsSpec(
       .build()
 }
 
-private fun String.substringAfterLast(delimiters: CharArray): String {
+private fun String.substringAfterLast(vararg delimiters: Char): String {
   val index = lastIndexOfAny(delimiters)
   return if (index == -1) this else substring(index + 1, length)
 }
