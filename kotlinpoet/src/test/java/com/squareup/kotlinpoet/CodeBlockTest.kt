@@ -473,4 +473,22 @@ class CodeBlockTest {
 
     assertThat(blockBuilder.build().toString()).isEmpty()
   }
+
+  @Test fun testLiterals() {
+    assertThat(CodeBlock.of("%L", 1.99f.literal).toString()).isEqualTo("1.99f")
+    assertThat(CodeBlock.of("%L", 1.0f.literal).toString()).isEqualTo("1.0f")
+    assertThat(CodeBlock.of("%L", 1.00f.literal).toString()).isEqualTo("1.0f")
+    assertThat(CodeBlock.of("%L", 1.0000001f.literal).toString()).isEqualTo("1.0000001f")
+
+    // IDE should warn this, floating point literals lose precision after a certain point
+    assertThat(CodeBlock.of("%L", 1.00000001f.literal).toString()).isEqualTo("1.0f")
+  }
+
+  private val Float.literal: CodeLiteral
+    get() {
+      val v = this
+      return object : CodeLiteral {
+        override fun toCodeBlock() = CodeBlock.of("%Lf", v)
+      }
+    }
 }

@@ -361,6 +361,7 @@ internal class CodeWriter constructor(
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
       is PropertySpec -> o.emit(this, emptySet())
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
+      is CodeLiteral -> emitCode(o.toCodeBlock(), isConstantContext = isConstantContext)
       else -> emit(o.toString())
     }
   }
