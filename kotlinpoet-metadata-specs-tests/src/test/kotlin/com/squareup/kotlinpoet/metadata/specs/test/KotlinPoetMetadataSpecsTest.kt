@@ -1611,7 +1611,7 @@ class KotlinPoetMetadataSpecsTest(
       class ClassNesting {
         class NestedClass {
           class SuperNestedClass {
-            class SuperDuperNestedClass
+            inner class SuperDuperInnerClass
           }
         }
       }
@@ -1622,7 +1622,7 @@ class KotlinPoetMetadataSpecsTest(
 class ClassNesting {
   class NestedClass {
     class SuperNestedClass {
-      class SuperDuperNestedClass
+      inner class SuperDuperInnerClass
     }
   }
 }

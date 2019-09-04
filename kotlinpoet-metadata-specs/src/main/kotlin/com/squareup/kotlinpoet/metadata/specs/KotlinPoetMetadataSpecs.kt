@@ -206,8 +206,9 @@ private fun ImmutableKmClass.toTypeSpec(
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
 
-  // package/of/class/MyClass.InnerClass
-  // Sometimes it's package/of/class/MyClass$InnerClass
+  // Top-level: package/of/class/MyClass
+  // Nested A:  package/of/class/MyClass.InnerClass
+  // Nested B:  package/of/class/MyClass$InnerClass
   val simpleName = name.substringAfterLast(charArrayOf(
       '/', // Drop the package name, e.g. "package/of/class/"
       '.', // Drop any enclosing classes, e.g. "MyClass."
