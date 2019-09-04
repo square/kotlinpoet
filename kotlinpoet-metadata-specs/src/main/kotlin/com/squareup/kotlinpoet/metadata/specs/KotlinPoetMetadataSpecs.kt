@@ -206,7 +206,10 @@ private fun ImmutableKmClass.toTypeSpec(
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
 
-  val simpleName = name.substringAfterLast(if (isInline) "/" else ".")
+  // package/of/class/MyClass.InnerClass
+  val simpleName = name
+      .substringAfterLast("/") // Drop the package name, e.g. "package/of/class/"
+      .substringAfter(".") // Drop any enclosing classes, e.g. "MyClass."
   val jvmInternalName = name.jvmInternalName
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
