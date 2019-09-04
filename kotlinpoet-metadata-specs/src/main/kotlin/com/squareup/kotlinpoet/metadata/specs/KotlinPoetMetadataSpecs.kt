@@ -212,7 +212,7 @@ private fun ImmutableKmClass.toTypeSpec(
   val simpleName = name.substringAfterLast(
       '/', // Drop the package name, e.g. "package/of/class/"
       '.', // Drop any enclosing classes, e.g. "MyClass."
-      '$'  // Drop any enclosing classes, e.g. "MyClass$"
+      '$' // Drop any enclosing classes, e.g. "MyClass$"
   )
   val jvmInternalName = name.jvmInternalName
   val builder = when {
