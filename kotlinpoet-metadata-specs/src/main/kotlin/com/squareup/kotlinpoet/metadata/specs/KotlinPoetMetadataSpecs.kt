@@ -208,10 +208,11 @@ private fun ImmutableKmClass.toTypeSpec(
 
   // package/of/class/MyClass.InnerClass
   // Sometimes it's package/of/class/MyClass$InnerClass
-  val simpleName = name
-      .substringAfterLast("/") // Drop the package name, e.g. "package/of/class/"
-      .substringAfterLast(".") // Drop any enclosing classes, e.g. "MyClass."
-      .substringAfterLast("$") // Drop any enclosing classes, e.g. "MyClass$"
+  val simpleName = name.substringAfterLast(charArrayOf(
+      '/', // Drop the package name, e.g. "package/of/class/"
+      '.', // Drop any enclosing classes, e.g. "MyClass."
+      '$'  // Drop any enclosing classes, e.g. "MyClass$"
+  ))
   val jvmInternalName = name.jvmInternalName
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -923,6 +924,11 @@ private fun createThrowsSpec(
       )
       .useSiteTarget(useSiteTarget)
       .build()
+}
+
+private fun String.substringAfterLast(delimiters: CharArray): String {
+  val index = lastIndexOfAny(delimiters)
+  return if (index == -1) this else substring(index + 1, length)
 }
 
 @PublishedApi
