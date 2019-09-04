@@ -1601,6 +1601,30 @@ class KotlinPoetMetadataSpecsTest(
       )
       """.trimIndent())
   }
+
+  @Test
+  fun classNamesAndNesting() {
+    // Make sure we parse class names correctly at all levels
+    val typeSpec = ClassNesting::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ClassNesting {
+        class NestedClass {
+          class SuperNestedClass {
+            class SuperDuperNestedClass
+          }
+        }
+      }
+      """.trimIndent())
+  }
+}
+
+class ClassNesting {
+  class NestedClass {
+    class SuperNestedClass {
+      class SuperDuperNestedClass
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
