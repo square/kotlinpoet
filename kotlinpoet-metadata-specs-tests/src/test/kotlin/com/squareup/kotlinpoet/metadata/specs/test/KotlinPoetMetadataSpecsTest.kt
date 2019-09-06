@@ -1574,6 +1574,57 @@ class KotlinPoetMetadataSpecsTest(
     fun testFunction() {
     }
   }
+
+  // The meta-ist of metadata meta-tests.
+  @Test
+  fun metaTest() {
+    val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      annotation class Metadata(
+        @get:kotlin.jvm.JvmName(name = "k")
+        val kind: kotlin.Int = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "mv")
+        val metadataVersion: kotlin.IntArray = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "bv")
+        val bytecodeVersion: kotlin.IntArray = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "d1")
+        val data1: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "d2")
+        val data2: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "xs")
+        val extraString: kotlin.String = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "pn")
+        val packageName: kotlin.String = TODO("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "xi")
+        val extraInt: kotlin.Int = TODO("Stub!")
+      )
+      """.trimIndent())
+  }
+
+  @Test
+  fun classNamesAndNesting() {
+    // Make sure we parse class names correctly at all levels
+    val typeSpec = ClassNesting::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ClassNesting {
+        class NestedClass {
+          class SuperNestedClass {
+            inner class SuperDuperInnerClass
+          }
+        }
+      }
+      """.trimIndent())
+  }
+}
+
+class ClassNesting {
+  class NestedClass {
+    class SuperNestedClass {
+      inner class SuperDuperInnerClass
+    }
+  }
 }
 
 private fun TypeSpec.trimmedToString(): String {
