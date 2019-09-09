@@ -721,11 +721,21 @@ private fun ImmutableKmProperty.toPropertySpec(
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   return PropertySpec.builder(name, returnTypeName)
       .apply {
-        val finalAnnotations = if (isConst) {
-          annotations.filterNot { it.className == JVM_STATIC }
-        } else {
-          annotations
-        }
+        // If a property annotation doesn't have a custom site target and is used in a constructor
+        // we have to add the property: site target to it.
+        val finalAnnotations = annotations
+            .filterNot { isConst && it.className == JVM_STATIC }
+            .map {
+              if (isConstructorParam && it.useSiteTarget == null) {
+                // TODO Ideally don't do this if the annotation use site is only field?
+                //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
+                //  automatically applied to the property for these annotation types.
+                //  his is another thing ElementHandler *could* tell us
+                it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
+              } else {
+                it
+              }
+            }
         addAnnotations(finalAnnotations)
         addVisibility { addModifiers(it) }
         addModifiers(flags.modalities

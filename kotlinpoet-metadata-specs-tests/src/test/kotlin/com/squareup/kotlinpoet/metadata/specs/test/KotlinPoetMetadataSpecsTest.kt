@@ -1307,7 +1307,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Fields(
-        @kotlin.jvm.JvmField
+        @property:kotlin.jvm.JvmField
         val param1: kotlin.String
       ) {
         @kotlin.jvm.JvmField
