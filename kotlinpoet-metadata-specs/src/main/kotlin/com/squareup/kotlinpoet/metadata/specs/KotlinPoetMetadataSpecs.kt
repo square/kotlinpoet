@@ -618,6 +618,21 @@ private fun companionObjectName(name: String): String? {
 }
 
 @KotlinPoetMetadataPreview
+private fun ImmutableKmValueParameter.extractAnnotations(
+  elementHandler: ElementHandler?,
+  classJvmName: String,
+  jvmMethodSignature: JvmMethodSignature?,
+  index: Int,
+  isConstructorParam: Boolean
+): List<AnnotationSpec> {
+  return if (hasAnnotations && elementHandler != null && jvmMethodSignature != null) {
+    elementHandler.parameterAnnotations(classJvmName, jvmMethodSignature, index, isConstructorParam)
+  } else {
+    emptyList()
+  }
+}
+
+@KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: List<AnnotationSpec>
