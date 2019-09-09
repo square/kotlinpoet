@@ -146,6 +146,23 @@ interface ElementHandler {
   fun methodAnnotations(classJvmName: String, methodSignature: JvmMethodSignature): List<AnnotationSpec>
 
   /**
+   * Looks up the annotations on a given parameter given a [JvmMethodSignature] at [index].
+   *
+   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param methodSignature The method with annotations to look up.
+   * @param index The parameter index.
+   * @param isConstructor Indicates if [methodSignature] is a constructor
+   * @return the [AnnotationSpec] representations of the annotations on the target parameter or
+   *         empty.
+   */
+  fun parameterAnnotations(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    index: Int,
+    isConstructor: Boolean
+  ): List<AnnotationSpec>
+
+  /**
    * Looks up a [JvmMethodSignature] and returns whether or not it is synthetic.
    *
    * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
