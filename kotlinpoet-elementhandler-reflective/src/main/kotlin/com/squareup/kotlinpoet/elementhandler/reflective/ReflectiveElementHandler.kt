@@ -186,6 +186,23 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }
   }
 
+  override fun parameterAnnotations(classJvmName: String, methodSignature: JvmMethodSignature,
+      index: Int, isConstructor: Boolean): List<AnnotationSpec> {
+    val parameters = if (isConstructor) {
+      lookupConstructor(classJvmName, methodSignature)!!.parameters
+    } else {
+      lookupMethod(classJvmName, methodSignature)!!.parameters
+    }
+    return try {
+      parameters[index]
+          .declaredAnnotations
+          .map { AnnotationSpec.get(it, true) }
+          .filterOutNullabilityAnnotations()
+    } catch (e: ClassNotFoundException) {
+      emptyList()
+    }
+  }
+
   override fun isMethodSynthetic(
     classJvmName: String,
     methodSignature: JvmMethodSignature
