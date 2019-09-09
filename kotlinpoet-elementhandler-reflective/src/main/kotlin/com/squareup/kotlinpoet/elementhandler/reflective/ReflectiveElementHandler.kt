@@ -186,8 +186,12 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }
   }
 
-  override fun parameterAnnotations(classJvmName: String, methodSignature: JvmMethodSignature,
-      index: Int, isConstructor: Boolean): List<AnnotationSpec> {
+  override fun parameterAnnotations(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    index: Int,
+    isConstructor: Boolean
+  ): List<AnnotationSpec> {
     val parameters = if (isConstructor) {
       lookupConstructor(classJvmName, methodSignature)!!.parameters
     } else {

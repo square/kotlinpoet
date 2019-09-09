@@ -1666,10 +1666,10 @@ class KotlinPoetMetadataSpecsTest(
   annotation class CustomAnnotation(val name: String)
 
   class ParameterAnnotations(
-      @property:CustomAnnotation("\$a") @param:CustomAnnotation("b") val param1: String,
-      @CustomAnnotation("2") param2: String) {
+    @property:CustomAnnotation("\$a") @param:CustomAnnotation("b") val param1: String,
+    @CustomAnnotation("2") param2: String
+  ) {
     fun function(@CustomAnnotation("woo") param1: String) {
-
     }
   }
 }
