@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
-import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LambdaTypeName
@@ -63,15 +62,7 @@ internal fun ImmutableKmTypeProjection.toTypeName(
   val typename = type?.toTypeName(typeParamResolver) ?: STAR
   return when (variance) {
     IN -> WildcardTypeName.consumerOf(typename)
-    OUT -> {
-      if (typename == ANY) {
-        // This becomes a *, which we actually don't want here.
-        // List<Any> works with List<*>, but List<*> doesn't work with List<Any>
-        typename
-      } else {
-        WildcardTypeName.producerOf(typename)
-      }
-    }
+    OUT -> WildcardTypeName.producerOf(typename)
     INVARIANT -> typename
     null -> STAR
   }
