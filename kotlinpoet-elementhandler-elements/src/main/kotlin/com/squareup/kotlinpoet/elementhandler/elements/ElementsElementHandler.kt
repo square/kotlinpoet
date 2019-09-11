@@ -171,6 +171,24 @@ class ElementsElementHandler private constructor(
         .filterOutNullabilityAnnotations()
   }
 
+  override fun parameterAnnotations(
+    classJvmName: String,
+    methodSignature: JvmMethodSignature,
+    index: Int,
+    isConstructor: Boolean
+  ): List<AnnotationSpec> {
+    val filter: (Iterable<Element>) -> List<ExecutableElement> = if (isConstructor) {
+      ElementFilter::constructorsIn
+    } else {
+      ElementFilter::methodsIn
+    }
+    return lookupMethod(classJvmName, methodSignature, filter)!!
+        .parameters[index]
+        .annotationMirrors
+        .map { AnnotationSpec.get(it) }
+        .filterOutNullabilityAnnotations()
+  }
+
   override fun isMethodSynthetic(
     classJvmName: String,
     methodSignature: JvmMethodSignature

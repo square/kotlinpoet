@@ -1307,7 +1307,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Fields(
-        @kotlin.jvm.JvmField
+        @property:kotlin.jvm.JvmField
         val param1: kotlin.String
       ) {
         @kotlin.jvm.JvmField
@@ -1616,6 +1616,61 @@ class KotlinPoetMetadataSpecsTest(
         }
       }
       """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Property site-target annotations are always stored on the synthetic annotations " +
+          "method, which is not accessible in the elements API",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun parameterAnnotations_reflective() {
+    val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ParameterAnnotations(
+        @property:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "${'$'}{'${'$'}'}a")
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
+        val param1: kotlin.String,
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
+        param2: kotlin.String
+      ) {
+        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String) {
+        }
+      }
+      """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Property site-target annotations are always stored on the synthetic annotations " +
+          "method, which is not accessible in the elements API",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun parameterAnnotations_elements() {
+    val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class ParameterAnnotations(
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
+        val param1: kotlin.String,
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
+        param2: kotlin.String
+      ) {
+        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String) {
+        }
+      }
+      """.trimIndent())
+  }
+
+  annotation class CustomAnnotation(val name: String)
+
+  class ParameterAnnotations(
+    @property:CustomAnnotation("\$a") @param:CustomAnnotation("b") val param1: String,
+    @CustomAnnotation("2") param2: String
+  ) {
+    fun function(@CustomAnnotation("woo") param1: String) {
+    }
   }
 }
 

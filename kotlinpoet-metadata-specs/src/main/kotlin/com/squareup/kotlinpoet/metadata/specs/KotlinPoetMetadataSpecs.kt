@@ -290,7 +290,7 @@ private fun ImmutableKmClass.toTypeSpec(
     val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
     if (isClass || isAnnotation || isEnum) {
       primaryConstructor?.let {
-        it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+        it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler), jvmInternalName, elementHandler)
             .also { spec ->
               val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
                 // Metadata specifies the constructor as private, but that's implicit so we can omit it
@@ -302,7 +302,7 @@ private fun ImmutableKmClass.toTypeSpec(
       }
       constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
         builder.addFunctions(secondaryConstructors.map {
-          it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler))
+          it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler), jvmInternalName, elementHandler)
         })
       }
     }
@@ -532,7 +532,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     }
               }
             }
-            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride)
+            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride, jvmInternalName, elementHandler)
                 .toBuilder()
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
@@ -618,15 +618,37 @@ private fun companionObjectName(name: String): String? {
 }
 
 @KotlinPoetMetadataPreview
+private fun ImmutableKmValueParameter.extractAnnotations(
+  elementHandler: ElementHandler?,
+  classJvmName: String,
+  jvmMethodSignature: JvmMethodSignature?,
+  index: Int,
+  isConstructorParam: Boolean
+): List<AnnotationSpec> {
+  return if (hasAnnotations && elementHandler != null && jvmMethodSignature != null) {
+    elementHandler.parameterAnnotations(classJvmName, jvmMethodSignature, index, isConstructorParam)
+  } else {
+    emptyList()
+  }
+}
+
+@KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: List<AnnotationSpec>
+  annotations: List<AnnotationSpec>,
+  classJvmName: String,
+  elementHandler: ElementHandler?
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
         addAnnotations(annotations)
         addVisibility { addModifiers(it) }
-        addParameters(this@toFunSpec.valueParameters.map { it.toParameterSpec(typeParamResolver) })
+        addParameters(this@toFunSpec.valueParameters.mapIndexed { index, param ->
+          param.toParameterSpec(
+              typeParamResolver,
+              param.extractAnnotations(elementHandler, classJvmName, signature, index, true)
+          )
+        })
         if (!isPrimary) {
           // TODO How do we know when to add callSuperConstructor()?
         }
@@ -639,14 +661,27 @@ private fun ImmutableKmConstructor.toFunSpec(
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: Iterable<AnnotationSpec>,
-  isOverride: Boolean
+  isOverride: Boolean,
+  classJvmName: String,
+  elementHandler: ElementHandler?
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
         addAnnotations(annotations)
         addVisibility { addModifiers(it) }
         if (valueParameters.isNotEmpty()) {
-          addParameters(valueParameters.map { it.toParameterSpec(typeParamResolver) })
+          addParameters(valueParameters.mapIndexed { index, param ->
+            param.toParameterSpec(
+                typeParamResolver,
+                param.extractAnnotations(
+                    elementHandler,
+                    classJvmName,
+                    signature,
+                    index,
+                    isConstructorParam = false
+                )
+            )
+          })
         }
         if (typeParameters.isNotEmpty()) {
           addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
@@ -688,11 +723,13 @@ private fun ImmutableKmFunction.toFunSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmValueParameter.toParameterSpec(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: ((index: Int) -> TypeName),
+  annotations: List<AnnotationSpec>
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
       .apply {
+        addAnnotations(annotations)
         if (varargElementType != null) {
           addModifiers(VARARG)
         }
@@ -721,11 +758,21 @@ private fun ImmutableKmProperty.toPropertySpec(
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   return PropertySpec.builder(name, returnTypeName)
       .apply {
-        val finalAnnotations = if (isConst) {
-          annotations.filterNot { it.className == JVM_STATIC }
-        } else {
-          annotations
-        }
+        // If a property annotation doesn't have a custom site target and is used in a constructor
+        // we have to add the property: site target to it.
+        val finalAnnotations = annotations
+            .filterNot { isConst && it.className == JVM_STATIC }
+            .map {
+              if (isConstructorParam && it.useSiteTarget == null) {
+                // TODO Ideally don't do this if the annotation use site is only field?
+                //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
+                //  automatically applied to the property for these annotation types.
+                //  his is another thing ElementHandler *could* tell us
+                it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
+              } else {
+                it
+              }
+            }
         addAnnotations(finalAnnotations)
         addVisibility { addModifiers(it) }
         addModifiers(flags.modalities
