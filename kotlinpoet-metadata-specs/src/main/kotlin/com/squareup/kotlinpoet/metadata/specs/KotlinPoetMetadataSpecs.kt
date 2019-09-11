@@ -673,7 +673,13 @@ private fun ImmutableKmFunction.toFunSpec(
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
                 typeParamResolver,
-                param.extractAnnotations(elementHandler, classJvmName, signature, index, false)
+                param.extractAnnotations(
+                    elementHandler,
+                    classJvmName,
+                    signature,
+                    index,
+                    isConstructorParam = false
+                )
             )
           })
         }
