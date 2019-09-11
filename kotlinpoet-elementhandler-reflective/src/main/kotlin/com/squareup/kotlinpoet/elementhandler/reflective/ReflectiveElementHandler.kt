@@ -200,7 +200,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     return try {
       parameters[index]
           .declaredAnnotations
-          .map { AnnotationSpec.get(it, true) }
+          .map { AnnotationSpec.get(it, includeDefaultValues = true) }
           .filterOutNullabilityAnnotations()
     } catch (e: ClassNotFoundException) {
       emptyList()
