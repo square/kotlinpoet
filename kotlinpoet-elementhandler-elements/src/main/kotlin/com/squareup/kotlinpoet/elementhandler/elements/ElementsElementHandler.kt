@@ -11,8 +11,12 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.hasAnnotations
+import com.squareup.kotlinpoet.metadata.isAnnotation
 import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.specs.ClassData
+import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -252,7 +256,22 @@ class ElementsElementHandler private constructor(
 
     val constructorData = TODO()
 
-    val methodData = TODO()
+    val methodData = kmClass.functions.associateWith { kmFunction ->
+      val signature = kmFunction.signature
+      if (signature != null) {
+        val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
+        method?.methodData(
+            typeElement = typeElement,
+            hasAnnotations = kmFunction.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+                ?.lookupMethod(signature, ElementFilter::methodsIn)
+                ?: method
+        )
+            ?: return@associateWith MethodData.SYNTHETIC
+      } else {
+        MethodData.EMPTY
+      }
+    }
 
     return ClassData(
         kmClass = kmClass,
