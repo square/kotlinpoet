@@ -30,33 +30,6 @@ import kotlinx.metadata.jvm.JvmMethodSignature
 @KotlinPoetMetadataPreview
 interface ElementHandler {
 
-  interface JvmModifier {
-    fun annotationSpec(): AnnotationSpec
-  }
-
-  /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
-  enum class JvmFieldModifier : JvmModifier {
-    STATIC {
-      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
-    },
-    TRANSIENT {
-      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(Transient::class.asClassName()).build()
-    },
-    VOLATILE {
-      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(Volatile::class.asClassName()).build()
-    };
-  }
-
-  /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
-  enum class JvmMethodModifier : JvmModifier {
-    STATIC {
-      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
-    },
-    SYNCHRONIZED {
-      override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(Synchronized::class.asClassName()).build()
-    }
-  }
-
   /**
    * Indicates if this element handler supports [AnnotationRetention.RUNTIME]-retained annotations.
    * This is used to indicate if manual inference of certain non-RUNTIME-retained annotations should
