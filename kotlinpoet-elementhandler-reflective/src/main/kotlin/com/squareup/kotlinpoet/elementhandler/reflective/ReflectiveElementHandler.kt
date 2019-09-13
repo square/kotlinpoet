@@ -6,6 +6,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.isCompanionObject
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
@@ -239,7 +240,21 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
     val constructorData = TODO()
 
-    val methodData = TODO()
+    val methodData = kmClass.functions.associateWith { kmFunction ->
+      val signature = kmFunction.signature
+      if (signature != null) {
+        val method = targetClass.lookupMethod(signature)
+        method?.methodData(
+            clazz = targetClass,
+            signature = signature,
+            hasAnnotations = kmFunction.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature) ?: method
+            )
+            ?: error("No method $signature found in $targetClass.")
+      } else {
+        MethodData.EMPTY
+      }
+    }
 
     return ClassData(
         kmClass = kmClass,
