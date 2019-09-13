@@ -320,7 +320,17 @@ class ElementsElementHandler private constructor(
             )
           }
 
-          val getterData = TODO()
+          val getterData = property.getterSignature?.let { getterSignature ->
+            val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
+            method?.methodData(
+                typeElement = typeElement,
+                hasAnnotations = property.getterFlags.hasAnnotations,
+                jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+                    ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
+                    ?: method
+            )
+                ?: return@let MethodData.SYNTHETIC
+          }
 
           val setterData = TODO()
 
