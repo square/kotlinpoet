@@ -7,12 +7,12 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 @KotlinPoetMetadataPreview
 data class MethodData(
-    private val annotations: List<AnnotationSpec>,
-    val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
-    val isSynthetic: Boolean,
-    val jvmModifiers: Set<JvmMethodModifier>,
-    val isOverride: Boolean,
-    val exceptions: List<TypeName>
+  private val annotations: List<AnnotationSpec>,
+  val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
+  val isSynthetic: Boolean,
+  val jvmModifiers: Set<JvmMethodModifier>,
+  val isOverride: Boolean,
+  val exceptions: List<TypeName>
 ) {
 
   fun allAnnotations(useSiteTarget: UseSiteTarget? = null): Collection<AnnotationSpec> {

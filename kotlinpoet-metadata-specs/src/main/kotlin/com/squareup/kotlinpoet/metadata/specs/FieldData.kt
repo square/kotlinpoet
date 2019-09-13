@@ -7,10 +7,10 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 @KotlinPoetMetadataPreview
 data class FieldData(
-    private val annotations: List<AnnotationSpec>,
-    val isSynthetic: Boolean,
-    val jvmModifiers: Set<JvmFieldModifier>,
-    val constant: CodeBlock?
+  private val annotations: List<AnnotationSpec>,
+  val isSynthetic: Boolean,
+  val jvmModifiers: Set<JvmFieldModifier>,
+  val constant: CodeBlock?
 ) {
 
   val allAnnotations = ElementHandler.createAnnotations(

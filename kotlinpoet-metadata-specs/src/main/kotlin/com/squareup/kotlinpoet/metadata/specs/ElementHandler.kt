@@ -47,9 +47,9 @@ interface ElementHandler {
   }
 
   fun classData(
-      kmClass: ImmutableKmClass,
-      parentName: String?,
-      simpleName: String = kmClass.bestGuessSimpleName()
+    kmClass: ImmutableKmClass,
+    parentName: String?,
+    simpleName: String = kmClass.bestGuessSimpleName()
   ): ClassData
 
   /**
@@ -109,11 +109,11 @@ interface ElementHandler {
     }
 
     fun ImmutableKmProperty.computeIsJvmField(
-        elementHandler: ElementHandler,
-        isCompanionObject: Boolean,
-        hasGetter: Boolean,
-        hasSetter: Boolean,
-        hasField: Boolean
+      elementHandler: ElementHandler,
+      isCompanionObject: Boolean,
+      hasGetter: Boolean,
+      hasSetter: Boolean,
+      hasField: Boolean
     ): Boolean {
       val isJvmField: Boolean
       if (!hasGetter &&
@@ -142,8 +142,8 @@ interface ElementHandler {
      *         input annotations from [body].
      */
     fun createAnnotations(
-        siteTarget: UseSiteTarget? = null,
-        body: MutableCollection<AnnotationSpec>.() -> Unit
+      siteTarget: UseSiteTarget? = null,
+      body: MutableCollection<AnnotationSpec>.() -> Unit
     ): Collection<AnnotationSpec> {
       val result = TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
         body()
@@ -165,8 +165,8 @@ interface ElementHandler {
     }
 
     fun createThrowsSpec(
-        exceptions: Collection<TypeName>,
-        useSiteTarget: UseSiteTarget? = null
+      exceptions: Collection<TypeName>,
+      useSiteTarget: UseSiteTarget? = null
     ): AnnotationSpec {
       return AnnotationSpec.builder(Throws::class)
           .addMember(

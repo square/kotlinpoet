@@ -245,8 +245,11 @@ class ElementsElementHandler private constructor(
     }
   }
 
-  override fun classData(kmClass: ImmutableKmClass, parentName: String?,
-      simpleName: String): ClassData {
+  override fun classData(
+    kmClass: ImmutableKmClass,
+    parentName: String?,
+    simpleName: String
+  ): ClassData {
     val typeElement = lookupTypeElement(kmClass.name.jvmInternalName)
         ?: error("No class found for: ${kmClass.name}.")
 
@@ -254,7 +257,7 @@ class ElementsElementHandler private constructor(
     val classIfCompanion by lazy(NONE) {
       if (kmClass.isCompanionObject && parentName != null) {
         lookupTypeElement(parentName)
-            ?: error("No class found for: ${parentName}.")
+            ?: error("No class found for: $parentName.")
       } else {
         typeElement
       }
@@ -273,7 +276,7 @@ class ElementsElementHandler private constructor(
               hasField = property.fieldSignature != null
           )
 
-          val fieldData = property.fieldSignature?.let fieldDataLet@ { fieldSignature ->
+          val fieldData = property.fieldSignature?.let fieldDataLet@{ fieldSignature ->
             // Check the field in the parent first. For const/static/jvmField elements, these only
             // exist in the parent and we want to check that if necessary to avoid looking up a
             // non-existent field in the companion.
@@ -294,7 +297,7 @@ class ElementsElementHandler private constructor(
             val field = classForOriginalField.lookupField(fieldSignature)
                 ?: return@fieldDataLet FieldData.SYNTHETIC
             val constant = if (property.hasConstant) {
-              val fieldWithConstant = classIfCompanion.takeIf { it != typeElement}?.let {
+              val fieldWithConstant = classIfCompanion.takeIf { it != typeElement }?.let {
                 if (it.kind.isInterface) {
                   field
                 } else {
@@ -439,10 +442,10 @@ class ElementsElementHandler private constructor(
   }
 
   private fun ExecutableElement.methodData(
-      typeElement: TypeElement,
-      hasAnnotations: Boolean,
-      jvmInformationMethod: ExecutableElement = this,
-      knownIsOverride: Boolean? = null
+    typeElement: TypeElement,
+    hasAnnotations: Boolean,
+    jvmInformationMethod: ExecutableElement = this,
+    knownIsOverride: Boolean? = null
   ): MethodData {
     return MethodData(
         annotations = if (hasAnnotations) annotationSpecs() else emptyList(),

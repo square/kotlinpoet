@@ -7,11 +7,11 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 @KotlinPoetMetadataPreview
 data class PropertyData(
-    val annotations: List<AnnotationSpec>,
-    val fieldData: FieldData?,
-    val getterData: MethodData?,
-    val setterData: MethodData?,
-    val isJvmField: Boolean
+  val annotations: List<AnnotationSpec>,
+  val fieldData: FieldData?,
+  val getterData: MethodData?,
+  val setterData: MethodData?,
+  val isJvmField: Boolean
 ) {
   val isOverride = (getterData?.isOverride ?: false) || (setterData?.isOverride ?: false)
   val allAnnotations: Collection<AnnotationSpec> = ElementHandler.createAnnotations {

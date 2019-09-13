@@ -229,9 +229,9 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun classData(
-      kmClass: ImmutableKmClass,
-      parentName: String?,
-      simpleName: String
+    kmClass: ImmutableKmClass,
+    parentName: String?,
+    simpleName: String
   ): ClassData {
     val targetClass = lookupClass(kmClass.name.jvmInternalName)
         ?: error("No class found for: ${kmClass.name}.")
@@ -240,7 +240,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     val classIfCompanion by lazy(NONE) {
       if (kmClass.isCompanionObject && parentName != null) {
         lookupClass(parentName)
-            ?: error("No class found for: ${parentName}.")
+            ?: error("No class found for: $parentName.")
       } else {
         targetClass
       }
@@ -280,7 +280,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
             val field = classForOriginalField.lookupField(fieldSignature)
                 ?: error("No field $fieldSignature found in $classForOriginalField.")
             val constant = if (property.hasConstant) {
-              val fieldWithConstant = classIfCompanion.takeIf { it != targetClass}?.let {
+              val fieldWithConstant = classIfCompanion.takeIf { it != targetClass }?.let {
                 if (it.isInterface) {
                   field
                 } else {
@@ -418,11 +418,11 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun Method.methodData(
-      clazz: Class<*>,
-      signature: JvmMethodSignature,
-      hasAnnotations: Boolean,
-      jvmInformationMethod: Method = this,
-      knownIsOverride: Boolean? = null
+    clazz: Class<*>,
+    signature: JvmMethodSignature,
+    hasAnnotations: Boolean,
+    jvmInformationMethod: Method = this,
+    knownIsOverride: Boolean? = null
   ): MethodData {
     return MethodData(
         annotations = if (hasAnnotations) annotationSpecs() else emptyList(),

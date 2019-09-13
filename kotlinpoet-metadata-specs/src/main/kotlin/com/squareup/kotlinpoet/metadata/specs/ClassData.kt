@@ -9,11 +9,11 @@ import com.squareup.kotlinpoet.metadata.isInterface
 
 @KotlinPoetMetadataPreview
 data class ClassData(
-    val kmClass: ImmutableKmClass,
-    val simpleName: String,
-    val properties: Map<ImmutableKmProperty, PropertyData>,
-    val constructors: Map<ImmutableKmConstructor, ConstructorData>,
-    val methods: Map<ImmutableKmFunction, MethodData>
+  val kmClass: ImmutableKmClass,
+  val simpleName: String,
+  val properties: Map<ImmutableKmProperty, PropertyData>,
+  val constructors: Map<ImmutableKmConstructor, ConstructorData>,
+  val methods: Map<ImmutableKmFunction, MethodData>
 ) {
   val isInterface: Boolean = kmClass.isInterface
 }
