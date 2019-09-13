@@ -67,13 +67,6 @@ class ElementsElementHandler private constructor(
     return lookupTypeElement(jvmName)?.kind == INTERFACE
   }
 
-  private fun lookupField(
-    classJvmName: String,
-    fieldSignature: JvmFieldSignature
-  ): VariableElement? {
-    return lookupTypeElement(classJvmName)?.lookupField(fieldSignature)
-  }
-
   private fun TypeElement.lookupField(fieldSignature: JvmFieldSignature): VariableElement? {
     val signatureString = fieldSignature.asString()
     return variableElementCache.getOrPut(this to signatureString) {
@@ -101,14 +94,6 @@ class ElementsElementHandler private constructor(
     }.nullableValue
   }
 
-  override fun fieldJvmModifiers(
-    classJvmName: String,
-    fieldSignature: JvmFieldSignature,
-    isJvmField: Boolean
-  ): Set<JvmFieldModifier> {
-    return lookupField(classJvmName, fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
-  }
-
   private fun VariableElement.jvmModifiers(isJvmField: Boolean): Set<JvmFieldModifier> {
     return modifiers.mapNotNullTo(mutableSetOf()) {
       when {
@@ -120,32 +105,10 @@ class ElementsElementHandler private constructor(
     }
   }
 
-  override fun fieldAnnotations(
-    classJvmName: String,
-    fieldSignature: JvmFieldSignature
-  ): List<AnnotationSpec> {
-    return lookupField(classJvmName, fieldSignature)
-        ?.annotationSpecs().orEmpty()
-  }
-
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
     return annotationMirrors
         .map { AnnotationSpec.get(it) }
         .filterOutNullabilityAnnotations()
-  }
-
-  override fun isFieldSynthetic(classJvmName: String, fieldSignature: JvmFieldSignature): Boolean {
-    // Elements can't see synthetic methods since they don't exist yet, so their absence here
-    // makes them implicitly synthetic
-    return lookupField(classJvmName, fieldSignature) == null
-  }
-
-  override fun methodJvmModifiers(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature
-  ): Set<JvmMethodModifier> {
-    return lookupMethod(classJvmName, methodSignature,
-        ElementFilter::methodsIn)?.jvmModifiers().orEmpty()
   }
 
   private fun ExecutableElement.jvmModifiers(): Set<JvmMethodModifier> {
@@ -158,68 +121,10 @@ class ElementsElementHandler private constructor(
     }
   }
 
-  override fun constructorAnnotations(
-    classJvmName: String,
-    constructorSignature: JvmMethodSignature
-  ): List<AnnotationSpec> {
-    return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
-        ?.annotationSpecs().orEmpty()
-  }
-
-  override fun methodAnnotations(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature
-  ): List<AnnotationSpec> {
-    return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
-        ?.annotationSpecs().orEmpty()
-  }
-
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
     return annotationMirrors
         .map { AnnotationSpec.get(it) }
         .filterOutNullabilityAnnotations()
-  }
-
-  override fun parameterAnnotations(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature,
-    index: Int,
-    isConstructor: Boolean
-  ): List<AnnotationSpec> {
-    val filter: (Iterable<Element>) -> List<ExecutableElement> = if (isConstructor) {
-      ElementFilter::constructorsIn
-    } else {
-      ElementFilter::methodsIn
-    }
-    return lookupMethod(classJvmName, methodSignature, filter)!!
-        .parameters[index]
-        .annotationMirrors
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
-  }
-
-  override fun isMethodSynthetic(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature
-  ): Boolean {
-    // Elements can't see synthetic methods since they don't exist yet, so their absence here
-    // makes them implicitly synthetic
-    return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn) == null
-  }
-
-  override fun methodExceptions(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature,
-    isConstructor: Boolean
-  ): Set<TypeName> {
-    val elementFilter: (Iterable<Element>) -> List<ExecutableElement> = if (isConstructor) {
-      ElementFilter::constructorsIn
-    } else {
-      ElementFilter::methodsIn
-    }
-    return lookupMethod(classJvmName, methodSignature, elementFilter)?.exceptionTypeNames()
-        .orEmpty()
-        .toSet()
   }
 
   private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
@@ -240,31 +145,8 @@ class ElementsElementHandler private constructor(
     }
   }
 
-  override fun fieldConstant(
-    classJvmName: String,
-    fieldSignature: JvmFieldSignature
-  ): CodeBlock? {
-    return lookupField(classJvmName, fieldSignature)?.let {
-      it.constantValue()
-    } ?: error("No field $fieldSignature found in $classJvmName.")
-  }
-
   private fun VariableElement.constantValue(): CodeBlock? {
     return constantValue?.asLiteralCodeBlock()
-  }
-
-  override fun isMethodOverride(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature
-  ): Boolean {
-    if (isMethodSynthetic(classJvmName, methodSignature)) {
-      return false
-    }
-    val typeElement = lookupTypeElement(classJvmName)
-        ?: error("No type element found for: $classJvmName.")
-    val method = typeElement.lookupMethod(methodSignature, ElementFilter::methodsIn)
-        ?: error("No ExecutableElement found for: $methodSignature.")
-    return method.isOverriddenIn(typeElement)
   }
 
   override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
