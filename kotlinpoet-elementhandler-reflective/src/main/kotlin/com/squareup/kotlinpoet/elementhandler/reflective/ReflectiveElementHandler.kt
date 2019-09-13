@@ -260,7 +260,17 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
           val getterData = TODO()
 
-          val setterData = TODO()
+          val setterData = property.setterSignature?.let { setterSignature ->
+            val method = classIfCompanion.lookupMethod(setterSignature)
+                method?.methodData(
+                    clazz = targetClass,
+                    signature = setterSignature,
+                    hasAnnotations = property.setterFlags.hasAnnotations,
+                    jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(setterSignature) ?: method,
+                    knownIsOverride = getterData?.isOverride
+                )
+                ?: error("No setter method $setterSignature found in $classIfCompanion.")
+          }
 
           val annotations = mutableListOf<AnnotationSpec>()
           if (property.hasAnnotations) {
