@@ -17,11 +17,34 @@ data class PropertyData(
   val allAnnotations: Collection<AnnotationSpec> = ElementHandler.createAnnotations {
     // Don't add annotations that are already defined on the parent
     val higherScopedAnnotations = annotations.associateBy { it.className }
-    addAll(annotations)
-    addAll(fieldData?.allAnnotations.orEmpty()
-        .filterNot { it.className in higherScopedAnnotations })
-    addAll(getterData?.allAnnotations(GET).orEmpty()
-        .filterNot { it.className in higherScopedAnnotations })
+    val fieldAnnotations = fieldData?.allAnnotations.orEmpty()
+        .filterNot { it.className in higherScopedAnnotations }
+        .associateByTo(LinkedHashMap()) { it.className }
+    val getterAnnotations = getterData?.allAnnotations(GET).orEmpty()
+        .filterNot { it.className in higherScopedAnnotations }
+        .associateByTo(LinkedHashMap()) { it.className }
+
+    val finalTopAnnotations = annotations.toMutableList()
+
+    // If this is a val, and annotation is on both getter and field, we can move it to just the
+    // regular annotations
+    if (setterData == null && !isJvmField) {
+      val sharedAnnotations = getterAnnotations.keys.intersect(fieldAnnotations.keys)
+      for (sharedAnnotation in sharedAnnotations) {
+        // Add it to the top-level annotations without a site-target
+        finalTopAnnotations += getterAnnotations.getValue(sharedAnnotation).toBuilder()
+            .useSiteTarget(null)
+            .build()
+
+        // Remove from field and getter
+        fieldAnnotations.remove(sharedAnnotation)
+        getterAnnotations.remove(sharedAnnotation)
+      }
+    }
+
+    addAll(finalTopAnnotations)
+    addAll(fieldAnnotations.values)
+    addAll(getterAnnotations.values)
     addAll(setterData?.allAnnotations(SET).orEmpty()
         .filterNot { it.className in higherScopedAnnotations })
     if (isJvmField) {
