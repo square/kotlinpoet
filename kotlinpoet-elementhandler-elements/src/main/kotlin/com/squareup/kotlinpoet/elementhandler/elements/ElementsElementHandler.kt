@@ -366,7 +366,7 @@ class ElementsElementHandler private constructor(
     val constructorData = kmClass.constructors.associateWith { kmConstructor ->
       if (kmClass.isAnnotation || kmClass.isInline) {
         //
-        // Annotations are interfaces in reflection, but kotlin metadata will still report a
+        // Annotations are interfaces in bytecode, but kotlin metadata will still report a
         // constructor signature
         //
         // Inline classes have no constructors at runtime
