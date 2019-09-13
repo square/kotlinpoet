@@ -115,26 +115,14 @@ interface ElementHandler {
       hasSetter: Boolean,
       hasField: Boolean
     ): Boolean {
-      val isJvmField: Boolean
-      if (!hasGetter &&
+      return if (!hasGetter &&
           !hasSetter &&
           hasField &&
           !isConst) {
-        if (elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject) {
-          // Throwaway value as this kind of element handler should be automatically be
-          // picking up the jvm field annotation.
-          //
-          // We don't do this for companion object fields though as they appear to not
-          // have the JvmField annotation copied over though
-          //
-          isJvmField = false
-        } else {
-          isJvmField = true
-        }
+        !(elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
       } else {
-        isJvmField = false
+        false
       }
-      return isJvmField
     }
 
     /**
