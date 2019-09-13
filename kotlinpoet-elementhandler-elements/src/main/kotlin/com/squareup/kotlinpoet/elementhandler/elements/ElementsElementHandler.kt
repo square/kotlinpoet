@@ -345,7 +345,14 @@ class ElementsElementHandler private constructor(
                 ?: return@let MethodData.SYNTHETIC
           }
 
-          val annotations = TODO()
+          val annotations = mutableListOf<AnnotationSpec>()
+          if (property.hasAnnotations) {
+            property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
+              val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
+                  ?: return@let MethodData.SYNTHETIC
+              annotations += method.annotationSpecs()
+            }
+          }
 
           PropertyData(
               annotations = annotations,
