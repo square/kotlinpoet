@@ -332,7 +332,18 @@ class ElementsElementHandler private constructor(
                 ?: return@let MethodData.SYNTHETIC
           }
 
-          val setterData = TODO()
+          val setterData = property.setterSignature?.let { setterSignature ->
+            val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
+            method?.methodData(
+                typeElement = typeElement,
+                hasAnnotations = property.setterFlags.hasAnnotations,
+                jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+                    ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
+                    ?: method,
+                knownIsOverride = getterData?.isOverride
+            )
+                ?: return@let MethodData.SYNTHETIC
+          }
 
           val annotations = TODO()
 
