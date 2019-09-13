@@ -595,7 +595,7 @@ private fun ImmutableKmProperty.toPropertySpec(
                 // TODO Ideally don't do this if the annotation use site is only field?
                 //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
                 //  automatically applied to the property for these annotation types.
-                //  his is another thing ElementHandler *could* tell us
+                //  This is another thing ElementHandler *could* tell us
                 it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
               } else {
                 it
