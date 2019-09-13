@@ -9,10 +9,13 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.isAnnotation
 import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.isDeclaration
 import com.squareup.kotlinpoet.metadata.isInline
+import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
@@ -20,6 +23,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
+import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -239,7 +243,35 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       }
     }
 
-    val propertyData = TODO()
+    val propertyData = kmClass.properties
+        .asSequence()
+        .filter { it.isDeclaration }
+        .filterNot { it.isSynthesized }
+        .associateWith { property ->
+          val isJvmField = property.computeIsJvmField(
+              elementHandler = this,
+              isCompanionObject = kmClass.isCompanionObject,
+              hasGetter = property.getterSignature != null,
+              hasSetter = property.setterSignature != null,
+              hasField = property.fieldSignature != null
+          )
+
+          val fieldData = TODO()
+
+          val getterData = TODO()
+
+          val setterData = TODO()
+
+          val annotations = TODO()
+
+          PropertyData(
+              annotations = annotations,
+              fieldData = fieldData,
+              getterData = getterData,
+              setterData = setterData,
+              isJvmField = isJvmField
+          )
+        }
 
     val constructorData = kmClass.constructors.associateWith { kmConstructor ->
       if (kmClass.isAnnotation || kmClass.isInline) {
