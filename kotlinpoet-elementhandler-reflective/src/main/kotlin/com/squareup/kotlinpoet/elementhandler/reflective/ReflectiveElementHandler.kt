@@ -258,7 +258,16 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
           val fieldData = TODO()
 
-          val getterData = TODO()
+          val getterData = property.getterSignature?.let { getterSignature ->
+            val method = classIfCompanion.lookupMethod(getterSignature)
+                method?.methodData(
+                    clazz = targetClass,
+                    signature = getterSignature,
+                    hasAnnotations = property.getterFlags.hasAnnotations,
+                    jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(getterSignature) ?: method
+                )
+                ?: error("No getter method $getterSignature found in $classIfCompanion.")
+          }
 
           val setterData = property.setterSignature?.let { setterSignature ->
             val method = classIfCompanion.lookupMethod(setterSignature)
