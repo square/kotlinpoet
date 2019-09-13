@@ -262,7 +262,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
           val setterData = TODO()
 
-          val annotations = TODO()
+          val annotations = mutableListOf<AnnotationSpec>()
+          if (property.hasAnnotations) {
+            property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
+              val method = targetClass.lookupMethod(annotationsHolderSignature)
+                  ?: error("Method $annotationsHolderSignature (synthetic method for annotations)" +
+                      " found in $targetClass.")
+              annotations += method.annotationSpecs()
+            }
+          }
 
           PropertyData(
               annotations = annotations,
