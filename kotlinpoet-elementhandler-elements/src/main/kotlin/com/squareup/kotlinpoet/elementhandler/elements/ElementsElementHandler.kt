@@ -8,6 +8,7 @@ import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -354,9 +355,21 @@ class ElementsElementHandler private constructor(
             }
           }
 
+          // If a field is static in a companion object, remove the modifier and add the annotation
+          // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
+          // not legal
+          var finalFieldData = fieldData
+          fieldData?.jvmModifiers?.let {
+            if (kmClass.isCompanionObject && JvmFieldModifier.STATIC in it) {
+              finalFieldData = fieldData.copy(jvmModifiers = fieldData.jvmModifiers
+                  .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC })
+              annotations += AnnotationSpec.builder(JVM_STATIC).build()
+            }
+          }
+
           PropertyData(
               annotations = annotations,
-              fieldData = fieldData,
+              fieldData = finalFieldData,
               getterData = getterData,
               setterData = setterData,
               isJvmField = isJvmField
@@ -448,6 +461,8 @@ class ElementsElementHandler private constructor(
     fun create(elements: Elements, types: Types): ElementHandler {
       return ElementsElementHandler(elements, types)
     }
+
+    private val JVM_STATIC = JvmStatic::class.asClassName()
 
     private fun Any.asLiteralCodeBlock(): CodeBlock {
       return when (this) {
