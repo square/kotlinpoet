@@ -12,12 +12,18 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
+import com.squareup.kotlinpoet.metadata.hasConstant
 import com.squareup.kotlinpoet.metadata.isAnnotation
 import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.isConst
+import com.squareup.kotlinpoet.metadata.isDeclaration
 import com.squareup.kotlinpoet.metadata.isInline
+import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
+import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
@@ -25,6 +31,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
+import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -254,7 +261,35 @@ class ElementsElementHandler private constructor(
 
     val propertyData = TODO()
 
-    val constructorData = TODO()
+    val constructorData = kmClass.constructors.associateWith { kmConstructor ->
+      if (kmClass.isAnnotation || kmClass.isInline) {
+        //
+        // Annotations are interfaces in reflection, but kotlin metadata will still report a
+        // constructor signature
+        //
+        // Inline classes have no constructors at runtime
+        //
+        return@associateWith ConstructorData.EMPTY
+      }
+      val signature = kmConstructor.signature
+      if (signature != null) {
+        val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
+            ?: return@associateWith ConstructorData.SYNTHETIC
+        ConstructorData(
+            annotations = if (kmConstructor.hasAnnotations) {
+              constructor.annotationSpecs()
+            } else {
+              emptyList()
+            },
+            parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+            isSynthetic = false,
+            jvmModifiers = constructor.jvmModifiers(),
+            exceptions = constructor.exceptionTypeNames()
+        )
+      } else {
+        ConstructorData.EMPTY
+      }
+    }
 
     val methodData = kmClass.functions.associateWith { kmFunction ->
       val signature = kmFunction.signature
