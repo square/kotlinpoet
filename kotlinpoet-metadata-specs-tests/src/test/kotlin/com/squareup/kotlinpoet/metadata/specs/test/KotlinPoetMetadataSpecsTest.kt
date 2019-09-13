@@ -1209,6 +1209,7 @@ class KotlinPoetMetadataSpecsTest(
 
         interface InterfaceWithJvmName {
           companion object {
+            @get:kotlin.jvm.JvmName(name = "fooBoolJvm")
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
@@ -1337,10 +1338,10 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Fields(
-        @field:kotlin.jvm.JvmField
+        @property:kotlin.jvm.JvmField
         val param1: kotlin.String
       ) {
-        @field:kotlin.jvm.JvmField
+        @kotlin.jvm.JvmField
         val fieldProp: kotlin.String = ""
 
         companion object {
@@ -1477,6 +1478,7 @@ class KotlinPoetMetadataSpecsTest(
           fun interfaceFunction()
 
           companion object {
+            @get:kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
