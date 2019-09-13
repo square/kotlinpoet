@@ -548,7 +548,7 @@ private fun ImmutableKmFunction.toFunSpec(
 @KotlinPoetMetadataPreview
 private fun ImmutableKmValueParameter.toParameterSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: List<AnnotationSpec>
+  annotations: Collection<AnnotationSpec>
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))

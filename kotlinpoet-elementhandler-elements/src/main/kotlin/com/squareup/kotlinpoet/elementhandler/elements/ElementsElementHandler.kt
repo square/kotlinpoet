@@ -419,9 +419,9 @@ class ElementsElementHandler private constructor(
     )
   }
 
-  private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, List<AnnotationSpec>> {
+  private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-      index to parameter.annotationSpecs()
+      index to ElementHandler.createAnnotations { addAll(parameter.annotationSpecs()) }
     }
   }
 

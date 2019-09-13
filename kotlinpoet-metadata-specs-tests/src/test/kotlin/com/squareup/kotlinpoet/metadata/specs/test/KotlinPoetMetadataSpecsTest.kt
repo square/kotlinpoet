@@ -1212,8 +1212,8 @@ class KotlinPoetMetadataSpecsTest(
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
-            @kotlin.jvm.JvmStatic
             @kotlin.jvm.JvmName(name = "jvmStaticFunction")
+            @kotlin.jvm.JvmStatic
             fun staticFunction() {
             }
           }

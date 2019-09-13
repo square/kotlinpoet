@@ -7,7 +7,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 @KotlinPoetMetadataPreview
 data class ConstructorData(
     val annotations: List<AnnotationSpec>,
-    val parameterAnnotations: Map<Int, List<AnnotationSpec>>,
+    val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
     val isSynthetic: Boolean,
     val jvmModifiers: Set<JvmMethodModifier>,
     val exceptions: List<TypeName>

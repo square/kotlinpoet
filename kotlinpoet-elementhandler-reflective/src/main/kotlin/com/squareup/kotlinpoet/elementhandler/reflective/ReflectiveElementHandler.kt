@@ -411,9 +411,9 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     )
   }
 
-  private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, List<AnnotationSpec>> {
+  private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-          index to parameter.annotationSpecs()
+          index to ElementHandler.createAnnotations { addAll(parameter.annotationSpecs()) }
         }
   }
 
