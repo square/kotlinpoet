@@ -272,7 +272,53 @@ class ElementsElementHandler private constructor(
               hasField = property.fieldSignature != null
           )
 
-          val fieldData = TODO()
+          val fieldData = property.fieldSignature?.let fieldDataLet@ { fieldSignature ->
+            // Check the field in the parent first. For const/static/jvmField elements, these only
+            // exist in the parent and we want to check that if necessary to avoid looking up a
+            // non-existent field in the companion.
+            val parentModifiers = if (kmClass.isCompanionObject && parentName != null) {
+              classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
+            } else {
+              emptySet()
+            }
+
+            val isStatic = JvmFieldModifier.STATIC in parentModifiers
+
+            // TODO we looked up field once, let's reuse it
+            val classForOriginalField = typeElement.takeUnless {
+              kmClass.isCompanionObject &&
+                  (property.isConst || isJvmField || isStatic)
+            } ?: classIfCompanion
+
+            val field = classForOriginalField.lookupField(fieldSignature)
+                ?: return@fieldDataLet FieldData.SYNTHETIC
+            val constant = if (property.hasConstant) {
+              val fieldWithConstant = classIfCompanion.takeIf { it != typeElement}?.let {
+                if (it.kind.isInterface) {
+                  field
+                } else {
+                  // const properties are relocated to the enclosing class
+                  it.lookupField(fieldSignature)
+                      ?: return@fieldDataLet FieldData.SYNTHETIC
+                }
+              } ?: field
+              fieldWithConstant.constantValue()
+            } else {
+              null
+            }
+
+            val jvmModifiers = field.jvmModifiers(isJvmField) + parentModifiers
+
+            FieldData(
+                annotations = field.annotationSpecs(),
+                isSynthetic = false,
+                jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
+                  // JvmField companion objects don't need JvmStatic, it's implicit
+                  kmClass.isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+                },
+                constant = constant
+            )
+          }
 
           val getterData = TODO()
 
