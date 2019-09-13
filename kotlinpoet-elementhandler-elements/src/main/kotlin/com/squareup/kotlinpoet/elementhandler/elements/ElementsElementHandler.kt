@@ -414,7 +414,7 @@ class ElementsElementHandler private constructor(
         kmClass = kmClass,
         simpleName = simpleName,
         properties = propertyData,
-        constructors = constructorData,
+        constructors = constructorData.filterValues { it != ConstructorData.SYNTHETIC },
         methods = methodData
     )
   }

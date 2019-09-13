@@ -290,7 +290,7 @@ private fun ImmutableKmClass.toTypeSpec(
     val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
     if (isClass || isAnnotation || isEnum) {
       primaryConstructor?.let {
-        it.toFunSpec(classTypeParamsResolver, classData?.constructors?.getValue(it))
+        it.toFunSpec(classTypeParamsResolver, classData?.constructors?.get(it) ?: return@let)
             .also { spec ->
               val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
                 // Metadata specifies the constructor as private, but that's implicit so we can omit it
@@ -301,8 +301,12 @@ private fun ImmutableKmClass.toTypeSpec(
             }
       }
       constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-        builder.addFunctions(secondaryConstructors.map {
-          it.toFunSpec(classTypeParamsResolver, classData?.constructors?.getValue(it))
+        builder.addFunctions(secondaryConstructors
+            .mapNotNull { kmConstructor ->
+              classData?.constructors?.get(kmConstructor)?.let { kmConstructor to it }
+            }
+            .map { (kmConstructor, constructorData) ->
+              kmConstructor.toFunSpec(classTypeParamsResolver, constructorData)
         })
       }
     }
