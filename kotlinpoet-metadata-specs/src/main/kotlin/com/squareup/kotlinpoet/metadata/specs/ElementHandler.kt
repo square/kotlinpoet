@@ -16,13 +16,18 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import kotlinx.metadata.jvm.JvmFieldSignature
+import com.squareup.kotlinpoet.metadata.isConst
 import kotlinx.metadata.jvm.JvmMethodSignature
+import java.util.Collections
+import java.util.TreeSet
 
 /**
  * A basic interface for looking up information about JVM elements.
@@ -36,6 +41,16 @@ interface ElementHandler {
    * be done, such as [JvmName].
    */
   val supportsNonRuntimeRetainedAnnotations: Boolean
+
+  fun classData(classJvmName: String, parentName: String?, simpleName: String): ClassData {
+    return classData(classFor(classJvmName), parentName, simpleName)
+  }
+
+  fun classData(
+      kmClass: ImmutableKmClass,
+      parentName: String?,
+      simpleName: String = kmClass.bestGuessSimpleName()
+  ): ClassData
 
   /**
    * Looks up other classes, such as for nested members. Note that this class would always be
@@ -57,109 +72,6 @@ interface ElementHandler {
   fun isInterface(jvmName: String): Boolean
 
   /**
-   * Looks up a given class field given its [JvmFieldSignature] and returns any [JvmModifier]s
-   * found on it.
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param fieldSignature The field to look up.
-   * @param isJvmField Indicates if this field is a JvmField, in which case it should not be marked
-   *                   as JvmStatic.
-   * @return the set of found modifiers.
-   */
-  fun fieldJvmModifiers(
-    classJvmName: String,
-    fieldSignature: JvmFieldSignature,
-    isJvmField: Boolean
-  ): Set<JvmFieldModifier>
-
-  /**
-   * Looks up the annotations on a given class field given its [JvmFieldSignature].
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param fieldSignature The field with annotations to look up.
-   * @return the [AnnotationSpec] representations of the annotations on the target field.
-   */
-  fun fieldAnnotations(classJvmName: String, fieldSignature: JvmFieldSignature): List<AnnotationSpec>
-
-  /**
-   * Looks up a [JvmFieldSignature] and returns whether or not it is synthetic.
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param fieldSignature The field to look up.
-   * @return whether or not the field is synthetic.
-   */
-  fun isFieldSynthetic(classJvmName: String, fieldSignature: JvmFieldSignature): Boolean
-
-  /**
-   * Looks up a given class method given its [JvmMethodSignature] and returns any [JvmMethodModifier]s
-   * found on it.
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method with annotations to look up.
-   * @return the set of found modifiers.
-   */
-  fun methodJvmModifiers(classJvmName: String, methodSignature: JvmMethodSignature): Set<JvmMethodModifier>
-
-  /**
-   * Looks up the annotations on a given class constructor given its [JvmMethodSignature].
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param constructorSignature The constructor with annotations to look up.
-   * @return the [AnnotationSpec] representations of the annotations on the target method.
-   */
-  fun constructorAnnotations(classJvmName: String, constructorSignature: JvmMethodSignature): List<AnnotationSpec>
-
-  /**
-   * Looks up the annotations on a given class method given its [JvmMethodSignature].
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method with annotations to look up.
-   * @return the [AnnotationSpec] representations of the annotations on the target method.
-   */
-  fun methodAnnotations(classJvmName: String, methodSignature: JvmMethodSignature): List<AnnotationSpec>
-
-  /**
-   * Looks up the annotations on a given parameter given a [JvmMethodSignature] at [index].
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method with annotations to look up.
-   * @param index The parameter index.
-   * @param isConstructor Indicates if [methodSignature] is a constructor
-   * @return the [AnnotationSpec] representations of the annotations on the target parameter or
-   *         empty.
-   */
-  fun parameterAnnotations(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature,
-    index: Int,
-    isConstructor: Boolean
-  ): List<AnnotationSpec>
-
-  /**
-   * Looks up a [JvmMethodSignature] and returns whether or not it is synthetic.
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method to look up.
-   * @return whether or not the method is synthetic.
-   */
-  fun isMethodSynthetic(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
-
-  /**
-   * Looks up a given class method given its [JvmMethodSignature] and returns any thrown types
-   * found on it. Used for [Throws][@Throws]
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method with annotations to look up.
-   * @param isConstructor Indicates if [methodSignature] is a constructor.
-   * @return the set of found thrown types, or empty.
-   */
-  fun methodExceptions(
-    classJvmName: String,
-    methodSignature: JvmMethodSignature,
-    isConstructor: Boolean
-  ): Set<TypeName>
-
-  /**
    * Looks up the enum entry on a given enum given its member name.
    *
    * @param enumClassJvmName The JVM name of the enum class (example: `"org/foo/bar/Baz$Nested"`).
@@ -170,27 +82,6 @@ interface ElementHandler {
   fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass?
 
   /**
-   * Looks up the constant value on a given class field given its [JvmFieldSignature].
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param fieldSignature The field with annotations to look up.
-   * @return the [CodeBlock] representation of the constant on the target field. Null if the value
-   *         cannot be resolved.
-   */
-  fun fieldConstant(classJvmName: String, fieldSignature: JvmFieldSignature): CodeBlock?
-
-  /**
-   * Looks up if a given [methodSignature] within [classJvmName] is an override of another method.
-   * Implementers should search for a matching method signature in the supertypes/classes of
-   * [classJvmName] to see if there are matches.
-   *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
-   * @param methodSignature The method signature to check.
-   * @return whether or not the method is an override.
-   */
-  fun isMethodOverride(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
-
-  /**
    * Looks up if a given [methodSignature] within [classJvmName] exists.
    *
    * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
@@ -198,4 +89,93 @@ interface ElementHandler {
    * @return whether or not the method exists.
    */
   fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
+
+  companion object {
+
+    // Top-level: package/of/class/MyClass
+    // Nested A:  package/of/class/MyClass.InnerClass
+    // Nested B:  package/of/class/MyClass$InnerClass
+    private fun ImmutableKmClass.bestGuessSimpleName(): String {
+      return name.substringAfterLast(
+          '/', // Drop the package name, e.g. "package/of/class/"
+          '.', // Drop any enclosing classes, e.g. "MyClass."
+          '$' // Drop any enclosing classes, e.g. "MyClass$"
+      )
+    }
+
+    private fun String.substringAfterLast(vararg delimiters: Char): String {
+      val index = lastIndexOfAny(delimiters)
+      return if (index == -1) this else substring(index + 1, length)
+    }
+
+    fun ImmutableKmProperty.computeIsJvmField(
+        elementHandler: ElementHandler,
+        isCompanionObject: Boolean,
+        hasGetter: Boolean,
+        hasSetter: Boolean,
+        hasField: Boolean
+    ): Boolean {
+      val isJvmField: Boolean
+      if (!hasGetter &&
+          !hasSetter &&
+          hasField &&
+          !isConst) {
+        if (elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject) {
+          // Throwaway value as this kind of element handler should be automatically be
+          // picking up the jvm field annotation.
+          //
+          // We don't do this for companion object fields though as they appear to not
+          // have the JvmField annotation copied over though
+          //
+          isJvmField = false
+        } else {
+          isJvmField = true
+        }
+      } else {
+        isJvmField = false
+      }
+      return isJvmField
+    }
+
+    /**
+     * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
+     *         input annotations from [body].
+     */
+    fun createAnnotations(
+        siteTarget: UseSiteTarget? = null,
+        body: MutableCollection<AnnotationSpec>.() -> Unit
+    ): Collection<AnnotationSpec> {
+      val result = TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
+        body()
+      }
+      val withUseSiteTarget = if (siteTarget != null) {
+        result.map {
+          if (!(siteTarget == FIELD && it.className in IMPLICIT_FIELD_ANNOTATIONS)) {
+            // Some annotations are implicitly only for FIELD, so don't emit those site targets
+            it.toBuilder().useSiteTarget(siteTarget).build()
+          } else {
+            it
+          }
+        }
+      } else {
+        result
+      }
+
+      return Collections.unmodifiableCollection(withUseSiteTarget)
+    }
+
+    fun createThrowsSpec(
+        exceptions: Collection<TypeName>,
+        useSiteTarget: UseSiteTarget? = null
+    ): AnnotationSpec {
+      return AnnotationSpec.builder(Throws::class)
+          .addMember(
+              "exceptionClasses = %L",
+              exceptions.map { CodeBlock.of("%T::class", it) }
+                  .joinToCode(prefix = "[", suffix = "]")
+          )
+          .useSiteTarget(useSiteTarget)
+          .build()
+    }
+  }
 }
