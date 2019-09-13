@@ -1420,8 +1420,8 @@ class KotlinPoetMetadataSpecsTest(
             /**
              * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
              */
-            @kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
+            @kotlin.jvm.JvmSynthetic
             fun staticFunction() {
             }
           }
