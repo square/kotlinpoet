@@ -69,7 +69,6 @@ import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_NOT_DEFAULT
 import com.squareup.kotlinpoet.metadata.declaresDefaultValue
-import com.squareup.kotlinpoet.metadata.hasConstant
 import com.squareup.kotlinpoet.metadata.hasGetter
 import com.squareup.kotlinpoet.metadata.hasSetter
 import com.squareup.kotlinpoet.metadata.isAbstract
@@ -319,7 +318,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .map { (property, propertyData) ->
               val annotations = mutableListOf<AnnotationSpec>()
               if (propertyData != null) {
-                if (property.hasGetter && property.canHaveGetterBody) {
+                if (property.hasGetter) {
                   property.getterSignature?.let { getterSignature ->
                     if (!isInterface &&
                         elementHandler?.supportsNonRuntimeRetainedAnnotations == false) {
@@ -661,7 +660,7 @@ private fun ImmutableKmProperty.toPropertySpec(
         // since the delegate handles it
         // vals with initialized constants have a getter in bytecode but not a body in kotlin source
         val modifierSet = modifiers.toSet()
-        if (hasGetter && !isDelegated && canHaveGetterBody) {
+        if (hasGetter && !isDelegated) {
           propertyAccessor(modifierSet, getterFlags,
               FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(::getter)
         }
@@ -783,9 +782,6 @@ private val Flags.modalities: Set<KModifier>
       add(SEALED)
     }
   }
-
-@KotlinPoetMetadataPreview
-private inline val ImmutableKmProperty.canHaveGetterBody: Boolean get() = !(isVal && hasConstant)
 
 private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
