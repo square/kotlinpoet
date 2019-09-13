@@ -57,9 +57,17 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   private fun lookupField(classJvmName: String, fieldSignature: JvmFieldSignature): Field? {
     return try {
       val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
+      return clazz.lookupField(fieldSignature)
+    } catch (e: ClassNotFoundException) {
+      null
+    }
+  }
+
+  private fun Class<*>.lookupField(fieldSignature: JvmFieldSignature): Field? {
+    return try {
       val signatureString = fieldSignature.asString()
-      fieldCache.getOrPut(clazz to signatureString) {
-        clazz.declaredFields
+      fieldCache.getOrPut(this to signatureString) {
+        declaredFields
             .asSequence()
             .onEach { it.isAccessible = true }
             .find { signatureString == it.jvmFieldSignature }.toOptional()
@@ -114,18 +122,20 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     fieldSignature: JvmFieldSignature,
     isJvmField: Boolean
   ): Set<JvmFieldModifier> {
-    return lookupField(classJvmName, fieldSignature)?.modifiers.let { modifiers ->
-      if (modifiers != null) {
-        return mutableSetOf<JvmFieldModifier>().apply {
-          if (Modifier.isTransient(modifiers)) {
-            add(TRANSIENT)
-          }
-          if (Modifier.isVolatile(modifiers)) {
-            add(VOLATILE)
-          }
-        }
+    return lookupField(classJvmName, fieldSignature)?.jvmModifiers() ?: emptySet()
+  }
+
+  private fun Field.jvmModifiers(): Set<JvmFieldModifier> {
+    return return mutableSetOf<JvmFieldModifier>().apply {
+      if (Modifier.isTransient(modifiers)) {
+        add(TRANSIENT)
       }
-      return@let emptySet()
+      if (Modifier.isVolatile(modifiers)) {
+        add(VOLATILE)
+      }
+      if (Modifier.isStatic(modifiers)) {
+        add(JvmFieldModifier.STATIC)
+      }
     }
   }
 
@@ -133,9 +143,14 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     classJvmName: String,
     fieldSignature: JvmFieldSignature
   ): List<AnnotationSpec> {
-    return lookupField(classJvmName, fieldSignature)?.declaredAnnotations
+    return lookupField(classJvmName, fieldSignature)?.annotationSpecs()
         .orEmpty()
-        .map { AnnotationSpec.get(it, true) }
+  }
+
+  private fun Field.annotationSpecs(): List<AnnotationSpec> {
+    return declaredAnnotations
+        .orEmpty()
+        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
         .filterOutNullabilityAnnotations()
   }
 
@@ -148,7 +163,12 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return lookupConstructor(classJvmName, constructorSignature)
-        ?.declaredAnnotations.orEmpty()
+        ?.annotationSpecs()
+        .orEmpty()
+  }
+
+  private fun Constructor<*>.annotationSpecs(): List<AnnotationSpec> {
+    return declaredAnnotations.orEmpty()
         .map { AnnotationSpec.get(it, true) }
         .filterOutNullabilityAnnotations()
   }
@@ -157,18 +177,26 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     classJvmName: String,
     methodSignature: JvmMethodSignature
   ): Set<JvmMethodModifier> {
-    return lookupMethod(classJvmName, methodSignature)?.modifiers.let { modifiers ->
-      val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
-      if (modifiers != null) {
-        if (Modifier.isSynchronized(modifiers)) {
-          jvmMethodModifiers += SYNCHRONIZED
-        }
-        if (Modifier.isStatic(modifiers)) {
-          jvmMethodModifiers += STATIC
-        }
-      }
-      return@let jvmMethodModifiers
+    return lookupMethod(classJvmName, methodSignature)?.jvmModifiers().orEmpty()
+  }
+
+  private fun Method.jvmModifiers(): Set<JvmMethodModifier> {
+    return methodJvmModifiers(modifiers)
+  }
+
+  private fun Constructor<*>.jvmModifiers(): Set<JvmMethodModifier> {
+    return methodJvmModifiers(modifiers)
+  }
+
+  private fun methodJvmModifiers(modifiers: Int): Set<JvmMethodModifier> {
+    val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
+    if (Modifier.isSynchronized(modifiers)) {
+      jvmMethodModifiers += SYNCHRONIZED
     }
+    if (Modifier.isStatic(modifiers)) {
+      jvmMethodModifiers += STATIC
+    }
+    return jvmMethodModifiers
   }
 
   override fun methodAnnotations(
@@ -177,13 +205,18 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   ): List<AnnotationSpec> {
     return try {
       lookupMethod(classJvmName, methodSignature)
-          ?.declaredAnnotations
+          ?.annotationSpecs()
           .orEmpty()
-          .map { AnnotationSpec.get(it, true) }
-          .filterOutNullabilityAnnotations()
     } catch (e: ClassNotFoundException) {
       emptyList()
     }
+  }
+
+  private fun Method.annotationSpecs(): List<AnnotationSpec> {
+    return declaredAnnotations
+        .orEmpty()
+        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
+        .filterOutNullabilityAnnotations()
   }
 
   override fun parameterAnnotations(
@@ -198,13 +231,16 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       lookupMethod(classJvmName, methodSignature)!!.parameters
     }
     return try {
-      parameters[index]
-          .declaredAnnotations
-          .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-          .filterOutNullabilityAnnotations()
+      parameters[index].annotationSpecs()
     } catch (e: ClassNotFoundException) {
       emptyList()
     }
+  }
+
+  private fun Parameter.annotationSpecs(): List<AnnotationSpec> {
+    return declaredAnnotations
+        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
+        .filterOutNullabilityAnnotations()
   }
 
   override fun isMethodSynthetic(
@@ -219,12 +255,19 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     methodSignature: JvmMethodSignature,
     isConstructor: Boolean
   ): Set<TypeName> {
-    val exceptions = if (isConstructor) {
-      lookupConstructor(classJvmName, methodSignature)?.exceptionTypes
+    return if (isConstructor) {
+      lookupConstructor(classJvmName, methodSignature)?.exceptionTypeNames().orEmpty().toSet()
     } else {
-      lookupMethod(classJvmName, methodSignature)?.exceptionTypes
+      lookupMethod(classJvmName, methodSignature)?.exceptionTypeNames().orEmpty().toSet()
     }
-    return exceptions.orEmpty().mapTo(mutableSetOf()) { it.asTypeName() }
+  }
+
+  private fun Method.exceptionTypeNames(): List<TypeName> {
+    return exceptionTypes.orEmpty().mapTo(mutableListOf()) { it.asTypeName() }
+  }
+
+  private fun Constructor<*>.exceptionTypeNames(): List<TypeName> {
+    return exceptionTypes.orEmpty().mapTo(mutableListOf()) { it.asTypeName() }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
@@ -253,11 +296,14 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   ): CodeBlock? {
     val field = lookupField(classJvmName, fieldSignature) ?: error(
         "No field $fieldSignature found in $classJvmName.")
-    if (!Modifier.isStatic(field.modifiers)) {
+    return field.constantValue()
+  }
+
+  private fun Field.constantValue(): CodeBlock? {
+    if (!Modifier.isStatic(modifiers)) {
       return null
     }
-    return field
-        .get(null) // Constant means we can do a static get on it.
+    return get(null) // Constant means we can do a static get on it.
         .asLiteralCodeBlock()
   }
 
@@ -266,7 +312,11 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     methodSignature: JvmMethodSignature
   ): Boolean {
     val clazz = lookupClass(classJvmName) ?: error("No class found for: $classJvmName.")
-    val signatureString = methodSignature.asString()
+    return methodSignature.isOverriddenIn(clazz)
+  }
+
+  private fun JvmMethodSignature.isOverriddenIn(clazz: Class<*>): Boolean {
+    val signatureString = asString()
     val classPackage = clazz.`package`.name
     val interfaceMethods = clazz.interfaces.asSequence()
         .flatMap { it.methods.asSequence() }
