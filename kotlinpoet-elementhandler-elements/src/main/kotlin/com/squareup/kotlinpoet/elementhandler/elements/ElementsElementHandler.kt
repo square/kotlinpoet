@@ -259,7 +259,35 @@ class ElementsElementHandler private constructor(
       }
     }
 
-    val propertyData = TODO()
+    val propertyData = kmClass.properties
+        .asSequence()
+        .filter { it.isDeclaration }
+        .filterNot { it.isSynthesized }
+        .associateWith { property ->
+          val isJvmField = property.computeIsJvmField(
+              elementHandler = this,
+              isCompanionObject = kmClass.isCompanionObject,
+              hasGetter = property.getterSignature != null,
+              hasSetter = property.setterSignature != null,
+              hasField = property.fieldSignature != null
+          )
+
+          val fieldData = TODO()
+
+          val getterData = TODO()
+
+          val setterData = TODO()
+
+          val annotations = TODO()
+
+          PropertyData(
+              annotations = annotations,
+              fieldData = fieldData,
+              getterData = getterData,
+              setterData = setterData,
+              isJvmField = isJvmField
+          )
+        }
 
     val constructorData = kmClass.constructors.associateWith { kmConstructor ->
       if (kmClass.isAnnotation || kmClass.isInline) {
