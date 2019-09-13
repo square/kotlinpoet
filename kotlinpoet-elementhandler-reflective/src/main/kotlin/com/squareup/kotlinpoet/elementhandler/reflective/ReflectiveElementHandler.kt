@@ -7,8 +7,10 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
+import com.squareup.kotlinpoet.metadata.hasConstant
 import com.squareup.kotlinpoet.metadata.isAnnotation
 import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isDeclaration
 import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
@@ -16,6 +18,7 @@ import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
+import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
@@ -256,7 +259,60 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
               hasField = property.fieldSignature != null
           )
 
-          val fieldData = TODO()
+          val fieldData = property.fieldSignature?.let { fieldSignature ->
+            // Check the field in the parent first. For const/static/jvmField elements, these only
+            // exist in the parent and we want to check that if necessary to avoid looking up a
+            // non-existent field in the companion.
+            val parentModifiers = if (kmClass.isCompanionObject && parentName != null) {
+              classIfCompanion.lookupField(fieldSignature)?.jvmModifiers().orEmpty()
+            } else {
+              emptySet()
+            }
+
+            val isStatic = JvmFieldModifier.STATIC in parentModifiers
+
+            // TODO we looked up field once, let's reuse it
+            val classForOriginalField = targetClass.takeUnless {
+              kmClass.isCompanionObject &&
+                  (property.isConst || isJvmField || isStatic)
+            } ?: classIfCompanion
+
+            val field = classForOriginalField.lookupField(fieldSignature)
+                ?: error("No field $fieldSignature found in $classForOriginalField.")
+            val constant = if (property.hasConstant) {
+              val fieldWithConstant = classIfCompanion.takeIf { it != targetClass}?.let {
+                if (it.isInterface) {
+                  field
+                } else {
+                  // const properties are relocated to the enclosing class
+                  it.lookupField(fieldSignature)
+                      ?: error("No field $fieldSignature found in $it.")
+                }
+              } ?: field
+              fieldWithConstant.constantValue()
+            } else {
+              null
+            }
+
+            val jvmModifiers = field.jvmModifiers() + parentModifiers
+
+            // For static, const, or JvmField fields in a companion object, the companion
+            // object's field is marked as synthetic to hide it from Java, but in this case
+            // it's a false positive for this check in kotlin.
+            val isSynthetic = field.isSynthetic &&
+                !(kmClass.isCompanionObject &&
+                (property.isConst || isJvmField || JvmFieldModifier.STATIC in jvmModifiers))
+
+            FieldData(
+                annotations = field.annotationSpecs(),
+                isSynthetic = isSynthetic,
+                jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
+                  // JvmField companion objects don't need JvmStatic, it's implicit
+                  kmClass.isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+                },
+                constant = constant
+            )
+          }
 
           val getterData = property.getterSignature?.let { getterSignature ->
             val method = classIfCompanion.lookupMethod(getterSignature)
