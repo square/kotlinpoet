@@ -484,7 +484,7 @@ private fun ImmutableKmConstructor.toFunSpec(
               typeParamResolver,
               constructorData?.takeIf { it != ConstructorData.EMPTY }
                   ?.parameterAnnotations
-                  ?.getValue(index)
+                  ?.get(index)
                   .orEmpty()
           )
         })

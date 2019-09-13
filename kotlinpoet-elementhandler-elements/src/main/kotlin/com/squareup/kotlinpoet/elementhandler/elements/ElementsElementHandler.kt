@@ -389,7 +389,7 @@ class ElementsElementHandler private constructor(
       val signature = kmConstructor.signature
       if (signature != null) {
         val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
-            ?: return@associateWith ConstructorData.SYNTHETIC
+            ?: return@associateWith ConstructorData.EMPTY
         ConstructorData(
             annotations = if (kmConstructor.hasAnnotations) {
               constructor.annotationSpecs()
@@ -427,7 +427,7 @@ class ElementsElementHandler private constructor(
         kmClass = kmClass,
         simpleName = simpleName,
         properties = propertyData,
-        constructors = constructorData.filterValues { it != ConstructorData.SYNTHETIC },
+        constructors = constructorData,
         methods = methodData
     )
   }
