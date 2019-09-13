@@ -395,7 +395,7 @@ private fun ImmutableKmClass.toTypeSpec(
           .map { (func, methodData) ->
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
-            val annotations = methodData?.allAnnotations().orEmpty().toMutableList()
+            val annotations = mutableListOf<AnnotationSpec>()
             if (elementHandler != null) {
               func.signature?.let { signature ->
                 if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
@@ -407,7 +407,11 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
               }
             }
-            func.toFunSpec(functionTypeParamsResolver, annotations, methodData)
+            val finalAnnotations = ElementHandler.createAnnotations {
+              addAll(annotations)
+              addAll(methodData?.allAnnotations().orEmpty())
+            }
+            func.toFunSpec(functionTypeParamsResolver, finalAnnotations, methodData)
                 .toBuilder()
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
@@ -427,7 +431,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   // For interface methods, remove any body and mark the methods as abstract
                   // IFF it doesn't have a default interface body.
                   if (isInterface &&
-                      annotations.none { it.className == JVM_DEFAULT } &&
+                      finalAnnotations.none { it.className == JVM_DEFAULT } &&
                       !isKotlinDefaultInterfaceMethod()
                   ) {
                     addModifiers(ABSTRACT)
