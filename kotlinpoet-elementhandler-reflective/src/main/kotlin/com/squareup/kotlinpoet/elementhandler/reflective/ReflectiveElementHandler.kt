@@ -6,21 +6,27 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.VOLATILE
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.STATIC
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.jvmInternalName
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.lang.reflect.Parameter
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
 class ReflectiveElementHandler private constructor() : ElementHandler {
@@ -209,6 +215,62 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
     return lookupClass(classJvmName)?.lookupMethod(methodSignature) != null
+  }
+
+  override fun classData(
+      kmClass: ImmutableKmClass,
+      parentName: String?,
+      simpleName: String
+  ): ClassData {
+    val targetClass = lookupClass(kmClass.name.jvmInternalName)
+        ?: error("No class found for: ${kmClass.name}.")
+
+    // Should only be called if parentName has been null-checked
+    val classIfCompanion by lazy(NONE) {
+      if (kmClass.isCompanionObject && parentName != null) {
+        lookupClass(parentName)
+            ?: error("No class found for: ${parentName}.")
+      } else {
+        targetClass
+      }
+    }
+
+    val propertyData = TODO()
+
+    val constructorData = TODO()
+
+    val methodData = TODO()
+
+    return ClassData(
+        kmClass = kmClass,
+        simpleName = simpleName,
+        properties = propertyData,
+        constructors = constructorData,
+        methods = methodData
+    )
+  }
+
+  private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, List<AnnotationSpec>> {
+    return withIndex().associate { (index, parameter) ->
+          index to parameter.annotationSpecs()
+        }
+  }
+
+  private fun Method.methodData(
+      clazz: Class<*>,
+      signature: JvmMethodSignature,
+      hasAnnotations: Boolean,
+      jvmInformationMethod: Method = this,
+      knownIsOverride: Boolean? = null
+  ): MethodData {
+    return MethodData(
+        annotations = if (hasAnnotations) annotationSpecs() else emptyList(),
+        parameterAnnotations = parameters.indexedAnnotationSpecs(),
+        isSynthetic = isSynthetic,
+        jvmModifiers = jvmInformationMethod.jvmModifiers(),
+        isOverride = knownIsOverride?.let { it } ?: signature.isOverriddenIn(clazz),
+        exceptions = exceptionTypeNames()
+    )
   }
 
   companion object {
