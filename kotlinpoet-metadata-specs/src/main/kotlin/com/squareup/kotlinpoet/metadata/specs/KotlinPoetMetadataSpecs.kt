@@ -363,7 +363,10 @@ private fun ImmutableKmClass.toTypeSpec(
               property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
-                  annotations = propertyData?.allAnnotations.orEmpty() + annotations,
+                  annotations = ElementHandler.createAnnotations {
+                    addAll(annotations)
+                    addAll(propertyData?.allAnnotations.orEmpty())
+                  },
                   propertyData = propertyData
               )
             }
