@@ -7,8 +7,11 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
+import com.squareup.kotlinpoet.metadata.isAnnotation
 import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.specs.ClassData
+import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -238,7 +241,35 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
     val propertyData = TODO()
 
-    val constructorData = TODO()
+    val constructorData = kmClass.constructors.associateWith { kmConstructor ->
+      if (kmClass.isAnnotation || kmClass.isInline) {
+        //
+        // Annotations are interfaces in reflection, but kotlin metadata will still report a
+        // constructor signature
+        //
+        // Inline classes have no constructors at runtime
+        //
+        return@associateWith ConstructorData.EMPTY
+      }
+      val signature = kmConstructor.signature
+      if (signature != null) {
+        val constructor = targetClass.lookupConstructor(signature)
+            ?: error("No constructor $signature found in $targetClass.")
+        ConstructorData(
+            annotations = if (kmConstructor.hasAnnotations) {
+              constructor.annotationSpecs()
+            } else {
+              emptyList()
+            },
+            parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+            isSynthetic = constructor.isSynthetic,
+            jvmModifiers = constructor.jvmModifiers(),
+            exceptions = constructor.exceptionTypeNames()
+        )
+      } else {
+        ConstructorData.EMPTY
+      }
+    }
 
     val methodData = kmClass.functions.associateWith { kmFunction ->
       val signature = kmFunction.signature
