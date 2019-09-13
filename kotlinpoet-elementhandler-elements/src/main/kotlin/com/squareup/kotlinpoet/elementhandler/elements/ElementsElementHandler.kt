@@ -11,16 +11,20 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isCompanionObject
+import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.TRANSIENT
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmFieldModifier.VOLATILE
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.STATIC
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
+import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.jvmInternalName
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -32,6 +36,7 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.LazyThreadSafetyMode.NONE
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
@@ -226,6 +231,58 @@ class ElementsElementHandler private constructor(
       Visibility.DEFAULT -> MoreElements.getPackage(this) == pkg
       else -> true
     }
+  }
+
+  override fun classData(kmClass: ImmutableKmClass, parentName: String?,
+      simpleName: String): ClassData {
+    val typeElement = lookupTypeElement(kmClass.name.jvmInternalName)
+        ?: error("No class found for: ${kmClass.name}.")
+
+    // Should only be called if parentName has been null-checked
+    val classIfCompanion by lazy(NONE) {
+      if (kmClass.isCompanionObject && parentName != null) {
+        lookupTypeElement(parentName)
+            ?: error("No class found for: ${parentName}.")
+      } else {
+        typeElement
+      }
+    }
+
+    val propertyData = TODO()
+
+    val constructorData = TODO()
+
+    val methodData = TODO()
+
+    return ClassData(
+        kmClass = kmClass,
+        simpleName = simpleName,
+        properties = propertyData,
+        constructors = constructorData,
+        methods = methodData
+    )
+  }
+
+  private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, List<AnnotationSpec>> {
+    return withIndex().associate { (index, parameter) ->
+      index to parameter.annotationSpecs()
+    }
+  }
+
+  private fun ExecutableElement.methodData(
+      typeElement: TypeElement,
+      hasAnnotations: Boolean,
+      jvmInformationMethod: ExecutableElement = this,
+      knownIsOverride: Boolean? = null
+  ): MethodData {
+    return MethodData(
+        annotations = if (hasAnnotations) annotationSpecs() else emptyList(),
+        parameterAnnotations = parameters.indexedAnnotationSpecs(),
+        isSynthetic = false,
+        jvmModifiers = jvmInformationMethod.jvmModifiers(),
+        isOverride = knownIsOverride?.let { it } ?: isOverriddenIn(typeElement),
+        exceptions = exceptionTypeNames()
+    )
   }
 
   companion object {
