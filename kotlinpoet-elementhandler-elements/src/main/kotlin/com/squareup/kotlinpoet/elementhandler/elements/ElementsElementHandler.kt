@@ -71,13 +71,15 @@ class ElementsElementHandler private constructor(
     classJvmName: String,
     fieldSignature: JvmFieldSignature
   ): VariableElement? {
-    return lookupTypeElement(classJvmName)?.let {
-      val signatureString = fieldSignature.asString()
-      variableElementCache.getOrPut(it to signatureString) {
-        ElementFilter.fieldsIn(it.enclosedElements)
-            .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
-      }.nullableValue
-    }
+    return lookupTypeElement(classJvmName)?.lookupField(fieldSignature)
+  }
+
+  private fun TypeElement.lookupField(fieldSignature: JvmFieldSignature): VariableElement? {
+    val signatureString = fieldSignature.asString()
+    return variableElementCache.getOrPut(this to signatureString) {
+      ElementFilter.fieldsIn(enclosedElements)
+          .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
+    }.nullableValue
   }
 
   private fun lookupMethod(
@@ -104,16 +106,18 @@ class ElementsElementHandler private constructor(
     fieldSignature: JvmFieldSignature,
     isJvmField: Boolean
   ): Set<JvmFieldModifier> {
-    return lookupField(classJvmName, fieldSignature)?.modifiers?.let { modifiers ->
-      modifiers.mapNotNullTo(mutableSetOf()) {
-        when {
-          it == ElementsModifier.TRANSIENT -> TRANSIENT
-          it == ElementsModifier.VOLATILE -> VOLATILE
-          !isJvmField && it == ElementsModifier.STATIC -> JvmFieldModifier.STATIC
-          else -> null
-        }
+    return lookupField(classJvmName, fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
+  }
+
+  private fun VariableElement.jvmModifiers(isJvmField: Boolean): Set<JvmFieldModifier> {
+    return modifiers.mapNotNullTo(mutableSetOf()) {
+      when {
+        it == ElementsModifier.TRANSIENT -> TRANSIENT
+        it == ElementsModifier.VOLATILE -> VOLATILE
+        !isJvmField && it == ElementsModifier.STATIC -> JvmFieldModifier.STATIC
+        else -> null
       }
-    }.orEmpty()
+    }
   }
 
   override fun fieldAnnotations(
@@ -121,8 +125,11 @@ class ElementsElementHandler private constructor(
     fieldSignature: JvmFieldSignature
   ): List<AnnotationSpec> {
     return lookupField(classJvmName, fieldSignature)
-        ?.annotationMirrors
-        .orEmpty()
+        ?.annotationSpecs().orEmpty()
+  }
+
+  private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
+    return annotationMirrors
         .map { AnnotationSpec.get(it) }
         .filterOutNullabilityAnnotations()
   }
@@ -138,15 +145,17 @@ class ElementsElementHandler private constructor(
     methodSignature: JvmMethodSignature
   ): Set<JvmMethodModifier> {
     return lookupMethod(classJvmName, methodSignature,
-        ElementFilter::methodsIn)?.modifiers?.let { modifiers ->
-      modifiers.mapNotNullTo(mutableSetOf()) {
-        when (it) {
-          ElementsModifier.SYNCHRONIZED -> SYNCHRONIZED
-          ElementsModifier.STATIC -> STATIC
-          else -> null
-        }
+        ElementFilter::methodsIn)?.jvmModifiers().orEmpty()
+  }
+
+  private fun ExecutableElement.jvmModifiers(): Set<JvmMethodModifier> {
+    return modifiers.mapNotNullTo(mutableSetOf()) {
+      when (it) {
+        ElementsModifier.SYNCHRONIZED -> SYNCHRONIZED
+        ElementsModifier.STATIC -> STATIC
+        else -> null
       }
-    }.orEmpty()
+    }
   }
 
   override fun constructorAnnotations(
@@ -154,10 +163,7 @@ class ElementsElementHandler private constructor(
     constructorSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return lookupMethod(classJvmName, constructorSignature, ElementFilter::constructorsIn)
-        ?.annotationMirrors
-        .orEmpty()
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
+        ?.annotationSpecs().orEmpty()
   }
 
   override fun methodAnnotations(
@@ -165,8 +171,11 @@ class ElementsElementHandler private constructor(
     methodSignature: JvmMethodSignature
   ): List<AnnotationSpec> {
     return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn)
-        ?.annotationMirrors
-        .orEmpty()
+        ?.annotationSpecs().orEmpty()
+  }
+
+  private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
+    return annotationMirrors
         .map { AnnotationSpec.get(it) }
         .filterOutNullabilityAnnotations()
   }
@@ -208,8 +217,13 @@ class ElementsElementHandler private constructor(
     } else {
       ElementFilter::methodsIn
     }
-    val exceptions = lookupMethod(classJvmName, methodSignature, elementFilter)?.thrownTypes
-    return exceptions.orEmpty().mapTo(mutableSetOf()) { it.asTypeName() }
+    return lookupMethod(classJvmName, methodSignature, elementFilter)?.exceptionTypeNames()
+        .orEmpty()
+        .toSet()
+  }
+
+  private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
+    return thrownTypes.map { it.asTypeName() }
   }
 
   override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
@@ -230,9 +244,13 @@ class ElementsElementHandler private constructor(
     classJvmName: String,
     fieldSignature: JvmFieldSignature
   ): CodeBlock? {
-    return lookupField(classJvmName, fieldSignature)?.constantValue
-        ?.asLiteralCodeBlock()
-        ?: error("No field $fieldSignature found in $classJvmName.")
+    return lookupField(classJvmName, fieldSignature)?.let {
+      it.constantValue()
+    } ?: error("No field $fieldSignature found in $classJvmName.")
+  }
+
+  private fun VariableElement.constantValue(): CodeBlock? {
+    return constantValue?.asLiteralCodeBlock()
   }
 
   override fun isMethodOverride(
