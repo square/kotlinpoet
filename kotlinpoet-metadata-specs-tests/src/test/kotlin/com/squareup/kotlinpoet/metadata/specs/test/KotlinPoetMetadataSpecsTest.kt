@@ -1414,6 +1414,7 @@ class KotlinPoetMetadataSpecsTest(
           fun interfaceFunction()
 
           companion object {
+            @get:kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
