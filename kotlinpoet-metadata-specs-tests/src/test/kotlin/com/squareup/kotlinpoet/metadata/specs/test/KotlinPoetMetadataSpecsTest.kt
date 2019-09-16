@@ -1209,11 +1209,12 @@ class KotlinPoetMetadataSpecsTest(
 
         interface InterfaceWithJvmName {
           companion object {
+            @get:kotlin.jvm.JvmName(name = "fooBoolJvm")
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
-            @kotlin.jvm.JvmStatic
             @kotlin.jvm.JvmName(name = "jvmStaticFunction")
+            @kotlin.jvm.JvmStatic
             fun staticFunction() {
             }
           }
@@ -1337,10 +1338,10 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Fields(
-        @field:kotlin.jvm.JvmField
+        @property:kotlin.jvm.JvmField
         val param1: kotlin.String
       ) {
-        @field:kotlin.jvm.JvmField
+        @kotlin.jvm.JvmField
         val fieldProp: kotlin.String = ""
 
         companion object {
@@ -1414,14 +1415,15 @@ class KotlinPoetMetadataSpecsTest(
           fun interfaceFunction()
 
           companion object {
+            @get:kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 
             /**
              * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
              */
-            @kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
+            @kotlin.jvm.JvmSynthetic
             fun staticFunction() {
             }
           }
@@ -1476,6 +1478,7 @@ class KotlinPoetMetadataSpecsTest(
           fun interfaceFunction()
 
           companion object {
+            @get:kotlin.jvm.JvmSynthetic
             @kotlin.jvm.JvmStatic
             val FOO_BOOL: kotlin.Boolean = false
 

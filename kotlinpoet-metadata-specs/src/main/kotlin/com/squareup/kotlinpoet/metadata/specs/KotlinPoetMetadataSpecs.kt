@@ -21,7 +21,6 @@ import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.FunSpec.Builder
@@ -56,7 +55,6 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -71,8 +69,6 @@ import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_NOT_DEFAULT
 import com.squareup.kotlinpoet.metadata.declaresDefaultValue
-import com.squareup.kotlinpoet.metadata.hasAnnotations
-import com.squareup.kotlinpoet.metadata.hasConstant
 import com.squareup.kotlinpoet.metadata.hasGetter
 import com.squareup.kotlinpoet.metadata.hasSetter
 import com.squareup.kotlinpoet.metadata.isAbstract
@@ -215,6 +211,9 @@ private fun ImmutableKmClass.toTypeSpec(
       '$' // Drop any enclosing classes, e.g. "MyClass$"
   )
   val jvmInternalName = name.jvmInternalName
+
+  val classData = elementHandler?.classData(jvmInternalName, parentName, simpleName)
+
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
     isCompanionObject -> TypeSpec.companionObjectBuilder(companionObjectName(simpleName))
@@ -290,7 +289,7 @@ private fun ImmutableKmClass.toTypeSpec(
     val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
     if (isClass || isAnnotation || isEnum) {
       primaryConstructor?.let {
-        it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler), jvmInternalName, elementHandler)
+        it.toFunSpec(classTypeParamsResolver, classData?.constructors?.get(it) ?: return@let)
             .also { spec ->
               val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
                 // Metadata specifies the constructor as private, but that's implicit so we can omit it
@@ -301,8 +300,12 @@ private fun ImmutableKmClass.toTypeSpec(
             }
       }
       constructors.filter { !it.isPrimary }.takeIf { it.isNotEmpty() }?.let { secondaryConstructors ->
-        builder.addFunctions(secondaryConstructors.map {
-          it.toFunSpec(classTypeParamsResolver, it.annotations(jvmInternalName, elementHandler), jvmInternalName, elementHandler)
+        builder.addFunctions(secondaryConstructors
+            .mapNotNull { kmConstructor ->
+              classData?.constructors?.get(kmConstructor)?.let { kmConstructor to it }
+            }
+            .map { (kmConstructor, constructorData) ->
+              kmConstructor.toFunSpec(classTypeParamsResolver, constructorData)
         })
       }
     }
@@ -311,95 +314,14 @@ private fun ImmutableKmClass.toTypeSpec(
             .asSequence()
             .filter { it.isDeclaration }
             .filterNot { it.isSynthesized }
-            .map { property ->
-              val annotations = LinkedHashSet<AnnotationSpec>()
-              var constant: CodeBlock? = null
-              var isOverride = false
-              if (elementHandler != null) {
-                if (property.hasAnnotations) {
-                  annotations += property.syntheticMethodForAnnotations?.let {
-                    elementHandler.methodAnnotations(jvmInternalName, it)
-                  }.orEmpty()
-                }
-                val isJvmField: Boolean
-                if (property.getterSignature == null &&
-                    property.setterSignature == null &&
-                    property.fieldSignature != null &&
-                    !property.isConst) {
-                  if (elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject) {
-                    // Throwaway value as this kind of element handler should be automatically be
-                    // picking up the jvm field annotation.
-                    //
-                    // We don't do this for companion object fields though as they appear to not
-                    // have the JvmField annotation copied over though
-                    //
-                    isJvmField = false
-                  } else {
-                    isJvmField = true
-                    annotations += AnnotationSpec.builder(JVM_FIELD).build()
-                  }
-                } else {
-                  isJvmField = false
-                }
-                property.fieldSignature?.let { fieldSignature ->
-                  annotations += elementHandler.fieldAnnotations(jvmInternalName, fieldSignature)
-                      .map { it.toBuilder().useSiteTarget(UseSiteTarget.FIELD).build() }
-                  annotations += elementHandler.fieldJvmModifiers(jvmInternalName, fieldSignature, isJvmField)
-                      .map { it.annotationSpec() }
-                  if (isCompanionObject && parentName != null) {
-                    // These are copied into the parent
-                    annotations += elementHandler.fieldJvmModifiers(parentName, fieldSignature, isJvmField)
-                        .map { it.annotationSpec() }
-                  }
-                  if (!(isCompanionObject && (property.isConst ||
-                          annotations.any { it.className == JVM_STATIC || it.className == JVM_FIELD })) &&
-                      elementHandler.isFieldSynthetic(jvmInternalName, fieldSignature)) {
-                    // For static, const, or JvmField fields in a companion object, the companion
-                    // object's field is marked as synthetic to hide it from Java, but in this case
-                    // it's a false positive for this check in kotlin.
-                    annotations += AnnotationSpec.builder(JVM_SYNTHETIC)
-                        .useSiteTarget(UseSiteTarget.FIELD)
-                        .build()
-                  }
-                  if (property.hasConstant) {
-                    constant = if (isCompanionObject && parentName != null) {
-                      if (elementHandler.classFor(parentName).isInterface) {
-                        elementHandler.fieldConstant(jvmInternalName, fieldSignature)
-                      } else {
-                        // const properties are relocated to the enclosing class
-                        elementHandler.fieldConstant(parentName, fieldSignature)
-                      }
-                    } else {
-                      elementHandler.fieldConstant(jvmInternalName, fieldSignature)
-                    }
-                  }
-                }
-                if (property.hasGetter && property.canHaveGetterBody) {
+            .map { it to classData?.properties?.get(it) }
+            .map { (property, propertyData) ->
+              val annotations = mutableListOf<AnnotationSpec>()
+              if (propertyData != null) {
+                if (property.hasGetter) {
                   property.getterSignature?.let { getterSignature ->
-                    if (!isOverride) {
-                      isOverride = elementHandler.isMethodOverride(jvmInternalName, getterSignature)
-                    }
-                    if (property.getterFlags.hasAnnotations) {
-                      annotations += elementHandler.methodAnnotations(jvmInternalName,
-                          getterSignature)
-                          .map { it.toBuilder().useSiteTarget(UseSiteTarget.GET).build() }
-                    }
-                    annotations += elementHandler.methodJvmModifiers(jvmInternalName,
-                        getterSignature)
-                        .map {
-                          it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.GET).build()
-                        }
-                    if (elementHandler.isMethodSynthetic(jvmInternalName, getterSignature)) {
-                      annotations += AnnotationSpec.builder(JvmSynthetic::class)
-                          .useSiteTarget(UseSiteTarget.GET)
-                          .build()
-                    }
-                    if (isCompanionObject && parentName != null) {
-                      // These are copied into the parent
-                      annotations += elementHandler.methodJvmModifiers(jvmInternalName, getterSignature)
-                          .map { it.annotationSpec() }
-                    }
-                    if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                    if (!isInterface &&
+                        elementHandler?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip interface types for this because they can't have @JvmName.
                       // For annotation properties, kotlinc puts JvmName annotations by default in
@@ -417,42 +339,13 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
-                    elementHandler.methodExceptions(jvmInternalName, getterSignature, false)
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { exceptions ->
-                          annotations += createThrowsSpec(exceptions, UseSiteTarget.GET)
-                        }
                   }
                 }
                 if (property.hasSetter) {
                   property.setterSignature?.let { setterSignature ->
-                    if (!isOverride) {
-                      isOverride = elementHandler.isMethodOverride(jvmInternalName, setterSignature)
-                    }
-                    if (property.setterFlags.hasAnnotations) {
-                      annotations += elementHandler.methodAnnotations(jvmInternalName,
-                          setterSignature)
-                          .map { it.toBuilder().useSiteTarget(UseSiteTarget.SET).build() }
-                    }
-                    annotations += elementHandler.methodJvmModifiers(jvmInternalName,
-                        setterSignature)
-                        .map {
-                          it.annotationSpec().toBuilder().useSiteTarget(UseSiteTarget.SET).build()
-                        }
-                    if (elementHandler.isMethodSynthetic(jvmInternalName, setterSignature)) {
-                      annotations += AnnotationSpec.builder(JvmSynthetic::class)
-                          .useSiteTarget(UseSiteTarget.SET)
-                          .build()
-                    }
-                    if (isCompanionObject && parentName != null) {
-                      // These are copied into the parent
-                      annotations += elementHandler.methodJvmModifiers(jvmInternalName,
-                          setterSignature)
-                          .map { it.annotationSpec() }
-                    }
                     if (!isAnnotation &&
                         !isInterface &&
-                        !elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                        elementHandler?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip annotation types for this because they can't have vars.
                       // We skip interface types for this because they can't have @JvmName.
@@ -463,20 +356,17 @@ private fun ImmutableKmClass.toTypeSpec(
                         annotations += jvmNameAnnotation
                       }
                     }
-                    elementHandler.methodExceptions(jvmInternalName, setterSignature, false)
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { exceptions ->
-                          annotations += createThrowsSpec(exceptions, UseSiteTarget.SET)
-                        }
                   }
                 }
               }
               property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
-                  annotations = annotations,
-                  constant = constant,
-                  isOverride = isOverride
+                  annotations = ElementHandler.createAnnotations {
+                    addAll(annotations)
+                    addAll(propertyData?.allAnnotations.orEmpty())
+                  },
+                  propertyData = propertyData
               )
             }
             .asIterable()
@@ -500,24 +390,13 @@ private fun ImmutableKmClass.toTypeSpec(
           .filter { it.isDeclaration }
           .filterNot { it.isDelegation }
           .filterNot { it.isSynthesized }
-          .map { func ->
+          .map { it to classData?.methods?.get(it) }
+          .map { (func, methodData) ->
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
-            val annotations = LinkedHashSet<AnnotationSpec>()
-            var isOverride = false
-            var isSynthetic = false
+            val annotations = mutableListOf<AnnotationSpec>()
             if (elementHandler != null) {
               func.signature?.let { signature ->
-                isSynthetic = elementHandler.isMethodSynthetic(jvmInternalName, signature)
-                if (isSynthetic) {
-                  annotations += AnnotationSpec.builder(JvmSynthetic::class).build()
-                }
-                if (func.hasAnnotations) {
-                  annotations += elementHandler.methodAnnotations(jvmInternalName, signature)
-                }
-                annotations += elementHandler.methodJvmModifiers(jvmInternalName, signature)
-                    .map { it.annotationSpec() }
-                isOverride = elementHandler.isMethodOverride(jvmInternalName, signature)
                 if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
                   // Infer if JvmName was used
                   // We skip interface types for this because they can't have @JvmName.
@@ -525,14 +404,13 @@ private fun ImmutableKmClass.toTypeSpec(
                     annotations += jvmNameAnnotation
                   }
                 }
-                elementHandler.methodExceptions(jvmInternalName, signature, false)
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { exceptions ->
-                      annotations += createThrowsSpec(exceptions)
-                    }
               }
             }
-            func.toFunSpec(functionTypeParamsResolver, annotations, isOverride, jvmInternalName, elementHandler)
+            val finalAnnotations = ElementHandler.createAnnotations {
+              addAll(annotations)
+              addAll(methodData?.allAnnotations().orEmpty())
+            }
+            func.toFunSpec(functionTypeParamsResolver, finalAnnotations, methodData)
                 .toBuilder()
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
@@ -552,13 +430,13 @@ private fun ImmutableKmClass.toTypeSpec(
                   // For interface methods, remove any body and mark the methods as abstract
                   // IFF it doesn't have a default interface body.
                   if (isInterface &&
-                      annotations.none { it.className == JVM_DEFAULT } &&
+                      finalAnnotations.none { it.className == JVM_DEFAULT } &&
                       !isKotlinDefaultInterfaceMethod()
                   ) {
                     addModifiers(ABSTRACT)
                     clearBody()
                   }
-                  if (isSynthetic) {
+                  if (methodData?.isSynthetic == true) {
                     addKdoc("Note: Since this is a synthetic function, some JVM information " +
                         "(annotations, modifiers) may be missing.")
                   }
@@ -591,62 +469,26 @@ private fun ImmutableKmClass.toTypeSpec(
       .build()
 }
 
-@KotlinPoetMetadataPreview
-private fun ImmutableKmConstructor.annotations(
-  classJvmName: String,
-  elementHandler: ElementHandler?
-): List<AnnotationSpec> {
-  if (elementHandler != null) {
-    signature?.let { signature ->
-      val annotations = mutableListOf<AnnotationSpec>()
-      if (hasAnnotations) {
-        annotations += elementHandler.constructorAnnotations(classJvmName, signature)
-      }
-      elementHandler.methodExceptions(classJvmName, signature, true)
-          .takeIf { it.isNotEmpty() }
-          ?.let {
-            annotations += createThrowsSpec(it)
-          }
-      return annotations
-    }
-  }
-  return emptyList()
-}
-
 private fun companionObjectName(name: String): String? {
   return if (name == "Companion") null else name
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmValueParameter.extractAnnotations(
-  elementHandler: ElementHandler?,
-  classJvmName: String,
-  jvmMethodSignature: JvmMethodSignature?,
-  index: Int,
-  isConstructorParam: Boolean
-): List<AnnotationSpec> {
-  return if (hasAnnotations && elementHandler != null && jvmMethodSignature != null) {
-    elementHandler.parameterAnnotations(classJvmName, jvmMethodSignature, index, isConstructorParam)
-  } else {
-    emptyList()
-  }
-}
-
-@KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: List<AnnotationSpec>,
-  classJvmName: String,
-  elementHandler: ElementHandler?
+  constructorData: ConstructorData?
 ): FunSpec {
   return FunSpec.constructorBuilder()
       .apply {
-        addAnnotations(annotations)
+        addAnnotations(constructorData?.allAnnotations.orEmpty())
         addVisibility { addModifiers(it) }
         addParameters(this@toFunSpec.valueParameters.mapIndexed { index, param ->
           param.toParameterSpec(
               typeParamResolver,
-              param.extractAnnotations(elementHandler, classJvmName, signature, index, true)
+              constructorData?.takeIf { it != ConstructorData.EMPTY }
+                  ?.parameterAnnotations
+                  ?.get(index)
+                  .orEmpty()
           )
         })
         if (!isPrimary) {
@@ -661,9 +503,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: Iterable<AnnotationSpec>,
-  isOverride: Boolean,
-  classJvmName: String,
-  elementHandler: ElementHandler?
+  methodData: MethodData?
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
@@ -673,20 +513,14 @@ private fun ImmutableKmFunction.toFunSpec(
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
                 typeParamResolver,
-                param.extractAnnotations(
-                    elementHandler,
-                    classJvmName,
-                    signature,
-                    index,
-                    isConstructorParam = false
-                )
+                methodData?.parameterAnnotations?.getValue(index).orEmpty()
             )
           })
         }
         if (typeParameters.isNotEmpty()) {
           addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
         }
-        if (isOverride) {
+        if (methodData?.isOverride == true) {
           addModifiers(KModifier.OVERRIDE)
         }
         if (isOperator) {
@@ -724,7 +558,7 @@ private fun ImmutableKmFunction.toFunSpec(
 @KotlinPoetMetadataPreview
 private fun ImmutableKmValueParameter.toParameterSpec(
   typeParamResolver: ((index: Int) -> TypeName),
-  annotations: List<AnnotationSpec>
+  annotations: Collection<AnnotationSpec>
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
@@ -752,9 +586,9 @@ private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
   isConstructorParam: Boolean,
   annotations: Iterable<AnnotationSpec>,
-  constant: CodeBlock?,
-  isOverride: Boolean
+  propertyData: PropertyData?
 ): PropertySpec {
+  val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   return PropertySpec.builder(name, returnTypeName)
       .apply {
@@ -767,7 +601,7 @@ private fun ImmutableKmProperty.toPropertySpec(
                 // TODO Ideally don't do this if the annotation use site is only field?
                 //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
                 //  automatically applied to the property for these annotation types.
-                //  his is another thing ElementHandler *could* tell us
+                //  This is another thing ElementHandler *could* tell us
                 it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
               } else {
                 it
@@ -814,6 +648,7 @@ private fun ImmutableKmProperty.toPropertySpec(
           addModifiers(LATEINIT)
         }
         if (isConstructorParam || (!isDelegated && !isLateinit)) {
+          val constant = propertyData?.fieldData?.constant
           when {
             constant != null -> initializer(constant)
             isConstructorParam -> initializer(name)
@@ -825,7 +660,7 @@ private fun ImmutableKmProperty.toPropertySpec(
         // since the delegate handles it
         // vals with initialized constants have a getter in bytecode but not a body in kotlin source
         val modifierSet = modifiers.toSet()
-        if (hasGetter && !isDelegated && canHaveGetterBody) {
+        if (hasGetter && !isDelegated) {
           propertyAccessor(modifierSet, getterFlags,
               FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(::getter)
         }
@@ -948,31 +783,12 @@ private val Flags.modalities: Set<KModifier>
     }
   }
 
-@KotlinPoetMetadataPreview
-private inline val ImmutableKmProperty.canHaveGetterBody: Boolean get() = !(isVal && hasConstant)
-
 private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
 }
 
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
-private val JVM_FIELD = JvmField::class.asClassName()
-private val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
-
-private fun createThrowsSpec(
-  exceptions: Set<TypeName>,
-  useSiteTarget: UseSiteTarget? = null
-): AnnotationSpec {
-  return AnnotationSpec.builder(Throws::class)
-      .addMember(
-          "exceptionClasses = %L",
-          exceptions.map { CodeBlock.of("%T::class", it) }
-              .joinToCode(prefix = "[", suffix = "]")
-      )
-      .useSiteTarget(useSiteTarget)
-      .build()
-}
 
 private fun String.substringAfterLast(vararg delimiters: Char): String {
   val index = lastIndexOfAny(delimiters)
