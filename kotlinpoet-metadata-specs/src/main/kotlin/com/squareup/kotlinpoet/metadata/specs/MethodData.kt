@@ -36,7 +36,7 @@ data class MethodData(
    *        use.
    */
   fun allAnnotations(useSiteTarget: UseSiteTarget? = null): Collection<AnnotationSpec> {
-    return ElementHandler.createAnnotations(
+    return ElementHandlerUtil.createAnnotations(
         useSiteTarget) {
       addAll(annotations)
       if (isSynthetic) {

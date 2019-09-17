@@ -29,7 +29,7 @@ data class FieldData(
    * A collection of all annotations on this method, including any derived from [jvmModifiers]
    * and [isSynthetic].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandler.createAnnotations(
+  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations(
       FIELD) {
     addAll(annotations)
     if (isSynthetic) {

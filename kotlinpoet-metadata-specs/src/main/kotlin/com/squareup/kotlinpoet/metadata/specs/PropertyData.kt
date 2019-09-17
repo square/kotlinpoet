@@ -5,7 +5,6 @@ import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.GET
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.JVM_FIELD_SPEC
 
 /**
  * Represents relevant information on a property used for [ElementHandler]. Should only be
@@ -32,7 +31,7 @@ data class PropertyData(
    * A collection of all annotations on this property including declared ones and any derived from
    * [fieldData], [getterData], [setterData], and [isJvmField].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandler.createAnnotations {
+  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations {
     // Don't add annotations that are already defined on the parent
     val higherScopedAnnotations = annotations.associateBy { it.className }
     val fieldAnnotations = fieldData?.allAnnotations.orEmpty()

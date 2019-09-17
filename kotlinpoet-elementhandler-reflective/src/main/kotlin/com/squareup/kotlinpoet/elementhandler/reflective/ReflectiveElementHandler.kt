@@ -27,6 +27,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -413,7 +414,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-          index to ElementHandler.createAnnotations { addAll(parameter.annotationSpecs()) }
+          index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
         }
   }
 

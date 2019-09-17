@@ -29,7 +29,7 @@ data class ConstructorData(
    * A collection of all annotations on this constructor, including any derived from [jvmModifiers],
    * [isSynthetic], and [exceptions].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandler.createAnnotations {
+  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations {
     addAll(annotations)
     if (isSynthetic) {
       add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)

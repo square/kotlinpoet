@@ -15,17 +15,11 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
-import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 import kotlinx.metadata.jvm.JvmMethodSignature
-import java.util.Collections
-import java.util.TreeSet
 
 /**
  * A basic interface for looking up information about JVM elements.
@@ -144,34 +138,6 @@ interface ElementHandler {
       } else {
         false
       }
-    }
-
-    /**
-     * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
-     *         input annotations from [body].
-     */
-    fun createAnnotations(
-      siteTarget: UseSiteTarget? = null,
-      body: MutableCollection<AnnotationSpec>.() -> Unit
-    ): Collection<AnnotationSpec> {
-      val result = TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
-        body()
-      }
-      val withUseSiteTarget = if (siteTarget != null) {
-        result.map {
-          if (!(siteTarget == FIELD &&
-                  it.className in ElementHandlerUtil.IMPLICIT_FIELD_ANNOTATIONS)) {
-            // Some annotations are implicitly only for FIELD, so don't emit those site targets
-            it.toBuilder().useSiteTarget(siteTarget).build()
-          } else {
-            it
-          }
-        }
-      } else {
-        result
-      }
-
-      return Collections.unmodifiableCollection(withUseSiteTarget)
     }
   }
 }
