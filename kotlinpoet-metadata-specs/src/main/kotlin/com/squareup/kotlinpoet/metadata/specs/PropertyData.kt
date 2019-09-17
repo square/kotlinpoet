@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.GET
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.JVM_FIELD_SPEC
 
 /**
@@ -65,7 +66,7 @@ data class PropertyData(
     addAll(setterData?.allAnnotations(SET).orEmpty()
         .filterNot { it.className in higherScopedAnnotations })
     if (isJvmField) {
-      add(JVM_FIELD_SPEC)
+      add(ElementHandlerUtil.JVM_FIELD_SPEC)
     }
   }
 }

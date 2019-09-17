@@ -25,7 +25,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
-import com.squareup.kotlinpoet.metadata.specs.internal.IMPLICIT_FIELD_ANNOTATIONS
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 import kotlinx.metadata.jvm.JvmMethodSignature
 import java.util.Collections
 import java.util.TreeSet
@@ -162,7 +162,8 @@ interface ElementHandler {
       }
       val withUseSiteTarget = if (siteTarget != null) {
         result.map {
-          if (!(siteTarget == FIELD && it.className in IMPLICIT_FIELD_ANNOTATIONS)) {
+          if (!(siteTarget == FIELD &&
+                  it.className in ElementHandlerUtil.IMPLICIT_FIELD_ANNOTATIONS)) {
             // Some annotations are implicitly only for FIELD, so don't emit those site targets
             it.toBuilder().useSiteTarget(siteTarget).build()
           } else {

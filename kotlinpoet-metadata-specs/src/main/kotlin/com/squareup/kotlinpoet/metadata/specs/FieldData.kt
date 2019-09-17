@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.JVM_SYNTHETIC_SPEC
 
 /**
@@ -32,7 +33,7 @@ data class FieldData(
       FIELD) {
     addAll(annotations)
     if (isSynthetic) {
-      add(JVM_SYNTHETIC_SPEC)
+      add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
     }
     addAll(jvmModifiers.map { it.annotationSpec() })
   }
