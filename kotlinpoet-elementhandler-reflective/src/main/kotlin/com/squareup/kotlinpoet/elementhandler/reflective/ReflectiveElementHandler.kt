@@ -246,7 +246,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }
 
     val classAnnotations = if (kmClass.hasAnnotations) {
-      ElementHandler.createAnnotations {
+      ElementHandlerUtil.createAnnotations {
         addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
       }
     } else {

@@ -15,6 +15,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
  *           annotation.
  * @property simpleName the simple name of the class. This is important to specify when possible
  *           since Kotlin allows for classes to contain characters like `$` or `-`.
+ * @property annotations declared annotations on this class.
  * @property properties the mapping of [kmClass]'s properties to parsed [PropertyData].
  * @property constructors the mapping of [kmClass]'s constructors to parsed [ConstructorData].
  * @property methods the mapping of [kmClass]'s methods to parsed [MethodData].
