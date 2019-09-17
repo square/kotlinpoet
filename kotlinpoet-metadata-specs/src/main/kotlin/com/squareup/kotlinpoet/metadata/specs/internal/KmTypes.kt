@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet.metadata.specs
+package com.squareup.kotlinpoet.metadata.specs.internal
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -178,5 +178,7 @@ internal val JVM_SYNTHETIC_SPEC = AnnotationSpec.builder(JvmSynthetic::class).bu
 internal val JVM_TRANSIENT = Transient::class.asClassName()
 internal val JVM_VOLATILE = Volatile::class.asClassName()
 internal val IMPLICIT_FIELD_ANNOTATIONS = setOf(
-    JVM_FIELD, JVM_TRANSIENT, JVM_VOLATILE
+    JVM_FIELD,
+    JVM_TRANSIENT,
+    JVM_VOLATILE
 )

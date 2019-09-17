@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
+import com.squareup.kotlinpoet.metadata.specs.internal.IMPLICIT_FIELD_ANNOTATIONS
 import kotlinx.metadata.jvm.JvmMethodSignature
 import java.util.Collections
 import java.util.TreeSet

@@ -107,6 +107,9 @@ import com.squareup.kotlinpoet.metadata.isTailRec
 import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
+import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
+import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
+import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.Flags
