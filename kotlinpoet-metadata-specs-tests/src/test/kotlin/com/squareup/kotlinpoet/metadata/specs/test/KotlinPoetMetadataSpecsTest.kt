@@ -1675,6 +1675,51 @@ class KotlinPoetMetadataSpecsTest(
     fun function(@CustomAnnotation("woo") param1: String) {
     }
   }
+
+  @IgnoreForHandlerType(
+      reason = "Non-runtime annotations are not present for reflection.",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun classAnnotations_reflective() {
+    val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SourceCustomClassAnnotation(name = "Source")
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BinaryCustomClassAnnotation(name = "Binary")
+      class ClassAnnotations
+      """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Non-runtime annotations are not present for reflection.",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun classAnnotations_elements() {
+    val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SourceCustomClassAnnotation(name = "Source")
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BinaryCustomClassAnnotation(name = "Binary")
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
+      class ClassAnnotations
+      """.trimIndent())
+  }
+
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class SourceCustomClassAnnotation(val name: String)
+
+  @Retention(AnnotationRetention.BINARY)
+  annotation class BinaryCustomClassAnnotation(val name: String)
+
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class RuntimeCustomClassAnnotation(val name: String)
+
+  @SourceCustomClassAnnotation("Source")
+  @BinaryCustomClassAnnotation("Binary")
+  @RuntimeCustomClassAnnotation("Runtime")
+  class ClassAnnotations
 }
 
 class ClassNesting {
