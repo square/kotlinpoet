@@ -1593,21 +1593,21 @@ class KotlinPoetMetadataSpecsTest(
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
-        val kind: kotlin.Int = TODO("Stub!"),
+        val kind: kotlin.Int = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "mv")
-        val metadataVersion: kotlin.IntArray = TODO("Stub!"),
+        val metadataVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "bv")
-        val bytecodeVersion: kotlin.IntArray = TODO("Stub!"),
+        val bytecodeVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "d1")
-        val data1: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        val data1: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "d2")
-        val data2: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        val data2: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xs")
-        val extraString: kotlin.String = TODO("Stub!"),
+        val extraString: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "pn")
-        val packageName: kotlin.String = TODO("Stub!"),
+        val packageName: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xi")
-        val extraInt: kotlin.Int = TODO("Stub!")
+        val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
       )
       """.trimIndent())
   }
