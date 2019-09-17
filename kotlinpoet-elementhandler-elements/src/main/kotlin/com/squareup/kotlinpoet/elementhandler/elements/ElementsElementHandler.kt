@@ -263,8 +263,12 @@ class ElementsElementHandler private constructor(
       }
     }
 
-    val classAnnotations = ElementHandler.createAnnotations {
-      addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+    val classAnnotations = if (kmClass.hasAnnotations) {
+      ElementHandler.createAnnotations {
+        addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+      }
+    } else {
+      emptyList()
     }
 
     val propertyData = kmClass.properties
