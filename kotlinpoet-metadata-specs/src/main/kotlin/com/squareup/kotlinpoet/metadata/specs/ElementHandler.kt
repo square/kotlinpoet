@@ -15,19 +15,9 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
-import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.isConst
 import kotlinx.metadata.jvm.JvmMethodSignature
-import java.util.Collections
-import java.util.TreeSet
 
 /**
  * A basic interface for looking up information about JVM elements.
@@ -42,10 +32,29 @@ interface ElementHandler {
    */
   val supportsNonRuntimeRetainedAnnotations: Boolean
 
+  /**
+   * Creates a new [ClassData] instance for a given [classJvmName].
+   *
+   * @param classJvmName the jvm name of the target class to to read from.
+   * @param parentName the parent class JVM name if [classJvmName] is nested, inner, or is a
+   *        companion object.
+   * @param simpleName the simple name of the class. This is important to specify when since Kotlin
+   *        allows for classes to contain characters like `$` or `-`.
+   */
   fun classData(classJvmName: String, parentName: String?, simpleName: String): ClassData {
     return classData(classFor(classJvmName), parentName, simpleName)
   }
 
+  /**
+   * Creates a new [ClassData] instance for a given [kmClass].
+   *
+   * @param kmClass the source [ImmutableKmClass] to read from.
+   * @param parentName the parent class JVM name if [kmClass] is nested, inner, or is a companion
+   *        object.
+   * @param simpleName the simple name of the class. This is important to specify when possible
+   *        since Kotlin allows for classes to contain characters like `$` or `-`. The default is
+   *        a best-effort inference.
+   */
   fun classData(
     kmClass: ImmutableKmClass,
     parentName: String?,
@@ -106,64 +115,6 @@ interface ElementHandler {
     private fun String.substringAfterLast(vararg delimiters: Char): String {
       val index = lastIndexOfAny(delimiters)
       return if (index == -1) this else substring(index + 1, length)
-    }
-
-    fun ImmutableKmProperty.computeIsJvmField(
-      elementHandler: ElementHandler,
-      isCompanionObject: Boolean,
-      hasGetter: Boolean,
-      hasSetter: Boolean,
-      hasField: Boolean
-    ): Boolean {
-      return if (!hasGetter &&
-          !hasSetter &&
-          hasField &&
-          !isConst) {
-        !(elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
-      } else {
-        false
-      }
-    }
-
-    /**
-     * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
-     *         input annotations from [body].
-     */
-    fun createAnnotations(
-      siteTarget: UseSiteTarget? = null,
-      body: MutableCollection<AnnotationSpec>.() -> Unit
-    ): Collection<AnnotationSpec> {
-      val result = TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
-        body()
-      }
-      val withUseSiteTarget = if (siteTarget != null) {
-        result.map {
-          if (!(siteTarget == FIELD && it.className in IMPLICIT_FIELD_ANNOTATIONS)) {
-            // Some annotations are implicitly only for FIELD, so don't emit those site targets
-            it.toBuilder().useSiteTarget(siteTarget).build()
-          } else {
-            it
-          }
-        }
-      } else {
-        result
-      }
-
-      return Collections.unmodifiableCollection(withUseSiteTarget)
-    }
-
-    fun createThrowsSpec(
-      exceptions: Collection<TypeName>,
-      useSiteTarget: UseSiteTarget? = null
-    ): AnnotationSpec {
-      return AnnotationSpec.builder(Throws::class)
-          .addMember(
-              "exceptionClasses = %L",
-              exceptions.map { CodeBlock.of("%T::class", it) }
-                  .joinToCode(prefix = "[", suffix = "]")
-          )
-          .useSiteTarget(useSiteTarget)
-          .build()
     }
   }
 }

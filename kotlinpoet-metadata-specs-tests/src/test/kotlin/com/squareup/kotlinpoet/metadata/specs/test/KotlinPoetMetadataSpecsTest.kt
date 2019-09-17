@@ -163,13 +163,13 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Properties {
-        var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
+        var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
         val bar: kotlin.String? = null
 
-        var baz: kotlin.Int = TODO("Stub!")
+        var baz: kotlin.Int = throw NotImplementedError("Stub!")
 
-        val foo: kotlin.String = TODO("Stub!")
+        val foo: kotlin.String = throw NotImplementedError("Stub!")
       }
     """.trimIndent())
   }
@@ -185,11 +185,11 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Properties {
-        var aList: kotlin.collections.List<kotlin.Int> = TODO("Stub!")
+        var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
         val bar: kotlin.String? = null
 
-        var baz: kotlin.Int = TODO("Stub!")
+        var baz: kotlin.Int = throw NotImplementedError("Stub!")
 
         val foo: kotlin.String = ""
       }
@@ -296,7 +296,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class SuspendTypes {
-        val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = TODO("Stub!")
+        val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = throw NotImplementedError("Stub!")
 
         suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
         }
@@ -329,14 +329,14 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
-        inline fun hasDefault(param1: kotlin.String = TODO("Stub!")) {
+        inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")) {
         }
 
         inline fun inline(crossinline param1: () -> kotlin.String) {
         }
 
         inline fun noinline(noinline param1: () -> kotlin.String): kotlin.String {
-          TODO("Stub!")
+          throw NotImplementedError("Stub!")
         }
       }
     """.trimIndent())
@@ -388,7 +388,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NestedTypeAliasTest {
-        val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = TODO("Stub!")
+        val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = throw NotImplementedError("Stub!")
       }
     """.trimIndent())
   }
@@ -434,9 +434,9 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       abstract class OverriddenThings : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
-        override var openProp: kotlin.String = TODO("Stub!")
+        override var openProp: kotlin.String = throw NotImplementedError("Stub!")
 
-        override var openPropInterface: kotlin.String = TODO("Stub!")
+        override var openPropInterface: kotlin.String = throw NotImplementedError("Stub!")
 
         override fun openFunction() {
         }
@@ -480,12 +480,12 @@ class KotlinPoetMetadataSpecsTest(
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
-        val immutable: kotlin.String by kotlin.lazy { TODO("Stub!") }
+        val immutable: kotlin.String by kotlin.lazy { throw NotImplementedError("Stub!") }
 
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
-        val immutableNullable: kotlin.String? by kotlin.lazy { TODO("Stub!") }
+        val immutableNullable: kotlin.String? by kotlin.lazy { throw NotImplementedError("Stub!") }
 
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
@@ -554,19 +554,19 @@ class KotlinPoetMetadataSpecsTest(
       ) {
         FOO {
           override fun toString(): kotlin.String {
-            TODO("Stub!")
+            throw NotImplementedError("Stub!")
           }
         },
 
         BAR {
           override fun toString(): kotlin.String {
-            TODO("Stub!")
+            throw NotImplementedError("Stub!")
           }
         },
 
         BAZ {
           override fun toString(): kotlin.String {
-            TODO("Stub!")
+            throw NotImplementedError("Stub!")
           }
         };
       }
@@ -598,19 +598,19 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(testInterfaceSpec.trimmedToString()).isEqualTo("""
       interface TestInterface {
-        fun complex(input: kotlin.String, input2: kotlin.String = TODO("Stub!")): kotlin.String {
-          TODO("Stub!")
+        fun complex(input: kotlin.String, input2: kotlin.String = throw NotImplementedError("Stub!")): kotlin.String {
+          throw NotImplementedError("Stub!")
         }
 
         fun hasDefault() {
         }
 
         fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String {
-          TODO("Stub!")
+          throw NotImplementedError("Stub!")
         }
 
         fun hasDefaultSingleParam(input: kotlin.String): kotlin.String {
-          TODO("Stub!")
+          throw NotImplementedError("Stub!")
         }
 
         @kotlin.jvm.JvmDefault
@@ -621,7 +621,7 @@ class KotlinPoetMetadataSpecsTest(
 
         fun noDefaultWithInput(input: kotlin.String)
 
-        fun noDefaultWithInputDefault(input: kotlin.String = TODO("Stub!"))
+        fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!"))
       }
     """.trimIndent())
 
@@ -900,7 +900,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Constants(
-        val param: kotlin.String = TODO("Stub!")
+        val param: kotlin.String = throw NotImplementedError("Stub!")
       ) {
         val binaryProp: kotlin.Int = 11
 
@@ -991,27 +991,27 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Constants(
-        val param: kotlin.String = TODO("Stub!")
+        val param: kotlin.String = throw NotImplementedError("Stub!")
       ) {
-        val binaryProp: kotlin.Int = TODO("Stub!")
+        val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        val boolProp: kotlin.Boolean = TODO("Stub!")
+        val boolProp: kotlin.Boolean = throw NotImplementedError("Stub!")
 
-        val doubleProp: kotlin.Double = TODO("Stub!")
+        val doubleProp: kotlin.Double = throw NotImplementedError("Stub!")
 
-        val floatProp: kotlin.Float = TODO("Stub!")
+        val floatProp: kotlin.Float = throw NotImplementedError("Stub!")
 
-        val hexProp: kotlin.Int = TODO("Stub!")
+        val hexProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        val intProp: kotlin.Int = TODO("Stub!")
+        val intProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        val longProp: kotlin.Long = TODO("Stub!")
+        val longProp: kotlin.Long = throw NotImplementedError("Stub!")
 
-        val stringProp: kotlin.String = TODO("Stub!")
+        val stringProp: kotlin.String = throw NotImplementedError("Stub!")
 
-        val underscoresHexProp: kotlin.Long = TODO("Stub!")
+        val underscoresHexProp: kotlin.Long = throw NotImplementedError("Stub!")
 
-        val underscoresProp: kotlin.Int = TODO("Stub!")
+        val underscoresProp: kotlin.Int = throw NotImplementedError("Stub!")
 
         companion object {
           const val CONST_BINARY_PROP: kotlin.Int = 11
@@ -1269,14 +1269,14 @@ class KotlinPoetMetadataSpecsTest(
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Overloads @kotlin.jvm.JvmOverloads constructor(
         val param1: kotlin.String,
-        val optionalParam2: kotlin.String = TODO("Stub!"),
-        val nullableParam3: kotlin.String? = TODO("Stub!")
+        val optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
+        val nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
       ) {
         @kotlin.jvm.JvmOverloads
         fun testFunction(
           param1: kotlin.String,
-          optionalParam2: kotlin.String = TODO("Stub!"),
-          nullableParam3: kotlin.String? = TODO("Stub!")
+          optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
+          nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
         ) {
         }
       }
@@ -1312,7 +1312,7 @@ class KotlinPoetMetadataSpecsTest(
         val param1: kotlin.String
       ) {
         @kotlin.jvm.JvmField
-        val fieldProp: kotlin.String = TODO("Stub!")
+        val fieldProp: kotlin.String = throw NotImplementedError("Stub!")
 
         companion object {
           @kotlin.jvm.JvmField
@@ -1626,21 +1626,21 @@ class KotlinPoetMetadataSpecsTest(
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
-        val kind: kotlin.Int = TODO("Stub!"),
+        val kind: kotlin.Int = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "mv")
-        val metadataVersion: kotlin.IntArray = TODO("Stub!"),
+        val metadataVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "bv")
-        val bytecodeVersion: kotlin.IntArray = TODO("Stub!"),
+        val bytecodeVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "d1")
-        val data1: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        val data1: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "d2")
-        val data2: kotlin.Array<kotlin.String> = TODO("Stub!"),
+        val data2: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xs")
-        val extraString: kotlin.String = TODO("Stub!"),
+        val extraString: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "pn")
-        val packageName: kotlin.String = TODO("Stub!"),
+        val packageName: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xi")
-        val extraInt: kotlin.Int = TODO("Stub!")
+        val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
       )
       """.trimIndent())
   }

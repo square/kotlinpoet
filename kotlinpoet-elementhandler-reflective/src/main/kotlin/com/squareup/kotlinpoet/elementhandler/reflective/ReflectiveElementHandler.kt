@@ -17,7 +17,6 @@ import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -27,6 +26,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -65,7 +66,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun isInterface(jvmName: String): Boolean {
-    if (jvmName.canonicalName in KOTLIN_INTRINSIC_INTERFACES) {
+    if (jvmName.canonicalName in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupClass(jvmName)?.isInterface ?: false
@@ -124,16 +125,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun Field.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .orEmpty()
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Constructor<*>.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations.orEmpty()
-        .map { AnnotationSpec.get(it, true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) }
+    )
   }
 
   private fun Method.jvmModifiers(): Set<JvmMethodModifier> {
@@ -156,16 +156,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun Method.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .orEmpty()
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Parameter.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Method.exceptionTypeNames(): List<TypeName> {
@@ -201,7 +200,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       return null
     }
     return get(null) // Constant means we can do a static get on it.
-        .asLiteralCodeBlock()
+        .let(ElementHandlerUtil::codeLiteralOf)
   }
 
   private fun JvmMethodSignature.isOverriddenIn(clazz: Class<*>): Boolean {
@@ -259,7 +258,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = property.computeIsJvmField(
+          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+              property = property,
               elementHandler = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
@@ -422,7 +422,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-          index to ElementHandler.createAnnotations { addAll(parameter.annotationSpecs()) }
+          index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
         }
   }
 
@@ -450,40 +450,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       return ReflectiveElementHandler()
     }
 
-    private fun Any.asLiteralCodeBlock(): CodeBlock {
-      return when (this) {
-        is String -> CodeBlock.of("%S", this)
-        is Long -> CodeBlock.of("%LL", this)
-        is Float -> CodeBlock.of("%LF", this)
-        else -> CodeBlock.of("%L", this)
-      }
-    }
-
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
-
-    private val KOTLIN_INTRINSIC_INTERFACES = setOf(
-        "kotlin.CharSequence",
-        "kotlin.Comparable",
-        "kotlin.collections.Iterable",
-        "kotlin.collections.Collection",
-        "kotlin.collections.List",
-        "kotlin.collections.Set",
-        "kotlin.collections.Map",
-        "kotlin.collections.Map.Entry",
-        "kotlin.collections.MutableIterable",
-        "kotlin.collections.MutableCollection",
-        "kotlin.collections.MutableList",
-        "kotlin.collections.MutableSet",
-        "kotlin.collections.MutableMap",
-        "kotlin.collections.MutableMap.Entry"
-    )
-
-    private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-        "org.jetbrains.annotations.NotNull",
-        "org.jetbrains.annotations.Nullable"
-    )
-
-    private fun List<AnnotationSpec>.filterOutNullabilityAnnotations() = filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
 
     private val Class<*>.descriptor: String get() {
       return when {

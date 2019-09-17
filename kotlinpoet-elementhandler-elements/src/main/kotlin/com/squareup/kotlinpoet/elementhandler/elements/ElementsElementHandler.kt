@@ -23,7 +23,6 @@ import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -33,6 +32,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -78,7 +79,7 @@ class ElementsElementHandler private constructor(
   }
 
   override fun isInterface(jvmName: String): Boolean {
-    if (jvmName.canonicalName in KOTLIN_INTRINSIC_INTERFACES) {
+    if (jvmName.canonicalName in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupTypeElement(jvmName)?.kind == INTERFACE
@@ -123,9 +124,9 @@ class ElementsElementHandler private constructor(
   }
 
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
-    return annotationMirrors
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        annotationMirrors.map { AnnotationSpec.get(it) }
+    )
   }
 
   private fun ExecutableElement.jvmModifiers(): Set<JvmMethodModifier> {
@@ -139,9 +140,9 @@ class ElementsElementHandler private constructor(
   }
 
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
-    return annotationMirrors
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        annotationMirrors.map { AnnotationSpec.get(it) }
+    )
   }
 
   private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
@@ -163,7 +164,7 @@ class ElementsElementHandler private constructor(
   }
 
   private fun VariableElement.constantValue(): CodeBlock? {
-    return constantValue?.asLiteralCodeBlock()
+    return constantValue?.let(ElementHandlerUtil::codeLiteralOf)
   }
 
   override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
@@ -276,7 +277,8 @@ class ElementsElementHandler private constructor(
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = property.computeIsJvmField(
+          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+              property = property,
               elementHandler = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
@@ -446,7 +448,7 @@ class ElementsElementHandler private constructor(
 
   private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-      index to ElementHandler.createAnnotations { addAll(parameter.annotationSpecs()) }
+      index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
     }
   }
 
@@ -476,40 +478,7 @@ class ElementsElementHandler private constructor(
 
     private val JVM_STATIC = JvmStatic::class.asClassName()
 
-    private fun Any.asLiteralCodeBlock(): CodeBlock {
-      return when (this) {
-        is String -> CodeBlock.of("%S", this)
-        is Long -> CodeBlock.of("%LL", this)
-        is Float -> CodeBlock.of("%LF", this)
-        else -> CodeBlock.of("%L", this)
-      }
-    }
-
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
-
-    private val KOTLIN_INTRINSIC_INTERFACES = setOf(
-        "kotlin.CharSequence",
-        "kotlin.Comparable",
-        "kotlin.collections.Iterable",
-        "kotlin.collections.Collection",
-        "kotlin.collections.List",
-        "kotlin.collections.Set",
-        "kotlin.collections.Map",
-        "kotlin.collections.Map.Entry",
-        "kotlin.collections.MutableIterable",
-        "kotlin.collections.MutableCollection",
-        "kotlin.collections.MutableList",
-        "kotlin.collections.MutableSet",
-        "kotlin.collections.MutableMap",
-        "kotlin.collections.MutableMap.Entry"
-    )
-
-    private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-        "org.jetbrains.annotations.NotNull",
-        "org.jetbrains.annotations.Nullable"
-    )
-
-    private fun List<AnnotationSpec>.filterOutNullabilityAnnotations() = filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
   }
 }
 
