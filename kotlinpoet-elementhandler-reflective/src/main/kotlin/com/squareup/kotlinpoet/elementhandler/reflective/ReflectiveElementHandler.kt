@@ -28,6 +28,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -125,16 +126,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun Field.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .orEmpty()
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Constructor<*>.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations.orEmpty()
-        .map { AnnotationSpec.get(it, true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) }
+    )
   }
 
   private fun Method.jvmModifiers(): Set<JvmMethodModifier> {
@@ -157,16 +157,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   private fun Method.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .orEmpty()
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Parameter.annotationSpecs(): List<AnnotationSpec> {
-    return declaredAnnotations
-        .map { AnnotationSpec.get(it, includeDefaultValues = true) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        declaredAnnotations.map { AnnotationSpec.get(it, includeDefaultValues = true) }
+    )
   }
 
   private fun Method.exceptionTypeNames(): List<TypeName> {
@@ -453,13 +452,6 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }
 
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
-
-    private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-        "org.jetbrains.annotations.NotNull",
-        "org.jetbrains.annotations.Nullable"
-    )
-
-    private fun List<AnnotationSpec>.filterOutNullabilityAnnotations() = filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
 
     private val Class<*>.descriptor: String get() {
       return when {

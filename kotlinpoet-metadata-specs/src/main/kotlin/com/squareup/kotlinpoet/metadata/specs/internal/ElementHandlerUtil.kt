@@ -45,6 +45,17 @@ object ElementHandlerUtil {
       "kotlin.collections.MutableMap.Entry"
   )
 
+  private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
+      "org.jetbrains.annotations.NotNull",
+      "org.jetbrains.annotations.Nullable"
+  )
+
+  fun filterOutNullabilityAnnotations(
+      annotations: List<AnnotationSpec>
+  ): List<AnnotationSpec> {
+    return annotations.filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
+  }
+
   /**
    * Infers if [property] is a jvm field and should be annotated as such given the input
    * parameters.

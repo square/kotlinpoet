@@ -23,7 +23,6 @@ import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler.Companion.computeIsJvmField
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -34,6 +33,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -124,9 +124,9 @@ class ElementsElementHandler private constructor(
   }
 
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
-    return annotationMirrors
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        annotationMirrors.map { AnnotationSpec.get(it) }
+    )
   }
 
   private fun ExecutableElement.jvmModifiers(): Set<JvmMethodModifier> {
@@ -140,9 +140,9 @@ class ElementsElementHandler private constructor(
   }
 
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
-    return annotationMirrors
-        .map { AnnotationSpec.get(it) }
-        .filterOutNullabilityAnnotations()
+    return filterOutNullabilityAnnotations(
+        annotationMirrors.map { AnnotationSpec.get(it) }
+    )
   }
 
   private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
@@ -479,13 +479,6 @@ class ElementsElementHandler private constructor(
     }
 
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
-
-    private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-        "org.jetbrains.annotations.NotNull",
-        "org.jetbrains.annotations.Nullable"
-    )
-
-    private fun List<AnnotationSpec>.filterOutNullabilityAnnotations() = filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
   }
 }
 
