@@ -59,10 +59,10 @@ object ElementHandlerUtil {
   /** @return a [CodeBlock] representation of a [literal] value. */
   fun codeLiteralOf(literal: Any): CodeBlock {
     return when (literal) {
-      is String -> CodeBlock.of("%S", this)
-      is Long -> CodeBlock.of("%LL", this)
-      is Float -> CodeBlock.of("%LF", this)
-      else -> CodeBlock.of("%L", this)
+      is String -> CodeBlock.of("%S", literal)
+      is Long -> CodeBlock.of("%LL", literal)
+      is Float -> CodeBlock.of("%LF", literal)
+      else -> CodeBlock.of("%L", literal)
     }
   }
 
