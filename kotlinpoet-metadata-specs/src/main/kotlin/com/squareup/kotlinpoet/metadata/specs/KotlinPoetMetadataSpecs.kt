@@ -227,7 +227,6 @@ private fun ImmutableKmClass.toTypeSpec(
 
   classData?.annotations
       ?.filterNot { it.className == METADATA }
-      ?.remapKotlinAnnotations()
       ?.let(builder::addAnnotations)
 
   if (isEnum) {
@@ -728,34 +727,6 @@ private fun JvmMethodSignature.jvmNameAnnotation(
         .addMember("name = %S", name)
         .useSiteTarget(useSiteTarget)
         .build()
-  }
-}
-
-private val JAVA_ANNOTATION_RETENTION = java.lang.annotation.Retention::class.asClassName()
-private val JAVA_ANNOTATION_TARGET = java.lang.annotation.Target::class.asClassName()
-private val ANNOTATION_RETENTION = Retention::class.asClassName()
-private val ANNOTATION_TARGET = Target::class.asClassName()
-
-private fun List<AnnotationSpec>.remapKotlinAnnotations(): List<AnnotationSpec> {
-  return map {
-    // TODO WIP
-    it
-//    when (it.className) {
-//      JAVA_ANNOTATION_RETENTION -> {
-//        AnnotationSpec.builder(ANNOTATION_RETENTION)
-//            .apply {
-//              it.members.map {
-//
-//              }
-//            }
-//            .build()
-//      }
-//      JAVA_ANNOTATION_TARGET -> {
-//        AnnotationSpec.builder(ANNOTATION_TARGET)
-//            .build()
-//      }
-//      else -> it
-//    }
   }
 }
 
