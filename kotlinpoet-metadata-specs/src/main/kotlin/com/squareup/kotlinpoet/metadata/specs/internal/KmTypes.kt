@@ -169,4 +169,3 @@ private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
   // TODO tag typeFlexibilityId somehow?
   return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
 }
-

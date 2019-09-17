@@ -51,7 +51,7 @@ object ElementHandlerUtil {
   )
 
   fun filterOutNullabilityAnnotations(
-      annotations: List<AnnotationSpec>
+    annotations: List<AnnotationSpec>
   ): List<AnnotationSpec> {
     return annotations.filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
   }
@@ -71,12 +71,12 @@ object ElementHandlerUtil {
    * parameters.
    */
   fun computeIsJvmField(
-      property: ImmutableKmProperty,
-      elementHandler: ElementHandler,
-      isCompanionObject: Boolean,
-      hasGetter: Boolean,
-      hasSetter: Boolean,
-      hasField: Boolean
+    property: ImmutableKmProperty,
+    elementHandler: ElementHandler,
+    isCompanionObject: Boolean,
+    hasGetter: Boolean,
+    hasSetter: Boolean,
+    hasField: Boolean
   ): Boolean {
     return if (!hasGetter &&
         !hasSetter &&
@@ -93,8 +93,8 @@ object ElementHandlerUtil {
    *         input annotations from [body].
    */
   fun createAnnotations(
-      siteTarget: UseSiteTarget? = null,
-      body: MutableCollection<AnnotationSpec>.() -> Unit
+    siteTarget: UseSiteTarget? = null,
+    body: MutableCollection<AnnotationSpec>.() -> Unit
   ): Collection<AnnotationSpec> {
     val result = TreeSet<AnnotationSpec>(compareBy { it.toString() })
         .apply(body)
@@ -119,8 +119,8 @@ object ElementHandlerUtil {
    *         [exceptions].
    */
   fun createThrowsSpec(
-      exceptions: Collection<TypeName>,
-      useSiteTarget: UseSiteTarget? = null
+    exceptions: Collection<TypeName>,
+    useSiteTarget: UseSiteTarget? = null
   ): AnnotationSpec {
     return AnnotationSpec.builder(Throws::class)
         .addMember(
@@ -132,4 +132,3 @@ object ElementHandlerUtil {
         .build()
   }
 }
-
