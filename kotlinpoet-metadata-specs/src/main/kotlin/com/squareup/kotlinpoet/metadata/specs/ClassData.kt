@@ -1,5 +1,6 @@
 package com.squareup.kotlinpoet.metadata.specs
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -11,6 +12,7 @@ import com.squareup.kotlinpoet.metadata.isInterface
 data class ClassData(
   val kmClass: ImmutableKmClass,
   val simpleName: String,
+  val annotations: Collection<AnnotationSpec>,
   val properties: Map<ImmutableKmProperty, PropertyData>,
   val constructors: Map<ImmutableKmConstructor, ConstructorData>,
   val methods: Map<ImmutableKmFunction, MethodData>
