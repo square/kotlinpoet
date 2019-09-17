@@ -18,10 +18,10 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import org.junit.Rule
-import kotlin.test.Test
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
+import kotlin.test.Test
 
 class AnnotationSpecTest {
 
@@ -110,7 +110,7 @@ class AnnotationSpecTest {
         |  m = [9, 8, 1],
         |  l = Override::class,
         |  j = AnnotationSpecTest.AnnotationA(),
-        |  q = AnnotationSpecTest.AnnotationC("bar"),
+        |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
         |class Taco
@@ -138,7 +138,7 @@ class AnnotationSpecTest {
         |  m = [9, 8, 1],
         |  l = Override::class,
         |  j = AnnotationSpecTest.AnnotationA(),
-        |  q = AnnotationSpecTest.AnnotationC("bar"),
+        |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
         |class IsAnnotated
@@ -178,7 +178,7 @@ class AnnotationSpecTest {
         |  m = [9, 8, 1],
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
-        |  q = AnnotationSpecTest.AnnotationC("bar"),
+        |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
         |class Taco
@@ -214,7 +214,7 @@ class AnnotationSpecTest {
         |  n = [AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES],
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
-        |  q = AnnotationSpecTest.AnnotationC("bar"),
+        |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
         |class Taco
