@@ -39,4 +39,9 @@ placeholders.
 
 - Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@file:` annotations are not supported yet.
-- `@JvmOverloads` annotations are only supported with `kotlinpoet-elemnethandler-reflective` and not reflection.
+- `@JvmOverloads` annotations are only supported with `kotlinpoet-elementhandler-elements` and not reflection.
+- Non-const literal values are only supported with `kotlinpoet-elementhandler-reflective` and not reflection.
+- ElementHandler data sourced from `synthetic` constructs are only supported with 
+`kotlinpoet-elementhandler-reflective` and not elements. This is because the javax Elements API does not model
+synthetic constructs. This can yield some missing information, like static companion object properties 
+or `property:` site target annotations.
