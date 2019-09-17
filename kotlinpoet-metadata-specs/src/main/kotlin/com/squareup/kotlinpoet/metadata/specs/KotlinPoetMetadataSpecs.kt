@@ -226,7 +226,9 @@ private fun ImmutableKmClass.toTypeSpec(
   }
 
   classData?.annotations
-      ?.filterNot { it.className == METADATA }
+      ?.filterNot {
+        it.className == METADATA || it.className in JAVA_ANNOTATION_ANNOTATIONS
+      }
       ?.let(builder::addAnnotations)
 
   if (isEnum) {
@@ -729,6 +731,11 @@ private fun JvmMethodSignature.jvmNameAnnotation(
         .build()
   }
 }
+
+private val JAVA_ANNOTATION_ANNOTATIONS = setOf(
+  java.lang.annotation.Retention::class.asClassName(),
+  java.lang.annotation.Target::class.asClassName()
+)
 
 @KotlinPoetMetadataPreview
 private val Flags.visibility: KModifier
