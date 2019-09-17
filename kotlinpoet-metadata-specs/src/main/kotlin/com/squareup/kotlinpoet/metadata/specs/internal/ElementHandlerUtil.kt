@@ -7,9 +7,14 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.joinToCode
+import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isConst
+import com.squareup.kotlinpoet.metadata.specs.ElementHandler
 import java.util.Collections
 import java.util.TreeSet
 
+@KotlinPoetMetadataPreview
 object ElementHandlerUtil {
   internal val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
@@ -22,6 +27,28 @@ object ElementHandlerUtil {
       JVM_TRANSIENT,
       JVM_VOLATILE
   )
+
+  /**
+   * Infers if [property] is a jvm field and should be annotated as such given the input
+   * parameters.
+   */
+  fun computeIsJvmField(
+      property: ImmutableKmProperty,
+      elementHandler: ElementHandler,
+      isCompanionObject: Boolean,
+      hasGetter: Boolean,
+      hasSetter: Boolean,
+      hasField: Boolean
+  ): Boolean {
+    return if (!hasGetter &&
+        !hasSetter &&
+        hasField &&
+        !property.isConst) {
+      !(elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
+    } else {
+      false
+    }
+  }
 
   /**
    * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping

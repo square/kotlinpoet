@@ -16,9 +16,7 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.isConst
 import kotlinx.metadata.jvm.JvmMethodSignature
 
 /**
@@ -117,27 +115,6 @@ interface ElementHandler {
     private fun String.substringAfterLast(vararg delimiters: Char): String {
       val index = lastIndexOfAny(delimiters)
       return if (index == -1) this else substring(index + 1, length)
-    }
-
-    /**
-     * Infers if [this] property is a jvm field and should be annotated as such given the input
-     * parameters.
-     */
-    fun ImmutableKmProperty.computeIsJvmField(
-      elementHandler: ElementHandler,
-      isCompanionObject: Boolean,
-      hasGetter: Boolean,
-      hasSetter: Boolean,
-      hasField: Boolean
-    ): Boolean {
-      return if (!hasGetter &&
-          !hasSetter &&
-          hasField &&
-          !isConst) {
-        !(elementHandler.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
-      } else {
-        false
-      }
     }
   }
 }

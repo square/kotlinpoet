@@ -252,7 +252,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = property.computeIsJvmField(
+          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+              property = property,
               elementHandler = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
