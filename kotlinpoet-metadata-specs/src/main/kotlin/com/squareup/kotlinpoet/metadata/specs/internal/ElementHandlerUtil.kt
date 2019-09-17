@@ -56,6 +56,16 @@ object ElementHandlerUtil {
     return annotations.filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
   }
 
+  /** @return a [CodeBlock] representation of a [literal] value. */
+  fun codeLiteralOf(literal: Any): CodeBlock {
+    return when (literal) {
+      is String -> CodeBlock.of("%S", this)
+      is Long -> CodeBlock.of("%LL", this)
+      is Float -> CodeBlock.of("%LF", this)
+      else -> CodeBlock.of("%L", this)
+    }
+  }
+
   /**
    * Infers if [property] is a jvm field and should be annotated as such given the input
    * parameters.

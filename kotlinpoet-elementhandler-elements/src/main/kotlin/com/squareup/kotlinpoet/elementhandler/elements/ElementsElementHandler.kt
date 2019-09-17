@@ -164,7 +164,7 @@ class ElementsElementHandler private constructor(
   }
 
   private fun VariableElement.constantValue(): CodeBlock? {
-    return constantValue?.asLiteralCodeBlock()
+    return constantValue?.let(ElementHandlerUtil::codeLiteralOf)
   }
 
   override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
@@ -468,15 +468,6 @@ class ElementsElementHandler private constructor(
     }
 
     private val JVM_STATIC = JvmStatic::class.asClassName()
-
-    private fun Any.asLiteralCodeBlock(): CodeBlock {
-      return when (this) {
-        is String -> CodeBlock.of("%S", this)
-        is Long -> CodeBlock.of("%LL", this)
-        is Float -> CodeBlock.of("%LF", this)
-        else -> CodeBlock.of("%L", this)
-      }
-    }
 
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
   }

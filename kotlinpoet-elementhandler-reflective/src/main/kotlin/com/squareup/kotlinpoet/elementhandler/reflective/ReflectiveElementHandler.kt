@@ -201,7 +201,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       return null
     }
     return get(null) // Constant means we can do a static get on it.
-        .asLiteralCodeBlock()
+        .let(ElementHandlerUtil::codeLiteralOf)
   }
 
   private fun JvmMethodSignature.isOverriddenIn(clazz: Class<*>): Boolean {
@@ -440,15 +440,6 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     @KotlinPoetMetadataPreview
     fun create(): ElementHandler {
       return ReflectiveElementHandler()
-    }
-
-    private fun Any.asLiteralCodeBlock(): CodeBlock {
-      return when (this) {
-        is String -> CodeBlock.of("%S", this)
-        is Long -> CodeBlock.of("%LL", this)
-        is Float -> CodeBlock.of("%LF", this)
-        else -> CodeBlock.of("%L", this)
-      }
     }
 
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
