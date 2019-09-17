@@ -1579,11 +1579,51 @@ class KotlinPoetMetadataSpecsTest(
   }
 
   // The meta-ist of metadata meta-tests.
+  @IgnoreForHandlerType(
+      reason = "Reflection can't parse non-runtime retained annotations",
+      handlerType = REFLECTIVE
+  )
   @Test
-  fun metaTest() {
+  fun metaTest_elements() {
     val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @kotlin.SinceKotlin(version = "1.3")
+      @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME)
+      @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+      annotation class Metadata(
+        @get:kotlin.jvm.JvmName(name = "k")
+        val kind: kotlin.Int = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "mv")
+        val metadataVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "bv")
+        val bytecodeVersion: kotlin.IntArray = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "d1")
+        val data1: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "d2")
+        val data2: kotlin.Array<kotlin.String> = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "xs")
+        val extraString: kotlin.String = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "pn")
+        val packageName: kotlin.String = throw NotImplementedError("Stub!"),
+        @get:kotlin.jvm.JvmName(name = "xi")
+        val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
+      )
+      """.trimIndent())
+  }
+
+  // The meta-ist of metadata meta-tests.
+  @IgnoreForHandlerType(
+      reason = "Reflection can't parse non-runtime retained annotations",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun metaTest_reflection() {
+    val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME)
+      @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
         val kind: kotlin.Int = throw NotImplementedError("Stub!"),
@@ -1675,6 +1715,49 @@ class KotlinPoetMetadataSpecsTest(
     fun function(@CustomAnnotation("woo") param1: String) {
     }
   }
+
+  @IgnoreForHandlerType(
+      reason = "Non-runtime annotations are not present for reflection.",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun classAnnotations_reflective() {
+    val typeSpec = ClassAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
+      class ClassAnnotations
+      """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      reason = "Non-runtime annotations are not present for reflection.",
+      handlerType = REFLECTIVE
+  )
+  @Test
+  fun classAnnotations_elements() {
+    val typeSpec = ClassAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BinaryCustomClassAnnotation(name = "Binary")
+      @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
+      class ClassAnnotations
+      """.trimIndent())
+  }
+
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class SourceCustomClassAnnotation(val name: String)
+
+  @Retention(AnnotationRetention.BINARY)
+  annotation class BinaryCustomClassAnnotation(val name: String)
+
+  @Retention(AnnotationRetention.RUNTIME)
+  annotation class RuntimeCustomClassAnnotation(val name: String)
+
+  @SourceCustomClassAnnotation("Source")
+  @BinaryCustomClassAnnotation("Binary")
+  @RuntimeCustomClassAnnotation("Runtime")
+  class ClassAnnotations
 }
 
 class ClassNesting {

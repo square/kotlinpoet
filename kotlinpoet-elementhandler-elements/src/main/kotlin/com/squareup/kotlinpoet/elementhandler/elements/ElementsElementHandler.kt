@@ -264,6 +264,14 @@ class ElementsElementHandler private constructor(
       }
     }
 
+    val classAnnotations = if (kmClass.hasAnnotations) {
+      ElementHandlerUtil.createAnnotations {
+        addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+      }
+    } else {
+      emptyList()
+    }
+
     val propertyData = kmClass.properties
         .asSequence()
         .filter { it.isDeclaration }
@@ -431,6 +439,7 @@ class ElementsElementHandler private constructor(
     return ClassData(
         kmClass = kmClass,
         simpleName = simpleName,
+        annotations = classAnnotations,
         properties = propertyData,
         constructors = constructorData,
         methods = methodData

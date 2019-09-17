@@ -229,6 +229,12 @@ private fun ImmutableKmClass.toTypeSpec(
     else -> TypeSpec.classBuilder(simpleName)
   }
 
+  classData?.annotations
+      ?.filterNot {
+        it.className == METADATA || it.className in JAVA_ANNOTATION_ANNOTATIONS
+      }
+      ?.let(builder::addAnnotations)
+
   if (isEnum) {
     enumEntries.forEach { entryName ->
       val typeSpec = if (elementHandler != null) {
@@ -730,6 +736,11 @@ private fun JvmMethodSignature.jvmNameAnnotation(
   }
 }
 
+private val JAVA_ANNOTATION_ANNOTATIONS = setOf(
+  java.lang.annotation.Retention::class.asClassName(),
+  java.lang.annotation.Target::class.asClassName()
+)
+
 @KotlinPoetMetadataPreview
 private val Flags.visibility: KModifier
   get() = when {
@@ -791,6 +802,7 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
   return mutableSetOf<E>().apply(body).toSet()
 }
 
+private val METADATA = Metadata::class.asClassName()
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 

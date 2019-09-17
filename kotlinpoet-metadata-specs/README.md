@@ -45,3 +45,4 @@ placeholders.
 `kotlinpoet-elementhandler-reflective` and not elements. This is because the javax Elements API does not model
 synthetic constructs. This can yield some missing information, like static companion object properties 
 or `property:` site target annotations.
+- Annotations annotated with `AnnotationRetention.SOURCE` are not parsable in reflection nor javax elements.
