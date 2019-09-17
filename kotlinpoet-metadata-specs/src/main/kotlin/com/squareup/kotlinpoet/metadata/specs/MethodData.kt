@@ -5,7 +5,6 @@ import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.JVM_SYNTHETIC_SPEC
 
 /**
  * Represents relevant information on a method used for [ElementHandler]. Should only be
