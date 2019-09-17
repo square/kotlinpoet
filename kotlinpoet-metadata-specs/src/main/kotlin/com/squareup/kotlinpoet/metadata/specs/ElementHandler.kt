@@ -42,10 +42,29 @@ interface ElementHandler {
    */
   val supportsNonRuntimeRetainedAnnotations: Boolean
 
+  /**
+   * Creates a new [ClassData] instance for a given [classJvmName].
+   *
+   * @param classJvmName the jvm name of the target class to to read from.
+   * @param parentName the parent class JVM name if [classJvmName] is nested, inner, or is a
+   *        companion object.
+   * @param simpleName the simple name of the class. This is important to specify when since Kotlin
+   *        allows for classes to contain characters like `$` or `-`.
+   */
   fun classData(classJvmName: String, parentName: String?, simpleName: String): ClassData {
     return classData(classFor(classJvmName), parentName, simpleName)
   }
 
+  /**
+   * Creates a new [ClassData] instance for a given [kmClass].
+   *
+   * @param kmClass the source [ImmutableKmClass] to read from.
+   * @param parentName the parent class JVM name if [kmClass] is nested, inner, or is a companion
+   *        object.
+   * @param simpleName the simple name of the class. This is important to specify when possible
+   *        since Kotlin allows for classes to contain characters like `$` or `-`. The default is
+   *        a best-effort inference.
+   */
   fun classData(
     kmClass: ImmutableKmClass,
     parentName: String?,
@@ -108,6 +127,10 @@ interface ElementHandler {
       return if (index == -1) this else substring(index + 1, length)
     }
 
+    /**
+     * Infers if [this] property is a jvm field and should be annotated as such given the input
+     * parameters.
+     */
     fun ImmutableKmProperty.computeIsJvmField(
       elementHandler: ElementHandler,
       isCompanionObject: Boolean,
@@ -152,6 +175,10 @@ interface ElementHandler {
       return Collections.unmodifiableCollection(withUseSiteTarget)
     }
 
+    /**
+     * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
+     *         [exceptions].
+     */
     fun createThrowsSpec(
       exceptions: Collection<TypeName>,
       useSiteTarget: UseSiteTarget? = null
