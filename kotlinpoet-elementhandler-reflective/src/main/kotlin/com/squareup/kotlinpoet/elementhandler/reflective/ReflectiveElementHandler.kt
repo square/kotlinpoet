@@ -246,6 +246,10 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       }
     }
 
+    val classAnnotations = ElementHandler.createAnnotations {
+      addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
+    }
+
     val propertyData = kmClass.properties
         .asSequence()
         .filter { it.isDeclaration }
@@ -405,6 +409,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     return ClassData(
         kmClass = kmClass,
         simpleName = simpleName,
+        annotations = classAnnotations,
         properties = propertyData,
         constructors = constructorData,
         methods = methodData
