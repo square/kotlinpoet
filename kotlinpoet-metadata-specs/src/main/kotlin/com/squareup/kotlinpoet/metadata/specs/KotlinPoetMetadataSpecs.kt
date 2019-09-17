@@ -178,7 +178,7 @@ fun ImmutableKmClass.toFileSpec(
   )
 }
 
-private const val TODO_BLOCK = "TODO(\"Stub!\")"
+private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 
 @KotlinPoetMetadataPreview
 private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
@@ -547,7 +547,7 @@ private fun ImmutableKmFunction.toFunSpec(
         val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamResolver)
         if (returnTypeName != UNIT) {
           returns(returnTypeName)
-          addStatement(TODO_BLOCK)
+          addStatement(NOT_IMPLEMENTED)
         }
         receiverParameterType?.toTypeName(typeParamResolver)?.let { receiver(it) }
       }
@@ -574,7 +574,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
           addModifiers(NOINLINE)
         }
         if (declaresDefaultValue) {
-          defaultValue(TODO_BLOCK)
+          defaultValue(NOT_IMPLEMENTED)
         }
       }
       .tag(this)
@@ -628,7 +628,7 @@ private fun ImmutableKmProperty.toPropertySpec(
           // Placeholders for these are tricky
           addKdoc("Note: delegation is ABI stub only and not guaranteed to match source code.")
           if (isVal) {
-            delegate("%M { %L }", MemberName("kotlin", "lazy"), TODO_BLOCK) // Placeholder
+            delegate("%M { %L }", MemberName("kotlin", "lazy"), NOT_IMPLEMENTED) // Placeholder
           } else {
             if (returnTypeName.isNullable) {
               delegate("%T.observable(null) { _, _, _ -> }",
@@ -653,7 +653,7 @@ private fun ImmutableKmProperty.toPropertySpec(
             constant != null -> initializer(constant)
             isConstructorParam -> initializer(name)
             returnTypeName.isNullable -> initializer("null")
-            else -> initializer(TODO_BLOCK)
+            else -> initializer(NOT_IMPLEMENTED)
           }
         }
         // Delegated properties have setters/getters defined for some reason, ignore here
@@ -662,7 +662,7 @@ private fun ImmutableKmProperty.toPropertySpec(
         val modifierSet = modifiers.toSet()
         if (hasGetter && !isDelegated) {
           propertyAccessor(modifierSet, getterFlags,
-              FunSpec.getterBuilder().addStatement(TODO_BLOCK), isOverride)?.let(::getter)
+              FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED), isOverride)?.let(::getter)
         }
         if (hasSetter && !isDelegated) {
           propertyAccessor(modifierSet, setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
