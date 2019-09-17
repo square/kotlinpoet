@@ -1,7 +1,11 @@
 package com.squareup.kotlinpoet.metadata.specs.internal
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.joinToCode
 
 object ElementHandlerUtil {
   internal val JVM_FIELD = JvmField::class.asClassName()
@@ -15,5 +19,23 @@ object ElementHandlerUtil {
       JVM_TRANSIENT,
       JVM_VOLATILE
   )
+
+  /**
+   * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
+   *         [exceptions].
+   */
+  fun createThrowsSpec(
+      exceptions: Collection<TypeName>,
+      useSiteTarget: UseSiteTarget? = null
+  ): AnnotationSpec {
+    return AnnotationSpec.builder(Throws::class)
+        .addMember(
+            "exceptionClasses = %L",
+            exceptions.map { CodeBlock.of("%T::class", it) }
+                .joinToCode(prefix = "[", suffix = "]")
+        )
+        .useSiteTarget(useSiteTarget)
+        .build()
+  }
 }
 

@@ -45,8 +45,7 @@ data class MethodData(
       addAll(jvmModifiers.map { it.annotationSpec() })
       exceptions.takeIf { it.isNotEmpty() }
           ?.let {
-            add(ElementHandler.createThrowsSpec(it,
-                useSiteTarget))
+            add(ElementHandlerUtil.createThrowsSpec(it, useSiteTarget))
           }
     }
   }

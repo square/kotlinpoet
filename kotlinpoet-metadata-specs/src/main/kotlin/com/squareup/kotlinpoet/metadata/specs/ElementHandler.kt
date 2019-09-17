@@ -18,9 +18,6 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -175,24 +172,6 @@ interface ElementHandler {
       }
 
       return Collections.unmodifiableCollection(withUseSiteTarget)
-    }
-
-    /**
-     * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
-     *         [exceptions].
-     */
-    fun createThrowsSpec(
-      exceptions: Collection<TypeName>,
-      useSiteTarget: UseSiteTarget? = null
-    ): AnnotationSpec {
-      return AnnotationSpec.builder(Throws::class)
-          .addMember(
-              "exceptionClasses = %L",
-              exceptions.map { CodeBlock.of("%T::class", it) }
-                  .joinToCode(prefix = "[", suffix = "]")
-          )
-          .useSiteTarget(useSiteTarget)
-          .build()
     }
   }
 }

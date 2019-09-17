@@ -37,7 +37,7 @@ data class ConstructorData(
     addAll(jvmModifiers.map { it.annotationSpec() })
     exceptions.takeIf { it.isNotEmpty() }
         ?.let {
-          add(ElementHandler.createThrowsSpec(it))
+          add(ElementHandlerUtil.createThrowsSpec(it))
         }
   }
 
