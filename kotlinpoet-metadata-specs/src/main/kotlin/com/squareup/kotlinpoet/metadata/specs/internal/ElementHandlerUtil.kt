@@ -28,6 +28,23 @@ object ElementHandlerUtil {
       JVM_VOLATILE
   )
 
+  val KOTLIN_INTRINSIC_INTERFACES = setOf(
+      "kotlin.CharSequence",
+      "kotlin.Comparable",
+      "kotlin.collections.Iterable",
+      "kotlin.collections.Collection",
+      "kotlin.collections.List",
+      "kotlin.collections.Set",
+      "kotlin.collections.Map",
+      "kotlin.collections.Map.Entry",
+      "kotlin.collections.MutableIterable",
+      "kotlin.collections.MutableCollection",
+      "kotlin.collections.MutableList",
+      "kotlin.collections.MutableSet",
+      "kotlin.collections.MutableMap",
+      "kotlin.collections.MutableMap.Entry"
+  )
+
   /**
    * Infers if [property] is a jvm field and should be annotated as such given the input
    * parameters.

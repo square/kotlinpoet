@@ -79,7 +79,7 @@ class ElementsElementHandler private constructor(
   }
 
   override fun isInterface(jvmName: String): Boolean {
-    if (jvmName.canonicalName in KOTLIN_INTRINSIC_INTERFACES) {
+    if (jvmName.canonicalName in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupTypeElement(jvmName)?.kind == INTERFACE
@@ -479,23 +479,6 @@ class ElementsElementHandler private constructor(
     }
 
     private val String.canonicalName get() = replace("/", ".").replace("$", ".")
-
-    private val KOTLIN_INTRINSIC_INTERFACES = setOf(
-        "kotlin.CharSequence",
-        "kotlin.Comparable",
-        "kotlin.collections.Iterable",
-        "kotlin.collections.Collection",
-        "kotlin.collections.List",
-        "kotlin.collections.Set",
-        "kotlin.collections.Map",
-        "kotlin.collections.Map.Entry",
-        "kotlin.collections.MutableIterable",
-        "kotlin.collections.MutableCollection",
-        "kotlin.collections.MutableList",
-        "kotlin.collections.MutableSet",
-        "kotlin.collections.MutableMap",
-        "kotlin.collections.MutableMap.Entry"
-    )
 
     private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
         "org.jetbrains.annotations.NotNull",
