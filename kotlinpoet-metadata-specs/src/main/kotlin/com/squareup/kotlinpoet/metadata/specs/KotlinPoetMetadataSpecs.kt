@@ -108,6 +108,7 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
@@ -134,13 +135,13 @@ fun KClass<*>.toTypeSpec(
 @KotlinPoetMetadataPreview
 fun Class<*>.toTypeSpec(
   elementHandler: ElementHandler? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
+): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 fun TypeElement.toTypeSpec(
   elementHandler: ElementHandler? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler)
+): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
@@ -166,19 +167,21 @@ fun TypeElement.toFileSpec(
 /** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toTypeSpec(
-  elementHandler: ElementHandler?
+  elementHandler: ElementHandler?,
+  className: ClassName = bestGuessClassName(name)
 ): TypeSpec {
-  return toTypeSpec(elementHandler, null)
+  return toTypeSpec(elementHandler, className, null)
 }
 
 /** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toFileSpec(
-  elementHandler: ElementHandler?
+  elementHandler: ElementHandler?,
+  className: ClassName = bestGuessClassName(name)
 ): FileSpec {
   return FileSpec.get(
-      packageName = name.jvmInternalName.substringBeforeLast("/"),
-      typeSpec = toTypeSpec(elementHandler)
+      packageName = className.packageName,
+      typeSpec = toTypeSpec(elementHandler, className)
   )
 }
 
@@ -202,21 +205,13 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
   elementHandler: ElementHandler?,
-  parentName: String?
+  className: ClassName,
+  parentClassName: ClassName?
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
-
-  // Top-level: package/of/class/MyClass
-  // Nested A:  package/of/class/MyClass.InnerClass
-  // Nested B:  package/of/class/MyClass$InnerClass
-  val simpleName = name.substringAfterLast(
-      '/', // Drop the package name, e.g. "package/of/class/"
-      '.', // Drop any enclosing classes, e.g. "MyClass."
-      '$' // Drop any enclosing classes, e.g. "MyClass$"
-  )
   val jvmInternalName = name.jvmInternalName
-
-  val classData = elementHandler?.classData(jvmInternalName, parentName, simpleName)
+  val simpleName = className.simpleName
+  val classData = elementHandler?.classData(className, parentClassName)
 
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -238,7 +233,10 @@ private fun ImmutableKmClass.toTypeSpec(
   if (isEnum) {
     enumEntries.forEach { entryName ->
       val typeSpec = if (elementHandler != null) {
-        elementHandler.enumEntry(jvmInternalName, entryName)?.toTypeSpec(elementHandler)
+        elementHandler.enumEntry(className, entryName)?.let { entry ->
+          val entryClassName = className.nestedClass(entryName)
+          entry.toTypeSpec(elementHandler, entryClassName, parentClassName = className)
+        }
       } else {
         TypeSpec.anonymousClassBuilder()
             .addKdoc(
@@ -279,7 +277,7 @@ private fun ImmutableKmClass.toTypeSpec(
     // - First element of an interface type is the first superinterface
     val superClassFilter = elementHandler?.let { handler ->
       { type: ImmutableKmType ->
-        !handler.isInterface((type.classifier as KmClassifier.Class).name.jvmInternalName)
+        !handler.isInterface(bestGuessClassName((type.classifier as KmClassifier.Class).name))
       }
     } ?: { true }
     val superClass = supertypes.asSequence()
@@ -383,8 +381,9 @@ private fun ImmutableKmClass.toTypeSpec(
     )
     companionObject?.let { objectName ->
       val companionType = if (elementHandler != null) {
-        elementHandler.classFor("$jvmInternalName$$objectName")
-            .toTypeSpec(elementHandler, jvmInternalName)
+        val companionClassName = className.nestedClass(objectName)
+        elementHandler.classFor(companionClassName)
+            .toTypeSpec(elementHandler, companionClassName, parentClassName = className)
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
             .addKdoc(
@@ -429,7 +428,7 @@ private fun ImmutableKmClass.toTypeSpec(
                       func.signature?.let { signature ->
                         val suffix = signature.desc.removePrefix("(")
                         return handler.methodExists(
-                            "${jvmInternalName}\$DefaultImpls",
+                            className.nestedClass("DefaultImpls"),
                             signature.copy(
                                 desc = "(L$jvmInternalName;$suffix"
                             ))
@@ -457,13 +456,14 @@ private fun ImmutableKmClass.toTypeSpec(
   )
 
   for (it in nestedClasses) {
-    val nestedClass = elementHandler?.classFor("$jvmInternalName$$it")
+    val nestedClassName = className.nestedClass(it)
+    val nestedClass = elementHandler?.classFor(nestedClassName)
     val nestedType = if (nestedClass != null) {
       if (nestedClass.isCompanionObject) {
         // We handle these separately
         continue
       } else {
-        nestedClass.toTypeSpec(elementHandler, jvmInternalName)
+        nestedClass.toTypeSpec(elementHandler, nestedClassName, parentClassName = className)
       }
     } else {
       TypeSpec.classBuilder(it)
@@ -805,11 +805,6 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 private val METADATA = Metadata::class.asClassName()
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
-
-private fun String.substringAfterLast(vararg delimiters: Char): String {
-  val index = lastIndexOfAny(delimiters)
-  return if (index == -1) this else substring(index + 1, length)
-}
 
 @PublishedApi
 internal val Element.packageName: String
