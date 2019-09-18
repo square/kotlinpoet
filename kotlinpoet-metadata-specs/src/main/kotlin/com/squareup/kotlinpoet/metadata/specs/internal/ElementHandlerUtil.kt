@@ -3,6 +3,7 @@ package com.squareup.kotlinpoet.metadata.specs.internal
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
@@ -11,6 +12,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import kotlinx.metadata.isLocal
 import java.util.Collections
 import java.util.TreeSet
 
@@ -130,5 +132,43 @@ object ElementHandlerUtil {
         )
         .useSiteTarget(useSiteTarget)
         .build()
+  }
+
+  /**
+   * Best guesses a [ClassName] as represented in Metadata's [kotlinx.metadata.ClassName], where
+   * package names in this name are separated by '/' and class names are separated by '.'.
+   *
+   * For example: `"org/foo/bar/Baz.Nested"`.
+   *
+   * Local classes are prefixed with ".", but for KotlinPoetMetadataSpecs' use case we don't deal
+   * with those.
+   */
+  fun bestGuessClassName(kotlinMetadataName: String): ClassName {
+    require(!kotlinMetadataName.isLocal) {
+      "Local/anonymous classes are not supported!"
+    }
+    // Top-level: package/of/class/MyClass
+    // Nested A:  package/of/class/MyClass.NestedClass
+    val simpleName = kotlinMetadataName.substringAfterLast(
+        '/', // Drop the package name, e.g. "package/of/class/"
+        '.' // Drop any enclosing classes, e.g. "MyClass."
+    )
+    val packageName = kotlinMetadataName.substringBeforeLast("/")
+    val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
+        .removeSuffix(".") // Trailing "." if any
+        .removePrefix(packageName)
+        .removePrefix("/")
+        .split(".")
+        .plus(simpleName)
+
+    return ClassName(
+        packageName = packageName.replace("/", "."),
+        simpleNames = simpleNames
+    )
+  }
+
+  private fun String.substringAfterLast(vararg delimiters: Char): String {
+    val index = lastIndexOfAny(delimiters)
+    return if (index == -1) this else substring(index + 1, length)
   }
 }
