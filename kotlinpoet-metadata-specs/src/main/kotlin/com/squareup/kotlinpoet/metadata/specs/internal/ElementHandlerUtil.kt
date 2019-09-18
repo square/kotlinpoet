@@ -3,8 +3,22 @@ package com.squareup.kotlinpoet.metadata.specs.internal
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
+import com.squareup.kotlinpoet.CHAR_SEQUENCE
+import com.squareup.kotlinpoet.COLLECTION
+import com.squareup.kotlinpoet.COMPARABLE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.ITERABLE
+import com.squareup.kotlinpoet.LIST
+import com.squareup.kotlinpoet.MAP
+import com.squareup.kotlinpoet.MAP_ENTRY
+import com.squareup.kotlinpoet.MUTABLE_COLLECTION
+import com.squareup.kotlinpoet.MUTABLE_ITERABLE
+import com.squareup.kotlinpoet.MUTABLE_LIST
+import com.squareup.kotlinpoet.MUTABLE_MAP
+import com.squareup.kotlinpoet.MUTABLE_MAP_ENTRY
+import com.squareup.kotlinpoet.MUTABLE_SET
+import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.joinToCode
@@ -31,20 +45,20 @@ object ElementHandlerUtil {
   )
 
   val KOTLIN_INTRINSIC_INTERFACES = setOf(
-      "kotlin.CharSequence",
-      "kotlin.Comparable",
-      "kotlin.collections.Iterable",
-      "kotlin.collections.Collection",
-      "kotlin.collections.List",
-      "kotlin.collections.Set",
-      "kotlin.collections.Map",
-      "kotlin.collections.Map.Entry",
-      "kotlin.collections.MutableIterable",
-      "kotlin.collections.MutableCollection",
-      "kotlin.collections.MutableList",
-      "kotlin.collections.MutableSet",
-      "kotlin.collections.MutableMap",
-      "kotlin.collections.MutableMap.Entry"
+      CHAR_SEQUENCE,
+      COMPARABLE,
+      ITERABLE,
+      COLLECTION,
+      LIST,
+      SET,
+      MAP,
+      MAP_ENTRY,
+      MUTABLE_ITERABLE,
+      MUTABLE_COLLECTION,
+      MUTABLE_LIST,
+      MUTABLE_SET,
+      MUTABLE_MAP,
+      MUTABLE_MAP_ENTRY
   )
 
   private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
