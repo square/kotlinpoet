@@ -1662,6 +1662,27 @@ class KotlinPoetMetadataSpecsTest(
   }
 
   @IgnoreForHandlerType(
+      reason = "compile-testing can't handle class names with dashes, will throw " +
+          "\"class file for com.squareup.kotlinpoet.metadata.specs.test.Fuzzy\$ClassNesting\$-Nested not found\"",
+      handlerType = ELEMENTS
+  )
+  @Test
+  fun classNamesAndNesting_pathological() {
+    // Make sure we parse class names correctly at all levels
+    val typeSpec = `Fuzzy$ClassNesting`::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Fuzzy${'$'}ClassNesting {
+        class `-Nested` {
+          class SuperNestedClass {
+            inner class `-${'$'}Fuzzy${'$'}Super${'$'}Weird-Nested${'$'}Name`
+          }
+        }
+      }
+      """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
       reason = "Property site-target annotations are always stored on the synthetic annotations " +
           "method, which is not accessible in the elements API",
       handlerType = ELEMENTS
@@ -1764,6 +1785,14 @@ class ClassNesting {
   class NestedClass {
     class SuperNestedClass {
       inner class SuperDuperInnerClass
+    }
+  }
+}
+
+class `Fuzzy$ClassNesting` {
+  class `-Nested` {
+    class SuperNestedClass {
+      inner class `-$Fuzzy$Super$Weird-Nested$Name`
     }
   }
 }
