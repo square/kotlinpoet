@@ -1589,7 +1589,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       @kotlin.SinceKotlin(version = "1.3")
-      @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME)
+      @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
@@ -1622,7 +1622,7 @@ class KotlinPoetMetadataSpecsTest(
     val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME)
+      @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
