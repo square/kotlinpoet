@@ -1,6 +1,7 @@
 package com.squareup.kotlinpoet.elementhandler.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
@@ -31,7 +32,6 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filter
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.jvmInternalName
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -43,16 +43,16 @@ import kotlin.LazyThreadSafetyMode.NONE
 @KotlinPoetMetadataPreview
 class ReflectiveElementHandler private constructor() : ElementHandler {
 
-  private val classCache = ConcurrentHashMap<String, Optional<Class<*>>>()
+  private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
   private val constructorCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Constructor<*>>>()
   private val fieldCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Field>>()
   private val enumCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Any>>()
 
-  private fun lookupClass(jvmName: String): Class<*>? {
-    return classCache.getOrPut(jvmName) {
+  private fun lookupClass(className: ClassName): Class<*>? {
+    return classCache.getOrPut(className) {
       try {
-        Class.forName(jvmName.replace("/", "."))
+        Class.forName(className.reflectionName())
       } catch (e: ClassNotFoundException) {
         null
       }.toOptional()
@@ -61,15 +61,15 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = false
 
-  override fun classFor(jvmName: String): ImmutableKmClass {
-    return lookupClass(jvmName)?.toImmutableKmClass() ?: error("No class found for: $jvmName.")
+  override fun classFor(className: ClassName): ImmutableKmClass {
+    return lookupClass(className)?.toImmutableKmClass() ?: error("No class found for: $className.")
   }
 
-  override fun isInterface(jvmName: String): Boolean {
-    if (jvmName.canonicalName in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+  override fun isInterface(className: ClassName): Boolean {
+    if (className in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
-    return lookupClass(jvmName)?.isInterface ?: false
+    return lookupClass(className)?.isInterface ?: false
   }
 
   private fun Class<*>.lookupField(fieldSignature: JvmFieldSignature): Field? {
@@ -175,9 +175,9 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     return exceptionTypes.orEmpty().mapTo(mutableListOf()) { it.asTypeName() }
   }
 
-  override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
-    val clazz = lookupClass(enumClassJvmName)
-        ?: error("No class found for: $enumClassJvmName.")
+  override fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass? {
+    val clazz = lookupClass(enumClassName)
+        ?: error("No class found for: $enumClassName.")
     check(clazz.isEnum) {
       "Class must be an enum but isn't: $clazz"
     }
@@ -185,7 +185,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       clazz.enumConstants.find { (it as Enum<*>).name == memberName }.toOptional()
     }.nullableValue
     checkNotNull(enumEntry) {
-      "Could not find $memberName on $enumClassJvmName"
+      "Could not find $memberName on $enumClassName"
     }
     if (enumEntry.javaClass == clazz) {
       // For simple enums with no class bodies, the entry class will be the same as the original
@@ -223,23 +223,23 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .any { it == signatureString }
   }
 
-  override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
-    return lookupClass(classJvmName)?.lookupMethod(methodSignature) != null
+  override fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean {
+    return lookupClass(className)?.lookupMethod(methodSignature) != null
   }
 
   override fun classData(
     kmClass: ImmutableKmClass,
-    parentName: String?,
-    simpleName: String
+    className: ClassName,
+    parentClassName: ClassName?
   ): ClassData {
-    val targetClass = lookupClass(kmClass.name.jvmInternalName)
+    val targetClass = lookupClass(className)
         ?: error("No class found for: ${kmClass.name}.")
 
     // Should only be called if parentName has been null-checked
     val classIfCompanion by lazy(NONE) {
-      if (kmClass.isCompanionObject && parentName != null) {
-        lookupClass(parentName)
-            ?: error("No class found for: $parentName.")
+      if (kmClass.isCompanionObject && parentClassName != null) {
+        lookupClass(parentClassName)
+            ?: error("No class found for: $parentClassName.")
       } else {
         targetClass
       }
@@ -271,7 +271,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
             // Check the field in the parent first. For const/static/jvmField elements, these only
             // exist in the parent and we want to check that if necessary to avoid looking up a
             // non-existent field in the companion.
-            val parentModifiers = if (kmClass.isCompanionObject && parentName != null) {
+            val parentModifiers = if (kmClass.isCompanionObject && parentClassName != null) {
               classIfCompanion.lookupField(fieldSignature)?.jvmModifiers().orEmpty()
             } else {
               emptySet()
@@ -412,7 +412,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
     return ClassData(
         kmClass = kmClass,
-        simpleName = simpleName,
+        className = className,
         annotations = classAnnotations,
         properties = propertyData,
         constructors = constructorData,
@@ -449,8 +449,6 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     fun create(): ElementHandler {
       return ReflectiveElementHandler()
     }
-
-    private val String.canonicalName get() = replace("/", ".").replace("$", ".")
 
     private val Class<*>.descriptor: String get() {
       return when {
