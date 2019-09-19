@@ -23,7 +23,7 @@ import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ClassInformer
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -54,13 +54,13 @@ import kotlin.LazyThreadSafetyMode.NONE
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
 /**
- * An [Elements]-based implementation of [ElementHandler].
+ * An [Elements]-based implementation of [ClassInformer].
  */
 @KotlinPoetMetadataPreview
-class ElementsElementHandler private constructor(
+class ElementsClassInformer private constructor(
   private val elements: Elements,
   private val types: Types
-) : ElementHandler {
+) : ClassInformer {
   private val typeElementCache = ConcurrentHashMap<ClassName, Optional<TypeElement>>()
   private val methodCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
   private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
@@ -469,11 +469,11 @@ class ElementsElementHandler private constructor(
   }
 
   companion object {
-    /** @return an [Elements]-based implementation of [ElementHandler]. */
+    /** @return an [Elements]-based implementation of [ClassInformer]. */
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(elements: Elements, types: Types): ElementHandler {
-      return ElementsElementHandler(elements, types)
+    fun create(elements: Elements, types: Types): ClassInformer {
+      return ElementsClassInformer(elements, types)
     }
 
     private val JVM_STATIC = JvmStatic::class.asClassName()

@@ -19,8 +19,8 @@ package com.squareup.kotlinpoet.metadata.specs.test
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.elementhandler.elements.ElementsElementHandler
-import com.squareup.kotlinpoet.elementhandler.reflective.ReflectiveElementHandler
+import com.squareup.kotlinpoet.elementhandler.elements.ElementsClassInformer
+import com.squareup.kotlinpoet.elementhandler.reflective.ReflectiveClassInformer
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -28,7 +28,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ClassInformer
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
@@ -53,7 +53,7 @@ import kotlin.test.fail
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
   elementHandlerType: ElementHandlerType,
-  private val elementHandlerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ElementHandler)
+  private val classInformerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInformer)
 ) {
 
   companion object {
@@ -64,12 +64,12 @@ class KotlinPoetMetadataSpecsTest(
       return listOf(
           arrayOf<Any>(
               ElementHandlerType.REFLECTIVE,
-              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveElementHandler.create() } }
+              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInformer.create() } }
           ),
           arrayOf<Any>(
               ElementHandlerType.ELEMENTS,
               { test: KotlinPoetMetadataSpecsTest -> {
-                ElementsElementHandler.create(test.compilation.elements, test.compilation.types)
+                ElementsClassInformer.create(test.compilation.elements, test.compilation.types)
               } }
           )
       )
@@ -115,7 +115,7 @@ class KotlinPoetMetadataSpecsTest(
       elementHandlerType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
-    return toTypeSpec(elementHandlerFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
+    return toTypeSpec(classInformerFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
   }
 
   @Test

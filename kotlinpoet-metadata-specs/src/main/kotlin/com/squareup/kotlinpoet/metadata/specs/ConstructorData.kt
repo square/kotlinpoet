@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
 
 /**
- * Represents relevant information on a constructor used for [ElementHandler]. Should only be
+ * Represents relevant information on a constructor used for [ClassInformer]. Should only be
  * associated with constructors of a [ClassData].
  *
  * @param annotations declared annotations on this constructor.

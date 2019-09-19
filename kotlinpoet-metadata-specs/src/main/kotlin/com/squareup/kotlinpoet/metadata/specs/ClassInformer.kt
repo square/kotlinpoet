@@ -24,7 +24,7 @@ import kotlinx.metadata.jvm.JvmMethodSignature
  * A basic interface for looking up information about JVM elements.
  */
 @KotlinPoetMetadataPreview
-interface ElementHandler {
+interface ClassInformer {
 
   /**
    * Indicates if this element handler supports [AnnotationRetention.RUNTIME]-retained annotations.
