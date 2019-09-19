@@ -30,7 +30,7 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.elementhandler.reflective")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.classinformer.reflective")
   }
 }
 

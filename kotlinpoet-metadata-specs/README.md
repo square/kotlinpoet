@@ -29,7 +29,7 @@ To aid with this, `toTypeSpec()` and `toFileSpec()` accept optional `ElementHand
 to assist in parsing/understanding the underlying JVM code. This is important for things like
 annotations, companion objects, certain JVM modifiers, overrides, and more. While it is optional,
  represented sources can be incomplete without this information available. Reflective and javax
-`Elements` implementations are available under the `kotlinpoet-elementhandler-*` artifacts.
+`Elements` implementations are available under the `kotlinpoet-classinformer-*` artifacts.
 
 Generated sources are solely _stub_ implementations, meaning implementation details of elements
 like functions, property getters, and delegated properties are simply stubbed with `TODO()` 
@@ -39,10 +39,10 @@ placeholders.
 
 - Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@file:` annotations are not supported yet.
-- `@JvmOverloads` annotations are only supported with `kotlinpoet-elementhandler-elements` and not reflection.
-- Non-const literal values are only supported with `kotlinpoet-elementhandler-reflective` and not reflection.
+- `@JvmOverloads` annotations are only supported with `kotlinpoet-classinformer-elements` and not reflection.
+- Non-const literal values are only supported with `kotlinpoet-classinformer-reflective` and not reflection.
 - ElementHandler data sourced from `synthetic` constructs are only supported with 
-`kotlinpoet-elementhandler-reflective` and not elements. This is because the javax Elements API does not model
+`kotlinpoet-classinformer-reflective` and not elements. This is because the javax Elements API does not model
 synthetic constructs. This can yield some missing information, like static companion object properties 
 or `property:` site target annotations.
 - Annotations annotated with `AnnotationRetention.SOURCE` are not parsable in reflection nor javax elements.
