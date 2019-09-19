@@ -1,6 +1,7 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -13,8 +14,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
  *
  * @property kmClass the [ImmutableKmClass] as parsed from the class's [@Metadata][Metadata]
  *           annotation.
- * @property simpleName the simple name of the class. This is important to specify when possible
- *           since Kotlin allows for classes to contain characters like `$` or `-`.
+ * @property className the KotlinPoet [ClassName] of the class.
  * @property annotations declared annotations on this class.
  * @property properties the mapping of [kmClass]'s properties to parsed [PropertyData].
  * @property constructors the mapping of [kmClass]'s constructors to parsed [ConstructorData].
@@ -23,7 +23,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 @KotlinPoetMetadataPreview
 data class ClassData(
   val kmClass: ImmutableKmClass,
-  val simpleName: String,
+  val className: ClassName,
   val annotations: Collection<AnnotationSpec>,
   val properties: Map<ImmutableKmProperty, PropertyData>,
   val constructors: Map<ImmutableKmConstructor, ConstructorData>,

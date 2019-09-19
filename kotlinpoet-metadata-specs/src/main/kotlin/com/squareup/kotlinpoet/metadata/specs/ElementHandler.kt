@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -33,88 +34,61 @@ interface ElementHandler {
   val supportsNonRuntimeRetainedAnnotations: Boolean
 
   /**
-   * Creates a new [ClassData] instance for a given [classJvmName].
+   * Creates a new [ClassData] instance for a given [className].
    *
-   * @param classJvmName the jvm name of the target class to to read from.
-   * @param parentName the parent class JVM name if [classJvmName] is nested, inner, or is a
+   * @param className the [ClassName] of the target class to to read from.
+   * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
    *        companion object.
-   * @param simpleName the simple name of the class. This is important to specify when since Kotlin
-   *        allows for classes to contain characters like `$` or `-`.
    */
-  fun classData(classJvmName: String, parentName: String?, simpleName: String): ClassData {
-    return classData(classFor(classJvmName), parentName, simpleName)
+  fun classData(className: ClassName, parentClassName: ClassName?): ClassData {
+    return classData(classFor(className), className, parentClassName)
   }
 
   /**
    * Creates a new [ClassData] instance for a given [kmClass].
    *
    * @param kmClass the source [ImmutableKmClass] to read from.
-   * @param parentName the parent class JVM name if [kmClass] is nested, inner, or is a companion
-   *        object.
-   * @param simpleName the simple name of the class. This is important to specify when possible
-   *        since Kotlin allows for classes to contain characters like `$` or `-`. The default is
-   *        a best-effort inference.
+   * @param className the [ClassName] of the target class to to read from.
+   * @param parentClassName the parent [ClassName] name if [kmClass] is nested, inner, or is a
+   *        companion object.
    */
-  fun classData(
-    kmClass: ImmutableKmClass,
-    parentName: String?,
-    simpleName: String = kmClass.bestGuessSimpleName()
-  ): ClassData
+  fun classData(kmClass: ImmutableKmClass, className: ClassName, parentClassName: ClassName?): ClassData
 
   /**
    * Looks up other classes, such as for nested members. Note that this class would always be
    * Kotlin, so Metadata can be relied on for this.
    *
-   * @param jvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param className The [ClassName] representation of the class.
    * @return the read [ImmutableKmClass] from its metadata. If no class was found, this should throw
    *         an exception.
    */
-  fun classFor(jvmName: String): ImmutableKmClass
+  fun classFor(className: ClassName): ImmutableKmClass
 
   /**
    * Looks up a class and returns whether or not it is an interface. Note that this class can be
    * Java or Kotlin, so Metadata should not be relied on for this.
    *
-   * @param jvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param className The [ClassName] representation of the class.
    * @return whether or not it is an interface.
    */
-  fun isInterface(jvmName: String): Boolean
+  fun isInterface(className: ClassName): Boolean
 
   /**
    * Looks up the enum entry on a given enum given its member name.
    *
-   * @param enumClassJvmName The JVM name of the enum class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param enumClassName The [ClassName] representation of the enum class.
    * @param memberName The simple member name.
    * @return the read [ImmutableKmClass] from its metadata, if any. For simple enum members with no
    *         class bodies, this should always be null.
    */
-  fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass?
+  fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass?
 
   /**
-   * Looks up if a given [methodSignature] within [classJvmName] exists.
+   * Looks up if a given [methodSignature] within [className] exists.
    *
-   * @param classJvmName The JVM name of the class (example: `"org/foo/bar/Baz$Nested"`).
+   * @param className The [ClassName] representation of the class.
    * @param methodSignature The method signature to check.
    * @return whether or not the method exists.
    */
-  fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean
-
-  companion object {
-
-    // Top-level: package/of/class/MyClass
-    // Nested A:  package/of/class/MyClass.InnerClass
-    // Nested B:  package/of/class/MyClass$InnerClass
-    private fun ImmutableKmClass.bestGuessSimpleName(): String {
-      return name.substringAfterLast(
-          '/', // Drop the package name, e.g. "package/of/class/"
-          '.', // Drop any enclosing classes, e.g. "MyClass."
-          '$' // Drop any enclosing classes, e.g. "MyClass$"
-      )
-    }
-
-    private fun String.substringAfterLast(vararg delimiters: Char): String {
-      val index = lastIndexOfAny(delimiters)
-      return if (index == -1) this else substring(index + 1, length)
-    }
-  }
+  fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean
 }

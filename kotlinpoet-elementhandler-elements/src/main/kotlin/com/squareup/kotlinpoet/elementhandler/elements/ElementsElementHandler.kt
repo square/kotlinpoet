@@ -6,6 +6,7 @@ import com.google.auto.common.Visibility
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
@@ -37,7 +38,6 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filter
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.jvmInternalName
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -61,28 +61,28 @@ class ElementsElementHandler private constructor(
   private val elements: Elements,
   private val types: Types
 ) : ElementHandler {
-  private val typeElementCache = ConcurrentHashMap<String, Optional<TypeElement>>()
+  private val typeElementCache = ConcurrentHashMap<ClassName, Optional<TypeElement>>()
   private val methodCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
   private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
 
-  private fun lookupTypeElement(jvmName: String): TypeElement? {
-    return typeElementCache.getOrPut(jvmName) {
-      elements.getTypeElement(jvmName.canonicalName).toOptional()
+  private fun lookupTypeElement(className: ClassName): TypeElement? {
+    return typeElementCache.getOrPut(className) {
+      elements.getTypeElement(className.canonicalName).toOptional()
     }.nullableValue
   }
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = true
 
-  override fun classFor(jvmName: String): ImmutableKmClass {
-    return lookupTypeElement(jvmName)?.toImmutableKmClass() ?: error(
-        "No type element found for: $jvmName.")
+  override fun classFor(className: ClassName): ImmutableKmClass {
+    return lookupTypeElement(className)?.toImmutableKmClass() ?: error(
+        "No type element found for: $className.")
   }
 
-  override fun isInterface(jvmName: String): Boolean {
-    if (jvmName.canonicalName in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+  override fun isInterface(className: ClassName): Boolean {
+    if (className in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
-    return lookupTypeElement(jvmName)?.kind == INTERFACE
+    return lookupTypeElement(className)?.kind == INTERFACE
   }
 
   private fun TypeElement.lookupField(fieldSignature: JvmFieldSignature): VariableElement? {
@@ -94,11 +94,11 @@ class ElementsElementHandler private constructor(
   }
 
   private fun lookupMethod(
-    classJvmName: String,
+    className: ClassName,
     methodSignature: JvmMethodSignature,
     elementFilter: (Iterable<Element>) -> List<ExecutableElement>
   ): ExecutableElement? {
-    return lookupTypeElement(classJvmName)?.lookupMethod(methodSignature, elementFilter)
+    return lookupTypeElement(className)?.lookupMethod(methodSignature, elementFilter)
   }
 
   private fun TypeElement.lookupMethod(
@@ -149,10 +149,10 @@ class ElementsElementHandler private constructor(
     return thrownTypes.map { it.asTypeName() }
   }
 
-  override fun enumEntry(enumClassJvmName: String, memberName: String): ImmutableKmClass? {
-    return lookupTypeElement(enumClassJvmName)?.let { enumType ->
+  override fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass? {
+    return lookupTypeElement(enumClassName)?.let { enumType ->
       val enumTypeAsType = enumType.asType()
-      val member = typeElementCache.getOrPut("$enumClassJvmName.$memberName") {
+      val member = typeElementCache.getOrPut(enumClassName.nestedClass(memberName)) {
         ElementFilter.typesIn(enumType.enclosedElements)
             .asSequence()
             .filter { types.isSubtype(enumTypeAsType, it.superclass) }
@@ -167,8 +167,8 @@ class ElementsElementHandler private constructor(
     return constantValue?.let(ElementHandlerUtil::codeLiteralOf)
   }
 
-  override fun methodExists(classJvmName: String, methodSignature: JvmMethodSignature): Boolean {
-    return lookupMethod(classJvmName, methodSignature, ElementFilter::methodsIn) != null
+  override fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean {
+    return lookupMethod(className, methodSignature, ElementFilter::methodsIn) != null
   }
 
   /**
@@ -248,17 +248,17 @@ class ElementsElementHandler private constructor(
 
   override fun classData(
     kmClass: ImmutableKmClass,
-    parentName: String?,
-    simpleName: String
+    className: ClassName,
+    parentClassName: ClassName?
   ): ClassData {
-    val typeElement = lookupTypeElement(kmClass.name.jvmInternalName)
+    val typeElement = lookupTypeElement(className)
         ?: error("No class found for: ${kmClass.name}.")
 
     // Should only be called if parentName has been null-checked
     val classIfCompanion by lazy(NONE) {
-      if (kmClass.isCompanionObject && parentName != null) {
-        lookupTypeElement(parentName)
-            ?: error("No class found for: $parentName.")
+      if (kmClass.isCompanionObject && parentClassName != null) {
+        lookupTypeElement(parentClassName)
+            ?: error("No class found for: $parentClassName.")
       } else {
         typeElement
       }
@@ -290,7 +290,7 @@ class ElementsElementHandler private constructor(
             // Check the field in the parent first. For const/static/jvmField elements, these only
             // exist in the parent and we want to check that if necessary to avoid looking up a
             // non-existent field in the companion.
-            val parentModifiers = if (kmClass.isCompanionObject && parentName != null) {
+            val parentModifiers = if (kmClass.isCompanionObject && parentClassName != null) {
               classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
             } else {
               emptySet()
@@ -438,7 +438,7 @@ class ElementsElementHandler private constructor(
 
     return ClassData(
         kmClass = kmClass,
-        simpleName = simpleName,
+        className = className,
         annotations = classAnnotations,
         properties = propertyData,
         constructors = constructorData,
@@ -477,8 +477,6 @@ class ElementsElementHandler private constructor(
     }
 
     private val JVM_STATIC = JvmStatic::class.asClassName()
-
-    private val String.canonicalName get() = replace("/", ".").replace("$", ".")
   }
 }
 
