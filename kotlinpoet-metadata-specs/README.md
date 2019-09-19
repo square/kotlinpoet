@@ -25,7 +25,7 @@ The generated representations are a _best effort_ representation of the underlyi
 This means that synthetic elements will be excluded from generation. Kotlin-specific language
 features like lambdas or delegation will be coerced to their idiomatic source form.
 
-To aid with this, `toTypeSpec()` and `toFileSpec()` accept optional `ElementHandler` instances
+To aid with this, `toTypeSpec()` and `toFileSpec()` accept optional `ClassInformer` instances
 to assist in parsing/understanding the underlying JVM code. This is important for things like
 annotations, companion objects, certain JVM modifiers, overrides, and more. While it is optional,
  represented sources can be incomplete without this information available. Reflective and javax
@@ -41,7 +41,7 @@ placeholders.
 - `@file:` annotations are not supported yet.
 - `@JvmOverloads` annotations are only supported with `kotlinpoet-classinformer-elements` and not reflection.
 - Non-const literal values are only supported with `kotlinpoet-classinformer-reflective` and not reflection.
-- ElementHandler data sourced from `synthetic` constructs are only supported with 
+- ClassInformer data sourced from `synthetic` constructs are only supported with 
 `kotlinpoet-classinformer-reflective` and not elements. This is because the javax Elements API does not model
 synthetic constructs. This can yield some missing information, like static companion object properties 
 or `property:` site target annotations.

@@ -33,8 +33,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -79,7 +79,7 @@ class ElementsClassInformer private constructor(
   }
 
   override fun isInterface(className: ClassName): Boolean {
-    if (className in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+    if (className in ClassInformerUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupTypeElement(className)?.kind == INTERFACE
@@ -164,7 +164,7 @@ class ElementsClassInformer private constructor(
   }
 
   private fun VariableElement.constantValue(): CodeBlock? {
-    return constantValue?.let(ElementHandlerUtil::codeLiteralOf)
+    return constantValue?.let(ClassInformerUtil::codeLiteralOf)
   }
 
   override fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean {
@@ -265,7 +265,7 @@ class ElementsClassInformer private constructor(
     }
 
     val classAnnotations = if (kmClass.hasAnnotations) {
-      ElementHandlerUtil.createAnnotations {
+      ClassInformerUtil.createAnnotations {
         addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
       }
     } else {
@@ -277,7 +277,7 @@ class ElementsClassInformer private constructor(
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+          val isJvmField = ClassInformerUtil.computeIsJvmField(
               property = property,
               classInformer = this,
               isCompanionObject = kmClass.isCompanionObject,
@@ -448,7 +448,7 @@ class ElementsClassInformer private constructor(
 
   private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-      index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
+      index to ClassInformerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
     }
   }
 

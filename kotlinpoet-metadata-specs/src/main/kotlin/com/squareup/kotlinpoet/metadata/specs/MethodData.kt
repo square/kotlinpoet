@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
 
 /**
  * Represents relevant information on a method used for [ClassInformer]. Should only be
@@ -35,16 +35,16 @@ data class MethodData(
    *        use.
    */
   fun allAnnotations(useSiteTarget: UseSiteTarget? = null): Collection<AnnotationSpec> {
-    return ElementHandlerUtil.createAnnotations(
+    return ClassInformerUtil.createAnnotations(
         useSiteTarget) {
       addAll(annotations)
       if (isSynthetic) {
-        add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
+        add(ClassInformerUtil.JVM_SYNTHETIC_SPEC)
       }
       addAll(jvmModifiers.map { it.annotationSpec() })
       exceptions.takeIf { it.isNotEmpty() }
           ?.let {
-            add(ElementHandlerUtil.createThrowsSpec(it, useSiteTarget))
+            add(ClassInformerUtil.createThrowsSpec(it, useSiteTarget))
           }
     }
   }

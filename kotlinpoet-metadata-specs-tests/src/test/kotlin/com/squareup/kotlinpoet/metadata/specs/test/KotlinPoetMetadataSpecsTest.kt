@@ -29,8 +29,8 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInformer
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.ELEMENTS
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.REFLECTIVE
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.ELEMENTS
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.tag
 import org.junit.Assume
@@ -52,7 +52,7 @@ import kotlin.test.fail
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
-  classInformerType: ElementHandlerType,
+  classInformerType: ClassInformerType,
   private val classInformerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInformer)
 ) {
 
@@ -63,11 +63,11 @@ class KotlinPoetMetadataSpecsTest(
     fun data(): Collection<Array<*>> {
       return listOf(
           arrayOf<Any>(
-              ElementHandlerType.REFLECTIVE,
+              ClassInformerType.REFLECTIVE,
               { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInformer.create() } }
           ),
           arrayOf<Any>(
-              ElementHandlerType.ELEMENTS,
+              ClassInformerType.ELEMENTS,
               { test: KotlinPoetMetadataSpecsTest -> {
                 ElementsClassInformer.create(test.compilation.elements, test.compilation.types)
               } }
@@ -76,7 +76,7 @@ class KotlinPoetMetadataSpecsTest(
     }
   }
 
-  enum class ElementHandlerType {
+  enum class ClassInformerType {
     REFLECTIVE, ELEMENTS
   }
 
@@ -85,10 +85,10 @@ class KotlinPoetMetadataSpecsTest(
   @Inherited
   annotation class IgnoreForHandlerType(
     val reason: String,
-    val handlerType: ElementHandlerType
+    val handlerType: ClassInformerType
   )
 
-  class IgnoreForElementsRule(private val handlerType: ElementHandlerType) : TestRule {
+  class IgnoreForElementsRule(private val handlerType: ClassInformerType) : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
       return object : Statement() {
         override fun evaluate() {

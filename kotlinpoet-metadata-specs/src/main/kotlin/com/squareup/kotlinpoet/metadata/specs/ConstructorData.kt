@@ -3,7 +3,7 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
 
 /**
  * Represents relevant information on a constructor used for [ClassInformer]. Should only be
@@ -28,15 +28,15 @@ data class ConstructorData(
    * A collection of all annotations on this constructor, including any derived from [jvmModifiers],
    * [isSynthetic], and [exceptions].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations {
+  val allAnnotations: Collection<AnnotationSpec> = ClassInformerUtil.createAnnotations {
     addAll(annotations)
     if (isSynthetic) {
-      add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
+      add(ClassInformerUtil.JVM_SYNTHETIC_SPEC)
     }
     addAll(jvmModifiers.map { it.annotationSpec() })
     exceptions.takeIf { it.isNotEmpty() }
         ?.let {
-          add(ElementHandlerUtil.createThrowsSpec(it))
+          add(ClassInformerUtil.createThrowsSpec(it))
         }
   }
 
