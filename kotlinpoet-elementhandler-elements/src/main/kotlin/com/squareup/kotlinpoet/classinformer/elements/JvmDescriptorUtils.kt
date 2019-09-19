@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.elementhandler.elements
+package com.squareup.kotlinpoet.classinformer.elements
 
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature

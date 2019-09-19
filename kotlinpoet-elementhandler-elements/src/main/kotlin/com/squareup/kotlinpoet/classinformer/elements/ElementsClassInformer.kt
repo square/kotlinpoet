@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.elementhandler.elements
+package com.squareup.kotlinpoet.classinformer.elements
 
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes

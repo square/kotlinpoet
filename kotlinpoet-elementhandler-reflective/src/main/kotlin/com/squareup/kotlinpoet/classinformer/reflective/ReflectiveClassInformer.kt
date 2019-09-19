@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.elementhandler.reflective
+package com.squareup.kotlinpoet.classinformer.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -522,4 +522,5 @@ class ReflectiveClassInformer private constructor() : ClassInformer {
  * TODO: Make this an inline class when inline classes are stable.
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(this)
+private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
+    this)
