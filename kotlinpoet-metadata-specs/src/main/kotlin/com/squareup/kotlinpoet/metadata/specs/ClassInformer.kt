@@ -25,7 +25,7 @@ import kotlinx.metadata.jvm.JvmMethodSignature
 interface ClassInformer {
 
   /**
-   * Indicates if this element handler supports [AnnotationRetention.RUNTIME]-retained annotations.
+   * Indicates if this informer supports [AnnotationRetention.RUNTIME]-retained annotations.
    * This is used to indicate if manual inference of certain non-RUNTIME-retained annotations should
    * be done, such as [JvmName].
    */

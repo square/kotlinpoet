@@ -271,7 +271,7 @@ private fun ImmutableKmClass.toTypeSpec(
       builder.addModifiers(INNER)
     }
     builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(classTypeParamsResolver) })
-    // If we have an element handler, we can check exactly which "supertype" is an interface vs
+    // If we have an informer, we can check exactly which "supertype" is an interface vs
     // class. Without a handler though, we have to best-effort guess. Usually, the flow is:
     // - First element of a non-interface type is the superclass (can be `Any`)
     // - First element of an interface type is the first superinterface
