@@ -52,7 +52,7 @@ import kotlin.test.fail
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
-  elementHandlerType: ElementHandlerType,
+  classInformerType: ElementHandlerType,
   private val classInformerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInformer)
 ) {
 
@@ -112,7 +112,7 @@ class KotlinPoetMetadataSpecsTest(
   @Rule
   @JvmField
   val ignoreForElementsRule = IgnoreForElementsRule(
-      elementHandlerType)
+      classInformerType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
     return toTypeSpec(classInformerFactoryCreator(this@KotlinPoetMetadataSpecsTest)())

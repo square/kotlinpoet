@@ -279,7 +279,7 @@ class ElementsClassInformer private constructor(
         .associateWith { property ->
           val isJvmField = ElementHandlerUtil.computeIsJvmField(
               property = property,
-              elementHandler = this,
+              classInformer = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
