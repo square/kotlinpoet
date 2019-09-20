@@ -16,8 +16,8 @@
 
 include(
     ":kotlinpoet",
-    ":kotlinpoet-classinformer-elements",
-    ":kotlinpoet-classinformer-reflective",
+    ":kotlinpoet-classinspector-elements",
+    ":kotlinpoet-classinspector-reflective",
     ":kotlinpoet-metadata",
     ":kotlinpoet-metadata-specs",
     ":kotlinpoet-metadata-specs-tests"
