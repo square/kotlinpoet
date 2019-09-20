@@ -20,14 +20,12 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlinx.metadata.jvm.JvmMethodSignature
 
-/**
- * A basic interface for looking up information about JVM elements.
- */
+/** A basic interface for looking up JVM information about a given Class. */
 @KotlinPoetMetadataPreview
-interface ElementHandler {
+interface ClassInspector {
 
   /**
-   * Indicates if this element handler supports [AnnotationRetention.RUNTIME]-retained annotations.
+   * Indicates if this [ClassInspector] supports [AnnotationRetention.RUNTIME]-retained annotations.
    * This is used to indicate if manual inference of certain non-RUNTIME-retained annotations should
    * be done, such as [JvmName].
    */

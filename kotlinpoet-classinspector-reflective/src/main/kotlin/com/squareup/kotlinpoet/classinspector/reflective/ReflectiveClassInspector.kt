@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.elementhandler.reflective
+package com.squareup.kotlinpoet.classinspector.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -17,7 +17,7 @@ import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -27,8 +27,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
-class ReflectiveElementHandler private constructor() : ElementHandler {
+class ReflectiveClassInspector private constructor() : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
@@ -66,7 +66,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   }
 
   override fun isInterface(className: ClassName): Boolean {
-    if (className in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+    if (className in ClassInspectorUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupClass(className)?.isInterface ?: false
@@ -200,7 +200,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
       return null
     }
     return get(null) // Constant means we can do a static get on it.
-        .let(ElementHandlerUtil::codeLiteralOf)
+        .let(ClassInspectorUtil::codeLiteralOf)
   }
 
   private fun JvmMethodSignature.isOverriddenIn(clazz: Class<*>): Boolean {
@@ -246,7 +246,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
     }
 
     val classAnnotations = if (kmClass.hasAnnotations) {
-      ElementHandlerUtil.createAnnotations {
+      ClassInspectorUtil.createAnnotations {
         addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
       }
     } else {
@@ -258,9 +258,9 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+          val isJvmField = ClassInspectorUtil.computeIsJvmField(
               property = property,
-              elementHandler = this,
+              classInspector = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
@@ -422,7 +422,7 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
 
   private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-          index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
+          index to ClassInspectorUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
         }
   }
 
@@ -446,8 +446,8 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
   companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(): ElementHandler {
-      return ReflectiveElementHandler()
+    fun create(): ClassInspector {
+      return ReflectiveClassInspector()
     }
 
     private val Class<*>.descriptor: String get() {
@@ -522,4 +522,5 @@ class ReflectiveElementHandler private constructor() : ElementHandler {
  * TODO: Make this an inline class when inline classes are stable.
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(this)
+private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
+    this)

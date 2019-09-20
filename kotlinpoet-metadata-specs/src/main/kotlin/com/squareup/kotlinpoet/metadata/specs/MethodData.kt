@@ -4,10 +4,10 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 
 /**
- * Represents relevant information on a method used for [ElementHandler]. Should only be
+ * Represents relevant information on a method used for [ClassInspector]. Should only be
  * associated with methods of a [ClassData] or [PropertyData].
  *
  * @param annotations declared annotations on this method.
@@ -35,16 +35,16 @@ data class MethodData(
    *        use.
    */
   fun allAnnotations(useSiteTarget: UseSiteTarget? = null): Collection<AnnotationSpec> {
-    return ElementHandlerUtil.createAnnotations(
+    return ClassInspectorUtil.createAnnotations(
         useSiteTarget) {
       addAll(annotations)
       if (isSynthetic) {
-        add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
+        add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
       addAll(jvmModifiers.map { it.annotationSpec() })
       exceptions.takeIf { it.isNotEmpty() }
           ?.let {
-            add(ElementHandlerUtil.createThrowsSpec(it, useSiteTarget))
+            add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget))
           }
     }
   }

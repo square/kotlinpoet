@@ -9,7 +9,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 /**
- * Represents relevant information on a class used for [ElementHandler]. Can only ever be applied on
+ * Represents relevant information on a class used for [ClassInspector]. Can only ever be applied on
  * a Kotlin type (i.e. is annotated with [Metadata]).
  *
  * @property kmClass the [ImmutableKmClass] as parsed from the class's [@Metadata][Metadata]

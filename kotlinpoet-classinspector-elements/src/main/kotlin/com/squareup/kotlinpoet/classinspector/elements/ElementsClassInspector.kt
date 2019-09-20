@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.elementhandler.elements
+package com.squareup.kotlinpoet.classinspector.elements
 
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -23,7 +23,7 @@ import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -33,8 +33,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -54,13 +54,13 @@ import kotlin.LazyThreadSafetyMode.NONE
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
 /**
- * An [Elements]-based implementation of [ElementHandler].
+ * An [Elements]-based implementation of [ClassInspector].
  */
 @KotlinPoetMetadataPreview
-class ElementsElementHandler private constructor(
+class ElementsClassInspector private constructor(
   private val elements: Elements,
   private val types: Types
-) : ElementHandler {
+) : ClassInspector {
   private val typeElementCache = ConcurrentHashMap<ClassName, Optional<TypeElement>>()
   private val methodCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
   private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
@@ -79,7 +79,7 @@ class ElementsElementHandler private constructor(
   }
 
   override fun isInterface(className: ClassName): Boolean {
-    if (className in ElementHandlerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+    if (className in ClassInspectorUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupTypeElement(className)?.kind == INTERFACE
@@ -164,7 +164,7 @@ class ElementsElementHandler private constructor(
   }
 
   private fun VariableElement.constantValue(): CodeBlock? {
-    return constantValue?.let(ElementHandlerUtil::codeLiteralOf)
+    return constantValue?.let(ClassInspectorUtil::codeLiteralOf)
   }
 
   override fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean {
@@ -265,7 +265,7 @@ class ElementsElementHandler private constructor(
     }
 
     val classAnnotations = if (kmClass.hasAnnotations) {
-      ElementHandlerUtil.createAnnotations {
+      ClassInspectorUtil.createAnnotations {
         addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
       }
     } else {
@@ -277,9 +277,9 @@ class ElementsElementHandler private constructor(
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = ElementHandlerUtil.computeIsJvmField(
+          val isJvmField = ClassInspectorUtil.computeIsJvmField(
               property = property,
-              elementHandler = this,
+              classInspector = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
@@ -376,7 +376,8 @@ class ElementsElementHandler private constructor(
             if (kmClass.isCompanionObject && JvmFieldModifier.STATIC in it) {
               finalFieldData = fieldData.copy(jvmModifiers = fieldData.jvmModifiers
                   .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC })
-              annotations += AnnotationSpec.builder(JVM_STATIC).build()
+              annotations += AnnotationSpec.builder(
+                  JVM_STATIC).build()
             }
           }
 
@@ -448,7 +449,7 @@ class ElementsElementHandler private constructor(
 
   private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-      index to ElementHandlerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
+      index to ClassInspectorUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
     }
   }
 
@@ -469,11 +470,11 @@ class ElementsElementHandler private constructor(
   }
 
   companion object {
-    /** @return an [Elements]-based implementation of [ElementHandler]. */
+    /** @return an [Elements]-based implementation of [ClassInspector]. */
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(elements: Elements, types: Types): ElementHandler {
-      return ElementsElementHandler(elements, types)
+    fun create(elements: Elements, types: Types): ClassInspector {
+      return ElementsClassInspector(elements, types)
     }
 
     private val JVM_STATIC = JvmStatic::class.asClassName()
@@ -486,4 +487,5 @@ class ElementsElementHandler private constructor(
  * TODO: Make this an inline class when inline classes are stable.
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(this)
+private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
+    this)

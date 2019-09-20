@@ -4,10 +4,10 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 
 /**
- * Represents relevant information on a field used for [ElementHandler]. Should only be
+ * Represents relevant information on a field used for [ClassInspector]. Should only be
  * associated with a [PropertyData].
  *
  * @param annotations declared annotations on this field.
@@ -28,11 +28,11 @@ data class FieldData(
    * A collection of all annotations on this method, including any derived from [jvmModifiers]
    * and [isSynthetic].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations(
+  val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations(
       FIELD) {
     addAll(annotations)
     if (isSynthetic) {
-      add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
+      add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
     }
     addAll(jvmModifiers.map { it.annotationSpec() })
   }

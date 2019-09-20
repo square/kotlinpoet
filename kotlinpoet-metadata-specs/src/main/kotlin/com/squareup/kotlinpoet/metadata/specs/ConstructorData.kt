@@ -3,10 +3,10 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 
 /**
- * Represents relevant information on a constructor used for [ElementHandler]. Should only be
+ * Represents relevant information on a constructor used for [ClassInspector]. Should only be
  * associated with constructors of a [ClassData].
  *
  * @param annotations declared annotations on this constructor.
@@ -28,15 +28,15 @@ data class ConstructorData(
    * A collection of all annotations on this constructor, including any derived from [jvmModifiers],
    * [isSynthetic], and [exceptions].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ElementHandlerUtil.createAnnotations {
+  val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations {
     addAll(annotations)
     if (isSynthetic) {
-      add(ElementHandlerUtil.JVM_SYNTHETIC_SPEC)
+      add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
     }
     addAll(jvmModifiers.map { it.annotationSpec() })
     exceptions.takeIf { it.isNotEmpty() }
         ?.let {
-          add(ElementHandlerUtil.createThrowsSpec(it))
+          add(ClassInspectorUtil.createThrowsSpec(it))
         }
   }
 

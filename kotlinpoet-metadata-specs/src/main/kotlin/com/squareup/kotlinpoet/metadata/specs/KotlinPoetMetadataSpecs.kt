@@ -107,8 +107,8 @@ import com.squareup.kotlinpoet.metadata.isTailRec
 import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ElementHandlerUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
@@ -128,60 +128,60 @@ import kotlin.reflect.KClass
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun KClass<*>.toTypeSpec(
-  elementHandler: ElementHandler? = null
-): TypeSpec = java.toTypeSpec(elementHandler)
+  classInspector: ClassInspector? = null
+): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun Class<*>.toTypeSpec(
-  elementHandler: ElementHandler? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler, asClassName())
+  classInspector: ClassInspector? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 fun TypeElement.toTypeSpec(
-  elementHandler: ElementHandler? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(elementHandler, asClassName())
+  classInspector: ClassInspector? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun KClass<*>.toFileSpec(
-  elementHandler: ElementHandler? = null
-): FileSpec = java.toFileSpec(elementHandler)
+  classInspector: ClassInspector? = null
+): FileSpec = java.toFileSpec(classInspector)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun Class<*>.toFileSpec(
-  elementHandler: ElementHandler? = null
-): FileSpec = FileSpec.get(`package`.name, toTypeSpec(elementHandler))
+  classInspector: ClassInspector? = null
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 fun TypeElement.toFileSpec(
-  elementHandler: ElementHandler? = null
+  classInspector: ClassInspector? = null
 ): FileSpec = FileSpec.get(
     packageName = packageName,
-    typeSpec = toTypeSpec(elementHandler)
+    typeSpec = toTypeSpec(classInspector)
 )
 
 /** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toTypeSpec(
-  elementHandler: ElementHandler?,
+  classInspector: ClassInspector?,
   className: ClassName = bestGuessClassName(name)
 ): TypeSpec {
-  return toTypeSpec(elementHandler, className, null)
+  return toTypeSpec(classInspector, className, null)
 }
 
 /** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toFileSpec(
-  elementHandler: ElementHandler?,
+  classInspector: ClassInspector?,
   className: ClassName = bestGuessClassName(name)
 ): FileSpec {
   return FileSpec.get(
       packageName = className.packageName,
-      typeSpec = toTypeSpec(elementHandler, className)
+      typeSpec = toTypeSpec(classInspector, className)
   )
 }
 
@@ -204,14 +204,14 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
-  elementHandler: ElementHandler?,
+  classInspector: ClassInspector?,
   className: ClassName,
   parentClassName: ClassName?
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
   val jvmInternalName = name.jvmInternalName
   val simpleName = className.simpleName
-  val classData = elementHandler?.classData(className, parentClassName)
+  val classData = classInspector?.classData(className, parentClassName)
 
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -232,15 +232,15 @@ private fun ImmutableKmClass.toTypeSpec(
 
   if (isEnum) {
     enumEntries.forEach { entryName ->
-      val typeSpec = if (elementHandler != null) {
-        elementHandler.enumEntry(className, entryName)?.let { entry ->
+      val typeSpec = if (classInspector != null) {
+        classInspector.enumEntry(className, entryName)?.let { entry ->
           val entryClassName = className.nestedClass(entryName)
-          entry.toTypeSpec(elementHandler, entryClassName, parentClassName = className)
+          entry.toTypeSpec(classInspector, entryClassName, parentClassName = className)
         }
       } else {
         TypeSpec.anonymousClassBuilder()
             .addKdoc(
-                "No ElementHandler was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
+                "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
             .build()
       }
       if (typeSpec != null) {
@@ -271,11 +271,11 @@ private fun ImmutableKmClass.toTypeSpec(
       builder.addModifiers(INNER)
     }
     builder.addTypeVariables(typeParameters.map { it.toTypeVariableName(classTypeParamsResolver) })
-    // If we have an element handler, we can check exactly which "supertype" is an interface vs
+    // If we have an inspector, we can check exactly which "supertype" is an interface vs
     // class. Without a handler though, we have to best-effort guess. Usually, the flow is:
     // - First element of a non-interface type is the superclass (can be `Any`)
     // - First element of an interface type is the first superinterface
-    val superClassFilter = elementHandler?.let { handler ->
+    val superClassFilter = classInspector?.let { handler ->
       { type: ImmutableKmType ->
         !handler.isInterface(bestGuessClassName((type.classifier as KmClassifier.Class).name))
       }
@@ -329,7 +329,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 if (property.hasGetter) {
                   property.getterSignature?.let { getterSignature ->
                     if (!isInterface &&
-                        elementHandler?.supportsNonRuntimeRetainedAnnotations == false) {
+                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip interface types for this because they can't have @JvmName.
                       // For annotation properties, kotlinc puts JvmName annotations by default in
@@ -353,7 +353,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   property.setterSignature?.let { setterSignature ->
                     if (!isAnnotation &&
                         !isInterface &&
-                        elementHandler?.supportsNonRuntimeRetainedAnnotations == false) {
+                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip annotation types for this because they can't have vars.
                       // We skip interface types for this because they can't have @JvmName.
@@ -370,7 +370,7 @@ private fun ImmutableKmClass.toTypeSpec(
               property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
-                  annotations = ElementHandlerUtil.createAnnotations {
+                  annotations = ClassInspectorUtil.createAnnotations {
                     addAll(annotations)
                     addAll(propertyData?.allAnnotations.orEmpty())
                   },
@@ -380,14 +380,14 @@ private fun ImmutableKmClass.toTypeSpec(
             .asIterable()
     )
     companionObject?.let { objectName ->
-      val companionType = if (elementHandler != null) {
+      val companionType = if (classInspector != null) {
         val companionClassName = className.nestedClass(objectName)
-        elementHandler.classFor(companionClassName)
-            .toTypeSpec(elementHandler, companionClassName, parentClassName = className)
+        classInspector.classFor(companionClassName)
+            .toTypeSpec(classInspector, companionClassName, parentClassName = className)
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
             .addKdoc(
-                "No ElementHandler was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.")
+                "No ClassInspector was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.")
             .build()
       }
       builder.addType(companionType)
@@ -404,9 +404,9 @@ private fun ImmutableKmClass.toTypeSpec(
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
             val annotations = mutableListOf<AnnotationSpec>()
-            if (elementHandler != null) {
+            if (classInspector != null) {
               func.signature?.let { signature ->
-                if (!isInterface && !elementHandler.supportsNonRuntimeRetainedAnnotations) {
+                if (!isInterface && !classInspector.supportsNonRuntimeRetainedAnnotations) {
                   // Infer if JvmName was used
                   // We skip interface types for this because they can't have @JvmName.
                   signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
@@ -415,7 +415,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
               }
             }
-            val finalAnnotations = ElementHandlerUtil.createAnnotations {
+            val finalAnnotations = ClassInspectorUtil.createAnnotations {
               addAll(annotations)
               addAll(methodData?.allAnnotations().orEmpty())
             }
@@ -424,7 +424,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
                   fun isKotlinDefaultInterfaceMethod(): Boolean {
-                    elementHandler?.let { handler ->
+                    classInspector?.let { handler ->
                       func.signature?.let { signature ->
                         val suffix = signature.desc.removePrefix("(")
                         return handler.methodExists(
@@ -457,18 +457,18 @@ private fun ImmutableKmClass.toTypeSpec(
 
   for (it in nestedClasses) {
     val nestedClassName = className.nestedClass(it)
-    val nestedClass = elementHandler?.classFor(nestedClassName)
+    val nestedClass = classInspector?.classFor(nestedClassName)
     val nestedType = if (nestedClass != null) {
       if (nestedClass.isCompanionObject) {
         // We handle these separately
         continue
       } else {
-        nestedClass.toTypeSpec(elementHandler, nestedClassName, parentClassName = className)
+        nestedClass.toTypeSpec(classInspector, nestedClassName, parentClassName = className)
       }
     } else {
       TypeSpec.classBuilder(it)
           .addKdoc(
-              "No ElementHandler was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.")
+              "No ClassInspector was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.")
           .build()
     }
     builder.addType(nestedType)
@@ -611,7 +611,7 @@ private fun ImmutableKmProperty.toPropertySpec(
                 // TODO Ideally don't do this if the annotation use site is only field?
                 //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
                 //  automatically applied to the property for these annotation types.
-                //  This is another thing ElementHandler *could* tell us
+                //  This is another thing ClassInspector *could* tell us
                 it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
               } else {
                 it

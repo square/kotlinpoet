@@ -19,8 +19,8 @@ package com.squareup.kotlinpoet.metadata.specs.test
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.elementhandler.elements.ElementsElementHandler
-import com.squareup.kotlinpoet.elementhandler.reflective.ReflectiveElementHandler
+import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
+import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -28,9 +28,9 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.ElementHandler
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.ELEMENTS
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ElementHandlerType.REFLECTIVE
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.ELEMENTS
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.tag
 import org.junit.Assume
@@ -52,8 +52,8 @@ import kotlin.test.fail
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
-  elementHandlerType: ElementHandlerType,
-  private val elementHandlerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ElementHandler)
+  classInspectorType: ClassInspectorType,
+  private val classInspectorFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInspector)
 ) {
 
   companion object {
@@ -63,20 +63,20 @@ class KotlinPoetMetadataSpecsTest(
     fun data(): Collection<Array<*>> {
       return listOf(
           arrayOf<Any>(
-              ElementHandlerType.REFLECTIVE,
-              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveElementHandler.create() } }
+              ClassInspectorType.REFLECTIVE,
+              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInspector.create() } }
           ),
           arrayOf<Any>(
-              ElementHandlerType.ELEMENTS,
+              ClassInspectorType.ELEMENTS,
               { test: KotlinPoetMetadataSpecsTest -> {
-                ElementsElementHandler.create(test.compilation.elements, test.compilation.types)
+                ElementsClassInspector.create(test.compilation.elements, test.compilation.types)
               } }
           )
       )
     }
   }
 
-  enum class ElementHandlerType {
+  enum class ClassInspectorType {
     REFLECTIVE, ELEMENTS
   }
 
@@ -85,10 +85,10 @@ class KotlinPoetMetadataSpecsTest(
   @Inherited
   annotation class IgnoreForHandlerType(
     val reason: String,
-    val handlerType: ElementHandlerType
+    val handlerType: ClassInspectorType
   )
 
-  class IgnoreForElementsRule(private val handlerType: ElementHandlerType) : TestRule {
+  class IgnoreForElementsRule(private val handlerType: ClassInspectorType) : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
       return object : Statement() {
         override fun evaluate() {
@@ -112,10 +112,10 @@ class KotlinPoetMetadataSpecsTest(
   @Rule
   @JvmField
   val ignoreForElementsRule = IgnoreForElementsRule(
-      elementHandlerType)
+      classInspectorType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
-    return toTypeSpec(elementHandlerFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
+    return toTypeSpec(classInspectorFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
   }
 
   @Test
