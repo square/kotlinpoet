@@ -22,7 +22,7 @@ import kotlinx.metadata.jvm.JvmMethodSignature
 
 /** A basic interface for looking up information about JVM information about a given Class. */
 @KotlinPoetMetadataPreview
-interface ClassInformer {
+interface ClassInspector {
 
   /**
    * Indicates if this informer supports [AnnotationRetention.RUNTIME]-retained annotations.

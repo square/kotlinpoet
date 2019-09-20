@@ -128,60 +128,60 @@ import kotlin.reflect.KClass
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun KClass<*>.toTypeSpec(
-  classInformer: ClassInformer? = null
-): TypeSpec = java.toTypeSpec(classInformer)
+  classInspector: ClassInspector? = null
+): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun Class<*>.toTypeSpec(
-  classInformer: ClassInformer? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(classInformer, asClassName())
+  classInspector: ClassInspector? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 fun TypeElement.toTypeSpec(
-  classInformer: ClassInformer? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(classInformer, asClassName())
+  classInspector: ClassInspector? = null
+): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun KClass<*>.toFileSpec(
-  classInformer: ClassInformer? = null
-): FileSpec = java.toFileSpec(classInformer)
+  classInspector: ClassInspector? = null
+): FileSpec = java.toFileSpec(classInspector)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 fun Class<*>.toFileSpec(
-  classInformer: ClassInformer? = null
-): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInformer))
+  classInspector: ClassInspector? = null
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 fun TypeElement.toFileSpec(
-  classInformer: ClassInformer? = null
+  classInspector: ClassInspector? = null
 ): FileSpec = FileSpec.get(
     packageName = packageName,
-    typeSpec = toTypeSpec(classInformer)
+    typeSpec = toTypeSpec(classInspector)
 )
 
 /** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toTypeSpec(
-  classInformer: ClassInformer?,
+  classInspector: ClassInspector?,
   className: ClassName = bestGuessClassName(name)
 ): TypeSpec {
-  return toTypeSpec(classInformer, className, null)
+  return toTypeSpec(classInspector, className, null)
 }
 
 /** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toFileSpec(
-  classInformer: ClassInformer?,
+  classInspector: ClassInspector?,
   className: ClassName = bestGuessClassName(name)
 ): FileSpec {
   return FileSpec.get(
       packageName = className.packageName,
-      typeSpec = toTypeSpec(classInformer, className)
+      typeSpec = toTypeSpec(classInspector, className)
   )
 }
 
@@ -204,14 +204,14 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
-  classInformer: ClassInformer?,
+  classInspector: ClassInspector?,
   className: ClassName,
   parentClassName: ClassName?
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
   val jvmInternalName = name.jvmInternalName
   val simpleName = className.simpleName
-  val classData = classInformer?.classData(className, parentClassName)
+  val classData = classInspector?.classData(className, parentClassName)
 
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -232,10 +232,10 @@ private fun ImmutableKmClass.toTypeSpec(
 
   if (isEnum) {
     enumEntries.forEach { entryName ->
-      val typeSpec = if (classInformer != null) {
-        classInformer.enumEntry(className, entryName)?.let { entry ->
+      val typeSpec = if (classInspector != null) {
+        classInspector.enumEntry(className, entryName)?.let { entry ->
           val entryClassName = className.nestedClass(entryName)
-          entry.toTypeSpec(classInformer, entryClassName, parentClassName = className)
+          entry.toTypeSpec(classInspector, entryClassName, parentClassName = className)
         }
       } else {
         TypeSpec.anonymousClassBuilder()
@@ -275,7 +275,7 @@ private fun ImmutableKmClass.toTypeSpec(
     // class. Without a handler though, we have to best-effort guess. Usually, the flow is:
     // - First element of a non-interface type is the superclass (can be `Any`)
     // - First element of an interface type is the first superinterface
-    val superClassFilter = classInformer?.let { handler ->
+    val superClassFilter = classInspector?.let { handler ->
       { type: ImmutableKmType ->
         !handler.isInterface(bestGuessClassName((type.classifier as KmClassifier.Class).name))
       }
@@ -329,7 +329,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 if (property.hasGetter) {
                   property.getterSignature?.let { getterSignature ->
                     if (!isInterface &&
-                        classInformer?.supportsNonRuntimeRetainedAnnotations == false) {
+                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip interface types for this because they can't have @JvmName.
                       // For annotation properties, kotlinc puts JvmName annotations by default in
@@ -353,7 +353,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   property.setterSignature?.let { setterSignature ->
                     if (!isAnnotation &&
                         !isInterface &&
-                        classInformer?.supportsNonRuntimeRetainedAnnotations == false) {
+                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
                       // Infer if JvmName was used
                       // We skip annotation types for this because they can't have vars.
                       // We skip interface types for this because they can't have @JvmName.
@@ -380,10 +380,10 @@ private fun ImmutableKmClass.toTypeSpec(
             .asIterable()
     )
     companionObject?.let { objectName ->
-      val companionType = if (classInformer != null) {
+      val companionType = if (classInspector != null) {
         val companionClassName = className.nestedClass(objectName)
-        classInformer.classFor(companionClassName)
-            .toTypeSpec(classInformer, companionClassName, parentClassName = className)
+        classInspector.classFor(companionClassName)
+            .toTypeSpec(classInspector, companionClassName, parentClassName = className)
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
             .addKdoc(
@@ -404,9 +404,9 @@ private fun ImmutableKmClass.toTypeSpec(
             val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
                 fallback = classTypeParamsResolver)
             val annotations = mutableListOf<AnnotationSpec>()
-            if (classInformer != null) {
+            if (classInspector != null) {
               func.signature?.let { signature ->
-                if (!isInterface && !classInformer.supportsNonRuntimeRetainedAnnotations) {
+                if (!isInterface && !classInspector.supportsNonRuntimeRetainedAnnotations) {
                   // Infer if JvmName was used
                   // We skip interface types for this because they can't have @JvmName.
                   signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
@@ -424,7 +424,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
                   fun isKotlinDefaultInterfaceMethod(): Boolean {
-                    classInformer?.let { handler ->
+                    classInspector?.let { handler ->
                       func.signature?.let { signature ->
                         val suffix = signature.desc.removePrefix("(")
                         return handler.methodExists(
@@ -457,13 +457,13 @@ private fun ImmutableKmClass.toTypeSpec(
 
   for (it in nestedClasses) {
     val nestedClassName = className.nestedClass(it)
-    val nestedClass = classInformer?.classFor(nestedClassName)
+    val nestedClass = classInspector?.classFor(nestedClassName)
     val nestedType = if (nestedClass != null) {
       if (nestedClass.isCompanionObject) {
         // We handle these separately
         continue
       } else {
-        nestedClass.toTypeSpec(classInformer, nestedClassName, parentClassName = className)
+        nestedClass.toTypeSpec(classInspector, nestedClassName, parentClassName = className)
       }
     } else {
       TypeSpec.classBuilder(it)

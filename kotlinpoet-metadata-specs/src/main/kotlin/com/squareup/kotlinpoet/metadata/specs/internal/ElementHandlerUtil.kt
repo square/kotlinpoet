@@ -25,7 +25,7 @@ import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
-import com.squareup.kotlinpoet.metadata.specs.ClassInformer
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import kotlinx.metadata.isLocal
 import java.util.Collections
 import java.util.TreeSet
@@ -88,7 +88,7 @@ object ClassInformerUtil {
    */
   fun computeIsJvmField(
     property: ImmutableKmProperty,
-    classInformer: ClassInformer,
+    classInspector: ClassInspector,
     isCompanionObject: Boolean,
     hasGetter: Boolean,
     hasSetter: Boolean,
@@ -98,7 +98,7 @@ object ClassInformerUtil {
         !hasSetter &&
         hasField &&
         !property.isConst) {
-      !(classInformer.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
+      !(classInspector.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
     } else {
       false
     }

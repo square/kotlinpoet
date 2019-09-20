@@ -17,7 +17,7 @@ import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
-import com.squareup.kotlinpoet.metadata.specs.ClassInformer
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
-class ReflectiveClassInformer private constructor() : ClassInformer {
+class ReflectiveClassInspector private constructor() : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
@@ -446,8 +446,8 @@ class ReflectiveClassInformer private constructor() : ClassInformer {
   companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(): ClassInformer {
-      return ReflectiveClassInformer()
+    fun create(): ClassInspector {
+      return ReflectiveClassInspector()
     }
 
     private val Class<*>.descriptor: String get() {

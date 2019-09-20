@@ -7,7 +7,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
 
 /**
- * Represents relevant information on a method used for [ClassInformer]. Should only be
+ * Represents relevant information on a method used for [ClassInspector]. Should only be
  * associated with methods of a [ClassData] or [PropertyData].
  *
  * @param annotations declared annotations on this method.

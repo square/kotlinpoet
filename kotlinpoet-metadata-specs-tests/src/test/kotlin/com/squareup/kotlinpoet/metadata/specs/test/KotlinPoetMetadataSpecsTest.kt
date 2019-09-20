@@ -19,8 +19,8 @@ package com.squareup.kotlinpoet.metadata.specs.test
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.classinformer.elements.ElementsClassInformer
-import com.squareup.kotlinpoet.classinformer.reflective.ReflectiveClassInformer
+import com.squareup.kotlinpoet.classinformer.elements.ElementsClassInspector
+import com.squareup.kotlinpoet.classinformer.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -28,7 +28,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.ClassInformer
+import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
@@ -53,7 +53,7 @@ import kotlin.test.fail
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
   classInformerType: ClassInformerType,
-  private val classInformerFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInformer)
+  private val classInspectorFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInspector)
 ) {
 
   companion object {
@@ -64,12 +64,12 @@ class KotlinPoetMetadataSpecsTest(
       return listOf(
           arrayOf<Any>(
               ClassInformerType.REFLECTIVE,
-              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInformer.create() } }
+              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInspector.create() } }
           ),
           arrayOf<Any>(
               ClassInformerType.ELEMENTS,
               { test: KotlinPoetMetadataSpecsTest -> {
-                ElementsClassInformer.create(test.compilation.elements, test.compilation.types)
+                ElementsClassInspector.create(test.compilation.elements, test.compilation.types)
               } }
           )
       )
@@ -115,7 +115,7 @@ class KotlinPoetMetadataSpecsTest(
       classInformerType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
-    return toTypeSpec(classInformerFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
+    return toTypeSpec(classInspectorFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
   }
 
   @Test
