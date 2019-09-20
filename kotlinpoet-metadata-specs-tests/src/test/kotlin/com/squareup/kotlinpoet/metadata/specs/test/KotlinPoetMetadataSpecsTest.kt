@@ -29,8 +29,8 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.ELEMENTS
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInformerType.REFLECTIVE
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.ELEMENTS
+import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.tag
 import org.junit.Assume
@@ -52,7 +52,7 @@ import kotlin.test.fail
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
-  classInformerType: ClassInformerType,
+  classInspectorType: ClassInspectorType,
   private val classInspectorFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInspector)
 ) {
 
@@ -63,11 +63,11 @@ class KotlinPoetMetadataSpecsTest(
     fun data(): Collection<Array<*>> {
       return listOf(
           arrayOf<Any>(
-              ClassInformerType.REFLECTIVE,
+              ClassInspectorType.REFLECTIVE,
               { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInspector.create() } }
           ),
           arrayOf<Any>(
-              ClassInformerType.ELEMENTS,
+              ClassInspectorType.ELEMENTS,
               { test: KotlinPoetMetadataSpecsTest -> {
                 ElementsClassInspector.create(test.compilation.elements, test.compilation.types)
               } }
@@ -76,7 +76,7 @@ class KotlinPoetMetadataSpecsTest(
     }
   }
 
-  enum class ClassInformerType {
+  enum class ClassInspectorType {
     REFLECTIVE, ELEMENTS
   }
 
@@ -85,10 +85,10 @@ class KotlinPoetMetadataSpecsTest(
   @Inherited
   annotation class IgnoreForHandlerType(
     val reason: String,
-    val handlerType: ClassInformerType
+    val handlerType: ClassInspectorType
   )
 
-  class IgnoreForElementsRule(private val handlerType: ClassInformerType) : TestRule {
+  class IgnoreForElementsRule(private val handlerType: ClassInspectorType) : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
       return object : Statement() {
         override fun evaluate() {
@@ -112,7 +112,7 @@ class KotlinPoetMetadataSpecsTest(
   @Rule
   @JvmField
   val ignoreForElementsRule = IgnoreForElementsRule(
-      classInformerType)
+      classInspectorType)
 
   private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
     return toTypeSpec(classInspectorFactoryCreator(this@KotlinPoetMetadataSpecsTest)())

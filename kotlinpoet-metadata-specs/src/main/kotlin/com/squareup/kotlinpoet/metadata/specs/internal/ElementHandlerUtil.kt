@@ -31,7 +31,7 @@ import java.util.Collections
 import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
-object ClassInformerUtil {
+object ClassInspectorUtil {
   private val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
   internal val JVM_SYNTHETIC_SPEC =

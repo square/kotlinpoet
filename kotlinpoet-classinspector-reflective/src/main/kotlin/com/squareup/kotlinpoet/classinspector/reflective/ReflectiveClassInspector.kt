@@ -27,8 +27,8 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -66,7 +66,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
   }
 
   override fun isInterface(className: ClassName): Boolean {
-    if (className in ClassInformerUtil.KOTLIN_INTRINSIC_INTERFACES) {
+    if (className in ClassInspectorUtil.KOTLIN_INTRINSIC_INTERFACES) {
       return true
     }
     return lookupClass(className)?.isInterface ?: false
@@ -200,7 +200,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
       return null
     }
     return get(null) // Constant means we can do a static get on it.
-        .let(ClassInformerUtil::codeLiteralOf)
+        .let(ClassInspectorUtil::codeLiteralOf)
   }
 
   private fun JvmMethodSignature.isOverriddenIn(clazz: Class<*>): Boolean {
@@ -246,7 +246,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     }
 
     val classAnnotations = if (kmClass.hasAnnotations) {
-      ClassInformerUtil.createAnnotations {
+      ClassInspectorUtil.createAnnotations {
         addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
       }
     } else {
@@ -258,9 +258,9 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
         .associateWith { property ->
-          val isJvmField = ClassInformerUtil.computeIsJvmField(
+          val isJvmField = ClassInspectorUtil.computeIsJvmField(
               property = property,
-              classInformer = this,
+              classInspector = this,
               isCompanionObject = kmClass.isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
@@ -422,7 +422,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
 
   private fun Array<Parameter>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {
     return withIndex().associate { (index, parameter) ->
-          index to ClassInformerUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
+          index to ClassInspectorUtil.createAnnotations { addAll(parameter.annotationSpecs()) }
         }
   }
 

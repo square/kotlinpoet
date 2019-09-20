@@ -107,8 +107,8 @@ import com.squareup.kotlinpoet.metadata.isTailRec
 import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInformerUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
@@ -240,7 +240,7 @@ private fun ImmutableKmClass.toTypeSpec(
       } else {
         TypeSpec.anonymousClassBuilder()
             .addKdoc(
-                "No ClassInformer was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
+                "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
             .build()
       }
       if (typeSpec != null) {
@@ -370,7 +370,7 @@ private fun ImmutableKmClass.toTypeSpec(
               property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
-                  annotations = ClassInformerUtil.createAnnotations {
+                  annotations = ClassInspectorUtil.createAnnotations {
                     addAll(annotations)
                     addAll(propertyData?.allAnnotations.orEmpty())
                   },
@@ -387,7 +387,7 @@ private fun ImmutableKmClass.toTypeSpec(
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
             .addKdoc(
-                "No ClassInformer was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.")
+                "No ClassInspector was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.")
             .build()
       }
       builder.addType(companionType)
@@ -415,7 +415,7 @@ private fun ImmutableKmClass.toTypeSpec(
                 }
               }
             }
-            val finalAnnotations = ClassInformerUtil.createAnnotations {
+            val finalAnnotations = ClassInspectorUtil.createAnnotations {
               addAll(annotations)
               addAll(methodData?.allAnnotations().orEmpty())
             }
@@ -468,7 +468,7 @@ private fun ImmutableKmClass.toTypeSpec(
     } else {
       TypeSpec.classBuilder(it)
           .addKdoc(
-              "No ClassInformer was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.")
+              "No ClassInspector was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.")
           .build()
     }
     builder.addType(nestedType)
@@ -611,7 +611,7 @@ private fun ImmutableKmProperty.toPropertySpec(
                 // TODO Ideally don't do this if the annotation use site is only field?
                 //  e.g. JvmField. It's technically fine, but redundant on parameters as it's
                 //  automatically applied to the property for these annotation types.
-                //  This is another thing ClassInformer *could* tell us
+                //  This is another thing ClassInspector *could* tell us
                 it.toBuilder().useSiteTarget(UseSiteTarget.PROPERTY).build()
               } else {
                 it

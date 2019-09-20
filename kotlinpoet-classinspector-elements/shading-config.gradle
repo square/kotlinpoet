@@ -26,9 +26,9 @@ shadowJar {
   minimize()
   classifier = ''
   configurations = [shadedConfig]
-  relocate 'com.google.auto.common', 'kotlinpoet.classinformer.elements.shaded.com.google.auto.common'
-  relocate 'com.google.common', 'kotlinpoet.classinformer.elements.shaded.com.google.common'
-  relocate 'com.google.thirdparty', 'kotlinpoet.classinformer.elements.shaded.com.google.thirdparty'
+  relocate 'com.google.auto.common', 'kotlinpoet.classinspector.elements.shaded.com.google.auto.common'
+  relocate 'com.google.common', 'kotlinpoet.classinspector.elements.shaded.com.google.common'
+  relocate 'com.google.thirdparty', 'kotlinpoet.classinspector.elements.shaded.com.google.thirdparty'
   exclude 'afu/**'
   exclude 'org/**'
   exclude 'com/google/errorprone/annotations/**'
