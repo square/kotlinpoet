@@ -20,7 +20,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlinx.metadata.jvm.JvmMethodSignature
 
-/** A basic interface for looking up information about JVM information about a given Class. */
+/** A basic interface for looking up JVM information about a given Class. */
 @KotlinPoetMetadataPreview
 interface ClassInspector {
 
