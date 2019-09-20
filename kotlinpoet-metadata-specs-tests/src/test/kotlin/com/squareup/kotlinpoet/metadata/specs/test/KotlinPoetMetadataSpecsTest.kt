@@ -19,8 +19,8 @@ package com.squareup.kotlinpoet.metadata.specs.test
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.classinformer.elements.ElementsClassInspector
-import com.squareup.kotlinpoet.classinformer.reflective.ReflectiveClassInspector
+import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
+import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction

@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.classinformer.reflective
+package com.squareup.kotlinpoet.classinspector.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName

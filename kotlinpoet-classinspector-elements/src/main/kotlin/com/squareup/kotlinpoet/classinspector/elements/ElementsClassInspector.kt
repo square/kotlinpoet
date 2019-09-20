@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.classinformer.elements
+package com.squareup.kotlinpoet.classinspector.elements
 
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -376,7 +376,8 @@ class ElementsClassInspector private constructor(
             if (kmClass.isCompanionObject && JvmFieldModifier.STATIC in it) {
               finalFieldData = fieldData.copy(jvmModifiers = fieldData.jvmModifiers
                   .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC })
-              annotations += AnnotationSpec.builder(JVM_STATIC).build()
+              annotations += AnnotationSpec.builder(
+                  JVM_STATIC).build()
             }
           }
 
@@ -486,4 +487,5 @@ class ElementsClassInspector private constructor(
  * TODO: Make this an inline class when inline classes are stable.
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(this)
+private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
+    this)
