@@ -167,7 +167,7 @@ object ClassInspectorUtil {
         '/', // Drop the package name, e.g. "package/of/class/"
         '.' // Drop any enclosing classes, e.g. "MyClass."
     )
-    val packageName = kotlinMetadataName.substringBeforeLast("/")
+    val packageName = kotlinMetadataName.substringBeforeLast("/", missingDelimiterValue = "")
     val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
         .removeSuffix(".") // Trailing "." if any
         .removePrefix(packageName)
