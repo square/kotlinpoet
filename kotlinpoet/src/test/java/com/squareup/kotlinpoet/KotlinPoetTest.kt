@@ -884,4 +884,13 @@ class KotlinPoetTest {
       |}
       |""".trimMargin())
   }
+
+  // https://github.com/square/kotlinpoet/issues/701
+  @Test fun noIllegalCharacterInIdentifier() {
+    assertThrows<java.lang.IllegalArgumentException> {
+      TypeSpec.enumBuilder("MyEnum")
+              .addEnumConstant("with.dots") // dots are illegal, so this should fail
+              .build().toString()
+    }.hasMessageThat().isEqualTo("Can't escape identifier `with.dots` because it contains illegal characters: .")
+  }
 }

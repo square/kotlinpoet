@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import java.lang.IllegalArgumentException
 import java.util.Collections
 
 internal object NullAppendable : Appendable {
@@ -151,7 +152,13 @@ internal fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
 internal fun String.escapeIfNotJavaIdentifier() =
   if (!Character.isJavaIdentifierStart(first()) || drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$this`" else this
 
-internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword()
+internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword().failIfEscapeInvalid()
+
+internal fun String.failIfEscapeInvalid() =
+  if (any { it in illegalCharactersToEscape })
+    throw IllegalArgumentException("Can't escape identifier $this because it contains illegal characters: " +
+      illegalCharactersToEscape.intersect(this.toSet()).joinToString(""))
+  else this
 
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
     .filter { it.isNotEmpty() }
@@ -218,3 +225,6 @@ private val KEYWORDS = setOf(
     "interface",
     "typeof"
 )
+
+// https://github.com/JetBrains/kotlin/blob/master/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JvmSimpleNameBacktickChecker.kt
+private val illegalCharactersToEscape = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')

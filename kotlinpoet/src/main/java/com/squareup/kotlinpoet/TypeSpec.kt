@@ -295,12 +295,19 @@ class TypeSpec private constructor(
     for (property in propertySpecs) {
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
-      if (CodeBlock.of("%N", parameter) != CodeBlock.of("%N", property.initializer.toString()))
+      if (!isPropertyInitializerConstructorParameter(property, parameter))
         continue
 
       result[property.name] = property.fromPrimaryConstructorParameter(parameter)
     }
     return result
+  }
+
+  /**
+   * Returns `true if the property can be declared inline as a constructor parameter
+   */
+  private fun isPropertyInitializerConstructorParameter(property: PropertySpec, parameter: ParameterSpec): Boolean {
+    return CodeBlock.of("%N", parameter).toString() == property.initializer.toString().escapeIfNotJavaIdentifier().escapeIfKeyword()
   }
 
   /**
