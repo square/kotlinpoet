@@ -61,5 +61,4 @@ class ClassInspectorUtilTest {
             .addMember("exceptionClasses = [%T::class]", Exception::class.asClassName())
             .build())
   }
-
 }
