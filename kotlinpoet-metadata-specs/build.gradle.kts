@@ -51,4 +51,7 @@ dependencies {
   api(deps.kotlin.stdlib)
   api(project(":kotlinpoet"))
   api(project(":kotlinpoet-metadata"))
+
+  testImplementation(deps.kotlin.junit)
+  testImplementation(deps.test.truth)
 }
