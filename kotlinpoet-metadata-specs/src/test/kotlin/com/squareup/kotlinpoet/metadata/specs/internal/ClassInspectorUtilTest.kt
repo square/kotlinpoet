@@ -55,6 +55,15 @@ class ClassInspectorUtilTest {
         .isEqualTo(ClassName("", "ClassWithNoPackage"))
   }
 
+  // Regression test for avoiding https://github.com/square/kotlinpoet/issues/795
+  @Test fun bestGuess_noEmptyNames() {
+    val noPackage = ClassInspectorUtil.bestGuessClassName("ClassWithNoPackage")
+    assertThat(noPackage.simpleNames.any { it.isEmpty() }).isFalse()
+
+    val withPackage = ClassInspectorUtil.bestGuessClassName("path/to/ClassWithNoPackage")
+    assertThat(withPackage.simpleNames.any { it.isEmpty() }).isFalse()
+  }
+
   @Test fun throwsSpec_normal() {
     assertThat(ClassInspectorUtil.createThrowsSpec(listOf(Exception::class.asClassName())))
         .isEqualTo(AnnotationSpec.builder(Throws::class.asClassName())
