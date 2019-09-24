@@ -887,7 +887,7 @@ class KotlinPoetTest {
 
   // https://github.com/square/kotlinpoet/issues/701
   @Test fun noIllegalCharacterInIdentifier() {
-    assertThrows<java.lang.IllegalArgumentException> {
+    assertThrows<IllegalArgumentException> {
       TypeSpec.enumBuilder("MyEnum")
               .addEnumConstant("with.dots") // dots are illegal, so this should fail
               .build().toString()

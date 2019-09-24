@@ -304,10 +304,15 @@ class TypeSpec private constructor(
   }
 
   /**
-   * Returns `true if the property can be declared inline as a constructor parameter
+   * Returns true if the property can be declared inline as a constructor parameter
    */
-  private fun isPropertyInitializerConstructorParameter(property: PropertySpec, parameter: ParameterSpec): Boolean {
-    return CodeBlock.of("%N", parameter).toString() == property.initializer.toString().escapeIfNotJavaIdentifier().escapeIfKeyword()
+  private fun isPropertyInitializerConstructorParameter(
+    property: PropertySpec,
+    parameter: ParameterSpec
+  ): Boolean {
+    val parameterName = CodeBlock.of("%N", parameter).toString()
+    val initializerCode = property.initializer.toString().escapeIfNotJavaIdentifier().escapeIfKeyword()
+    return parameterName == initializerCode
   }
 
   /**
