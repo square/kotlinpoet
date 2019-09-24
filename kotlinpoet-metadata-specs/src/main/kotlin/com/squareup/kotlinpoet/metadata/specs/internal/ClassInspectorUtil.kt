@@ -172,7 +172,14 @@ object ClassInspectorUtil {
         .removeSuffix(".") // Trailing "." if any
         .removePrefix(packageName)
         .removePrefix("/")
-        .split(".")
+        .let {
+          if (it.isNotEmpty()) {
+            it.split(".")
+          } else {
+            // Don't split, otherwise we end up with an empty string as the first element!
+            emptyList()
+          }
+        }
         .plus(simpleName)
 
     return ClassName(
