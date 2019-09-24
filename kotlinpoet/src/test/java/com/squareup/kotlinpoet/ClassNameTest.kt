@@ -185,4 +185,24 @@ class ClassNameTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun emptySimpleNamesForbidden() {
+    assertThrows<IllegalArgumentException> {
+      ClassName(packageName = "", simpleNames = *emptyArray())
+    }.hasMessageThat().isEqualTo("simpleNames must not be empty")
+
+    assertThrows<IllegalArgumentException> {
+      ClassName(packageName = "", simpleNames = *arrayOf("Foo", "Bar", ""))
+    }.hasMessageThat().isEqualTo("simpleNames must not contain empty items: " +
+        "[Foo, Bar, ]")
+
+    assertThrows<IllegalArgumentException> {
+      ClassName(packageName = "", simpleNames = emptyList())
+    }.hasMessageThat().isEqualTo("simpleNames must not be empty")
+
+    assertThrows<IllegalArgumentException> {
+      ClassName(packageName = "", simpleNames = listOf("Foo", "Bar", ""))
+    }.hasMessageThat().isEqualTo("simpleNames must not contain empty items: " +
+        "[Foo, Bar, ]")
+  }
 }

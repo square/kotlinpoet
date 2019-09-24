@@ -309,6 +309,9 @@ class ClassName internal constructor(
   constructor(packageName: String, vararg simpleNames: String) :
       this(listOf(packageName, *simpleNames)) {
     require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
+    require(simpleNames.none { it.isEmpty() }) {
+      "simpleNames must not contain empty items: ${simpleNames.contentToString()}"
+    }
   }
 
   /**
@@ -318,6 +321,9 @@ class ClassName internal constructor(
   constructor(packageName: String, simpleNames: List<String>) :
       this(mutableListOf(packageName).apply { addAll(simpleNames) }) {
     require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
+    require(simpleNames.none { it.isEmpty() }) {
+      "simpleNames must not contain empty items: $simpleNames"
+    }
   }
 
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`.  */
