@@ -151,7 +151,15 @@ internal fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
 internal fun String.escapeIfNotJavaIdentifier() =
   if (!Character.isJavaIdentifierStart(first()) || drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$this`" else this
 
-internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword()
+internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword().failIfEscapeInvalid()
+
+internal fun String.failIfEscapeInvalid(): String {
+  require(!any { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
+    "Can't escape identifier $this because it contains illegal characters: " +
+    ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("") }
+
+  return this
+}
 
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
     .filter { it.isNotEmpty() }
@@ -218,3 +226,6 @@ private val KEYWORDS = setOf(
     "interface",
     "typeof"
 )
+
+// https://github.com/JetBrains/kotlin/blob/master/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JvmSimpleNameBacktickChecker.kt
+private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
