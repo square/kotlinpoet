@@ -1,6 +1,41 @@
 Change Log
 ==========
 
+## Version 1.4.0
+
+_2019-09-24_
+
+ * New: This release introduces the new KotlinPoet-metadata API that makes it easy to introspect 
+   Kotlin types and build KotlinPoet Specs based on that data. 
+   
+   The strategy for type introspection is driven by `ClassInspector`, which is a basic interface for 
+   looking up JVM information about a given Class. This optionally is used by the 
+   `toTypeSpec()`/`toFileSpec()` APIs in `kotlinpoet-metadata-specs` artifact to inform about 
+   Classes with information that isn’t present in metadata (overrides, JVM modifiers, etc). There 
+   are two batteries-included implementations available in `ReflectiveClassInspector` 
+   (for reflection) and `ElementsClassInspector` (for the javax Elements API in annotation 
+   processing). These implementations are available through their respective 
+   `kotlinpoet-classinspector-*` artifacts. For more information refer to the 
+   [KotlinPoet-metadata-specs README](kotlinpoet-metadata-specs/README.md).
+   
+   At the time of this release the API is in experimental mode and has to be opted into via the
+   `KotlinPoetMetadataPreview` annotation.
+ 
+ * New: Kotlin 1.3.50.
+ * New: A new constructor to simplify creation of `ParameterSpec` instances.
+ * New: New `ClassName` constructors.
+ * New: `TypeName` and subclasses can now store tags.
+ * New: Optional parameters added to `toBuilder()` methods of most Specs.
+ * New: `List` overrides for Spec methods that accept `vararg`s.
+ * New: `CodeBlock.Builder.clear()` helper method.
+ * New: `FunSpec.Builder.clearBody()` helper method.
+ * Fix: Properly escape enum constant names.
+ * Fix: Ensure trailing newlines in KDoc and function bodies.
+ * Fix: `TypeVariableName`s with empty bounds will now default to `Any?`.
+ * Fix: Don't emit parens for primary constructors.
+ * Fix: `ClassName`s with empty simple names are not allowed anymore.
+ * Fix: Throw if names contain illegal characters that can't be escaped with backticks.
+
 ## Version 1.3.0
 
 _2019-05-30_
