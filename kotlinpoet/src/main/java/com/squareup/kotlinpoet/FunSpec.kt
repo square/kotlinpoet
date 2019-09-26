@@ -44,6 +44,7 @@ class FunSpec private constructor(
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
   val receiverType = builder.receiverType
+  val receiverNullable = builder.receiverNullable
   val returnType = builder.returnType
   val parameters = builder.parameters.toImmutableList()
   val delegateConstructor = builder.delegateConstructor
@@ -119,10 +120,11 @@ class FunSpec private constructor(
       codeWriter.emitCode("set")
     } else {
       if (receiverType != null) {
+        val nullable =  if (receiverNullable) "?" else ""
         if (receiverType is LambdaTypeName) {
-          codeWriter.emitCode("(%T).", receiverType)
+          codeWriter.emitCode("(%T)$nullable.", receiverType)
         } else {
-          codeWriter.emitCode("%T.", receiverType)
+          codeWriter.emitCode("%T$nullable.", receiverType)
         }
       }
       codeWriter.emitCode("%N", this)
@@ -251,6 +253,7 @@ class FunSpec private constructor(
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
+    internal var receiverNullable: Boolean = false
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
@@ -325,34 +328,40 @@ class FunSpec private constructor(
 
     @JvmOverloads fun receiver(
       receiverType: TypeName,
+      nullable: Boolean = false,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ) = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
+      this.receiverNullable = nullable
       this.receiverKdoc = kdoc
     }
 
     @JvmOverloads fun receiver(
       receiverType: Type,
+      nullable: Boolean = false,
       kdoc: CodeBlock = CodeBlock.EMPTY
-    ) = receiver(receiverType.asTypeName(), kdoc)
+    ) = receiver(receiverType.asTypeName(), nullable, kdoc)
 
     fun receiver(
       receiverType: Type,
+      nullable: Boolean,
       kdoc: String,
       vararg args: Any
-    ) = receiver(receiverType, CodeBlock.of(kdoc, args))
+    ) = receiver(receiverType, nullable, CodeBlock.of(kdoc, args))
 
     @JvmOverloads fun receiver(
       receiverType: KClass<*>,
+      nullable: Boolean = false,
       kdoc: CodeBlock = CodeBlock.EMPTY
-    ) = receiver(receiverType.asTypeName(), kdoc)
+    ) = receiver(receiverType.asTypeName(), nullable, kdoc)
 
     fun receiver(
       receiverType: KClass<*>,
+      nullable: Boolean = false,
       kdoc: String,
       vararg args: Any
-    ) = receiver(receiverType, CodeBlock.of(kdoc, args))
+    ) = receiver(receiverType, nullable, CodeBlock.of(kdoc, args))
 
     @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock = CodeBlock.EMPTY) = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }

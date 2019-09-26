@@ -558,6 +558,21 @@ class FunSpecTest {
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
 
+  @Test fun receiverNullable() {
+    val funSpec = FunSpec.builder("toBar")
+            .receiver(String::class, nullable = true, kdoc = "the string to transform.")
+            .returns(String::class)
+            .addStatement("return %S", "bar")
+            .build()
+
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @receiver the string to transform.
+      | */
+      |fun kotlin.String?.toBar(): kotlin.String = "bar"
+      |""".trimMargin())
+  }
+
   @Test fun receiverWithKdoc() {
     val funSpec = FunSpec.builder("toBar")
         .receiver(String::class, kdoc = "the string to transform.")
