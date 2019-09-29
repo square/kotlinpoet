@@ -58,7 +58,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmTypeProjection.toTypeName(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: TypeParameterResolver
 ): TypeName {
   val typename = type?.toTypeName(typeParamResolver) ?: STAR
   return when (variance) {
@@ -76,12 +76,12 @@ internal fun ImmutableKmTypeProjection.toTypeName(
  */
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmType.toTypeName(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: TypeParameterResolver
 ): TypeName {
   val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
   val type: TypeName = when (val valClassifier = classifier) {
     is TypeParameter -> {
-      typeParamResolver(valClassifier.id)
+      typeParamResolver[valClassifier.id]
     }
     is KmClassifier.Class -> {
       flexibleTypeUpperBound?.toTypeName(typeParamResolver)?.let { return it }
@@ -151,7 +151,7 @@ internal fun ImmutableKmType.toTypeName(
 
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmTypeParameter.toTypeVariableName(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: TypeParameterResolver
 ): TypeVariableName {
   val finalVariance = variance.toKModifier()
   val typeVariableName = TypeVariableName(
@@ -173,8 +173,41 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
-  typeParamResolver: ((index: Int) -> TypeName)
+  typeParamResolver: TypeParameterResolver
 ): TypeName {
   // TODO tag typeFlexibilityId somehow?
   return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
+}
+internal interface TypeParameterResolver {
+  val parametersMap: Map<Int, TypeVariableName>
+  operator fun get(index: Int): TypeVariableName
+}
+
+@KotlinPoetMetadataPreview
+internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
+    fallback: TypeParameterResolver? = null
+): TypeParameterResolver {
+  val parametersMap = LinkedHashMap<Int, TypeVariableName>()
+  val typeParamResolver = { id: Int ->
+    parametersMap[id]
+        ?: fallback?.get(id)
+        ?: throw IllegalStateException("No type argument found for $id!")
+  }
+
+  val resolver = object : TypeParameterResolver {
+    override val parametersMap: Map<Int, TypeVariableName> = parametersMap
+
+    override operator fun get(index: Int): TypeVariableName = typeParamResolver(index)
+  }
+
+  // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
+  forEach {
+    // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
+    // replacement later that may add bounds referencing this.
+    parametersMap[it.id] = TypeVariableName(it.name)
+    // Now replace it with the full version.
+    parametersMap[it.id] = it.toTypeVariableName(resolver)
+  }
+
+  return resolver
 }

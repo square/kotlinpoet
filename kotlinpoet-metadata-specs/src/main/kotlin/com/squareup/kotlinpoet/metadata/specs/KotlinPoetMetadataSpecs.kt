@@ -50,9 +50,7 @@ import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
@@ -60,7 +58,6 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
-import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmWithFlags
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -111,8 +108,11 @@ import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
+import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
@@ -190,33 +190,12 @@ fun ImmutableKmClass.toFileSpec(
 private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 
 @KotlinPoetMetadataPreview
-private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
-  fallback: ((Int) -> TypeVariableName)? = null
-): (Int) -> TypeVariableName {
-  val parametersMap = mutableMapOf<Int, TypeVariableName>()
-  val typeParamResolver = { id: Int ->
-    parametersMap[id]
-        ?: fallback?.invoke(id)
-        ?: throw IllegalStateException("No type argument found for $id!")
-  }
-  // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
-  forEach {
-    // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
-    // replacement later that may add bounds referencing this.
-    parametersMap[it.id] = TypeVariableName(it.name)
-    // Now replace it with the full version.
-    parametersMap[it.id] = it.toTypeVariableName(typeParamResolver)
-  }
-  return typeParamResolver
-}
-
-@KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName,
   parentClassName: ClassName?
 ): TypeSpec {
-  val classTypeParamsResolver = typeParameters.toTypeParamsResolver()
+  val classTypeParamsResolver = typeParameters.toTypeParameterResolver()
   val jvmInternalName = name.jvmInternalName
   val simpleName = className.simpleName
   val classData = classInspector?.classData(className, parentClassName)
@@ -410,8 +389,9 @@ private fun ImmutableKmClass.toTypeSpec(
           .filterNot { it.isSynthesized }
           .map { it to classData?.methods?.get(it) }
           .map { (func, methodData) ->
-            val functionTypeParamsResolver = func.typeParameters.toTypeParamsResolver(
-                fallback = classTypeParamsResolver)
+            val functionTypeParamsResolver = func.typeParameters.toTypeParameterResolver(
+                fallback = classTypeParamsResolver
+            )
             val annotations = mutableListOf<AnnotationSpec>()
             if (classInspector != null) {
               func.signature?.let { signature ->
@@ -497,7 +477,7 @@ private fun companionObjectName(name: String): String? {
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmConstructor.toFunSpec(
-  typeParamResolver: ((index: Int) -> TypeName),
+  typeParamResolver: TypeParameterResolver,
   constructorData: ConstructorData?
 ): FunSpec {
   return FunSpec.constructorBuilder()
@@ -523,7 +503,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmFunction.toFunSpec(
-  typeParamResolver: ((index: Int) -> TypeName),
+  typeParamResolver: TypeParameterResolver,
   annotations: Iterable<AnnotationSpec>,
   methodData: MethodData?,
   isInInterface: Boolean
@@ -595,7 +575,7 @@ private fun ImmutableKmFunction.toFunSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmValueParameter.toParameterSpec(
-  typeParamResolver: ((index: Int) -> TypeName),
+  typeParamResolver: TypeParameterResolver,
   annotations: Collection<AnnotationSpec>
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
@@ -621,7 +601,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmProperty.toPropertySpec(
-  typeParamResolver: ((index: Int) -> TypeName),
+  typeParamResolver: TypeParameterResolver,
   isConstructorParam: Boolean,
   annotations: Iterable<AnnotationSpec>,
   propertyData: PropertyData?,
