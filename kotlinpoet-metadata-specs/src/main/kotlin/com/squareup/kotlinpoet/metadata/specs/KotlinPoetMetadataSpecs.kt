@@ -56,6 +56,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
+import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
@@ -185,6 +186,27 @@ fun ImmutableKmClass.toFileSpec(
       packageName = className.packageName,
       typeSpec = toTypeSpec(classInspector, className)
   )
+}
+
+/** @return a [FileSpec] ABI representation of this [ImmutableKmPackage]. */
+@KotlinPoetMetadataPreview
+fun ImmutableKmPackage.toFileSpec(
+  classInspector: ClassInspector?,
+  className: ClassName
+): FileSpec {
+  return FileSpec.builder(className.packageName, className.simpleName)
+      .apply {
+        for (function in functions) {
+          addFunction(function.toFunSpec())
+        }
+        for (property in properties) {
+          addProperty(property.toPropertySpec())
+        }
+        for (alias in typeAliases) {
+          addTypeAlias(alias.toTypeAliasSpec())
+        }
+      }
+      .build()
 }
 
 private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
