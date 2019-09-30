@@ -1776,6 +1776,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   class Asset<A : Asset<A>> {
     fun <D : Asset<D>, C : Asset<A>> function() {
     }
+
     class AssetOut<out B : AssetOut<B>>
     class AssetIn<in C : AssetIn<C>>
   }
@@ -1916,9 +1917,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     override val interfaceProp: String? = null
     override fun interfaceFun() {
     }
+
     override val openProp: String? = null
     override fun openFun() {
     }
+  }
+
+  @Test fun facadeFile() {
+    val typeSpec = Class.forName(
+        "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toTypeSpecWithTestHandler()
+    println(typeSpec)
   }
 }
 
