@@ -136,7 +136,12 @@ internal fun ImmutableKmType.toTypeName(
     }
   }
 
-  return type.copy(nullable = isNullable)
+  val annotations = ClassInspectorUtil.createAnnotations {
+    for (annotation in annotations) {
+      add(annotation.toAnnotationSpec())
+    }
+  }.toList()
+  return type.copy(nullable = isNullable, annotations = annotations)
 }
 
 @KotlinPoetMetadataPreview
@@ -156,9 +161,15 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
       bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
       variance = finalVariance
   )
+  val annotations = ClassInspectorUtil.createAnnotations {
+    for (annotation in annotations) {
+      add(annotation.toAnnotationSpec())
+    }
+  }.toList()
   return typeVariableName.copy(
       reified = isReified,
-      tags = mapOf(ImmutableKmTypeParameter::class to this)
+      tags = mapOf(ImmutableKmTypeParameter::class to this),
+      annotations = annotations
   )
 }
 
