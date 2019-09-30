@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
@@ -27,7 +28,7 @@ import kotlinx.metadata.KmAnnotationArgument.UShortValue
 
 @KotlinPoetMetadataPreview
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
-  val cn = ClassInspectorUtil.bestGuessClassName(className)
+  val cn = bestGuessClassName(className)
   return AnnotationSpec.builder(cn)
       .apply {
         arguments.forEach { (name, arg) ->
@@ -40,21 +41,21 @@ internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
 @KotlinPoetMetadataPreview
 internal fun KmAnnotationArgument<*>.toCodeBlock(): CodeBlock {
   return when (this) {
-    is ByteValue -> CodeBlock.of("%L.toByte()", value)
-    is CharValue -> CodeBlock.of("%L.toChar()", value)
-    is ShortValue -> CodeBlock.of("%L.toShort()", value)
+    is ByteValue -> CodeBlock.of("%L", value)
+    is CharValue -> CodeBlock.of("'%L'", value)
+    is ShortValue -> CodeBlock.of("%L", value)
     is IntValue -> CodeBlock.of("%L", value)
     is LongValue -> CodeBlock.of("%LL", value)
     is FloatValue -> CodeBlock.of("%LF", value)
-    is DoubleValue -> CodeBlock.of("%LF.toDouble()", value)
+    is DoubleValue -> CodeBlock.of("%L", value)
     is BooleanValue -> CodeBlock.of("%L", value)
-    is UByteValue -> CodeBlock.of("%Lu.toUByte()", value)
-    is UShortValue -> CodeBlock.of("%Lu.toUShort()", value)
+    is UByteValue -> CodeBlock.of("%Lu", value)
+    is UShortValue -> CodeBlock.of("%Lu", value)
     is UIntValue -> CodeBlock.of("%Lu", value)
     is ULongValue -> CodeBlock.of("%Lu", value)
     is StringValue -> CodeBlock.of("%S", value)
-    is KClassValue -> CodeBlock.of("%T::class", ClassInspectorUtil.bestGuessClassName(value))
-    is EnumValue -> CodeBlock.of("%T.%L", enumClassName, enumEntryName)
+    is KClassValue -> CodeBlock.of("%T::class", bestGuessClassName(value))
+    is EnumValue -> CodeBlock.of("%T.%L", bestGuessClassName(enumClassName), enumEntryName)
     is AnnotationValue -> CodeBlock.of("%L", value.toAnnotationSpec())
     is ArrayValue -> value.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
   }
