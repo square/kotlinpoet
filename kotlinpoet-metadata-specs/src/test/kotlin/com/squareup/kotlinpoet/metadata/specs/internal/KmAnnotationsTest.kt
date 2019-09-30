@@ -203,5 +203,4 @@ class KmAnnotationsTest {
       @test.ArrayValueAnnotation(value = [1, 2, 3])
     """.trimIndent())
   }
-
 }

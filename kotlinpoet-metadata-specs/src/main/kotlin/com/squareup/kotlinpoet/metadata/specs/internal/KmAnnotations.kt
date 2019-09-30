@@ -25,7 +25,6 @@ import kotlinx.metadata.KmAnnotationArgument.UIntValue
 import kotlinx.metadata.KmAnnotationArgument.ULongValue
 import kotlinx.metadata.KmAnnotationArgument.UShortValue
 
-
 @KotlinPoetMetadataPreview
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
   val cn = bestGuessClassName(className)
