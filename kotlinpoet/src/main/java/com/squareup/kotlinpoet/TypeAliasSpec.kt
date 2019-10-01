@@ -32,9 +32,11 @@ class TypeAliasSpec private constructor(
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
   val kdoc = builder.kdoc.build()
+  val annotations = builder.annotations.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
+    codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode("typealias %L", name)
     codeWriter.emitTypeVariables(typeVariables)
@@ -59,6 +61,7 @@ class TypeAliasSpec private constructor(
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     builder.kdoc.add(kdoc)
+    builder.annotations += annotations
     builder.tags += tagMap.tags
     return builder
   }
@@ -71,6 +74,7 @@ class TypeAliasSpec private constructor(
 
     val modifiers = mutableSetOf<KModifier>()
     val typeVariables = mutableSetOf<TypeVariableName>()
+    val annotations = mutableListOf<AnnotationSpec>()
     override val tags = mutableMapOf<KClass<*>, Any>()
 
     init {
@@ -104,6 +108,22 @@ class TypeAliasSpec private constructor(
     fun addKdoc(block: CodeBlock) = apply {
       kdoc.add(block)
     }
+
+    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
+      this.annotations += annotationSpecs
+    }
+
+    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
+      annotations += annotationSpec
+    }
+
+    fun addAnnotation(annotation: ClassName) = apply {
+      annotations += AnnotationSpec.builder(annotation).build()
+    }
+
+    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+
+    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
 
     fun build(): TypeAliasSpec {
       for (it in modifiers) {
