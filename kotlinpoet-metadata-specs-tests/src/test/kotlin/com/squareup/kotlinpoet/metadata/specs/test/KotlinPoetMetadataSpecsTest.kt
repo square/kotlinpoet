@@ -44,6 +44,8 @@ import org.junit.runners.Parameterized
 import org.junit.runners.model.Statement
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.TYPE
+import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 import kotlin.test.fail
@@ -1779,6 +1781,36 @@ class KotlinPoetMetadataSpecsTest(
   @BinaryCustomClassAnnotation("Binary")
   @RuntimeCustomClassAnnotation("Runtime")
   class ClassAnnotations
+
+  @Test
+  fun typeAnnotations() {
+    val typeSpec = TypeAnnotations::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class TypeAnnotations {
+        val foo: kotlin.collections.List<@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String> = throw NotImplementedError("Stub!")
+      
+        fun <T> bar(input: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String, input2: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation (@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.Int) -> @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String) {
+        }
+      }
+      """.trimIndent()
+    )
+  }
+
+  @Target(TYPE, TYPE_PARAMETER)
+  annotation class TypeAnnotation
+
+  class TypeAnnotations {
+    val foo: List<@TypeAnnotation String> = emptyList()
+
+    fun <@TypeAnnotation T> bar(
+        input: @TypeAnnotation String,
+        // TODO Needless parens below necessary until Kotlin 1.3.60
+        //  https://youtrack.jetbrains.com/issue/KT-31734
+        input2: @TypeAnnotation() (@TypeAnnotation Int) -> @TypeAnnotation String
+    ) {
+    }
+  }
 }
 
 class ClassNesting {
