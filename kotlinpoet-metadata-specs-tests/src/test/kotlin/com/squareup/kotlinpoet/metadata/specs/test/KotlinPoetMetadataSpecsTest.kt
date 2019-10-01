@@ -1789,7 +1789,7 @@ class KotlinPoetMetadataSpecsTest(
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class TypeAnnotations {
         val foo: kotlin.collections.List<@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String> = throw NotImplementedError("Stub!")
-      
+
         fun <T> bar(input: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String, input2: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation (@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.Int) -> @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String) {
         }
       }
@@ -1804,10 +1804,10 @@ class KotlinPoetMetadataSpecsTest(
     val foo: List<@TypeAnnotation String> = emptyList()
 
     fun <@TypeAnnotation T> bar(
-        input: @TypeAnnotation String,
+      input: @TypeAnnotation String,
         // TODO Needless parens below necessary until Kotlin 1.3.60
         //  https://youtrack.jetbrains.com/issue/KT-31734
-        input2: @TypeAnnotation() (@TypeAnnotation Int) -> @TypeAnnotation String
+      input2: @TypeAnnotation() (@TypeAnnotation Int) -> @TypeAnnotation String
     ) {
     }
   }
