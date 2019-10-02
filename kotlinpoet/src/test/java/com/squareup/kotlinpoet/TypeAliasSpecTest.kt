@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.TYPEALIAS
 import kotlin.test.Test
 
 class TypeAliasSpecTest {
@@ -109,6 +111,20 @@ class TypeAliasSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun annotations() {
+    val typeAliasSpec = TypeAliasSpec
+        .builder("Word", String::class)
+        .addAnnotation(AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
+            .addMember("value = %S", "words!")
+            .build())
+        .build()
+
+    assertThat(typeAliasSpec.toString()).isEqualTo("""
+      |@com.squareup.kotlinpoet.TypeAliasAnnotation(value = "words!")
+      |typealias Word = kotlin.String
+      |""".trimMargin())
+  }
+
   @Test fun kdocWithoutNewLine() {
     val typeAliasSpec = TypeAliasSpec
         .builder("Word", String::class)
@@ -164,4 +180,24 @@ class TypeAliasSpecTest {
 
     assertThat(builder.build().typeVariables).containsExactly(tVar)
   }
+
+  @Test fun modifyAnnotations() {
+    val builder = TypeAliasSpec
+        .builder("Word", String::class)
+        .addAnnotation(AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
+            .addMember("value = %S", "value1")
+            .build())
+
+    val javaWord = AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
+        .addMember("value = %S", "value2")
+        .build()
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
+
+    assertThat(builder.build().annotations).containsExactly(javaWord)
+  }
 }
+
+@Retention(RUNTIME)
+@Target(TYPEALIAS)
+annotation class TypeAliasAnnotation(val value: String)
