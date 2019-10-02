@@ -27,6 +27,8 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import kotlinx.metadata.isLocal
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import java.util.Collections
 import java.util.TreeSet
 
@@ -42,6 +44,14 @@ object ClassInspectorUtil {
       JVM_FIELD,
       JVM_TRANSIENT,
       JVM_VOLATILE
+  )
+  private val NOT_NULL = NotNull::class.asClassName()
+  private val NULLABLE = Nullable::class.asClassName()
+  private val EXTENSION_FUNCTION_TYPE = ExtensionFunctionType::class.asClassName()
+  private val KOTLIN_INTRINSIC_ANNOTATIONS = setOf(
+      NOT_NULL,
+      NULLABLE,
+      EXTENSION_FUNCTION_TYPE
   )
 
   val KOTLIN_INTRINSIC_INTERFACES = setOf(
@@ -112,8 +122,11 @@ object ClassInspectorUtil {
     siteTarget: UseSiteTarget? = null,
     body: MutableCollection<AnnotationSpec>.() -> Unit
   ): Collection<AnnotationSpec> {
-    val result = TreeSet<AnnotationSpec>(compareBy { it.toString() })
+    val result = mutableSetOf<AnnotationSpec>()
         .apply(body)
+        .filterNot { spec ->
+          spec.className in KOTLIN_INTRINSIC_ANNOTATIONS
+        }
     val withUseSiteTarget = if (siteTarget != null) {
       result.map {
         if (!(siteTarget == FIELD && it.className in IMPLICIT_FIELD_ANNOTATIONS)) {
@@ -127,7 +140,12 @@ object ClassInspectorUtil {
       result
     }
 
-    return Collections.unmodifiableCollection(withUseSiteTarget)
+    val sorted = TreeSet<AnnotationSpec>(compareBy { it.toString() })
+        .apply {
+          addAll(withUseSiteTarget)
+        }
+
+    return Collections.unmodifiableCollection(sorted)
   }
 
   /**
