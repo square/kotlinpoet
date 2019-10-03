@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlinx.metadata.jvm.JvmMethodSignature
 
@@ -43,14 +44,24 @@ interface ClassInspector {
   }
 
   /**
-   * Creates a new [ClassData] instance for a given [kmClass].
+   * Creates a new [ClassData] instance for a given [declarationContainer].
    *
-   * @param kmClass the source [ImmutableKmClass] to read from.
+   * @param declarationContainer the source [ImmutableKmDeclarationContainer] to read from.
    * @param className the [ClassName] of the target class to to read from.
-   * @param parentClassName the parent [ClassName] name if [kmClass] is nested, inner, or is a
+   * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner, or is a
    *        companion object.
    */
-  fun classData(kmClass: ImmutableKmClass, className: ClassName, parentClassName: ClassName?): ClassData
+  fun classData(declarationContainer: ImmutableKmDeclarationContainer, className: ClassName, parentClassName: ClassName?): ClassData
+
+  /**
+   * Looks up other declaration containers, such as for nested members. Note that this class would
+   * always be Kotlin, so Metadata can be relied on for this.
+   *
+   * @param className The [ClassName] representation of the class.
+   * @return the read [ImmutableKmDeclarationContainer] from its metadata. If no class or facade
+   *         file was found, this should throw an exception.
+   */
+  fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer
 
   /**
    * Looks up other classes, such as for nested members. Note that this class would always be
@@ -60,7 +71,14 @@ interface ClassInspector {
    * @return the read [ImmutableKmClass] from its metadata. If no class was found, this should throw
    *         an exception.
    */
-  fun classFor(className: ClassName): ImmutableKmClass
+  // TODO Extension function this
+  fun classFor(className: ClassName): ImmutableKmClass {
+    val container = declarationContainerFor(className)
+    check(container is ImmutableKmClass) {
+      "Container is not a class! Was ${container.javaClass.simpleName}"
+    }
+    return container
+  }
 
   /**
    * Looks up a class and returns whether or not it is an interface. Note that this class can be
