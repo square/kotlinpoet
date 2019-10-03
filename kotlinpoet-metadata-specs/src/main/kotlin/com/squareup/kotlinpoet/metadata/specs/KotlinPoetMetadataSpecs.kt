@@ -202,7 +202,12 @@ fun ImmutableKmPackage.toFileSpec(
   return FileSpec.builder(className.packageName, className.simpleName)
       .apply {
         for (function in functions) {
-          addFunction(function.toFunSpec())
+          val methodData = classData?.methods?.get(function)
+          addFunction(function.toFunSpec(
+              classInspector = classInspector,
+              classData = classData,
+              methodData = methodData
+          ))
         }
         for (property in properties) {
           val propertyData = classData?.properties?.get(property)
