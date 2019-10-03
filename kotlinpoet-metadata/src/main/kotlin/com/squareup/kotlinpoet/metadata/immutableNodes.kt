@@ -28,6 +28,7 @@ import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmConstantValue
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.KmContract
+import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.KmEffect
 import kotlinx.metadata.KmEffectExpression
 import kotlinx.metadata.KmEffectInvocationKind
@@ -72,6 +73,23 @@ import java.util.Collections
 @KotlinPoetMetadataPreview
 interface ImmutableKmWithFlags {
   val flags: Flags
+}
+
+/**
+ * Immutable representation of [KmDeclarationContainer].
+ *
+ * Represents a Kotlin declaration container, such as a class or a package fragment.
+ */
+@KotlinPoetMetadataPreview
+interface ImmutableKmDeclarationContainer {
+  /** Functions in the container. */
+  val functions: List<ImmutableKmFunction>
+
+  /** Properties in the container. */
+  val properties: List<ImmutableKmProperty>
+
+  /** Type aliases in the container. */
+  val typeAliases: List<ImmutableKmTypeAlias>
 }
 
 /**
@@ -132,9 +150,9 @@ data class ImmutableKmClass internal constructor(
   val name: ClassName,
   val typeParameters: List<ImmutableKmTypeParameter>,
   val supertypes: List<ImmutableKmType>,
-  val functions: List<ImmutableKmFunction>,
-  val properties: List<ImmutableKmProperty>,
-  val typeAliases: List<ImmutableKmTypeAlias>,
+  override val functions: List<ImmutableKmFunction>,
+  override val properties: List<ImmutableKmProperty>,
+  override val typeAliases: List<ImmutableKmTypeAlias>,
   val constructors: List<ImmutableKmConstructor>,
   val companionObject: String?,
   val nestedClasses: List<String>,
@@ -157,7 +175,7 @@ data class ImmutableKmClass internal constructor(
    * copied from bodies of inline functions to the use site by the Kotlin compiler.
    */
   val anonymousObjectOriginName: String?
-) : ImmutableKmWithFlags {
+) : ImmutableKmDeclarationContainer, ImmutableKmWithFlags {
   fun toMutable(): KmClass {
     return KmClass().apply {
       flags = this@ImmutableKmClass.flags
@@ -202,9 +220,9 @@ fun KmPackage.toImmutable(): ImmutableKmPackage {
  */
 @KotlinPoetMetadataPreview
 data class ImmutableKmPackage internal constructor(
-  val functions: List<ImmutableKmFunction>,
-  val properties: List<ImmutableKmProperty>,
-  val typeAliases: List<ImmutableKmTypeAlias>,
+  override val functions: List<ImmutableKmFunction>,
+  override val properties: List<ImmutableKmProperty>,
+  override val typeAliases: List<ImmutableKmTypeAlias>,
   /**
    * Metadata of local delegated properties used somewhere inside this package fragment (but not in any class).
    * Note that for classes produced by the Kotlin compiler, such properties will have default accessors.
@@ -216,7 +234,7 @@ data class ImmutableKmPackage internal constructor(
    */
   val localDelegatedProperties: List<ImmutableKmProperty>,
   val moduleName: String?
-) {
+): ImmutableKmDeclarationContainer {
   fun toMutable(): KmPackage {
     return KmPackage().apply {
       functions += this@ImmutableKmPackage.functions.map { it.toMutable() }
