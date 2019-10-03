@@ -238,9 +238,9 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
   }
 
   override fun classData(
-      declarationContainer: ImmutableKmDeclarationContainer,
-      className: ClassName,
-      parentClassName: ClassName?
+    declarationContainer: ImmutableKmDeclarationContainer,
+    className: ClassName,
+    parentClassName: ClassName?
   ): ClassData {
     if (declarationContainer !is ImmutableKmClass) {
       TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
@@ -425,7 +425,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     }
 
     return ClassData(
-        kmClass = kmClass,
+        declarationContainer = declarationContainer,
         className = className,
         annotations = classAnnotations,
         properties = propertyData,

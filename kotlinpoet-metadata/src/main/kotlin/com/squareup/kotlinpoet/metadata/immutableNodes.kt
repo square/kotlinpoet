@@ -234,7 +234,7 @@ data class ImmutableKmPackage internal constructor(
    */
   val localDelegatedProperties: List<ImmutableKmProperty>,
   val moduleName: String?
-): ImmutableKmDeclarationContainer {
+) : ImmutableKmDeclarationContainer {
   fun toMutable(): KmPackage {
     return KmPackage().apply {
       functions += this@ImmutableKmPackage.functions.map { it.toMutable() }

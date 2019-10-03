@@ -451,7 +451,7 @@ class ElementsClassInspector private constructor(
     }
 
     return ClassData(
-        kmClass = kmClass,
+        declarationContainer = declarationContainer,
         className = className,
         annotations = classAnnotations,
         properties = propertyData,
