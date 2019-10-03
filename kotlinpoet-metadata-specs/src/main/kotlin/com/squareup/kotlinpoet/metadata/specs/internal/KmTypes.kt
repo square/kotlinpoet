@@ -185,7 +185,7 @@ internal interface TypeParameterResolver {
 
 @KotlinPoetMetadataPreview
 internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
-    fallback: TypeParameterResolver? = null
+  fallback: TypeParameterResolver? = null
 ): TypeParameterResolver {
   val parametersMap = LinkedHashMap<Int, TypeVariableName>()
   val typeParamResolver = { id: Int ->

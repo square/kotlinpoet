@@ -54,7 +54,6 @@ var syntheticPropertyGetAndSet: kotlin.String? = null
 var syntheticPropertySet: kotlin.String? = null
 
 fun regularFun() {
-
 }
 
 @Synchronized
@@ -67,8 +66,8 @@ fun jvmNameFunction() {
 
 @JvmOverloads
 fun jvmOverloads(
-    param1: String,
-    optionalParam2: String = "",
-    nullableParam3: String? = null
+  param1: String,
+  optionalParam2: String = "",
+  nullableParam3: String? = null
 ) {
 }
