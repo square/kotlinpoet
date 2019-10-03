@@ -40,7 +40,7 @@ interface ClassInspector {
    *        companion object.
    */
   fun classData(className: ClassName, parentClassName: ClassName?): ClassData {
-    return classData(classFor(className), className, parentClassName)
+    return classData(declarationContainerFor(className), className, parentClassName)
   }
 
   /**
@@ -62,23 +62,6 @@ interface ClassInspector {
    *         file was found, this should throw an exception.
    */
   fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer
-
-  /**
-   * Looks up other classes, such as for nested members. Note that this class would always be
-   * Kotlin, so Metadata can be relied on for this.
-   *
-   * @param className The [ClassName] representation of the class.
-   * @return the read [ImmutableKmClass] from its metadata. If no class was found, this should throw
-   *         an exception.
-   */
-  // TODO Extension function this
-  fun classFor(className: ClassName): ImmutableKmClass {
-    val container = declarationContainerFor(className)
-    check(container is ImmutableKmClass) {
-      "Container is not a class! Was ${container.javaClass.simpleName}"
-    }
-    return container
-  }
 
   /**
    * Looks up a class and returns whether or not it is an interface. Note that this class can be
@@ -107,4 +90,21 @@ interface ClassInspector {
    * @return whether or not the method exists.
    */
   fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean
+}
+
+/**
+ * Looks up other classes, such as for nested members. Note that this class would always be
+ * Kotlin, so Metadata can be relied on for this.
+ *
+ * @param className The [ClassName] representation of the class.
+ * @return the read [ImmutableKmClass] from its metadata. If no class was found, this should throw
+ *         an exception.
+ */
+@KotlinPoetMetadataPreview
+fun ClassInspector.classFor(className: ClassName): ImmutableKmClass {
+  val container = declarationContainerFor(className)
+  check(container is ImmutableKmClass) {
+    "Container is not a class! Was ${container.javaClass.simpleName}"
+  }
+  return container
 }
