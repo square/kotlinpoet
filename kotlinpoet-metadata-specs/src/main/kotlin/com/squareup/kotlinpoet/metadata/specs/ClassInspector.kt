@@ -33,17 +33,6 @@ interface ClassInspector {
   val supportsNonRuntimeRetainedAnnotations: Boolean
 
   /**
-   * Creates a new [ClassData] instance for a given [className].
-   *
-   * @param className the [ClassName] of the target class to to read from.
-   * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
-   *        companion object.
-   */
-  fun classData(className: ClassName, parentClassName: ClassName?): ClassData {
-    return classData(declarationContainerFor(className), className, parentClassName)
-  }
-
-  /**
    * Creates a new [ClassData] instance for a given [declarationContainer].
    *
    * @param declarationContainer the source [ImmutableKmDeclarationContainer] to read from.
@@ -90,6 +79,18 @@ interface ClassInspector {
    * @return whether or not the method exists.
    */
   fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean
+}
+
+/**
+ * Creates a new [ClassData] instance for a given [className].
+ *
+ * @param className the [ClassName] of the target class to to read from.
+ * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
+ *        companion object.
+ */
+@KotlinPoetMetadataPreview
+fun ClassInspector.classData(className: ClassName, parentClassName: ClassName?): ClassData {
+  return classData(declarationContainerFor(className), className, parentClassName)
 }
 
 /**
