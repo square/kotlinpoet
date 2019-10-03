@@ -140,10 +140,7 @@ object ClassInspectorUtil {
       result
     }
 
-    val sorted = TreeSet<AnnotationSpec>(compareBy { it.toString() })
-        .apply {
-          addAll(withUseSiteTarget)
-        }
+    val sorted = withUseSiteTarget.toTreeSet()
 
     return Collections.unmodifiableCollection(sorted)
   }
@@ -204,6 +201,12 @@ object ClassInspectorUtil {
         packageName = packageName.replace("/", "."),
         simpleNames = simpleNames
     )
+  }
+
+  fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
+    return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
+      addAll(this@toTreeSet)
+    }
   }
 
   private fun String.substringAfterLast(vararg delimiters: Char): String {
