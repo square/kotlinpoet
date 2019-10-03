@@ -50,6 +50,7 @@ import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeAliasSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
@@ -59,6 +60,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
 import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmType
+import com.squareup.kotlinpoet.metadata.ImmutableKmTypeAlias
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmWithFlags
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -67,6 +69,7 @@ import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_NOT_DEFAULT
 import com.squareup.kotlinpoet.metadata.declaresDefaultValue
+import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasGetter
 import com.squareup.kotlinpoet.metadata.hasSetter
 import com.squareup.kotlinpoet.metadata.isAbstract
@@ -112,6 +115,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.create
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
+import com.squareup.kotlinpoet.metadata.specs.internal.toAnnotationSpec
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
@@ -756,6 +760,24 @@ private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
       IS_NOT_DEFAULT -> null // Gracefully skip over these
     }
   }.toTypedArray()
+}
+
+@KotlinPoetMetadataPreview
+private fun ImmutableKmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
+  val typeParamResolver = typeParameters.toTypeParameterResolver()
+  return TypeAliasSpec.builder(name, underlyingType.toTypeName(typeParamResolver, true))
+      .apply {
+        addVisibility {
+          addModifiers(it)
+        }
+        if (hasAnnotations) {
+          val annotationSpecs = this@toTypeAliasSpec.annotations
+              .map { it.toAnnotationSpec() }
+          addAnnotations(annotationSpecs)
+        }
+      }
+      .addTypeVariables(typeParamResolver.parametersMap.values)
+      .build()
 }
 
 private fun JvmMethodSignature.jvmNameAnnotation(
