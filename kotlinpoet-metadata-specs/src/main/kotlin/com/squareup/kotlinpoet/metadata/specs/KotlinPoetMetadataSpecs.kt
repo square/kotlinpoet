@@ -113,6 +113,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toAnnotationSpec
@@ -198,13 +199,19 @@ fun ImmutableKmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName
 ): FileSpec {
+  val classData = classInspector?.classData(className)
   return FileSpec.builder(className.packageName, className.simpleName)
       .apply {
         for (function in functions) {
           addFunction(function.toFunSpec())
         }
         for (property in properties) {
-          addProperty(property.toPropertySpec())
+          val propertyData = classData?.properties?.get(property)
+          addProperty(property.toPropertySpec(
+              classInspector = classInspector,
+              classData = classData,
+              propertyData = propertyData
+          ))
         }
         for (alias in typeAliases) {
           addTypeAlias(alias.toTypeAliasSpec())
@@ -327,7 +334,7 @@ private fun ImmutableKmClass.toTypeSpec(
             }
             .map { (kmConstructor, constructorData) ->
               kmConstructor.toFunSpec(classTypeParamsResolver, constructorData)
-        })
+            })
       }
     }
     builder.addProperties(
