@@ -59,7 +59,13 @@ fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   }
 }
 
-private fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
+/**
+ * Returns the [KotlinClassMetadata] this represents. In general you should only use this function
+ * when you don't know what the underlying [KotlinClassMetadata] subtype is, otherwise you should
+ * use one of the more direct functions like [toImmutableKmClass].
+ */
+@KotlinPoetMetadataPreview
+fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
   val metadata = KotlinClassMetadata.read(asClassHeader())
   checkNotNull(metadata) {
     "Could not parse metadata! This should only happen if you're using Kotlin <1.1."
