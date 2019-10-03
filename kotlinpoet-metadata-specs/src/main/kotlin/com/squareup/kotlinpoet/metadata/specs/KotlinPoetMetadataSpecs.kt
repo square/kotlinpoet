@@ -337,6 +337,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .filterNot { it.isSynthesized }
             .map { it to classData?.properties?.get(it) }
             .map { (property, propertyData) ->
+<<<<<<< HEAD
               val annotations = mutableListOf<AnnotationSpec>()
               if (propertyData != null) {
                 if (property.hasGetter && !isAbstract) {
@@ -389,6 +390,14 @@ private fun ImmutableKmClass.toTypeSpec(
                   },
                   propertyData = propertyData,
                   isInInterface = isInterface
+=======
+              property.toPropertySpec(
+                  typeParamResolver = classTypeParamsResolver,
+                  isConstructorParam = property.name in primaryConstructorParams,
+                  classInspector = classInspector,
+                  classData = classData,
+                  propertyData = propertyData
+>>>>>>> Consolidate property handling into KmProperty.toPropertySpec()
               )
             }
             .asIterable()
@@ -627,19 +636,65 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmProperty.toPropertySpec(
-  typeParamResolver: TypeParameterResolver,
-  isConstructorParam: Boolean,
-  annotations: Iterable<AnnotationSpec>,
-  propertyData: PropertyData?,
-  isInInterface: Boolean
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  isConstructorParam: Boolean = false,
+  classInspector: ClassInspector? = null,
+  classData: ClassData? = null,
+  propertyData: PropertyData? = null
+  isInInterface: Boolean = false
 ): PropertySpec {
   val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
+  val mutableAnnotations = mutableListOf<AnnotationSpec>()
+  if (classData != null && propertyData != null) {
+    if (hasGetter) {
+      getterSignature?.let { getterSignature ->
+        if (!classData.kmClass.isInterface &&
+            classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
+          // Infer if JvmName was used
+          // We skip interface types for this because they can't have @JvmName.
+          // For annotation properties, kotlinc puts JvmName annotations by default in
+          // bytecode but they're implicit in source, so we expect the simple name for
+          // annotation types.
+          val expectedMetadataName = if (classData.kmClass.isAnnotation) {
+            name
+          } else {
+            "get${name.safeCapitalize(Locale.US)}"
+          }
+          getterSignature.jvmNameAnnotation(
+              metadataName = expectedMetadataName,
+              useSiteTarget = UseSiteTarget.GET
+          )?.let { jvmNameAnnotation ->
+            mutableAnnotations += jvmNameAnnotation
+          }
+        }
+      }
+    }
+    if (hasSetter) {
+      setterSignature?.let { setterSignature ->
+        if (!classData.kmClass.isAnnotation &&
+            !classData.kmClass.isInterface &&
+            classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
+          // Infer if JvmName was used
+          // We skip annotation types for this because they can't have vars.
+          // We skip interface types for this because they can't have @JvmName.
+          setterSignature.jvmNameAnnotation(
+              metadataName = "set${name.safeCapitalize(Locale.US)}",
+              useSiteTarget = UseSiteTarget.SET
+          )?.let { jvmNameAnnotation ->
+            mutableAnnotations += jvmNameAnnotation
+          }
+        }
+      }
+    }
+  }
   return PropertySpec.builder(name, returnTypeName)
       .apply {
         // If a property annotation doesn't have a custom site target and is used in a constructor
         // we have to add the property: site target to it.
-        val finalAnnotations = annotations
+
+        val finalAnnotations = mutableAnnotations
+            .plus(propertyData?.allAnnotations.orEmpty())
             .filterNot { isConst && it.className == JVM_STATIC }
             .map {
               if (isConstructorParam && it.useSiteTarget == null) {
@@ -652,6 +707,7 @@ private fun ImmutableKmProperty.toPropertySpec(
                 it
               }
             }
+            .toTreeSet()
         addAnnotations(finalAnnotations)
         addVisibility { addModifiers(it) }
         addModifiers(flags.modalities
