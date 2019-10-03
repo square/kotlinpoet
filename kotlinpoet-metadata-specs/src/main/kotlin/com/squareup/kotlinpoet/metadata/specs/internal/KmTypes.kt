@@ -181,6 +181,14 @@ private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
 internal interface TypeParameterResolver {
   val parametersMap: Map<Int, TypeVariableName>
   operator fun get(index: Int): TypeVariableName
+
+  companion object {
+    val EMPTY = object : TypeParameterResolver {
+      override val parametersMap: Map<Int, TypeVariableName> = emptyMap()
+
+      override fun get(index: Int): TypeVariableName = error("No type parameters!")
+    }
+  }
 }
 
 @KotlinPoetMetadataPreview
