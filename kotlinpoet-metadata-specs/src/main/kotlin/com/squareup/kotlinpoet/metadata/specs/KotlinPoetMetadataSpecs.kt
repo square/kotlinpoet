@@ -112,7 +112,6 @@ import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
@@ -344,67 +343,12 @@ private fun ImmutableKmClass.toTypeSpec(
             .filterNot { it.isSynthesized }
             .map { it to classData?.properties?.get(it) }
             .map { (property, propertyData) ->
-<<<<<<< HEAD
-              val annotations = mutableListOf<AnnotationSpec>()
-              if (propertyData != null) {
-                if (property.hasGetter && !isAbstract) {
-                  property.getterSignature?.let { getterSignature ->
-                    if (!isInterface &&
-                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
-                      // Infer if JvmName was used
-                      // We skip interface types for this because they can't have @JvmName.
-                      // For annotation properties, kotlinc puts JvmName annotations by default in
-                      // bytecode but they're implicit in source, so we expect the simple name for
-                      // annotation types.
-                      val expectedMetadataName = if (isAnnotation) {
-                        property.name
-                      } else {
-                        "get${property.name.safeCapitalize(Locale.US)}"
-                      }
-                      getterSignature.jvmNameAnnotation(
-                          metadataName = expectedMetadataName,
-                          useSiteTarget = UseSiteTarget.GET
-                      )?.let { jvmNameAnnotation ->
-                        annotations += jvmNameAnnotation
-                      }
-                    }
-                  }
-                }
-                if (property.hasSetter && !isAbstract) {
-                  property.setterSignature?.let { setterSignature ->
-                    if (!isAnnotation &&
-                        !isInterface &&
-                        classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
-                      // Infer if JvmName was used
-                      // We skip annotation types for this because they can't have vars.
-                      // We skip interface types for this because they can't have @JvmName.
-                      setterSignature.jvmNameAnnotation(
-                          metadataName = "set${property.name.safeCapitalize(Locale.US)}",
-                          useSiteTarget = UseSiteTarget.SET
-                      )?.let { jvmNameAnnotation ->
-                        annotations += jvmNameAnnotation
-                      }
-                    }
-                  }
-                }
-              }
-              property.toPropertySpec(
-                  typeParamResolver = classTypeParamsResolver,
-                  isConstructorParam = property.name in primaryConstructorParams,
-                  annotations = ClassInspectorUtil.createAnnotations {
-                    addAll(annotations)
-                    addAll(propertyData?.allAnnotations.orEmpty())
-                  },
-                  propertyData = propertyData,
-                  isInInterface = isInterface
-=======
               property.toPropertySpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
                   classInspector = classInspector,
                   classData = classData,
                   propertyData = propertyData
->>>>>>> Consolidate property handling into KmProperty.toPropertySpec()
               )
             }
             .asIterable()
@@ -431,26 +375,7 @@ private fun ImmutableKmClass.toTypeSpec(
           .filterNot { it.isSynthesized }
           .map { it to classData?.methods?.get(it) }
           .map { (func, methodData) ->
-            val functionTypeParamsResolver = func.typeParameters.toTypeParameterResolver(
-                fallback = classTypeParamsResolver
-            )
-            val annotations = mutableListOf<AnnotationSpec>()
-            if (classInspector != null) {
-              func.signature?.let { signature ->
-                if (!isInterface && !classInspector.supportsNonRuntimeRetainedAnnotations) {
-                  // Infer if JvmName was used
-                  // We skip interface types for this because they can't have @JvmName.
-                  signature.jvmNameAnnotation(func.name)?.let { jvmNameAnnotation ->
-                    annotations += jvmNameAnnotation
-                  }
-                }
-              }
-            }
-            val finalAnnotations = ClassInspectorUtil.createAnnotations {
-              addAll(annotations)
-              addAll(methodData?.allAnnotations().orEmpty())
-            }
-            func.toFunSpec(functionTypeParamsResolver, finalAnnotations, methodData, isInterface)
+            func.toFunSpec(classTypeParamsResolver, classInspector, classData, methodData)
                 .toBuilder()
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
@@ -470,7 +395,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   // For interface methods, remove any body and mark the methods as abstract
                   // IFF it doesn't have a default interface body.
                   if (isInterface &&
-                      finalAnnotations.none { it.className == JVM_DEFAULT } &&
+                      annotations.none { it.className == JVM_DEFAULT } &&
                       !isKotlinDefaultInterfaceMethod()
                   ) {
                     addModifiers(ABSTRACT)
@@ -545,20 +470,33 @@ private fun ImmutableKmConstructor.toFunSpec(
 
 @KotlinPoetMetadataPreview
 private fun ImmutableKmFunction.toFunSpec(
-  typeParamResolver: TypeParameterResolver,
-  annotations: Iterable<AnnotationSpec>,
-  methodData: MethodData?,
-  isInInterface: Boolean
+  classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  classInspector: ClassInspector? = null,
+  classData: ClassData? = null,
+  methodData: MethodData? = null,
+  isInInterface: Boolean = false
 ): FunSpec {
-  val finalAnnotations = if (typeParameters.any { it.isReified }) {
-    // Functions with reified type parameters are implicitly synthetic
-    annotations.filterNot { it.className == JVM_SYNTHETIC }
-  } else {
-    annotations
+  val typeParamsResolver = typeParameters.toTypeParameterResolver(
+      fallback = classTypeParamsResolver
+  )
+  val mutableAnnotations = mutableListOf<AnnotationSpec>()
+  if (classInspector != null && classData != null) {
+    signature?.let { signature ->
+      if (!classData.kmClass.isInterface && !classInspector.supportsNonRuntimeRetainedAnnotations) {
+        // Infer if JvmName was used
+        // We skip interface types for this because they can't have @JvmName.
+        signature.jvmNameAnnotation(name)?.let { jvmNameAnnotation ->
+          mutableAnnotations += jvmNameAnnotation
+        }
+      }
+    }
   }
+  val annotations = mutableAnnotations
+      .plus(methodData?.allAnnotations().orEmpty())
+      .toTreeSet()
   return FunSpec.builder(name)
       .apply {
-        addAnnotations(finalAnnotations)
+        addAnnotations(annotations)
         addVisibility { addModifiers(it) }
         val isOverride = methodData?.isOverride == true
         addModifiers(flags.modalities
@@ -569,16 +507,16 @@ private fun ImmutableKmFunction.toFunSpec(
         if (valueParameters.isNotEmpty()) {
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
-                typeParamResolver,
+                typeParamsResolver,
                 // This can be empty if the element is synthetic
                 methodData?.parameterAnnotations?.get(index).orEmpty()
             )
           })
         }
         if (typeParameters.isNotEmpty()) {
-          addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
+          addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamsResolver) })
         }
-        if (isOverride) {
+        if (methodData?.isOverride == true) {
           addModifiers(KModifier.OVERRIDE)
         }
         if (isOperator) {
@@ -602,14 +540,14 @@ private fun ImmutableKmFunction.toFunSpec(
         if (isSuspend) {
           addModifiers(SUSPEND)
         }
-        val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamResolver)
+        val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamsResolver)
         if (returnTypeName != UNIT) {
           returns(returnTypeName)
           if (!isAbstract) {
             addStatement(NOT_IMPLEMENTED)
           }
         }
-        receiverParameterType?.toTypeName(typeParamResolver)?.let { receiver(it) }
+        receiverParameterType?.toTypeName(typeParamsResolver)?.let { receiver(it) }
       }
       .tag(this)
       .build()
