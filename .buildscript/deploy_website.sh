@@ -6,22 +6,26 @@
 # Install the packages with the following command:
 # pip install mkdocs mkdocs-material
 
-set -ex
+if [ "$1" = "--local" ]; then local=true; fi
 
-REPO="git@github.com:square/kotlinpoet.git"
-DIR=temp-clone
+if ! [ $local ]; then
+  set -ex
 
-# Delete any existing temporary website clone
-rm -rf $DIR
+  REPO="git@github.com:square/kotlinpoet.git"
+  DIR=temp-clone
 
-# Clone the current repo into temp folder
-git clone $REPO $DIR
+  # Delete any existing temporary website clone
+  rm -rf $DIR
 
-# Move working directory into temp folder
-cd $DIR
+  # Clone the current repo into temp folder
+  git clone $REPO $DIR
 
-# Generate the API docs
-./gradlew :kotlinpoet:dokka
+  # Move working directory into temp folder
+  cd $DIR
+
+  # Generate the API docs
+  ./gradlew :kotlinpoet:dokka
+fi
 
 # Copy in special files that GitHub wants in the project root.
 cat README.md > docs/index.md
@@ -37,8 +41,14 @@ cp CONTRIBUTING.md docs/contributing.md
 sed -i "" 's/kotlinpoet-metadata-specs\/README.md/\/kotlinpoet_metadata_specs/' docs/changelog.md
 
 # Build the site and push the new files up to GitHub
-mkdocs gh-deploy
+if ! [ $local ]; then
+  mkdocs gh-deploy
+else
+  mkdocs serve
+fi
 
 # Delete our temp folder
-cd ..
-rm -rf $DIR
+if ! [ $local ]; then
+  cd ..
+  rm -rf $DIR
+fi
