@@ -25,8 +25,16 @@ cd $DIR
 
 # Copy in special files that GitHub wants in the project root.
 cat README.md > docs/index.md
+cp kotlinpoet-metadata/README.md docs/kotlinpoet_metadata.md
+cp kotlinpoet-metadata-specs/README.md docs/kotlinpoet_metadata_specs.md
 cp CHANGELOG.md docs/changelog.md
 cp CONTRIBUTING.md docs/contributing.md
+
+# Fix *.md links to point to where the docs live under Mkdocs.
+# Linux
+# sed -i 's/kotlinpoet-metadata-specs\/README.md/\/kotlinpoet_metadata_specs/' docs/changelog.md
+# OSX
+sed -i "" 's/kotlinpoet-metadata-specs\/README.md/\/kotlinpoet_metadata_specs/' docs/changelog.md
 
 # Build the site and push the new files up to GitHub
 mkdocs gh-deploy

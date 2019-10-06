@@ -42,7 +42,10 @@ markdown_extensions:
   - admonition
 
 nav:
-  - 'Overview': index.md
+  - 'Overview':
+    - 'KotlinPoet': index.md
+    - 'KotlinPoet Metadata': kotlinpoet_metadata.md
+    - 'KotlinPoet Metadata Specs': kotlinpoet_metadata_specs.md
   - 'API': 1.x/kotlinpoet/com.squareup.kotlinpoet/index.md
   - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
   - 'Change Log': changelog.md
