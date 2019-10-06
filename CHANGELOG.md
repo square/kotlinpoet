@@ -16,7 +16,7 @@ _2019-09-24_
    (for reflection) and `ElementsClassInspector` (for the javax Elements API in annotation 
    processing). These implementations are available through their respective 
    `kotlinpoet-classinspector-*` artifacts. For more information refer to the 
-   [KotlinPoet-metadata-specs README](kotlinpoet-metadata-specs/README.md).
+   [KotlinPoet-metadata-specs README][kotlinpoet-metadata-specs].
    
    At the time of this release the API is in experimental mode and has to be opted into via the
    `KotlinPoetMetadataPreview` annotation.
@@ -305,3 +305,5 @@ _2017-05-21_
 _2017-05-16_
 
  * Initial public release.
+
+ [kotlinpoet-metadata-specs]: kotlinpoet-metadata-specs/README.md

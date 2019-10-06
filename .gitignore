@@ -20,6 +20,8 @@ docs/1.x/*
 docs/changelog.md
 docs/contributing.md
 docs/index.md
+docs/kotlinpoet_metadata.md
+docs/kotlinpoet_metadata_specs.md
 
 obj
 
