@@ -12,6 +12,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -21,9 +22,10 @@ import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isDeclaration
 import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
+import com.squareup.kotlinpoet.metadata.readKotlinClassMetadata
 import com.squareup.kotlinpoet.metadata.specs.ClassData
-import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
@@ -38,6 +40,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filter
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -73,9 +76,15 @@ class ElementsClassInspector private constructor(
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = true
 
-  override fun classFor(className: ClassName): ImmutableKmClass {
-    return lookupTypeElement(className)?.toImmutableKmClass() ?: error(
-        "No type element found for: $className.")
+  override fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer {
+    val typeElement = lookupTypeElement(className)
+        ?: error("No type element found for: $className.")
+
+    val metadata = typeElement.getAnnotation(Metadata::class.java)
+    return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
+      is KotlinClassMetadata.Class -> kotlinClassMetadata.toImmutableKmClass()
+      else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
+    }
   }
 
   override fun isInterface(className: ClassName): Boolean {
@@ -247,10 +256,14 @@ class ElementsClassInspector private constructor(
   }
 
   override fun classData(
-    kmClass: ImmutableKmClass,
+    declarationContainer: ImmutableKmDeclarationContainer,
     className: ClassName,
     parentClassName: ClassName?
   ): ClassData {
+    if (declarationContainer !is ImmutableKmClass) {
+      TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
+    }
+    val kmClass = declarationContainer
     val typeElement = lookupTypeElement(className)
         ?: error("No class found for: ${kmClass.name}.")
 
@@ -438,7 +451,7 @@ class ElementsClassInspector private constructor(
     }
 
     return ClassData(
-        kmClass = kmClass,
+        declarationContainer = declarationContainer,
         className = className,
         annotations = classAnnotations,
         properties = propertyData,
