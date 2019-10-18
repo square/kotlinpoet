@@ -240,7 +240,7 @@ class KotlinPoetMetadataSpecsTest(
     val typeSpec = Generics::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class Generics<T, in R, V>(
+      class Generics<out T, in R, V>(
         val genericInput: T
       )
     """.trimIndent())

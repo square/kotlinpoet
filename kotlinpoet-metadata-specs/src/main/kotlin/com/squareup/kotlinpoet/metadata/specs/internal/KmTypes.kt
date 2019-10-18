@@ -148,14 +148,7 @@ internal fun ImmutableKmType.toTypeName(
 internal fun ImmutableKmTypeParameter.toTypeVariableName(
   typeParamResolver: ((index: Int) -> TypeName)
 ): TypeVariableName {
-  val finalVariance = variance.toKModifier().let {
-    if (it == KModifier.OUT) {
-      // We don't redeclare out variance here
-      null
-    } else {
-      it
-    }
-  }
+  val finalVariance = variance.toKModifier()
   val typeVariableName = TypeVariableName(
       name = name,
       bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
