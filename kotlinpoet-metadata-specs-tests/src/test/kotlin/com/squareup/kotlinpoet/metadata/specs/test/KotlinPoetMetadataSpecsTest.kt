@@ -1812,6 +1812,32 @@ class KotlinPoetMetadataSpecsTest(
     ) {
     }
   }
+
+  // Regression test for https://github.com/square/kotlinpoet/issues/812
+  @Test
+  fun backwardTypeVarReferences() {
+    val typeSpec = Asset::class.toTypeSpecWithTestHandler()
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      class Asset<A : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> {
+        fun <D : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> function() {
+        }
+      
+        class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>
+      
+        class AssetOut<out B : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetOut<B>>
+      }
+      """.trimIndent()
+    )
+  }
+
+  class Asset<A : Asset<A>> {
+    fun <D : Asset<D>, C : Asset<A>> function() {
+
+    }
+    class AssetOut<out B : AssetOut<B>>
+    class AssetIn<in C : AssetIn<C>>
+  }
 }
 
 class ClassNesting {
