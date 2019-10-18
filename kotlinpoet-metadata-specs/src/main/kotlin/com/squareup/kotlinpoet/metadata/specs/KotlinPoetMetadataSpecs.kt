@@ -198,7 +198,13 @@ private fun List<ImmutableKmTypeParameter>.toTypeParamsResolver(
         ?: throw IllegalStateException("No type argument found for $id!")
   }
   // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
-  forEach { parametersMap[it.id] = it.toTypeVariableName(typeParamResolver) }
+  forEach {
+    // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
+    // replacement later that may add bounds referencing this.
+    parametersMap[it.id] = TypeVariableName(it.name)
+    // Now replace it with the full version.
+    parametersMap[it.id] = it.toTypeVariableName(typeParamResolver)
+  }
   return typeParamResolver
 }
 
