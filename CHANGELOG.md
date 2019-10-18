@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+## Version 1.4.1
+
+_2019-10-18_
+
+ * New: Add annotations support to `TypeAliasSpec`.
+ * New: Read type annotations from Kotlin `Metadata`.
+ * New: Introduce `ImmutableKmDeclarationContainer`.
+ * Fix: Use full package name for shading `auto-common`.
+ * Fix: Support reading self-type variables (e.g. `Asset<A : Asset<A>>`) from Kotlin `Metadata`.
+
 ## Version 1.4.0
 
 _2019-09-24_
