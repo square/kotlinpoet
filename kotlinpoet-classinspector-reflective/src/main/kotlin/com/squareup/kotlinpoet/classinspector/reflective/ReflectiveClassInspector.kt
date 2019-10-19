@@ -6,7 +6,9 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
+import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -32,6 +34,7 @@ import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
@@ -71,6 +74,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     val metadata = clazz.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
       is KotlinClassMetadata.Class -> kotlinClassMetadata.toImmutableKmClass()
+      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toImmutableKmPackage()
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
     }
   }
@@ -242,16 +246,61 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     className: ClassName,
     parentClassName: ClassName?
   ): ClassData {
-    if (declarationContainer !is ImmutableKmClass) {
-      TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
+    val targetClass = lookupClass(className) ?: error("No class found for: $className.")
+    val isCompanionObject: Boolean
+    val constructorData: Map<ImmutableKmConstructor, ConstructorData>
+    val classAnnotations: Collection<AnnotationSpec>
+    when (declarationContainer) {
+      is ImmutableKmClass -> {
+        isCompanionObject = declarationContainer.isCompanionObject
+        classAnnotations = if (declarationContainer.hasAnnotations) {
+          ClassInspectorUtil.createAnnotations {
+            addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
+          }
+        } else {
+          emptyList()
+        }
+        constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
+          if (declarationContainer.isAnnotation || declarationContainer.isInline) {
+            //
+            // Annotations are interfaces in reflection, but kotlin metadata will still report a
+            // constructor signature
+            //
+            // Inline classes have no constructors at runtime
+            //
+            return@associateWith ConstructorData.EMPTY
+          }
+          val signature = kmConstructor.signature
+          if (signature != null) {
+            val constructor = targetClass.lookupConstructor(signature)
+                ?: error("No constructor $signature found in $targetClass.")
+            ConstructorData(
+                annotations = if (kmConstructor.hasAnnotations) {
+                  constructor.annotationSpecs()
+                } else {
+                  emptyList()
+                },
+                parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+                isSynthetic = constructor.isSynthetic,
+                jvmModifiers = constructor.jvmModifiers(),
+                exceptions = constructor.exceptionTypeNames()
+            )
+          } else {
+            ConstructorData.EMPTY
+          }
+        }
+      }
+      is ImmutableKmPackage -> {
+        isCompanionObject = false
+        constructorData = emptyMap()
+        classAnnotations = emptyList()
+      }
+      else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
     }
-    val kmClass = declarationContainer
-    val targetClass = lookupClass(className)
-        ?: error("No class found for: ${kmClass.name}.")
 
     // Should only be called if parentName has been null-checked
     val classIfCompanion by lazy(NONE) {
-      if (kmClass.isCompanionObject && parentClassName != null) {
+      if (isCompanionObject && parentClassName != null) {
         lookupClass(parentClassName)
             ?: error("No class found for: $parentClassName.")
       } else {
@@ -259,15 +308,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
       }
     }
 
-    val classAnnotations = if (kmClass.hasAnnotations) {
-      ClassInspectorUtil.createAnnotations {
-        addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
-      }
-    } else {
-      emptyList()
-    }
-
-    val propertyData = kmClass.properties
+    val propertyData = declarationContainer.properties
         .asSequence()
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
@@ -275,7 +316,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
           val isJvmField = ClassInspectorUtil.computeIsJvmField(
               property = property,
               classInspector = this,
-              isCompanionObject = kmClass.isCompanionObject,
+              isCompanionObject = isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
               hasField = property.fieldSignature != null
@@ -285,7 +326,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
             // Check the field in the parent first. For const/static/jvmField elements, these only
             // exist in the parent and we want to check that if necessary to avoid looking up a
             // non-existent field in the companion.
-            val parentModifiers = if (kmClass.isCompanionObject && parentClassName != null) {
+            val parentModifiers = if (isCompanionObject && parentClassName != null) {
               classIfCompanion.lookupField(fieldSignature)?.jvmModifiers().orEmpty()
             } else {
               emptySet()
@@ -295,7 +336,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
 
             // TODO we looked up field once, let's reuse it
             val classForOriginalField = targetClass.takeUnless {
-              kmClass.isCompanionObject &&
+              isCompanionObject &&
                   (property.isConst || isJvmField || isStatic)
             } ?: classIfCompanion
 
@@ -322,7 +363,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
             // object's field is marked as synthetic to hide it from Java, but in this case
             // it's a false positive for this check in kotlin.
             val isSynthetic = field.isSynthetic &&
-                !(kmClass.isCompanionObject &&
+                !(isCompanionObject &&
                 (property.isConst || isJvmField || JvmFieldModifier.STATIC in jvmModifiers))
 
             FieldData(
@@ -330,7 +371,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
                 isSynthetic = isSynthetic,
                 jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
                   // JvmField companion objects don't need JvmStatic, it's implicit
-                  kmClass.isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+                  isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
                 },
                 constant = constant
             )
@@ -378,37 +419,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
           )
         }
 
-    val constructorData = kmClass.constructors.associateWith { kmConstructor ->
-      if (kmClass.isAnnotation || kmClass.isInline) {
-        //
-        // Annotations are interfaces in reflection, but kotlin metadata will still report a
-        // constructor signature
-        //
-        // Inline classes have no constructors at runtime
-        //
-        return@associateWith ConstructorData.EMPTY
-      }
-      val signature = kmConstructor.signature
-      if (signature != null) {
-        val constructor = targetClass.lookupConstructor(signature)
-            ?: error("No constructor $signature found in $targetClass.")
-        ConstructorData(
-            annotations = if (kmConstructor.hasAnnotations) {
-              constructor.annotationSpecs()
-            } else {
-              emptyList()
-            },
-            parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
-            isSynthetic = constructor.isSynthetic,
-            jvmModifiers = constructor.jvmModifiers(),
-            exceptions = constructor.exceptionTypeNames()
-        )
-      } else {
-        ConstructorData.EMPTY
-      }
-    }
-
-    val methodData = kmClass.functions.associateWith { kmFunction ->
+    val methodData = declarationContainer.functions.associateWith { kmFunction ->
       val signature = kmFunction.signature
       if (signature != null) {
         val method = targetClass.lookupMethod(signature)
