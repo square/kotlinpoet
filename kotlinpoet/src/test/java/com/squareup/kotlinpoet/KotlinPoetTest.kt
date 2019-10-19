@@ -893,4 +893,25 @@ class KotlinPoetTest {
               .build().toString()
     }.hasMessageThat().isEqualTo("Can't escape identifier `with.dots` because it contains illegal characters: .")
   }
+
+  // https://github.com/square/kotlinpoet/issues/814
+  @Test fun percentAtTheEndOfKdoc() {
+    val paramSpec1 = ParameterSpec.builder("a", Int::class)
+        .addKdoc("Progress in %%")
+        .build()
+    val paramSpec2 = ParameterSpec.builder("b", Int::class)
+        .addKdoc("Some other parameter with %%")
+        .build()
+    val funSpec = FunSpec.builder("test")
+        .addParameters(listOf(paramSpec1, paramSpec2))
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |/**
+      | * @param a Progress in %
+      | * @param b Some other parameter with %
+      | */
+      |fun test(a: kotlin.Int, b: kotlin.Int) {
+      |}
+      |""".trimMargin())
+  }
 }

@@ -172,17 +172,15 @@ internal val String.isKeyword get() = this in KEYWORDS
 internal val String.isName get() = split("\\.").none { it.isKeyword }
 
 internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
-  val lastFormatPart = formatParts.last()
-  if (CodeBlock.isPlaceholder(lastFormatPart)) {
-    if (args.isEmpty()) {
-      return@with build()
-    }
+  val lastFormatPart = trim().formatParts.last()
+  if (CodeBlock.isPlaceholder(lastFormatPart) && args.isNotEmpty()) {
     val lastArg = args.last()
     if (lastArg is String) {
       args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
     }
   } else {
-    formatParts[formatParts.size - 1] = lastFormatPart.trimEnd('\n') + '\n'
+    formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+    formatParts += "\n"
   }
   return@with build()
 }
