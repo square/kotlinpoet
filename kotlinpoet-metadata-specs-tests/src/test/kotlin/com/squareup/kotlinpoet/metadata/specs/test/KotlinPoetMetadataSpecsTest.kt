@@ -18,6 +18,9 @@ package com.squareup.kotlinpoet.metadata.specs.test
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.LIST
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
 import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
@@ -29,6 +32,7 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
@@ -252,14 +256,23 @@ class KotlinPoetMetadataSpecsTest(
   fun typeAliases() {
     val typeSpec = TypeAliases::class.toTypeSpecWithTestHandler()
 
-    // We always resolve the underlying type of typealiases
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class TypeAliases(
-        val foo: kotlin.String,
-        val bar: kotlin.collections.List<kotlin.String>
+        val foo: com.squareup.kotlinpoet.metadata.specs.test.TypeAliasName,
+        val bar: com.squareup.kotlinpoet.metadata.specs.test.GenericTypeAlias
       )
     """.trimIndent())
+
+    val fooPropertyType = typeSpec.propertySpecs.first { it.name == "foo" }.type
+    val fooAliasData = fooPropertyType.tag<TypeNameAliasTag>()
+    checkNotNull(fooAliasData)
+    assertThat(fooAliasData.type).isEqualTo(STRING)
+
+    val barPropertyType = typeSpec.propertySpecs.first { it.name == "bar" }.type
+    val barAliasData = barPropertyType.tag<TypeNameAliasTag>()
+    checkNotNull(barAliasData)
+    assertThat(barAliasData.type).isEqualTo(LIST.parameterizedBy(STRING))
   }
 
   class TypeAliases(val foo: TypeAliasName, val bar: GenericTypeAlias)
@@ -390,7 +403,7 @@ class KotlinPoetMetadataSpecsTest(
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class NestedTypeAliasTest {
-        val prop: kotlin.collections.List<kotlin.collections.List<kotlin.String>> = throw NotImplementedError("Stub!")
+        val prop: com.squareup.kotlinpoet.metadata.specs.test.NestedTypeAlias = throw NotImplementedError("Stub!")
       }
     """.trimIndent())
   }
