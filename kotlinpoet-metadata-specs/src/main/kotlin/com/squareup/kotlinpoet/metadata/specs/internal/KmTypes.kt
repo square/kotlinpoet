@@ -35,6 +35,7 @@ import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isReified
 import com.squareup.kotlinpoet.metadata.isSuspend
+import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmClassifier.TypeAlias
 import kotlinx.metadata.KmClassifier.TypeParameter
@@ -75,8 +76,7 @@ internal fun ImmutableKmTypeProjection.toTypeName(
  */
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmType.toTypeName(
-  typeParamResolver: ((index: Int) -> TypeName),
-  useTypeAlias: Boolean = false
+  typeParamResolver: ((index: Int) -> TypeName)
 ): TypeName {
   val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
   val type: TypeName = when (val valClassifier = classifier) {
@@ -128,11 +128,7 @@ internal fun ImmutableKmType.toTypeName(
       finalType
     }
     is TypeAlias -> {
-      if (useTypeAlias) {
-        ClassName.bestGuess(valClassifier.name)
-      } else {
-        checkNotNull(abbreviatedType).toTypeName(typeParamResolver)
-      }
+      ClassInspectorUtil.bestGuessClassName(valClassifier.name)
     }
   }
 
@@ -141,7 +137,16 @@ internal fun ImmutableKmType.toTypeName(
       add(annotation.toAnnotationSpec())
     }
   }.toList()
-  return type.copy(nullable = isNullable, annotations = annotations)
+  val finalType = type.copy(nullable = isNullable, annotations = annotations)
+  return abbreviatedType?.let {
+    // This is actually an alias! The "abbreviated type" is the alias and how it's actually
+    // represented in source. So instead - we'll return the abbreviated type but store the "real"
+    // type in tags for reference.
+    val abbreviatedTypeName = it.toTypeName(typeParamResolver)
+    abbreviatedTypeName.copy(
+        tags = mapOf(TypeNameAliasTag::class to TypeNameAliasTag(finalType))
+    )
+  } ?: finalType
 }
 
 @KotlinPoetMetadataPreview
