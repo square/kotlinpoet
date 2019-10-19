@@ -198,7 +198,7 @@ fun ImmutableKmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName
 ): FileSpec {
-  val classData = classInspector?.classData(className)
+  val classData = classInspector?.classData(className, null)
   return FileSpec.builder(className.packageName, className.simpleName)
       .apply {
         for (function in functions) {
@@ -487,7 +487,9 @@ private fun ImmutableKmFunction.toFunSpec(
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
   if (classInspector != null && classData != null) {
     signature?.let { signature ->
-      if (!classData.kmClass.isInterface && !classInspector.supportsNonRuntimeRetainedAnnotations) {
+      if (classData.declarationContainer is ImmutableKmClass &&
+          !classData.declarationContainer.isInterface &&
+          !classInspector.supportsNonRuntimeRetainedAnnotations) {
         // Infer if JvmName was used
         // We skip interface types for this because they can't have @JvmName.
         signature.jvmNameAnnotation(name)?.let { jvmNameAnnotation ->
@@ -599,14 +601,14 @@ private fun ImmutableKmProperty.toPropertySpec(
   if (classData != null && propertyData != null) {
     if (hasGetter) {
       getterSignature?.let { getterSignature ->
-        if (!classData.kmClass.isInterface &&
+        if (classData.declarationContainer is ImmutableKmClass && !classData.declarationContainer.isInterface &&
             classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
           // Infer if JvmName was used
           // We skip interface types for this because they can't have @JvmName.
           // For annotation properties, kotlinc puts JvmName annotations by default in
           // bytecode but they're implicit in source, so we expect the simple name for
           // annotation types.
-          val expectedMetadataName = if (classData.kmClass.isAnnotation) {
+          val expectedMetadataName = if (classData.declarationContainer.isAnnotation) {
             name
           } else {
             "get${name.safeCapitalize(Locale.US)}"
@@ -622,8 +624,9 @@ private fun ImmutableKmProperty.toPropertySpec(
     }
     if (hasSetter) {
       setterSignature?.let { setterSignature ->
-        if (!classData.kmClass.isAnnotation &&
-            !classData.kmClass.isInterface &&
+        if (classData.declarationContainer is ImmutableKmClass &&
+            !classData.declarationContainer.isAnnotation &&
+            !classData.declarationContainer.isInterface &&
             classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
           // Infer if JvmName was used
           // We skip annotation types for this because they can't have vars.
