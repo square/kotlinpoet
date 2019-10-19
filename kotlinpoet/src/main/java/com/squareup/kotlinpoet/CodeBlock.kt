@@ -94,7 +94,7 @@ class CodeBlock private constructor(
       }
 
       // If the matching format part has an argument, check that too.
-      if (formatPart.startsWith("%") && !isMultiCharNoArgPlaceholder(formatPart[1])) {
+      if (formatPart.startsWith("%") && !formatPart[1].isMultiCharNoArgPlaceholder) {
         if (args[prefixArgCount] != prefix.args[prefixArgCount]) {
           return null // Argument doesn't match.
         }
@@ -202,7 +202,7 @@ class CodeBlock private constructor(
       }
 
       while (p < format.length) {
-        val nextP = nextPotentialPlaceholderPosition(format, p)
+        val nextP = format.nextPotentialPlaceholderPosition(startIndex = p)
         if (nextP == -1) {
           formatParts += format.substring(p, format.length)
           break
@@ -228,12 +228,12 @@ class CodeBlock private constructor(
           addArgument(format, formatChar, arguments[argumentName])
           formatParts += "%$formatChar"
           p += matchResult.range.endInclusive + 1
-        } else if (isSingleCharNoArgPlaceholder(format[p])) {
+        } else if (format[p].isSingleCharNoArgPlaceholder) {
           formatParts += format.substring(p, p + 1)
           p++
         } else {
           require(p < format.length - 1) { "dangling % at end" }
-          require(isMultiCharNoArgPlaceholder(format[p + 1])) {
+          require(format[p + 1].isMultiCharNoArgPlaceholder) {
             "unknown format %${format[p + 1]} at ${p + 1} in '$format'"
           }
           formatParts += format.substring(p, p + 2)
@@ -262,14 +262,14 @@ class CodeBlock private constructor(
 
       var p = 0
       while (p < format.length) {
-        if (isSingleCharNoArgPlaceholder(format[p])) {
+        if (format[p].isSingleCharNoArgPlaceholder) {
           formatParts += format[p].toString()
           p++
           continue
         }
 
         if (format[p] != '%') {
-          var nextP = nextPotentialPlaceholderPosition(format, p + 1)
+          var nextP = format.nextPotentialPlaceholderPosition(startIndex = p + 1)
           if (nextP == -1) nextP = format.length
           formatParts += format.substring(p, nextP)
           p = nextP
@@ -288,7 +288,7 @@ class CodeBlock private constructor(
         val indexEnd = p - 1
 
         // If 'c' doesn't take an argument, we're done.
-        if (isMultiCharNoArgPlaceholder(c)) {
+        if (c.isMultiCharNoArgPlaceholder) {
           require(indexStart == indexEnd) { "%% may not have an index" }
           formatParts += "%$c"
           continue
@@ -447,13 +447,14 @@ class CodeBlock private constructor(
     @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
     @JvmStatic fun builder() = Builder()
 
-    internal fun isMultiCharNoArgPlaceholder(c: Char) = c == '%'
-    internal fun isSingleCharNoArgPlaceholder(c: Char) = c.isOneOf('⇥', '⇤', '«', '»')
-    internal fun isPlaceholder(s: String) =
-        (s.length == 1 && isSingleCharNoArgPlaceholder(s.first())) ||
-            (s.length == 2 && isMultiCharNoArgPlaceholder(s.first()))
-    internal fun nextPotentialPlaceholderPosition(s: String, startIndex: Int) = s.indexOfAny(
-        charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
+    internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
+    internal val Char.isSingleCharNoArgPlaceholder get() = isOneOf('⇥', '⇤', '«', '»')
+    internal val String.isPlaceholder
+      get() = (length == 1 && first().isSingleCharNoArgPlaceholder) ||
+          (length == 2 && first().isMultiCharNoArgPlaceholder)
+
+    internal fun String.nextPotentialPlaceholderPosition(startIndex: Int) =
+        indexOfAny(charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
   }
 }
 
