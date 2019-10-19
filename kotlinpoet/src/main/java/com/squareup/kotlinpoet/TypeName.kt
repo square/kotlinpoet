@@ -92,7 +92,7 @@ sealed class TypeName constructor(
   abstract fun copy(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
-    tags: Map<KClass<*>, Any> = this.tagMap.tags.toMap()
+    tags: Map<KClass<*>, Any> = this.tags
   ): TypeName
 
   val isAnnotated get() = annotations.isNotEmpty()
@@ -519,7 +519,7 @@ class LambdaTypeName private constructor(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     suspending: Boolean = this.isSuspending,
-    tags: Map<KClass<*>, Any> = this.tagMap.tags.toMap()
+    tags: Map<KClass<*>, Any> = this.tags.toMap()
   ): LambdaTypeName {
     return LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations, tags)
   }
