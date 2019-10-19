@@ -20,6 +20,9 @@ import kotlin.reflect.KClass
 /** A type that can be tagged with extra metadata of the user's choice. */
 interface Taggable {
 
+  /** Returns all tags. */
+  val tags: Map<KClass<*>, Any> get() = emptyMap()
+
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
   fun <T : Any> tag(type: Class<T>): T? = tag(type.kotlin)
 
@@ -137,7 +140,9 @@ inline fun <reified T : Any> TypeSpec.Builder.tag(tag: T?): TypeSpec.Builder = t
 
 internal fun Taggable.Builder<*>.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)) // Defensive copy
 
-internal class TagMap(val tags: Map<KClass<*>, Any>) : Taggable {
+internal class TagMap(tags: Map<KClass<*>, Any>) : Taggable {
+  override val tags: Map<KClass<*>, Any> = tags.toImmutableMap()
+
   override fun <T : Any> tag(type: KClass<T>): T? {
     @Suppress("UNCHECKED_CAST")
     return tags[type] as T?
