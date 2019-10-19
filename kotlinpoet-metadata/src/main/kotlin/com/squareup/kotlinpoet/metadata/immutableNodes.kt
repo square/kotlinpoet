@@ -100,6 +100,14 @@ interface ImmutableKmDeclarationContainer {
 fun KotlinClassMetadata.Class.toImmutableKmClass(): ImmutableKmClass =
     toKmClass().toImmutable()
 
+/**
+ * Visits metadata of this class with a new [KmPackage] instance and returns an [ImmutableKmPackage]
+ * instance of its values.
+ */
+@KotlinPoetMetadataPreview
+fun KotlinClassMetadata.FileFacade.toImmutableKmPackage(): ImmutableKmPackage =
+    toKmPackage().toImmutable()
+
 /** @return an immutable representation of this [KmClass]. */
 @KotlinPoetMetadataPreview
 @JvmName("immutableOf")
