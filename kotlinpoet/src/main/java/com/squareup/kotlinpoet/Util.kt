@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import java.util.Collections
 
 internal object NullAppendable : Appendable {
@@ -173,7 +174,7 @@ internal val String.isName get() = split("\\.").none { it.isKeyword }
 
 internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
   val lastFormatPart = trim().formatParts.last()
-  if (CodeBlock.isPlaceholder(lastFormatPart) && args.isNotEmpty()) {
+  if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
     val lastArg = args.last()
     if (lastArg is String) {
       args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
