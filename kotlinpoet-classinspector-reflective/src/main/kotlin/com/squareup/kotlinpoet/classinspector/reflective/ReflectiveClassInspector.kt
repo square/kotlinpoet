@@ -1,6 +1,7 @@
 package com.squareup.kotlinpoet.classinspector.reflective
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
@@ -293,7 +294,14 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
       is ImmutableKmPackage -> {
         isCompanionObject = false
         constructorData = emptyMap()
-        classAnnotations = emptyList()
+        // There's no flag for checking if there are annotations, so we just eagerly check in this
+        // case. All annotations on this class are file: site targets in source. This does not
+        // include @JvmName since it does not have RUNTIME retention. In practice this doesn't
+        // really matter, but it does mean we can't know for certain if the file should be called
+        // FooKt.kt or Foo.kt.
+        classAnnotations = ClassInspectorUtil.createAnnotations(FILE) {
+          addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
+        }
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
     }

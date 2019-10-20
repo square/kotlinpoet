@@ -6,6 +6,7 @@ import com.google.auto.common.Visibility
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
@@ -311,7 +312,12 @@ class ElementsClassInspector private constructor(
       is ImmutableKmPackage -> {
         isCompanionObject = false
         constructorData = emptyMap()
-        classAnnotations = emptyList()
+        // There's no flag for checking if there are annotations, so we just eagerly check in this
+        // case. All annotations on this class are file: site targets in source. This includes
+        // @JvmName.
+        classAnnotations = ClassInspectorUtil.createAnnotations(FILE) {
+          addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+        }
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
     }
