@@ -774,7 +774,7 @@ private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
 @KotlinPoetMetadataPreview
 private fun ImmutableKmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
   val typeParamResolver = typeParameters.toTypeParameterResolver()
-  return TypeAliasSpec.builder(name, underlyingType.toTypeName(typeParamResolver, true))
+  return TypeAliasSpec.builder(name, underlyingType.toTypeName(typeParamResolver))
       .apply {
         addVisibility {
           addModifiers(it)
