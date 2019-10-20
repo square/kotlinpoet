@@ -1,5 +1,11 @@
 @file:JvmName("FacadeFile")
+@file:FileAnnotation("file annotations!")
 package com.squareup.kotlinpoet.metadata.specs.test
+
+import kotlin.annotation.AnnotationTarget.FILE
+
+@Target(FILE)
+annotation class FileAnnotation(val value: String)
 
 typealias FacadeTypeAliasName = String
 typealias FacadeGenericTypeAlias = List<String>
