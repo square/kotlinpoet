@@ -199,27 +199,30 @@ fun ImmutableKmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName
 ): FileSpec {
-  val classData = classInspector?.classData(className, null)
+  val fileData = classInspector?.containerData(className, null)
+  check(fileData is FileData?) {
+    "Unexpected container data type: ${fileData?.javaClass}"
+  }
   return FileSpec.builder(className.packageName, className.simpleName)
       .apply {
-        classData?.jvmName?.let { jvmName ->
+        fileData?.jvmName?.let { jvmName ->
           addAnnotation(AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
               .addMember("name = %S", jvmName)
               .build())
         }
         for (function in functions) {
-          val methodData = classData?.methods?.get(function)
+          val methodData = fileData?.methods?.get(function)
           addFunction(function.toFunSpec(
               classInspector = classInspector,
-              classData = classData,
+              containerData = fileData,
               methodData = methodData
           ))
         }
         for (property in properties) {
-          val propertyData = classData?.properties?.get(property)
+          val propertyData = fileData?.properties?.get(property)
           addProperty(property.toPropertySpec(
               classInspector = classInspector,
-              classData = classData,
+              containerData = fileData,
               propertyData = propertyData
           ))
         }
@@ -241,7 +244,10 @@ private fun ImmutableKmClass.toTypeSpec(
   val classTypeParamsResolver = typeParameters.toTypeParameterResolver()
   val jvmInternalName = name.jvmInternalName
   val simpleName = className.simpleName
-  val classData = classInspector?.classData(className, parentClassName)
+  val classData = classInspector?.containerData(className, parentClassName)
+  check(classData is ClassData?) {
+    "Unexpected container data type: ${classData?.javaClass}"
+  }
 
   val builder = when {
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
@@ -358,7 +364,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   typeParamResolver = classTypeParamsResolver,
                   isConstructorParam = property.name in primaryConstructorParams,
                   classInspector = classInspector,
-                  classData = classData,
+                  containerData = classData,
                   propertyData = propertyData
               )
             }
@@ -483,7 +489,7 @@ private fun ImmutableKmConstructor.toFunSpec(
 private fun ImmutableKmFunction.toFunSpec(
   classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   classInspector: ClassInspector? = null,
-  classData: ClassData? = null,
+  containerData: ContainerData? = null,
   methodData: MethodData? = null,
   isInInterface: Boolean = false
 ): FunSpec {
@@ -491,10 +497,10 @@ private fun ImmutableKmFunction.toFunSpec(
       fallback = classTypeParamsResolver
   )
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
-  if (classInspector != null && classData != null) {
+  if (classInspector != null && containerData != null) {
     signature?.let { signature ->
-      if (classData.declarationContainer is ImmutableKmClass &&
-          !classData.declarationContainer.isInterface &&
+      if (containerData is ClassData &&
+          !containerData.declarationContainer.isInterface &&
           !classInspector.supportsNonRuntimeRetainedAnnotations) {
         // Infer if JvmName was used
         // We skip interface types for this because they can't have @JvmName.
@@ -597,24 +603,24 @@ private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   isConstructorParam: Boolean = false,
   classInspector: ClassInspector? = null,
-  classData: ClassData? = null,
-  propertyData: PropertyData? = null
+  containerData: ContainerData? = null,
+  propertyData: PropertyData? = null,
   isInInterface: Boolean = false
 ): PropertySpec {
   val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
-  if (classData != null && propertyData != null) {
+  if (containerData != null && propertyData != null) {
     if (hasGetter) {
       getterSignature?.let { getterSignature ->
-        if (classData.declarationContainer is ImmutableKmClass && !classData.declarationContainer.isInterface &&
+        if (containerData is ClassData && !containerData.declarationContainer.isInterface &&
             classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
           // Infer if JvmName was used
           // We skip interface types for this because they can't have @JvmName.
           // For annotation properties, kotlinc puts JvmName annotations by default in
           // bytecode but they're implicit in source, so we expect the simple name for
           // annotation types.
-          val expectedMetadataName = if (classData.declarationContainer.isAnnotation) {
+          val expectedMetadataName = if (containerData.declarationContainer.isAnnotation) {
             name
           } else {
             "get${name.safeCapitalize(Locale.US)}"
@@ -630,9 +636,9 @@ private fun ImmutableKmProperty.toPropertySpec(
     }
     if (hasSetter) {
       setterSignature?.let { setterSignature ->
-        if (classData.declarationContainer is ImmutableKmClass &&
-            !classData.declarationContainer.isAnnotation &&
-            !classData.declarationContainer.isInterface &&
+        if (containerData is ClassData &&
+            !containerData.declarationContainer.isAnnotation &&
+            !containerData.declarationContainer.isInterface &&
             classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
           // Infer if JvmName was used
           // We skip annotation types for this because they can't have vars.

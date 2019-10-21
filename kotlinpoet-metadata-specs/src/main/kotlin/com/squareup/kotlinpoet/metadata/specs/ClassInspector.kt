@@ -33,14 +33,14 @@ interface ClassInspector {
   val supportsNonRuntimeRetainedAnnotations: Boolean
 
   /**
-   * Creates a new [ClassData] instance for a given [declarationContainer].
+   * Creates a new [ContainerData] instance for a given [declarationContainer].
    *
    * @param declarationContainer the source [ImmutableKmDeclarationContainer] to read from.
    * @param className the [ClassName] of the target class to to read from.
    * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner, or is a
    *        companion object.
    */
-  fun classData(declarationContainer: ImmutableKmDeclarationContainer, className: ClassName, parentClassName: ClassName?): ClassData
+  fun containerData(declarationContainer: ImmutableKmDeclarationContainer, className: ClassName, parentClassName: ClassName?): ContainerData
 
   /**
    * Looks up other declaration containers, such as for nested members. Note that this class would
@@ -82,15 +82,15 @@ interface ClassInspector {
 }
 
 /**
- * Creates a new [ClassData] instance for a given [className].
+ * Creates a new [ContainerData] instance for a given [className].
  *
  * @param className the [ClassName] of the target class to to read from.
  * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
  *        companion object.
  */
 @KotlinPoetMetadataPreview
-fun ClassInspector.classData(className: ClassName, parentClassName: ClassName?): ClassData {
-  return classData(declarationContainerFor(className), className, parentClassName)
+fun ClassInspector.containerData(className: ClassName, parentClassName: ClassName?): ContainerData {
+  return containerData(declarationContainerFor(className), className, parentClassName)
 }
 
 /**

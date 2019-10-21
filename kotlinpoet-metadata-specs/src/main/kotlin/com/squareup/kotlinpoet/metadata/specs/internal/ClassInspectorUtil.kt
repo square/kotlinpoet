@@ -34,11 +34,11 @@ import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
 object ClassInspectorUtil {
+  val JVM_NAME = JvmName::class.asClassName()
   private val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
   internal val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
   internal val JVM_SYNTHETIC_SPEC = AnnotationSpec.builder(JVM_SYNTHETIC).build()
-  internal val JVM_NAME = JvmName::class.asClassName()
   private val JVM_TRANSIENT = Transient::class.asClassName()
   private val JVM_VOLATILE = Volatile::class.asClassName()
   private val IMPLICIT_FIELD_ANNOTATIONS = setOf(
