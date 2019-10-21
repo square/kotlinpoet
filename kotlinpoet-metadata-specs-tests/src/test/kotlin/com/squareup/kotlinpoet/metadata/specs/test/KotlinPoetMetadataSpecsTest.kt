@@ -17,13 +17,10 @@
 package com.squareup.kotlinpoet.metadata.specs.test
 
 import com.google.common.truth.Truth.assertThat
-import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
-import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -33,96 +30,26 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.ELEMENTS
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.REFLECTIVE
-import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
+import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
+import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
-import org.junit.Assume
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.runner.Description
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import org.junit.runners.model.Statement
-import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
-import kotlin.reflect.KClass
 import kotlin.test.fail
 
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest(
-  classInspectorType: ClassInspectorType,
-  private val classInspectorFactoryCreator: (KotlinPoetMetadataSpecsTest) -> (() -> ClassInspector)
-) {
-
-  companion object {
-    @Suppress("RedundantLambdaArrow") // Needed for lambda type resolution
-    @JvmStatic
-    @Parameterized.Parameters(name = "{0}")
-    fun data(): Collection<Array<*>> {
-      return listOf(
-          arrayOf<Any>(
-              ClassInspectorType.REFLECTIVE,
-              { _: KotlinPoetMetadataSpecsTest -> { ReflectiveClassInspector.create() } }
-          ),
-          arrayOf<Any>(
-              ClassInspectorType.ELEMENTS,
-              { test: KotlinPoetMetadataSpecsTest -> {
-                ElementsClassInspector.create(test.compilation.elements, test.compilation.types)
-              } }
-          )
-      )
-    }
-  }
-
-  enum class ClassInspectorType {
-    REFLECTIVE, ELEMENTS
-  }
-
-  @Retention(RUNTIME)
-  @Target(AnnotationTarget.FUNCTION)
-  @Inherited
-  annotation class IgnoreForHandlerType(
-    val reason: String,
-    val handlerType: ClassInspectorType
-  )
-
-  class IgnoreForElementsRule(private val handlerType: ClassInspectorType) : TestRule {
-    override fun apply(base: Statement, description: Description): Statement {
-      return object : Statement() {
-        override fun evaluate() {
-          val annotation = description.getAnnotation(
-              IgnoreForHandlerType::class.java)
-          val shouldIgnore = annotation?.handlerType == handlerType
-          Assume.assumeTrue(
-              "Ignoring ${description.methodName}: ${annotation?.reason}",
-              !shouldIgnore
-          )
-          base.evaluate()
-        }
-      }
-    }
-  }
-
-  @Rule
-  @JvmField
-  val compilation = CompilationRule()
-
-  @Rule
-  @JvmField
-  val ignoreForElementsRule = IgnoreForElementsRule(
-      classInspectorType)
-
-  private fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
-    return toTypeSpec(classInspectorFactoryCreator(this@KotlinPoetMetadataSpecsTest)())
-  }
+  override val classInspectorType: ClassInspectorType,
+  override val classInspectorFactoryCreator: (MultiClassInspectorTest) -> (() -> ClassInspector)
+) : MultiClassInspectorTest() {
 
   @Test
   fun constructorData() {
