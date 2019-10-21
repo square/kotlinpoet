@@ -36,8 +36,6 @@ import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.ELEMENTS
-import com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.metadata.specs.toFileSpec
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.metadata.toImmutable

@@ -112,6 +112,7 @@ import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
@@ -201,6 +202,11 @@ fun ImmutableKmPackage.toFileSpec(
   val classData = classInspector?.classData(className, null)
   return FileSpec.builder(className.packageName, className.simpleName)
       .apply {
+        classData?.jvmName?.let { jvmName ->
+          addAnnotation(AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
+              .addMember("name = %S", jvmName)
+              .build())
+        }
         for (function in functions) {
           val methodData = classData?.methods?.get(function)
           addFunction(function.toFunSpec(
