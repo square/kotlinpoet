@@ -69,8 +69,8 @@ abstract class MultiClassInspectorTest {
   @Target(AnnotationTarget.FUNCTION)
   @Inherited
   annotation class IgnoreForHandlerType(
-      val reason: String,
-      val handlerType: ClassInspectorType
+    val reason: String,
+    val handlerType: ClassInspectorType
   )
 
   @JvmField
