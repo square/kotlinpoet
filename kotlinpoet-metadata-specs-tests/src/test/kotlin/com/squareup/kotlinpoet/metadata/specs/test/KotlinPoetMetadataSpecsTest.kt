@@ -28,7 +28,6 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
@@ -46,10 +45,7 @@ import kotlin.test.fail
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
 @RunWith(Parameterized::class)
-class KotlinPoetMetadataSpecsTest(
-  override val classInspectorType: ClassInspectorType,
-  override val classInspectorFactoryCreator: (MultiClassInspectorTest) -> (() -> ClassInspector)
-) : MultiClassInspectorTest() {
+class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   @Test
   fun constructorData() {
