@@ -34,8 +34,6 @@ import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.Class
 import com.squareup.kotlinpoet.tag
 import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
