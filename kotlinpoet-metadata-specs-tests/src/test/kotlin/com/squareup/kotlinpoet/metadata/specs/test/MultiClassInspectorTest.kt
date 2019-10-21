@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import org.junit.Assume
 import org.junit.Rule
 import org.junit.rules.TestRule
+import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.model.Statement
@@ -32,6 +33,7 @@ import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 
+@RunWith(Parameterized::class)
 @KotlinPoetMetadataPreview
 abstract class MultiClassInspectorTest {
   companion object {

@@ -44,7 +44,6 @@ import kotlin.test.fail
 
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
-@RunWith(Parameterized::class)
 class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   @Test
