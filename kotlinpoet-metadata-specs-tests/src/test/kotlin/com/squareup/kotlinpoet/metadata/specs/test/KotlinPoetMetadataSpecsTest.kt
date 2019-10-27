@@ -1770,6 +1770,54 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     class AssetOut<out B : AssetOut<B>>
     class AssetIn<in C : AssetIn<C>>
   }
+
+  // Regression test for https://github.com/square/kotlinpoet/issues/821
+  @Test
+  fun abstractClass() {
+    val typeSpec = AbstractClass::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      abstract class AbstractClass {
+        val baz: kotlin.String? = null
+      
+        abstract val foo: kotlin.String
+      
+        abstract fun bar()
+      
+        fun fuz() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  abstract class AbstractClass {
+    abstract val foo: String
+    abstract fun bar()
+
+    val baz: String? = null
+    fun fuz() {}
+  }
+
+  // Regression test for https://github.com/square/kotlinpoet/issues/820
+  @Test
+  fun internalAbstractProperty() {
+    val typeSpec = InternalAbstractPropertyHolder::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      abstract class InternalAbstractPropertyHolder {
+        internal abstract val valProp: kotlin.String
+
+        internal abstract var varProp: kotlin.String
+      }
+    """.trimIndent())
+  }
+
+  abstract class InternalAbstractPropertyHolder {
+    internal abstract val valProp: String
+    internal abstract var varProp: String
+  }
 }
 
 class ClassNesting {
