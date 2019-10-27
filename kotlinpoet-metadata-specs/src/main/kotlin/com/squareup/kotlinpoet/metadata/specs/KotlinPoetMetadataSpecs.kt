@@ -528,6 +528,11 @@ private fun ImmutableKmFunction.toFunSpec(
       .apply {
         addAnnotations(annotations)
         addVisibility { addModifiers(it) }
+        val isOverride = methodData?.isOverride == true
+        addModifiers(flags.modalities
+            .filterNot { it == FINAL && !isOverride } // Final is the default
+            .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
+        )
         if (valueParameters.isNotEmpty()) {
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
@@ -539,11 +544,8 @@ private fun ImmutableKmFunction.toFunSpec(
         if (typeParameters.isNotEmpty()) {
           addTypeVariables(typeParameters.map { it.toTypeVariableName(typeParamResolver) })
         }
-        if (methodData?.isOverride == true) {
+        if (isOverride) {
           addModifiers(KModifier.OVERRIDE)
-        }
-        if (isAbstract) {
-          addModifiers(ABSTRACT)
         }
         if (isOperator) {
           addModifiers(OPERATOR)
