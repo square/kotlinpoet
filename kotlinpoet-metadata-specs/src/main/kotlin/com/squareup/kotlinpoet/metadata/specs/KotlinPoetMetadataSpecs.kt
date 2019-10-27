@@ -332,7 +332,7 @@ private fun ImmutableKmClass.toTypeSpec(
             .map { (property, propertyData) ->
               val annotations = mutableListOf<AnnotationSpec>()
               if (propertyData != null) {
-                if (property.hasGetter) {
+                if (property.hasGetter && !isAbstract) {
                   property.getterSignature?.let { getterSignature ->
                     if (!isInterface &&
                         classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
@@ -355,7 +355,7 @@ private fun ImmutableKmClass.toTypeSpec(
                     }
                   }
                 }
-                if (property.hasSetter) {
+                if (property.hasSetter && !isAbstract) {
                   property.setterSignature?.let { setterSignature ->
                     if (!isAnnotation &&
                         !isInterface &&
@@ -449,6 +449,9 @@ private fun ImmutableKmClass.toTypeSpec(
                       !isKotlinDefaultInterfaceMethod()
                   ) {
                     addModifiers(ABSTRACT)
+                    clearBody()
+                  } else if (ABSTRACT in modifiers) {
+                    // Remove bodies for abstract functions
                     clearBody()
                   }
                   if (methodData?.isSynthetic == true) {
@@ -682,11 +685,11 @@ private fun ImmutableKmProperty.toPropertySpec(
         // since the delegate handles it
         // vals with initialized constants have a getter in bytecode but not a body in kotlin source
         val modifierSet = modifiers.toSet()
-        if (hasGetter && !isDelegated) {
+        if (hasGetter && !isDelegated && !isAbstract) {
           propertyAccessor(modifierSet, getterFlags,
               FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED), isOverride)?.let(::getter)
         }
-        if (hasSetter && !isDelegated) {
+        if (hasSetter && !isDelegated && !isAbstract) {
           propertyAccessor(modifierSet, setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
         }
       }
