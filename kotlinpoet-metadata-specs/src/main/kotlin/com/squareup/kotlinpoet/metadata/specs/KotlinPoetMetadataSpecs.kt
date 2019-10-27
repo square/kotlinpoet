@@ -672,6 +672,9 @@ private fun ImmutableKmProperty.toPropertySpec(
             constant != null -> initializer(constant)
             isConstructorParam -> initializer(name)
             returnTypeName.isNullable -> initializer("null")
+            isAbstract -> {
+              // No-op, don't emit an initializer for abstract properties
+            }
             else -> initializer(NOT_IMPLEMENTED)
           }
         }
