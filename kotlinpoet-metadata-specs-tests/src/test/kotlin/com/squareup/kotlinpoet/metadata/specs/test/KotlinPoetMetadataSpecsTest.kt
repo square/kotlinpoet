@@ -1818,6 +1818,89 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     internal abstract val valProp: String
     internal abstract var varProp: String
   }
+
+  @Test
+  fun modalities() {
+    val abstractModalities = AbstractModalities::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(abstractModalities.trimmedToString()).isEqualTo("""
+      abstract class AbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
+        val implicitFinalProp: kotlin.String? = null
+      
+        override val interfaceProp: kotlin.String? = null
+      
+        open val openProp: kotlin.String? = null
+      
+        fun implicitFinalFun() {
+        }
+      
+        override fun interfaceFun() {
+        }
+      
+        open fun openFun() {
+        }
+      }
+    """.trimIndent())
+
+    val finalAbstractModalities = FinalAbstractModalities::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(finalAbstractModalities.trimmedToString()).isEqualTo("""
+      abstract class FinalAbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
+        final override val interfaceProp: kotlin.String? = null
+      
+        final override fun interfaceFun() {
+        }
+      }
+    """.trimIndent())
+
+    val modalities = Modalities::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(modalities.trimmedToString()).isEqualTo("""
+      class Modalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.AbstractModalities() {
+        override val interfaceProp: kotlin.String? = null
+      
+        override val openProp: kotlin.String? = null
+      
+        override fun interfaceFun() {
+        }
+      
+        override fun openFun() {
+        }
+      }
+    """.trimIndent())
+  }
+
+  interface ModalitiesInterface {
+    val interfaceProp: String?
+    fun interfaceFun()
+  }
+  abstract class AbstractModalities : ModalitiesInterface {
+    override val interfaceProp: String? = null
+    override fun interfaceFun() {
+    }
+    val implicitFinalProp: String? = null
+    fun implicitFinalFun() {
+    }
+    open val openProp: String? = null
+    open fun openFun() {
+    }
+  }
+  abstract class FinalAbstractModalities : ModalitiesInterface {
+    final override val interfaceProp: String? = null
+    final override fun interfaceFun() {
+    }
+  }
+  class Modalities : AbstractModalities() {
+    override val interfaceProp: String? = null
+    override fun interfaceFun() {
+    }
+    override val openProp: String? = null
+    override fun openFun() {
+    }
+  }
 }
 
 class ClassNesting {
