@@ -539,6 +539,9 @@ private fun ImmutableKmFunction.toFunSpec(
         if (methodData?.isOverride == true) {
           addModifiers(KModifier.OVERRIDE)
         }
+        if (isAbstract) {
+          addModifiers(ABSTRACT)
+        }
         if (isOperator) {
           addModifiers(OPERATOR)
         }
