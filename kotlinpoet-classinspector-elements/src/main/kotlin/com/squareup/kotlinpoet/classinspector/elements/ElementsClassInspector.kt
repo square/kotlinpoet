@@ -201,10 +201,10 @@ class ElementsClassInspector private constructor(
     //       and compare against only preceding ones.
     val methodList = methodMap.asMap()[simpleName.toString()]?.toList()
         ?: return false
-    val indexOfPossibleOverrider = methodList.indexOf(this)
-    return (indexOfPossibleOverrider downTo 0)
-        .asSequence()
-        .map { methodList[it] }
+    val signature = jvmMethodSignature(types)
+    return methodList.asSequence()
+        .filter { it.jvmMethodSignature(types) == signature }
+        .take(1)
         .any { elements.overrides(this, it, type) }
   }
 
