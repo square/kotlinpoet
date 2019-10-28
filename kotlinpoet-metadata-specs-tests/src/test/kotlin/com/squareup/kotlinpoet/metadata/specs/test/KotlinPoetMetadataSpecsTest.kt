@@ -1780,11 +1780,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       abstract class AbstractClass {
         val baz: kotlin.String? = null
-      
+
         abstract val foo: kotlin.String
-      
+
         abstract fun bar()
-      
+
         fun fuz() {
         }
       }
@@ -1827,17 +1827,17 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(abstractModalities.trimmedToString()).isEqualTo("""
       abstract class AbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         val implicitFinalProp: kotlin.String? = null
-      
+
         override val interfaceProp: kotlin.String? = null
-      
+
         open val openProp: kotlin.String? = null
-      
+
         fun implicitFinalFun() {
         }
-      
+
         override fun interfaceFun() {
         }
-      
+
         open fun openFun() {
         }
       }
@@ -1849,7 +1849,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(finalAbstractModalities.trimmedToString()).isEqualTo("""
       abstract class FinalAbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         final override val interfaceProp: kotlin.String? = null
-      
+
         final override fun interfaceFun() {
         }
       }
@@ -1861,12 +1861,12 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(modalities.trimmedToString()).isEqualTo("""
       class Modalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.AbstractModalities() {
         override val interfaceProp: kotlin.String? = null
-      
+
         override val openProp: kotlin.String? = null
-      
+
         override fun interfaceFun() {
         }
-      
+
         override fun openFun() {
         }
       }
