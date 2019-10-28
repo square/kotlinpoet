@@ -3842,13 +3842,13 @@ class TypeSpecTest {
     //language=kotlin
     assertThat(toString(type)).isEqualTo("""
         package com.squareup.tacos
-        
+
         import kotlin.Int
-        
+
         class MyClass {
           init {
           }
-        
+
           val tacos: Int
         }
 
@@ -3865,15 +3865,15 @@ class TypeSpecTest {
     //language=kotlin
     assertThat(toString(type)).isEqualTo("""
         package com.squareup.tacos
-        
+
         import kotlin.Int
-        
+
         class MyClass {
           val tacos1: Int
 
           init {
           }
-        
+
           val tacos2: Int
         }
 
@@ -3889,9 +3889,9 @@ class TypeSpecTest {
     //language=kotlin
     assertThat(toString(type)).isEqualTo("""
         package com.squareup.tacos
-        
+
         import kotlin.Int
-        
+
         class MyClass {
           val tacos: Int
 
@@ -3920,16 +3920,16 @@ class TypeSpecTest {
     //language=kotlin
     assertThat(toString(type)).isEqualTo("""
         package com.squareup.tacos
-        
+
         import kotlin.Int
-        
+
         class MyClass(
           val tacos1: Int,
           tacos2: Int
         ) {
           init {
           }
-  
+
           val tacos2: Int = tacos2
         }
 
