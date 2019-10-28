@@ -62,6 +62,7 @@ class TypeSpec private constructor(
   val enumConstants = builder.enumConstants.toImmutableMap()
   val propertySpecs = builder.propertySpecs.toImmutableList()
   val initializerBlock = builder.initializerBlock.build()
+  val initializerIndex = builder.initializerIndex
   val funSpecs = builder.funSpecs.toImmutableList()
   val typeSpecs = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
@@ -80,6 +81,7 @@ class TypeSpec private constructor(
     builder.funSpecs += funSpecs
     builder.typeSpecs += typeSpecs
     builder.initializerBlock.add(initializerBlock)
+    builder.initializerIndex = initializerIndex
     builder.superinterfaces.putAll(superinterfaces)
     builder.primaryConstructor = primaryConstructor
     builder.tags += tagMap.tags
@@ -223,8 +225,24 @@ class TypeSpec private constructor(
         }
       }
 
-      // Properties.
-      for (propertySpec in propertySpecs) {
+      val cachedHasInitializer = hasInitializer
+      var initializerEmitted = false
+      fun possiblyEmitInitializer() {
+        if (initializerEmitted) return
+        initializerEmitted = true
+        if (cachedHasInitializer) {
+          if (!firstMember) codeWriter.emit("\n")
+          codeWriter.emitCode(initializerBlock)
+          firstMember = false
+        }
+      }
+
+      // Properties and initializer block.
+      for ((index, propertySpec) in propertySpecs.withIndex()) {
+        // Initializer block.
+        if (index == initializerIndex) {
+          possiblyEmitInitializer()
+        }
         if (constructorProperties.containsKey(propertySpec.name)) {
           continue
         }
@@ -233,19 +251,15 @@ class TypeSpec private constructor(
         firstMember = false
       }
 
+      // One last try in case the initializer index is after all properties
+      possiblyEmitInitializer()
+
       if (primaryConstructor != null && primaryConstructor.body.isNotEmpty()) {
         codeWriter.emit("init {\n")
         codeWriter.indent()
         codeWriter.emitCode(primaryConstructor.body)
         codeWriter.unindent()
         codeWriter.emit("}\n")
-      }
-
-      // Initializer block.
-      if (initializerBlock.isNotEmpty()) {
-        if (!firstMember) codeWriter.emit("\n")
-        codeWriter.emitCode(initializerBlock)
-        firstMember = false
       }
 
       // Constructors.
@@ -291,8 +305,16 @@ class TypeSpec private constructor(
   private fun constructorProperties(): Map<String, PropertySpec> {
     if (primaryConstructor == null) return emptyMap()
 
+    // Properties added after the initializer are not permitted to be inlined into the constructor
+    // due to ordering concerns.
+    val range = if (hasInitializer) {
+      0 until initializerIndex
+    } else {
+      propertySpecs.indices
+    }
     val result: MutableMap<String, PropertySpec> = LinkedHashMap()
-    for (property in propertySpecs) {
+    for (propertyIndex in range) {
+      val property = propertySpecs[propertyIndex]
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
       if (!isPropertyInitializerConstructorParameter(property, parameter))
@@ -341,6 +363,8 @@ class TypeSpec private constructor(
       build()
     }
   }
+
+  private val hasInitializer: Boolean get() = initializerIndex != -1 && initializerBlock.isNotEmpty()
 
   private val hasNoBody: Boolean
     get() {
@@ -419,6 +443,7 @@ class TypeSpec private constructor(
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
+    var initializerIndex = -1
     internal val isAnonymousClass get() = name == null && kind == Kind.CLASS
     internal val isEnum get() = kind == Kind.CLASS && ENUM in modifiers
     internal val isAnnotation get() = kind == Kind.CLASS && ANNOTATION in modifiers
@@ -626,6 +651,10 @@ class TypeSpec private constructor(
 
     fun addInitializerBlock(block: CodeBlock) = apply {
       checkCanHaveInitializerBlocks()
+      // Set index to however many properties we have
+      // All properties added after this point are declared as such, including any that initialize
+      // to a constructor param.
+      initializerIndex = propertySpecs.size
       initializerBlock.add("init {\n")
           .indent()
           .add(block)
