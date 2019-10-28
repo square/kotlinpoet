@@ -3833,6 +3833,109 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun initOrdering_first() {
+    val type = TypeSpec.classBuilder("MyClass")
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addProperty("tacos", Int::class)
+        .build()
+
+    //language=kotlin
+    assertThat(toString(type)).isEqualTo("""
+        package com.squareup.tacos
+        
+        import kotlin.Int
+        
+        class MyClass {
+          init {
+          }
+        
+          val tacos: Int
+        }
+
+        """.trimIndent())
+  }
+
+  @Test fun initOrdering_middle() {
+    val type = TypeSpec.classBuilder("MyClass")
+        .addProperty("tacos1", Int::class)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addProperty("tacos2", Int::class)
+        .build()
+
+    //language=kotlin
+    assertThat(toString(type)).isEqualTo("""
+        package com.squareup.tacos
+        
+        import kotlin.Int
+        
+        class MyClass {
+          val tacos1: Int
+
+          init {
+          }
+        
+          val tacos2: Int
+        }
+
+        """.trimIndent())
+  }
+
+  @Test fun initOrdering_last() {
+    val type = TypeSpec.classBuilder("MyClass")
+        .addProperty("tacos", Int::class)
+        .addInitializerBlock(CodeBlock.builder().build())
+        .build()
+
+    //language=kotlin
+    assertThat(toString(type)).isEqualTo("""
+        package com.squareup.tacos
+        
+        import kotlin.Int
+        
+        class MyClass {
+          val tacos: Int
+
+          init {
+          }
+        }
+
+        """.trimIndent())
+  }
+
+  @Test fun initOrdering_constructorParamsExludedAfterIndex() {
+    val type = TypeSpec.classBuilder("MyClass")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("tacos1", Int::class)
+            .addParameter("tacos2", Int::class)
+            .build())
+        .addProperty(PropertySpec.builder("tacos1", Int::class)
+            .initializer("tacos1")
+            .build())
+        .addInitializerBlock(CodeBlock.builder().build())
+        .addProperty(PropertySpec.builder("tacos2", Int::class)
+            .initializer("tacos2")
+            .build())
+        .build()
+
+    //language=kotlin
+    assertThat(toString(type)).isEqualTo("""
+        package com.squareup.tacos
+        
+        import kotlin.Int
+        
+        class MyClass(
+          val tacos1: Int,
+          tacos2: Int
+        ) {
+          init {
+          }
+  
+          val tacos2: Int = tacos2
+        }
+
+        """.trimIndent())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
