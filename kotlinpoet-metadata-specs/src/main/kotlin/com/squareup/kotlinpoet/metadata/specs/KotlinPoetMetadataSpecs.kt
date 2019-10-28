@@ -534,7 +534,7 @@ private fun ImmutableKmFunction.toFunSpec(
         addModifiers(flags.modalities
             .filterNot { it == FINAL && !isOverride } // Final is the default
             .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
-            .filterNot { it == OPEN && isInInterface } // functions methods are implicitly open
+            .filterNot { it == OPEN && isInInterface } // interface methods are implicitly open
         )
         if (valueParameters.isNotEmpty()) {
           addParameters(valueParameters.mapIndexed { index, param ->
