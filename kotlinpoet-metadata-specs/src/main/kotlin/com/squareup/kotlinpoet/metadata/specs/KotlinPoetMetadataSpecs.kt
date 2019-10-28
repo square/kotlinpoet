@@ -380,7 +380,8 @@ private fun ImmutableKmClass.toTypeSpec(
                     addAll(annotations)
                     addAll(propertyData?.allAnnotations.orEmpty())
                   },
-                  propertyData = propertyData
+                  propertyData = propertyData,
+                  isInInterface = isInterface
               )
             }
             .asIterable()
@@ -425,7 +426,7 @@ private fun ImmutableKmClass.toTypeSpec(
               addAll(annotations)
               addAll(methodData?.allAnnotations().orEmpty())
             }
-            func.toFunSpec(functionTypeParamsResolver, finalAnnotations, methodData)
+            func.toFunSpec(functionTypeParamsResolver, finalAnnotations, methodData, isInterface)
                 .toBuilder()
                 .apply {
                   // For interface methods, remove any body and mark the methods as abstract
@@ -522,7 +523,8 @@ private fun ImmutableKmConstructor.toFunSpec(
 private fun ImmutableKmFunction.toFunSpec(
   typeParamResolver: ((index: Int) -> TypeName),
   annotations: Iterable<AnnotationSpec>,
-  methodData: MethodData?
+  methodData: MethodData?,
+  isInInterface: Boolean
 ): FunSpec {
   return FunSpec.builder(name)
       .apply {
@@ -532,6 +534,7 @@ private fun ImmutableKmFunction.toFunSpec(
         addModifiers(flags.modalities
             .filterNot { it == FINAL && !isOverride } // Final is the default
             .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
+            .filterNot { it == OPEN && isInInterface } // functions methods are implicitly open
         )
         if (valueParameters.isNotEmpty()) {
           addParameters(valueParameters.mapIndexed { index, param ->
@@ -610,7 +613,8 @@ private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: ((index: Int) -> TypeName),
   isConstructorParam: Boolean,
   annotations: Iterable<AnnotationSpec>,
-  propertyData: PropertyData?
+  propertyData: PropertyData?,
+  isInInterface: Boolean
 ): PropertySpec {
   val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
@@ -636,6 +640,8 @@ private fun ImmutableKmProperty.toPropertySpec(
         addModifiers(flags.modalities
             .filterNot { it == FINAL && !isOverride } // Final is the default
             .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
+            .filterNot { it == OPEN && isInInterface } // Interface properties implicitly open
+            .filterNot { it == ABSTRACT && isInInterface } // Interface properties implicitly abstract
         )
         if (isOverride) {
           addModifiers(KModifier.OVERRIDE)
@@ -677,8 +683,8 @@ private fun ImmutableKmProperty.toPropertySpec(
             constant != null -> initializer(constant)
             isConstructorParam -> initializer(name)
             returnTypeName.isNullable -> initializer("null")
-            isAbstract -> {
-              // No-op, don't emit an initializer for abstract properties
+            isAbstract || isInInterface -> {
+              // No-op, don't emit an initializer for abstract or interface properties
             }
             else -> initializer(NOT_IMPLEMENTED)
           }
