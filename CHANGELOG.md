@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+## Version 1.4.2
+
+_2019-10-28_
+
+ * Fix: Properly handle abstract elements in KotlinPoet-metadata.
+ * Fix: Properly handle typealiases in KotlinPoet-metadata.
+ * Fix: Properly render % symbols at the end of KDocs.
+
 ## Version 1.4.1
 
 _2019-10-18_
