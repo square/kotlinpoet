@@ -34,7 +34,6 @@ import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.Class
 import com.squareup.kotlinpoet.tag
 import org.junit.Ignore
 import org.junit.Test
-import java.io.Serializable
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
