@@ -34,11 +34,14 @@ import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.Class
 import com.squareup.kotlinpoet.tag
 import org.junit.Ignore
 import org.junit.Test
+import java.io.Serializable
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.test.fail
+
+private const val HEATMAP_REFRESH_MILLIS: Long = 5 * 60 * 1000L
 
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -1785,7 +1788,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         abstract fun bar()
 
+        abstract fun barWithReturn(): kotlin.String
+
         fun fuz() {
+        }
+
+        fun fuzWithReturn(): kotlin.String {
+          throw NotImplementedError("Stub!")
         }
       }
     """.trimIndent())
@@ -1794,9 +1803,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   abstract class AbstractClass {
     abstract val foo: String
     abstract fun bar()
+    abstract fun barWithReturn(): String
 
     val baz: String? = null
     fun fuz() {}
+    fun fuzWithReturn(): String {
+      return ""
+    }
   }
 
   // Regression test for https://github.com/square/kotlinpoet/issues/820
