@@ -574,7 +574,9 @@ private fun ImmutableKmFunction.toFunSpec(
         val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamResolver)
         if (returnTypeName != UNIT) {
           returns(returnTypeName)
-          addStatement(NOT_IMPLEMENTED)
+          if (!isAbstract) {
+            addStatement(NOT_IMPLEMENTED)
+          }
         }
         receiverParameterType?.toTypeName(typeParamResolver)?.let { receiver(it) }
       }

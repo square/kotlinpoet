@@ -1785,7 +1785,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         abstract fun bar()
 
+        abstract fun barWithReturn(): kotlin.String
+
         fun fuz() {
+        }
+
+        fun fuzWithReturn(): kotlin.String {
+          throw NotImplementedError("Stub!")
         }
       }
     """.trimIndent())
@@ -1794,9 +1800,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   abstract class AbstractClass {
     abstract val foo: String
     abstract fun bar()
+    abstract fun barWithReturn(): String
 
     val baz: String? = null
     fun fuz() {}
+    fun fuzWithReturn(): String {
+      return ""
+    }
   }
 
   // Regression test for https://github.com/square/kotlinpoet/issues/820
