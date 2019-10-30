@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+## Version 1.4.3
+
+_2019-10-30_
+
+ * Fix: Don't emit stubs for abstract functions in KotlinPoet-metadata.
+ 
 ## Version 1.4.2
 
 _2019-10-28_
