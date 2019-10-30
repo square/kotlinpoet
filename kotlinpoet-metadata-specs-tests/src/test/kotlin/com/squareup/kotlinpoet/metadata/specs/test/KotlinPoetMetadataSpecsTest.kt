@@ -40,8 +40,6 @@ import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.test.fail
 
-private const val HEATMAP_REFRESH_MILLIS: Long = 5 * 60 * 1000L
-
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
 class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
