@@ -540,7 +540,8 @@ private fun ImmutableKmFunction.toFunSpec(
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
                 typeParamResolver,
-                methodData?.parameterAnnotations?.getValue(index).orEmpty()
+                // This can be empty if the element is synthetic
+                methodData?.parameterAnnotations?.get(index).orEmpty()
             )
           })
         }
