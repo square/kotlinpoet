@@ -720,7 +720,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         /**
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
          */
-        @kotlin.jvm.JvmSynthetic
         inline fun <reified T> reified(param: T) {
         }
       }
