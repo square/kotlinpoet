@@ -716,6 +716,12 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         fun functionWithT(param: T) {
         }
+
+        /**
+         * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
+         */
+        inline fun <reified T> reified(param: T) {
+        }
       }
     """.trimIndent())
 
@@ -731,6 +737,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     fun <T> functionAlsoWithT(param: T) {
     }
     fun <R> functionWithADifferentType(param: R) {
+    }
+    // Regression for https://github.com/square/kotlinpoet/issues/829
+    inline fun <reified T> reified(param: T) {
     }
   }
 
