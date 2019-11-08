@@ -100,6 +100,7 @@ import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isPrivate
 import com.squareup.kotlinpoet.metadata.isProtected
 import com.squareup.kotlinpoet.metadata.isPublic
+import com.squareup.kotlinpoet.metadata.isReified
 import com.squareup.kotlinpoet.metadata.isSealed
 import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.metadata.isSynthesized
@@ -108,6 +109,7 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
@@ -526,9 +528,15 @@ private fun ImmutableKmFunction.toFunSpec(
   methodData: MethodData?,
   isInInterface: Boolean
 ): FunSpec {
+  val finalAnnotations = if (typeParameters.any { it.isReified }) {
+    // Functions with reified type parameters are implicitly synthetic
+    annotations.filterNot { it.className == JVM_SYNTHETIC }
+  } else {
+    annotations
+  }
   return FunSpec.builder(name)
       .apply {
-        addAnnotations(annotations)
+        addAnnotations(finalAnnotations)
         addVisibility { addModifiers(it) }
         val isOverride = methodData?.isOverride == true
         addModifiers(flags.modalities
@@ -540,7 +548,8 @@ private fun ImmutableKmFunction.toFunSpec(
           addParameters(valueParameters.mapIndexed { index, param ->
             param.toParameterSpec(
                 typeParamResolver,
-                methodData?.parameterAnnotations?.getValue(index).orEmpty()
+                // This can be empty if the element is synthetic
+                methodData?.parameterAnnotations?.get(index).orEmpty()
             )
           })
         }
