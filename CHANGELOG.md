@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+## Version 1.4.4
+
+_2019-11-16_
+
+ * Fix: Support reified inline types in KotlinPoet-metadata.
+ 
 ## Version 1.4.3
 
 _2019-10-30_
