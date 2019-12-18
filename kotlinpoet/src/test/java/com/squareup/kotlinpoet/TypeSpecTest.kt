@@ -3936,6 +3936,36 @@ class TypeSpecTest {
         """.trimIndent())
   }
 
+  // https://github.com/square/kotlinpoet/issues/843
+  @Test fun kdocWithParametersWithoutClassKdoc() {
+    val taco = TypeSpec.classBuilder("Taco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("mild", Boolean::class)
+                .addKdoc(CodeBlock.of("%L", "Whether the taco is mild (ew) or crunchy (ye).\n"))
+                .build())
+            .build())
+        .addProperty(PropertySpec.builder("mild", Boolean::class)
+            .addKdoc("No one likes mild tacos.")
+            .initializer("mild")
+            .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Boolean
+        |
+        |/**
+        | * @param mild Whether the taco is mild (ew) or crunchy (ye).
+        | */
+        |class Taco(
+        |  /**
+        |   * No one likes mild tacos.
+        |   */
+        |  val mild: Boolean
+        |)
+        |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
