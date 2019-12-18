@@ -357,7 +357,7 @@ class TypeSpec private constructor(
     }
     return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
       parametersWithKdoc.forEachIndexed { index, parameter ->
-        if (index == 0) add("\n")
+        if (index == 0 && kdoc.isNotEmpty()) add("\n")
         add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
       }
       build()
