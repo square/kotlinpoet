@@ -201,9 +201,7 @@ class TypeSpec private constructor(
           codeWriter.emit("\n")
           return // Avoid unnecessary braces "{}".
         }
-        if (!isAnnotation) {
-          codeWriter.emit(" {\n")
-        }
+        codeWriter.emit(" {\n")
       }
 
       codeWriter.pushType(this)
@@ -290,9 +288,7 @@ class TypeSpec private constructor(
       codeWriter.unindent()
       codeWriter.popType()
 
-      if (!isAnnotation) {
-        codeWriter.emit("}")
-      }
+      codeWriter.emit("}")
       if (enumName == null && !isAnonymousClass) {
         codeWriter.emit("\n") // If this type isn't also a value, include a trailing newline.
       }
@@ -368,9 +364,6 @@ class TypeSpec private constructor(
 
   private val hasNoBody: Boolean
     get() {
-      if (isAnnotation) {
-        return true
-      }
       if (propertySpecs.isNotEmpty()) {
         val constructorProperties = constructorProperties()
         for (propertySpec in propertySpecs) {
@@ -756,7 +749,7 @@ class TypeSpec private constructor(
       when (companionObjectsCount) {
         0 -> Unit
         1 -> {
-          require(isSimpleClass || kind == Kind.INTERFACE || isEnum) {
+          require(isSimpleClass || kind == Kind.INTERFACE || isEnum || isAnnotation) {
             "$kind types can't have a companion object"
           }
         }
