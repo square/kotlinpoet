@@ -941,6 +941,58 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun annotationWithInnerTypes() {
+    val annotationName = ClassName(tacosPackage, "TacoDelivery")
+    val kindName = annotationName.nestedClass("Kind")
+    val annotation = TypeSpec.annotationBuilder(annotationName)
+            .addModifiers(PUBLIC)
+            .primaryConstructor(FunSpec.constructorBuilder()
+                    .addParameter(ParameterSpec.builder("kind", kindName)
+                            .build())
+                    .addParameter(ParameterSpec.builder("quantity", Int::class)
+                            .defaultValue("QUANTITY_DEFAULT")
+                            .build())
+                    .build())
+            .addProperty(PropertySpec.builder("kind", kindName)
+                    .initializer("kind")
+                    .build())
+            .addProperty(PropertySpec.builder("quantity", Int::class)
+                    .initializer("quantity")
+                    .build())
+            .addType(TypeSpec.enumBuilder("Kind")
+                    .addEnumConstant("SOFT")
+                    .addEnumConstant("HARD")
+                    .build())
+            .addType(TypeSpec.companionObjectBuilder()
+                    .addProperty(PropertySpec
+                            .builder("QUANTITY_DEFAULT", Int::class, KModifier.CONST)
+                            .initializer("%L", 10_000)
+                            .build())
+                    .build())
+            .build()
+
+    assertThat(toString(annotation)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |annotation class TacoDelivery(
+        |  val kind: Kind,
+        |  val quantity: Int = QUANTITY_DEFAULT
+        |) {
+        |  enum class Kind {
+        |    SOFT,
+        |
+        |    HARD
+        |  }
+        |
+        |  companion object {
+        |    const val QUANTITY_DEFAULT: Int = 10000
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
   @Ignore @Test fun innerAnnotationInAnnotationDeclaration() {
     val bar = TypeSpec.annotationBuilder("Bar")
         .primaryConstructor(FunSpec.constructorBuilder()
