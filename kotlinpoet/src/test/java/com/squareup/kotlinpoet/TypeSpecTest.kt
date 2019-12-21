@@ -941,7 +941,7 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun annotationWithInnerTypes() {
+  @Test fun annotationWithNestedTypes() {
     val annotationName = ClassName(tacosPackage, "TacoDelivery")
     val kindName = annotationName.nestedClass("Kind")
     val annotation = TypeSpec.annotationBuilder(annotationName)
