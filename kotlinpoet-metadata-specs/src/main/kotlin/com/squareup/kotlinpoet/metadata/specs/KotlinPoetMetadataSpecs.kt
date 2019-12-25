@@ -110,7 +110,7 @@ import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
@@ -170,7 +170,7 @@ fun TypeElement.toFileSpec(
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toTypeSpec(
   classInspector: ClassInspector?,
-  className: ClassName = bestGuessClassName(name)
+  className: ClassName = createClassName(name)
 ): TypeSpec {
   return toTypeSpec(classInspector, className, null)
 }
@@ -179,7 +179,7 @@ fun ImmutableKmClass.toTypeSpec(
 @KotlinPoetMetadataPreview
 fun ImmutableKmClass.toFileSpec(
   classInspector: ClassInspector?,
-  className: ClassName = bestGuessClassName(name)
+  className: ClassName = createClassName(name)
 ): FileSpec {
   return FileSpec.get(
       packageName = className.packageName,
@@ -285,7 +285,7 @@ private fun ImmutableKmClass.toTypeSpec(
     // - First element of an interface type is the first superinterface
     val superClassFilter = classInspector?.let { handler ->
       { type: ImmutableKmType ->
-        !handler.isInterface(bestGuessClassName((type.classifier as KmClassifier.Class).name))
+        !handler.isInterface(createClassName((type.classifier as KmClassifier.Class).name))
       }
     } ?: { true }
     val superClass = supertypes.asSequence()

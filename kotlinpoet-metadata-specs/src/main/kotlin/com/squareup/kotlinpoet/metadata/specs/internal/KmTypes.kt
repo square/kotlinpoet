@@ -86,7 +86,7 @@ internal fun ImmutableKmType.toTypeName(
     is KmClassifier.Class -> {
       flexibleTypeUpperBound?.toTypeName(typeParamResolver)?.let { return it }
       outerType?.toTypeName(typeParamResolver)?.let { return it }
-      var finalType: TypeName = ClassInspectorUtil.bestGuessClassName(valClassifier.name.replace("/", "."))
+      var finalType: TypeName = ClassInspectorUtil.createClassName(valClassifier.name.replace("/", "."))
       if (argumentList.isNotEmpty()) {
         val finalTypeString = finalType.toString()
         if (finalTypeString.startsWith("kotlin.Function")) {
@@ -128,7 +128,7 @@ internal fun ImmutableKmType.toTypeName(
       finalType
     }
     is TypeAlias -> {
-      ClassInspectorUtil.bestGuessClassName(valClassifier.name)
+      ClassInspectorUtil.createClassName(valClassifier.name)
     }
   }
 

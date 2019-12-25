@@ -11,56 +11,56 @@ import kotlin.test.Test
 class ClassInspectorUtilTest {
 
   @Test fun bestGuess_simple() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Foo"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Foo"))
         .isEqualTo(ClassName("some.path", "Foo"))
   }
 
   @Test fun bestGuess_nested() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Foo.Nested"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Foo.Nested"))
         .isEqualTo(ClassName("some.path", "Foo", "Nested"))
   }
 
   @Test fun bestGuess_simple_dollarNameStart() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Foo$"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Foo$"))
         .isEqualTo(ClassName("some.path", "Foo$"))
   }
 
   @Test fun bestGuess_simple_dollarNameMiddle() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Fo${'$'}o"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Fo${'$'}o"))
         .isEqualTo(ClassName("some.path", "Fo${'$'}o"))
   }
 
   @Test fun bestGuess_simple_dollarNameEnd() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Nested.${'$'}Foo"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Nested.${'$'}Foo"))
         .isEqualTo(ClassName("some.path", "Nested", "${'$'}Foo"))
   }
 
   @Test fun bestGuess_nested_dollarNameStart() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Nested.Foo$"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Nested.Foo$"))
         .isEqualTo(ClassName("some.path", "Nested", "Foo$"))
   }
 
   @Test fun bestGuess_nested_dollarNameMiddle() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Nested.Fo${'$'}o"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Nested.Fo${'$'}o"))
         .isEqualTo(ClassName("some.path", "Nested", "Fo${'$'}o"))
   }
 
   @Test fun bestGuess_nested_dollarNameEnd() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("some/path/Nested.${'$'}Foo"))
+    assertThat(ClassInspectorUtil.createClassName("some/path/Nested.${'$'}Foo"))
         .isEqualTo(ClassName("some.path", "Nested", "${'$'}Foo"))
   }
 
   @Test fun bestGuess_noPackageName() {
-    assertThat(ClassInspectorUtil.bestGuessClassName("ClassWithNoPackage"))
+    assertThat(ClassInspectorUtil.createClassName("ClassWithNoPackage"))
         .isEqualTo(ClassName("", "ClassWithNoPackage"))
   }
 
   // Regression test for avoiding https://github.com/square/kotlinpoet/issues/795
   @Test fun bestGuess_noEmptyNames() {
-    val noPackage = ClassInspectorUtil.bestGuessClassName("ClassWithNoPackage")
+    val noPackage = ClassInspectorUtil.createClassName("ClassWithNoPackage")
     assertThat(noPackage.simpleNames.any { it.isEmpty() }).isFalse()
 
-    val withPackage = ClassInspectorUtil.bestGuessClassName("path/to/ClassWithNoPackage")
+    val withPackage = ClassInspectorUtil.createClassName("path/to/ClassWithNoPackage")
     assertThat(withPackage.simpleNames.any { it.isEmpty() }).isFalse()
   }
 
