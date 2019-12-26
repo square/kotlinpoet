@@ -4018,6 +4018,21 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/848
+  @Test fun escapeEnumConstantNames() {
+    val enum = TypeSpec
+        .enumBuilder("MyEnum")
+        .addEnumConstant("object")
+        .build()
+    assertThat(toString(enum)).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |enum class MyEnum {
+      |  `object`
+      |}
+      |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }
