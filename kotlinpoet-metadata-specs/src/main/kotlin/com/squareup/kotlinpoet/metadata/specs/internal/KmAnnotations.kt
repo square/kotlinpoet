@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.bestGuessClassName
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
@@ -27,7 +27,7 @@ import kotlinx.metadata.KmAnnotationArgument.UShortValue
 
 @KotlinPoetMetadataPreview
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
-  val cn = bestGuessClassName(className)
+  val cn = createClassName(className)
   return AnnotationSpec.builder(cn)
       .apply {
         arguments.forEach { (name, arg) ->
@@ -53,8 +53,8 @@ internal fun KmAnnotationArgument<*>.toCodeBlock(): CodeBlock {
     is UIntValue -> CodeBlock.of("%Lu", value)
     is ULongValue -> CodeBlock.of("%Lu", value)
     is StringValue -> CodeBlock.of("%S", value)
-    is KClassValue -> CodeBlock.of("%T::class", bestGuessClassName(value))
-    is EnumValue -> CodeBlock.of("%T.%L", bestGuessClassName(enumClassName), enumEntryName)
+    is KClassValue -> CodeBlock.of("%T::class", createClassName(value))
+    is EnumValue -> CodeBlock.of("%T.%L", createClassName(enumClassName), enumEntryName)
     is AnnotationValue -> CodeBlock.of("%L", value.toAnnotationSpec())
     is ArrayValue -> value.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
   }

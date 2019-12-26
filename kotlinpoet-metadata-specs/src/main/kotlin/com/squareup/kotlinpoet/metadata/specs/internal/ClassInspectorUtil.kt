@@ -175,7 +175,7 @@ object ClassInspectorUtil {
    * Local classes are prefixed with ".", but for KotlinPoetMetadataSpecs' use case we don't deal
    * with those.
    */
-  fun bestGuessClassName(kotlinMetadataName: String): ClassName {
+  fun createClassName(kotlinMetadataName: String): ClassName {
     require(!kotlinMetadataName.isLocal) {
       "Local/anonymous classes are not supported!"
     }
