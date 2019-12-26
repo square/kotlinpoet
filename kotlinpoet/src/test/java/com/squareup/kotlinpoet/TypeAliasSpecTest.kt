@@ -196,6 +196,13 @@ class TypeAliasSpecTest {
 
     assertThat(builder.build().annotations).containsExactly(javaWord)
   }
+
+  @Test fun nameEscaping() {
+    val typeAlias = TypeAliasSpec.builder("fun", String::class).build()
+    assertThat(typeAlias.toString()).isEqualTo("""
+      |typealias `fun` = kotlin.String
+      |""".trimMargin())
+  }
 }
 
 @Retention(RUNTIME)
