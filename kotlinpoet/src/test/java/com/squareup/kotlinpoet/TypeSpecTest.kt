@@ -3175,12 +3175,6 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun requiresNonKeywordName() {
-    assertThrows<IllegalArgumentException> {
-      TypeSpec.enumBuilder("when")
-    }.hasMessageThat().isEqualTo("not a valid name: when")
-  }
-
   @Test fun internalFunForbiddenInInterface() {
     val type = TypeSpec.interfaceBuilder("ITaco")
 
@@ -4030,6 +4024,13 @@ class TypeSpecTest {
       |enum class MyEnum {
       |  `object`
       |}
+      |""".trimMargin())
+  }
+
+  @Test fun escapeClassNames() {
+    val type = TypeSpec.classBuilder("fun").build()
+    assertThat(type.toString()).isEqualTo("""
+      |class `fun`
       |""".trimMargin())
   }
 
