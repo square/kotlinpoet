@@ -34,12 +34,6 @@ class TypeAliasSpecTest {
         |""".trimMargin())
   }
 
-  @Test fun keywordForbiddenAsTypeAliasName() {
-    assertThrows<IllegalArgumentException> {
-      TypeAliasSpec.builder("null", String::class)
-    }
-  }
-
   @Test fun typeVariable() {
     val v = TypeVariableName("V")
     val typeAliasSpec = TypeAliasSpec
@@ -88,8 +82,9 @@ class TypeAliasSpecTest {
   @Test fun implTypeAlias() {
     val typeName = AtomicReference::class.asClassName().parameterizedBy(TypeVariableName("V"))
     val typeAliasSpec = TypeAliasSpec
-        .builder("AtomicRef<V>", typeName)
+        .builder("AtomicRef", typeName)
         .addModifiers(KModifier.ACTUAL)
+        .addTypeVariable(TypeVariableName("V"))
         .build()
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
@@ -195,6 +190,13 @@ class TypeAliasSpecTest {
     builder.annotations.add(javaWord)
 
     assertThat(builder.build().annotations).containsExactly(javaWord)
+  }
+
+  @Test fun nameEscaping() {
+    val typeAlias = TypeAliasSpec.builder("fun", String::class).build()
+    assertThat(typeAlias.toString()).isEqualTo("""
+      |typealias `fun` = kotlin.String
+      |""".trimMargin())
   }
 }
 

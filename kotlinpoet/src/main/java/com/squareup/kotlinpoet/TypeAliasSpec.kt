@@ -38,7 +38,7 @@ class TypeAliasSpec private constructor(
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emitCode("typealias %L", name)
+    codeWriter.emitCode("typealias %N", name)
     codeWriter.emitTypeVariables(typeVariables)
     codeWriter.emitCode(" = %T", type)
     codeWriter.emit("\n")
@@ -76,10 +76,6 @@ class TypeAliasSpec private constructor(
     val typeVariables = mutableSetOf<TypeVariableName>()
     val annotations = mutableListOf<AnnotationSpec>()
     override val tags = mutableMapOf<KClass<*>, Any>()
-
-    init {
-      require(name.isName) { "not a valid name: $name" }
-    }
 
     fun addModifiers(vararg modifiers: KModifier) = apply {
       modifiers.forEach(this::addModifier)
