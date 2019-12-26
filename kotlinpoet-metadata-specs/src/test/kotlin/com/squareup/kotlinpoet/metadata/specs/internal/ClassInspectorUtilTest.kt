@@ -64,6 +64,11 @@ class ClassInspectorUtilTest {
     assertThat(withPackage.simpleNames.any { it.isEmpty() }).isFalse()
   }
 
+  @Test fun createClassName_packageWithCaps() {
+    assertThat(ClassInspectorUtil.createClassName("some/Path/Foo.Nested"))
+        .isEqualTo(ClassName("some.Path", "Foo", "Nested"))
+  }
+
   @Test fun throwsSpec_normal() {
     assertThat(ClassInspectorUtil.createThrowsSpec(listOf(Exception::class.asClassName())))
         .isEqualTo(AnnotationSpec.builder(Throws::class.asClassName())
