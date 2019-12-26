@@ -461,10 +461,6 @@ class TypeSpec private constructor(
     val funSpecs = mutableListOf<FunSpec>()
     val typeSpecs = mutableListOf<TypeSpec>()
 
-    init {
-      require(name == null || name.isName) { "not a valid name: $name" }
-    }
-
     fun addKdoc(format: String, vararg args: Any) = apply {
       kdoc.add(format, *args)
     }
