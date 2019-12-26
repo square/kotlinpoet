@@ -89,7 +89,12 @@ class TypeSpec private constructor(
     return builder
   }
 
-  internal fun emit(codeWriter: CodeWriter, enumName: String?, implicitModifiers: Set<KModifier> = emptySet(), isNestedExternal: Boolean = false) {
+  internal fun emit(
+    codeWriter: CodeWriter,
+    enumName: String?,
+    implicitModifiers: Set<KModifier> = emptySet(),
+    isNestedExternal: Boolean = false
+  ) {
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -673,10 +678,7 @@ class TypeSpec private constructor(
 
     fun build(): TypeSpec {
       if (enumConstants.isNotEmpty()) {
-        check(isEnum) { "${this.name} is not enum and cannot have enum constants" }
-        for (it in enumConstants.keys) {
-          require(it.isName) { "not a valid enum constant: $name" }
-        }
+        check(isEnum) { "$name is not an enum and cannot have enum constants" }
       }
 
       if (superclassConstructorParameters.isNotEmpty()) {
