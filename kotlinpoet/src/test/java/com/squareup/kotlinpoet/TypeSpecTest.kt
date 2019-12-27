@@ -4034,6 +4034,19 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun escapeInnerClassName() {
+    val tacoType = ClassName("com.squareup.tacos", "Taco", "object")
+    val funSpec = FunSpec.builder("printTaco")
+        .addParameter("taco", tacoType)
+        .addStatement("print(taco)")
+        .build()
+    assertThat(funSpec.toString()).isEqualTo("""
+      |fun printTaco(taco: com.squareup.tacos.Taco.`object`) {
+      |  print(taco)
+      |}
+      |""".trimMargin())
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

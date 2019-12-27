@@ -170,8 +170,6 @@ internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 internal val String.isKeyword get() = this in KEYWORDS
 
-internal val String.isName get() = split("\\.").none { it.isKeyword }
-
 internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
   val lastFormatPart = trim().formatParts.last()
   if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {

@@ -346,12 +346,6 @@ class ClassName internal constructor(
    */
   val simpleNames get() = names.subList(1, names.size)
 
-  init {
-    for (i in 1 until names.size) {
-      require(names[i].isName) { "part ${names[i]} is keyword" }
-    }
-  }
-
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,
