@@ -334,7 +334,7 @@ class TypeSpec private constructor(
     parameter: ParameterSpec
   ): Boolean {
     val parameterName = CodeBlock.of("%N", parameter).toString()
-    val initializerCode = property.initializer.toString().escapeIfNotJavaIdentifier().escapeIfKeyword()
+    val initializerCode = property.initializer.toString().escapeIfNecessary(validate = false)
     return parameterName == initializerCode
   }
 
