@@ -36,13 +36,6 @@ internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
     enumValues<T>().filterTo(mutableSetOf(), this::contains)
 
-internal fun requireExactlyOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
-  val count = mutuallyExclusive.count(modifiers::contains)
-  require(count == 1) {
-    "modifiers $modifiers must contain one of ${mutuallyExclusive.contentToString()}"
-  }
-}
-
 internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
   require(count <= 1) {
@@ -141,11 +134,6 @@ internal fun stringLiteralWithQuotes(
     return result.toString()
   }
 }
-
-/**
- * @receiver Canonical name
- */
-internal fun String.escapeKeywords() = split('.').joinToString(".") { it.escapeIfKeyword() }
 
 internal fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
 
