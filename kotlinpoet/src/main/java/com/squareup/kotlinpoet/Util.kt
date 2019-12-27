@@ -135,29 +135,6 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
-
-internal fun String.escapeIfNotJavaIdentifier() =
-  if (!Character.isJavaIdentifierStart(first()) || drop(1).any { !Character.isJavaIdentifierPart(it) }) "`$this`" else this
-
-internal fun String.escapeIfNecessary() = escapeIfNotJavaIdentifier().escapeIfKeyword().failIfEscapeInvalid()
-
-internal fun String.failIfEscapeInvalid(): String {
-  require(!any { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
-    "Can't escape identifier $this because it contains illegal characters: " +
-    ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("") }
-
-  return this
-}
-
-internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
-    .filter { it.isNotEmpty() }
-    .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
-
-internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
-
-internal val String.isKeyword get() = this in KEYWORDS
-
 internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
   val lastFormatPart = trim().formatParts.last()
   if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
@@ -179,6 +156,8 @@ private val IDENTIFIER_REGEX =
     "|" +
     "(`[^\n\r`]+`)")
     .toRegex()
+
+internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 // https://github.com/JetBrains/kotlin/blob/master/core/descriptors/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java
 private val KEYWORDS = setOf(
@@ -212,5 +191,36 @@ private val KEYWORDS = setOf(
     "typeof"
 )
 
+internal val String.isKeyword get() = this in KEYWORDS
+
 // https://github.com/JetBrains/kotlin/blob/master/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JvmSimpleNameBacktickChecker.kt
 private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+
+private fun String.failIfEscapeInvalid() {
+  require(!any { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
+    "Can't escape identifier $this because it contains illegal characters: " +
+        ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("") }
+}
+
+internal fun String.escapeIfNecessary(validate: Boolean = true): String {
+  val escapedString = escapeIfNotJavaIdentifier().escapeIfKeyword()
+  if (validate) {
+    escapedString.failIfEscapeInvalid()
+  }
+  return escapedString
+}
+
+private fun String.escapeIfKeyword() = if (isKeyword) "`$this`" else this
+
+private fun String.escapeIfNotJavaIdentifier(): String {
+  return if (!Character.isJavaIdentifierStart(first()) ||
+      drop(1).any { !Character.isJavaIdentifierPart(it) }) {
+    "`$this`"
+  } else {
+    this
+  }
+}
+
+internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
+    .filter { it.isNotEmpty() }
+    .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
