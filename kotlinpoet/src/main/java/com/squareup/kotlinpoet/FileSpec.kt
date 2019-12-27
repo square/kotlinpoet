@@ -223,10 +223,6 @@ class FileSpec private constructor(
 
     val annotations = mutableListOf<AnnotationSpec>()
 
-    init {
-      require(name.isName) { "not a valid file name: $name" }
-    }
-
     /**
      * Add an annotation to the file.
      *

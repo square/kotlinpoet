@@ -285,4 +285,12 @@ class FileWritingTest {
         |class Taco
         |""".trimMargin())
   }
+
+  @Test fun fileWithKeywordName() {
+    val type = TypeSpec.classBuilder("fun").build()
+    FileSpec.get("", type).writeTo(filer)
+
+    val testPath = fsRoot.resolve("fun.kt")
+    assertThat(Files.exists(testPath)).isTrue()
+  }
 }
