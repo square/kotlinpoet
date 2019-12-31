@@ -209,7 +209,7 @@ class CodeBlockTest {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
     }.hasMessageThat().isEqualTo("""
-      |Can't close a statement that hasn't been opened (closing » is not preceded by an 
+      |Can't close a statement that hasn't been opened (closing » is not preceded by an
       |opening «).
       |Current code block:
       |- Format parts: [«, print(, %L, », ), \n, »]

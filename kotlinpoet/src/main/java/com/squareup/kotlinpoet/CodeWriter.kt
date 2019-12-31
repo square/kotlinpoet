@@ -312,7 +312,7 @@ internal class CodeWriter constructor(
         "»" -> {
           check(statementLine != -1) {
             """
-            |Can't close a statement that hasn't been opened (closing » is not preceded by an 
+            |Can't close a statement that hasn't been opened (closing » is not preceded by an
             |opening «).
             |Current code block:
             |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
