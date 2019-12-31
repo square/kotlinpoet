@@ -222,8 +222,7 @@ internal class CodeWriter constructor(
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
     while (partIterator.hasNext()) {
-      val part = partIterator.next()
-      when (part) {
+      when (val part = partIterator.next()) {
         "%L" -> emitLiteral(codeBlock.args[a++], isConstantContext)
 
         "%N" -> emit(codeBlock.args[a++] as String)
@@ -298,12 +297,28 @@ internal class CodeWriter constructor(
         "⇤" -> unindent()
 
         "«" -> {
-          check(statementLine == -1) { "statement enter « followed by statement enter «" }
+          check(statementLine == -1) {
+            """
+            |Can't open a new statement until the current statement is closed (opening « followed
+            |by another « without a closing »).
+            |Current code block:
+            |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
+            |- Arguments: ${codeBlock.args}
+            |""".trimMargin()
+          }
           statementLine = 0
         }
 
         "»" -> {
-          check(statementLine != -1) { "statement exit » has no matching statement enter «" }
+          check(statementLine != -1) {
+            """
+            |Can't close a statement that hasn't been opened (closing » is not preceded by an 
+            |opening «).
+            |Current code block:
+            |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
+            |- Arguments: ${codeBlock.args}
+            |""".trimMargin()
+          }
           if (statementLine > 0) {
             unindent(2) // End a multi-line statement. Decrease the indentation level.
           }
