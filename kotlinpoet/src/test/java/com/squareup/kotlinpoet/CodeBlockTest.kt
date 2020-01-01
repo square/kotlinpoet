@@ -186,19 +186,35 @@ class CodeBlockTest {
   }
 
   @Test fun tooManyStatementEnters() {
-    val codeBlock = CodeBlock.builder().add("««").build()
+    val codeBlock = CodeBlock.builder()
+        .addStatement("print(«%L»)", "1 + 1")
+        .build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("statement enter « followed by statement enter «")
+    }.hasMessageThat().isEqualTo("""
+      |Can't open a new statement until the current statement is closed (opening « followed
+      |by another « without a closing »).
+      |Current code block:
+      |- Format parts: [«, print(, «, %L, », ), \n, »]
+      |- Arguments: [1 + 1]
+      |""".trimMargin())
   }
 
   @Test fun statementExitWithoutStatementEnter() {
-    val codeBlock = CodeBlock.builder().add("»").build()
+    val codeBlock = CodeBlock.builder()
+        .addStatement("print(%L»)", "1 + 1")
+        .build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("statement exit » has no matching statement enter «")
+    }.hasMessageThat().isEqualTo("""
+      |Can't close a statement that hasn't been opened (closing » is not preceded by an
+      |opening «).
+      |Current code block:
+      |- Format parts: [«, print(, %L, », ), \n, »]
+      |- Arguments: [1 + 1]
+      |""".trimMargin())
   }
 
   @Test fun nullableType() {

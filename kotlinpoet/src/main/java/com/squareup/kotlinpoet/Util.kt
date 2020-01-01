@@ -67,6 +67,10 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   else -> Character.toString(c)
 }
 
+internal fun escapeCharacterLiterals(s: String) = buildString {
+  for (c in s) append(characterLiteralWithoutSingleQuotes(c))
+}
+
 private val Char.isIsoControl: Boolean
   get() {
     return this in '\u0000'..'\u001F' || this in '\u007F'..'\u009F'
