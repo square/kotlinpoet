@@ -622,10 +622,13 @@ private fun ImmutableKmProperty.toPropertySpec(
   if (containerData != null && propertyData != null) {
     if (hasGetter) {
       getterSignature?.let { getterSignature ->
-        if (containerData is ClassData && !containerData.declarationContainer.isInterface &&
-            classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
+        if (containerData is ClassData &&
+            !containerData.declarationContainer.isInterface &&
+            classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
+            !isOpen &&
+            !isAbstract) {
           // Infer if JvmName was used
-          // We skip interface types for this because they can't have @JvmName.
+          // We skip interface types or open/abstract properties because they can't have @JvmName.
           // For annotation properties, kotlinc puts JvmName annotations by default in
           // bytecode but they're implicit in source, so we expect the simple name for
           // annotation types.
@@ -648,10 +651,12 @@ private fun ImmutableKmProperty.toPropertySpec(
         if (containerData is ClassData &&
             !containerData.declarationContainer.isAnnotation &&
             !containerData.declarationContainer.isInterface &&
-            classInspector?.supportsNonRuntimeRetainedAnnotations == false) {
+            classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
+            !isOpen &&
+            !isAbstract) {
           // Infer if JvmName was used
           // We skip annotation types for this because they can't have vars.
-          // We skip interface types for this because they can't have @JvmName.
+          // We skip interface types or open/abstract properties because they can't have @JvmName.
           setterSignature.jvmNameAnnotation(
               metadataName = "set${name.safeCapitalize(Locale.US)}",
               useSiteTarget = UseSiteTarget.SET
