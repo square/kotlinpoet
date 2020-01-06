@@ -33,12 +33,17 @@ data class MethodData(
    *
    * @param useSiteTarget an optional [UseSiteTarget] that all annotations on this method should
    *        use.
+   * @param containsReifiedTypeParameter an optional boolean indicating if any type parameters on
+   *        this function are `reified`, which are implicitly synthetic.
    */
-  fun allAnnotations(useSiteTarget: UseSiteTarget? = null): Collection<AnnotationSpec> {
+  fun allAnnotations(
+      useSiteTarget: UseSiteTarget? = null,
+      containsReifiedTypeParameter: Boolean = false
+  ): Collection<AnnotationSpec> {
     return ClassInspectorUtil.createAnnotations(
         useSiteTarget) {
       addAll(annotations)
-      if (isSynthetic) {
+      if (isSynthetic && !containsReifiedTypeParameter) {
         add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
       addAll(jvmModifiers.map { it.annotationSpec() })

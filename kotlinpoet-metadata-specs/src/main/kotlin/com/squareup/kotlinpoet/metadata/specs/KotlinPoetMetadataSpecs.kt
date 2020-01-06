@@ -101,6 +101,7 @@ import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isPrivate
 import com.squareup.kotlinpoet.metadata.isProtected
 import com.squareup.kotlinpoet.metadata.isPublic
+import com.squareup.kotlinpoet.metadata.isReified
 import com.squareup.kotlinpoet.metadata.isSealed
 import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.metadata.isSynthesized
@@ -109,6 +110,7 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
@@ -516,8 +518,9 @@ private fun ImmutableKmFunction.toFunSpec(
       }
     }
   }
+  val anyReified = typeParameters.any { it.isReified }
   val annotations = mutableAnnotations
-      .plus(methodData?.allAnnotations().orEmpty())
+      .plus(methodData?.allAnnotations(containsReifiedTypeParameter = anyReified).orEmpty())
       .toTreeSet()
   return FunSpec.builder(name)
       .apply {
