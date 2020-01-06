@@ -110,7 +110,6 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_SYNTHETIC
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver

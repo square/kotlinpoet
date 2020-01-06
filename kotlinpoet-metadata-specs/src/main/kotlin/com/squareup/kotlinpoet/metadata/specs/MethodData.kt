@@ -37,8 +37,8 @@ data class MethodData(
    *        this function are `reified`, which are implicitly synthetic.
    */
   fun allAnnotations(
-      useSiteTarget: UseSiteTarget? = null,
-      containsReifiedTypeParameter: Boolean = false
+    useSiteTarget: UseSiteTarget? = null,
+    containsReifiedTypeParameter: Boolean = false
   ): Collection<AnnotationSpec> {
     return ClassInspectorUtil.createAnnotations(
         useSiteTarget) {

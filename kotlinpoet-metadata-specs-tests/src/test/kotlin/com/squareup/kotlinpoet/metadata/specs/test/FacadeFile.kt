@@ -20,9 +20,9 @@ fun synchronizedFun() {
 
 @JvmOverloads
 fun jvmOverloads(
-    param1: String,
-    optionalParam2: String = "",
-    nullableParam3: String? = null
+  param1: String,
+  optionalParam2: String = "",
+  nullableParam3: String? = null
 ) {
 }
 

@@ -26,7 +26,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmSynthetic
       import kotlin.jvm.Synchronized
-      
+
       @JvmName(name = "jvmStaticFunction")
       fun jvmNameFunction() {
       }
@@ -146,11 +146,11 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.JvmOverloads
       import kotlin.jvm.JvmSynthetic
       import kotlin.jvm.Synchronized
-      
+
       @JvmName(name = "jvmStaticFunction")
       fun jvmNameFunction() {
       }
-      
+
       @JvmOverloads
       fun jvmOverloads(
         param1: kotlin.String,
@@ -249,7 +249,6 @@ class FacadeFileTest : MultiClassInspectorTest() {
       typealias FacadeTypeAliasName = kotlin.String
     """.trimIndent())
   }
-
 }
 
 private fun FileSpec.trimmedToString(): String {
