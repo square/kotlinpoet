@@ -257,6 +257,82 @@ class FacadeFileTest : MultiClassInspectorTest() {
       typealias FacadeTypeAliasName = kotlin.String
     """.trimIndent())
   }
+
+  @IgnoreForHandlerType(
+      handlerType = ELEMENTS,
+      reason = "JvmName not possible in reflection"
+  )
+  @Test
+  fun noJvmName_reflective() {
+    val fileSpec = Class.forName(
+        "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+    //language=kotlin
+    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      package com.squareup.kotlinpoet.metadata.specs.test
+
+      import kotlin
+
+      val prop: kotlin.String = ""
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      handlerType = REFLECTIVE,
+      reason = "JvmName not possible in reflection"
+  )
+  @Test
+  fun noJvmName_elements() {
+    val fileSpec = Class.forName(
+        "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+    //language=kotlin
+    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      package com.squareup.kotlinpoet.metadata.specs.test
+
+      import kotlin
+
+      val prop: kotlin.String = ""
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      handlerType = ELEMENTS,
+      reason = "JvmName not possible in reflection"
+  )
+  @Test
+  fun jvmName_with_kt_reflective() {
+    val fileSpec = Class.forName(
+        "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+    //language=kotlin
+    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      package com.squareup.kotlinpoet.metadata.specs.test
+
+      import kotlin
+
+      val prop2: kotlin.String = ""
+    """.trimIndent())
+  }
+
+  @IgnoreForHandlerType(
+      handlerType = REFLECTIVE,
+      reason = "JvmName not possible in reflection"
+  )
+  @Test
+  fun jvmName_with_kt_elements() {
+    val fileSpec = Class.forName(
+        "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+    //language=kotlin
+    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      @file:JvmName(name = "JvmNameKt")
+  
+      package com.squareup.kotlinpoet.metadata.specs.test
+
+      import kotlin
+      import kotlin.jvm.JvmName
+
+      val prop2: kotlin.String = ""
+    """.trimIndent())
+  }
+
 }
 
 private fun FileSpec.trimmedToString(): String {
