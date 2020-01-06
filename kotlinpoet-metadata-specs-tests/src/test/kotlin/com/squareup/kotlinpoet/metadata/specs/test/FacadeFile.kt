@@ -7,9 +7,24 @@ import kotlin.annotation.AnnotationTarget.FILE
 @Target(FILE)
 annotation class FileAnnotation(val value: String)
 
-typealias FacadeTypeAliasName = String
-typealias FacadeGenericTypeAlias = List<String>
-typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
+@JvmName("jvmStaticFunction")
+fun jvmNameFunction() {
+}
+
+fun regularFun() {
+}
+
+@Synchronized
+fun synchronizedFun() {
+}
+
+@JvmOverloads
+fun jvmOverloads(
+    param1: String,
+    optionalParam2: String = "",
+    nullableParam3: String? = null
+) {
+}
 
 val BOOL_PROP = false
 val BINARY_PROP = 0b00001011
@@ -59,21 +74,6 @@ var syntheticPropertyGetAndSet: kotlin.String? = null
 @set:kotlin.jvm.JvmSynthetic
 var syntheticPropertySet: kotlin.String? = null
 
-fun regularFun() {
-}
-
-@Synchronized
-fun synchronizedFun() {
-}
-
-@JvmName("jvmStaticFunction")
-fun jvmNameFunction() {
-}
-
-@JvmOverloads
-fun jvmOverloads(
-  param1: String,
-  optionalParam2: String = "",
-  nullableParam3: String? = null
-) {
-}
+typealias FacadeTypeAliasName = String
+typealias FacadeGenericTypeAlias = List<String>
+typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
