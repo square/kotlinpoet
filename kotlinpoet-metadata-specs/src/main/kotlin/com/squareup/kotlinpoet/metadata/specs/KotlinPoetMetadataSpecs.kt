@@ -212,7 +212,8 @@ fun ImmutableKmPackage.toFileSpec(
           addFunction(function.toFunSpec(
               classInspector = classInspector,
               containerData = fileData,
-              methodData = methodData
+              methodData = methodData,
+              isInInterface = false
           ))
         }
         for (property in properties) {
@@ -220,7 +221,8 @@ fun ImmutableKmPackage.toFileSpec(
           addProperty(property.toPropertySpec(
               classInspector = classInspector,
               containerData = fileData,
-              propertyData = propertyData
+              propertyData = propertyData,
+              isInInterface = false
           ))
         }
         for (alias in typeAliases) {
@@ -483,12 +485,19 @@ private fun ImmutableKmConstructor.toFunSpec(
 }
 
 @KotlinPoetMetadataPreview
+private val ContainerData.isInterface: Boolean get() {
+  return declarationContainer.let { container ->
+    container is ImmutableKmClass && container.isInterface
+  }
+}
+
+@KotlinPoetMetadataPreview
 private fun ImmutableKmFunction.toFunSpec(
   classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   classInspector: ClassInspector? = null,
   containerData: ContainerData? = null,
   methodData: MethodData? = null,
-  isInInterface: Boolean = false
+  isInInterface: Boolean = containerData?.isInterface ?: false
 ): FunSpec {
   val typeParamsResolver = typeParameters.toTypeParameterResolver(
       fallback = classTypeParamsResolver
@@ -602,7 +611,7 @@ private fun ImmutableKmProperty.toPropertySpec(
   classInspector: ClassInspector? = null,
   containerData: ContainerData? = null,
   propertyData: PropertyData? = null,
-  isInInterface: Boolean = false
+  isInInterface: Boolean = containerData?.isInterface ?: false
 ): PropertySpec {
   val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
