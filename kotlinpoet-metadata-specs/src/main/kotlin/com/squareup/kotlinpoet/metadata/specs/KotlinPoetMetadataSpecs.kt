@@ -519,8 +519,10 @@ private fun ImmutableKmFunction.toFunSpec(
     }
   }
   val anyReified = typeParameters.any { it.isReified }
+  val isInFacade = containerData is FileData
   val annotations = mutableAnnotations
       .plus(methodData?.allAnnotations(containsReifiedTypeParameter = anyReified).orEmpty())
+      .filterNot { isInFacade && it.className == JVM_STATIC }
       .toTreeSet()
   return FunSpec.builder(name)
       .apply {
@@ -672,9 +674,10 @@ private fun ImmutableKmProperty.toPropertySpec(
         // If a property annotation doesn't have a custom site target and is used in a constructor
         // we have to add the property: site target to it.
 
+        val isInFacade = containerData is FileData
         val finalAnnotations = mutableAnnotations
             .plus(propertyData?.allAnnotations.orEmpty())
-            .filterNot { isConst && it.className == JVM_STATIC }
+            .filterNot { (isConst || isInFacade) && it.className == JVM_STATIC }
             .map {
               if (isConstructorParam && it.useSiteTarget == null) {
                 // TODO Ideally don't do this if the annotation use site is only field?
