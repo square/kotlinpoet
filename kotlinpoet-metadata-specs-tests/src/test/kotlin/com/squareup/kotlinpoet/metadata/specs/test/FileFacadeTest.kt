@@ -23,9 +23,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:JvmName(name = "FacadeFile")
       @file:FileAnnotation(value = "file annotations!")
-      
+
       package com.squareup.kotlinpoet.metadata.specs.test
-      
+
       import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
       import kotlin
       import kotlin.jvm.JvmName
@@ -147,9 +147,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:FileAnnotation(value = "file annotations!")
       @file:JvmName(name = "FacadeFile")
-      
+
       package com.squareup.kotlinpoet.metadata.specs.test
-      
+
       import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
       import kotlin
       import kotlin.jvm.JvmName
@@ -329,7 +329,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:JvmName(name = "JvmNameKt")
-  
+
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import kotlin
@@ -338,7 +338,6 @@ class FacadeFileTest : MultiClassInspectorTest() {
       val prop2: kotlin.String = ""
     """.trimIndent())
   }
-
 }
 
 private fun FileSpec.trimmedToString(): String {
