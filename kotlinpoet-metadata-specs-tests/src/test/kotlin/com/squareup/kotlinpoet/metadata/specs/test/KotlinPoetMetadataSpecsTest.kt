@@ -20,9 +20,7 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STRING
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -34,18 +32,12 @@ import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
-import com.squareup.kotlinpoet.metadata.specs.toFileSpec
-import com.squareup.kotlinpoet.metadata.toImmutable
-import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
-import com.squareup.kotlinpoet.tag
-import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
-import kotlin.reflect.KClass
 import kotlin.test.fail
 
 @KotlinPoetMetadataPreview
@@ -1929,12 +1921,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     override val openProp: String? = null
     override fun openFun() {
     }
-  }
-
-  @Test fun facadeFile() {
-    val typeSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
-    println(typeSpec)
   }
 }
 
