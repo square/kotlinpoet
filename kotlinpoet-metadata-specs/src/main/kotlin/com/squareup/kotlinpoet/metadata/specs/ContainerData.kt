@@ -54,7 +54,7 @@ data class ClassData(
  *           [@Metadata][Metadata] annotation.
  * @property className the KotlinPoet [ClassName] of the underlying facade class in JVM.
  * @property jvmName the `@JvmName` of the class or null if it does not have a custom name.
- * @property fileName the file name of the container, defaults to [className]'s simple name + "Kt".
+ *           Default will try to infer from the [className].
  */
 @KotlinPoetMetadataPreview
 data class FileData(
@@ -63,7 +63,13 @@ data class FileData(
   override val properties: Map<ImmutableKmProperty, PropertyData>,
   override val methods: Map<ImmutableKmFunction, MethodData>,
   val className: ClassName,
-  val jvmName: String? = null
+  val jvmName: String? = if (!className.simpleName.endsWith("Kt")) className.simpleName else null
 ) : ContainerData {
-  val fileName: String = jvmName ?: "${className.simpleName}Kt"
+  private val defaultName = "${className.simpleName}Kt"
+
+  /**
+   * The file name of the container, defaults to [className]'s simple name + "Kt". If a [jvmName] is
+   * specified, it will always defer to that.
+   */
+  val fileName: String = jvmName ?: defaultName
 }

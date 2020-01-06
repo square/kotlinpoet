@@ -12,7 +12,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
   @IgnoreForHandlerType(
       handlerType = ELEMENTS,
-      reason = "Elements can detect JvmOverloads"
+      reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
   )
   @Test
   fun facadeFile_reflective() {
@@ -20,8 +20,12 @@ class FacadeFileTest : MultiClassInspectorTest() {
         "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      @file:JvmName(name = "FacadeFile")
+      @file:FileAnnotation(value = "file annotations!")
+      
       package com.squareup.kotlinpoet.metadata.specs.test
-
+      
+      import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
       import kotlin
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmSynthetic
@@ -131,7 +135,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
   @IgnoreForHandlerType(
       handlerType = REFLECTIVE,
-      reason = "Elements can detect JvmOverloads"
+      reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
   )
   @Test
   fun facadeFile_elements() {
@@ -139,8 +143,12 @@ class FacadeFileTest : MultiClassInspectorTest() {
         "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
+      @file:FileAnnotation(value = "file annotations!")
+      @file:JvmName(name = "FacadeFile")
+      
       package com.squareup.kotlinpoet.metadata.specs.test
-
+      
+      import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
       import kotlin
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmOverloads

@@ -20,6 +20,7 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -110,6 +111,7 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createAnnotations
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
@@ -201,12 +203,21 @@ fun ImmutableKmPackage.toFileSpec(
   check(fileData is FileData?) {
     "Unexpected container data type: ${fileData?.javaClass}"
   }
-  return FileSpec.builder(className.packageName, className.simpleName)
+  val fileName = fileData?.let { (it as FileData).fileName } ?: className.simpleName
+  return FileSpec.builder(className.packageName, fileName)
       .apply {
-        fileData?.jvmName?.let { jvmName ->
-          addAnnotation(AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
-              .addMember("name = %S", jvmName)
-              .build())
+        fileData?.let { data ->
+          (data as FileData).jvmName?.let { name ->
+            addAnnotation(AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
+                .addMember("name = %S", name)
+                .build())
+          }
+          val fileAnnotations = createAnnotations(FILE) {
+            addAll(data.annotations.filterNot { it.className == METADATA })
+          }
+          for (fileAnnotation in fileAnnotations) {
+            addAnnotation(fileAnnotation)
+          }
         }
         for (function in functions) {
           val methodData = fileData?.methods?.get(function)
