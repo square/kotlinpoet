@@ -507,9 +507,7 @@ private fun ImmutableKmFunction.toFunSpec(
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
   if (classInspector != null && containerData != null) {
     signature?.let { signature ->
-      if (containerData is ClassData &&
-          !containerData.declarationContainer.isInterface &&
-          !classInspector.supportsNonRuntimeRetainedAnnotations) {
+      if (!containerData.isInterface) {
         // Infer if JvmName was used
         // We skip interface types for this because they can't have @JvmName.
         signature.jvmNameAnnotation(name)?.let { jvmNameAnnotation ->
@@ -624,9 +622,7 @@ private fun ImmutableKmProperty.toPropertySpec(
   if (containerData != null && propertyData != null) {
     if (hasGetter) {
       getterSignature?.let { getterSignature ->
-        if (containerData is ClassData &&
-            !containerData.declarationContainer.isInterface &&
-            classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
+        if (!containerData.isInterface &&
             !isOpen &&
             !isAbstract) {
           // Infer if JvmName was used
@@ -634,7 +630,8 @@ private fun ImmutableKmProperty.toPropertySpec(
           // For annotation properties, kotlinc puts JvmName annotations by default in
           // bytecode but they're implicit in source, so we expect the simple name for
           // annotation types.
-          val expectedMetadataName = if (containerData.declarationContainer.isAnnotation) {
+          val expectedMetadataName = if (containerData is ClassData &&
+              containerData.declarationContainer.isAnnotation) {
             name
           } else {
             "get${name.safeCapitalize(Locale.US)}"
