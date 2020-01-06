@@ -127,7 +127,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
   }
 
   private fun Field.jvmModifiers(): Set<JvmFieldModifier> {
-    return return mutableSetOf<JvmFieldModifier>().apply {
+    return mutableSetOf<JvmFieldModifier>().apply {
       if (Modifier.isTransient(modifiers)) {
         add(TRANSIENT)
       }

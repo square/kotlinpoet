@@ -39,12 +39,12 @@ interface ContainerData {
  */
 @KotlinPoetMetadataPreview
 data class ClassData(
-    override val declarationContainer: ImmutableKmClass,
-    val className: ClassName,
-    override val annotations: Collection<AnnotationSpec>,
-    override val properties: Map<ImmutableKmProperty, PropertyData>,
-    val constructors: Map<ImmutableKmConstructor, ConstructorData>,
-    override val methods: Map<ImmutableKmFunction, MethodData>
+  override val declarationContainer: ImmutableKmClass,
+  val className: ClassName,
+  override val annotations: Collection<AnnotationSpec>,
+  override val properties: Map<ImmutableKmProperty, PropertyData>,
+  val constructors: Map<ImmutableKmConstructor, ConstructorData>,
+  override val methods: Map<ImmutableKmFunction, MethodData>
 ) : ContainerData
 
 /**
@@ -58,12 +58,12 @@ data class ClassData(
  */
 @KotlinPoetMetadataPreview
 data class FileData(
-    override val declarationContainer: ImmutableKmPackage,
-    override val annotations: Collection<AnnotationSpec>,
-    override val properties: Map<ImmutableKmProperty, PropertyData>,
-    override val methods: Map<ImmutableKmFunction, MethodData>,
-    val className: ClassName,
-    val jvmName: String? = null
+  override val declarationContainer: ImmutableKmPackage,
+  override val annotations: Collection<AnnotationSpec>,
+  override val properties: Map<ImmutableKmProperty, PropertyData>,
+  override val methods: Map<ImmutableKmFunction, MethodData>,
+  val className: ClassName,
+  val jvmName: String? = null
 ) : ContainerData {
   val fileName: String = jvmName ?: "${className.simpleName}Kt"
 }

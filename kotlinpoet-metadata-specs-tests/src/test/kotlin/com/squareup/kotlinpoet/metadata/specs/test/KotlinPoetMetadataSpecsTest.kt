@@ -23,8 +23,6 @@ import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
-import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
@@ -37,31 +35,22 @@ import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.Class
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
 import com.squareup.kotlinpoet.metadata.specs.toFileSpec
-import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.metadata.toImmutable
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
-import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
+import kotlin.reflect.KClass
 import kotlin.test.fail
 
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
 class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
-
-  private fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
-    val classInspector = classInspectorFactoryCreator(this@KotlinPoetMetadataSpecsTest)()
-    return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
-        .toKmPackage()
-        .toImmutable()
-        .toFileSpec(classInspector, asClassName())
-  }
 
   @Test
   fun constructorData() {
