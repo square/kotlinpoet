@@ -65,11 +65,10 @@ data class FileData(
   val className: ClassName,
   val jvmName: String? = if (!className.simpleName.endsWith("Kt")) className.simpleName else null
 ) : ContainerData {
-  private val defaultName = "${className.simpleName}Kt"
 
   /**
    * The file name of the container, defaults to [className]'s simple name + "Kt". If a [jvmName] is
    * specified, it will always defer to that.
    */
-  val fileName: String = jvmName ?: defaultName
+  val fileName: String = jvmName ?: className.simpleName.removeSuffix("Kt")
 }

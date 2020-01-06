@@ -18,6 +18,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun facadeFile_reflective() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("FacadeFile")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:JvmName(name = "FacadeFile")
@@ -141,6 +142,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun facadeFile_elements() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("FacadeFile")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:FileAnnotation(value = "file annotations!")
@@ -266,6 +268,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun noJvmName_reflective() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("NoJvmNameFacadeFile")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
@@ -284,6 +287,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun noJvmName_elements() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("NoJvmNameFacadeFile")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
@@ -302,6 +306,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun jvmName_with_kt_reflective() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("JvmName")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
@@ -320,6 +325,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
   fun jvmName_with_kt_elements() {
     val fileSpec = Class.forName(
         "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+    assertThat(fileSpec.name).isEqualTo("JvmName")
     //language=kotlin
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       @file:JvmName(name = "JvmNameKt")
