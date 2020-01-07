@@ -58,7 +58,8 @@ const val CONST_FLOAT_PROP = 1.0f
 const val CONST_DOUBLE_PROP = 1.0
 const val CONST_STRING_PROP = "prop"
 
-@field:kotlin.jvm.JvmSynthetic
+@JvmField
+@kotlin.jvm.JvmSynthetic
 val syntheticFieldProperty: kotlin.String? = null
 
 @field:kotlin.jvm.JvmSynthetic

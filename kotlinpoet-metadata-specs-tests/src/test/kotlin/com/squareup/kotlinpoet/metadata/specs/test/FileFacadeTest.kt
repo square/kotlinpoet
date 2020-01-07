@@ -28,6 +28,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
       import kotlin
+      import kotlin.jvm.JvmField
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmSynthetic
       import kotlin.jvm.Synchronized
@@ -111,6 +112,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       var VAR_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
 
       @field:JvmSynthetic
+      @JvmField
       val syntheticFieldProperty: kotlin.String? = null
 
       @field:JvmSynthetic
