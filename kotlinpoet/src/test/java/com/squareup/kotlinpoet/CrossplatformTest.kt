@@ -18,8 +18,8 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.test.Test
 
 class CrossplatformTest {
 

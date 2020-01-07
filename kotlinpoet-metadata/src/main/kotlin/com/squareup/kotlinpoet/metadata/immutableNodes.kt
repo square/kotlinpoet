@@ -19,6 +19,7 @@
 
 package com.squareup.kotlinpoet.metadata
 
+import java.util.Collections
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
@@ -65,7 +66,6 @@ import kotlinx.metadata.jvm.moduleName
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
-import java.util.Collections
 
 /**
  * Represents an immutable kotlinx-metadata type with a common [Flags] property.

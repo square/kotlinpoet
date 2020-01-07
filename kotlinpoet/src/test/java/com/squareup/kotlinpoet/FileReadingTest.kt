@@ -17,10 +17,10 @@ package com.squareup.kotlinpoet
 
 import com.google.common.io.ByteStreams
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.Test
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.tools.JavaFileObject.Kind
+import kotlin.test.Test
 
 class FileReadingTest {
   @Test fun javaFileObjectUri() {

@@ -18,8 +18,8 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.KModifier.VARARG
-import kotlin.test.Test
 import javax.annotation.Nullable
+import kotlin.test.Test
 
 class LambdaTypeNameTest {
 

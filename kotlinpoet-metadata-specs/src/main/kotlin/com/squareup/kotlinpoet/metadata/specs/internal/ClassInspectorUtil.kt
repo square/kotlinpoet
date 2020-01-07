@@ -26,11 +26,11 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import java.util.Collections
+import java.util.TreeSet
 import kotlinx.metadata.isLocal
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import java.util.Collections
-import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
 object ClassInspectorUtil {

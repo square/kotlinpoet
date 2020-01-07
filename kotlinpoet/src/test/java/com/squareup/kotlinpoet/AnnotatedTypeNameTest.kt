@@ -16,12 +16,12 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
-import kotlin.test.Ignore
-import kotlin.test.Test
 
 class AnnotatedTypeNameTest {
   private val NEVER_NULL = AnnotationSpec.builder(NeverNull::class).build()

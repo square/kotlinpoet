@@ -17,11 +17,11 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
-import org.junit.Rule
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 import kotlin.test.Test
+import org.junit.Rule
 
 class AnnotationSpecTest {
 
