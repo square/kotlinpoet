@@ -6,6 +6,7 @@ import com.google.auto.common.Visibility
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
@@ -13,6 +14,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.ImmutableKmClass
 import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
+import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -26,7 +28,9 @@ import com.squareup.kotlinpoet.metadata.readKotlinClassMetadata
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
+import com.squareup.kotlinpoet.metadata.specs.ContainerData
 import com.squareup.kotlinpoet.metadata.specs.FieldData
+import com.squareup.kotlinpoet.metadata.specs.FileData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
@@ -36,11 +40,10 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -53,6 +56,9 @@ import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.LazyThreadSafetyMode.NONE
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
@@ -67,6 +73,9 @@ class ElementsClassInspector private constructor(
   private val typeElementCache = ConcurrentHashMap<ClassName, Optional<TypeElement>>()
   private val methodCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
   private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
+  private val jvmNameType = elements.getTypeElement(JVM_NAME.canonicalName)
+  private val jvmNameName = ElementFilter.methodsIn(jvmNameType.enclosedElements)
+      .first { it.simpleName.toString() == "name" }
 
   private fun lookupTypeElement(className: ClassName): TypeElement? {
     return typeElementCache.getOrPut(className) {
@@ -83,6 +92,7 @@ class ElementsClassInspector private constructor(
     val metadata = typeElement.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
       is KotlinClassMetadata.Class -> kotlinClassMetadata.toImmutableKmClass()
+      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toImmutableKmPackage()
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
     }
   }
@@ -255,21 +265,25 @@ class ElementsClassInspector private constructor(
     }
   }
 
-  override fun classData(
+  override fun containerData(
     declarationContainer: ImmutableKmDeclarationContainer,
     className: ClassName,
     parentClassName: ClassName?
-  ): ClassData {
-    if (declarationContainer !is ImmutableKmClass) {
-      TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
+  ): ContainerData {
+    val typeElement: TypeElement = lookupTypeElement(className) ?: error("No class found for: $className.")
+    val isCompanionObject = when (declarationContainer) {
+      is ImmutableKmClass -> {
+        declarationContainer.isCompanionObject
+      }
+      is ImmutableKmPackage -> {
+        false
+      }
+      else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
     }
-    val kmClass = declarationContainer
-    val typeElement = lookupTypeElement(className)
-        ?: error("No class found for: ${kmClass.name}.")
 
     // Should only be called if parentName has been null-checked
     val classIfCompanion by lazy(NONE) {
-      if (kmClass.isCompanionObject && parentClassName != null) {
+      if (isCompanionObject && parentClassName != null) {
         lookupTypeElement(parentClassName)
             ?: error("No class found for: $parentClassName.")
       } else {
@@ -277,15 +291,7 @@ class ElementsClassInspector private constructor(
       }
     }
 
-    val classAnnotations = if (kmClass.hasAnnotations) {
-      ClassInspectorUtil.createAnnotations {
-        addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
-      }
-    } else {
-      emptyList()
-    }
-
-    val propertyData = kmClass.properties
+    val propertyData = declarationContainer.properties
         .asSequence()
         .filter { it.isDeclaration }
         .filterNot { it.isSynthesized }
@@ -293,7 +299,7 @@ class ElementsClassInspector private constructor(
           val isJvmField = ClassInspectorUtil.computeIsJvmField(
               property = property,
               classInspector = this,
-              isCompanionObject = kmClass.isCompanionObject,
+              isCompanionObject = isCompanionObject,
               hasGetter = property.getterSignature != null,
               hasSetter = property.setterSignature != null,
               hasField = property.fieldSignature != null
@@ -303,7 +309,7 @@ class ElementsClassInspector private constructor(
             // Check the field in the parent first. For const/static/jvmField elements, these only
             // exist in the parent and we want to check that if necessary to avoid looking up a
             // non-existent field in the companion.
-            val parentModifiers = if (kmClass.isCompanionObject && parentClassName != null) {
+            val parentModifiers = if (isCompanionObject && parentClassName != null) {
               classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
             } else {
               emptySet()
@@ -313,7 +319,7 @@ class ElementsClassInspector private constructor(
 
             // TODO we looked up field once, let's reuse it
             val classForOriginalField = typeElement.takeUnless {
-              kmClass.isCompanionObject &&
+              isCompanionObject &&
                   (property.isConst || isJvmField || isStatic)
             } ?: classIfCompanion
 
@@ -341,7 +347,7 @@ class ElementsClassInspector private constructor(
                 isSynthetic = false,
                 jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
                   // JvmField companion objects don't need JvmStatic, it's implicit
-                  kmClass.isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+                  isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
                 },
                 constant = constant
             )
@@ -386,7 +392,7 @@ class ElementsClassInspector private constructor(
           // not legal
           var finalFieldData = fieldData
           fieldData?.jvmModifiers?.let {
-            if (kmClass.isCompanionObject && JvmFieldModifier.STATIC in it) {
+            if (isCompanionObject && JvmFieldModifier.STATIC in it) {
               finalFieldData = fieldData.copy(jvmModifiers = fieldData.jvmModifiers
                   .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC })
               annotations += AnnotationSpec.builder(
@@ -403,37 +409,7 @@ class ElementsClassInspector private constructor(
           )
         }
 
-    val constructorData = kmClass.constructors.associateWith { kmConstructor ->
-      if (kmClass.isAnnotation || kmClass.isInline) {
-        //
-        // Annotations are interfaces in bytecode, but kotlin metadata will still report a
-        // constructor signature
-        //
-        // Inline classes have no constructors at runtime
-        //
-        return@associateWith ConstructorData.EMPTY
-      }
-      val signature = kmConstructor.signature
-      if (signature != null) {
-        val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
-            ?: return@associateWith ConstructorData.EMPTY
-        ConstructorData(
-            annotations = if (kmConstructor.hasAnnotations) {
-              constructor.annotationSpecs()
-            } else {
-              emptyList()
-            },
-            parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
-            isSynthetic = false,
-            jvmModifiers = constructor.jvmModifiers(),
-            exceptions = constructor.exceptionTypeNames()
-        )
-      } else {
-        ConstructorData.EMPTY
-      }
-    }
-
-    val methodData = kmClass.functions.associateWith { kmFunction ->
+    val methodData = declarationContainer.functions.associateWith { kmFunction ->
       val signature = kmFunction.signature
       if (signature != null) {
         val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
@@ -450,14 +426,79 @@ class ElementsClassInspector private constructor(
       }
     }
 
-    return ClassData(
-        declarationContainer = declarationContainer,
-        className = className,
-        annotations = classAnnotations,
-        properties = propertyData,
-        constructors = constructorData,
-        methods = methodData
-    )
+    when (declarationContainer) {
+      is ImmutableKmClass -> {
+        val constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
+          if (declarationContainer.isAnnotation || declarationContainer.isInline) {
+            //
+            // Annotations are interfaces in bytecode, but kotlin metadata will still report a
+            // constructor signature
+            //
+            // Inline classes have no constructors at runtime
+            //
+            return@associateWith ConstructorData.EMPTY
+          }
+          val signature = kmConstructor.signature
+          if (signature != null) {
+            val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
+                ?: return@associateWith ConstructorData.EMPTY
+            ConstructorData(
+                annotations = if (kmConstructor.hasAnnotations) {
+                  constructor.annotationSpecs()
+                } else {
+                  emptyList()
+                },
+                parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+                isSynthetic = false,
+                jvmModifiers = constructor.jvmModifiers(),
+                exceptions = constructor.exceptionTypeNames()
+            )
+          } else {
+            ConstructorData.EMPTY
+          }
+        }
+        return ClassData(
+            declarationContainer = declarationContainer,
+            className = className,
+            annotations = if (declarationContainer.hasAnnotations) {
+              ClassInspectorUtil.createAnnotations {
+                addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+              }
+            } else {
+              emptyList()
+            },
+            properties = propertyData,
+            constructors = constructorData,
+            methods = methodData
+        )
+      }
+      is ImmutableKmPackage -> {
+        // There's no flag for checking if there are annotations, so we just eagerly check in this
+        // case. All annotations on this class are file: site targets in source. This includes
+        // @JvmName.
+        var jvmName: String? = null
+        val fileAnnotations = ClassInspectorUtil.createAnnotations(FILE) {
+          addAll(typeElement.annotationMirrors.map {
+            if (it.annotationType == jvmNameType) {
+              val nameValue = requireNotNull(it.elementValues[jvmNameName]) {
+                "No name property found on $it"
+              }
+              jvmName = nameValue.value as String
+            }
+            AnnotationSpec.get(it)
+          })
+        }
+        return FileData(
+            declarationContainer = declarationContainer,
+            annotations = fileAnnotations,
+            properties = propertyData,
+            methods = methodData,
+            className = className,
+            jvmName = jvmName
+        )
+      }
+      else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
+    }
   }
 
   private fun List<VariableElement>.indexedAnnotationSpecs(): Map<Int, Collection<AnnotationSpec>> {

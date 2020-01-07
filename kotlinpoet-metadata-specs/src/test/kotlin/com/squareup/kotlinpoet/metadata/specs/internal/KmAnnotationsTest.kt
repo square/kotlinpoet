@@ -2,6 +2,7 @@ package com.squareup.kotlinpoet.metadata.specs.internal
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import kotlin.test.Test
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
 import kotlinx.metadata.KmAnnotationArgument.ArrayValue
@@ -20,7 +21,6 @@ import kotlinx.metadata.KmAnnotationArgument.UByteValue
 import kotlinx.metadata.KmAnnotationArgument.UIntValue
 import kotlinx.metadata.KmAnnotationArgument.ULongValue
 import kotlinx.metadata.KmAnnotationArgument.UShortValue
-import kotlin.test.Test
 
 @KotlinPoetMetadataPreview
 class KmAnnotationsTest {

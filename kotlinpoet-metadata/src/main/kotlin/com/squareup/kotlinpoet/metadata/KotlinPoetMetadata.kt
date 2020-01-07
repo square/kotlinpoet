@@ -18,13 +18,13 @@
 
 package com.squareup.kotlinpoet.metadata
 
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
 import javax.lang.model.element.TypeElement
 import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
 import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.reflect.KClass
+import kotlinx.metadata.jvm.KotlinClassHeader
+import kotlinx.metadata.jvm.KotlinClassMetadata
 
 /**
  * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
@@ -47,15 +47,28 @@ fun TypeElement.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnot
 
 @KotlinPoetMetadataPreview
 fun Metadata.toImmutableKmClass(): ImmutableKmClass {
-  return when (val metadata = readKotlinClassMetadata()) {
-    is KotlinClassMetadata.Class -> {
-      metadata.toImmutableKmClass()
+  return toKotlinClassMetadata<KotlinClassMetadata.Class>()
+      .toImmutableKmClass()
+}
+
+@KotlinPoetMetadataPreview
+inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T {
+  val expectedType = T::class
+  val metadata = readKotlinClassMetadata()
+  return when (expectedType) {
+    KotlinClassMetadata.Class::class -> {
+      check(metadata is KotlinClassMetadata.Class)
+      metadata as T
     }
-    is KotlinClassMetadata.FileFacade -> throw UnsupportedOperationException("FileFacade isn't supported yet!")
-    is KotlinClassMetadata.SyntheticClass -> throw UnsupportedOperationException("SyntheticClass isn't supported yet!")
-    is KotlinClassMetadata.MultiFileClassFacade -> throw UnsupportedOperationException("MultiFileClassFacade isn't supported yet!")
-    is KotlinClassMetadata.MultiFileClassPart -> throw UnsupportedOperationException("MultiFileClassPart isn't supported yet!")
-    is KotlinClassMetadata.Unknown -> throw RuntimeException("Recorded unknown metadata type! $metadata")
+    KotlinClassMetadata.FileFacade::class -> {
+      check(metadata is KotlinClassMetadata.FileFacade)
+      metadata as T
+    }
+    KotlinClassMetadata.SyntheticClass::class -> throw UnsupportedOperationException("SyntheticClass isn't supported yet!")
+    KotlinClassMetadata.MultiFileClassFacade::class -> throw UnsupportedOperationException("MultiFileClassFacade isn't supported yet!")
+    KotlinClassMetadata.MultiFileClassPart::class -> throw UnsupportedOperationException("MultiFileClassPart isn't supported yet!")
+    KotlinClassMetadata.Unknown::class -> throw RuntimeException("Recorded unknown metadata type! $metadata")
+    else -> TODO("Unrecognized KotlinClassMetadata type: $expectedType")
   }
 }
 

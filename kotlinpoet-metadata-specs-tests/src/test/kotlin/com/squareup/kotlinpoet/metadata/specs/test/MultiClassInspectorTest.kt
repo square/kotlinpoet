@@ -16,13 +16,22 @@
 package com.squareup.kotlinpoet.metadata.specs.test
 
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
 import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType
+import com.squareup.kotlinpoet.metadata.specs.toFileSpec
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
+import com.squareup.kotlinpoet.metadata.toImmutable
+import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
+import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.reflect.KClass
+import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Assume
 import org.junit.Rule
 import org.junit.rules.TestRule
@@ -30,9 +39,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.model.Statement
-import java.lang.annotation.Inherited
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.reflect.KClass
 
 /** Base test class that runs all tests with multiple [ClassInspectorTypes][ClassInspectorType]. */
 @RunWith(Parameterized::class)
@@ -104,5 +110,13 @@ abstract class MultiClassInspectorTest {
 
   protected fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
     return toTypeSpec(classInspectorType.create(this@MultiClassInspectorTest))
+  }
+
+  protected fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
+    val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
+    return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
+        .toKmPackage()
+        .toImmutable()
+        .toFileSpec(classInspector, asClassName())
   }
 }

@@ -19,6 +19,7 @@
 
 package com.squareup.kotlinpoet.metadata
 
+import java.util.Collections
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
@@ -65,7 +66,6 @@ import kotlinx.metadata.jvm.moduleName
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
-import java.util.Collections
 
 /**
  * Represents an immutable kotlinx-metadata type with a common [Flags] property.
@@ -99,6 +99,14 @@ interface ImmutableKmDeclarationContainer {
 @KotlinPoetMetadataPreview
 fun KotlinClassMetadata.Class.toImmutableKmClass(): ImmutableKmClass =
     toKmClass().toImmutable()
+
+/**
+ * Visits metadata of this class with a new [KmPackage] instance and returns an [ImmutableKmPackage]
+ * instance of its values.
+ */
+@KotlinPoetMetadataPreview
+fun KotlinClassMetadata.FileFacade.toImmutableKmPackage(): ImmutableKmPackage =
+    toKmPackage().toImmutable()
 
 /** @return an immutable representation of this [KmClass]. */
 @KotlinPoetMetadataPreview

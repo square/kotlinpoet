@@ -16,10 +16,10 @@
 package com.squareup.kotlinpoet
 
 import com.google.testing.compile.CompilationRule
-import kotlin.test.Ignore
-import org.junit.Rule
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.test.Ignore
+import org.junit.Rule
 
 @Ignore("Not clear this test is useful to retain in the Kotlin world")
 class TypesTest : AbstractTypesTest() {

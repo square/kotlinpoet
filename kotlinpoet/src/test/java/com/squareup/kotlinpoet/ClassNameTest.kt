@@ -17,9 +17,9 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule
-import kotlin.test.Test
 
 class ClassNameTest {
   @Rule @JvmField var compilationRule = CompilationRule()

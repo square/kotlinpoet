@@ -26,14 +26,15 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import java.util.Collections
+import java.util.TreeSet
 import kotlinx.metadata.isLocal
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import java.util.Collections
-import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
 object ClassInspectorUtil {
+  val JVM_NAME = JvmName::class.asClassName()
   private val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
   internal val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
@@ -140,10 +141,7 @@ object ClassInspectorUtil {
       result
     }
 
-    val sorted = TreeSet<AnnotationSpec>(compareBy { it.toString() })
-        .apply {
-          addAll(withUseSiteTarget)
-        }
+    val sorted = withUseSiteTarget.toTreeSet()
 
     return Collections.unmodifiableCollection(sorted)
   }
@@ -204,6 +202,12 @@ object ClassInspectorUtil {
         packageName = packageName.replace("/", "."),
         simpleNames = simpleNames
     )
+  }
+
+  fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
+    return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
+      addAll(this@toTreeSet)
+    }
   }
 
   private fun String.substringAfterLast(vararg delimiters: Char): String {

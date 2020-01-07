@@ -16,9 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.assertEquals
-
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class UtilTest {
   @Test fun characterLiteral() {
