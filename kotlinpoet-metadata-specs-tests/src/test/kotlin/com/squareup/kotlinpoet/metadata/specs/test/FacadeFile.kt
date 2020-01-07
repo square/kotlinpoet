@@ -59,20 +59,20 @@ const val CONST_DOUBLE_PROP = 1.0
 const val CONST_STRING_PROP = "prop"
 
 @JvmField
-@kotlin.jvm.JvmSynthetic
+@JvmSynthetic
 val syntheticFieldProperty: kotlin.String? = null
 
-@field:kotlin.jvm.JvmSynthetic
+@field:JvmSynthetic
 val syntheticProperty: kotlin.String? = null
 
-@get:kotlin.jvm.JvmSynthetic
+@get:JvmSynthetic
 val syntheticPropertyGet: kotlin.String? = null
 
-@get:kotlin.jvm.JvmSynthetic
-@set:kotlin.jvm.JvmSynthetic
+@get:JvmSynthetic
+@set:JvmSynthetic
 var syntheticPropertyGetAndSet: kotlin.String? = null
 
-@set:kotlin.jvm.JvmSynthetic
+@set:JvmSynthetic
 var syntheticPropertySet: kotlin.String? = null
 
 typealias FacadeTypeAliasName = String
