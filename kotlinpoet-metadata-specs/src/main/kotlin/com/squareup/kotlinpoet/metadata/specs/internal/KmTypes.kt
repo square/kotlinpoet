@@ -186,7 +186,7 @@ internal interface TypeParameterResolver {
     val EMPTY = object : TypeParameterResolver {
       override val parametersMap: Map<Int, TypeVariableName> = emptyMap()
 
-      override fun get(index: Int): TypeVariableName = error("No type parameters!")
+      override fun get(index: Int): TypeVariableName = throw NoSuchElementException("No type parameters!")
     }
   }
 }
