@@ -27,7 +27,13 @@ class FacadeFileTest : MultiClassInspectorTest() {
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
-      import kotlin
+      import kotlin.Boolean
+      import kotlin.Double
+      import kotlin.Float
+      import kotlin.Int
+      import kotlin.Long
+      import kotlin.String
+      import kotlin.collections.List
       import kotlin.jvm.JvmField
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmSynthetic
@@ -38,9 +44,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
       }
 
       fun jvmOverloads(
-        param1: kotlin.String,
-        optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
-        nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
+        param1: String,
+        optionalParam2: String = throw NotImplementedError("Stub!"),
+        nullableParam3: String? = throw NotImplementedError("Stub!")
       ) {
       }
 
@@ -51,88 +57,88 @@ class FacadeFileTest : MultiClassInspectorTest() {
       fun synchronizedFun() {
       }
 
-      val BINARY_PROP: kotlin.Int = 11
+      val BINARY_PROP: Int = 11
 
-      val BOOL_PROP: kotlin.Boolean = false
+      val BOOL_PROP: Boolean = false
 
-      const val CONST_BINARY_PROP: kotlin.Int = 11
+      const val CONST_BINARY_PROP: Int = 11
 
-      const val CONST_BOOL_PROP: kotlin.Boolean = false
+      const val CONST_BOOL_PROP: Boolean = false
 
-      const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+      const val CONST_DOUBLE_PROP: Double = 1.0
 
-      const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+      const val CONST_FLOAT_PROP: Float = 1.0F
 
-      const val CONST_HEX_PROP: kotlin.Int = 15
+      const val CONST_HEX_PROP: Int = 15
 
-      const val CONST_INT_PROP: kotlin.Int = 1
+      const val CONST_INT_PROP: Int = 1
 
-      const val CONST_LONG_PROP: kotlin.Long = 1L
+      const val CONST_LONG_PROP: Long = 1L
 
-      const val CONST_STRING_PROP: kotlin.String = "prop"
+      const val CONST_STRING_PROP: String = "prop"
 
-      const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+      const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+      const val CONST_UNDERSCORES_PROP: Int = 1000000
 
-      val DOUBLE_PROP: kotlin.Double = 1.0
+      val DOUBLE_PROP: Double = 1.0
 
-      val FLOAT_PROP: kotlin.Float = 1.0F
+      val FLOAT_PROP: Float = 1.0F
 
-      val HEX_PROP: kotlin.Int = 15
+      val HEX_PROP: Int = 15
 
-      val INT_PROP: kotlin.Int = 1
+      val INT_PROP: Int = 1
 
-      val LONG_PROP: kotlin.Long = 1L
+      val LONG_PROP: Long = 1L
 
-      val STRING_PROP: kotlin.String = "prop"
+      val STRING_PROP: String = "prop"
 
-      val UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+      val UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      val UNDERSCORES_PROP: kotlin.Int = 1000000
+      val UNDERSCORES_PROP: Int = 1000000
 
-      var VAR_BINARY_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_BOOL_PROP: kotlin.Boolean = throw NotImplementedError("Stub!")
+      var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      var VAR_DOUBLE_PROP: kotlin.Double = throw NotImplementedError("Stub!")
+      var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
-      var VAR_FLOAT_PROP: kotlin.Float = throw NotImplementedError("Stub!")
+      var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
 
-      var VAR_HEX_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_INT_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_LONG_PROP: kotlin.Long = throw NotImplementedError("Stub!")
+      var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_STRING_PROP: kotlin.String = throw NotImplementedError("Stub!")
+      var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_HEX_PROP: kotlin.Long = throw NotImplementedError("Stub!")
+      var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
       @field:JvmSynthetic
       @JvmField
-      val syntheticFieldProperty: kotlin.String? = null
+      val syntheticFieldProperty: String? = null
 
       @field:JvmSynthetic
-      val syntheticProperty: kotlin.String? = null
+      val syntheticProperty: String? = null
 
       @get:JvmSynthetic
-      val syntheticPropertyGet: kotlin.String? = null
+      val syntheticPropertyGet: String? = null
 
       @get:JvmSynthetic
       @set:JvmSynthetic
-      var syntheticPropertyGetAndSet: kotlin.String? = null
+      var syntheticPropertyGetAndSet: String? = null
 
       @set:JvmSynthetic
-      var syntheticPropertySet: kotlin.String? = null
+      var syntheticPropertySet: String? = null
 
-      typealias FacadeGenericTypeAlias = kotlin.collections.List<kotlin.String>
+      typealias FacadeGenericTypeAlias = List<String>
 
-      typealias FacadeNestedTypeAlias = kotlin.collections.List<GenericTypeAlias>
+      typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
-      typealias FacadeTypeAliasName = kotlin.String
+      typealias FacadeTypeAliasName = String
     """.trimIndent())
   }
 
@@ -153,7 +159,13 @@ class FacadeFileTest : MultiClassInspectorTest() {
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import com.squareup.kotlinpoet.metadata.specs.test.FileAnnotation
-      import kotlin
+      import kotlin.Boolean
+      import kotlin.Double
+      import kotlin.Float
+      import kotlin.Int
+      import kotlin.Long
+      import kotlin.String
+      import kotlin.collections.List
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmOverloads
       import kotlin.jvm.JvmSynthetic
@@ -165,9 +177,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       @JvmOverloads
       fun jvmOverloads(
-        param1: kotlin.String,
-        optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
-        nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
+        param1: String,
+        optionalParam2: String = throw NotImplementedError("Stub!"),
+        nullableParam3: String? = throw NotImplementedError("Stub!")
       ) {
       }
 
@@ -178,87 +190,87 @@ class FacadeFileTest : MultiClassInspectorTest() {
       fun synchronizedFun() {
       }
 
-      val BINARY_PROP: kotlin.Int = 11
+      val BINARY_PROP: Int = 11
 
-      val BOOL_PROP: kotlin.Boolean = false
+      val BOOL_PROP: Boolean = false
 
-      const val CONST_BINARY_PROP: kotlin.Int = 11
+      const val CONST_BINARY_PROP: Int = 11
 
-      const val CONST_BOOL_PROP: kotlin.Boolean = false
+      const val CONST_BOOL_PROP: Boolean = false
 
-      const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+      const val CONST_DOUBLE_PROP: Double = 1.0
 
-      const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+      const val CONST_FLOAT_PROP: Float = 1.0F
 
-      const val CONST_HEX_PROP: kotlin.Int = 15
+      const val CONST_HEX_PROP: Int = 15
 
-      const val CONST_INT_PROP: kotlin.Int = 1
+      const val CONST_INT_PROP: Int = 1
 
-      const val CONST_LONG_PROP: kotlin.Long = 1L
+      const val CONST_LONG_PROP: Long = 1L
 
-      const val CONST_STRING_PROP: kotlin.String = "prop"
+      const val CONST_STRING_PROP: String = "prop"
 
-      const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+      const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+      const val CONST_UNDERSCORES_PROP: Int = 1000000
 
-      val DOUBLE_PROP: kotlin.Double = 1.0
+      val DOUBLE_PROP: Double = 1.0
 
-      val FLOAT_PROP: kotlin.Float = 1.0F
+      val FLOAT_PROP: Float = 1.0F
 
-      val HEX_PROP: kotlin.Int = 15
+      val HEX_PROP: Int = 15
 
-      val INT_PROP: kotlin.Int = 1
+      val INT_PROP: Int = 1
 
-      val LONG_PROP: kotlin.Long = 1L
+      val LONG_PROP: Long = 1L
 
-      val STRING_PROP: kotlin.String = "prop"
+      val STRING_PROP: String = "prop"
 
-      val UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+      val UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      val UNDERSCORES_PROP: kotlin.Int = 1000000
+      val UNDERSCORES_PROP: Int = 1000000
 
-      var VAR_BINARY_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_BOOL_PROP: kotlin.Boolean = throw NotImplementedError("Stub!")
+      var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      var VAR_DOUBLE_PROP: kotlin.Double = throw NotImplementedError("Stub!")
+      var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
-      var VAR_FLOAT_PROP: kotlin.Float = throw NotImplementedError("Stub!")
+      var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
 
-      var VAR_HEX_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_INT_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+      var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_LONG_PROP: kotlin.Long = throw NotImplementedError("Stub!")
+      var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_STRING_PROP: kotlin.String = throw NotImplementedError("Stub!")
+      var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_HEX_PROP: kotlin.Long = throw NotImplementedError("Stub!")
+      var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
-
-      @field:JvmSynthetic
-      val syntheticFieldProperty: kotlin.String? = null
+      var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
       @field:JvmSynthetic
-      val syntheticProperty: kotlin.String? = null
+      val syntheticFieldProperty: String? = null
+
+      @field:JvmSynthetic
+      val syntheticProperty: String? = null
 
       @get:JvmSynthetic
-      val syntheticPropertyGet: kotlin.String? = null
+      val syntheticPropertyGet: String? = null
 
       @get:JvmSynthetic
       @set:JvmSynthetic
-      var syntheticPropertyGetAndSet: kotlin.String? = null
+      var syntheticPropertyGetAndSet: String? = null
 
       @set:JvmSynthetic
-      var syntheticPropertySet: kotlin.String? = null
+      var syntheticPropertySet: String? = null
 
-      typealias FacadeGenericTypeAlias = kotlin.collections.List<kotlin.String>
+      typealias FacadeGenericTypeAlias = List<String>
 
-      typealias FacadeNestedTypeAlias = kotlin.collections.List<GenericTypeAlias>
+      typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
-      typealias FacadeTypeAliasName = kotlin.String
+      typealias FacadeTypeAliasName = String
     """.trimIndent())
   }
 
@@ -275,9 +287,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
 
-      import kotlin
+      import kotlin.String
 
-      val prop: kotlin.String = ""
+      val prop: String = ""
     """.trimIndent())
   }
 
@@ -294,9 +306,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
 
-      import kotlin
+      import kotlin.String
 
-      val prop: kotlin.String = ""
+      val prop: String = ""
     """.trimIndent())
   }
 
@@ -313,9 +325,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
     assertThat(fileSpec.trimmedToString()).isEqualTo("""
       package com.squareup.kotlinpoet.metadata.specs.test
 
-      import kotlin
+      import kotlin.String
 
-      val prop2: kotlin.String = ""
+      val prop2: String = ""
     """.trimIndent())
   }
 
@@ -334,10 +346,10 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       package com.squareup.kotlinpoet.metadata.specs.test
 
-      import kotlin
+      import kotlin.String
       import kotlin.jvm.JvmName
 
-      val prop2: kotlin.String = ""
+      val prop2: String = ""
     """.trimIndent())
   }
 }
