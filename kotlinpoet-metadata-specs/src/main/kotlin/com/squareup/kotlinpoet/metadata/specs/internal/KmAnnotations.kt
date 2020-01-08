@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
@@ -34,6 +35,7 @@ internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
           addMember("%L = %L", name, arg.toCodeBlock())
         }
       }
+      .tag(this)
       .build()
 }
 

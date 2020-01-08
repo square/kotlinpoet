@@ -181,6 +181,7 @@ class AnnotationSpec private constructor(
       try {
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
+            .tag(annotation)
         val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
         for (method in methods) {
           val value = method.invoke(annotation)
@@ -218,6 +219,7 @@ class AnnotationSpec private constructor(
     @JvmStatic fun get(annotation: AnnotationMirror): AnnotationSpec {
       val element = annotation.annotationType.asElement() as TypeElement
       val builder = AnnotationSpec.builder(element.asClassName())
+          .tag(annotation)
       for (executableElement in annotation.elementValues.keys) {
         val member = CodeBlock.builder()
         val visitor = Visitor(member)
