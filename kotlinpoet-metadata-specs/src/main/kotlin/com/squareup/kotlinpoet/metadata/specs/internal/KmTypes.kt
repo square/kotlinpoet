@@ -86,7 +86,7 @@ internal fun ImmutableKmType.toTypeName(
     is KmClassifier.Class -> {
       flexibleTypeUpperBound?.toTypeName(typeParamResolver)?.let { return it }
       outerType?.toTypeName(typeParamResolver)?.let { return it }
-      var finalType: TypeName = ClassInspectorUtil.createClassName(valClassifier.name.replace("/", "."))
+      var finalType: TypeName = ClassInspectorUtil.createClassName(valClassifier.name)
       if (argumentList.isNotEmpty()) {
         val finalTypeString = finalType.toString()
         if (finalTypeString.startsWith("kotlin.Function")) {
