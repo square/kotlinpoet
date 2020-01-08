@@ -17,8 +17,6 @@
 package com.squareup.kotlinpoet.metadata.specs.test
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STRING
@@ -58,13 +56,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         constructor(bar: kotlin.Int)
       }
     """.trimIndent())
-  }
-
-  @Test
-  fun builtInTypeParsing() {
-    val typeSpec = ConstructorClass::class.toTypeSpecWithTestHandler()
-    assertThat(typeSpec.propertySpecs.single().type).isEqualTo(STRING)
-    assertThat((typeSpec.propertySpecs.single().type as ClassName).packageName).isEqualTo("kotlin")
   }
 
   class ConstructorClass(val foo: String, vararg bar: Int) {
