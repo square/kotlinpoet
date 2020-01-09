@@ -527,6 +527,27 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @Test
+  fun enumWithAnnotation() {
+    val typeSpec = EnumWithAnnotation::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class EnumWithAnnotation {
+        FOO,
+
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
+        BAR,
+
+        BAZ
+      }
+    """.trimIndent())
+  }
+
+  enum class EnumWithAnnotation {
+    FOO, @FieldAnnotation BAR, BAZ
+  }
+
+  @Test
   fun interfaces() {
     val testInterfaceSpec = TestInterface::class.toTypeSpecWithTestHandler()
 

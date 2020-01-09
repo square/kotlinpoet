@@ -26,28 +26,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.FunSpec.Builder
 import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
-import com.squareup.kotlinpoet.KModifier.CONST
-import com.squareup.kotlinpoet.KModifier.CROSSINLINE
-import com.squareup.kotlinpoet.KModifier.DATA
-import com.squareup.kotlinpoet.KModifier.EXPECT
-import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.FINAL
-import com.squareup.kotlinpoet.KModifier.INFIX
-import com.squareup.kotlinpoet.KModifier.INLINE
-import com.squareup.kotlinpoet.KModifier.INNER
-import com.squareup.kotlinpoet.KModifier.INTERNAL
-import com.squareup.kotlinpoet.KModifier.LATEINIT
-import com.squareup.kotlinpoet.KModifier.NOINLINE
-import com.squareup.kotlinpoet.KModifier.OPEN
-import com.squareup.kotlinpoet.KModifier.OPERATOR
-import com.squareup.kotlinpoet.KModifier.PRIVATE
-import com.squareup.kotlinpoet.KModifier.PROTECTED
-import com.squareup.kotlinpoet.KModifier.PUBLIC
-import com.squareup.kotlinpoet.KModifier.SEALED
-import com.squareup.kotlinpoet.KModifier.SUSPEND
-import com.squareup.kotlinpoet.KModifier.TAILREC
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.*
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
@@ -122,16 +101,16 @@ import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
+import kotlinx.metadata.Flags
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.jvmInternalName
 import java.util.Locale
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
-import kotlinx.metadata.Flags
-import kotlinx.metadata.KmClassifier
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.jvmInternalName
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
@@ -280,21 +259,23 @@ private fun ImmutableKmClass.toTypeSpec(
   if (isEnum) {
     enumEntries.forEach { entryName ->
       val typeSpec = if (classInspector != null) {
-        classInspector.enumEntry(className, entryName)?.let { entry ->
-          val entryClassName = className.nestedClass(entryName)
-          entry.toTypeSpec(classInspector, entryClassName, parentClassName = className)
-        }
+        val entry = classInspector.enumEntry(className, entryName)
+        val typeSpec = entry.declarationContainer
+            ?.let { enumEntryClass ->
+              val entryClassName = className.nestedClass(entryName)
+              enumEntryClass.toTypeSpec(classInspector, entryClassName, parentClassName = className)
+            }
+            ?: TypeSpec.anonymousClassBuilder().build()
+        typeSpec.toBuilder()
+            .addAnnotations(entry.annotations)
+            .build()
       } else {
         TypeSpec.anonymousClassBuilder()
             .addKdoc(
                 "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
             .build()
       }
-      if (typeSpec != null) {
-        builder.addEnumConstant(entryName, typeSpec)
-      } else {
-        builder.addEnumConstant(entryName)
-      }
+      builder.addEnumConstant(entryName, typeSpec)
     }
   }
 

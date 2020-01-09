@@ -29,6 +29,7 @@ import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ContainerData
+import com.squareup.kotlinpoet.metadata.specs.EnumEntryData
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.FileData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
@@ -168,18 +169,28 @@ class ElementsClassInspector private constructor(
     return thrownTypes.map { it.asTypeName() }
   }
 
-  override fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass? {
-    return lookupTypeElement(enumClassName)?.let { enumType ->
-      val enumTypeAsType = enumType.asType()
-      val member = typeElementCache.getOrPut(enumClassName.nestedClass(memberName)) {
-        ElementFilter.typesIn(enumType.enclosedElements)
-            .asSequence()
-            .filter { types.isSubtype(enumTypeAsType, it.superclass) }
-            .find { it.simpleName.contentEquals(memberName) }.toOptional()
-      }.nullableValue
-      member?.getAnnotation(Metadata::class.java)
-          ?.toImmutableKmClass()
-    }
+  override fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData {
+    val enumType = lookupTypeElement(enumClassName)
+        ?: error("No type element found for: $enumClassName.")
+    val enumTypeAsType = enumType.asType()
+    val member = typeElementCache.getOrPut(enumClassName.nestedClass(memberName)) {
+      ElementFilter.typesIn(enumType.enclosedElements)
+          .asSequence()
+          .filter { types.isSubtype(enumTypeAsType, it.superclass) }
+          .find { it.simpleName.contentEquals(memberName) }.toOptional()
+    }.nullableValue
+    val declarationContainer = member?.getAnnotation(Metadata::class.java)
+        ?.toImmutableKmClass()
+
+    val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
+        .asSequence()
+        .find { it.simpleName.contentEquals(memberName) }
+        ?: error("Could not find the enum entry for: $enumClassName")
+
+    return EnumEntryData(
+        declarationContainer = declarationContainer,
+        annotations = entry.annotationSpecs()
+    )
   }
 
   private fun VariableElement.constantValue(): CodeBlock? {
