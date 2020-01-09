@@ -280,21 +280,22 @@ private fun ImmutableKmClass.toTypeSpec(
   if (isEnum) {
     enumEntries.forEach { entryName ->
       val typeSpec = if (classInspector != null) {
-        classInspector.enumEntry(className, entryName)?.let { entry ->
-          val entryClassName = className.nestedClass(entryName)
-          entry.toTypeSpec(classInspector, entryClassName, parentClassName = className)
-        }
+        val entry = classInspector.enumEntry(className, entryName)
+        entry.declarationContainer
+            ?.let { enumEntryClass ->
+              val entryClassName = className.nestedClass(entryName)
+              enumEntryClass.toTypeSpec(classInspector, entryClassName, parentClassName = className)
+            }
+            ?: TypeSpec.anonymousClassBuilder()
+              .addAnnotations(entry.annotations)
+              .build()
       } else {
         TypeSpec.anonymousClassBuilder()
             .addKdoc(
                 "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.")
             .build()
       }
-      if (typeSpec != null) {
-        builder.addEnumConstant(entryName, typeSpec)
-      } else {
-        builder.addEnumConstant(entryName)
-      }
+      builder.addEnumConstant(entryName, typeSpec)
     }
   }
 

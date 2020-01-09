@@ -527,6 +527,77 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @Test
+  fun enumWithAnnotation() {
+    val typeSpec = EnumWithAnnotation::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class EnumWithAnnotation {
+        FOO,
+
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
+        BAR,
+
+        BAZ
+      }
+    """.trimIndent())
+  }
+
+  enum class EnumWithAnnotation {
+    FOO, @FieldAnnotation BAR, BAZ
+  }
+
+  @Test
+  fun complexEnumWithAnnotation() {
+    val typeSpec = ComplexEnumWithAnnotation::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+      enum class ComplexEnumWithAnnotation(
+        val value: kotlin.String
+      ) {
+        FOO {
+          override fun toString(): kotlin.String {
+            throw NotImplementedError("Stub!")
+          }
+        },
+
+        @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
+        BAR {
+          override fun toString(): kotlin.String {
+            throw NotImplementedError("Stub!")
+          }
+        },
+
+        BAZ {
+          override fun toString(): kotlin.String {
+            throw NotImplementedError("Stub!")
+          }
+        };
+      }
+    """.trimIndent())
+  }
+
+  enum class ComplexEnumWithAnnotation(val value: String) {
+    FOO("foo") {
+      override fun toString(): String {
+        return "foo1"
+      }
+    },
+    @FieldAnnotation
+    BAR("bar") {
+      override fun toString(): String {
+        return "bar1"
+      }
+    },
+    BAZ("baz") {
+      override fun toString(): String {
+        return "baz1"
+      }
+    }
+  }
+
+  @Test
   fun interfaces() {
     val testInterfaceSpec = TestInterface::class.toTypeSpecWithTestHandler()
 

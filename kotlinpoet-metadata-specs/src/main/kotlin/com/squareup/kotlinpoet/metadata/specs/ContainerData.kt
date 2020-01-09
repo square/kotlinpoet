@@ -72,3 +72,15 @@ data class FileData(
    */
   val fileName: String = jvmName ?: className.simpleName.removeSuffix("Kt")
 }
+
+/**
+ * Represents relevant information on a Kotlin enum entry.
+ *
+ * @property declarationContainer the [ImmutableKmClass] as parsed from the entry's [@Metadata][Metadata] annotation.
+ * @property annotations the annotations for the entry
+ */
+@KotlinPoetMetadataPreview
+data class EnumEntryData(
+  val declarationContainer: ImmutableKmClass?,
+  val annotations: Collection<AnnotationSpec>
+)

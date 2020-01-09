@@ -23,6 +23,7 @@ import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.ConstructorData
 import com.squareup.kotlinpoet.metadata.specs.ContainerData
+import com.squareup.kotlinpoet.metadata.specs.EnumEntryData
 import com.squareup.kotlinpoet.metadata.specs.FieldData
 import com.squareup.kotlinpoet.metadata.specs.FileData
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
@@ -55,7 +56,7 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
   private val constructorCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Constructor<*>>>()
   private val fieldCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Field>>()
-  private val enumCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Any>>()
+  private val enumCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Enum<*>>>()
 
   private fun lookupClass(className: ClassName): Class<*>? {
     return classCache.getOrPut(className) {
@@ -191,24 +192,32 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     return exceptionTypes.orEmpty().mapTo(mutableListOf()) { it.asTypeName() }
   }
 
-  override fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass? {
+  override fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData {
     val clazz = lookupClass(enumClassName)
         ?: error("No class found for: $enumClassName.")
     check(clazz.isEnum) {
       "Class must be an enum but isn't: $clazz"
     }
     val enumEntry = enumCache.getOrPut(clazz to memberName) {
-      clazz.enumConstants.find { (it as Enum<*>).name == memberName }.toOptional()
+      clazz.enumConstants
+          .asSequence()
+          .map { it as Enum<*> }
+          .find { it.name == memberName }
+          .toOptional()
     }.nullableValue
     checkNotNull(enumEntry) {
       "Could not find $memberName on $enumClassName"
     }
-    if (enumEntry.javaClass == clazz) {
-      // For simple enums with no class bodies, the entry class will be the same as the original
-      // class.
-      return null
-    }
-    return enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toImmutableKmClass()
+    return EnumEntryData(
+        declarationContainer = if (enumEntry.javaClass == clazz) {
+          // For simple enums with no class bodies, the entry class will be the same as the original
+          // class.
+          null
+        } else {
+          enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toImmutableKmClass()
+        },
+        annotations = clazz.getField(enumEntry.name).annotationSpecs()
+    )
   }
 
   private fun Field.constantValue(): CodeBlock? {

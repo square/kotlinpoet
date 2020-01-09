@@ -66,10 +66,9 @@ interface ClassInspector {
    *
    * @param enumClassName The [ClassName] representation of the enum class.
    * @param memberName The simple member name.
-   * @return the read [ImmutableKmClass] from its metadata, if any. For simple enum members with no
-   *         class bodies, this should always be null.
+   * @return the [EnumEntryData]
    */
-  fun enumEntry(enumClassName: ClassName, memberName: String): ImmutableKmClass?
+  fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData
 
   /**
    * Looks up if a given [methodSignature] within [className] exists.
