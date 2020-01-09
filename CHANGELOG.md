@@ -1,7 +1,31 @@
 Change Log
 ==========
 
-## Version 1.4.4
+## Version 1.5.0
+
+_2020-01-09_
+
+ KotlinPoet now targets JDK8, which means that executing a build that includes KotlinPoet as a
+ dependency on a machine with an older version of JDK installed won't work. **This has no effect on 
+ the code that KotlinPoet produces**: the code can still be compiled against JDK6, as long as it 
+ doesn't use any features that were introduced in newer releases.
+ 
+ * New: Kotlin 1.3.61.
+ * New: Add support for processing FileFacades in KotlinPoet-metadata.
+ * New: Add support for inner nested and companion objects on annotation classes.
+ * New: Improve error messages for mismatched open/close statement characters.
+ * New: Tag `AnnotationSpec`s with the annotation mirror when available.
+ * New: Include annotations on enum entries when creating `TypeSpec`s from metadata.
+ * Fix: Fix metadata parsing for types.
+ * Fix: Allow file names that are Kotlin keywords.
+ * Fix: Properly escape type alias names with backticks.
+ * Fix: Allow creating `TypeSpec`s with names that can be escaped with backticks.
+ * Fix: Properly escape enum constant names with backticks.
+ * Fix: Maintain proper ordering of properties and initializers when emitting a `TypeSpec`.
+ * Fix: Don't emit a leading new line if type KDoc is empty but parameter KDocs are present.
+ * Fix: Ensure KotlinPoet-metadata resolves package names properly.
+ 
+ ## Version 1.4.4
 
 _2019-11-16_
 
