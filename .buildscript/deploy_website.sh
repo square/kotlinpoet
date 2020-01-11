@@ -24,7 +24,7 @@ if ! [ $local ]; then
   cd $DIR
 
   # Generate the API docs
-  ./gradlew :kotlinpoet:dokka
+  ./gradlew dokka
 fi
 
 # Copy in special files that GitHub wants in the project root.

@@ -41,7 +41,8 @@ afterEvaluate {
   tasks.named<DokkaTask>("dokka") {
     // TODO(egorand): Re-enable when https://github.com/Kotlin/dokka/issues/512 is fixed
     // skipDeprecated = true
-    outputFormat = "html"
+    outputDirectory = "$rootDir/docs/1.x"
+    outputFormat = "gfm"
   }
 }
 
