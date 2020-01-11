@@ -21,7 +21,9 @@ _2020-01-09_
  * Fix: Properly escape type alias names with backticks.
  * Fix: Allow creating `TypeSpec`s with names that can be escaped with backticks.
  * Fix: Properly escape enum constant names with backticks.
- * Fix: Maintain proper ordering of properties and initializers when emitting a `TypeSpec`.
+ * Fix: Maintain proper ordering of properties and initializers when emitting a `TypeSpec`. 
+   **Note**: with this change, any properties declared after any initializer blocks will not be
+   added to the primary constructor and will instead be emitted inside the `TypeSpec` body.
  * Fix: Don't emit a leading new line if type KDoc is empty but parameter KDocs are present.
  * Fix: Ensure KotlinPoet-metadata resolves package names properly.
  
