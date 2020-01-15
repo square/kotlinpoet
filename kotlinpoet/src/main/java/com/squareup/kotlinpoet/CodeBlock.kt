@@ -344,6 +344,7 @@ class CodeBlock private constructor(
         'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
+        'O' -> this.args += arg
         else -> throw IllegalArgumentException(
             String.format("invalid format string: '%s'", format))
       }

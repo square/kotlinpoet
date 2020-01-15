@@ -285,6 +285,11 @@ internal class CodeWriter constructor(
           typeName.emitNullable(this)
         }
 
+        "%O" -> {
+          val memberName = codeBlock.args[a++] as MemberName
+          memberName.emitOperator(this)
+        }
+
         "%M" -> {
           val memberName = codeBlock.args[a++] as MemberName
           memberName.emit(this)

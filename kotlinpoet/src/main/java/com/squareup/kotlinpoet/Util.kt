@@ -228,3 +228,25 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
     .filter { it.isNotEmpty() }
     .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
+internal fun guessOperator(simpleName: String): String {
+  return when (simpleName) {
+    "unaryPlus", "plus" -> "+"
+    "unaryMinus", "minus" -> "-"
+    "times" -> "*"
+    "div" -> "/"
+    "rem" -> "%"
+    "plusAssign" -> "+="
+    "minusAssign" -> "-="
+    "timesAssign" -> "*="
+    "divAssign" -> "/="
+    "remAssign" -> "%="
+    "inc" -> "++"
+    "dec" -> "--"
+    "equals" -> "=="
+    "not" -> "!"
+    "rangeTo" -> ".."
+    "contains" -> "in"
+    else -> ""
+  }
+}

@@ -26,13 +26,18 @@ import kotlin.reflect.KClass
  * @param simpleName e.g. `isBlank`, `size`
  */
 data class MemberName internal constructor(
-  val packageName: String,
-  val enclosingClassName: ClassName?,
-  val simpleName: String
+    val packageName: String,
+    val enclosingClassName: ClassName?,
+    val simpleName: String,
+    val operator: String
 ) {
-  constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
+  constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName, guessOperator(simpleName))
   constructor(enclosingClassName: ClassName, simpleName: String) :
-      this(enclosingClassName.packageName, enclosingClassName, simpleName)
+      this(enclosingClassName.packageName, enclosingClassName, simpleName, guessOperator(simpleName))
+
+  constructor(packageName: String, simpleName: String, operator: String) : this(packageName, null, simpleName, operator)
+  constructor(enclosingClassName: ClassName, simpleName: String, operator: String) :
+      this(enclosingClassName.packageName, enclosingClassName, simpleName, operator)
 
   /** Fully qualified name using `.` as a separator, like `kotlin.String.isBlank`. */
   val canonicalName = buildString {
@@ -61,15 +66,28 @@ data class MemberName internal constructor(
 
   internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
+  internal fun emitOperator(out: CodeWriter) {
+    out.lookupName(this)
+    out.emit(this.operator)
+  }
+
   override fun toString() = canonicalName
 
   companion object {
     @Suppress("NOTHING_TO_INLINE")
-    @JvmSynthetic @JvmStatic inline fun ClassName.member(simpleName: String) =
+    @JvmSynthetic
+    @JvmStatic
+    inline fun ClassName.member(simpleName: String) =
         MemberName(this, simpleName)
-    @JvmStatic @JvmName("get") fun KClass<*>.member(simpleName: String) =
+
+    @JvmStatic
+    @JvmName("get")
+    fun KClass<*>.member(simpleName: String) =
         asClassName().member(simpleName)
-    @JvmStatic @JvmName("get") fun Class<*>.member(simpleName: String) =
+
+    @JvmStatic
+    @JvmName("get")
+    fun Class<*>.member(simpleName: String) =
         asClassName().member(simpleName)
   }
 }
