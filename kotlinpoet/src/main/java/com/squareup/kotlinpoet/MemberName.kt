@@ -26,10 +26,10 @@ import kotlin.reflect.KClass
  * @param simpleName e.g. `isBlank`, `size`
  */
 data class MemberName internal constructor(
-    val packageName: String,
-    val enclosingClassName: ClassName?,
-    val simpleName: String,
-    val operator: String
+  val packageName: String,
+  val enclosingClassName: ClassName?,
+  val simpleName: String,
+  val operator: String
 ) {
   constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName, guessOperator(simpleName))
   constructor(enclosingClassName: ClassName, simpleName: String) :
