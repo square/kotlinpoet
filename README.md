@@ -491,9 +491,10 @@ fun main() {
 }
 ```
 
-As you can see, it's also possible to use `%O` to reference extension operators functions. KotlinPoet convert
-function name to operator correctly in most cast. But in sometimes, a function could be map to multi operators,
-like: `compareTo` could be map to `>`, `<`, `>=` and `<=`. In those cases you must assign operator to `MemberName`.
+As you can see, it's also possible to use `%O` to reference extension operator functions.
+KotlinPoet converts function name to operator correctly in the most cast. But sometimes,
+a function could be mapping to multi operators, like: `compareTo` could be mapping to `>`,
+`<`, `>=` and `<=`. In those cases, you must assign operator to `MemberName`.
 
 ```kotlin
 val compareTo = MemberName("com.squareup.tacos", "compareTo", ">=")
