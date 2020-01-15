@@ -320,4 +320,36 @@ class MemberNameTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun importOperator() {
+    val rangeTo = MemberName("com.squareup.tacos", "rangeTo")
+    val not = MemberName("com.squareup.tacos", "not")
+    val compareTo = MemberName("com.squareup.tacos", "compareTo", ">=")
+    val equals = MemberName("com.squareup.tacos", "equals")
+    val equals2 = MemberName("com.squareup.tacos", "equals", "!=")
+    val funSpec = FunSpec.builder("makeTastyTacos")
+        .addStatement("%OAny()%OAny()", not, rangeTo)
+        .addStatement("Any() %O Any()", compareTo)
+        .addStatement("Any() %O Any()", equals)
+        .addStatement("Any() %O Any()", equals2)
+        .build()
+    val file = FileSpec.builder("com.example", "Tacos")
+        .addFunction(funSpec)
+        .build()
+    assertThat(file.toString()).isEqualTo("""
+      |package com.example
+      |
+      |import com.squareup.tacos.compareTo
+      |import com.squareup.tacos.equals
+      |import com.squareup.tacos.not
+      |import com.squareup.tacos.rangeTo
+      |
+      |fun makeTastyTacos() {
+      |  !Any()..Any()
+      |  Any() >= Any()
+      |  Any() == Any()
+      |  Any() != Any()
+      |}
+      |""".trimMargin())
+  }
 }
