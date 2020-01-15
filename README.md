@@ -482,8 +482,8 @@ The code above generates the following file:
 ```kotlin
 package com.squareup.example
 
-import com.squareup.tacos.createTaco
-import com.squareup.tacos.isVegan
+import com.squareup.tacos.not
+import com.squareup.tacos.rangeTo
 
 fun main() {
     !Any()
