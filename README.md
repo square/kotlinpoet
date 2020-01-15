@@ -524,8 +524,6 @@ fun main() {
 }
 ```
 
-`MemberName`:
-
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
