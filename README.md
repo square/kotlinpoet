@@ -458,6 +458,74 @@ fun main() {
 }
 ```
 
+### %O for Operators
+
+Similar to `MemberName`, KotlinPoet has a special placeholder for **operators**, which comes handy when 
+your code needs to access top-level and members declared operators. Use **`%O`** to  reference operators,
+pass an instance of `MemberName` as the argument for the placeholder, and KotlinPoet will handle imports 
+automatically in most cases:
+
+```kotlin
+val rangeTo = MemberName("com.squareup.tacos", "rangeTo")
+val not = MemberName("com.squareup.tacos", "not")
+val file = FileSpec.builder("com.squareup.example", "TacoTest")
+    .addFunction(FunSpec.builder("main")
+        .addStatement("%OAny()", not)
+        .addStatement("Any()%OAny()", rangeTo)
+        .build())
+    .build()
+println(file)
+```
+
+The code above generates the following file:
+
+```kotlin
+package com.squareup.example
+
+import com.squareup.tacos.createTaco
+import com.squareup.tacos.isVegan
+
+fun main() {
+    !Any()
+    Any()..Any()
+}
+```
+
+As you can see, it's also possible to use `%O` to reference extension operators functions. KotlinPoet convert
+function name to operator correctly in most cast. But in sometimes, a function could be map to multi operators,
+like: `compareTo` could be map to `>`, `<`, `>=` and `<=`. In those cases you must assign operator to `MemberName`.
+
+```kotlin
+val compareTo = MemberName("com.squareup.tacos", "compareTo", ">=")
+val equals = MemberName("com.squareup.tacos", "equals")
+val equals2 = MemberName("com.squareup.tacos", "equals", "!=")
+val file = FileSpec.builder("com.squareup.example", "TacoTest")
+    .addFunction(FunSpec.builder("main")
+        .addStatement("Any() %O Any()", compareTo)
+        .addStatement("Any() %O Any()", equals)
+        .addStatement("Any() %O Any()", equals2)
+        .build())
+    .build()
+println(file)
+```
+
+The code above generates the following file:
+
+```kotlin
+package com.squareup.example
+
+import com.squareup.tacos.compareTo
+import com.squareup.tacos.equals
+
+fun main() {
+    Any() >= Any()
+    Any() == ()
+    Any() != Any()
+}
+```
+
+`MemberName`:
+
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by
