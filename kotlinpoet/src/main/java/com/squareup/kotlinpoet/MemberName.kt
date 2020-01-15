@@ -74,19 +74,15 @@ data class MemberName internal constructor(
   override fun toString() = canonicalName
 
   companion object {
-    @Suppress("NOTHING_TO_INLINE")
-    @JvmSynthetic
-    @JvmStatic
+    @Suppress("NOTHING_TO_INLINE") @JvmSynthetic @JvmStatic
     inline fun ClassName.member(simpleName: String) =
         MemberName(this, simpleName)
 
-    @JvmStatic
-    @JvmName("get")
+    @JvmStatic @JvmName("get")
     fun KClass<*>.member(simpleName: String) =
         asClassName().member(simpleName)
 
-    @JvmStatic
-    @JvmName("get")
+    @JvmStatic @JvmName("get")
     fun Class<*>.member(simpleName: String) =
         asClassName().member(simpleName)
   }
