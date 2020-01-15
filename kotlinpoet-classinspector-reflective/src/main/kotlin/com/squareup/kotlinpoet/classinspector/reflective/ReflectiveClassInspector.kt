@@ -513,14 +513,8 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
       }
     }
 
-    private val Method.descriptor: String get() {
-      return buildString {
-        append('(')
-        parameterTypes.joinTo(this, separator = "", transform = { it.descriptor })
-        append(')')
-        append(returnType.descriptor)
-      }
-    }
+    private val Method.descriptor: String
+      get() = parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")${returnType.descriptor}") { it.descriptor }
 
     /**
      * Returns the JVM signature in the form "$Name$MethodDescriptor", for example: `equals(Ljava/lang/Object;)Z`.
@@ -531,14 +525,8 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
      */
     private val Method.jvmMethodSignature: String get() = "$name$descriptor"
 
-    private val Constructor<*>.descriptor: String get() {
-      return buildString {
-        append('(')
-        parameterTypes.joinTo(this, separator = "", transform = { it.descriptor })
-        append(')')
-        append('V')
-      }
-    }
+    private val Constructor<*>.descriptor: String
+      get() = parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")V") { it.descriptor }
 
     /**
      * Returns the JVM signature in the form "<init>$MethodDescriptor", for example: `"<init>(Ljava/lang/Object;)V")`.
