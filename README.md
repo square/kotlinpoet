@@ -458,6 +458,47 @@ fun main() {
 }
 ```
 
+#### MemberName and operators
+
+MemberName also support operators, you can use `MemberName(String, KOperator)` or `MemberName(ClassName, KOperator)`
+to import and reference operators.
+
+```kotlin
+val taco = ClassName("com.squareup.tacos", "Taco")
+val meat = ClassName("com.squareup.tacos.ingredient", "Meat")
+val iterate = MemberName("com.squareup.tacos.internal", KOperator.ITERATE)
+val minusAssign = MemberName("com.squareup.tacos.internal", KOperator.MINUS_ASSIGN)
+val file = FileSpec.builder("com.example", "Test")
+    .addFunction(FunSpec.builder("makeTacoHealth")
+        .addParameter("taco", taco)
+        .beginControlFlow("for(ingredient %M taco)", iterate)
+        .addStatement("if(ingredient is %T) taco %M ingredient", meat, minusAssign)
+        .endControlFlow()
+        .addStatement("return taco")
+        .build())
+    .build()
+println(file)
+```
+
+KotlinPoet will import the extended operator functions and emit the operator.
+
+```kotlin
+package com.example
+
+import com.squareup.tacos.Taco
+import com.squareup.tacos.ingredient.Meat
+import com.squareup.tacos.internal.iterator
+import com.squareup.tacos.internal.minusAssign
+
+fun makeTacoHealth(taco: Taco) {
+  for(ingredient in taco) {
+    if(ingredient is Meat) taco -= ingredient
+  }
+  return taco
+}
+
+```
+
 ### %N for Names
 
 Generated code is often self-referential. Use **`%N`** to refer to another generated declaration by

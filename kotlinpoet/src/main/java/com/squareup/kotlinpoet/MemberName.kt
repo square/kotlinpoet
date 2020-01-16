@@ -28,11 +28,15 @@ import kotlin.reflect.KClass
 data class MemberName internal constructor(
   val packageName: String,
   val enclosingClassName: ClassName?,
-  val simpleName: String
+  val simpleName: String,
+  val operator: KOperator? = null
 ) {
   constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
   constructor(enclosingClassName: ClassName, simpleName: String) :
       this(enclosingClassName.packageName, enclosingClassName, simpleName)
+  constructor(packageName: String, operator: KOperator) : this(packageName, null, operator.functionName, operator)
+  constructor(enclosingClassName: ClassName, operator: KOperator) :
+      this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
 
   /** Fully qualified name using `.` as a separator, like `kotlin.String.isBlank`. */
   val canonicalName = buildString {
@@ -59,7 +63,14 @@ data class MemberName internal constructor(
     else -> CodeBlock.of("%T::%N", enclosingClassName, simpleName)
   }
 
-  internal fun emit(out: CodeWriter) = out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
+  internal fun emit(out: CodeWriter) {
+    if (operator == null) {
+      out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
+    } else {
+      out.lookupName(this)
+      out.emit(operator.operator)
+    }
+  }
 
   override fun toString() = canonicalName
 
