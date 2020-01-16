@@ -44,7 +44,7 @@ enum class KOperator(
     GE(">=", "compareTo"),
     LE("<=", "compareTo"),
     INVOKE("", "invoke"),
-    ITERATE("in", "iterator"),
+    ITERATOR("in", "iterator"),
     GET("", "get"),
     SET("", "set")
 }
