@@ -327,10 +327,10 @@ class MemberNameTest {
     val iterate = MemberName("com.squareup.tacos.internal", KOperator.ITERATE)
     val minusAssign = MemberName("com.squareup.tacos.internal", KOperator.MINUS_ASSIGN)
     val file = FileSpec.builder("com.example", "Test")
-        .addFunction(FunSpec.builder("makeTacoHealth")
+        .addFunction(FunSpec.builder("makeTacoHealthy")
             .addParameter("taco", taco)
-            .beginControlFlow("for(ingredient %M taco)", iterate)
-            .addStatement("if(ingredient is %T) taco %M ingredient", meat, minusAssign)
+            .beginControlFlow("for (ingredient %M taco)", iterate)
+            .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
             .endControlFlow()
             .addStatement("return taco")
             .build())
@@ -343,9 +343,9 @@ class MemberNameTest {
       |import com.squareup.tacos.internal.iterator
       |import com.squareup.tacos.internal.minusAssign
       |
-      |fun makeTacoHealth(taco: Taco) {
-      |  for(ingredient in taco) {
-      |    if(ingredient is Meat) taco -= ingredient
+      |fun makeTacoHealthy(taco: Taco) {
+      |  for (ingredient in taco) {
+      |    if (ingredient is Meat) taco -= ingredient
       |  }
       |  return taco
       |}
