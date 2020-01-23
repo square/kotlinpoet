@@ -587,8 +587,61 @@ private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec 
 }
 ```
 
-Literals are emitted directly to the output code with no escaping. Arguments for literals may be
-strings, primitives, and a few KotlinPoet types described below.
+### %B for CodeBlock
+
+Sometimes you may want to reuse or decorate your codes, in this case, you can use `%B` to import
+existed `CodeBlock`:
+
+```kotlin
+val funSpec = FunSpec.builder("cookTaco")
+    .addParameter("rawTaco", ClassName.bestGuess("com.squareup.tacos.Taco"))
+    .apply {
+      var taco = buildCodeBlock {
+        add("rawTaco")
+      }
+      taco = buildCodeBlock {
+        add("%B.fry(30,·%T.SECONDS)", taco, TimeUnit::class)
+      }
+      taco = buildCodeBlock {
+        add("%B .bake(8,·%T.MINUTES)", taco, TimeUnit::class)
+      }
+      taco = buildCodeBlock {
+        add("%B.addChicken(10)", taco)
+      }
+      taco = buildCodeBlock {
+        add("%B.addCheese(5)", taco)
+      }
+      taco = buildCodeBlock {
+        add("%B.bake(15,·%T.MINUTES)", taco, TimeUnit::class)
+      }
+      taco = buildCodeBlock {
+        add("%B .addLettuce(3)", taco)
+      }
+      taco = buildCodeBlock {
+        add("%B.addSpice(0.5)", taco)
+      }
+      addStatement("return %B", taco)
+    }
+    .build()
+val fileSpec = FileSpec.builder("com.squareup.tacos.test", "CookTaco")
+    .addFunction(funSpec)
+    .build()
+println(file)
+```
+
+The `CodeBlock` can be decorated over and over again. Finally, it can be used in many functions,
+properties, classes. The references in `CodeBlock` will auto imported.
+
+```kotlin
+package com.squareup.tacos.test
+
+import com.squareup.tacos.Taco
+import java.util.concurrent.TimeUnit
+
+fun cookTaco(rawTaco: Taco) = rawTaco.fry(30, TimeUnit.SECONDS)
+    .bake(8, TimeUnit.MINUTES).addChicken(10).addCheese(5).bake(15, TimeUnit.MINUTES)
+    .addLettuce(3).addSpice(0.5)
+```
 
 ### Code block format strings
 

@@ -217,7 +217,7 @@ internal class CodeWriter constructor(
     codeBlock: CodeBlock,
     isConstantContext: Boolean = false,
     ensureTrailingNewline: Boolean = false
-  ) = apply {
+  ): CodeWriter = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
@@ -288,6 +288,11 @@ internal class CodeWriter constructor(
         "%M" -> {
           val memberName = codeBlock.args[a++] as MemberName
           memberName.emit(this)
+        }
+
+        "%B" -> {
+          val block = codeBlock.args[a++] as CodeBlock
+          emitCode(block)
         }
 
         "%%" -> emit("%")

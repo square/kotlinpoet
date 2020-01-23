@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
 class CodeBlockTest {
@@ -480,6 +481,62 @@ class CodeBlockTest {
   @Test fun `%N escapes spaces`() {
     val funSpec = FunSpec.builder("create taco").build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("`create taco`")
+  }
+
+  @Test fun `%B nested code block`() {
+    val funSpec = FunSpec.builder("cookTaco")
+        .addParameter("rawTaco", ClassName.bestGuess("com.squareup.tacos.Taco"))
+        .apply {
+          var taco = buildCodeBlock {
+            add("rawTaco")
+          }
+
+          taco = buildCodeBlock {
+            add("%B.fry(30,·%T.SECONDS)", taco, TimeUnit::class)
+          }
+
+          taco = buildCodeBlock {
+            add("%B .bake(8,·%T.MINUTES)", taco, TimeUnit::class)
+          }
+
+          taco = buildCodeBlock {
+            add("%B.addChicken(10)", taco)
+          }
+
+          taco = buildCodeBlock {
+            add("%B.addCheese(5)", taco)
+          }
+
+          taco = buildCodeBlock {
+            add("%B.bake(15,·%T.MINUTES)", taco, TimeUnit::class)
+          }
+
+          taco = buildCodeBlock {
+            add("%B .addLettuce(3)", taco)
+          }
+
+          taco = buildCodeBlock {
+            add("%B.addSpice(0.5)", taco)
+          }
+
+          addStatement("return %B", taco)
+        }
+        .build()
+
+    val fileSpec = FileSpec.builder("com.squareup.tacos.test", "CookTaco")
+        .addFunction(funSpec)
+        .build()
+
+    assertThat(fileSpec.toString()).isEqualTo("""
+      |package com.squareup.tacos.test
+      |
+      |import com.squareup.tacos.Taco
+      |import java.util.concurrent.TimeUnit
+      |
+      |fun cookTaco(rawTaco: Taco) = rawTaco.fry(30, TimeUnit.SECONDS)
+      |    .bake(8, TimeUnit.MINUTES).addChicken(10).addCheese(5).bake(15, TimeUnit.MINUTES)
+      |    .addLettuce(3).addSpice(0.5)
+      |""".trimMargin())
   }
 
   @Test fun clear() {
