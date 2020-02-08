@@ -1078,6 +1078,100 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun deeplyNestedExpectClassWithFunction() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.classBuilder("ClassB")
+            .addType(TypeSpec.classBuilder("ClassC")
+                .addFunction(FunSpec.builder("test")
+                    .build())
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  class ClassB {
+      |    class ClassC {
+      |      fun test()
+      |    }
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun veryDeeplyNestedExpectClassWithFunction() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.classBuilder("ClassB")
+            .addType(TypeSpec.classBuilder("ClassC")
+                .addType(TypeSpec.classBuilder("ClassD")
+                    .addFunction(FunSpec.builder("test")
+                        .build())
+                    .build())
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  class ClassB {
+      |    class ClassC {
+      |      class ClassD {
+      |        fun test()
+      |      }
+      |    }
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun deeplyNestedExpectClassWithConstructor() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.classBuilder("ClassB")
+            .addType(TypeSpec.classBuilder("ClassC")
+                .addFunction(FunSpec.constructorBuilder()
+                    .addStatement("Unit")
+                    .build())
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  class ClassB {
+      |    class ClassC {
+      |      constructor()
+      |    }
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun veryDeeplyNestedExpectClassWithConstructor() {
+    val classA = TypeSpec.expectClassBuilder("ClassA")
+        .addType(TypeSpec.classBuilder("ClassB")
+            .addType(TypeSpec.classBuilder("ClassC")
+                .addType(TypeSpec.classBuilder("ClassD")
+                    .addFunction(FunSpec.constructorBuilder()
+                        .addStatement("Unit")
+                        .build())
+                    .build())
+                .build())
+            .build())
+        .build()
+
+    assertThat(classA.toString()).isEqualTo("""
+      |expect class ClassA {
+      |  class ClassB {
+      |    class ClassC {
+      |      class ClassD {
+      |        constructor()
+      |      }
+      |    }
+      |  }
+      |}
+      |""".trimMargin())
+  }
+
   @Test fun interfaceWithMethods() {
     val taco = TypeSpec.interfaceBuilder("Taco")
         .addFunction(FunSpec.builder("aMethod")

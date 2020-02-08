@@ -269,7 +269,7 @@ class TypeSpec private constructor(
       for (funSpec in funSpecs) {
         if (!funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers), false)
+        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers + implicitModifiers), false)
         firstMember = false
       }
 
@@ -286,7 +286,7 @@ class TypeSpec private constructor(
 
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null, kind.implicitTypeModifiers(modifiers), isNestedExternal = areNestedExternal)
+        typeSpec.emit(codeWriter, null, kind.implicitTypeModifiers(modifiers + implicitModifiers), isNestedExternal = areNestedExternal)
         firstMember = false
       }
 
