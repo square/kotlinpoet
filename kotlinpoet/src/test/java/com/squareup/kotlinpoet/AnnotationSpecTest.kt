@@ -17,6 +17,9 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.KModifier.OVERRIDE
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
@@ -334,7 +337,10 @@ class AnnotationSpecTest {
     val classBuilder = TypeSpec.classBuilder("Result")
 
     myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
-        .filter { it.className.simpleName == "AnnotationWithArrayValue" }
+        .filter {
+          val typeName = it.typeName
+          return@filter typeName is ClassName && typeName.simpleName == "AnnotationWithArrayValue"
+        }
         .forEach {
           classBuilder.addAnnotation(it)
         }
@@ -392,6 +398,120 @@ class AnnotationSpecTest {
 
   @Retention(RUNTIME)
   internal annotation class AnnotationWithArrayValue(vararg val value: KClass<*>)
+
+  @Test fun annotationsWithTypeParameters() {
+    // Example from https://kotlinlang.org/docs/tutorials/android-plugin.html
+    val externalClass = ClassName("com.squareup.parceler", "ExternalClass")
+    val externalClassSpec = TypeSpec.classBuilder(externalClass)
+        .addProperty(PropertySpec.builder("value", Int::class)
+            .initializer("value")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("value", Int::class)
+            .build())
+        .build()
+    val externalClassParceler = ClassName("com.squareup.parceler", "ExternalClassParceler")
+    val parcel = ClassName("com.squareup.parceler", "Parcel")
+    val externalClassParcelerSpec = TypeSpec.objectBuilder(externalClassParceler)
+        .addSuperinterface(ClassName("com.squareup.parceler", "Parceler")
+            .parameterizedBy(externalClass))
+        .addFunction(FunSpec.builder("create")
+            .addModifiers(OVERRIDE)
+            .addParameter("parcel", parcel)
+            .addStatement("return %T(parcel.readInt())", externalClass)
+            .build())
+        .addFunction(FunSpec.builder("write")
+            .addModifiers(OVERRIDE)
+            .receiver(externalClass)
+            .addParameter("parcel", parcel)
+            .addParameter("flags", Int::class)
+            .addStatement("parcel.writeInt(value)")
+            .build())
+        .build()
+    val parcelize = ClassName("com.squareup.parceler", "Parcelize")
+    val typeParceler = ClassName("com.squareup.parceler", "TypeParceler")
+    val typeParcelerAnnotation = AnnotationSpec.builder(typeParceler
+        .plusParameter(externalClass)
+        .plusParameter(externalClassParceler))
+        .build()
+    val classLocalParceler = TypeSpec.classBuilder("MyClass")
+        .addAnnotation(parcelize)
+        .addAnnotation(typeParcelerAnnotation)
+        .addProperty(PropertySpec.builder("external", externalClass)
+            .initializer("external")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("external", externalClass)
+            .build())
+        .build()
+    val propertyLocalParceler = TypeSpec.classBuilder("MyClass")
+        .addAnnotation(parcelize)
+        .addProperty(PropertySpec.builder("external", externalClass)
+            .addAnnotation(typeParcelerAnnotation)
+            .initializer("external")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("external", externalClass)
+            .build())
+        .build()
+    val writeWith = ClassName("com.squareup.parceler", "WriteWith")
+    val writeWithExternalClass = externalClass
+        .copy(annotations = listOf(AnnotationSpec
+            .builder(writeWith.plusParameter(externalClassParceler))
+            .build()))
+    val typeLocalParceler = TypeSpec.classBuilder("MyClass")
+        .addAnnotation(parcelize)
+        .addProperty(PropertySpec.builder("external", writeWithExternalClass)
+            .initializer("external")
+            .build())
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("external", writeWithExternalClass)
+            .build())
+        .build()
+    val file = FileSpec.builder("com.squareup.parceler", "Test")
+        .addType(externalClassSpec)
+        .addType(externalClassParcelerSpec)
+        .addType(classLocalParceler)
+        .addType(propertyLocalParceler)
+        .addType(typeLocalParceler)
+        .build()
+    //language=kotlin
+    assertThat(file.toString()).isEqualTo("""
+      package com.squareup.parceler
+
+      import kotlin.Int
+
+      class ExternalClass(
+        val value: Int
+      )
+
+      object ExternalClassParceler : Parceler<ExternalClass> {
+        override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
+
+        override fun ExternalClass.write(parcel: Parcel, flags: Int) {
+          parcel.writeInt(value)
+        }
+      }
+
+      @Parcelize
+      @TypeParceler<ExternalClass, ExternalClassParceler>
+      class MyClass(
+        val external: ExternalClass
+      )
+
+      @Parcelize
+      class MyClass(
+        @TypeParceler<ExternalClass, ExternalClassParceler>
+        val external: ExternalClass
+      )
+
+      @Parcelize
+      class MyClass(
+        val external: @WriteWith<ExternalClassParceler> ExternalClass
+      )
+
+    """.trimIndent())
+  }
 
   private fun toString(annotationSpec: AnnotationSpec) =
       toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())

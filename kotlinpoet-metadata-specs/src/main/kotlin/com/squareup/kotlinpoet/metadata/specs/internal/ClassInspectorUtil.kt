@@ -80,7 +80,11 @@ object ClassInspectorUtil {
   fun filterOutNullabilityAnnotations(
     annotations: List<AnnotationSpec>
   ): List<AnnotationSpec> {
-    return annotations.filterNot { it.className.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS }
+    return annotations.filterNot {
+      val typeName = it.typeName
+      return@filterNot typeName is ClassName &&
+          typeName.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS
+    }
   }
 
   /** @return a [CodeBlock] representation of a [literal] value. */
@@ -126,11 +130,11 @@ object ClassInspectorUtil {
     val result = mutableSetOf<AnnotationSpec>()
         .apply(body)
         .filterNot { spec ->
-          spec.className in KOTLIN_INTRINSIC_ANNOTATIONS
+          spec.typeName in KOTLIN_INTRINSIC_ANNOTATIONS
         }
     val withUseSiteTarget = if (siteTarget != null) {
       result.map {
-        if (!(siteTarget == FIELD && it.className in IMPLICIT_FIELD_ANNOTATIONS)) {
+        if (!(siteTarget == FIELD && it.typeName in IMPLICIT_FIELD_ANNOTATIONS)) {
           // Some annotations are implicitly only for FIELD, so don't emit those site targets
           it.toBuilder().useSiteTarget(siteTarget).build()
         } else {

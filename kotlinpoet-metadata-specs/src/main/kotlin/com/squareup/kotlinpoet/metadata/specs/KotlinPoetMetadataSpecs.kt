@@ -213,7 +213,7 @@ fun ImmutableKmPackage.toFileSpec(
                 .build())
           }
           val fileAnnotations = createAnnotations(FILE) {
-            addAll(data.annotations.filterNot { it.className == METADATA })
+            addAll(data.annotations.filterNot { it.typeName == METADATA })
           }
           for (fileAnnotation in fileAnnotations) {
             addAnnotation(fileAnnotation)
@@ -273,7 +273,7 @@ private fun ImmutableKmClass.toTypeSpec(
 
   classData?.annotations
       ?.filterNot {
-        it.className == METADATA || it.className in JAVA_ANNOTATION_ANNOTATIONS
+        it.typeName == METADATA || it.typeName in JAVA_ANNOTATION_ANNOTATIONS
       }
       ?.let(builder::addAnnotations)
 
@@ -424,7 +424,7 @@ private fun ImmutableKmClass.toTypeSpec(
                   // For interface methods, remove any body and mark the methods as abstract
                   // IFF it doesn't have a default interface body.
                   if (isInterface &&
-                      annotations.none { it.className == JVM_DEFAULT } &&
+                      annotations.none { it.typeName == JVM_DEFAULT } &&
                       !isKotlinDefaultInterfaceMethod()
                   ) {
                     addModifiers(ABSTRACT)
@@ -531,7 +531,7 @@ private fun ImmutableKmFunction.toFunSpec(
   val isInFacade = containerData is FileData
   val annotations = mutableAnnotations
       .plus(methodData?.allAnnotations(containsReifiedTypeParameter = anyReified).orEmpty())
-      .filterNot { isInFacade && it.className == JVM_STATIC }
+      .filterNot { isInFacade && it.typeName == JVM_STATIC }
       .toTreeSet()
   return FunSpec.builder(name)
       .apply {
@@ -685,7 +685,7 @@ private fun ImmutableKmProperty.toPropertySpec(
         val isInFacade = containerData is FileData
         val finalAnnotations = mutableAnnotations
             .plus(propertyData?.allAnnotations.orEmpty())
-            .filterNot { (isConst || isInFacade) && it.className == JVM_STATIC }
+            .filterNot { (isConst || isInFacade) && it.typeName == JVM_STATIC }
             .map {
               if (isConstructorParam && it.useSiteTarget == null) {
                 // TODO Ideally don't do this if the annotation use site is only field?
