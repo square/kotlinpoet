@@ -96,6 +96,10 @@ class UtilTest {
     assertThat("with_unicode_punctuation\u2026".escapeIfNecessary()).isEqualTo("`with_unicode_punctuation\u2026`")
   }
 
+  @Test fun escapeMultipleTimes() {
+    assertThat("A-\$B".escapeIfNecessary()).isEqualTo("`A-\$B`")
+  }
+
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
   private fun stringLiteral(expected: String, value: String) =
