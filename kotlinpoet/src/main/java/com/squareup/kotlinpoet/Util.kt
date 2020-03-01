@@ -199,7 +199,7 @@ private const val ALLOWED_CHARACTER = '$'
 
 internal val String.isKeyword get() = this in KEYWORDS
 
-internal val String.isAllowedCharacter get() = this.any { it == ALLOWED_CHARACTER }
+internal val String.hasAllowedCharacters get() = this.any { it == ALLOWED_CHARACTER }
 
 // https://github.com/JetBrains/kotlin/blob/master/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JvmSimpleNameBacktickChecker.kt
 private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
@@ -211,7 +211,7 @@ private fun String.failIfEscapeInvalid() {
 }
 
 internal fun String.escapeIfNecessary(validate: Boolean = true): String {
-  val escapedString = escapeIfNotJavaIdentifier().escapeIfKeyword().escapeIfAllowedCharacter()
+  val escapedString = escapeIfNotJavaIdentifier().escapeIfKeyword().escapeIfHasAllowedCharacters()
   if (validate) {
     escapedString.failIfEscapeInvalid()
   }
@@ -222,7 +222,7 @@ private fun String.alreadyEscaped() = startsWith("`") && endsWith("`")
 
 private fun String.escapeIfKeyword() = if (isKeyword && !alreadyEscaped()) "`$this`" else this
 
-private fun String.escapeIfAllowedCharacter() = if (isAllowedCharacter && !alreadyEscaped()) "`$this`" else this
+private fun String.escapeIfHasAllowedCharacters() = if (hasAllowedCharacters && !alreadyEscaped()) "`$this`" else this
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if (!Character.isJavaIdentifierStart(first()) ||
