@@ -383,7 +383,7 @@ class ClassName internal constructor(
     }
     // concat top level class name and nested names
     return buildString {
-      append(topLevelClassName())
+      append(topLevelClassName().canonicalName)
       for (name in simpleNames.subList(1, simpleNames.size)) {
         append('$').append(name)
       }

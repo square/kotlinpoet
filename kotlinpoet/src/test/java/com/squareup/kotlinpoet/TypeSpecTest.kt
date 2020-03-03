@@ -4141,6 +4141,12 @@ class TypeSpecTest {
       |""".trimMargin())
   }
 
+  @Test fun escapeAllowedCharacters() {
+    var typeSpec = TypeSpec.classBuilder("A\$B")
+        .build()
+    assertThat(typeSpec.toString()).isEqualTo("class `A\$B`\n")
+  }
+
   companion object {
     private val donutsPackage = "com.squareup.donuts"
   }

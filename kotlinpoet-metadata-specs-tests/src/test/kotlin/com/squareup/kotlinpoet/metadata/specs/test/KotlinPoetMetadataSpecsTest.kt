@@ -1687,7 +1687,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = `Fuzzy$ClassNesting`::class.toTypeSpecWithTestHandler()
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
-      class Fuzzy${'$'}ClassNesting {
+      class `Fuzzy${'$'}ClassNesting` {
         class `-Nested` {
           class SuperNestedClass {
             inner class `-${'$'}Fuzzy${'$'}Super${'$'}Weird-Nested${'$'}Name`
