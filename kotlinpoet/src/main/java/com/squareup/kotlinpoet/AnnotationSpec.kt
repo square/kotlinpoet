@@ -30,7 +30,13 @@ class AnnotationSpec private constructor(
   builder: AnnotationSpec.Builder,
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
-  val className: ClassName = builder.className
+  @Deprecated(
+      message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
+      replaceWith = ReplaceWith("typeName")
+  )
+  val className: ClassName
+    get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
+  val typeName: TypeName = builder.typeName
   val members = builder.members.toImmutableList()
   val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
@@ -41,7 +47,7 @@ class AnnotationSpec private constructor(
     if (useSiteTarget != null) {
       codeWriter.emit(useSiteTarget.keyword + ":")
     }
-    codeWriter.emitCode("%T", className)
+    codeWriter.emitCode("%T", typeName)
 
     if (members.isEmpty() && !asParameter) {
       // @Singleton
@@ -72,7 +78,7 @@ class AnnotationSpec private constructor(
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(className)
+    val builder = Builder(typeName)
     builder.members += members
     builder.useSiteTarget = useSiteTarget
     builder.tags += tagMap.tags
@@ -105,7 +111,7 @@ class AnnotationSpec private constructor(
   }
 
   class Builder internal constructor(
-    internal val className: ClassName
+    internal val typeName: TypeName
   ) : Taggable.Builder<AnnotationSpec.Builder> {
     internal var useSiteTarget: UseSiteTarget? = null
 
@@ -233,6 +239,8 @@ class AnnotationSpec private constructor(
     }
 
     @JvmStatic fun builder(type: ClassName) = Builder(type)
+
+    @JvmStatic fun builder(type: ParameterizedTypeName) = Builder(type)
 
     @JvmStatic fun builder(type: Class<out Annotation>) = builder(type.asClassName())
 
