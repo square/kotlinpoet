@@ -33,6 +33,7 @@ dependencies {
   testImplementation(project(":kotlinpoet-classinspector-elements"))
   testImplementation(project(":kotlinpoet-classinspector-reflective"))
   testImplementation(deps.kotlin.junit)
+  testImplementation(deps.kotlin.reflect)
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
 }
