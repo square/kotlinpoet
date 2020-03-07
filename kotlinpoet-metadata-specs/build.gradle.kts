@@ -55,6 +55,5 @@ dependencies {
   api(project(":kotlinpoet-metadata"))
 
   testImplementation(deps.kotlin.junit)
-  testImplementation(deps.kotlin.reflect)
   testImplementation(deps.test.truth)
 }
