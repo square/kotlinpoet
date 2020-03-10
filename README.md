@@ -351,10 +351,6 @@ class HelloWorld {
 }
 ```
 
-Note that due to a [bug](https://youtrack.jetbrains.com/issue/KT-15286), the IDE will not 
-autocomplete the `parameterizedBy` or `plusParameter` extensions and you'll have to add the import 
-statement manually to get those extensions.
-
 #### Nullable Types
 
 KotlinPoet supports nullable types. To convert a `TypeName` into its nullable counterpart, use the 
