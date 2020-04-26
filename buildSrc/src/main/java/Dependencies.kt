@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 object versions {
-  const val kotlin = "1.3.70"
+  const val kotlin = "1.3.72"
   const val spotless = "3.27.0"
   const val ktlint = "0.36.0"
   const val mavenPublish = "0.8.0"
