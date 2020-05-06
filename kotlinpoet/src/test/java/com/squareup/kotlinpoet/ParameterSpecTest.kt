@@ -103,4 +103,22 @@ class ParameterSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun annotatedLambdaType() {
+    val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
+    val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
+    val spec = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(FunSpec.builder("foo")
+            .addParameter("bar", type)
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |fun foo(bar: @Annotation () -> Unit) {
+      |}
+      |""".trimMargin())
+  }
 }

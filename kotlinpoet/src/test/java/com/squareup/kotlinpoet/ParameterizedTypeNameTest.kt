@@ -138,4 +138,13 @@ class ParameterizedTypeNameTest {
   private fun <Param : Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
 
   private fun <Param : Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
+
+  @Test fun annotatedLambdaTypeParameter() {
+    val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
+    val typeName = Map::class.asTypeName()
+        .plusParameter(String::class.asTypeName())
+        .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
+    assertThat(typeName.toString())
+        .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
+  }
 }
