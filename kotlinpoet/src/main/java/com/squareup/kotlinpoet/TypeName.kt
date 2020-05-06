@@ -519,8 +519,6 @@ class LambdaTypeName private constructor(
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
-    emitAnnotations(out)
-
     if (isNullable) {
       out.emit("(")
     }

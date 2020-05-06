@@ -769,4 +769,40 @@ class FunSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun annotatedLambdaReceiverType() {
+    val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
+    val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
+    val spec = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(FunSpec.builder("foo")
+            .receiver(type)
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |fun (@Annotation () -> Unit).foo() {
+      |}
+      |""".trimMargin())
+  }
+
+  @Test fun annotatedLambdaReturnType() {
+    val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
+    val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
+    val spec = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(FunSpec.builder("foo")
+            .returns(type)
+            .build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |fun foo(): @Annotation () -> Unit {
+      |}
+      |""".trimMargin())
+  }
 }

@@ -375,4 +375,19 @@ class PropertySpecTest {
       |const val FOO: String = "This is a long string with a newline\nin the middle."
       |""".trimMargin())
   }
+
+  @Test fun annotatedLambdaType() {
+    val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
+    val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
+    val spec = FileSpec.builder("com.squareup.tacos", "Taco")
+        .addProperty(PropertySpec.builder("foo", type).build())
+        .build()
+    assertThat(spec.toString()).isEqualTo("""
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |val foo: @Annotation () -> Unit
+      |""".trimMargin())
+  }
 }

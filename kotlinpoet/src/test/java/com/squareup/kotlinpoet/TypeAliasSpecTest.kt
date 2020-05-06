@@ -198,6 +198,15 @@ class TypeAliasSpecTest {
       |typealias `fun` = kotlin.String
       |""".trimMargin())
   }
+
+  @Test fun annotatedLambdaType() {
+    val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
+    val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
+    val spec = TypeAliasSpec.builder("lambda", type).build()
+    assertThat(spec.toString()).isEqualTo("""
+      |typealias lambda = @Annotation () -> kotlin.Unit
+      |""".trimMargin())
+  }
 }
 
 @Retention(RUNTIME)
