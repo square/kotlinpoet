@@ -872,7 +872,9 @@ class TypeSpecTest {
           .build()
       fail()
     } catch (e: IllegalStateException) {
-      assertThat(e).hasMessageThat().contains("Functional interfaces must have exactly one abstract function. Contained 0")
+      assertThat(e)
+          .hasMessageThat()
+          .contains("Functional interfaces must have exactly one abstract function. Contained 0")
     }
   }
 
@@ -888,7 +890,9 @@ class TypeSpecTest {
           .build()
       fail()
     } catch (e: IllegalStateException) {
-      assertThat(e).hasMessageThat().contains("Functional interfaces must have exactly one abstract function. Contained 2")
+      assertThat(e)
+          .hasMessageThat()
+          .contains("Functional interfaces must have exactly one abstract function. Contained 2")
     }
   }
 
