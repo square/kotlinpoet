@@ -846,6 +846,56 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Test fun funInterface() {
+    val taco = ClassName(tacosPackage, "Taco")
+    val typeSpec = TypeSpec.funInterfaceBuilder(taco)
+        .addFunction(FunSpec.builder("sam")
+            .addModifiers(ABSTRACT)
+            .build())
+        .addFunction(FunSpec.builder("notSam").build())
+        .build()
+    assertThat(toString(typeSpec)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |fun interface Taco {
+        |  fun sam()
+        |
+        |  fun notSam() {
+        |  }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun funInterface_empty_shouldError() {
+    try {
+      TypeSpec.funInterfaceBuilder("Taco")
+          .build()
+      fail()
+    } catch (e: IllegalStateException) {
+      assertThat(e)
+          .hasMessageThat()
+          .contains("Functional interfaces must have exactly one abstract function. Contained 0")
+    }
+  }
+
+  @Test fun funInterface_multipleAbstract_shouldError() {
+    try {
+      TypeSpec.funInterfaceBuilder("Taco")
+          .addFunction(FunSpec.builder("fun1")
+              .addModifiers(ABSTRACT)
+              .build())
+          .addFunction(FunSpec.builder("fun2")
+              .addModifiers(ABSTRACT)
+              .build())
+          .build()
+      fail()
+    } catch (e: IllegalStateException) {
+      assertThat(e)
+          .hasMessageThat()
+          .contains("Functional interfaces must have exactly one abstract function. Contained 2")
+    }
+  }
+
   @Test fun nestedClasses() {
     val taco = ClassName(tacosPackage, "Combo", "Taco")
     val topping = ClassName(tacosPackage, "Combo", "Taco", "Topping")
