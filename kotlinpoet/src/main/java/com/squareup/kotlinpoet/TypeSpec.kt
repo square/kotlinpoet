@@ -21,6 +21,7 @@ import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.KModifier.ENUM
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
+import com.squareup.kotlinpoet.KModifier.FUN
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
@@ -52,6 +53,7 @@ class TypeSpec private constructor(
   val isAnnotation = builder.isAnnotation
   val isCompanion = builder.isCompanion
   val isAnonymousClass = builder.isAnonymousClass
+  val isFunInterface = builder.isFunInterface
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
@@ -448,6 +450,7 @@ class TypeSpec private constructor(
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
     internal val isInlineClass get() = kind == Kind.CLASS && INLINE in modifiers
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
+    internal val isFunInterface get() = kind == Kind.INTERFACE && FUN in modifiers
 
     override val tags = mutableMapOf<KClass<*>, Any>()
     override val originatingElements = mutableListOf<Element>()
@@ -743,6 +746,14 @@ class TypeSpec private constructor(
         }
       }
 
+      if (isFunInterface) {
+        // Note: Functional interfaces can contain any number of non-abstract functions.
+        val abstractFunSpecs = funSpecs.filter { ABSTRACT in it.modifiers }
+        check(abstractFunSpecs.size == 1) {
+          "Functional interfaces must have exactly one abstract function. Contained ${abstractFunSpecs.size}: ${abstractFunSpecs.map { it.name }}"
+        }
+      }
+
       val companionObjectsCount = typeSpecs.count { it.isCompanion }
       when (companionObjectsCount) {
         0 -> Unit
@@ -779,6 +790,12 @@ class TypeSpec private constructor(
     @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name)
 
     @JvmStatic fun interfaceBuilder(className: ClassName) = interfaceBuilder(className.simpleName)
+
+    @JvmStatic
+    fun funInterfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, FUN)
+
+    @JvmStatic
+    fun funInterfaceBuilder(className: ClassName) = funInterfaceBuilder(className.simpleName)
 
     @JvmStatic fun enumBuilder(name: String) = Builder(Kind.CLASS, name, ENUM)
 

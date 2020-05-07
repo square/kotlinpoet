@@ -48,6 +48,7 @@ enum class KModifier(
 
   ENUM("enum", Target.CLASS),
   ANNOTATION("annotation", Target.CLASS),
+  FUN("fun", Target.INTERFACE),
 
   COMPANION("companion", Target.CLASS),
 
@@ -72,6 +73,7 @@ enum class KModifier(
     TYPE_PARAMETER,
     FUNCTION,
     PROPERTY,
+    INTERFACE,
   }
 
   internal fun checkTarget(target: Target) {
