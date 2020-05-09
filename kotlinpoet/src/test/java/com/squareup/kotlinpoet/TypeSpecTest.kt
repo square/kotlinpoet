@@ -854,6 +854,7 @@ class TypeSpecTest {
             .build())
         .addFunction(FunSpec.builder("notSam").build())
         .build()
+    assertThat(typeSpec.isFunctionalInterface).isTrue()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
