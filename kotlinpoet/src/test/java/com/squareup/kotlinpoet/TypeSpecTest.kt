@@ -854,6 +854,7 @@ class TypeSpecTest {
             .build())
         .addFunction(FunSpec.builder("notSam").build())
         .build()
+    assertThat(typeSpec.isFunctionalInterface).isTrue()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
@@ -867,19 +868,15 @@ class TypeSpecTest {
   }
 
   @Test fun funInterface_empty_shouldError() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.funInterfaceBuilder("Taco")
           .build()
-      fail()
-    } catch (e: IllegalStateException) {
-      assertThat(e)
-          .hasMessageThat()
-          .contains("Functional interfaces must have exactly one abstract function. Contained 0")
-    }
+    }.hasMessageThat()
+        .contains("Functional interfaces must have exactly one abstract function. Contained 0")
   }
 
   @Test fun funInterface_multipleAbstract_shouldError() {
-    try {
+    assertThrows<IllegalStateException> {
       TypeSpec.funInterfaceBuilder("Taco")
           .addFunction(FunSpec.builder("fun1")
               .addModifiers(ABSTRACT)
@@ -888,12 +885,8 @@ class TypeSpecTest {
               .addModifiers(ABSTRACT)
               .build())
           .build()
-      fail()
-    } catch (e: IllegalStateException) {
-      assertThat(e)
-          .hasMessageThat()
-          .contains("Functional interfaces must have exactly one abstract function. Contained 2")
-    }
+    }.hasMessageThat()
+        .contains("Functional interfaces must have exactly one abstract function. Contained 2")
   }
 
   @Test fun nestedClasses() {

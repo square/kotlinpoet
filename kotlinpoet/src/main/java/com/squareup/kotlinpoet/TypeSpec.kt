@@ -53,7 +53,7 @@ class TypeSpec private constructor(
   val isAnnotation = builder.isAnnotation
   val isCompanion = builder.isCompanion
   val isAnonymousClass = builder.isAnonymousClass
-  val isFunInterface = builder.isFunInterface
+  val isFunctionalInterface = builder.isFunInterface
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
