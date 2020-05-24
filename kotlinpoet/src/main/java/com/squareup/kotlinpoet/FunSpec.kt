@@ -28,6 +28,7 @@ import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ExecutableType
 import javax.lang.model.type.TypeVariable
 import javax.lang.model.util.Types
+import kotlin.coroutines.Continuation
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
@@ -537,11 +538,24 @@ class FunSpec private constructor(
 
       funBuilder.returns(method.returnType.asTypeName())
       funBuilder.addParameters(ParameterSpec.parametersOf(method))
+
+      val lastIndex = funBuilder.parameters.lastIndex
       if (method.isVarArgs) {
-        funBuilder.parameters[funBuilder.parameters.lastIndex] = funBuilder.parameters.last()
+        // TODO: isVarArgs is false for suspending vararg functions
+        funBuilder.parameters[lastIndex] = funBuilder.parameters.last()
             .toBuilder()
             .addModifiers(VARARG)
             .build()
+      } else {
+        funBuilder.parameters.takeIf { it.isNotEmpty() }?.last()?.also {
+          if (it.type.belongsToType(Continuation::class)) {
+            funBuilder.parameters.removeAt(lastIndex)
+            funBuilder.addModifiers(KModifier.SUSPEND)
+            var typeArg = (it.type as ParameterizedTypeName).typeArguments[0]
+            if (typeArg is WildcardTypeName) typeArg = typeArg.inTypes[0]
+            funBuilder.returns(typeArg)
+          }
+        }
       }
 
       if (method.thrownTypes.isNotEmpty()) {

@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import java.util.Collections
+import kotlin.reflect.KClass
 
 internal object NullAppendable : Appendable {
   override fun append(charSequence: CharSequence) = this
@@ -236,3 +237,9 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
     .filter { it.isNotEmpty() }
     .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
+fun TypeName.belongsToType(expectedType: TypeName): Boolean {
+  return if (this is ParameterizedTypeName) rawType == expectedType else this == expectedType
+}
+
+fun TypeName.belongsToType(expectedClass: KClass<*>) = belongsToType(expectedClass.asTypeName())
