@@ -770,11 +770,11 @@ class FileSpecTest {
 
     assertThat(builder.build().toString()).isEqualTo("""
       package com.taco
-      
+
       import com.foo.Foo
       import com.foo.Foo2
-      
-      
+
+
     """.trimIndent())
   }
 
