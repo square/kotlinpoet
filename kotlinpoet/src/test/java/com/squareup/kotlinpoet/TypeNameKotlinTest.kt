@@ -68,4 +68,11 @@ class TypeNameKotlinTest {
     val type = typeNameOf<String>().copy(tags = mapOf(String::class to "Test"))
     assertThat(type.tag<String>()).isEqualTo("Test")
   }
+
+  @Test
+  fun existingTagsShouldBePreserved() {
+    val type = typeNameOf<String>().copy(tags = mapOf(String::class to "Test"))
+    val copied = type.copy(nullable = true)
+    assertThat(copied.tag<String>()).isEqualTo("Test")
+  }
 }

@@ -86,7 +86,7 @@ sealed class TypeName constructor(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList()
   ): TypeName {
-    return copy(nullable, annotations, emptyMap())
+    return copy(nullable, annotations, this.tags)
   }
 
   abstract fun copy(
