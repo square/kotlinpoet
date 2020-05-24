@@ -18,7 +18,13 @@
 package com.squareup.kotlinpoet
 
 import java.lang.reflect.WildcardType
+import kotlin.DeprecationLevel.WARNING
 
+@Deprecated(
+    message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+    level = WARNING
+)
 @JvmName("get")
 fun javax.lang.model.type.WildcardType.asWildcardTypeName() =
     WildcardTypeName.get(this, mutableMapOf())

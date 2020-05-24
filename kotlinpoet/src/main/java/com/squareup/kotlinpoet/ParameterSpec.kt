@@ -19,6 +19,7 @@ import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.VariableElement
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated parameter declaration.  */
@@ -141,7 +142,13 @@ class ParameterSpec private constructor(
   }
 
   companion object {
-    @JvmStatic fun get(element: VariableElement): ParameterSpec {
+    @Deprecated(
+        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+            " the kotlinpoet-metadata APIs instead.",
+        level = WARNING
+    )
+    @JvmStatic
+    fun get(element: VariableElement): ParameterSpec {
       val name = element.simpleName.toString()
       val type = element.asType().asTypeName()
       return ParameterSpec.builder(name, type)
@@ -149,7 +156,13 @@ class ParameterSpec private constructor(
           .build()
     }
 
-    @JvmStatic fun parametersOf(method: ExecutableElement) =
+    @Deprecated(
+        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+            " the kotlinpoet-metadata APIs instead.",
+        level = WARNING
+    )
+    @JvmStatic
+    fun parametersOf(method: ExecutableElement) =
         method.parameters.map { ParameterSpec.get(it) }
 
     @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {

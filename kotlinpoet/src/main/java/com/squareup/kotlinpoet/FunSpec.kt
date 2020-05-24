@@ -28,6 +28,7 @@ import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ExecutableType
 import javax.lang.model.type.TypeVariable
 import javax.lang.model.util.Types
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated function declaration.  */
@@ -506,14 +507,13 @@ class FunSpec private constructor(
 
     @JvmStatic fun setterBuilder() = Builder(SETTER)
 
-    /**
-     * Returns a new fun spec builder that overrides `method`.
-
-     *
-     * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An `override` modifier will be added.
-     */
-    @JvmStatic fun overriding(method: ExecutableElement): Builder {
+    @Deprecated(
+        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+            " the kotlinpoet-metadata APIs instead.",
+        level = WARNING
+    )
+    @JvmStatic
+    fun overriding(method: ExecutableElement): Builder {
       var modifiers: Set<Modifier> = method.modifiers
       require(Modifier.PRIVATE !in modifiers &&
           Modifier.FINAL !in modifiers &&
@@ -554,15 +554,13 @@ class FunSpec private constructor(
       return funBuilder
     }
 
-    /**
-     * Returns a new function spec builder that overrides `method` as a member of `enclosing`. This
-     * will resolve type parameters: for example overriding [Comparable.compareTo] in a type that
-     * implements `Comparable<Movie>`, the `T` parameter will be resolved to `Movie`.
-     *
-     * This will copy its visibility modifiers, type parameters, return type, name, parameters, and
-     * throws declarations. An `override` modifier will be added.
-     */
-    @JvmStatic fun overriding(
+    @Deprecated(
+        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+            " the kotlinpoet-metadata APIs instead.",
+        level = WARNING
+    )
+    @JvmStatic
+    fun overriding(
       method: ExecutableElement,
       enclosing: DeclaredType,
       types: Types
