@@ -789,7 +789,7 @@ class FileSpecTest {
     check(builder.build().members.all { it is TypeSpec })
   }
 
-  @Test fun clearIndent() {
+  @Test fun clearComment() {
     val builder = FileSpec.builder("com.taco", "Taco")
         .addFunction(FunSpec.builder("aFunction").build())
         .addComment("Hello!")
