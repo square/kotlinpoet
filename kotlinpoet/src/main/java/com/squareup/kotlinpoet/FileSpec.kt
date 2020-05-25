@@ -218,9 +218,10 @@ class FileSpec private constructor(
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
-    internal val members = mutableListOf<Any>()
     override val tags = mutableMapOf<KClass<*>, Any>()
 
+    val imports: List<Import> get() = memberImports.toList()
+    val members = mutableListOf<Any>()
     val annotations = mutableListOf<AnnotationSpec>()
 
     /**
@@ -247,6 +248,10 @@ class FileSpec private constructor(
 
     fun addComment(format: String, vararg args: Any) = apply {
       comment.add(format.replace(' ', '·'), *args)
+    }
+
+    fun clearComment() = apply {
+      comment.clear()
     }
 
     fun addType(typeSpec: TypeSpec) = apply {
@@ -313,6 +318,14 @@ class FileSpec private constructor(
           Import(name)
         }
       }
+    }
+
+    fun addImport(import: Import) = apply {
+      memberImports += import
+    }
+
+    fun clearImports() = apply {
+      memberImports.clear()
     }
 
     fun addAliasedImport(`class`: Class<*>, `as`: String) =

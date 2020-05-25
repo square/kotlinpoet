@@ -754,6 +754,53 @@ class FileSpecTest {
     assertThat(builder.build().annotations).containsExactly(javaWord)
   }
 
+  @Test fun modifyImports() {
+    val builder = FileSpec.builder("com.taco", "Taco")
+        .addImport("com.foo", "Foo")
+
+    val currentImports = builder.imports
+    builder.clearImports()
+    builder.addImport("com.foo", "Foo2")
+        .apply {
+          for (current in currentImports) {
+            addImport(current)
+          }
+        }
+        .indent("")
+
+    assertThat(builder.build().toString()).isEqualTo("""
+      package com.taco
+
+      import com.foo.Foo
+      import com.foo.Foo2
+
+
+    """.trimIndent())
+  }
+
+  @Test fun modifyMembers() {
+    val builder = FileSpec.builder("com.taco", "Taco")
+        .addFunction(FunSpec.builder("aFunction").build())
+        .addProperty(PropertySpec.builder("aProperty", INT).initializer("1").build())
+        .addTypeAlias(TypeAliasSpec.builder("ATypeAlias", INT).build())
+        .addType(TypeSpec.classBuilder("AClass").build())
+
+    builder.members.removeAll { it !is TypeSpec }
+
+    check(builder.build().members.all { it is TypeSpec })
+  }
+
+  @Test fun clearComment() {
+    val builder = FileSpec.builder("com.taco", "Taco")
+        .addFunction(FunSpec.builder("aFunction").build())
+        .addComment("Hello!")
+
+    builder.clearComment()
+        .addComment("Goodbye!")
+
+    assertThat(builder.build().comment.toString()).isEqualTo("Goodbye!")
+  }
+
   // https://github.com/square/kotlinpoet/issues/480
   @Test fun defaultPackageMemberImport() {
     val bigInteger = ClassName.bestGuess("bigInt.BigInteger")
