@@ -36,6 +36,7 @@ import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleTypeVisitor7
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
@@ -273,6 +274,11 @@ sealed class TypeName constructor(
 @JvmField val DYNAMIC = Dynamic
 
 /** Returns a [TypeName] equivalent to this [TypeMirror]. */
+@Deprecated(
+    message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+    level = WARNING
+)
 @JvmName("get")
 fun TypeMirror.asTypeName() = TypeName.get(this, mutableMapOf())
 

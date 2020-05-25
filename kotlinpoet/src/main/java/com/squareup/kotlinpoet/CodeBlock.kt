@@ -42,8 +42,7 @@ import kotlin.reflect.KClass
  *  * `%P` - Similar to `%S`, but doesn't escape dollar signs (`$`) to allow creation of string
  *    templates. If the string contains dollar signs that should be escaped - use `%S`.
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
- *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
- *    [elements][javax.lang.model.element.Element].
+ *    [classes][Class].
  *  * `%M` emits a *member* reference. A member is either a function or a property. If the member is
  *    importable, e.g. it's a top-level function or a property declared inside an object, the import
  *    will be resolved if possible. Arguments for members must be of type [MemberName].
@@ -363,10 +362,21 @@ class CodeBlock private constructor(
 
     private fun argToString(o: Any?) = o?.toString()
 
+    private fun logDeprecationWarning(o: Any) {
+      println("Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
+          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead.")
+    }
+
     private fun argToType(o: Any?) = when (o) {
       is TypeName -> o
-      is TypeMirror -> o.asTypeName()
-      is Element -> o.asType().asTypeName()
+      is TypeMirror -> {
+        logDeprecationWarning(o)
+        o.asTypeName()
+      }
+      is Element -> {
+        logDeprecationWarning(o)
+        o.asType().asTypeName()
+      }
       is Type -> o.asTypeName()
       is KClass<*> -> o.asTypeName()
       else -> throw IllegalArgumentException("expected type but was $o")

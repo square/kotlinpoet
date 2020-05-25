@@ -23,6 +23,7 @@ import javax.lang.model.element.NestingKind.MEMBER
 import javax.lang.model.element.NestingKind.TOP_LEVEL
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 @JvmName("get")
@@ -51,6 +52,11 @@ fun KClass<*>.asClassName(): ClassName {
 }
 
 /** Returns the class name for `element`.  */
+@Deprecated(
+    message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+    level = WARNING
+)
 @JvmName("get")
 fun TypeElement.asClassName(): ClassName {
   fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface

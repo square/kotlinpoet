@@ -23,6 +23,7 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleAnnotationValueVisitor7
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration.  */
@@ -222,7 +223,13 @@ class AnnotationSpec private constructor(
       }
     }
 
-    @JvmStatic fun get(annotation: AnnotationMirror): AnnotationSpec {
+    @Deprecated(
+        message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+            " the kotlinpoet-metadata APIs instead.",
+        level = WARNING
+    )
+    @JvmStatic
+    fun get(annotation: AnnotationMirror): AnnotationSpec {
       val element = annotation.annotationType.asElement() as TypeElement
       val builder = AnnotationSpec.builder(element.asClassName())
           .tag(annotation)
