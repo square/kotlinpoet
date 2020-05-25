@@ -781,7 +781,8 @@ class FileSpecTest {
   @Test fun modifyMembers() {
     val builder = FileSpec.builder("com.taco", "Taco")
         .addFunction(FunSpec.builder("aFunction").build())
-        .addFunction(FunSpec.builder("aSecondFunction").build())
+        .addProperty(PropertySpec.builder("aProperty", INT).initializer("1").build())
+        .addTypeAlias(TypeAliasSpec.builder("ATypeAlias", INT).build())
         .addType(TypeSpec.classBuilder("AClass").build())
 
     builder.members.removeAll { it !is TypeSpec }
