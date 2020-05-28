@@ -1,6 +1,37 @@
 Change Log
 ==========
 
+## Version 1.6.0
+
+_2020-05-28_
+
+ * New: Deprecate Mirror API integrations.
+ 
+   Mirror API integrations, such as `TypeElement.asClassName()` and 
+   `FunSpec.overriding(ExecutableElement)`, are being deprecated in this release. These KotlinPoet
+   APIs are most often used in annotation processors. Since kapt runs annotation processors over
+   stubs, which are Java files, a lot of the Kotlin-specific information gets lost in translation 
+   and cannot be accessed by KotlinPoet through the Mirror API integrations. Examples include:
+   
+   - Alias types, such as `kotlin.String`, get converted to their JVM representations, such as 
+     `java.lang.String`.
+   - Type nullability information is not accessible.
+   - `suspend` functions are seen as simple functions with an additional `Continuation` parameter.
+   
+   The correct solution is to switch to [KotlinPoet-metadata][kotlinpoet-metadata] or 
+   [KotlinPoet-metadata-specs][kotlinpoet-metadata-specs] API, which fetches Kotlin-specific
+   information from the `@Metadata` annotation and produces correct KotlinPoet Specs.
+ 
+ * New: Kotlin 1.3.72.
+ * New: Improve `MemberName` to support operator overloading.
+ * New: Support generics in `AnnotationSpec`.
+ * New: Add support for functional interfaces.
+ * New: Make more `FunSpec.Builder` members public for easier mutation.
+ * Fix: Properly propagate implicit type and function modifiers in nested declarations.
+ * Fix: Properly escape type names containing `$` character.
+ * Fix: Don't emit `LambdaTypeName` annotations twice.
+ * Fix: Preserve tags in `TypeName.copy()`.
+
 ## Version 1.5.0
 
 _2020-01-09_
@@ -362,4 +393,5 @@ _2017-05-16_
 
  * Initial public release.
 
+ [kotlinpoet-metadata]: kotlinpoet-metadata/README.md
  [kotlinpoet-metadata-specs]: kotlinpoet-metadata-specs/README.md
