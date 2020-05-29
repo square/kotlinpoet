@@ -20,7 +20,8 @@ _2020-05-28_
    
    The correct solution is to switch to [KotlinPoet-metadata][kotlinpoet-metadata] or 
    [KotlinPoet-metadata-specs][kotlinpoet-metadata-specs] API, which fetches Kotlin-specific
-   information from the `@Metadata` annotation and produces correct KotlinPoet Specs.
+   information from the `@Metadata` annotation and produces correct KotlinPoet Specs. We may explore
+   adding new metadata-based alternatives to the deprecated APIs in the future.
  
  * New: Kotlin 1.3.72.
  * New: Improve `MemberName` to support operator overloading.
