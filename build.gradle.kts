@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version versions.kotlin apply false
+  kotlin("jvm") version versions.kotlin.plugin apply false
   id("org.jetbrains.dokka") version versions.dokka apply false
   id("com.diffplug.gradle.spotless") version versions.spotless
 }
@@ -34,10 +35,15 @@ subprojects {
   repositories {
     mavenCentral()
     jcenter()
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
   }
   tasks.withType<KotlinCompile> {
     kotlinOptions {
       jvmTarget = "1.8"
+      languageVersion = "1.3"
     }
+  }
+  extensions.findByType<KotlinProjectExtension>()?.apply {
+    explicitApiWarning() // TODO(egor): Change to explicitApi() and fix errors.
   }
 }

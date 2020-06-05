@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 object versions {
-  const val kotlin = "1.3.72"
+  object kotlin {
+    const val plugin = "1.4-M2"
+    const val libs = "1.3.72"
+  }
   const val spotless = "3.27.0"
   const val ktlint = "0.36.0"
   const val mavenPublish = "0.8.0"
@@ -25,9 +28,9 @@ object versions {
 object deps {
   const val autoCommon = "com.google.auto:auto-common:0.10"
   object kotlin {
-    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    const val reflect = "org.jetbrains.kotlin:kotlin-reflect"
-    const val junit = "org.jetbrains.kotlin:kotlin-test-junit"
+    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin.libs}"
+    const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin.libs}"
+    const val junit = "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin.libs}"
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"
   }
   object test {

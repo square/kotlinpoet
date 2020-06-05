@@ -13,6 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
+  }
+}
 
 include(
     ":kotlinpoet",
