@@ -43,7 +43,8 @@ subprojects {
       languageVersion = "1.3"
     }
   }
-  extensions.findByType<KotlinProjectExtension>()?.apply {
-    explicitApiWarning() // TODO(egor): Change to explicitApi() and fix errors.
+  afterEvaluate {
+    // TODO(egor): Change to explicitApi() and fix errors.
+    the<KotlinProjectExtension>().explicitApiWarning()
   }
 }
