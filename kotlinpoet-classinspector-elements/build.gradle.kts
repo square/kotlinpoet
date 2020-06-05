@@ -46,12 +46,6 @@ afterEvaluate {
   }
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xuse-experimental=kotlin.Experimental")
-  }
-}
-
 dependencies {
   api(deps.kotlin.stdlib)
   api(project(":kotlinpoet-metadata-specs"))

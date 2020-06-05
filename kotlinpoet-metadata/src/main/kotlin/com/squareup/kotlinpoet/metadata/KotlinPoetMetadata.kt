@@ -30,7 +30,7 @@ import kotlinx.metadata.jvm.KotlinClassMetadata
  * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
  * because kotlinx-metadata is not a stable API, and will remain in place until it is.
  */
-@Experimental
+@RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY)
 annotation class KotlinPoetMetadataPreview
