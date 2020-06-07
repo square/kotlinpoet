@@ -41,105 +41,105 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      fun jvmNameFunction(): Unit {
+      public fun jvmNameFunction(): Unit {
       }
 
-      fun jvmOverloads(
+      public fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!")
       ): Unit {
       }
 
-      fun regularFun(): Unit {
+      public fun regularFun(): Unit {
       }
 
       @Synchronized
-      fun synchronizedFun(): Unit {
+      public fun synchronizedFun(): Unit {
       }
 
-      val BINARY_PROP: Int = 11
+      public val BINARY_PROP: Int = 11
 
-      val BOOL_PROP: Boolean = false
+      public val BOOL_PROP: Boolean = false
 
-      const val CONST_BINARY_PROP: Int = 11
+      public const val CONST_BINARY_PROP: Int = 11
 
-      const val CONST_BOOL_PROP: Boolean = false
+      public const val CONST_BOOL_PROP: Boolean = false
 
-      const val CONST_DOUBLE_PROP: Double = 1.0
+      public const val CONST_DOUBLE_PROP: Double = 1.0
 
-      const val CONST_FLOAT_PROP: Float = 1.0F
+      public const val CONST_FLOAT_PROP: Float = 1.0F
 
-      const val CONST_HEX_PROP: Int = 15
+      public const val CONST_HEX_PROP: Int = 15
 
-      const val CONST_INT_PROP: Int = 1
+      public const val CONST_INT_PROP: Int = 1
 
-      const val CONST_LONG_PROP: Long = 1L
+      public const val CONST_LONG_PROP: Long = 1L
 
-      const val CONST_STRING_PROP: String = "prop"
+      public const val CONST_STRING_PROP: String = "prop"
 
-      const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      const val CONST_UNDERSCORES_PROP: Int = 1000000
+      public const val CONST_UNDERSCORES_PROP: Int = 1000000
 
-      val DOUBLE_PROP: Double = 1.0
+      public val DOUBLE_PROP: Double = 1.0
 
-      val FLOAT_PROP: Float = 1.0F
+      public val FLOAT_PROP: Float = 1.0F
 
-      val HEX_PROP: Int = 15
+      public val HEX_PROP: Int = 15
 
-      val INT_PROP: Int = 1
+      public val INT_PROP: Int = 1
 
-      val LONG_PROP: Long = 1L
+      public val LONG_PROP: Long = 1L
 
-      val STRING_PROP: String = "prop"
+      public val STRING_PROP: String = "prop"
 
-      val UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public val UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      val UNDERSCORES_PROP: Int = 1000000
+      public val UNDERSCORES_PROP: Int = 1000000
 
-      var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
+      public var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
+      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
-      var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
+      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
 
-      var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
       @field:JvmSynthetic
       @JvmField
-      val syntheticFieldProperty: String? = null
+      public val syntheticFieldProperty: String? = null
 
       @field:JvmSynthetic
-      val syntheticProperty: String? = null
+      public val syntheticProperty: String? = null
 
       @get:JvmSynthetic
-      val syntheticPropertyGet: String? = null
+      public val syntheticPropertyGet: String? = null
 
       @get:JvmSynthetic
       @set:JvmSynthetic
-      var syntheticPropertyGetAndSet: String? = null
+      public var syntheticPropertyGetAndSet: String? = null
 
       @set:JvmSynthetic
-      var syntheticPropertySet: String? = null
+      public var syntheticPropertySet: String? = null
 
-      typealias FacadeGenericTypeAlias = List<String>
+      public typealias FacadeGenericTypeAlias = List<String>
 
-      typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
+      public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
-      typealias FacadeTypeAliasName = String
+      public typealias FacadeTypeAliasName = String
     """.trimIndent())
   }
 
@@ -174,105 +174,105 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      fun jvmNameFunction(): Unit {
+      public fun jvmNameFunction(): Unit {
       }
 
       @JvmOverloads
-      fun jvmOverloads(
+      public fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!")
       ): Unit {
       }
 
-      fun regularFun(): Unit {
+      public fun regularFun(): Unit {
       }
 
       @Synchronized
-      fun synchronizedFun(): Unit {
+      public fun synchronizedFun(): Unit {
       }
 
-      val BINARY_PROP: Int = 11
+      public val BINARY_PROP: Int = 11
 
-      val BOOL_PROP: Boolean = false
+      public val BOOL_PROP: Boolean = false
 
-      const val CONST_BINARY_PROP: Int = 11
+      public const val CONST_BINARY_PROP: Int = 11
 
-      const val CONST_BOOL_PROP: Boolean = false
+      public const val CONST_BOOL_PROP: Boolean = false
 
-      const val CONST_DOUBLE_PROP: Double = 1.0
+      public const val CONST_DOUBLE_PROP: Double = 1.0
 
-      const val CONST_FLOAT_PROP: Float = 1.0F
+      public const val CONST_FLOAT_PROP: Float = 1.0F
 
-      const val CONST_HEX_PROP: Int = 15
+      public const val CONST_HEX_PROP: Int = 15
 
-      const val CONST_INT_PROP: Int = 1
+      public const val CONST_INT_PROP: Int = 1
 
-      const val CONST_LONG_PROP: Long = 1L
+      public const val CONST_LONG_PROP: Long = 1L
 
-      const val CONST_STRING_PROP: String = "prop"
+      public const val CONST_STRING_PROP: String = "prop"
 
-      const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      const val CONST_UNDERSCORES_PROP: Int = 1000000
+      public const val CONST_UNDERSCORES_PROP: Int = 1000000
 
-      val DOUBLE_PROP: Double = 1.0
+      public val DOUBLE_PROP: Double = 1.0
 
-      val FLOAT_PROP: Float = 1.0F
+      public val FLOAT_PROP: Float = 1.0F
 
-      val HEX_PROP: Int = 15
+      public val HEX_PROP: Int = 15
 
-      val INT_PROP: Int = 1
+      public val INT_PROP: Int = 1
 
-      val LONG_PROP: Long = 1L
+      public val LONG_PROP: Long = 1L
 
-      val STRING_PROP: String = "prop"
+      public val STRING_PROP: String = "prop"
 
-      val UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public val UNDERSCORES_HEX_PROP: Long = 4293713502L
 
-      val UNDERSCORES_PROP: Int = 1000000
+      public val UNDERSCORES_PROP: Int = 1000000
 
-      var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
+      public var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
+      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
-      var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
+      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
 
-      var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
-
-      @field:JvmSynthetic
-      val syntheticFieldProperty: String? = null
+      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
       @field:JvmSynthetic
-      val syntheticProperty: String? = null
+      public val syntheticFieldProperty: String? = null
+
+      @field:JvmSynthetic
+      public val syntheticProperty: String? = null
 
       @get:JvmSynthetic
-      val syntheticPropertyGet: String? = null
+      public val syntheticPropertyGet: String? = null
 
       @get:JvmSynthetic
       @set:JvmSynthetic
-      var syntheticPropertyGetAndSet: String? = null
+      public var syntheticPropertyGetAndSet: String? = null
 
       @set:JvmSynthetic
-      var syntheticPropertySet: String? = null
+      public var syntheticPropertySet: String? = null
 
-      typealias FacadeGenericTypeAlias = List<String>
+      public typealias FacadeGenericTypeAlias = List<String>
 
-      typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
+      public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
-      typealias FacadeTypeAliasName = String
+      public typealias FacadeTypeAliasName = String
     """.trimIndent())
   }
 
@@ -291,7 +291,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       import kotlin.String
 
-      val prop: String = ""
+      public val prop: String = ""
     """.trimIndent())
   }
 
@@ -310,7 +310,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       import kotlin.String
 
-      val prop: String = ""
+      public val prop: String = ""
     """.trimIndent())
   }
 
@@ -329,7 +329,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       import kotlin.String
 
-      val prop2: String = ""
+      public val prop2: String = ""
     """.trimIndent())
   }
 
@@ -351,7 +351,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.String
       import kotlin.jvm.JvmName
 
-      val prop2: String = ""
+      public val prop2: String = ""
     """.trimIndent())
   }
 }

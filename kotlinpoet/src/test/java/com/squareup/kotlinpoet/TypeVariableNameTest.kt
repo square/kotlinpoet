@@ -33,7 +33,7 @@ class TypeVariableNameTest {
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun <T> foo(): T? = null
+      |public fun <T> foo(): T? = null
       |""".trimMargin())
   }
 
@@ -45,7 +45,7 @@ class TypeVariableNameTest {
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun <T, U> foo(): T? = null
+      |public fun <T, U> foo(): T? = null
       |""".trimMargin())
   }
 
@@ -56,7 +56,7 @@ class TypeVariableNameTest {
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun <T : java.io.Serializable> foo(): T? = null
+      |public fun <T : java.io.Serializable> foo(): T? = null
       |""".trimMargin())
   }
 
@@ -68,7 +68,7 @@ class TypeVariableNameTest {
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun <T : java.io.Serializable, U : java.lang.Runnable> foo(): T? = null
+      |public fun <T : java.io.Serializable, U : java.lang.Runnable> foo(): T? = null
       |""".trimMargin())
   }
 
@@ -79,7 +79,7 @@ class TypeVariableNameTest {
         .addStatement("return null")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun <T> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable = null
+      |public fun <T> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable = null
       |""".trimMargin())
   }
 
@@ -90,7 +90,7 @@ class TypeVariableNameTest {
         .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
-    assertThat(funSpec.toString()).isEqualTo("fun <T, U> foo(): " +
+    assertThat(funSpec.toString()).isEqualTo("public fun <T, U> foo(): " +
         "T? where T : java.io.Serializable, T : java.lang.Runnable, " +
         "U : java.util.Comparator, U : kotlin.Cloneable = null\n")
   }
@@ -103,7 +103,7 @@ class TypeVariableNameTest {
         .returns(TypeVariableName("T").copy(nullable = true))
         .addStatement("return null")
         .build()
-    assertThat(funSpec.toString()).isEqualTo("fun <T, U : kotlin.Cloneable, V> foo(): " +
+    assertThat(funSpec.toString()).isEqualTo("public fun <T, U : kotlin.Cloneable, V> foo(): " +
         "T? where T : java.io.Serializable, T : java.lang.Runnable = null\n")
   }
 
@@ -112,7 +112,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("T").copy(bounds = listOf(Number::class.asTypeName())))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<T : kotlin.Number>
+      |public class Taco<T : kotlin.Number>
       |""".trimMargin())
   }
 
@@ -121,7 +121,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("E", Number::class, variance = KModifier.IN))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<in E : kotlin.Number>
+      |public class Taco<in E : kotlin.Number>
       |""".trimMargin())
   }
 
@@ -130,7 +130,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("E", Number::class, variance = KModifier.OUT))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<out E : kotlin.Number>
+      |public class Taco<out E : kotlin.Number>
       |""".trimMargin())
   }
 
@@ -147,7 +147,7 @@ class TypeVariableNameTest {
         .addStatement("println(T::class.members)")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |inline fun <reified T> printMembers(): kotlin.Unit {
+      |public inline fun <reified T> printMembers(): kotlin.Unit {
       |  println(T::class.members)
       |}
       |""".trimMargin())
@@ -158,7 +158,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("E", ANY))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<E : kotlin.Any>
+      |public class Taco<E : kotlin.Any>
       |""".trimMargin())
   }
 
@@ -167,7 +167,7 @@ class TypeVariableNameTest {
         .addTypeVariable(TypeVariableName("E", NULLABLE_ANY))
         .build()
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<E>
+      |public class Taco<E>
       |""".trimMargin())
   }
 
@@ -178,7 +178,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<E>
+      |public class Taco<E>
       |""".trimMargin())
   }
 
@@ -189,7 +189,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<E>
+      |public class Taco<E>
       |""".trimMargin())
   }
 
@@ -200,7 +200,7 @@ class TypeVariableNameTest {
         .build()
     assertThat(typeVariable.bounds).isEqualTo(NULLABLE_ANY_LIST)
     assertThat(typeSpec.toString()).isEqualTo("""
-      |class Taco<T>
+      |public class Taco<T>
       |""".trimMargin())
   }
 

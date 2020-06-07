@@ -44,19 +44,19 @@ class KotlinPoetTest {
         |import kotlin.String
         |import kotlin.Unit
         |
-        |fun a(): Unit {
+        |public fun a(): Unit {
         |}
         |
-        |class B
+        |public class B
         |
-        |val c: String = "C"
+        |public val c: String = "C"
         |
-        |fun d(): Unit {
+        |public fun d(): Unit {
         |}
         |
-        |class E
+        |public class E
         |
-        |val f: String = "F"
+        |public val f: String = "F"
         |""".trimMargin())
   }
 
@@ -81,7 +81,7 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |class Taco(
+        |public class Taco(
         |  cheese: String
         |) {
         |  init {
@@ -123,14 +123,14 @@ class KotlinPoetTest {
         |import kotlin.Boolean
         |import kotlin.String
         |
-        |class Taco(
-        |  val cheese: String,
-        |  var cilantro: String,
+        |public class Taco(
+        |  public val cheese: String,
+        |  public var cilantro: String,
         |  lettuce: String
         |) {
-        |  val lettuce: String = lettuce.trim()
+        |  public val lettuce: String = lettuce.trim()
         |
-        |  val onion: Boolean = true
+        |  public val onion: Boolean = true
         |  init {
         |    require(!cheese.isEmpty()) {
         |      "cheese cannot be empty"
@@ -155,10 +155,10 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |class Taco {
+        |public class Taco {
         |  private const val CHEESE: String = "monterey jack"
         |
-        |  var sauce: String = "chipotle mayo"
+        |  public var sauce: String = "chipotle mayo"
         |}
         |""".trimMargin())
   }
@@ -181,8 +181,8 @@ class KotlinPoetTest {
         |
         |import kotlin.Unit
         |
-        |class Taco {
-        |  fun a(): Unit {
+        |public class Taco {
+        |  public fun a(): Unit {
         |  }
         |
         |  protected fun b(): Unit {
@@ -209,8 +209,8 @@ class KotlinPoetTest {
         "\n" +
         "import kotlin.Unit\n" +
         "\n" +
-        "class Taco {\n" +
-        "  fun strings(): Unit {\n" +
+        "public class Taco {\n" +
+        "  public fun strings(): Unit {\n" +
         "    val a = \"basic string\"\n" +
         "    val b = \"string with a \${\'\$\'} dollar sign\"\n" +
         "  }\n" +
@@ -241,8 +241,8 @@ class KotlinPoetTest {
         "\n" +
         "import kotlin.Unit\n" +
         "\n" +
-        "class Taco {\n" +
-        "  fun strings(): Unit {\n" +
+        "public class Taco {\n" +
+        "  public fun strings(): Unit {\n" +
         "    val a = \"\"\"\n" +
         "        |\"\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -280,8 +280,8 @@ class KotlinPoetTest {
         "\n" +
         "import kotlin.Unit\n" +
         "\n" +
-        "class Taco {\n" +
-        "  fun strings(): Unit {\n" +
+        "public class Taco {\n" +
+        "  public fun strings(): Unit {\n" +
         "    val a = \"\"\"\n" +
         "        |\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -307,8 +307,8 @@ class KotlinPoetTest {
         |import kotlin.String
         |import kotlin.Unit
         |
-        |class Taco {
-        |  fun addCheese(kind: String = "monterey jack"): Unit {
+        |public class Taco {
+        |  public fun addCheese(kind: String = "monterey jack"): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -327,7 +327,7 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |fun String.shrink(): String = substring(0, length - 1)
+        |public fun String.shrink(): String = substring(0, length - 1)
         |""".trimMargin())
   }
 
@@ -346,7 +346,7 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |fun ((String) -> String).shrink(): String = substring(0, length - 1)
+        |public fun ((String) -> String).shrink(): String = substring(0, length - 1)
         |""".trimMargin())
   }
 
@@ -366,7 +366,7 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((name: String) -> Unit).whatever(): Unit = Unit
+      |public fun ((name: String) -> Unit).whatever(): Unit = Unit
       |""".trimMargin())
   }
 
@@ -391,7 +391,7 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun ((
+      |public fun ((
       |  name: String,
       |  Int,
       |  age: Long
@@ -414,8 +414,8 @@ class KotlinPoetTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |val String.extensionProperty: Int
-        |  get() = length
+        |public val String.extensionProperty: Int
+        |  public get() = length
         |
         """.trimMargin())
   }
@@ -437,8 +437,8 @@ class KotlinPoetTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |val ((String) -> String).extensionProperty: Int
-        |  get() = length
+        |public val ((String) -> String).extensionProperty: Int
+        |  public get() = length
         |
         """.trimMargin())
   }
@@ -471,12 +471,12 @@ class KotlinPoetTest {
         |
         |import kotlin.Int
         |
-        |var propertyWithCustomAccessors: Int = 1
-        |  get() {
+        |public var propertyWithCustomAccessors: Int = 1
+        |  public get() {
         |    println("getter")
         |    return field
         |  }
-        |  set(value) {
+        |  public set(value) {
         |    println("setter")
         |    field = value
         |  }
@@ -527,14 +527,14 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |abstract class A {
+        |public abstract class A {
         |  protected abstract var q: String
         |}
         |
         |internal const val p: String = "a"
         |
-        |abstract class B : A() {
-        |  final override lateinit var q: String
+        |public abstract class B : A() {
+        |  public final override lateinit var q: String
         |}
         |""".trimMargin())
   }
@@ -559,7 +559,7 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |open class A {
+        |public open class A {
         |  protected open external infix operator fun get(v: String): String
         |
         |  internal final tailrec inline fun loop(): String = "a"
@@ -580,7 +580,7 @@ class KotlinPoetTest {
         |
         |import kotlin.String
         |
-        |fun addA(s: String): String = s + "a"
+        |public fun addA(s: String): String = s + "a"
         |""".trimMargin())
   }
 
@@ -607,11 +607,11 @@ class KotlinPoetTest {
       |
       |import kotlin.Unit
       |
-      |var bar: suspend (Foo) -> Bar = { Bar() }
+      |public var bar: suspend (Foo) -> Bar = { Bar() }
       |
-      |var nullBar: (suspend (Foo) -> Bar)? = null
+      |public var nullBar: (suspend (Foo) -> Bar)? = null
       |
-      |fun foo(bar: suspend (Foo) -> Bar): Unit {
+      |public fun foo(bar: suspend (Foo) -> Bar): Unit {
       |}
       |""".trimMargin())
   }
@@ -633,7 +633,7 @@ class KotlinPoetTest {
       |import kotlin.Long
       |import kotlin.Unit
       |
-      |fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS): Unit {
+      |public fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS): Unit {
       |  this.timeout = timeUnit.toMillis(duration)
       |}
       |""".trimMargin())
@@ -657,7 +657,7 @@ class KotlinPoetTest {
       |
       |import kotlin.Unit
       |
-      |fun dynamicTest(): Unit {
+      |public fun dynamicTest(): Unit {
       |  val d1: dynamic = "Taco"
       |  val d2: dynamic = 1f
       |  // dynamics are dangerous!
@@ -684,9 +684,9 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.jvm.JvmField
       |
-      |class Taco(
+      |public class Taco(
       |  @JvmField
-      |  val foo: String
+      |  public val foo: String
       |)
       |""".trimMargin())
   }
@@ -707,7 +707,7 @@ class KotlinPoetTest {
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
+      |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -739,8 +739,8 @@ class KotlinPoetTest {
       |
       |import com.example.SomeTypeAlias
       |
-      |class Taco(
-      |  val foo: SomeTypeAlias = { arg: kotlin.Any ->
+      |public class Taco(
+      |  public val foo: SomeTypeAlias = { arg: kotlin.Any ->
       |    println("arg=${'$'}arg")
       |  }
       |
@@ -765,8 +765,8 @@ class KotlinPoetTest {
       |
       |import kotlin.Float
       |
-      |class AlarmInfo(
-      |  val `when`: Float
+      |public class AlarmInfo(
+      |  public val `when`: Float
       |)
       |""".trimMargin())
   }
@@ -784,7 +784,8 @@ class KotlinPoetTest {
       |import kotlin.String
       |import kotlin.Unit
       |
-      |fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String):
+      |public
+      |    fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String):
       |    Unit {
       |}
       |""".trimMargin())
@@ -815,12 +816,12 @@ class KotlinPoetTest {
       |import com.squareup.wire.WireField
       |import kotlin.String
       |
-      |data class Taco(
+      |public data class Taco(
       |  @WireField(
       |    tag = 1,
       |    adapter = "CustomStringAdapterWithALongNameThatCauses"
       |  )
-      |  val name: String
+      |  public val name: String
       |)
       |""".trimMargin())
   }
@@ -850,12 +851,12 @@ class KotlinPoetTest {
       | * Builder class for Foo. Allows creating instances of Foo by initializing a subset of their fields,
       | * following the Builder pattern.
       | */
-      |class Builder {
+      |public class Builder {
       |  /**
       |   * The description for the choice, e.g. "Currently unavailable due to high demand. Please try
       |   * later." May be null.
       |   */
-      |  fun summary_text(summary_text: String?): Builder {
+      |  public fun summary_text(summary_text: String?): Builder {
       |    this.summary_text = summary_text
       |    return this
       |  }
@@ -877,7 +878,7 @@ class KotlinPoetTest {
       |import com.squareup.tacos.Taco
       |import kotlin.Unit
       |
-      |fun main(): Unit {
+      |public fun main(): Unit {
       |  println(${'"'}""Here's a taco: ${'$'}{Taco()}""${'"'})
       |}
       |""".trimMargin())
@@ -898,7 +899,7 @@ class KotlinPoetTest {
       |import kotlin.Unit
       |import kotlin.collections.contentToString
       |
-      |fun main(): Unit {
+      |public fun main(): Unit {
       |  val ints = arrayOf(1, 2, 3)
       |  println(${'"'}""${'$'}{ints.contentToString()}""${'"'})
       |}
@@ -930,7 +931,7 @@ class KotlinPoetTest {
       | * @param a Progress in %
       | * @param b Some other parameter with %
       | */
-      |fun test(a: kotlin.Int, b: kotlin.Int): kotlin.Unit {
+      |public fun test(a: kotlin.Int, b: kotlin.Int): kotlin.Unit {
       |}
       |""".trimMargin())
   }

@@ -150,13 +150,16 @@ internal class CodeWriter constructor(
 
   /**
    * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
-   * be emitted.
+   * be emitted except for [KModifier.PUBLIC]
    */
   fun emitModifiers(
     modifiers: Set<KModifier>,
     implicitModifiers: Set<KModifier> = emptySet()
   ) {
-    if (modifiers.isEmpty()) return
+    if (shouldEmitPublicModifier(modifiers, implicitModifiers)) {
+      emit(KModifier.PUBLIC.keyword)
+      emit(" ")
+    }
     for (modifier in modifiers.toEnumSet()) {
       if (modifier in implicitModifiers) continue
       emit(modifier.keyword)
@@ -564,6 +567,30 @@ internal class CodeWriter constructor(
     for (j in 0 until indentLevel) {
       out.appendNonWrapping(indent)
     }
+  }
+
+  /**
+   * Returns whether a [KModifier.PUBLIC] should be emitted.
+   *
+   * This will return true when [KModifier.PUBLIC] is one of the [implicitModifiers] and
+   * there are no other opposing modifiers (like [KModifier.PROTECTED] etc.) supplied by the
+   * consumer.
+   */
+  private fun shouldEmitPublicModifier(
+    modifiers: Set<KModifier>,
+    implicitModifiers: Set<KModifier>
+  ): Boolean {
+    if (modifiers.contains(KModifier.PUBLIC)) {
+      return true
+    }
+
+    if (!implicitModifiers.contains(KModifier.PUBLIC)) {
+      return false
+    }
+
+    val containsOtherVisibility = modifiers.containsAnyOf(KModifier.PRIVATE, KModifier.INTERNAL, KModifier.PROTECTED)
+
+    return !containsOtherVisibility
   }
 
   /**

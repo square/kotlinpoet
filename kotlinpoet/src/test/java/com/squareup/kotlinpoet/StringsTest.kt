@@ -26,7 +26,7 @@ class StringsTest {
         .addStatement("return %S", stringWithTemplate)
         .build()
     assertThat(funSpec.toString())
-        .isEqualTo("fun getString() = \"\${\'\$\'}annoyingUser is annoying.\"\n")
+        .isEqualTo("public fun getString() = \"\${\'\$\'}annoyingUser is annoying.\"\n")
   }
 
   @Test fun multilineStringWithDollarSymbols() {
@@ -34,7 +34,7 @@ class StringsTest {
     val funSpec = FunSpec.builder("getString")
         .addStatement("return %S", stringWithTemplate)
         .build()
-    assertThat(funSpec.toString()).isEqualTo("fun getString() = \"\"\"\n" +
+    assertThat(funSpec.toString()).isEqualTo("public fun getString() = \"\"\"\n" +
         "|Some string\n" +
         "|\${\'\$\'}annoyingUser is annoying.\n" +
         "\"\"\".trimMargin()\n")
@@ -46,7 +46,7 @@ class StringsTest {
         .addStatement("return %P", stringWithTemplate)
         .build()
     assertThat(funSpec.toString())
-        .isEqualTo("fun getString() = \"\"\"\$annoyingUser is annoying.\"\"\"\n")
+        .isEqualTo("public fun getString() = \"\"\"\$annoyingUser is annoying.\"\"\"\n")
   }
 
   @Test fun multilineStringTemplate() {
@@ -54,7 +54,7 @@ class StringsTest {
     val funSpec = FunSpec.builder("getString")
         .addStatement("return %P", stringWithTemplate)
         .build()
-    assertThat(funSpec.toString()).isEqualTo("fun getString() = \"\"\"\n" +
+    assertThat(funSpec.toString()).isEqualTo("public fun getString() = \"\"\"\n" +
         "|Some string\n" +
         "|\$annoyingUser is annoying.\n" +
         "\"\"\".trimMargin()\n")
@@ -67,6 +67,6 @@ class StringsTest {
         .addStatement("return %P", string)
         .build()
     assertThat(funSpec.toString())
-        .isEqualTo("fun getString() = \"\"\"SELECT * FROM socialFeedItem WHERE message IS NOT NULL AND userId \${ if (userId == null) \"IS\" else \"=\" } ?1 ORDER BY datetime(creation_time) DESC\"\"\"\n")
+        .isEqualTo("public fun getString() = \"\"\"SELECT * FROM socialFeedItem WHERE message IS NOT NULL AND userId \${ if (userId == null) \"IS\" else \"=\" } ?1 ORDER BY datetime(creation_time) DESC\"\"\"\n")
   }
 }

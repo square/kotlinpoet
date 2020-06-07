@@ -450,7 +450,7 @@ class CodeBlockTest {
       |
       |import kotlin.Unit
       |
-      |fun test(): Unit {
+      |public fun test(): Unit {
       |  if ("Very long string that would wrap the line " ==
       |      "Very long string that would wrap the line ") {
       |  } else if ("Long string that would wrap the line 2 " ==

@@ -47,9 +47,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmField
       |
-      |class Taco {
+      |public class Taco {
       |  @JvmField
-      |  val foo: String = "foo"
+      |  public val foo: String = "foo"
       |}
       |""".trimMargin())
   }
@@ -72,9 +72,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmField
       |
-      |class Taco(
+      |public class Taco(
       |  @JvmField
-      |  val foo: String
+      |  public val foo: String
       |)
       |""".trimMargin())
   }
@@ -96,10 +96,10 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmStatic
       |
-      |class Taco {
-      |  companion object {
+      |public class Taco {
+      |  public companion object {
       |    @JvmStatic
-      |    val foo: String = "foo"
+      |    public val foo: String = "foo"
       |  }
       |}
       |""".trimMargin())
@@ -123,10 +123,10 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmStatic
       |
-      |class Taco {
-      |  companion object {
+      |public class Taco {
+      |  public companion object {
       |    @JvmStatic
-      |    fun foo(): String = "foo"
+      |    public fun foo(): String = "foo"
       |  }
       |}
       |""".trimMargin())
@@ -151,11 +151,11 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmStatic
       |
-      |class Taco {
-      |  companion object {
-      |    val foo: String
+      |public class Taco {
+      |  public companion object {
+      |    public val foo: String
       |      @JvmStatic
-      |      get() = "foo"
+      |      public get() = "foo"
       |  }
       |}
       |""".trimMargin())
@@ -182,11 +182,11 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmStatic
       |
-      |class Taco {
-      |  companion object {
-      |    var foo: String = "foo"
+      |public class Taco {
+      |  public companion object {
+      |    public var foo: String = "foo"
       |      @JvmStatic
-      |      set(value) {
+      |      public set(value) {
       |      }
       |  }
       |}
@@ -218,7 +218,7 @@ class JvmAnnotationsTest {
       |  IOException::class,
       |  IllegalArgumentException::class
       |)
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -236,7 +236,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Throws
       |
       |@Throws(IllegalTacoException::class)
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -257,7 +257,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Throws
       |
-      |class Taco @Throws(IOException::class) constructor(
+      |public class Taco @Throws(IOException::class) constructor(
       |  foo: String
       |)
       |""".trimMargin())
@@ -279,9 +279,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Throws
       |
-      |val foo: String
+      |public val foo: String
       |  @Throws(IOException::class)
-      |  get() = "foo"
+      |  public get() = "foo"
       |""".trimMargin())
   }
 
@@ -302,9 +302,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Throws
       |
-      |val foo: String
+      |public val foo: String
       |  @Throws(IOException::class)
-      |  set(value) {
+      |  public set(value) {
       |    print("foo")
       |  }
       |""".trimMargin())
@@ -329,7 +329,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmOverloads
       |
       |@JvmOverloads
-      |fun foo(bar: Int, baz: String = "baz"): Unit {
+      |public fun foo(bar: Int, baz: String = "baz"): Unit {
       |}
       |""".trimMargin())
   }
@@ -353,7 +353,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmOverloads
       |
-      |class Taco @JvmOverloads constructor(
+      |public class Taco @JvmOverloads constructor(
       |  bar: Int,
       |  baz: String = "baz"
       |)
@@ -389,7 +389,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmName
       |
-      |val foo: String = "foo"
+      |public val foo: String = "foo"
       |""".trimMargin())
   }
 
@@ -406,7 +406,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmName
       |
       |@JvmName("getFoo")
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -426,9 +426,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmName
       |
-      |val foo: String
+      |public val foo: String
       |  @JvmName("foo")
-      |  get() = "foo"
+      |  public get() = "foo"
       |""".trimMargin())
   }
 
@@ -449,9 +449,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmName
       |
-      |var foo: String = "foo"
+      |public var foo: String = "foo"
       |  @JvmName("foo")
-      |  set(value) {
+      |  public set(value) {
       |  }
       |""".trimMargin())
   }
@@ -478,7 +478,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmMultifileClass
       |
-      |val foo: String = "foo"
+      |public val foo: String = "foo"
       |""".trimMargin())
   }
 
@@ -494,7 +494,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmSuppressWildcards
       |
       |@JvmSuppressWildcards
-      |class Taco
+      |public class Taco
       |""".trimMargin())
   }
 
@@ -511,7 +511,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmSuppressWildcards
       |
       |@JvmSuppressWildcards(suppress = false)
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -551,7 +551,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmSuppressWildcards
       |
       |@JvmSuppressWildcards(suppress = false)
-      |val foo: String = "foo"
+      |public val foo: String = "foo"
       |""".trimMargin())
   }
 
@@ -570,7 +570,7 @@ class JvmAnnotationsTest {
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
+      |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -590,7 +590,7 @@ class JvmAnnotationsTest {
       |import kotlin.collections.List
       |import kotlin.jvm.JvmWildcard
       |
-      |fun foo(a: List<@JvmWildcard Int>): Unit {
+      |public fun foo(a: List<@JvmWildcard Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -608,7 +608,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Synchronized
       |
       |@Synchronized
-      |fun foo() = "foo"
+      |public fun foo() = "foo"
       |""".trimMargin())
   }
 
@@ -627,9 +627,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Synchronized
       |
-      |val foo: String
+      |public val foo: String
       |  @Synchronized
-      |  get() = "foo"
+      |  public get() = "foo"
       |""".trimMargin())
   }
 
@@ -650,9 +650,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Synchronized
       |
-      |var foo: String = "foo"
+      |public var foo: String = "foo"
       |  @Synchronized
-      |  set(value) {
+      |  public set(value) {
       |  }
       |""".trimMargin())
   }
@@ -679,9 +679,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Transient
       |
-      |class Taco {
+      |public class Taco {
       |  @Transient
-      |  val foo: String = "foo"
+      |  public val foo: String = "foo"
       |}
       |""".trimMargin())
   }
@@ -704,9 +704,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Transient
       |
-      |class Taco(
+      |public class Taco(
       |  @Transient
-      |  val foo: String
+      |  public val foo: String
       |)
       |""".trimMargin())
   }
@@ -726,9 +726,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Volatile
       |
-      |class Taco {
+      |public class Taco {
       |  @Volatile
-      |  val foo: String = "foo"
+      |  public val foo: String = "foo"
       |}
       |""".trimMargin())
   }
@@ -751,9 +751,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Volatile
       |
-      |class Taco(
+      |public class Taco(
       |  @Volatile
-      |  val foo: String
+      |  public val foo: String
       |)
       |""".trimMargin())
   }
@@ -771,7 +771,7 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.Strictfp
       |
       |@Strictfp
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -791,7 +791,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Strictfp
       |
-      |class Taco @Strictfp constructor(
+      |public class Taco @Strictfp constructor(
       |  foo: String
       |)
       |""".trimMargin())
@@ -812,9 +812,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Strictfp
       |
-      |val foo: String
+      |public val foo: String
       |  @Strictfp
-      |  get() = "foo"
+      |  public get() = "foo"
       |""".trimMargin())
   }
 
@@ -834,9 +834,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Strictfp
       |
-      |val foo: String
+      |public val foo: String
       |  @Strictfp
-      |  set(value) {
+      |  public set(value) {
       |    print("foo")
       |  }
       |""".trimMargin())
@@ -857,9 +857,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmDefault
       |
-      |interface Taco {
+      |public interface Taco {
       |  @JvmDefault
-      |  val foo: String = "foo"
+      |  public val foo: String = "foo"
       |}
       |""".trimMargin())
   }
@@ -880,9 +880,9 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.JvmDefault
       |
-      |interface Taco {
+      |public interface Taco {
       |  @JvmDefault
-      |  fun foo(): String = "foo"
+      |  public fun foo(): String = "foo"
       |}
       |""".trimMargin())
   }

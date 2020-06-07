@@ -30,7 +30,7 @@ class TypeAliasSpecTest {
         .build()
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |typealias Word = kotlin.String
+        |public typealias Word = kotlin.String
         |""".trimMargin())
   }
 
@@ -42,7 +42,7 @@ class TypeAliasSpecTest {
         .build()
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |typealias Word<V> = kotlin.collections.List<V>
+        |public typealias Word<V> = kotlin.collections.List<V>
         |""".trimMargin())
   }
 
@@ -88,7 +88,7 @@ class TypeAliasSpecTest {
         .build()
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
-        |actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
+        |public actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
         |""".trimMargin())
   }
 
@@ -102,7 +102,7 @@ class TypeAliasSpecTest {
       |/**
       | * Word is just a type alias for [String](kotlin.String).
       | */
-      |typealias Word = kotlin.String
+      |public typealias Word = kotlin.String
       |""".trimMargin())
   }
 
@@ -116,7 +116,7 @@ class TypeAliasSpecTest {
 
     assertThat(typeAliasSpec.toString()).isEqualTo("""
       |@com.squareup.kotlinpoet.TypeAliasAnnotation(value = "words!")
-      |typealias Word = kotlin.String
+      |public typealias Word = kotlin.String
       |""".trimMargin())
   }
 
@@ -130,7 +130,7 @@ class TypeAliasSpecTest {
       |/**
       | * Word is just a type alias for [String](kotlin.String).
       | */
-      |typealias Word = kotlin.String
+      |public typealias Word = kotlin.String
       |""".trimMargin())
   }
 
@@ -195,7 +195,7 @@ class TypeAliasSpecTest {
   @Test fun nameEscaping() {
     val typeAlias = TypeAliasSpec.builder("fun", String::class).build()
     assertThat(typeAlias.toString()).isEqualTo("""
-      |typealias `fun` = kotlin.String
+      |public typealias `fun` = kotlin.String
       |""".trimMargin())
   }
 
@@ -204,7 +204,7 @@ class TypeAliasSpecTest {
     val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
     val spec = TypeAliasSpec.builder("lambda", type).build()
     assertThat(spec.toString()).isEqualTo("""
-      |typealias lambda = @Annotation () -> kotlin.Unit
+      |public typealias lambda = @Annotation () -> kotlin.Unit
       |""".trimMargin())
   }
 }

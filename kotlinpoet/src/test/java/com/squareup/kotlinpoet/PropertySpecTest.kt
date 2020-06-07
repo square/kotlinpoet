@@ -372,7 +372,7 @@ class PropertySpecTest {
       |
       |import kotlin.String
       |
-      |const val FOO: String = "This is a long string with a newline\nin the middle."
+      |public const val FOO: String = "This is a long string with a newline\nin the middle."
       |""".trimMargin())
   }
 
@@ -387,7 +387,7 @@ class PropertySpecTest {
       |
       |import kotlin.Unit
       |
-      |val foo: @Annotation () -> Unit
+      |public val foo: @Annotation () -> Unit
       |""".trimMargin())
   }
 }
