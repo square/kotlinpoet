@@ -255,11 +255,12 @@ class FileWritingTest {
         |import java.lang.System
         |import java.util.Date
         |import kotlin.Array
+        |import kotlin.Unit
         |
         |class Test {
         |${"\t"}val madeFreshDate: Date
         |
-        |${"\t"}fun main(args: Array<String>) {
+        |${"\t"}fun main(args: Array<String>): Unit {
         |${"\t\t"}System.out.println("Hello World!");
         |${"\t"}}
         |}

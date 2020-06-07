@@ -345,8 +345,9 @@ class FileSpecTest {
       |package com.example
       |
       |import com.squareup.`taco factory`.TacoFactory
+      |import kotlin.Unit
       |
-      |fun main() {
+      |fun main(): Unit {
       |  println(TacoFactory.produceTacos())
       |}
       |""".trimMargin())
@@ -363,9 +364,10 @@ class FileSpecTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.example
       |
+      |import kotlin.Unit
       |import com.squareup.`taco factory`.TacoFactory as `La Taqueria`
       |
-      |fun main() {
+      |fun main(): Unit {
       |  println(`La Taqueria`.produceTacos())
       |}
       |""".trimMargin())
@@ -405,9 +407,10 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
-      |fun sleepForFiveMins() {
+      |fun sleepForFiveMins(): Unit {
       |  MINS.sleep(5)
       |}
       |""".trimMargin())
@@ -576,9 +579,10 @@ class FileSpecTest {
         |import java.lang.System
         |import kotlin.Array
         |import kotlin.String
+        |import kotlin.Unit
         |
         |class HelloWorld {
-        |  fun main(args: Array<String>) {
+        |  fun main(args: Array<String>): Unit {
         |    System.out.println("Hello World!");
         |  }
         |}
@@ -837,7 +841,9 @@ class FileSpecTest {
     assertThat(spec.toString()).isEqualTo("""
       |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.get.a.really.large.packagename
       |
-      |fun foo() {
+      |import kotlin.Unit
+      |
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }

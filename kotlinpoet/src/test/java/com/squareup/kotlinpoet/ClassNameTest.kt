@@ -179,8 +179,9 @@ class ClassNameTest {
       |package com.squareup.tacos
       |
       |import com.squareup.`taco factory`.`Taco Factory`
+      |import kotlin.Unit
       |
-      |fun main() {
+      |fun main(): Unit {
       |  println(`Taco Factory`.produceTacos())
       |}
       |""".trimMargin())

@@ -88,7 +88,9 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() {
+        |import kotlin.Unit
+        |
+        |fun wrapMe(): Unit {
         |  val a =    8
         |  val b =   64
         |  val c =  512
@@ -107,7 +109,9 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() {
+        |import kotlin.Unit
+        |
+        |fun wrapMe(): Unit {
         |  val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
         |  val bbbbbb =
         |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
@@ -135,6 +139,7 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
+        |import kotlin.Unit
         |
         |class Taco {
         |  fun call(
@@ -170,7 +175,7 @@ class LineWrappingTest {
         |    s29: String,
         |    s30: String,
         |    s31: String
-        |  ) {
+        |  ): Unit {
         |    call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
         |  }

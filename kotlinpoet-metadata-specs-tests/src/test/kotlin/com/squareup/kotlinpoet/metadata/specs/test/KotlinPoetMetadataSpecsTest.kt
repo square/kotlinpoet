@@ -233,13 +233,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       class SuspendTypes {
         val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = throw NotImplementedError("Stub!")
 
-        suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
+        suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String): kotlin.Unit {
         }
 
-        fun testFun(body: suspend (kotlin.Int, kotlin.Long) -> kotlin.String) {
+        fun testFun(body: suspend (kotlin.Int, kotlin.Long) -> kotlin.String): kotlin.Unit {
         }
 
-        suspend fun testSuspendFun(param1: kotlin.String) {
+        suspend fun testSuspendFun(param1: kotlin.String): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -264,10 +264,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Parameters {
-        inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")) {
+        inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit {
         }
 
-        inline fun inline(crossinline param1: () -> kotlin.String) {
+        inline fun inline(crossinline param1: () -> kotlin.String): kotlin.Unit {
         }
 
         inline fun noinline(noinline param1: () -> kotlin.String): kotlin.String {
@@ -295,13 +295,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class LambdaReceiver {
-        fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit) {
+        fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit): kotlin.Unit {
         }
 
-        fun lambdaReceiver2(block: kotlin.String.(kotlin.Int) -> kotlin.Unit) {
+        fun lambdaReceiver2(block: kotlin.String.(kotlin.Int) -> kotlin.Unit): kotlin.Unit {
         }
 
-        fun lambdaReceiver3(block: kotlin.String.(kotlin.Int, kotlin.String) -> kotlin.Unit) {
+        fun lambdaReceiver3(block: kotlin.String.(kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -351,7 +351,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class FunctionsReferencingTypeParameters<T> {
-        fun test(param: T) {
+        fun test(param: T): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -373,10 +373,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         override var openPropInterface: kotlin.String = throw NotImplementedError("Stub!")
 
-        override fun openFunction() {
+        override fun openFunction(): kotlin.Unit {
         }
 
-        override fun openFunctionInterface() {
+        override fun openFunctionInterface(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -608,7 +608,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           throw NotImplementedError("Stub!")
         }
 
-        fun hasDefault() {
+        fun hasDefault(): kotlin.Unit {
         }
 
         fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String {
@@ -620,14 +620,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         }
 
         @kotlin.jvm.JvmDefault
-        fun hasJvmDefault() {
+        fun hasJvmDefault(): kotlin.Unit {
         }
 
-        fun noDefault()
+        fun noDefault(): kotlin.Unit
 
-        fun noDefaultWithInput(input: kotlin.String)
+        fun noDefaultWithInput(input: kotlin.String): kotlin.Unit
 
-        fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!"))
+        fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit
       }
     """.trimIndent())
 
@@ -636,14 +636,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(subInterfaceSpec.trimmedToString()).isEqualTo("""
       interface SubInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TestInterface {
-        override fun hasDefault() {
+        override fun hasDefault(): kotlin.Unit {
         }
 
         @kotlin.jvm.JvmDefault
-        override fun hasJvmDefault() {
+        override fun hasJvmDefault(): kotlin.Unit {
         }
 
-        fun subInterfaceFunction() {
+        fun subInterfaceFunction(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -653,13 +653,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(implSpec.trimmedToString()).isEqualTo("""
       class TestSubInterfaceImpl : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
-        override fun noDefault() {
+        override fun noDefault(): kotlin.Unit {
         }
 
-        override fun noDefaultWithInput(input: kotlin.String) {
+        override fun noDefaultWithInput(input: kotlin.String): kotlin.Unit {
         }
 
-        override fun noDefaultWithInputDefault(input: kotlin.String) {
+        override fun noDefaultWithInputDefault(input: kotlin.String): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -779,19 +779,19 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class GenericClass<T> {
-        fun <T> functionAlsoWithT(param: T) {
+        fun <T> functionAlsoWithT(param: T): kotlin.Unit {
         }
 
-        fun <R> functionWithADifferentType(param: R) {
+        fun <R> functionWithADifferentType(param: R): kotlin.Unit {
         }
 
-        fun functionWithT(param: T) {
+        fun functionWithT(param: T): kotlin.Unit {
         }
 
         /**
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
          */
-        inline fun <reified T> reified(param: T) {
+        inline fun <reified T> reified(param: T): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -861,7 +861,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         constructor(value: kotlin.String)
 
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FunctionAnnotation
-        fun function() {
+        fun function(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -1142,7 +1142,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         var volatileProp: kotlin.String? = null
 
         @kotlin.jvm.Synchronized
-        fun synchronizedFun() {
+        fun synchronizedFun(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -1153,10 +1153,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(interfaceSpec.trimmedToString()).isEqualTo("""
       interface JvmAnnotationsInterface {
         @kotlin.jvm.JvmDefault
-        fun defaultMethod() {
+        fun defaultMethod(): kotlin.Unit {
         }
 
-        fun notDefaultMethod()
+        fun notDefaultMethod(): kotlin.Unit
       }
     """.trimIndent())
   }
@@ -1219,7 +1219,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         var propertySet: kotlin.String? = null
 
         @kotlin.jvm.JvmName(name = "jvmFunction")
-        fun function() {
+        fun function(): kotlin.Unit {
         }
 
         interface InterfaceWithJvmName {
@@ -1230,7 +1230,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
             @kotlin.jvm.JvmName(name = "jvmStaticFunction")
             @kotlin.jvm.JvmStatic
-            fun staticFunction() {
+            fun staticFunction(): kotlin.Unit {
             }
           }
         }
@@ -1292,7 +1292,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           param1: kotlin.String,
           optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
           nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
-        ) {
+        ): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -1419,7 +1419,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
          */
         @kotlin.jvm.JvmSynthetic
-        fun function() {
+        fun function(): kotlin.Unit {
         }
 
         interface InterfaceWithJvmName {
@@ -1427,7 +1427,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
            * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
            */
           @kotlin.jvm.JvmSynthetic
-          fun interfaceFunction()
+          fun interfaceFunction(): kotlin.Unit
 
           companion object {
             @get:kotlin.jvm.JvmSynthetic
@@ -1439,7 +1439,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
              */
             @kotlin.jvm.JvmStatic
             @kotlin.jvm.JvmSynthetic
-            fun staticFunction() {
+            fun staticFunction(): kotlin.Unit {
             }
           }
         }
@@ -1482,7 +1482,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
          */
         @kotlin.jvm.JvmSynthetic
-        fun function() {
+        fun function(): kotlin.Unit {
         }
 
         interface InterfaceWithJvmName {
@@ -1490,7 +1490,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
            * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
            */
           @kotlin.jvm.JvmSynthetic
-          fun interfaceFunction()
+          fun interfaceFunction(): kotlin.Unit
 
           companion object {
             @get:kotlin.jvm.JvmSynthetic
@@ -1501,7 +1501,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
              * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
              */
             @kotlin.jvm.JvmSynthetic
-            fun staticFunction() {
+            fun staticFunction(): kotlin.Unit {
             }
           }
         }
@@ -1570,7 +1570,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         var setterThrows: kotlin.String? = null
 
         @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
-        fun testFunction() {
+        fun testFunction(): kotlin.Unit {
         }
       }
       """.trimIndent())
@@ -1714,7 +1714,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
         param2: kotlin.String
       ) {
-        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String) {
+        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }
       }
       """.trimIndent())
@@ -1736,7 +1736,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
         param2: kotlin.String
       ) {
-        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String) {
+        fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }
       }
       """.trimIndent())
@@ -1803,7 +1803,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       class TypeAnnotations {
         val foo: kotlin.collections.List<@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String> = throw NotImplementedError("Stub!")
 
-        fun <T> bar(input: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String, input2: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation (@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.Int) -> @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String) {
+        fun <T> bar(input: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String, input2: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation (@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.Int) -> @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String): kotlin.Unit {
         }
       }
       """.trimIndent()
@@ -1833,7 +1833,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       class Asset<A : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> {
-        fun <D : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> function() {
+        fun <D : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> function(): kotlin.Unit {
         }
 
         class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>
@@ -1864,11 +1864,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         abstract val foo: kotlin.String
 
-        abstract fun bar()
+        abstract fun bar(): kotlin.Unit
 
         abstract fun barWithReturn(): kotlin.String
 
-        fun fuz() {
+        fun fuz(): kotlin.Unit {
         }
 
         fun fuzWithReturn(): kotlin.String {
@@ -1923,13 +1923,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         open val openProp: kotlin.String? = null
 
-        fun implicitFinalFun() {
+        fun implicitFinalFun(): kotlin.Unit {
         }
 
-        override fun interfaceFun() {
+        override fun interfaceFun(): kotlin.Unit {
         }
 
-        open fun openFun() {
+        open fun openFun(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -1941,7 +1941,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       abstract class FinalAbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         final override val interfaceProp: kotlin.String? = null
 
-        final override fun interfaceFun() {
+        final override fun interfaceFun(): kotlin.Unit {
         }
       }
     """.trimIndent())
@@ -1955,10 +1955,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         override val openProp: kotlin.String? = null
 
-        override fun interfaceFun() {
+        override fun interfaceFun(): kotlin.Unit {
         }
 
-        override fun openFun() {
+        override fun openFun(): kotlin.Unit {
         }
       }
     """.trimIndent())

@@ -153,11 +153,13 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |class Taco {
         |  val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
         |    override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
         |        {
-        |      override fun doSomething(bar: Bar) {
+        |      override fun doSomething(bar: Bar): Unit {
         |        /* code snippets */
         |      }
         |    }
@@ -213,10 +215,11 @@ class TypeSpecTest {
         |
         |import com.squareup.wire.Message
         |import java.lang.Runnable
+        |import kotlin.Unit
         |
         |class Taco {
         |  val NAME: Runnable = object : Message(), Runnable {
-        |    override fun run() {
+        |    override fun run(): Unit {
         |      /* code snippets */
         |    }
         |  }
@@ -502,13 +505,15 @@ class TypeSpecTest {
     assertThat(toString(roshambo)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |enum class Tortilla {
         |  CORN {
-        |    override fun fold() {
+        |    override fun fold(): Unit {
         |    }
         |  };
         |
-        |  abstract fun fold()
+        |  abstract fun fold(): Unit
         |}
         |""".trimMargin())
   }
@@ -523,11 +528,12 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
+        |import kotlin.Unit
         |
         |sealed class Sealed {
         |  abstract val name: String
         |
-        |  abstract fun fold()
+        |  abstract fun fold(): Unit
         |}
         |""".trimMargin())
   }
@@ -644,25 +650,26 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.io.IOException
+        |import kotlin.Unit
         |import kotlin.jvm.Throws
         |
         |abstract class Taco {
         |  @Throws(IOException::class)
-        |  fun throwOne() {
+        |  fun throwOne(): Unit {
         |  }
         |
         |  @Throws(
         |    IOException::class,
         |    SourCreamException::class
         |  )
-        |  fun throwTwo() {
+        |  fun throwTwo(): Unit {
         |  }
         |
         |  @Throws(IOException::class)
-        |  abstract fun abstractThrow()
+        |  abstract fun abstractThrow(): Unit
         |
         |  @Throws(IOException::class)
-        |  external fun nativeThrow()
+        |  external fun nativeThrow(): Unit
         |}
         |""".trimMargin())
   }
@@ -858,10 +865,12 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun interface Taco {
-        |  fun sam()
+        |import kotlin.Unit
         |
-        |  fun notSam() {
+        |fun interface Taco {
+        |  fun sam(): Unit
+        |
+        |  fun notSam(): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -1082,7 +1091,7 @@ class TypeSpecTest {
 
     assertThat(classA.toString()).isEqualTo("""
       |expect class ClassA {
-      |  fun test()
+      |  fun test(): kotlin.Unit
       |}
       |""".trimMargin())
   }
@@ -1098,7 +1107,7 @@ class TypeSpecTest {
     assertThat(classA.toString()).isEqualTo("""
       |expect class ClassA {
       |  companion object {
-      |    fun test()
+      |    fun test(): kotlin.Unit
       |  }
       |}
       |""".trimMargin())
@@ -1115,7 +1124,7 @@ class TypeSpecTest {
     assertThat(classA.toString()).isEqualTo("""
       |expect class ClassA {
       |  class ClassB {
-      |    fun test()
+      |    fun test(): kotlin.Unit
       |  }
       |}
       |""".trimMargin())
@@ -1135,7 +1144,7 @@ class TypeSpecTest {
       |expect class ClassA {
       |  class ClassB {
       |    class ClassC {
-      |      fun test()
+      |      fun test(): kotlin.Unit
       |    }
       |  }
       |}
@@ -1159,7 +1168,7 @@ class TypeSpecTest {
       |  class ClassB {
       |    class ClassC {
       |      class ClassD {
-      |        fun test()
+      |        fun test(): kotlin.Unit
       |      }
       |    }
       |  }
@@ -1229,13 +1238,15 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |interface Taco {
-        |  fun aMethod()
+        |import kotlin.Unit
         |
-        |  fun aDefaultMethod() {
+        |interface Taco {
+        |  fun aMethod(): Unit
+        |
+        |  fun aDefaultMethod(): Unit {
         |  }
         |
-        |  private fun aPrivateMethod() {
+        |  private fun aPrivateMethod(): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -1383,6 +1394,7 @@ class TypeSpecTest {
         |
         |import java.util.Locale
         |import kotlin.Boolean
+        |import kotlin.Unit
         |
         |/**
         | * A hard or soft tortilla, loosely folded and filled with whatever
@@ -1400,7 +1412,7 @@ class TypeSpecTest {
         |   *
         |   * For [Locale#KOREAN], the front may also be folded.
         |   */
-        |  fun refold(locale: Locale) {
+        |  fun refold(locale: Locale): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -1513,9 +1525,10 @@ class TypeSpecTest {
         |
         |import java.lang.Runnable
         |import kotlin.Int
+        |import kotlin.Unit
         |
         |class Taqueria {
-        |  fun prepare(workers: Int, vararg jobs: Runnable) {
+        |  fun prepare(workers: Int, vararg jobs: Runnable): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -1535,13 +1548,14 @@ class TypeSpecTest {
         |import java.lang.Runnable
         |import kotlin.Boolean
         |import kotlin.Int
+        |import kotlin.Unit
         |
         |class Taqueria {
         |  fun prepare(
         |    workers: Int,
         |    vararg jobs: Runnable,
         |    start: Boolean
-        |  ) {
+        |  ): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -1631,9 +1645,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.lang.System
+        |import kotlin.Unit
         |
         |class Taco {
-        |  fun choices() {
+        |  fun choices(): Unit {
         |    if (taco != null || taco == otherTaco) {
         |      System.out.println("only one taco? NOO!")
         |    } else if (taco.isSupreme() && otherTaco.isSupreme()) {
@@ -1658,9 +1673,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.lang.System
+        |import kotlin.Unit
         |
         |class Taco {
-        |  fun choices() {
+        |  fun choices(): Unit {
         |    if (5 < 4)  {
         |      System.out.println("wat")
         |    } else if (5 < 6) {
@@ -1681,9 +1697,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.lang.System
+        |import kotlin.Unit
         |
         |class Taco {
-        |  fun inlineIndent() {
+        |  fun inlineIndent(): Unit {
         |    if (3 < 4) {
         |      System.out.println("hello");
         |    }
@@ -1742,6 +1759,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.Long
         |import kotlin.String
+        |import kotlin.Unit
         |
         |class Members {
         |  val W: String
@@ -1752,16 +1770,16 @@ class TypeSpecTest {
         |
         |  constructor(o: Long)
         |
-        |  fun T() {
+        |  fun T(): Unit {
         |  }
         |
-        |  fun S() {
+        |  fun S(): Unit {
         |  }
         |
-        |  fun R() {
+        |  fun R(): Unit {
         |  }
         |
-        |  fun Q() {
+        |  fun Q(): Unit {
         |  }
         |
         |  class Z
@@ -1875,7 +1893,7 @@ class TypeSpecTest {
         .build()
     assertThat(type.toString()).isEqualTo("""
         |object : java.lang.Runnable {
-        |  override fun run() {
+        |  override fun run(): kotlin.Unit {
         |  }
         |}""".trimMargin())
   }
@@ -1962,6 +1980,7 @@ class TypeSpecTest {
         |import java.util.Comparator
         |import kotlin.Int
         |import kotlin.String
+        |import kotlin.Unit
         |import kotlin.collections.List
         |
         |class Taco {
@@ -1976,7 +1995,7 @@ class TypeSpecTest {
         |    }
         |  }
         |
-        |  fun sortPrefix(list: List<String>, final length: Int) {
+        |  fun sortPrefix(list: List<String>, final length: Int): Unit {
         |    Collections.sort(
         |        list,
         |        object : Comparator<String> {
@@ -2313,8 +2332,10 @@ class TypeSpecTest {
     assertThat(toString(taco)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |class Taco {
-        |  fun addTopping(topping: Topping) {
+        |  fun addTopping(topping: Topping): Unit {
         |    try {
         |      /* do something tricky with the topping */
         |    } catch (e: IllegalToppingException) {
@@ -2798,6 +2819,7 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import kotlin.Int
+        |import kotlin.Unit
         |
         |object MyObject {
         |  val tacos: Int
@@ -2805,7 +2827,7 @@ class TypeSpecTest {
         |  init {
         |  }
         |
-        |  fun test() {
+        |  fun test(): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -2826,12 +2848,13 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import com.squareup.wire.Message
+        |import kotlin.Unit
         |
         |object MyObject : Message() {
         |  init {
         |  }
         |
-        |  fun test() {
+        |  fun test(): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -2856,12 +2879,13 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import kotlin.Int
+        |import kotlin.Unit
         |
         |class MyClass {
         |  companion object {
         |    val tacos: Int = 42
         |
-        |    fun test() {
+        |    fun test(): Unit {
         |    }
         |  }
         |}
@@ -2913,9 +2937,11 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |class MyClass {
         |  companion object Factory {
-        |    fun tacos() {
+        |    fun tacos(): Unit {
         |    }
         |  }
         |}
@@ -2937,9 +2963,11 @@ class TypeSpecTest {
     assertThat(toString(type)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |interface MyInterface {
         |  companion object {
-        |    fun test() {
+        |    fun test(): Unit {
         |    }
         |  }
         |}
@@ -2963,13 +2991,15 @@ class TypeSpecTest {
     assertThat(toString(enumBuilder)).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |enum class MyEnum {
         |  FOO,
         |
         |  BAR;
         |
         |  companion object {
-        |    fun test() {
+        |    fun test(): Unit {
         |    }
         |  }
         |}
@@ -3010,10 +3040,11 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import com.squareup.wire.Message
+        |import kotlin.Unit
         |
         |class MyClass {
         |  companion object : Message() {
-        |    fun test() {
+        |    fun test(): Unit {
         |    }
         |  }
         |}
@@ -3452,9 +3483,10 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
+        |import kotlin.Unit
         |
         |class Taco {
-        |  fun shell() {
+        |  fun shell(): Unit {
         |    val taco1: String = "Taco!"
         |    val taco2: String? = null
         |    lateinit var taco3: String
@@ -3617,8 +3649,10 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
+      |
       |external class Foo {
-      |  fun bar()
+      |  fun bar(): Unit
       |}
       |""".trimMargin())
   }
@@ -3634,11 +3668,12 @@ class TypeSpecTest {
       |package com.squareup.tacos
       |
       |import kotlin.String
+      |import kotlin.Unit
       |
       |external interface Foo {
       |  val baz: String
       |
-      |  fun bar()
+      |  fun bar(): Unit
       |}
       |""".trimMargin())
   }
@@ -3654,11 +3689,12 @@ class TypeSpecTest {
       |package com.squareup.tacos
       |
       |import kotlin.String
+      |import kotlin.Unit
       |
       |external object Foo {
       |  val baz: String
       |
-      |  fun bar()
+      |  fun bar(): Unit
       |}
       |""".trimMargin())
   }
@@ -3683,17 +3719,19 @@ class TypeSpecTest {
     assertThat(toString(typeSpec)).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
+      |
       |external class Foo {
       |  class Nested1 {
-      |    fun baz()
+      |    fun baz(): Unit
       |
       |    object Nested2 {
-      |      fun bar()
+      |      fun bar(): Unit
       |    }
       |  }
       |
       |  companion object {
-      |    fun qux()
+      |    fun qux(): Unit
       |  }
       |}
       |""".trimMargin())
@@ -4178,7 +4216,7 @@ class TypeSpecTest {
         .addStatement("print(taco)")
         .build()
     assertThat(funSpec.toString()).isEqualTo("""
-      |fun printTaco(taco: com.squareup.tacos.Taco.`object`) {
+      |fun printTaco(taco: com.squareup.tacos.Taco.`object`): kotlin.Unit {
       |  print(taco)
       |}
       |""".trimMargin())

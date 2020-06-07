@@ -117,7 +117,7 @@ class ParameterSpecTest {
       |
       |import kotlin.Unit
       |
-      |fun foo(bar: @Annotation () -> Unit) {
+      |fun foo(bar: @Annotation () -> Unit): Unit {
       |}
       |""".trimMargin())
   }

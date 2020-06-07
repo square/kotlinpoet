@@ -62,6 +62,7 @@ class CrossplatformTest {
     assertThat(fileSpec.toString()).isEqualTo("""
       |import java.util.concurrent.atomic.AtomicReference
       |import kotlin.Boolean
+      |import kotlin.Unit
       |
       |internal expect class AtomicRef<V>(
       |  value: V
@@ -70,7 +71,7 @@ class CrossplatformTest {
       |
       |  fun get(): V
       |
-      |  fun set(value: V)
+      |  fun set(value: V): Unit
       |
       |  fun getAndSet(value: V): V
       |

@@ -42,15 +42,16 @@ class KotlinPoetTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
+        |import kotlin.Unit
         |
-        |fun a() {
+        |fun a(): Unit {
         |}
         |
         |class B
         |
         |val c: String = "C"
         |
-        |fun d() {
+        |fun d(): Unit {
         |}
         |
         |class E
@@ -178,17 +179,19 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
+        |import kotlin.Unit
+        |
         |class Taco {
-        |  fun a() {
+        |  fun a(): Unit {
         |  }
         |
-        |  protected fun b() {
+        |  protected fun b(): Unit {
         |  }
         |
-        |  internal fun c() {
+        |  internal fun c(): Unit {
         |  }
         |
-        |  private fun d() {
+        |  private fun d(): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -204,8 +207,10 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("" +
         "package com.squareup.tacos\n" +
         "\n" +
+        "import kotlin.Unit\n" +
+        "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
+        "  fun strings(): Unit {\n" +
         "    val a = \"basic string\"\n" +
         "    val b = \"string with a \${\'\$\'} dollar sign\"\n" +
         "  }\n" +
@@ -234,8 +239,10 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("" +
         "package com.squareup.tacos\n" +
         "\n" +
+        "import kotlin.Unit\n" +
+        "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
+        "  fun strings(): Unit {\n" +
         "    val a = \"\"\"\n" +
         "        |\"\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -271,8 +278,10 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("" +
         "package com.squareup.tacos\n" +
         "\n" +
+        "import kotlin.Unit\n" +
+        "\n" +
         "class Taco {\n" +
-        "  fun strings() {\n" +
+        "  fun strings(): Unit {\n" +
         "    val a = \"\"\"\n" +
         "        |\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -296,9 +305,10 @@ class KotlinPoetTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
+        |import kotlin.Unit
         |
         |class Taco {
-        |  fun addCheese(kind: String = "monterey jack") {
+        |  fun addCheese(kind: String = "monterey jack"): Unit {
         |  }
         |}
         |""".trimMargin())
@@ -595,11 +605,13 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
+      |
       |var bar: suspend (Foo) -> Bar = { Bar() }
       |
       |var nullBar: (suspend (Foo) -> Bar)? = null
       |
-      |fun foo(bar: suspend (Foo) -> Bar) {
+      |fun foo(bar: suspend (Foo) -> Bar): Unit {
       |}
       |""".trimMargin())
   }
@@ -619,8 +631,9 @@ class KotlinPoetTest {
       |
       |import java.util.concurrent.TimeUnit
       |import kotlin.Long
+      |import kotlin.Unit
       |
-      |fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS) {
+      |fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS): Unit {
       |  this.timeout = timeUnit.toMillis(duration)
       |}
       |""".trimMargin())
@@ -642,7 +655,9 @@ class KotlinPoetTest {
     assertThat(source.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
-      |fun dynamicTest() {
+      |import kotlin.Unit
+      |
+      |fun dynamicTest(): Unit {
       |  val d1: dynamic = "Taco"
       |  val d2: dynamic = 1f
       |  // dynamics are dangerous!
@@ -688,10 +703,11 @@ class KotlinPoetTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
+      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |fun foo(a: List<@JvmSuppressWildcards Int>) {
+      |fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -766,8 +782,10 @@ class KotlinPoetTest {
       |package com.squareup.tacos
       |
       |import kotlin.String
+      |import kotlin.Unit
       |
-      |fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String) {
+      |fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String):
+      |    Unit {
       |}
       |""".trimMargin())
   }
@@ -857,8 +875,9 @@ class KotlinPoetTest {
       |package com.squareup.example
       |
       |import com.squareup.tacos.Taco
+      |import kotlin.Unit
       |
-      |fun main() {
+      |fun main(): Unit {
       |  println(${'"'}""Here's a taco: ${'$'}{Taco()}""${'"'})
       |}
       |""".trimMargin())
@@ -876,9 +895,10 @@ class KotlinPoetTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.example
       |
+      |import kotlin.Unit
       |import kotlin.collections.contentToString
       |
-      |fun main() {
+      |fun main(): Unit {
       |  val ints = arrayOf(1, 2, 3)
       |  println(${'"'}""${'$'}{ints.contentToString()}""${'"'})
       |}
@@ -910,7 +930,7 @@ class KotlinPoetTest {
       | * @param a Progress in %
       | * @param b Some other parameter with %
       | */
-      |fun test(a: kotlin.Int, b: kotlin.Int) {
+      |fun test(a: kotlin.Int, b: kotlin.Int): kotlin.Unit {
       |}
       |""".trimMargin())
   }
