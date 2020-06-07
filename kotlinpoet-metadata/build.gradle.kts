@@ -43,12 +43,6 @@ afterEvaluate {
   }
 }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xuse-experimental=kotlin.Experimental")
-  }
-}
-
 dependencies {
   api(deps.kotlin.stdlib)
   api(deps.kotlin.metadata)
