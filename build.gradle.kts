@@ -43,8 +43,10 @@ subprojects {
       languageVersion = "1.3"
     }
   }
-  afterEvaluate {
+  pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     // TODO(egor): Change to explicitApi() and fix errors.
-    the<KotlinProjectExtension>().explicitApiWarning()
+    configure<KotlinProjectExtension> {
+      explicitApiWarning()
+    }
   }
 }
