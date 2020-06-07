@@ -44,7 +44,10 @@ subprojects {
       freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
   }
-  extensions.findByType<KotlinProjectExtension>()?.apply {
-    explicitApiWarning() // TODO(egor): Change to explicitApi() and fix errors.
+  pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+    // TODO(egor): Change to explicitApi() and fix errors.
+    configure<KotlinProjectExtension> {
+      explicitApiWarning()
+    }
   }
 }
