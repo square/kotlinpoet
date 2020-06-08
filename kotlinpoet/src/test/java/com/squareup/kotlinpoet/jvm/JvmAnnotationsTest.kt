@@ -211,13 +211,14 @@ class JvmAnnotationsTest {
       |
       |import java.io.IOException
       |import java.lang.IllegalArgumentException
+      |import kotlin.Unit
       |import kotlin.jvm.Throws
       |
       |@Throws(
       |  IOException::class,
       |  IllegalArgumentException::class
       |)
-      |fun foo() {
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -231,10 +232,11 @@ class JvmAnnotationsTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import kotlin.jvm.Throws
       |
       |@Throws(IllegalTacoException::class)
-      |fun foo() {
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -323,10 +325,11 @@ class JvmAnnotationsTest {
       |
       |import kotlin.Int
       |import kotlin.String
+      |import kotlin.Unit
       |import kotlin.jvm.JvmOverloads
       |
       |@JvmOverloads
-      |fun foo(bar: Int, baz: String = "baz") {
+      |fun foo(bar: Int, baz: String = "baz"): Unit {
       |}
       |""".trimMargin())
   }
@@ -399,10 +402,11 @@ class JvmAnnotationsTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import kotlin.jvm.JvmName
       |
       |@JvmName("getFoo")
-      |fun foo() {
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -503,10 +507,11 @@ class JvmAnnotationsTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import kotlin.jvm.JvmSuppressWildcards
       |
       |@JvmSuppressWildcards(suppress = false)
-      |fun foo() {
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }
@@ -561,10 +566,11 @@ class JvmAnnotationsTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
+      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |fun foo(a: List<@JvmSuppressWildcards Int>) {
+      |fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -580,10 +586,11 @@ class JvmAnnotationsTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
+      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmWildcard
       |
-      |fun foo(a: List<@JvmWildcard Int>) {
+      |fun foo(a: List<@JvmWildcard Int>): Unit {
       |}
       |""".trimMargin())
   }
@@ -760,10 +767,11 @@ class JvmAnnotationsTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import kotlin.jvm.Strictfp
       |
       |@Strictfp
-      |fun foo() {
+      |fun foo(): Unit {
       |}
       |""".trimMargin())
   }

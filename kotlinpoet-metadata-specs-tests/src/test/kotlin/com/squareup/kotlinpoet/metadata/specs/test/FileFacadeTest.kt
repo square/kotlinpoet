@@ -33,6 +33,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.Int
       import kotlin.Long
       import kotlin.String
+      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.jvm.JvmField
       import kotlin.jvm.JvmName
@@ -40,21 +41,21 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      fun jvmNameFunction() {
+      fun jvmNameFunction(): Unit {
       }
 
       fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!")
-      ) {
+      ): Unit {
       }
 
-      fun regularFun() {
+      fun regularFun(): Unit {
       }
 
       @Synchronized
-      fun synchronizedFun() {
+      fun synchronizedFun(): Unit {
       }
 
       val BINARY_PROP: Int = 11
@@ -165,6 +166,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.Int
       import kotlin.Long
       import kotlin.String
+      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmOverloads
@@ -172,7 +174,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      fun jvmNameFunction() {
+      fun jvmNameFunction(): Unit {
       }
 
       @JvmOverloads
@@ -180,14 +182,14 @@ class FacadeFileTest : MultiClassInspectorTest() {
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!")
-      ) {
+      ): Unit {
       }
 
-      fun regularFun() {
+      fun regularFun(): Unit {
       }
 
       @Synchronized
-      fun synchronizedFun() {
+      fun synchronizedFun(): Unit {
       }
 
       val BINARY_PROP: Int = 11

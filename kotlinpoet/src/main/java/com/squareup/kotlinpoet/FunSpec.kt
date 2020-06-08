@@ -135,8 +135,10 @@ class FunSpec private constructor(
       }
     }
 
-    if (emitReturnType(returnType)) {
+    if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
+    } else if (emitUnitReturnType()) {
+      codeWriter.emitCode(": %T", Unit::class.asTypeName())
     }
 
     if (delegateConstructor != null) {
@@ -181,19 +183,23 @@ class FunSpec private constructor(
   }
 
   /**
-   * Returns whether we should emit the return type for given [returnType].
+   * Returns whether [Unit] should be emitted as the return type.
    *
-   * For return types like [Unit], we can omit emitting the return type, only
-   * if it's not a single expression body.
-   * If it is a single expression body, we want to emit [Unit] so that any type
-   * change in the delegated function doesn't inadvertently carry over to the
-   * delegating function.
+   * [Unit] is emitted as return type on a function unless:
+   *   - It's a constructor
+   *   - It's a getter/setter on a property
+   *   - It's an expression body
    */
-  private fun emitReturnType(returnType: TypeName?): Boolean {
-    if (returnType != null) {
-      return returnType != Unit::class.asTypeName() || body.asExpressionBody() != null
+  private fun emitUnitReturnType(): Boolean {
+    if (isConstructor) {
+      return false
     }
-    return false
+    if (name == GETTER || name == SETTER) {
+      // Getter/setters don't emit return types
+      return false
+    }
+
+    return body.asExpressionBody() == null
   }
 
   private fun CodeBlock.asExpressionBody(): CodeBlock? {

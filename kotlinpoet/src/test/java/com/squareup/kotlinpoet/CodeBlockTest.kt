@@ -448,7 +448,9 @@ class CodeBlockTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
-      |fun test() {
+      |import kotlin.Unit
+      |
+      |fun test(): Unit {
       |  if ("Very long string that would wrap the line " ==
       |      "Very long string that would wrap the line ") {
       |  } else if ("Long string that would wrap the line 2 " ==

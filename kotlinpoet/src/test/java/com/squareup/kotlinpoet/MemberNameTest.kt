@@ -37,8 +37,9 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.bestTacoEver
       |import com.squareup.tacos.randomTaco
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  val randomTaco = randomTaco()
       |  val bestTaco = bestTacoEver
       |}
@@ -57,8 +58,9 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.Taco.Companion.createTaco
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -74,7 +76,9 @@ class MemberNameTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
-      |fun makeTastyTacos() {
+      |import kotlin.Unit
+      |
+      |fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -94,8 +98,9 @@ class MemberNameTest {
       |package com.squareup.tacos
       |
       |import com.squareup.tacos.Town.createTaco
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -114,8 +119,9 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.createTaco
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  createTaco()
       |  com.twitter.tacos.createTaco()
       |}
@@ -138,8 +144,9 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.SquareTacos.Companion.createTaco
       |import com.twitter.tacos.TwitterTacos
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  createTaco()
       |  TwitterTacos.Companion.createTaco()
       |}
@@ -159,8 +166,9 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.SquareTacos
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  val tacos = SquareTacos()
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
@@ -181,10 +189,11 @@ class MemberNameTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.example
       |
+      |import kotlin.Unit
       |import com.squareup.tacos.createTaco as createSquareTaco
       |import com.twitter.tacos.createTaco as createTwitterTaco
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  createSquareTaco()
       |  createTwitterTaco()
       |}
@@ -204,12 +213,13 @@ class MemberNameTest {
     assertThat(file.toString()).isEqualTo("""
       |package com.squareup.tacos
       |
+      |import kotlin.Unit
       |import org.junit.Before
       |import org.mockito.`when`
       |
       |class TacoTest {
       |  @Before
-      |  fun setUp() {
+      |  fun setUp(): Unit {
       |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
       |  }
       |}
@@ -232,8 +242,9 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.SquareTacos.Companion.`when`
       |import com.twitter.tacos.TwitterTacos
+      |import kotlin.Unit
       |
-      |fun whenTastyTacos() {
+      |fun whenTastyTacos(): Unit {
       |  `when`()
       |  TwitterTacos.Companion.`when`()
       |}
@@ -256,8 +267,9 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.TacoTruck
       |import com.squareup.tacos.randomTaco
+      |import kotlin.Unit
       |
-      |fun makeTastyTacos() {
+      |fun makeTastyTacos(): Unit {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
@@ -275,8 +287,9 @@ class MemberNameTest {
       |package com.squareup.tacos
       |
       |import com.squareup.`taco factory`.`produce tacos`
+      |import kotlin.Unit
       |
-      |fun main() {
+      |fun main(): Unit {
       |  println(`produce tacos`())
       |}
       |""".trimMargin())
@@ -313,9 +326,10 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.Taco
       |import com.squareup.tacos.TacoPackager
+      |import kotlin.Unit
       |import kotlin.collections.List
       |
-      |fun packageTacos(tacos: List<Taco>, packager: TacoPackager) {
+      |fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
       |  packager.`package`(tacos)
       |}
       |""".trimMargin())
@@ -342,8 +356,9 @@ class MemberNameTest {
       |import com.squareup.tacos.ingredient.Meat
       |import com.squareup.tacos.internal.iterator
       |import com.squareup.tacos.internal.minusAssign
+      |import kotlin.Unit
       |
-      |fun makeTacoHealthy(taco: Taco) {
+      |fun makeTacoHealthy(taco: Taco): Unit {
       |  for (ingredient in taco) {
       |    if (ingredient is Meat) taco -= ingredient
       |  }

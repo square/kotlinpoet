@@ -285,8 +285,9 @@ class AnnotationSpecTest {
       |package test
       |
       |import kotlin.Suppress
+      |import kotlin.Unit
       |
-      |fun test() {
+      |fun test(): Unit {
       |  @Suppress("Things")
       |  val annotatedString = "AnnotatedString"
       |}
@@ -303,7 +304,7 @@ class AnnotationSpecTest {
         .build()
 
     assertThat(funSpec.toString().trim()).isEqualTo("""
-      |fun operation() {
+      |fun operation(): kotlin.Unit {
       |  @Suppress("UNCHECKED_CAST")
       |}
       """.trimMargin())
@@ -480,6 +481,7 @@ class AnnotationSpecTest {
       package com.squareup.parceler
 
       import kotlin.Int
+      import kotlin.Unit
 
       class ExternalClass(
         val value: Int
@@ -488,7 +490,7 @@ class AnnotationSpecTest {
       object ExternalClassParceler : Parceler<ExternalClass> {
         override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
 
-        override fun ExternalClass.write(parcel: Parcel, flags: Int) {
+        override fun ExternalClass.write(parcel: Parcel, flags: Int): Unit {
           parcel.writeInt(value)
         }
       }
