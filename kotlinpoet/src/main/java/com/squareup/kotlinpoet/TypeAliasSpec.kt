@@ -37,7 +37,7 @@ class TypeAliasSpec private constructor(
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitModifiers(modifiers)
+    codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
     codeWriter.emitCode("typealias %N", name)
     codeWriter.emitTypeVariables(typeVariables)
     codeWriter.emitCode(" = %T", type)

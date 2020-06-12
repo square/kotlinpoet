@@ -116,7 +116,7 @@ class AnnotationSpecTest {
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -144,7 +144,7 @@ class AnnotationSpecTest {
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
-        |class IsAnnotated
+        |public class IsAnnotated
         |""".trimMargin())
   }
 
@@ -184,7 +184,7 @@ class AnnotationSpecTest {
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -220,7 +220,7 @@ class AnnotationSpecTest {
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -287,7 +287,7 @@ class AnnotationSpecTest {
       |import kotlin.Suppress
       |import kotlin.Unit
       |
-      |fun test(): Unit {
+      |public fun test(): Unit {
       |  @Suppress("Things")
       |  val annotatedString = "AnnotatedString"
       |}
@@ -304,7 +304,7 @@ class AnnotationSpecTest {
         .build()
 
     assertThat(funSpec.toString().trim()).isEqualTo("""
-      |fun operation(): kotlin.Unit {
+      |public fun operation(): kotlin.Unit {
       |  @Suppress("UNCHECKED_CAST")
       |}
       """.trimMargin())
@@ -328,7 +328,7 @@ class AnnotationSpecTest {
             |import java.lang.Object
             |
             |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-            |class Result
+            |public class Result
             |""".trimMargin())
   }
 
@@ -354,7 +354,7 @@ class AnnotationSpecTest {
         |import kotlin.Boolean
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-        |class Result
+        |public class Result
         """.trimMargin())
   }
 
@@ -372,7 +372,7 @@ class AnnotationSpecTest {
         |import java.lang.Object
         |
         |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-        |class Result
+        |public class Result
         """.trimMargin())
   }
 
@@ -390,7 +390,7 @@ class AnnotationSpecTest {
         |import kotlin.Boolean
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
-        |class Result
+        |public class Result
         """.trimMargin())
   }
 
@@ -483,33 +483,33 @@ class AnnotationSpecTest {
       import kotlin.Int
       import kotlin.Unit
 
-      class ExternalClass(
-        val value: Int
+      public class ExternalClass(
+        public val value: Int
       )
 
-      object ExternalClassParceler : Parceler<ExternalClass> {
-        override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
+      public object ExternalClassParceler : Parceler<ExternalClass> {
+        public override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
 
-        override fun ExternalClass.write(parcel: Parcel, flags: Int): Unit {
+        public override fun ExternalClass.write(parcel: Parcel, flags: Int): Unit {
           parcel.writeInt(value)
         }
       }
 
       @Parcelize
       @TypeParceler<ExternalClass, ExternalClassParceler>
-      class MyClass(
-        val external: ExternalClass
+      public class MyClass(
+        public val external: ExternalClass
       )
 
       @Parcelize
-      class MyClass(
+      public class MyClass(
         @TypeParceler<ExternalClass, ExternalClassParceler>
-        val external: ExternalClass
+        public val external: ExternalClass
       )
 
       @Parcelize
-      class MyClass(
-        val external: @WriteWith<ExternalClassParceler> ExternalClass
+      public class MyClass(
+        public val external: @WriteWith<ExternalClassParceler> ExternalClass
       )
 
     """.trimIndent())

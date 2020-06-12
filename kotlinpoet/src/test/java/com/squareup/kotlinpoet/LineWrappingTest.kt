@@ -30,8 +30,8 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() = 10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 *
-        |    70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
+        |public fun wrapMe() = 10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 *
+        |    60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |""".trimMargin())
   }
 
@@ -46,7 +46,7 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() =
+        |public fun wrapMe() =
         |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
         |""".trimMargin())
   }
@@ -62,7 +62,7 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() =
+        |public fun wrapMe() =
         |    10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |""".trimMargin())
   }
@@ -74,7 +74,7 @@ class LineWrappingTest {
     assertThat(toString(wrapMe)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |fun wrapMe() = "a·b"
+        |public fun wrapMe() = "a·b"
         |""".trimMargin())
   }
 
@@ -90,7 +90,7 @@ class LineWrappingTest {
         |
         |import kotlin.Unit
         |
-        |fun wrapMe(): Unit {
+        |public fun wrapMe(): Unit {
         |  val a =    8
         |  val b =   64
         |  val c =  512
@@ -111,7 +111,7 @@ class LineWrappingTest {
         |
         |import kotlin.Unit
         |
-        |fun wrapMe(): Unit {
+        |public fun wrapMe(): Unit {
         |  val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
         |  val bbbbbb =
         |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
@@ -141,8 +141,8 @@ class LineWrappingTest {
         |import kotlin.String
         |import kotlin.Unit
         |
-        |class Taco {
-        |  fun call(
+        |public class Taco {
+        |  public fun call(
         |    s0: String,
         |    s1: String,
         |    s2: String,

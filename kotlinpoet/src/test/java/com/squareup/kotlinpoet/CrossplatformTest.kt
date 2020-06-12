@@ -67,18 +67,18 @@ class CrossplatformTest {
       |internal expect class AtomicRef<V>(
       |  value: V
       |) {
-      |  val value: V
+      |  public val value: V
       |
-      |  fun get(): V
+      |  public fun get(): V
       |
-      |  fun set(value: V): Unit
+      |  public fun set(value: V): Unit
       |
-      |  fun getAndSet(value: V): V
+      |  public fun getAndSet(value: V): V
       |
-      |  fun compareAndSet(expect: V, update: V): Boolean
+      |  public fun compareAndSet(expect: V, update: V): Boolean
       |}
       |
-      |actual typealias AtomicRef<V> = AtomicReference<V>
+      |public actual typealias AtomicRef<V> = AtomicReference<V>
       |""".trimMargin())
   }
 
@@ -99,10 +99,10 @@ class CrossplatformTest {
       |import java.lang.Exception
       |import kotlin.String
       |
-      |expect open class IoException : Exception {
-      |  constructor()
+      |public expect open class IoException : Exception {
+      |  public constructor()
       |
-      |  constructor(message: String)
+      |  public constructor(message: String)
       |}
       |""".trimMargin())
   }
@@ -118,9 +118,9 @@ class CrossplatformTest {
     assertThat(fileSpec.toString()).isEqualTo("""
       |import kotlin.String
       |
-      |expect val bar: String
+      |public expect val bar: String
       |
-      |actual val bar: String = "Hello"
+      |public actual val bar: String = "Hello"
       |""".trimMargin())
   }
 
@@ -139,9 +139,9 @@ class CrossplatformTest {
     assertThat(fileSpec.toString()).isEqualTo("""
       |import kotlin.Int
       |
-      |expect fun f1(): Int
+      |public expect fun f1(): Int
       |
-      |actual fun f1() = 1
+      |public actual fun f1() = 1
       |""".trimMargin())
   }
 

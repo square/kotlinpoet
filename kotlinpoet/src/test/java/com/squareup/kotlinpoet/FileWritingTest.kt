@@ -257,10 +257,10 @@ class FileWritingTest {
         |import kotlin.Array
         |import kotlin.Unit
         |
-        |class Test {
-        |${"\t"}val madeFreshDate: Date
+        |public class Test {
+        |${"\t"}public val madeFreshDate: Date
         |
-        |${"\t"}fun main(args: Array<String>): Unit {
+        |${"\t"}public fun main(args: Array<String>): Unit {
         |${"\t\t"}System.out.println("Hello World!");
         |${"\t"}}
         |}
@@ -283,7 +283,7 @@ class FileWritingTest {
         |// Piñata¡
         |package foo
         |
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 

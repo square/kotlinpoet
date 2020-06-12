@@ -62,8 +62,8 @@ class FileSpecTest {
         |import java.util.Collections.sort
         |import kotlin.collections.List
         |
-        |class HelloWorld {
-        |  fun beyond(): List<Hoverboard> {
+        |public class HelloWorld {
+        |  public fun beyond(): List<Hoverboard> {
         |    val result = ArrayList<Hoverboard>()
         |    result.add(createNimbus(2000))
         |    result.add(createNimbus("2001"))
@@ -101,14 +101,14 @@ class FileSpecTest {
         |import java.lang.Thread.State.BLOCKED
         |import java.lang.Thread.State.valueOf
         |
-        |class Taco {
+        |public class Taco {
         |  init {
         |    assert valueOf("BLOCKED") == BLOCKED
         |    gc()
         |    out.println(nanoTime())
         |  }
         |
-        |  constructor(vararg states: Thread.State)
+        |  public constructor(vararg states: Thread.State)
         |}
         |""".trimMargin())
   }
@@ -129,7 +129,7 @@ class FileSpecTest {
         |import com.squareup.tacos.internal.wrap
         |import kotlin.collections.List
         |
-        |fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
+        |public fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
         |""".trimMargin())
   }
 
@@ -168,8 +168,8 @@ class FileSpecTest {
         |import java.util.concurrent.TimeUnit
         |import kotlin.Long
         |
-        |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
+        |public class Util {
+        |  public fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
@@ -189,8 +189,8 @@ class FileSpecTest {
         |import java.util.concurrent.TimeUnit.SECONDS
         |import kotlin.Long
         |
-        |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
+        |public class Util {
+        |  public fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
@@ -212,8 +212,8 @@ class FileSpecTest {
         |import java.util.concurrent.TimeUnit.SECONDS
         |import kotlin.Long
         |
-        |class Util {
-        |  fun minutesToSeconds(minutes: Long): Long {
+        |public class Util {
+        |  public fun minutesToSeconds(minutes: Long): Long {
         |    System.gc()
         |    return SECONDS.convert(minutes, MINUTES)
         |  }
@@ -247,7 +247,7 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -262,8 +262,8 @@ class FileSpecTest {
         |
         |import java.util.Date
         |
-        |class Taco {
-        |  val madeFreshDate: Date
+        |public class Taco {
+        |  public val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -279,8 +279,8 @@ class FileSpecTest {
         |
         |import com.squareup.`is`.`fun`.`in`.Date
         |
-        |class Taco {
-        |  val madeFreshDate: Date
+        |public class Taco {
+        |  public val madeFreshDate: Date
         |}
         |""".trimMargin())
   }
@@ -306,10 +306,10 @@ class FileSpecTest {
         |
         |import java.util.Date
         |
-        |class Taco {
-        |  val madeFreshDate: Date
+        |public class Taco {
+        |  public val madeFreshDate: Date
         |
-        |  val madeFreshDatabaseDate: java.sql.Date
+        |  public val madeFreshDatabaseDate: java.sql.Date
         |}
         |""".trimMargin())
   }
@@ -326,10 +326,10 @@ class FileSpecTest {
         |
         |import com.squareup.`is`.`fun`.`in`.Date
         |
-        |class Taco {
-        |  val madeFreshDate1: Date
+        |public class Taco {
+        |  public val madeFreshDate1: Date
         |
-        |  val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
+        |  public val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
         |""".trimMargin())
   }
@@ -347,7 +347,7 @@ class FileSpecTest {
       |import com.squareup.`taco factory`.TacoFactory
       |import kotlin.Unit
       |
-      |fun main(): Unit {
+      |public fun main(): Unit {
       |  println(TacoFactory.produceTacos())
       |}
       |""".trimMargin())
@@ -367,7 +367,7 @@ class FileSpecTest {
       |import kotlin.Unit
       |import com.squareup.`taco factory`.TacoFactory as `La Taqueria`
       |
-      |fun main(): Unit {
+      |public fun main(): Unit {
       |  println(`La Taqueria`.produceTacos())
       |}
       |""".trimMargin())
@@ -390,9 +390,9 @@ class FileSpecTest {
       |import java.lang.String as JString
       |import kotlin.String as KString
       |
-      |val a: JString = JString("a")
+      |public val a: JString = JString("a")
       |
-      |val b: KString = "b"
+      |public val b: KString = "b"
       |""".trimMargin())
   }
 
@@ -410,7 +410,7 @@ class FileSpecTest {
       |import kotlin.Unit
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
-      |fun sleepForFiveMins(): Unit {
+      |public fun sleepForFiveMins(): Unit {
       |  MINS.sleep(5)
       |}
       |""".trimMargin())
@@ -434,17 +434,17 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class A {
-        |  class B {
-        |    class Twin
+        |public class A {
+        |  public class B {
+        |    public class Twin
         |
-        |    class C {
-        |      val d: A.Twin.D
+        |    public class C {
+        |      public val d: A.Twin.D
         |    }
         |  }
         |
-        |  class Twin {
-        |    class D
+        |  public class Twin {
+        |    public class D
         |  }
         |}
         |""".trimMargin())
@@ -468,17 +468,17 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class A {
-        |  class B {
-        |    class C {
-        |      val d: A.Twin.D
+        |public class A {
+        |  public class B {
+        |    public class C {
+        |      public val d: A.Twin.D
         |
-        |      class Twin
+        |      public class Twin
         |    }
         |  }
         |
-        |  class Twin {
-        |    class D
+        |  public class Twin {
+        |    public class D
         |  }
         |}
         |""".trimMargin())
@@ -504,19 +504,19 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class A {
-        |  class B {
-        |    class C {
-        |      val d: Twin.D
+        |public class A {
+        |  public class B {
+        |    public class C {
+        |      public val d: Twin.D
         |
-        |      class Nested {
-        |        class Twin
+        |      public class Nested {
+        |        public class Twin
         |      }
         |    }
         |  }
         |
-        |  class Twin {
-        |    class D
+        |  public class Twin {
+        |    public class D
         |  }
         |}
         |""".trimMargin())
@@ -536,8 +536,8 @@ class FileSpecTest {
         |
         |import com.squareup.wire.Message
         |
-        |class Taco : Message() {
-        |  class Builder : Message.Builder()
+        |public class Taco : Message() {
+        |  public class Builder : Message.Builder()
         |}
         |""".trimMargin())
   }
@@ -558,9 +558,9 @@ class FileSpecTest {
         |import dagger.Component
         |
         |@Component
-        |class TestComponent {
+        |public class TestComponent {
         |  @Component.Builder
-        |  class Builder
+        |  public class Builder
         |}
         |""".trimMargin())
   }
@@ -581,8 +581,8 @@ class FileSpecTest {
         |import kotlin.String
         |import kotlin.Unit
         |
-        |class HelloWorld {
-        |  fun main(args: Array<String>): Unit {
+        |public class HelloWorld {
+        |  public fun main(args: Array<String>): Unit {
         |    System.out.println("Hello World!");
         |  }
         |}
@@ -600,7 +600,7 @@ class FileSpecTest {
         |
         |import Test
         |
-        |class World : Test
+        |public class World : Test
         |""".trimMargin())
   }
 
@@ -613,7 +613,7 @@ class FileSpecTest {
         |// Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!
         |package com.squareup.tacos
         |
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -630,7 +630,7 @@ class FileSpecTest {
         |//
         |package com.squareup.tacos
         |
-        |class Taco
+        |public class Taco
         |""".trimMargin())
   }
 
@@ -644,10 +644,10 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class Taco {
-        |  val a: com.squareup.tacos.A
+        |public class Taco {
+        |  public val a: com.squareup.tacos.A
         |
-        |  class A
+        |  public class A
         |}
         |""".trimMargin())
   }
@@ -660,9 +660,9 @@ class FileSpecTest {
     assertThat(source.toString()).isEqualTo("""
         |package com.squareup.tacos
         |
-        |class A
+        |public class A
         |
-        |class B
+        |public class B
         |""".trimMargin())
   }
 
@@ -680,9 +680,9 @@ class FileSpecTest {
         |import kotlin.String
         |import kotlin.collections.Map
         |
-        |typealias Int8 = Byte
+        |public typealias Int8 = Byte
         |
-        |typealias FileTable = Map<String, Int>
+        |public typealias FileTable = Map<String, Int>
         |""".trimMargin())
   }
 
@@ -826,7 +826,7 @@ class FileSpecTest {
       |import bigInt.BigInteger
       |import kotlin.Int
       |
-      |fun add5ToInput(input: Int): BigInteger {
+      |public fun add5ToInput(input: Int): BigInteger {
       |  val inputBigInt = bigInt(input)
       |  return inputBigInt.add(5)
       |}
@@ -843,7 +843,7 @@ class FileSpecTest {
       |
       |import kotlin.Unit
       |
-      |fun foo(): Unit {
+      |public fun foo(): Unit {
       |}
       |""".trimMargin())
   }

@@ -39,7 +39,7 @@ class MemberNameTest {
       |import com.squareup.tacos.randomTaco
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  val randomTaco = randomTaco()
       |  val bestTaco = bestTacoEver
       |}
@@ -60,7 +60,7 @@ class MemberNameTest {
       |import com.squareup.tacos.Taco.Companion.createTaco
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -78,7 +78,7 @@ class MemberNameTest {
       |
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -100,7 +100,7 @@ class MemberNameTest {
       |import com.squareup.tacos.Town.createTaco
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
       |""".trimMargin())
@@ -121,7 +121,7 @@ class MemberNameTest {
       |import com.squareup.tacos.createTaco
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |  com.twitter.tacos.createTaco()
       |}
@@ -146,7 +146,7 @@ class MemberNameTest {
       |import com.twitter.tacos.TwitterTacos
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |  TwitterTacos.Companion.createTaco()
       |}
@@ -168,7 +168,7 @@ class MemberNameTest {
       |import com.squareup.tacos.SquareTacos
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  val tacos = SquareTacos()
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
@@ -193,7 +193,7 @@ class MemberNameTest {
       |import com.squareup.tacos.createTaco as createSquareTaco
       |import com.twitter.tacos.createTaco as createTwitterTaco
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  createSquareTaco()
       |  createTwitterTaco()
       |}
@@ -217,9 +217,9 @@ class MemberNameTest {
       |import org.junit.Before
       |import org.mockito.`when`
       |
-      |class TacoTest {
+      |public class TacoTest {
       |  @Before
-      |  fun setUp(): Unit {
+      |  public fun setUp(): Unit {
       |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
       |  }
       |}
@@ -244,7 +244,7 @@ class MemberNameTest {
       |import com.twitter.tacos.TwitterTacos
       |import kotlin.Unit
       |
-      |fun whenTastyTacos(): Unit {
+      |public fun whenTastyTacos(): Unit {
       |  `when`()
       |  TwitterTacos.Companion.`when`()
       |}
@@ -269,7 +269,7 @@ class MemberNameTest {
       |import com.squareup.tacos.randomTaco
       |import kotlin.Unit
       |
-      |fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos(): Unit {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
@@ -289,7 +289,7 @@ class MemberNameTest {
       |import com.squareup.`taco factory`.`produce tacos`
       |import kotlin.Unit
       |
-      |fun main(): Unit {
+      |public fun main(): Unit {
       |  println(`produce tacos`())
       |}
       |""".trimMargin())
@@ -329,7 +329,7 @@ class MemberNameTest {
       |import kotlin.Unit
       |import kotlin.collections.List
       |
-      |fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
+      |public fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
       |  packager.`package`(tacos)
       |}
       |""".trimMargin())
@@ -358,7 +358,7 @@ class MemberNameTest {
       |import com.squareup.tacos.internal.minusAssign
       |import kotlin.Unit
       |
-      |fun makeTacoHealthy(taco: Taco): Unit {
+      |public fun makeTacoHealthy(taco: Taco): Unit {
       |  for (ingredient in taco) {
       |    if (ingredient is Meat) taco -= ingredient
       |  }
