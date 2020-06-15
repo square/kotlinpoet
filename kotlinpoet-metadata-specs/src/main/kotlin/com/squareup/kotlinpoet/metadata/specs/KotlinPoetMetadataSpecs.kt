@@ -135,37 +135,37 @@ import kotlinx.metadata.jvm.jvmInternalName
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
-fun KClass<*>.toTypeSpec(
+public fun KClass<*>.toTypeSpec(
   classInspector: ClassInspector? = null
 ): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
-fun Class<*>.toTypeSpec(
+public fun Class<*>.toTypeSpec(
   classInspector: ClassInspector? = null
 ): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
-fun TypeElement.toTypeSpec(
+public fun TypeElement.toTypeSpec(
   classInspector: ClassInspector? = null
 ): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
-fun KClass<*>.toFileSpec(
+public fun KClass<*>.toFileSpec(
   classInspector: ClassInspector? = null
 ): FileSpec = java.toFileSpec(classInspector)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
-fun Class<*>.toFileSpec(
+public fun Class<*>.toFileSpec(
   classInspector: ClassInspector? = null
 ): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
-fun TypeElement.toFileSpec(
+public fun TypeElement.toFileSpec(
   classInspector: ClassInspector? = null
 ): FileSpec = FileSpec.get(
     packageName = packageName,
@@ -174,7 +174,7 @@ fun TypeElement.toFileSpec(
 
 /** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
-fun ImmutableKmClass.toTypeSpec(
+public fun ImmutableKmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name)
 ): TypeSpec {
@@ -183,7 +183,7 @@ fun ImmutableKmClass.toTypeSpec(
 
 /** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
 @KotlinPoetMetadataPreview
-fun ImmutableKmClass.toFileSpec(
+public fun ImmutableKmClass.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name)
 ): FileSpec {
@@ -195,7 +195,7 @@ fun ImmutableKmClass.toFileSpec(
 
 /** @return a [FileSpec] ABI representation of this [ImmutableKmPackage]. */
 @KotlinPoetMetadataPreview
-fun ImmutableKmPackage.toFileSpec(
+public fun ImmutableKmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName
 ): FileSpec {

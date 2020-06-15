@@ -23,24 +23,28 @@ import kotlinx.metadata.jvm.JvmMethodSignature
 
 /** A basic interface for looking up JVM information about a given Class. */
 @KotlinPoetMetadataPreview
-interface ClassInspector {
+public interface ClassInspector {
 
   /**
    * Indicates if this [ClassInspector] supports [AnnotationRetention.RUNTIME]-retained annotations.
    * This is used to indicate if manual inference of certain non-RUNTIME-retained annotations should
    * be done, such as [JvmName].
    */
-  val supportsNonRuntimeRetainedAnnotations: Boolean
+  public val supportsNonRuntimeRetainedAnnotations: Boolean
 
   /**
    * Creates a new [ContainerData] instance for a given [declarationContainer].
    *
    * @param declarationContainer the source [ImmutableKmDeclarationContainer] to read from.
    * @param className the [ClassName] of the target class to to read from.
-   * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner, or is a
-   *        companion object.
+   * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner,
+   * or is a companion object.
    */
-  fun containerData(declarationContainer: ImmutableKmDeclarationContainer, className: ClassName, parentClassName: ClassName?): ContainerData
+  public fun containerData(
+    declarationContainer: ImmutableKmDeclarationContainer,
+    className: ClassName,
+    parentClassName: ClassName?
+  ): ContainerData
 
   /**
    * Looks up other declaration containers, such as for nested members. Note that this class would
@@ -50,7 +54,7 @@ interface ClassInspector {
    * @return the read [ImmutableKmDeclarationContainer] from its metadata. If no class or facade
    *         file was found, this should throw an exception.
    */
-  fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer
+  public fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer
 
   /**
    * Looks up a class and returns whether or not it is an interface. Note that this class can be
@@ -59,7 +63,7 @@ interface ClassInspector {
    * @param className The [ClassName] representation of the class.
    * @return whether or not it is an interface.
    */
-  fun isInterface(className: ClassName): Boolean
+  public fun isInterface(className: ClassName): Boolean
 
   /**
    * Looks up the enum entry on a given enum given its member name.
@@ -68,7 +72,7 @@ interface ClassInspector {
    * @param memberName The simple member name.
    * @return the [EnumEntryData]
    */
-  fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData
+  public fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData
 
   /**
    * Looks up if a given [methodSignature] within [className] exists.
@@ -77,7 +81,7 @@ interface ClassInspector {
    * @param methodSignature The method signature to check.
    * @return whether or not the method exists.
    */
-  fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean
+  public fun methodExists(className: ClassName, methodSignature: JvmMethodSignature): Boolean
 }
 
 /**
@@ -88,7 +92,10 @@ interface ClassInspector {
  *        companion object.
  */
 @KotlinPoetMetadataPreview
-fun ClassInspector.containerData(className: ClassName, parentClassName: ClassName?): ContainerData {
+public fun ClassInspector.containerData(
+  className: ClassName,
+  parentClassName: ClassName?
+): ContainerData {
   return containerData(declarationContainerFor(className), className, parentClassName)
 }
 
@@ -101,7 +108,7 @@ fun ClassInspector.containerData(className: ClassName, parentClassName: ClassNam
  *         an exception.
  */
 @KotlinPoetMetadataPreview
-fun ClassInspector.classFor(className: ClassName): ImmutableKmClass {
+public fun ClassInspector.classFor(className: ClassName): ImmutableKmClass {
   val container = declarationContainerFor(className)
   check(container is ImmutableKmClass) {
     "Container is not a class! Was ${container.javaClass.simpleName}"

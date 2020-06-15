@@ -22,24 +22,24 @@ import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
-/** A generated property declaration.  */
-class PropertySpec private constructor(
+/** A generated property declaration. */
+public class PropertySpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
-  val mutable = builder.mutable
-  val name = builder.name
-  val type = builder.type
-  val kdoc = builder.kdoc.build()
-  val annotations = builder.annotations.toImmutableList()
-  val modifiers = builder.modifiers.toImmutableSet()
-  val typeVariables = builder.typeVariables.toImmutableList()
-  val initializer = builder.initializer
-  val delegated = builder.delegated
-  val getter = builder.getter
-  val setter = builder.setter
-  val receiverType = builder.receiverType
+  public val mutable: Boolean = builder.mutable
+  public val name: String = builder.name
+  public val type: TypeName = builder.type
+  public val kdoc: CodeBlock = builder.kdoc.build()
+  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
+  public val initializer: CodeBlock? = builder.initializer
+  public val delegated: Boolean = builder.delegated
+  public val getter: FunSpec? = builder.getter
+  public val setter: FunSpec? = builder.setter
+  public val receiverType: TypeName? = builder.receiverType
 
   init {
     require(typeVariables.none { it.isReified } ||
@@ -128,12 +128,12 @@ class PropertySpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this, emptySet()) }
+  override fun toString(): String = buildCodeString { emit(this, emptySet()) }
 
   @JvmOverloads
-  fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
+  public fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)
     builder.mutable = mutable
     builder.kdoc.add(kdoc)
@@ -150,10 +150,11 @@ class PropertySpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(
+  public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ) : Taggable.Builder<PropertySpec.Builder>, OriginatingElementsHolder.Builder<PropertySpec.Builder> {
+  ) : Taggable.Builder<Builder>,
+      OriginatingElementsHolder.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -163,93 +164,97 @@ class PropertySpec private constructor(
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
 
-    val annotations = mutableListOf<AnnotationSpec>()
-    val modifiers = mutableListOf<KModifier>()
-    val typeVariables = mutableListOf<TypeVariableName>()
-    override val tags = mutableMapOf<KClass<*>, Any>()
-    override val originatingElements = mutableListOf<Element>()
+    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    public val modifiers: MutableList<KModifier> = mutableListOf()
+    public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val originatingElements: MutableList<Element> = mutableListOf()
 
     /** True to create a `var` instead of a `val`. */
-    fun mutable(mutable: Boolean = true) = apply {
+    public fun mutable(mutable: Boolean = true): Builder = apply {
       this.mutable = mutable
     }
 
-    fun addKdoc(format: String, vararg args: Any) = apply {
+    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
     }
 
-    fun addKdoc(block: CodeBlock) = apply {
+    public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
+    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
       annotations += annotationSpecs
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
+    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
       annotations += annotationSpec
     }
 
-    fun addAnnotation(annotation: ClassName) = apply {
+    public fun addAnnotation(annotation: ClassName): Builder = apply {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: Class<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: KClass<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addModifiers(vararg modifiers: KModifier) = apply {
+    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
       this.modifiers += modifiers
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+    public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
       this.typeVariables += typeVariables
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+    public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
 
-    fun initializer(format: String, vararg args: Any?) = initializer(CodeBlock.of(format, *args))
+    public fun initializer(format: String, vararg args: Any?): Builder =
+        initializer(CodeBlock.of(format, *args))
 
-    fun initializer(codeBlock: CodeBlock) = apply {
+    public fun initializer(codeBlock: CodeBlock): Builder = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
     }
 
-    fun delegate(format: String, vararg args: Any?): Builder = delegate(CodeBlock.of(format, *args))
+    public fun delegate(format: String, vararg args: Any?): Builder =
+        delegate(CodeBlock.of(format, *args))
 
-    fun delegate(codeBlock: CodeBlock) = apply {
+    public fun delegate(codeBlock: CodeBlock): Builder = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
       this.delegated = true
     }
 
-    fun getter(getter: FunSpec) = apply {
+    public fun getter(getter: FunSpec): Builder = apply {
       require(getter.name == GETTER) { "${getter.name} is not a getter" }
       check(this.getter == null) { "getter was already set" }
       this.getter = getter
     }
 
-    fun setter(setter: FunSpec) = apply {
+    public fun setter(setter: FunSpec): Builder = apply {
       require(setter.name == SETTER) { "${setter.name} is not a setter" }
       check(this.setter == null) { "setter was already set" }
       this.setter = setter
     }
 
-    fun receiver(receiverType: TypeName) = apply {
+    public fun receiver(receiverType: TypeName): Builder = apply {
       this.receiverType = receiverType
     }
 
-    fun receiver(receiverType: Type) = receiver(receiverType.asTypeName())
+    public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
-    fun receiver(receiverType: KClass<*>) = receiver(receiverType.asTypeName())
+    public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
 
-    fun build(): PropertySpec {
+    public fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {
         throw IllegalArgumentException("KotlinPoet doesn't allow setting the inline modifier on " +
             "properties. You should mark either the getter, the setter, or both inline.")
@@ -261,27 +266,42 @@ class PropertySpec private constructor(
     }
   }
 
-  companion object {
-    @JvmStatic fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
-      return Builder(name, type)
-          .addModifiers(*modifiers)
+  public companion object {
+    @JvmStatic public fun builder(
+      name: String,
+      type: TypeName,
+      vararg modifiers: KModifier
+    ): Builder {
+      return Builder(name, type).addModifiers(*modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, vararg modifiers: KModifier) =
+    @JvmStatic public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
         builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier) =
-        builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic public fun builder(
+      name: String,
+      type: KClass<*>,
+      vararg modifiers: KModifier
+    ): Builder = builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic fun builder(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder {
-      return Builder(name, type)
-          .addModifiers(modifiers)
+    @JvmStatic public fun builder(
+      name: String,
+      type: TypeName,
+      modifiers: Iterable<KModifier>
+    ): Builder {
+      return Builder(name, type).addModifiers(modifiers)
     }
 
-    @JvmStatic fun builder(name: String, type: Type, modifiers: Iterable<KModifier>) =
-        builder(name, type.asTypeName(), modifiers)
+    @JvmStatic public fun builder(
+      name: String,
+      type: Type,
+      modifiers: Iterable<KModifier>
+    ): Builder = builder(name, type.asTypeName(), modifiers)
 
-    @JvmStatic fun builder(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
-        builder(name, type.asTypeName(), modifiers)
+    @JvmStatic public fun builder(
+      name: String,
+      type: KClass<*>,
+      modifiers: Iterable<KModifier>
+    ): Builder = builder(name, type.asTypeName(), modifiers)
   }
 }

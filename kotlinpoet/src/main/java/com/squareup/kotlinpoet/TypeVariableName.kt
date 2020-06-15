@@ -24,21 +24,21 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 
-/** Returns type variable equivalent to `mirror`.  */
+/** Returns type variable equivalent to `mirror`. */
 @JvmName("get")
-fun TypeVariable.asTypeVariableName() =
+public fun TypeVariable.asTypeVariableName(): TypeVariableName =
     (asElement() as TypeParameterElement).asTypeVariableName()
 
-/** Returns type variable equivalent to `element`.  */
+/** Returns type variable equivalent to `element`. */
 @JvmName("get")
-fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
+public fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()
   val boundsTypeNames = bounds.map(TypeMirror::asTypeName)
       .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST)
   return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }
 
-fun KTypeParameter.asTypeVariableName(): TypeVariableName {
+public fun KTypeParameter.asTypeVariableName(): TypeVariableName {
   return TypeVariableName.of(
       name = name,
       bounds = upperBounds.map(KType::asTypeName)

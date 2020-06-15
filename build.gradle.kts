@@ -45,9 +45,8 @@ subprojects {
     }
   }
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-    // TODO(egor): Change to explicitApi() and fix errors.
     configure<KotlinProjectExtension> {
-      explicitApiWarning()
+      explicitApi()
     }
   }
 }

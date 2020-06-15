@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 @KotlinPoetMetadataPreview
-object ClassInspectorUtil {
-  val JVM_NAME = JvmName::class.asClassName()
+public object ClassInspectorUtil {
+  public val JVM_NAME: ClassName = JvmName::class.asClassName()
   private val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
   internal val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
@@ -55,7 +55,7 @@ object ClassInspectorUtil {
       EXTENSION_FUNCTION_TYPE
   )
 
-  val KOTLIN_INTRINSIC_INTERFACES = setOf(
+  public val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
       CHAR_SEQUENCE,
       COMPARABLE,
       ITERABLE,
@@ -77,7 +77,7 @@ object ClassInspectorUtil {
       "org.jetbrains.annotations.Nullable"
   )
 
-  fun filterOutNullabilityAnnotations(
+  public fun filterOutNullabilityAnnotations(
     annotations: List<AnnotationSpec>
   ): List<AnnotationSpec> {
     return annotations.filterNot {
@@ -88,7 +88,7 @@ object ClassInspectorUtil {
   }
 
   /** @return a [CodeBlock] representation of a [literal] value. */
-  fun codeLiteralOf(literal: Any): CodeBlock {
+  public fun codeLiteralOf(literal: Any): CodeBlock {
     return when (literal) {
       is String -> CodeBlock.of("%S", literal)
       is Long -> CodeBlock.of("%LL", literal)
@@ -101,7 +101,7 @@ object ClassInspectorUtil {
    * Infers if [property] is a jvm field and should be annotated as such given the input
    * parameters.
    */
-  fun computeIsJvmField(
+  public fun computeIsJvmField(
     property: ImmutableKmProperty,
     classInspector: ClassInspector,
     isCompanionObject: Boolean,
@@ -123,7 +123,7 @@ object ClassInspectorUtil {
    * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
    *         input annotations from [body].
    */
-  fun createAnnotations(
+  public fun createAnnotations(
     siteTarget: UseSiteTarget? = null,
     body: MutableCollection<AnnotationSpec>.() -> Unit
   ): Collection<AnnotationSpec> {
@@ -154,7 +154,7 @@ object ClassInspectorUtil {
    * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
    *         [exceptions].
    */
-  fun createThrowsSpec(
+  public fun createThrowsSpec(
     exceptions: Collection<TypeName>,
     useSiteTarget: UseSiteTarget? = null
   ): AnnotationSpec {
@@ -177,7 +177,7 @@ object ClassInspectorUtil {
    * Local classes are prefixed with ".", but for KotlinPoetMetadataSpecs' use case we don't deal
    * with those.
    */
-  fun createClassName(kotlinMetadataName: String): ClassName {
+  public fun createClassName(kotlinMetadataName: String): ClassName {
     require(!kotlinMetadataName.isLocal) {
       "Local/anonymous classes are not supported!"
     }
@@ -187,7 +187,10 @@ object ClassInspectorUtil {
         '/', // Drop the package name, e.g. "package/of/class/"
         '.' // Drop any enclosing classes, e.g. "MyClass."
     )
-    val packageName = kotlinMetadataName.substringBeforeLast("/", missingDelimiterValue = "")
+    val packageName = kotlinMetadataName.substringBeforeLast(
+        delimiter = "/",
+        missingDelimiterValue = ""
+    )
     val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
         .removeSuffix(".") // Trailing "." if any
         .removePrefix(packageName)
@@ -208,7 +211,7 @@ object ClassInspectorUtil {
     )
   }
 
-  fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
+  public fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
     return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
       addAll(this@toTreeSet)
     }

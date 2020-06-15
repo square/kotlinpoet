@@ -26,8 +26,9 @@ import kotlin.DeprecationLevel.WARNING
     level = WARNING
 )
 @JvmName("get")
-fun javax.lang.model.type.WildcardType.asWildcardTypeName() =
+public fun javax.lang.model.type.WildcardType.asWildcardTypeName(): TypeName =
     WildcardTypeName.get(this, mutableMapOf())
 
 @JvmName("get")
-fun WildcardType.asWildcardTypeName() = WildcardTypeName.get(this, mutableMapOf())
+public fun WildcardType.asWildcardTypeName(): TypeName =
+    WildcardTypeName.get(this, mutableMapOf())

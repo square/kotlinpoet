@@ -26,20 +26,20 @@ import javax.lang.model.util.SimpleAnnotationValueVisitor7
 import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
-/** A generated annotation on a declaration.  */
-class AnnotationSpec private constructor(
-  builder: AnnotationSpec.Builder,
+/** A generated annotation on a declaration. */
+public class AnnotationSpec private constructor(
+  builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
   @Deprecated(
       message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
       replaceWith = ReplaceWith("typeName")
   )
-  val className: ClassName
+  public val className: ClassName
     get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
-  val typeName: TypeName = builder.typeName
-  val members = builder.members.toImmutableList()
-  val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
+  public val typeName: TypeName = builder.typeName
+  public val members: List<CodeBlock> = builder.members.toImmutableList()
+  public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
@@ -78,7 +78,7 @@ class AnnotationSpec private constructor(
     codeWriter.emit(")")
   }
 
-  fun toBuilder(): Builder {
+  public fun toBuilder(): Builder {
     val builder = Builder(typeName)
     builder.members += members
     builder.useSiteTarget = useSiteTarget
@@ -93,13 +93,13 @@ class AnnotationSpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildCodeString {
+  override fun toString(): String = buildCodeString {
     emit(this, inline = true, asParameter = false)
   }
 
-  enum class UseSiteTarget(internal val keyword: String) {
+  public enum class UseSiteTarget(internal val keyword: String) {
     FILE("file"),
     PROPERTY("property"),
     FIELD("field"),
@@ -108,32 +108,31 @@ class AnnotationSpec private constructor(
     RECEIVER("receiver"),
     PARAM("param"),
     SETPARAM("setparam"),
-    DELEGATE("delegate")
+    DELEGATE("delegate"),
   }
 
-  class Builder internal constructor(
+  public class Builder internal constructor(
     internal val typeName: TypeName
-  ) : Taggable.Builder<AnnotationSpec.Builder> {
+  ) : Taggable.Builder<Builder> {
     internal var useSiteTarget: UseSiteTarget? = null
 
-    val members = mutableListOf<CodeBlock>()
-    override val tags = mutableMapOf<KClass<*>, Any>()
+    public val members: MutableList<CodeBlock> = mutableListOf()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    fun addMember(format: String, vararg args: Any) =
+    public fun addMember(format: String, vararg args: Any): Builder =
         addMember(CodeBlock.of(format, *args))
 
-    fun addMember(codeBlock: CodeBlock) = apply {
+    public fun addMember(codeBlock: CodeBlock): Builder = apply {
       members += codeBlock
     }
 
-    fun useSiteTarget(useSiteTarget: UseSiteTarget?) = apply {
+    public fun useSiteTarget(useSiteTarget: UseSiteTarget?): Builder = apply {
       this.useSiteTarget = useSiteTarget
     }
 
-    fun build() = AnnotationSpec(this)
+    public fun build(): AnnotationSpec = AnnotationSpec(this)
 
-    companion object {
-
+    public companion object {
       /**
        * Creates a [CodeBlock] with parameter `format` depending on the given `value` object.
        * Handles a number of special cases, such as appending "f" to `Float` values, and uses
@@ -153,8 +152,8 @@ class AnnotationSpec private constructor(
   /**
    * Annotation value visitor adding members to the given builder instance.
    */
-  private class Visitor internal constructor(
-    internal val builder: CodeBlock.Builder
+  private class Visitor(
+    val builder: CodeBlock.Builder
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String) =
@@ -180,8 +179,8 @@ class AnnotationSpec private constructor(
     }
   }
 
-  companion object {
-    @JvmStatic @JvmOverloads fun get(
+  public companion object {
+    @JvmStatic @JvmOverloads public fun get(
       annotation: Annotation,
       includeDefaultValues: Boolean = false
     ): AnnotationSpec {
@@ -229,10 +228,9 @@ class AnnotationSpec private constructor(
         level = WARNING
     )
     @JvmStatic
-    fun get(annotation: AnnotationMirror): AnnotationSpec {
+    public fun get(annotation: AnnotationMirror): AnnotationSpec {
       val element = annotation.annotationType.asElement() as TypeElement
-      val builder = AnnotationSpec.builder(element.asClassName())
-          .tag(annotation)
+      val builder = builder(element.asClassName()).tag(annotation)
       for (executableElement in annotation.elementValues.keys) {
         val member = CodeBlock.builder()
         val visitor = Visitor(member)
@@ -245,12 +243,14 @@ class AnnotationSpec private constructor(
       return builder.build()
     }
 
-    @JvmStatic fun builder(type: ClassName) = Builder(type)
+    @JvmStatic public fun builder(type: ClassName): Builder = Builder(type)
 
-    @JvmStatic fun builder(type: ParameterizedTypeName) = Builder(type)
+    @JvmStatic public fun builder(type: ParameterizedTypeName): Builder = Builder(type)
 
-    @JvmStatic fun builder(type: Class<out Annotation>) = builder(type.asClassName())
+    @JvmStatic public fun builder(type: Class<out Annotation>): Builder =
+        builder(type.asClassName())
 
-    @JvmStatic fun builder(type: KClass<out Annotation>) = builder(type.asClassName())
+    @JvmStatic public fun builder(type: KClass<out Annotation>): Builder =
+        builder(type.asClassName())
   }
 }

@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 
 /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
 @KotlinPoetMetadataPreview
-enum class JvmMethodModifier : JvmModifier {
+public enum class JvmMethodModifier : JvmModifier {
   STATIC {
     override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
         JvmStatic::class.asClassName()).build()

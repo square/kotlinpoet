@@ -73,18 +73,21 @@ import java.util.UUID
  * NameAllocator used for the outer scope to further refine name allocation for a specific inner
  * scope.
  */
-class NameAllocator private constructor(
+public class NameAllocator private constructor(
   private val allocatedNames: MutableSet<String>,
   private val tagToName: MutableMap<Any, String>
 ) {
-  constructor() : this(mutableSetOf(), mutableMapOf())
+  public constructor() : this(mutableSetOf(), mutableMapOf())
 
   /**
    * Return a new name using `suggestion` that will not be a Java identifier or clash with other
    * names. The returned value can be queried multiple times by passing `tag` to
    * [NameAllocator.get].
    */
-  @JvmOverloads fun newName(suggestion: String, tag: Any = UUID.randomUUID().toString()): String {
+  @JvmOverloads public fun newName(
+    suggestion: String,
+    tag: Any = UUID.randomUUID().toString()
+  ): String {
     var result = toJavaIdentifier(suggestion)
     while (result.isKeyword || !allocatedNames.add(result)) {
       result += "_"
@@ -100,7 +103,7 @@ class NameAllocator private constructor(
   }
 
   /** Retrieve a name created with [NameAllocator.newName]. */
-  operator fun get(tag: Any): String = requireNotNull(tagToName[tag]) { "unknown tag: $tag" }
+  public operator fun get(tag: Any): String = requireNotNull(tagToName[tag]) { "unknown tag: $tag" }
 
   /**
    * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
@@ -109,7 +112,7 @@ class NameAllocator private constructor(
    *
    * @return A deep copy of this NameAllocator.
    */
-  fun copy(): NameAllocator {
+  public fun copy(): NameAllocator {
     return NameAllocator(allocatedNames.toMutableSet(), tagToName.toMutableMap())
   }
 }

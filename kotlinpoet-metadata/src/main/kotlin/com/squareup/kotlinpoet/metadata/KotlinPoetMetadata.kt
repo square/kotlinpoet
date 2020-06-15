@@ -33,26 +33,28 @@ import kotlinx.metadata.jvm.KotlinClassMetadata
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY)
-annotation class KotlinPoetMetadataPreview
+public annotation class KotlinPoetMetadataPreview
 
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetMetadataPreview
-fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
+public fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetMetadataPreview
-fun Class<*>.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
+public fun Class<*>.toImmutableKmClass(): ImmutableKmClass =
+    readMetadata(::getAnnotation).toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
 @KotlinPoetMetadataPreview
-fun TypeElement.toImmutableKmClass(): ImmutableKmClass = readMetadata(::getAnnotation).toImmutableKmClass()
+public fun TypeElement.toImmutableKmClass(): ImmutableKmClass =
+    readMetadata(::getAnnotation).toImmutableKmClass()
 
 @KotlinPoetMetadataPreview
-fun Metadata.toImmutableKmClass(): ImmutableKmClass {
+public fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>()
       .toImmutableKmClass()
 }
 
 @KotlinPoetMetadataPreview
-inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T {
+public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T {
   val expectedType = T::class
   val metadata = readKotlinClassMetadata()
   return when (expectedType) {
@@ -64,10 +66,14 @@ inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T
       check(metadata is KotlinClassMetadata.FileFacade)
       metadata as T
     }
-    KotlinClassMetadata.SyntheticClass::class -> throw UnsupportedOperationException("SyntheticClass isn't supported yet!")
-    KotlinClassMetadata.MultiFileClassFacade::class -> throw UnsupportedOperationException("MultiFileClassFacade isn't supported yet!")
-    KotlinClassMetadata.MultiFileClassPart::class -> throw UnsupportedOperationException("MultiFileClassPart isn't supported yet!")
-    KotlinClassMetadata.Unknown::class -> throw RuntimeException("Recorded unknown metadata type! $metadata")
+    KotlinClassMetadata.SyntheticClass::class ->
+      throw UnsupportedOperationException("SyntheticClass isn't supported yet!")
+    KotlinClassMetadata.MultiFileClassFacade::class ->
+      throw UnsupportedOperationException("MultiFileClassFacade isn't supported yet!")
+    KotlinClassMetadata.MultiFileClassPart::class ->
+      throw UnsupportedOperationException("MultiFileClassPart isn't supported yet!")
+    KotlinClassMetadata.Unknown::class ->
+      throw RuntimeException("Recorded unknown metadata type! $metadata")
     else -> TODO("Unrecognized KotlinClassMetadata type: $expectedType")
   }
 }
@@ -78,7 +84,7 @@ inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T
  * use one of the more direct functions like [toImmutableKmClass].
  */
 @KotlinPoetMetadataPreview
-fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
+public fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
   val metadata = KotlinClassMetadata.read(asClassHeader())
   checkNotNull(metadata) {
     "Could not parse metadata! This should only happen if you're using Kotlin <1.1."

@@ -16,7 +16,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
  * @property exceptions list of exceptions thrown by this constructor.
  */
 @KotlinPoetMetadataPreview
-data class ConstructorData(
+public data class ConstructorData(
   private val annotations: List<AnnotationSpec>,
   val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
   val isSynthetic: Boolean,
@@ -40,8 +40,8 @@ data class ConstructorData(
         }
   }
 
-  companion object {
-    val EMPTY = ConstructorData(
+  public companion object {
+    public val EMPTY: ConstructorData = ConstructorData(
         annotations = emptyList(),
         parameterAnnotations = emptyMap(),
         isSynthetic = false,

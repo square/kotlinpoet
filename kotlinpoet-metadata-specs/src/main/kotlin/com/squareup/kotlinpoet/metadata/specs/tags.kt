@@ -22,4 +22,4 @@ import com.squareup.kotlinpoet.TypeName
  *
  * @property [type] the underlying type for this alias.
  */
-class TypeNameAliasTag(val type: TypeName)
+public class TypeNameAliasTag(public val type: TypeName)

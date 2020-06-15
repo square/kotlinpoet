@@ -56,15 +56,15 @@ import kotlin.reflect.KClass
  *    double-indented.
  *  * `»` ends a statement.
  */
-class CodeBlock private constructor(
+public class CodeBlock private constructor(
   internal val formatParts: List<String>,
   internal val args: List<Any?>
 ) {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
-  fun isEmpty() = formatParts.isEmpty()
+  public fun isEmpty(): Boolean = formatParts.isEmpty()
 
-  fun isNotEmpty() = !isEmpty()
+  public fun isNotEmpty(): Boolean = !isEmpty()
 
   /**
    * Returns a code block with `prefix` stripped off, or null if this code block doesn't start with
@@ -157,7 +157,7 @@ class CodeBlock private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
   override fun toString(): String = buildCodeString { emitCode(this@CodeBlock) }
 
@@ -165,20 +165,20 @@ class CodeBlock private constructor(
     emitCode(this@CodeBlock)
   }
 
-  fun toBuilder(): Builder {
+  public fun toBuilder(): Builder {
     val builder = Builder()
     builder.formatParts += formatParts
     builder.args.addAll(args)
     return builder
   }
 
-  class Builder {
+  public class Builder {
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
 
-    fun isEmpty() = formatParts.isEmpty()
+    public fun isEmpty(): Boolean = formatParts.isEmpty()
 
-    fun isNotEmpty() = !isEmpty()
+    public fun isNotEmpty(): Boolean = !isEmpty()
 
     /**
      * Adds code using named arguments.
@@ -191,7 +191,7 @@ class CodeBlock private constructor(
      * format string containing `%clazz:T` and include the key `clazz` with value
      * `java.lang.Integer.class` in the argument map.
      */
-    fun addNamed(format: String, arguments: Map<String, *>) = apply {
+    public fun addNamed(format: String, arguments: Map<String, *>): Builder = apply {
       var p = 0
 
       for (argument in arguments.keys) {
@@ -252,7 +252,7 @@ class CodeBlock private constructor(
      * Mixing relative and positional arguments in a call to add is invalid and will result in an
      * error.
      */
-    fun add(format: String, vararg args: Any?) = apply {
+    public fun add(format: String, vararg args: Any?): Builder = apply {
       var hasRelative = false
       var hasIndexed = false
 
@@ -388,7 +388,7 @@ class CodeBlock private constructor(
      *     `beginControlFlow("list.forEach { element ->")`. If there's no opening brace at the end
      *     of the string, it will be added.
      */
-    fun beginControlFlow(controlFlow: String, vararg args: Any?) = apply {
+    public fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       add(controlFlow.withOpeningBrace(), *args)
       indent()
     }
@@ -408,45 +408,45 @@ class CodeBlock private constructor(
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      *     Shouldn't contain braces or newline characters.
      */
-    fun nextControlFlow(controlFlow: String, vararg args: Any?) = apply {
+    public fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       unindent()
       add("}·$controlFlow·{\n", *args)
       indent()
     }
 
-    fun endControlFlow() = apply {
+    public fun endControlFlow(): Builder = apply {
       unindent()
       add("}\n")
     }
 
-    fun addStatement(format: String, vararg args: Any?) = apply {
+    public fun addStatement(format: String, vararg args: Any?): Builder = apply {
       add("«")
       add(format, *args)
       add("\n»")
     }
 
-    fun add(codeBlock: CodeBlock) = apply {
+    public fun add(codeBlock: CodeBlock): Builder = apply {
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
     }
 
-    fun indent() = apply {
+    public fun indent(): Builder = apply {
       formatParts += "⇥"
     }
 
-    fun unindent() = apply {
+    public fun unindent(): Builder = apply {
       formatParts += "⇤"
     }
 
-    fun clear() = apply {
+    public fun clear(): Builder = apply {
       formatParts.clear()
       args.clear()
     }
 
-    fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
+    public fun build(): CodeBlock = CodeBlock(formatParts.toImmutableList(), args.toImmutableList())
   }
 
-  companion object {
+  public companion object {
     private val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
     private val LOWERCASE = Regex("[a-z]+[\\w_]*")
     private const val ARG_NAME = 1
@@ -454,8 +454,9 @@ class CodeBlock private constructor(
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
-    @JvmStatic fun of(format: String, vararg args: Any?) = Builder().add(format, *args).build()
-    @JvmStatic fun builder() = Builder()
+    @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
+        Builder().add(format, *args).build()
+    @JvmStatic public fun builder(): Builder = Builder()
 
     internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
     internal val Char.isSingleCharNoArgPlaceholder get() = isOneOf('⇥', '⇤', '«', '»')
@@ -469,7 +470,7 @@ class CodeBlock private constructor(
 }
 
 @JvmOverloads
-fun Collection<CodeBlock>.joinToCode(
+public fun Collection<CodeBlock>.joinToCode(
   separator: CharSequence = ", ",
   prefix: CharSequence = "",
   suffix: CharSequence = ""
@@ -483,6 +484,6 @@ fun Collection<CodeBlock>.joinToCode(
  * Builds new [CodeBlock] by populating newly created [CodeBlock.Builder] using provided
  * [builderAction] and then converting it to [CodeBlock].
  */
-inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock {
+public inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock {
   return CodeBlock.builder().apply(builderAction).build()
 }

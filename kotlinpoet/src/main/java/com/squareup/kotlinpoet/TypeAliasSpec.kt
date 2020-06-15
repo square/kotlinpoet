@@ -23,16 +23,16 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
-class TypeAliasSpec private constructor(
-  builder: TypeAliasSpec.Builder,
+public class TypeAliasSpec private constructor(
+  builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
-  val name = builder.name
-  val type = builder.type
-  val modifiers = builder.modifiers.toImmutableSet()
-  val typeVariables = builder.typeVariables.toImmutableList()
-  val kdoc = builder.kdoc.build()
-  val annotations = builder.annotations.toImmutableList()
+  public val name: String = builder.name
+  public val type: TypeName = builder.type
+  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
+  public val kdoc: CodeBlock = builder.kdoc.build()
+  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
@@ -51,12 +51,12 @@ class TypeAliasSpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this) }
+  override fun toString(): String = buildCodeString { emit(this) }
 
   @JvmOverloads
-  fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
+  public fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type)
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
@@ -66,22 +66,22 @@ class TypeAliasSpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(
+  public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName
-  ) : Taggable.Builder<TypeAliasSpec.Builder> {
+  ) : Taggable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
 
-    val modifiers = mutableSetOf<KModifier>()
-    val typeVariables = mutableSetOf<TypeVariableName>()
-    val annotations = mutableListOf<AnnotationSpec>()
-    override val tags = mutableMapOf<KClass<*>, Any>()
+    public val modifiers: MutableSet<KModifier> = mutableSetOf()
+    public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
+    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    fun addModifiers(vararg modifiers: KModifier) = apply {
+    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       modifiers.forEach(this::addModifier)
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
       modifiers.forEach(this::addModifier)
     }
 
@@ -89,39 +89,41 @@ class TypeAliasSpec private constructor(
       this.modifiers.add(modifier)
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+    public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
       this.typeVariables += typeVariables
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+    public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
 
-    fun addKdoc(format: String, vararg args: Any) = apply {
+    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
     }
 
-    fun addKdoc(block: CodeBlock) = apply {
+    public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
+    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
       this.annotations += annotationSpecs
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
+    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
       annotations += annotationSpec
     }
 
-    fun addAnnotation(annotation: ClassName) = apply {
+    public fun addAnnotation(annotation: ClassName): Builder = apply {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: Class<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: KClass<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun build(): TypeAliasSpec {
+    public fun build(): TypeAliasSpec {
       for (it in modifiers) {
         require(it in ALLOWABLE_MODIFIERS) {
           "unexpected typealias modifier $it"
@@ -135,11 +137,13 @@ class TypeAliasSpec private constructor(
     }
   }
 
-  companion object {
-    @JvmStatic fun builder(name: String, type: TypeName) = Builder(name, type)
+  public companion object {
+    @JvmStatic public fun builder(name: String, type: TypeName): Builder = Builder(name, type)
 
-    @JvmStatic fun builder(name: String, type: Type) = builder(name, type.asTypeName())
+    @JvmStatic public fun builder(name: String, type: Type): Builder =
+        builder(name, type.asTypeName())
 
-    @JvmStatic fun builder(name: String, type: KClass<*>) = builder(name, type.asTypeName())
+    @JvmStatic public fun builder(name: String, type: KClass<*>): Builder =
+        builder(name, type.asTypeName())
   }
 }

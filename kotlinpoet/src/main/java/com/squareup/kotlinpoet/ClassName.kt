@@ -27,7 +27,7 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 @JvmName("get")
-fun Class<*>.asClassName(): ClassName {
+public fun Class<*>.asClassName(): ClassName {
   require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
   require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
   require(!isArray) { "array types cannot be represented as a ClassName" }
@@ -46,19 +46,19 @@ fun Class<*>.asClassName(): ClassName {
 }
 
 @JvmName("get")
-fun KClass<*>.asClassName(): ClassName {
+public fun KClass<*>.asClassName(): ClassName {
   qualifiedName?.let { return ClassName.bestGuess(it) }
   throw IllegalArgumentException("$this cannot be represented as a ClassName")
 }
 
-/** Returns the class name for `element`.  */
+/** Returns the class name for `element`. */
 @Deprecated(
     message = "Element APIs don't give complete information on Kotlin types. Consider using" +
         " the kotlinpoet-metadata APIs instead.",
     level = WARNING
 )
 @JvmName("get")
-fun TypeElement.asClassName(): ClassName {
+public fun TypeElement.asClassName(): ClassName {
   fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface
 
   fun getPackage(type: Element): PackageElement {
