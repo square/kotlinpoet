@@ -25,21 +25,22 @@ import kotlin.reflect.KClass
  * companion object of the Map.Entry class
  * @param simpleName e.g. `isBlank`, `size`
  */
-data class MemberName internal constructor(
-  val packageName: String,
-  val enclosingClassName: ClassName?,
-  val simpleName: String,
-  val operator: KOperator? = null
+public data class MemberName internal constructor(
+  public val packageName: String,
+  public val enclosingClassName: ClassName?,
+  public val simpleName: String,
+  public val operator: KOperator? = null
 ) {
-  constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
-  constructor(enclosingClassName: ClassName, simpleName: String) :
+  public constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
+  public constructor(enclosingClassName: ClassName, simpleName: String) :
       this(enclosingClassName.packageName, enclosingClassName, simpleName)
-  constructor(packageName: String, operator: KOperator) : this(packageName, null, operator.functionName, operator)
-  constructor(enclosingClassName: ClassName, operator: KOperator) :
+  public constructor(packageName: String, operator: KOperator) :
+      this(packageName, null, operator.functionName, operator)
+  public constructor(enclosingClassName: ClassName, operator: KOperator) :
       this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
 
   /** Fully qualified name using `.` as a separator, like `kotlin.String.isBlank`. */
-  val canonicalName = buildString {
+  public val canonicalName: String = buildString {
     if (enclosingClassName != null) {
       append(enclosingClassName.canonicalName)
       append('.')
@@ -58,7 +59,7 @@ data class MemberName internal constructor(
    * Note: As `::$packageName.$simpleName` is not valid syntax, an aliased import may be
    * required for a top-level member with a conflicting name.
    */
-  fun reference(): CodeBlock = when (enclosingClassName) {
+  public fun reference(): CodeBlock = when (enclosingClassName) {
     null -> CodeBlock.of("::%M", this)
     else -> CodeBlock.of("%T::%N", enclosingClassName, simpleName)
   }
@@ -72,15 +73,15 @@ data class MemberName internal constructor(
     }
   }
 
-  override fun toString() = canonicalName
+  override fun toString(): String = canonicalName
 
-  companion object {
+  public companion object {
     @Suppress("NOTHING_TO_INLINE")
-    @JvmSynthetic @JvmStatic inline fun ClassName.member(simpleName: String) =
+    @JvmSynthetic @JvmStatic public inline fun ClassName.member(simpleName: String): MemberName =
         MemberName(this, simpleName)
-    @JvmStatic @JvmName("get") fun KClass<*>.member(simpleName: String) =
+    @JvmStatic @JvmName("get") public fun KClass<*>.member(simpleName: String): MemberName =
         asClassName().member(simpleName)
-    @JvmStatic @JvmName("get") fun Class<*>.member(simpleName: String) =
+    @JvmStatic @JvmName("get") public fun Class<*>.member(simpleName: String): MemberName =
         asClassName().member(simpleName)
   }
 }

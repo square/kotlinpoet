@@ -18,7 +18,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
  * @property exceptions list of exceptions thrown by this method.
  */
 @KotlinPoetMetadataPreview
-data class MethodData(
+public data class MethodData(
   private val annotations: List<AnnotationSpec>,
   val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
   val isSynthetic: Boolean,
@@ -36,7 +36,7 @@ data class MethodData(
    * @param containsReifiedTypeParameter an optional boolean indicating if any type parameters on
    *        this function are `reified`, which are implicitly synthetic.
    */
-  fun allAnnotations(
+  public fun allAnnotations(
     useSiteTarget: UseSiteTarget? = null,
     containsReifiedTypeParameter: Boolean = false
   ): Collection<AnnotationSpec> {
@@ -54,8 +54,8 @@ data class MethodData(
     }
   }
 
-  companion object {
-    val SYNTHETIC = MethodData(
+  public companion object {
+    public val SYNTHETIC: MethodData = MethodData(
         annotations = emptyList(),
         parameterAnnotations = emptyMap(),
         isSynthetic = true,
@@ -63,7 +63,7 @@ data class MethodData(
         isOverride = false,
         exceptions = emptyList()
     )
-    val EMPTY = MethodData(
+    public val EMPTY: MethodData = MethodData(
         annotations = emptyList(),
         parameterAnnotations = emptyMap(),
         isSynthetic = false,

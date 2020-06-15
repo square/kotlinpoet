@@ -50,7 +50,7 @@ import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
 
 @KotlinPoetMetadataPreview
-class ReflectiveClassInspector private constructor() : ClassInspector {
+public class ReflectiveClassInspector private constructor() : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
@@ -496,10 +496,10 @@ class ReflectiveClassInspector private constructor() : ClassInspector {
     )
   }
 
-  companion object {
+  public companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(): ClassInspector {
+    public fun create(): ClassInspector {
       return ReflectiveClassInspector()
     }
 

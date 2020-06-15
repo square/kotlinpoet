@@ -15,7 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-enum class KModifier(
+public enum class KModifier(
   internal val keyword: String,
   private vararg val targets: Target
 ) {
@@ -64,7 +64,8 @@ enum class KModifier(
   DATA("data", Target.CLASS),
 
   IN("in", Target.VARIANCE_ANNOTATION),
-  OUT("out", Target.VARIANCE_ANNOTATION);
+  OUT("out", Target.VARIANCE_ANNOTATION),
+  ;
 
   internal enum class Target {
     CLASS,

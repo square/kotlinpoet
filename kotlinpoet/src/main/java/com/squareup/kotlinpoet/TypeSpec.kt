@@ -31,46 +31,47 @@ import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
-/** A generated class, interface, or enum declaration.  */
-class TypeSpec private constructor(
-  builder: TypeSpec.Builder,
+/** A generated class, interface, or enum declaration. */
+public class TypeSpec private constructor(
+  builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElements: OriginatingElementsHolder = builder.originatingElements
       .plus(builder.typeSpecs.flatMap(TypeSpec::originatingElements))
       .buildOriginatingElements()
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements {
-  val kind = builder.kind
-  val name = builder.name
-  val kdoc = builder.kdoc.build()
-  val annotationSpecs = builder.annotationSpecs.toImmutableList()
-  val modifiers = builder.modifiers.toImmutableSet()
-  val typeVariables = builder.typeVariables.toImmutableList()
-  val primaryConstructor = builder.primaryConstructor
-  val superclass = builder.superclass
-  val superclassConstructorParameters = builder.superclassConstructorParameters.toImmutableList()
+  public val kind: Kind = builder.kind
+  public val name: String? = builder.name
+  public val kdoc: CodeBlock = builder.kdoc.build()
+  public val annotationSpecs: List<AnnotationSpec> = builder.annotationSpecs.toImmutableList()
+  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
+  public val primaryConstructor: FunSpec? = builder.primaryConstructor
+  public val superclass: TypeName = builder.superclass
+  public val superclassConstructorParameters: List<CodeBlock> =
+      builder.superclassConstructorParameters.toImmutableList()
 
-  val isEnum = builder.isEnum
-  val isAnnotation = builder.isAnnotation
-  val isCompanion = builder.isCompanion
-  val isAnonymousClass = builder.isAnonymousClass
-  val isFunctionalInterface = builder.isFunInterface
+  public val isEnum: Boolean = builder.isEnum
+  public val isAnnotation: Boolean = builder.isAnnotation
+  public val isCompanion: Boolean = builder.isCompanion
+  public val isAnonymousClass: Boolean = builder.isAnonymousClass
+  public val isFunctionalInterface: Boolean = builder.isFunInterface
 
   /**
    * Map of superinterfaces - entries with a null value represent a regular superinterface (with
    * no delegation), while non-null [CodeBlock] values represent delegates
    * for the corresponding [TypeSpec] interface (key) value
    */
-  val superinterfaces = builder.superinterfaces.toImmutableMap()
-  val enumConstants = builder.enumConstants.toImmutableMap()
-  val propertySpecs = builder.propertySpecs.toImmutableList()
-  val initializerBlock = builder.initializerBlock.build()
-  val initializerIndex = builder.initializerIndex
-  val funSpecs = builder.funSpecs.toImmutableList()
-  val typeSpecs = builder.typeSpecs.toImmutableList()
+  public val superinterfaces: Map<TypeName, CodeBlock?> = builder.superinterfaces.toImmutableMap()
+  public val enumConstants: Map<String, TypeSpec> = builder.enumConstants.toImmutableMap()
+  public val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
+  public val initializerBlock: CodeBlock = builder.initializerBlock.build()
+  public val initializerIndex: Int = builder.initializerIndex
+  public val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
+  public val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
   @JvmOverloads
-  fun toBuilder(kind: Kind = this.kind, name: String? = this.name): Builder {
+  public fun toBuilder(kind: Kind = this.kind, name: String? = this.name): Builder {
     val builder = Builder(kind, name)
     builder.modifiers += modifiers
     builder.kdoc.add(kdoc)
@@ -393,11 +394,11 @@ class TypeSpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this, null) }
+  override fun toString(): String = buildCodeString { emit(this, null) }
 
-  enum class Kind(
+  public enum class Kind(
     internal val declarationKeyword: String,
     internal val defaultImplicitPropertyModifiers: Set<KModifier>,
     internal val defaultImplicitFunctionModifiers: Set<KModifier>,
@@ -434,16 +435,16 @@ class TypeSpec private constructor(
     }
   }
 
-  class Builder internal constructor(
+  public class Builder internal constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ) : Taggable.Builder<TypeSpec.Builder>, OriginatingElementsHolder.Builder<TypeSpec.Builder> {
+  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
-    var initializerIndex = -1
+    public var initializerIndex: Int = -1
     internal val isAnonymousClass get() = name == null && kind == Kind.CLASS
     internal val isEnum get() = kind == Kind.CLASS && ENUM in modifiers
     internal val isAnnotation get() = kind == Kind.CLASS && ANNOTATION in modifiers
@@ -452,60 +453,62 @@ class TypeSpec private constructor(
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
     internal val isFunInterface get() = kind == Kind.INTERFACE && FUN in modifiers
 
-    override val tags = mutableMapOf<KClass<*>, Any>()
-    override val originatingElements = mutableListOf<Element>()
-    val modifiers = mutableSetOf(*modifiers)
-    val superinterfaces = mutableMapOf<TypeName, CodeBlock?>()
-    val enumConstants = mutableMapOf<String, TypeSpec>()
-    val annotationSpecs = mutableListOf<AnnotationSpec>()
-    val typeVariables = mutableListOf<TypeVariableName>()
-    val superclassConstructorParameters = mutableListOf<CodeBlock>()
-    val propertySpecs = mutableListOf<PropertySpec>()
-    val funSpecs = mutableListOf<FunSpec>()
-    val typeSpecs = mutableListOf<TypeSpec>()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val originatingElements: MutableList<Element> = mutableListOf()
+    public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
+    public val superinterfaces: MutableMap<TypeName, CodeBlock?> = mutableMapOf()
+    public val enumConstants: MutableMap<String, TypeSpec> = mutableMapOf()
+    public val annotationSpecs: MutableList<AnnotationSpec> = mutableListOf()
+    public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
+    public val superclassConstructorParameters: MutableList<CodeBlock> = mutableListOf()
+    public val propertySpecs: MutableList<PropertySpec> = mutableListOf()
+    public val funSpecs: MutableList<FunSpec> = mutableListOf()
+    public val typeSpecs: MutableList<TypeSpec> = mutableListOf()
 
-    fun addKdoc(format: String, vararg args: Any) = apply {
+    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
     }
 
-    fun addKdoc(block: CodeBlock) = apply {
+    public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
+    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
       this.annotationSpecs += annotationSpecs
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
+    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
       annotationSpecs += annotationSpec
     }
 
-    fun addAnnotation(annotation: ClassName) =
+    public fun addAnnotation(annotation: ClassName): Builder =
         addAnnotation(AnnotationSpec.builder(annotation).build())
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: Class<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: KClass<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addModifiers(vararg modifiers: KModifier) = apply {
+    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
       this.modifiers += modifiers
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
       this.modifiers += modifiers
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+    public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
       this.typeVariables += typeVariables
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+    public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
 
-    fun primaryConstructor(primaryConstructor: FunSpec?) = apply {
+    public fun primaryConstructor(primaryConstructor: FunSpec?): Builder = apply {
       check(kind == Kind.CLASS) {
         "$kind can't have a primary constructor"
       }
@@ -523,7 +526,7 @@ class TypeSpec private constructor(
       this.primaryConstructor = primaryConstructor
     }
 
-    fun superclass(superclass: TypeName) = apply {
+    public fun superclass(superclass: TypeName): Builder = apply {
       checkCanHaveSuperclass()
       check(this.superclass === ANY) { "superclass already set to ${this.superclass}" }
       this.superclass = superclass
@@ -550,24 +553,30 @@ class TypeSpec private constructor(
       }
     }
 
-    fun superclass(superclass: Type) = superclass(superclass.asTypeName())
+    public fun superclass(superclass: Type): Builder = superclass(superclass.asTypeName())
 
-    fun superclass(superclass: KClass<*>) = superclass(superclass.asTypeName())
+    public fun superclass(superclass: KClass<*>): Builder = superclass(superclass.asTypeName())
 
-    fun addSuperclassConstructorParameter(format: String, vararg args: Any) = apply {
+    public fun addSuperclassConstructorParameter(
+      format: String,
+      vararg args: Any
+    ): Builder = apply {
       addSuperclassConstructorParameter(CodeBlock.of(format, *args))
     }
 
-    fun addSuperclassConstructorParameter(codeBlock: CodeBlock) = apply {
+    public fun addSuperclassConstructorParameter(codeBlock: CodeBlock): Builder = apply {
       checkCanHaveSuperclass()
       this.superclassConstructorParameters += codeBlock
     }
 
-    fun addSuperinterfaces(superinterfaces: Iterable<TypeName>) = apply {
+    public fun addSuperinterfaces(superinterfaces: Iterable<TypeName>): Builder = apply {
       this.superinterfaces.putAll(superinterfaces.map { it to null })
     }
 
-    fun addSuperinterface(superinterface: TypeName, delegate: CodeBlock = CodeBlock.EMPTY) = apply {
+    public fun addSuperinterface(
+      superinterface: TypeName,
+      delegate: CodeBlock = CodeBlock.EMPTY
+    ): Builder = apply {
       if (delegate.isEmpty()) {
         this.superinterfaces[superinterface] = null
       } else {
@@ -585,16 +594,25 @@ class TypeSpec private constructor(
       }
     }
 
-    fun addSuperinterface(superinterface: Type, delegate: CodeBlock = CodeBlock.EMPTY) =
-        addSuperinterface(superinterface.asTypeName(), delegate)
+    public fun addSuperinterface(
+      superinterface: Type,
+      delegate: CodeBlock = CodeBlock.EMPTY
+    ): Builder = addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(superinterface: KClass<*>, delegate: CodeBlock = CodeBlock.EMPTY) =
-        addSuperinterface(superinterface.asTypeName(), delegate)
+    public fun addSuperinterface(
+      superinterface: KClass<*>,
+      delegate: CodeBlock = CodeBlock.EMPTY
+    ): Builder = addSuperinterface(superinterface.asTypeName(), delegate)
 
-    fun addSuperinterface(superinterface: KClass<*>, constructorParameterName: String) =
-        addSuperinterface(superinterface.asTypeName(), constructorParameterName)
+    public fun addSuperinterface(
+      superinterface: KClass<*>,
+      constructorParameterName: String
+    ): Builder = addSuperinterface(superinterface.asTypeName(), constructorParameterName)
 
-    fun addSuperinterface(superinterface: TypeName, constructorParameter: String) = apply {
+    public fun addSuperinterface(
+      superinterface: TypeName,
+      constructorParameter: String
+    ): Builder = apply {
       requireNotNull(primaryConstructor) {
         "delegating to constructor parameter requires not-null constructor"
       }
@@ -605,18 +623,18 @@ class TypeSpec private constructor(
       addSuperinterface(superinterface, CodeBlock.of(constructorParameter))
     }
 
-    @JvmOverloads fun addEnumConstant(
+    @JvmOverloads public fun addEnumConstant(
       name: String,
       typeSpec: TypeSpec = anonymousClassBuilder().build()
-    ) = apply {
+    ): Builder = apply {
       enumConstants[name] = typeSpec
     }
 
-    fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
+    public fun addProperties(propertySpecs: Iterable<PropertySpec>): Builder = apply {
       propertySpecs.map(this::addProperty)
     }
 
-    fun addProperty(propertySpec: PropertySpec) = apply {
+    public fun addProperty(propertySpec: PropertySpec): Builder = apply {
       if (EXPECT in modifiers) {
         require(propertySpec.initializer == null) {
           "properties in expect classes can't have initializers"
@@ -628,25 +646,25 @@ class TypeSpec private constructor(
       propertySpecs += propertySpec
     }
 
-    fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier) =
+    public fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
         addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
-    fun addProperty(name: String, type: Type, vararg modifiers: KModifier) =
+    public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
         addProperty(name, type.asTypeName(), *modifiers)
 
-    fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+    public fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
         addProperty(name, type.asTypeName(), *modifiers)
 
-    fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>) =
+    public fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
         addProperty(PropertySpec.builder(name, type, modifiers).build())
 
-    fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>) =
+    public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
         addProperty(name, type.asTypeName(), modifiers)
 
-    fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
+    public fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): Builder =
         addProperty(name, type.asTypeName(), modifiers)
 
-    fun addInitializerBlock(block: CodeBlock) = apply {
+    public fun addInitializerBlock(block: CodeBlock): Builder = apply {
       checkCanHaveInitializerBlocks()
       // Set index to however many properties we have
       // All properties added after this point are declared as such, including any that initialize
@@ -659,23 +677,23 @@ class TypeSpec private constructor(
           .add("}\n")
     }
 
-    fun addFunctions(funSpecs: Iterable<FunSpec>) = apply {
+    public fun addFunctions(funSpecs: Iterable<FunSpec>): Builder = apply {
       funSpecs.forEach { addFunction(it) }
     }
 
-    fun addFunction(funSpec: FunSpec) = apply {
+    public fun addFunction(funSpec: FunSpec): Builder = apply {
       funSpecs += funSpec
     }
 
-    fun addTypes(typeSpecs: Iterable<TypeSpec>) = apply {
+    public fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = apply {
       this.typeSpecs += typeSpecs
     }
 
-    fun addType(typeSpec: TypeSpec) = apply {
+    public fun addType(typeSpec: TypeSpec): Builder = apply {
       typeSpecs += typeSpec
     }
 
-    fun build(): TypeSpec {
+    public fun build(): TypeSpec {
       if (enumConstants.isNotEmpty()) {
         check(isEnum) { "$name is not an enum and cannot have enum constants" }
       }
@@ -688,7 +706,8 @@ class TypeSpec private constructor(
         "typevariables are forbidden on anonymous types"
       }
 
-      val isAbstract = ABSTRACT in modifiers || SEALED in modifiers || kind != Kind.CLASS || !isSimpleClass
+      val isAbstract = ABSTRACT in modifiers || SEALED in modifiers || kind != Kind.CLASS ||
+          !isSimpleClass
       for (funSpec in funSpecs) {
         require(isAbstract || ABSTRACT !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
@@ -710,7 +729,8 @@ class TypeSpec private constructor(
 
       if (primaryConstructor == null) {
         require(funSpecs.none { it.isConstructor } || superclassConstructorParameters.isEmpty()) {
-          "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters"
+          "types without a primary constructor cannot specify secondary constructors and " +
+              "superclass constructor parameters"
         }
       }
 
@@ -772,43 +792,48 @@ class TypeSpec private constructor(
     }
   }
 
-  companion object {
-    @JvmStatic fun classBuilder(name: String) = Builder(Kind.CLASS, name)
+  public companion object {
+    @JvmStatic public fun classBuilder(name: String): Builder = Builder(Kind.CLASS, name)
 
-    @JvmStatic fun classBuilder(className: ClassName) = classBuilder(className.simpleName)
+    @JvmStatic public fun classBuilder(className: ClassName): Builder =
+        classBuilder(className.simpleName)
 
-    @JvmStatic fun expectClassBuilder(name: String) = Builder(Kind.CLASS, name, EXPECT)
+    @JvmStatic public fun expectClassBuilder(name: String): Builder =
+        Builder(Kind.CLASS, name, EXPECT)
 
-    @JvmStatic fun expectClassBuilder(className: ClassName) = expectClassBuilder(className.simpleName)
+    @JvmStatic public fun expectClassBuilder(className: ClassName): Builder =
+        expectClassBuilder(className.simpleName)
 
-    @JvmStatic fun objectBuilder(name: String) = Builder(Kind.OBJECT, name)
+    @JvmStatic public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
 
-    @JvmStatic fun objectBuilder(className: ClassName) = objectBuilder(className.simpleName)
+    @JvmStatic public fun objectBuilder(className: ClassName): Builder =
+        objectBuilder(className.simpleName)
 
-    @JvmStatic @JvmOverloads fun companionObjectBuilder(name: String? = null) =
+    @JvmStatic @JvmOverloads public fun companionObjectBuilder(name: String? = null): Builder =
         Builder(Kind.OBJECT, name, COMPANION)
 
-    @JvmStatic fun interfaceBuilder(name: String) = Builder(Kind.INTERFACE, name)
+    @JvmStatic public fun interfaceBuilder(name: String): Builder = Builder(Kind.INTERFACE, name)
 
-    @JvmStatic fun interfaceBuilder(className: ClassName) = interfaceBuilder(className.simpleName)
+    @JvmStatic public fun interfaceBuilder(className: ClassName): Builder =
+        interfaceBuilder(className.simpleName)
 
-    @JvmStatic
-    fun funInterfaceBuilder(name: String) = Builder(Kind.INTERFACE, name, FUN)
+    @JvmStatic public fun funInterfaceBuilder(name: String): Builder =
+        Builder(Kind.INTERFACE, name, FUN)
 
-    @JvmStatic
-    fun funInterfaceBuilder(className: ClassName) = funInterfaceBuilder(className.simpleName)
+    @JvmStatic public fun funInterfaceBuilder(className: ClassName): Builder =
+        funInterfaceBuilder(className.simpleName)
 
-    @JvmStatic fun enumBuilder(name: String) = Builder(Kind.CLASS, name, ENUM)
+    @JvmStatic public fun enumBuilder(name: String): Builder = Builder(Kind.CLASS, name, ENUM)
 
-    @JvmStatic fun enumBuilder(className: ClassName) = enumBuilder(className.simpleName)
+    @JvmStatic public fun enumBuilder(className: ClassName): Builder =
+        enumBuilder(className.simpleName)
 
-    @JvmStatic fun anonymousClassBuilder(): Builder {
-      return Builder(Kind.CLASS, null)
-    }
+    @JvmStatic public fun anonymousClassBuilder(): Builder = Builder(Kind.CLASS, null)
 
-    @JvmStatic fun annotationBuilder(name: String) = Builder(Kind.CLASS, name, ANNOTATION)
+    @JvmStatic public fun annotationBuilder(name: String): Builder =
+        Builder(Kind.CLASS, name, ANNOTATION)
 
-    @JvmStatic fun annotationBuilder(className: ClassName) =
+    @JvmStatic public fun annotationBuilder(className: ClassName): Builder =
         annotationBuilder(className.simpleName)
   }
 }

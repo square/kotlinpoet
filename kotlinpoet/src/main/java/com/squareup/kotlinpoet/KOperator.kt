@@ -15,7 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-enum class KOperator(
+public enum class KOperator(
   internal val operator: String,
   internal val functionName: String
 ) {

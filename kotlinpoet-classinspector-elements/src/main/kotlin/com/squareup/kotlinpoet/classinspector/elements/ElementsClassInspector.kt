@@ -67,7 +67,7 @@ private typealias ElementsModifier = javax.lang.model.element.Modifier
  * An [Elements]-based implementation of [ClassInspector].
  */
 @KotlinPoetMetadataPreview
-class ElementsClassInspector private constructor(
+public class ElementsClassInspector private constructor(
   private val elements: Elements,
   private val types: Types
 ) : ClassInspector {
@@ -534,11 +534,11 @@ class ElementsClassInspector private constructor(
     )
   }
 
-  companion object {
+  public companion object {
     /** @return an [Elements]-based implementation of [ClassInspector]. */
     @JvmStatic
     @KotlinPoetMetadataPreview
-    fun create(elements: Elements, types: Types): ClassInspector {
+    public fun create(elements: Elements, types: Types): ClassInspector {
       return ElementsClassInspector(elements, types)
     }
 

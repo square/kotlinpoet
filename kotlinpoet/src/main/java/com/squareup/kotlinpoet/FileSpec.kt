@@ -43,20 +43,20 @@ import kotlin.reflect.KClass
  * - Imports
  * - Members
  */
-class FileSpec private constructor(
-  builder: FileSpec.Builder,
+public class FileSpec private constructor(
+  builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
-  val annotations = builder.annotations.toImmutableList()
-  val comment = builder.comment.build()
-  val packageName = builder.packageName
-  val name = builder.name
-  val members = builder.members.toList()
+  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  public val comment: CodeBlock = builder.comment.build()
+  public val packageName: String = builder.packageName
+  public val name: String = builder.name
+  public val members: List<Any> = builder.members.toList()
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
 
   @Throws(IOException::class)
-  fun writeTo(out: Appendable) {
+  public fun writeTo(out: Appendable) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
     val importsCollector = CodeWriter(NullAppendable, indent, memberImports,
         columnLimit = Integer.MAX_VALUE)
@@ -74,7 +74,7 @@ class FileSpec private constructor(
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
-  fun writeTo(directory: Path) {
+  public fun writeTo(directory: Path) {
     require(Files.notExists(directory) || Files.isDirectory(directory)) {
       "path $directory exists but is not a directory."
     }
@@ -93,11 +93,11 @@ class FileSpec private constructor(
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
-  fun writeTo(directory: File) = writeTo(directory.toPath())
+  public fun writeTo(directory: File): Unit = writeTo(directory.toPath())
 
   /** Writes this to `filer`.  */
   @Throws(IOException::class)
-  fun writeTo(filer: Filer) {
+  public fun writeTo(filer: Filer) {
     val originatingElements = members.asSequence()
         .filterIsInstance<OriginatingElementsHolder>()
         .flatMap { it.originatingElements.asSequence() }
@@ -177,11 +177,11 @@ class FileSpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildString { writeTo(this) }
+  override fun toString(): String = buildString { writeTo(this) }
 
-  fun toJavaFileObject(): JavaFileObject {
+  public fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create((if (packageName.isEmpty())
       name else
       packageName.replace('.', '/') + '/' + name) + ".kt")
@@ -200,7 +200,7 @@ class FileSpec private constructor(
   }
 
   @JvmOverloads
-  fun toBuilder(packageName: String = this.packageName, name: String = this.name): Builder {
+  public fun toBuilder(packageName: String = this.packageName, name: String = this.name): Builder {
     val builder = Builder(packageName, name)
     builder.annotations.addAll(annotations)
     builder.comment.add(comment)
@@ -211,18 +211,18 @@ class FileSpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(
-    val packageName: String,
-    val name: String
-  ) : Taggable.Builder<FileSpec.Builder> {
+  public class Builder internal constructor(
+    public val packageName: String,
+    public val name: String
+  ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
-    override val tags = mutableMapOf<KClass<*>, Any>()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    val imports: List<Import> get() = memberImports.toList()
-    val members = mutableListOf<Any>()
-    val annotations = mutableListOf<AnnotationSpec>()
+    public val imports: List<Import> get() = memberImports.toList()
+    public val members: MutableList<Any> = mutableListOf()
+    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
     /**
      * Add an annotation to the file.
@@ -230,86 +230,88 @@ class FileSpec private constructor(
      * The annotation must either have a [`file` use-site target][AnnotationSpec.UseSiteTarget.FILE]
      * or not have a use-site target specified (in which case it will be changed to `file`).
      */
-    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
-      when (annotationSpec.useSiteTarget) {
-        FILE -> annotations += annotationSpec
-        null -> annotations += annotationSpec.toBuilder().useSiteTarget(FILE).build()
+    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
+      annotations += when (annotationSpec.useSiteTarget) {
+        FILE -> annotationSpec
+        null -> annotationSpec.toBuilder().useSiteTarget(FILE).build()
         else -> error(
             "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.")
       }
     }
 
-    fun addAnnotation(annotation: ClassName) =
+    public fun addAnnotation(annotation: ClassName): Builder =
         addAnnotation(AnnotationSpec.builder(annotation).build())
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: Class<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: KClass<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addComment(format: String, vararg args: Any) = apply {
+    public fun addComment(format: String, vararg args: Any): Builder = apply {
       comment.add(format.replace(' ', '·'), *args)
     }
 
-    fun clearComment() = apply {
+    public fun clearComment(): Builder = apply {
       comment.clear()
     }
 
-    fun addType(typeSpec: TypeSpec) = apply {
+    public fun addType(typeSpec: TypeSpec): Builder = apply {
       members += typeSpec
     }
 
-    fun addFunction(funSpec: FunSpec) = apply {
+    public fun addFunction(funSpec: FunSpec): Builder = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
         "cannot add ${funSpec.name} to file $name"
       }
       members += funSpec
     }
 
-    fun addProperty(propertySpec: PropertySpec) = apply {
+    public fun addProperty(propertySpec: PropertySpec): Builder = apply {
       members += propertySpec
     }
 
-    fun addTypeAlias(typeAliasSpec: TypeAliasSpec) = apply {
+    public fun addTypeAlias(typeAliasSpec: TypeAliasSpec): Builder = apply {
       members += typeAliasSpec
     }
 
-    fun addImport(constant: Enum<*>) = addImport(
+    public fun addImport(constant: Enum<*>): Builder = addImport(
         (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name)
 
-    fun addImport(`class`: Class<*>, vararg names: String) = apply {
+    public fun addImport(`class`: Class<*>, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       addImport(`class`.asClassName(), names.toList())
     }
 
-    fun addImport(`class`: KClass<*>, vararg names: String) = apply {
+    public fun addImport(`class`: KClass<*>, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       addImport(`class`.asClassName(), names.toList())
     }
 
-    fun addImport(className: ClassName, vararg names: String) = apply {
+    public fun addImport(className: ClassName, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       addImport(className, names.toList())
     }
 
-    fun addImport(`class`: Class<*>, names: Iterable<String>) =
+    public fun addImport(`class`: Class<*>, names: Iterable<String>): Builder =
         addImport(`class`.asClassName(), names)
 
-    fun addImport(`class`: KClass<*>, names: Iterable<String>) =
+    public fun addImport(`class`: KClass<*>, names: Iterable<String>): Builder =
         addImport(`class`.asClassName(), names)
 
-    fun addImport(className: ClassName, names: Iterable<String>) = apply {
+    public fun addImport(className: ClassName, names: Iterable<String>): Builder = apply {
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += Import(className.canonicalName + "." + name)
       }
     }
 
-    fun addImport(packageName: String, vararg names: String) = apply {
+    public fun addImport(packageName: String, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       addImport(packageName, names.toList())
     }
 
-    fun addImport(packageName: String, names: Iterable<String>) = apply {
+    public fun addImport(packageName: String, names: Iterable<String>): Builder = apply {
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
         memberImports += if (packageName.isNotEmpty()) {
@@ -320,37 +322,41 @@ class FileSpec private constructor(
       }
     }
 
-    fun addImport(import: Import) = apply {
+    public fun addImport(import: Import): Builder = apply {
       memberImports += import
     }
 
-    fun clearImports() = apply {
+    public fun clearImports(): Builder = apply {
       memberImports.clear()
     }
 
-    fun addAliasedImport(`class`: Class<*>, `as`: String) =
+    public fun addAliasedImport(`class`: Class<*>, `as`: String): Builder =
         addAliasedImport(`class`.asClassName(), `as`)
 
-    fun addAliasedImport(`class`: KClass<*>, `as`: String) =
+    public fun addAliasedImport(`class`: KClass<*>, `as`: String): Builder =
         addAliasedImport(`class`.asClassName(), `as`)
 
-    fun addAliasedImport(className: ClassName, `as`: String) = apply {
+    public fun addAliasedImport(className: ClassName, `as`: String): Builder = apply {
       memberImports += Import(className.canonicalName, `as`)
     }
 
-    fun addAliasedImport(className: ClassName, memberName: String, `as`: String) = apply {
+    public fun addAliasedImport(
+      className: ClassName,
+      memberName: String,
+      `as`: String
+    ): Builder = apply {
       memberImports += Import("${className.canonicalName}.$memberName", `as`)
     }
 
-    fun addAliasedImport(memberName: MemberName, `as`: String) = apply {
+    public fun addAliasedImport(memberName: MemberName, `as`: String): Builder = apply {
       memberImports += Import(memberName.canonicalName, `as`)
     }
 
-    fun indent(indent: String) = apply {
+    public fun indent(indent: String): Builder = apply {
       this.indent = indent
     }
 
-    fun build(): FileSpec {
+    public fun build(): FileSpec {
       for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
           error(
@@ -361,14 +367,15 @@ class FileSpec private constructor(
     }
   }
 
-  companion object {
-    @JvmStatic fun get(packageName: String, typeSpec: TypeSpec): FileSpec {
+  public companion object {
+    @JvmStatic public fun get(packageName: String, typeSpec: TypeSpec): FileSpec {
       val fileName = typeSpec.name
           ?: throw IllegalArgumentException("file name required but type has no name")
       return builder(packageName, fileName).addType(typeSpec).build()
     }
 
-    @JvmStatic fun builder(packageName: String, fileName: String) = Builder(packageName, fileName)
+    @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
+        Builder(packageName, fileName)
   }
 }
 

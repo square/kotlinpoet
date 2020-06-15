@@ -17,7 +17,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
  * @property isJvmField indicates if this property should be treated as a jvm field.
  */
 @KotlinPoetMetadataPreview
-data class PropertyData(
+public data class PropertyData(
   private val annotations: List<AnnotationSpec>,
   val fieldData: FieldData?,
   val getterData: MethodData?,
@@ -25,7 +25,7 @@ data class PropertyData(
   val isJvmField: Boolean
 ) {
   /** Indicates if this property overrides another from a supertype. */
-  val isOverride = (getterData?.isOverride ?: false) || (setterData?.isOverride ?: false)
+  val isOverride: Boolean = (getterData?.isOverride ?: false) || (setterData?.isOverride ?: false)
 
   /**
    * A collection of all annotations on this property including declared ones and any derived from

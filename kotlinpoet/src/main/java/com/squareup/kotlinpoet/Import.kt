@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.squareup.kotlinpoet
 
-data class Import internal constructor(
+public data class Import internal constructor(
   val qualifiedName: String,
   val alias: String? = null
 ) : Comparable<Import> {
@@ -28,7 +27,7 @@ data class Import internal constructor(
     }
   }
 
-  override fun toString() = importString
+  override fun toString(): String = importString
 
-  override fun compareTo(other: Import) = importString.compareTo(other.importString)
+  override fun compareTo(other: Import): Int = importString.compareTo(other.importString)
 }

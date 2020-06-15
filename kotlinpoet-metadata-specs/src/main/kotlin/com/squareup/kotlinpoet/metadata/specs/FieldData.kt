@@ -17,7 +17,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
  *           strictly imply that the associated property is `const`.
  */
 @KotlinPoetMetadataPreview
-data class FieldData(
+public data class FieldData(
   private val annotations: List<AnnotationSpec>,
   val isSynthetic: Boolean,
   val jvmModifiers: Set<JvmFieldModifier>,
@@ -37,8 +37,8 @@ data class FieldData(
     addAll(jvmModifiers.map { it.annotationSpec() })
   }
 
-  companion object {
-    val SYNTHETIC = FieldData(
+  public companion object {
+    public val SYNTHETIC: FieldData = FieldData(
         annotations = emptyList(),
         isSynthetic = true,
         jvmModifiers = emptySet(),

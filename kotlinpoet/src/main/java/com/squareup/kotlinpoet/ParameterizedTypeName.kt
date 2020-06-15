@@ -24,10 +24,11 @@ import kotlin.reflect.KTypeParameter
 
 /** Returns a parameterized type equivalent to `type`.  */
 @JvmName("get")
-fun ParameterizedType.asParameterizedTypeName() = ParameterizedTypeName.get(this, mutableMapOf())
+public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
+    ParameterizedTypeName.get(this, mutableMapOf())
 
 /** Returns a class name equivalent to given Kotlin KType.  */
-fun KType.asTypeName(): TypeName {
+public fun KType.asTypeName(): TypeName {
   val classifier = this.classifier
   if (classifier is KTypeParameter) {
     return classifier.asTypeVariableName().run { if (isMarkedNullable) copy(nullable = true) else this }

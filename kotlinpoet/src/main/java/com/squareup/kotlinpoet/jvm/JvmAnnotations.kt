@@ -30,18 +30,18 @@ import com.squareup.kotlinpoet.asTypeName
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
-fun FileSpec.Builder.jvmName(name: String) = addAnnotation(
+public fun FileSpec.Builder.jvmName(name: String): FileSpec.Builder = addAnnotation(
     AnnotationSpec.builder(JvmName::class)
         .useSiteTarget(FILE)
         .addMember("%S", name)
         .build())
 
-fun FileSpec.Builder.jvmMultifileClass() = addAnnotation(
+public fun FileSpec.Builder.jvmMultifileClass(): FileSpec.Builder = addAnnotation(
     AnnotationSpec.builder(JvmMultifileClass::class)
         .useSiteTarget(FILE)
         .build())
 
-fun TypeSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true) =
+public fun TypeSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): TypeSpec.Builder =
     addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
 
 private fun jvmSuppressWildcardsAnnotation(suppress: Boolean = true) =
@@ -49,40 +49,41 @@ private fun jvmSuppressWildcardsAnnotation(suppress: Boolean = true) =
         .apply { if (!suppress) addMember("suppress = false") }
         .build()
 
-fun FunSpec.Builder.jvmStatic() = apply {
+public fun FunSpec.Builder.jvmStatic(): FunSpec.Builder = apply {
   check(!name.isConstructor) { "Can't apply @JvmStatic to a constructor!" }
   addAnnotation(JvmStatic::class)
 }
 
-fun FunSpec.Builder.jvmOverloads() = apply {
+public fun FunSpec.Builder.jvmOverloads(): FunSpec.Builder = apply {
   check(!name.isAccessor) {
     "Can't apply @JvmOverloads to a " + if (name == FunSpec.GETTER) "getter!" else "setter!"
   }
   addAnnotation(JvmOverloads::class)
 }
 
-fun FunSpec.Builder.jvmName(name: String) = apply {
+public fun FunSpec.Builder.jvmName(name: String): FunSpec.Builder = apply {
   check(!this.name.isConstructor) { "Can't apply @JvmName to a constructor!" }
   addAnnotation(AnnotationSpec.builder(JvmName::class)
       .addMember("%S", name)
       .build())
 }
 
-fun FunSpec.Builder.throws(vararg exceptionClasses: KClass<out Throwable>) =
+public fun FunSpec.Builder.throws(vararg exceptionClasses: KClass<out Throwable>): FunSpec.Builder =
     throws(exceptionClasses.map(KClass<*>::asTypeName))
 
-fun FunSpec.Builder.throws(vararg exceptionClasses: Type) =
+public fun FunSpec.Builder.throws(vararg exceptionClasses: Type): FunSpec.Builder =
     throws(exceptionClasses.map(Type::asTypeName))
 
-fun FunSpec.Builder.throws(vararg exceptionClasses: TypeName) =
+public fun FunSpec.Builder.throws(vararg exceptionClasses: TypeName): FunSpec.Builder =
     throws(exceptionClasses.toList())
 
-fun FunSpec.Builder.throws(exceptionClasses: Iterable<TypeName>) = addAnnotation(
-    AnnotationSpec.builder(Throws::class)
-        .apply { exceptionClasses.forEach { addMember("%T::class", it) } }
-        .build())
+public fun FunSpec.Builder.throws(exceptionClasses: Iterable<TypeName>): FunSpec.Builder =
+  addAnnotation(
+      AnnotationSpec.builder(Throws::class)
+          .apply { exceptionClasses.forEach { addMember("%T::class", it) } }
+          .build())
 
-fun FunSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true) = apply {
+public fun FunSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): FunSpec.Builder = apply {
   check(!name.isConstructor) { "Can't apply @JvmSuppressWildcards to a constructor!" }
   check(!name.isAccessor) {
     "Can't apply @JvmSuppressWildcards to a " + if (name == FunSpec.GETTER) "getter!" else "setter!"
@@ -90,30 +91,32 @@ fun FunSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true) = apply {
   addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
 }
 
-fun FunSpec.Builder.synchronized() = apply {
+public fun FunSpec.Builder.synchronized(): FunSpec.Builder = apply {
   check(!name.isConstructor) { "Can't apply @Synchronized to a constructor!" }
   addAnnotation(Synchronized::class)
 }
 
-fun FunSpec.Builder.strictfp() = addAnnotation(Strictfp::class)
+public fun FunSpec.Builder.strictfp(): FunSpec.Builder = addAnnotation(Strictfp::class)
 
-fun PropertySpec.Builder.jvmField() = addAnnotation(JvmField::class)
+public fun PropertySpec.Builder.jvmField(): PropertySpec.Builder = addAnnotation(JvmField::class)
 
-fun PropertySpec.Builder.jvmStatic() = addAnnotation(JvmStatic::class)
+public fun PropertySpec.Builder.jvmStatic(): PropertySpec.Builder = addAnnotation(JvmStatic::class)
 
-fun PropertySpec.Builder.jvmSuppressWildcards(suppress: Boolean = true) =
-    addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
+public fun PropertySpec.Builder.jvmSuppressWildcards(
+  suppress: Boolean = true
+): PropertySpec.Builder = addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
 
-fun PropertySpec.Builder.transient() = addAnnotation(Transient::class)
+public fun PropertySpec.Builder.transient(): PropertySpec.Builder = addAnnotation(Transient::class)
 
-fun PropertySpec.Builder.volatile() = addAnnotation(Volatile::class)
+public fun PropertySpec.Builder.volatile(): PropertySpec.Builder = addAnnotation(Volatile::class)
 
-fun TypeName.jvmSuppressWildcards(suppress: Boolean = true) =
+public fun TypeName.jvmSuppressWildcards(suppress: Boolean = true): TypeName =
     copy(annotations = this.annotations + jvmSuppressWildcardsAnnotation(suppress))
 
-fun TypeName.jvmWildcard() =
+public fun TypeName.jvmWildcard(): TypeName =
     copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
-fun PropertySpec.Builder.jvmDefault() = addAnnotation(JvmDefault::class)
+public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder =
+    addAnnotation(JvmDefault::class)
 
-fun FunSpec.Builder.jvmDefault() = addAnnotation(JvmDefault::class)
+public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = addAnnotation(JvmDefault::class)

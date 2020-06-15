@@ -31,25 +31,26 @@ import javax.lang.model.util.Types
 import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
-/** A generated function declaration.  */
-class FunSpec private constructor(
+/** A generated function declaration. */
+public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
-  val name = builder.name
-  val kdoc = builder.kdoc.build()
-  val returnKdoc = builder.returnKdoc
-  val receiverKdoc = builder.receiverKdoc
-  val annotations = builder.annotations.toImmutableList()
-  val modifiers = builder.modifiers.toImmutableSet()
-  val typeVariables = builder.typeVariables.toImmutableList()
-  val receiverType = builder.receiverType
-  val returnType = builder.returnType
-  val parameters = builder.parameters.toImmutableList()
-  val delegateConstructor = builder.delegateConstructor
-  val delegateConstructorArguments = builder.delegateConstructorArguments.toImmutableList()
-  val body = builder.body.build()
+  public val name: String = builder.name
+  public val kdoc: CodeBlock = builder.kdoc.build()
+  public val returnKdoc: CodeBlock = builder.returnKdoc
+  public val receiverKdoc: CodeBlock = builder.receiverKdoc
+  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
+  public val receiverType: TypeName? = builder.receiverType
+  public val returnType: TypeName? = builder.returnType
+  public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
+  public val delegateConstructor: String? = builder.delegateConstructor
+  public val delegateConstructorArguments: List<CodeBlock> =
+      builder.delegateConstructorArguments.toImmutableList()
+  public val body: CodeBlock = builder.body.build()
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
@@ -147,9 +148,9 @@ class FunSpec private constructor(
     }
   }
 
-  val isConstructor get() = name.isConstructor
+  public val isConstructor: Boolean get() = name.isConstructor
 
-  val isAccessor get() = name.isAccessor
+  public val isAccessor: Boolean get() = name.isAccessor
 
   private fun kdocWithTags(): CodeBlock {
     return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
@@ -221,9 +222,9 @@ class FunSpec private constructor(
     return toString() == other.toString()
   }
 
-  override fun hashCode() = toString().hashCode()
+  override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString() = buildCodeString {
+  override fun toString(): String = buildCodeString {
     emit(
         codeWriter = this,
         enclosingName = "Constructor",
@@ -232,7 +233,7 @@ class FunSpec private constructor(
   }
 
   @JvmOverloads
-  fun toBuilder(name: String = this.name): Builder {
+  public fun toBuilder(name: String = this.name): Builder {
     val builder = Builder(name)
     builder.kdoc.add(kdoc)
     builder.returnKdoc = returnKdoc
@@ -251,9 +252,9 @@ class FunSpec private constructor(
     return builder
   }
 
-  class Builder internal constructor(
+  public class Builder internal constructor(
     internal val name: String
-  ) : Taggable.Builder<FunSpec.Builder>, OriginatingElementsHolder.Builder<FunSpec.Builder> {
+  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
@@ -263,46 +264,48 @@ class FunSpec private constructor(
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
 
-    val annotations = mutableListOf<AnnotationSpec>()
-    val modifiers = mutableListOf<KModifier>()
-    val typeVariables = mutableListOf<TypeVariableName>()
-    val parameters = mutableListOf<ParameterSpec>()
-    override val tags = mutableMapOf<KClass<*>, Any>()
-    override val originatingElements = mutableListOf<Element>()
+    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    public val modifiers: MutableList<KModifier> = mutableListOf()
+    public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
+    public val parameters: MutableList<ParameterSpec> = mutableListOf()
+    override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val originatingElements: MutableList<Element> = mutableListOf()
 
-    fun addKdoc(format: String, vararg args: Any) = apply {
+    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
     }
 
-    fun addKdoc(block: CodeBlock) = apply {
+    public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
 
-    fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>) = apply {
+    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
       this.annotations += annotationSpecs
     }
 
-    fun addAnnotation(annotationSpec: AnnotationSpec) = apply {
+    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
       annotations += annotationSpec
     }
 
-    fun addAnnotation(annotation: ClassName) = apply {
+    public fun addAnnotation(annotation: ClassName): Builder = apply {
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
-    fun addAnnotation(annotation: Class<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: Class<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addAnnotation(annotation: KClass<*>) = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: KClass<*>): Builder =
+        addAnnotation(annotation.asClassName())
 
-    fun addModifiers(vararg modifiers: KModifier) = apply {
+    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
     }
 
-    fun addModifiers(modifiers: Iterable<KModifier>) = apply {
+    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
       this.modifiers += modifiers
     }
 
-    fun jvmModifiers(modifiers: Iterable<Modifier>) {
+    public fun jvmModifiers(modifiers: Iterable<Modifier>) {
       var visibility = KModifier.INTERNAL
       for (modifier in modifiers) {
         when (modifier) {
@@ -322,99 +325,107 @@ class FunSpec private constructor(
       this.modifiers += visibility
     }
 
-    fun addTypeVariables(typeVariables: Iterable<TypeVariableName>) = apply {
+    public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
       this.typeVariables += typeVariables
     }
 
-    fun addTypeVariable(typeVariable: TypeVariableName) = apply {
+    public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
 
-    @JvmOverloads fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
-    ) = apply {
+    ): Builder = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
       this.receiverKdoc = kdoc
     }
 
-    @JvmOverloads fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: Type,
       kdoc: CodeBlock = CodeBlock.EMPTY
-    ) = receiver(receiverType.asTypeName(), kdoc)
+    ): Builder = receiver(receiverType.asTypeName(), kdoc)
 
-    fun receiver(
+    public fun receiver(
       receiverType: Type,
       kdoc: String,
       vararg args: Any
-    ) = receiver(receiverType, CodeBlock.of(kdoc, args))
+    ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: KClass<*>,
       kdoc: CodeBlock = CodeBlock.EMPTY
-    ) = receiver(receiverType.asTypeName(), kdoc)
+    ): Builder = receiver(receiverType.asTypeName(), kdoc)
 
-    fun receiver(
+    public fun receiver(
       receiverType: KClass<*>,
       kdoc: String,
       vararg args: Any
-    ) = receiver(receiverType, CodeBlock.of(kdoc, args))
+    ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads fun returns(returnType: TypeName, kdoc: CodeBlock = CodeBlock.EMPTY) = apply {
+    @JvmOverloads public fun returns(
+      returnType: TypeName,
+      kdoc: CodeBlock = CodeBlock.EMPTY
+    ): Builder = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
       this.returnKdoc = kdoc
     }
 
-    @JvmOverloads fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
+    @JvmOverloads public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
+        returns(returnType.asTypeName(), kdoc)
 
-    fun returns(returnType: Type, kdoc: String, vararg args: Any) = returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
-
-    @JvmOverloads fun returns(returnType: KClass<*>, kdoc: CodeBlock = CodeBlock.EMPTY) = returns(returnType.asTypeName(), kdoc)
-
-    fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any) =
+    public fun returns(returnType: Type, kdoc: String, vararg args: Any): Builder =
         returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
-    fun addParameters(parameterSpecs: Iterable<ParameterSpec>) = apply {
+    @JvmOverloads public fun returns(
+      returnType: KClass<*>,
+      kdoc: CodeBlock = CodeBlock.EMPTY
+    ): Builder = returns(returnType.asTypeName(), kdoc)
+
+    public fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any): Builder =
+        returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+
+    public fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder = apply {
       for (parameterSpec in parameterSpecs) {
         addParameter(parameterSpec)
       }
     }
 
-    fun addParameter(parameterSpec: ParameterSpec) = apply {
+    public fun addParameter(parameterSpec: ParameterSpec): Builder = apply {
       parameters += parameterSpec
     }
 
-    fun callThisConstructor(args: List<CodeBlock>) = apply {
+    public fun callThisConstructor(args: List<CodeBlock>): Builder = apply {
       callConstructor("this", args)
     }
 
-    fun callThisConstructor(args: Iterable<CodeBlock>) = apply {
+    public fun callThisConstructor(args: Iterable<CodeBlock>): Builder = apply {
       callConstructor("this", args.toList())
     }
 
-    fun callThisConstructor(vararg args: String) = apply {
+    public fun callThisConstructor(vararg args: String): Builder = apply {
       callConstructor("this", args.map { CodeBlock.of(it) })
     }
 
-    fun callThisConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+    public fun callThisConstructor(vararg args: CodeBlock = emptyArray()): Builder = apply {
       callConstructor("this", args.toList())
     }
 
-    fun callSuperConstructor(args: Iterable<CodeBlock>) = apply {
+    public fun callSuperConstructor(args: Iterable<CodeBlock>): Builder = apply {
       callConstructor("super", args.toList())
     }
 
-    fun callSuperConstructor(args: List<CodeBlock>) = apply {
+    public fun callSuperConstructor(args: List<CodeBlock>): Builder = apply {
       callConstructor("super", args)
     }
 
-    fun callSuperConstructor(vararg args: String) = apply {
+    public fun callSuperConstructor(vararg args: String): Builder = apply {
       callConstructor("super", args.map { CodeBlock.of(it) })
     }
 
-    fun callSuperConstructor(vararg args: CodeBlock = emptyArray()) = apply {
+    public fun callSuperConstructor(vararg args: CodeBlock = emptyArray()): Builder = apply {
       callConstructor("super", args.toList())
     }
 
@@ -424,37 +435,40 @@ class FunSpec private constructor(
       delegateConstructorArguments = args
     }
 
-    fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier) =
+    public fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
         addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
-    fun addParameter(name: String, type: Type, vararg modifiers: KModifier) =
+    public fun addParameter(name: String, type: Type, vararg modifiers: KModifier): Builder =
         addParameter(name, type.asTypeName(), *modifiers)
 
-    fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier) =
+    public fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
         addParameter(name, type.asTypeName(), *modifiers)
 
-    fun addParameter(name: String, type: TypeName, modifiers: Iterable<KModifier>) =
+    public fun addParameter(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
         addParameter(ParameterSpec.builder(name, type, modifiers).build())
 
-    fun addParameter(name: String, type: Type, modifiers: Iterable<KModifier>) =
+    public fun addParameter(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
         addParameter(name, type.asTypeName(), modifiers)
 
-    fun addParameter(name: String, type: KClass<*>, modifiers: Iterable<KModifier>) =
-        addParameter(name, type.asTypeName(), modifiers)
+    public fun addParameter(
+      name: String,
+      type: KClass<*>,
+      modifiers: Iterable<KModifier>
+    ): Builder = addParameter(name, type.asTypeName(), modifiers)
 
-    fun addCode(format: String, vararg args: Any?) = apply {
+    public fun addCode(format: String, vararg args: Any?): Builder = apply {
       body.add(format, *args)
     }
 
-    fun addNamedCode(format: String, args: Map<String, *>) = apply {
+    public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
       body.addNamed(format, args)
     }
 
-    fun addCode(codeBlock: CodeBlock) = apply {
+    public fun addCode(codeBlock: CodeBlock): Builder = apply {
       body.add(codeBlock)
     }
 
-    fun addComment(format: String, vararg args: Any) = apply {
+    public fun addComment(format: String, vararg args: Any): Builder = apply {
       body.add("//·${format.replace(' ', '·')}\n", *args)
     }
 
@@ -462,7 +476,7 @@ class FunSpec private constructor(
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      * * Shouldn't contain braces or newline characters.
      */
-    fun beginControlFlow(controlFlow: String, vararg args: Any) = apply {
+    public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
       body.beginControlFlow(controlFlow, *args)
     }
 
@@ -470,23 +484,23 @@ class FunSpec private constructor(
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      * *     Shouldn't contain braces or newline characters.
      */
-    fun nextControlFlow(controlFlow: String, vararg args: Any) = apply {
+    public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
       body.nextControlFlow(controlFlow, *args)
     }
 
-    fun endControlFlow() = apply {
+    public fun endControlFlow(): Builder = apply {
       body.endControlFlow()
     }
 
-    fun addStatement(format: String, vararg args: Any) = apply {
+    public fun addStatement(format: String, vararg args: Any): Builder = apply {
       body.addStatement(format, *args)
     }
 
-    fun clearBody() = apply {
+    public fun clearBody(): Builder = apply {
       body.clear()
     }
 
-    fun build(): FunSpec {
+    public fun build(): FunSpec {
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
       check(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
@@ -494,7 +508,7 @@ class FunSpec private constructor(
     }
   }
 
-  companion object {
+  public companion object {
     private const val CONSTRUCTOR = "constructor()"
     internal const val GETTER = "get()"
     internal const val SETTER = "set()"
@@ -505,13 +519,13 @@ class FunSpec private constructor(
     private val RETURN_EXPRESSION_BODY_PREFIX = CodeBlock.of("return ")
     private val THROW_EXPRESSION_BODY_PREFIX = CodeBlock.of("throw ")
 
-    @JvmStatic fun builder(name: String) = Builder(name)
+    @JvmStatic public fun builder(name: String): Builder = Builder(name)
 
-    @JvmStatic fun constructorBuilder() = Builder(CONSTRUCTOR)
+    @JvmStatic public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
 
-    @JvmStatic fun getterBuilder() = Builder(GETTER)
+    @JvmStatic public fun getterBuilder(): Builder = Builder(GETTER)
 
-    @JvmStatic fun setterBuilder() = Builder(SETTER)
+    @JvmStatic public fun setterBuilder(): Builder = Builder(SETTER)
 
     @Deprecated(
         message = "Element APIs don't give complete information on Kotlin types. Consider using" +
@@ -519,7 +533,7 @@ class FunSpec private constructor(
         level = WARNING
     )
     @JvmStatic
-    fun overriding(method: ExecutableElement): Builder {
+    public fun overriding(method: ExecutableElement): Builder {
       var modifiers: Set<Modifier> = method.modifiers
       require(Modifier.PRIVATE !in modifiers &&
           Modifier.FINAL !in modifiers &&
@@ -528,7 +542,7 @@ class FunSpec private constructor(
       }
 
       val methodName = method.simpleName.toString()
-      val funBuilder = FunSpec.builder(methodName)
+      val funBuilder = builder(methodName)
 
       funBuilder.addModifiers(KModifier.OVERRIDE)
 
@@ -566,7 +580,7 @@ class FunSpec private constructor(
         level = WARNING
     )
     @JvmStatic
-    fun overriding(
+    public fun overriding(
       method: ExecutableElement,
       enclosing: DeclaredType,
       types: Types
