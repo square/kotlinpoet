@@ -475,12 +475,11 @@ class TypeSpecTest {
         |   * Avalanche!
         |   */
         |  ROCK,
-        |
         |  PAPER("flat") {
         |    public override fun toString(): String = "paper airplane!"
         |  },
-        |
-        |  SCISSORS("peace sign");
+        |  SCISSORS("peace sign"),
+        |  ;
         |
         |  public constructor() {
         |    this("fist")
@@ -511,7 +510,8 @@ class TypeSpecTest {
         |  CORN {
         |    public override fun fold(): Unit {
         |    }
-        |  };
+        |  },
+        |  ;
         |
         |  public abstract fun fold(): Unit
         |}
@@ -597,7 +597,7 @@ class TypeSpecTest {
         |public enum class Roshambo {
         |  SPOCK {
         |    public override fun toString(): String = "west side"
-        |  }
+        |  },
         |}
         |""".trimMargin())
   }
@@ -620,10 +620,8 @@ class TypeSpecTest {
         |public enum class Roshambo {
         |  @Deprecated
         |  ROCK,
-        |
         |  PAPER,
-        |
-        |  SCISSORS
+        |  SCISSORS,
         |}
         |""".trimMargin())
   }
@@ -831,8 +829,7 @@ class TypeSpecTest {
         |
         |public enum class Food : Serializable, Cloneable {
         |  LEAN_GROUND_BEEF,
-        |
-        |  SHREDDED_CHEESE
+        |  SHREDDED_CHEESE,
         |}
         |""".trimMargin())
   }
@@ -944,8 +941,7 @@ class TypeSpecTest {
         |
         |    public enum class Topping {
         |      SHREDDED_CHEESE,
-        |
-        |      LEAN_GROUND_BEEF
+        |      LEAN_GROUND_BEEF,
         |    }
         |  }
         |
@@ -957,14 +953,10 @@ class TypeSpecTest {
         |
         |  public enum class Sauce {
         |    SOUR_CREAM,
-        |
         |    SALSA,
-        |
         |    QUESO,
-        |
         |    MILD,
-        |
-        |    FIRE
+        |    FIRE,
         |  }
         |}
         |""".trimMargin())
@@ -1034,8 +1026,7 @@ class TypeSpecTest {
         |) {
         |  public enum class Kind {
         |    SOFT,
-        |
-        |    HARD
+        |    HARD,
         |  }
         |
         |  public companion object {
@@ -1728,7 +1719,7 @@ class TypeSpecTest {
         |  public interface Tortilla
         |
         |  public enum class Topping {
-        |    SALSA
+        |    SALSA,
         |  }
         |}
         |""".trimMargin())
@@ -2177,8 +2168,8 @@ class TypeSpecTest {
       |  public val x: kotlin.Int
       |) {
       |  A(1),
-      |
-      |  B(2);
+      |  B(2),
+      |  ;
       |}
       |""".trimMargin())
   }
@@ -2995,8 +2986,8 @@ class TypeSpecTest {
         |
         |public enum class MyEnum {
         |  FOO,
-        |
-        |  BAR;
+        |  BAR,
+        |  ;
         |
         |  public companion object {
         |    public fun test(): Unit {
@@ -4048,8 +4039,7 @@ class TypeSpecTest {
     assertThat(enum.toString()).isEqualTo("""
       |public enum class MyEnum {
       |  `test test`,
-      |
-      |  `0constants`
+      |  `0constants`,
       |}
       |""".trimMargin())
   }
@@ -4197,7 +4187,7 @@ class TypeSpecTest {
       |package com.squareup.tacos
       |
       |public enum class MyEnum {
-      |  `object`
+      |  `object`,
       |}
       |""".trimMargin())
   }
