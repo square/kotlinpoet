@@ -466,10 +466,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       public enum class SimpleEnum {
         FOO,
-
         BAR,
-
-        BAZ
+        BAZ,
       }
     """.trimIndent())
   }
@@ -492,18 +490,17 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
             throw NotImplementedError("Stub!")
           }
         },
-
         BAR {
           public override fun toString(): kotlin.String {
             throw NotImplementedError("Stub!")
           }
         },
-
         BAZ {
           public override fun toString(): kotlin.String {
             throw NotImplementedError("Stub!")
           }
-        };
+        },
+        ;
       }
     """.trimIndent())
   }
@@ -534,11 +531,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo("""
       public enum class EnumWithAnnotation {
         FOO,
-
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR,
-
-        BAZ
+        BAZ,
       }
     """.trimIndent())
   }
@@ -561,19 +556,18 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
             throw NotImplementedError("Stub!")
           }
         },
-
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR {
           public override fun toString(): kotlin.String {
             throw NotImplementedError("Stub!")
           }
         },
-
         BAZ {
           public override fun toString(): kotlin.String {
             throw NotImplementedError("Stub!")
           }
-        };
+        },
+        ;
       }
     """.trimIndent())
   }

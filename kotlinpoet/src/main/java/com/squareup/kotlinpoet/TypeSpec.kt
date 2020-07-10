@@ -215,19 +215,18 @@ public class TypeSpec private constructor(
       codeWriter.pushType(this)
       codeWriter.indent()
       var firstMember = true
-      val i = enumConstants.entries.iterator()
-      while (i.hasNext()) {
-        val enumConstant = i.next()
+      for ((key, value) in enumConstants.entries) {
         if (!firstMember) codeWriter.emit("\n")
-        enumConstant.value.emit(codeWriter, enumConstant.key)
+        value.emit(codeWriter, key)
+        codeWriter.emit(",")
         firstMember = false
-        if (i.hasNext()) codeWriter.emit(",\n")
       }
       if (isEnum) {
+        if (!firstMember) {
+          codeWriter.emit("\n")
+        }
         if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
           codeWriter.emit(";\n")
-        } else if (!firstMember) {
-          codeWriter.emit("\n")
         }
       }
 
