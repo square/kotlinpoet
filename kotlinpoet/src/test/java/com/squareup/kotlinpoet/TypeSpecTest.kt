@@ -591,6 +591,7 @@ class TypeSpecTest {
             .build())
         .addProperty(
             PropertySpec.builder("contents", String::class).initializer("contents")
+                .mutable()
                 .setter(FunSpec.setterBuilder()
                     .addParameter("value", String::class)
                     .addCode("println(%S)\nfield = value", "contents changed!").build())
@@ -605,7 +606,7 @@ class TypeSpecTest {
         |public class ObservantTaco(
         |  contents: String
         |) {
-        |  public val contents: String = contents
+        |  public var contents: String = contents
         |    public set(value) {
         |      println("contents changed!")
         |      field = value
