@@ -102,7 +102,7 @@ public class FunSpec private constructor(
     val asExpressionBody = body.asExpressionBody()
 
     if (asExpressionBody != null) {
-      codeWriter.emitCode(" = %L", asExpressionBody)
+      codeWriter.emitCode(CodeBlock.of(" = %L", asExpressionBody), ensureTrailingNewline = true)
     } else if (!isEmptySetter) {
       codeWriter.emitCode("·{\n")
       codeWriter.indent()
