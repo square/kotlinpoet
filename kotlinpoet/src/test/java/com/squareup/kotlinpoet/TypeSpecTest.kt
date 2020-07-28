@@ -556,6 +556,64 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  /** https://github.com/square/kotlinpoet/issues/942  */
+  @Test fun noConstructorPropertiesWithCustomGetter() {
+    val taco = TypeSpec.classBuilder("ObservantTaco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("contents", String::class).build())
+            .build())
+        .addProperty(
+            PropertySpec.builder("contents", String::class).initializer("contents")
+                .getter(FunSpec.getterBuilder().addCode("println(%S)\nreturn field", "contents observed!").build())
+                .build())
+        .build()
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public class ObservantTaco(
+        |  contents: String
+        |) {
+        |  public val contents: String = contents
+        |    public get() {
+        |      println("contents observed!")
+        |      return field
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
+  @Test fun noConstructorPropertiesWithCustomSetter() {
+    val taco = TypeSpec.classBuilder("ObservantTaco")
+        .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder("contents", String::class).build())
+            .build())
+        .addProperty(
+            PropertySpec.builder("contents", String::class).initializer("contents")
+                .setter(FunSpec.setterBuilder()
+                    .addParameter("value",String::class)
+                    .addCode("println(%S)\nfield = value", "contents changed!").build())
+                .build())
+        .build()
+    println(toString(taco))
+    assertThat(toString(taco)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public class ObservantTaco(
+        |  contents: String
+        |) {
+        |  public val contents: String = contents
+        |    public set(value) {
+        |      println("contents changed!")
+        |      field = value
+        |    }
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun onlyEnumsMayHaveEnumConstants() {
     assertThrows<IllegalStateException> {
       TypeSpec.classBuilder("Roshambo")
