@@ -288,6 +288,7 @@ class JvmAnnotationsTest {
   @Test fun throwsSetter() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addProperty(PropertySpec.builder("foo", String::class)
+            .mutable()
             .setter(FunSpec.setterBuilder()
                 .throws(IOException::class)
                 .addParameter("value", String::class)
@@ -302,7 +303,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Throws
       |
-      |public val foo: String
+      |public var foo: String
       |  @Throws(IOException::class)
       |  public set(value) {
       |    print("foo")
@@ -821,6 +822,7 @@ class JvmAnnotationsTest {
   @Test fun strictfpSetter() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
         .addProperty(PropertySpec.builder("foo", String::class)
+            .mutable()
             .setter(FunSpec.setterBuilder()
                 .strictfp()
                 .addParameter("value", String::class)
@@ -834,7 +836,7 @@ class JvmAnnotationsTest {
       |import kotlin.String
       |import kotlin.jvm.Strictfp
       |
-      |public val foo: String
+      |public var foo: String
       |  @Strictfp
       |  public set(value) {
       |    print("foo")

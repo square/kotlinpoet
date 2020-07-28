@@ -186,6 +186,7 @@ class CrossplatformTest {
     assertThrows<IllegalArgumentException> {
       TypeSpec.expectClassBuilder("AtomicRef")
           .addProperty(PropertySpec.builder("a", Boolean::class)
+              .mutable()
               .setter(FunSpec.setterBuilder()
                   .addParameter("value", Boolean::class)
                   .addStatement("field = true")

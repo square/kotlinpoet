@@ -48,6 +48,9 @@ public class PropertySpec private constructor(
         (setter == null || KModifier.INLINE in setter.modifiers)) {
       "only type parameters of properties with inline getters and/or setters can be reified!"
     }
+    require(mutable || setter == null) {
+      "only a mutable property can have a setter"
+    }
   }
 
   internal fun emit(

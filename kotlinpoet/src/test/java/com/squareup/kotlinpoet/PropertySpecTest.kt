@@ -298,6 +298,18 @@ class PropertySpecTest {
         "only type parameters of properties with inline getters and/or setters can be reified!")
   }
 
+  @Test fun setterNotAllowedWhenPropertyIsNotMutable() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("property", String::class.asTypeName())
+          .setter(FunSpec.setterBuilder()
+              .addModifiers(KModifier.INLINE)
+              .addParameter("value", String::class)
+              .addStatement("println()")
+              .build())
+          .build()
+    }.hasMessageThat().isEqualTo("only a mutable property can have a setter")
+  }
+
   // https://github.com/square/kotlinpoet/issues/462
   @Test fun codeBlockInitializer() {
     val param = ParameterSpec.builder("arg", ANY).build()
