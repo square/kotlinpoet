@@ -592,7 +592,7 @@ class TypeSpecTest {
         .addProperty(
             PropertySpec.builder("contents", String::class).initializer("contents")
                 .setter(FunSpec.setterBuilder()
-                    .addParameter("value",String::class)
+                    .addParameter("value", String::class)
                     .addCode("println(%S)\nfield = value", "contents changed!").build())
                 .build())
         .build()
