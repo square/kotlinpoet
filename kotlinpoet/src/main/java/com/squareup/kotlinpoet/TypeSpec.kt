@@ -318,6 +318,7 @@ public class TypeSpec private constructor(
     val result: MutableMap<String, PropertySpec> = LinkedHashMap()
     for (propertyIndex in range) {
       val property = propertySpecs[propertyIndex]
+      if (property.getter != null || property.setter != null) continue
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
       if (!isPropertyInitializerConstructorParameter(property, parameter))
