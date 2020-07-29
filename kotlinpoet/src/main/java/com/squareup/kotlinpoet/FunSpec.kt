@@ -109,6 +109,8 @@ public class FunSpec private constructor(
       codeWriter.emitCode(body, ensureTrailingNewline = true)
       codeWriter.unindent()
       codeWriter.emit("}\n")
+    } else {
+      codeWriter.emit("\n")
     }
   }
 
