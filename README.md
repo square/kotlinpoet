@@ -1369,7 +1369,7 @@ Download [the latest .jar][dl] or depend via Maven:
 or Gradle:
 
 ```groovy
-compile 'com.squareup:kotlinpoet:1.6.0'
+implementation("com.squareup:kotlinpoet:1.6.0")
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
