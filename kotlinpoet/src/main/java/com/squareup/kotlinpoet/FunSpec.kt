@@ -57,8 +57,13 @@ public class FunSpec private constructor(
     require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
       "abstract function ${builder.name} cannot have code"
     }
-    require(name != SETTER || parameters.size <= 1) {
-      "$name can have at most one parameter"
+    if (name == SETTER) {
+      require(parameters.size <= 1) {
+        "$name can have at most one parameter"
+      }
+      require(parameters.isNotEmpty() || body.isEmpty()) {
+        "parameterless setter cannot have code"
+      }
     }
     require(INLINE in modifiers || typeVariables.none { it.isReified }) {
       "only type parameters of inline functions can be reified!"

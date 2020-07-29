@@ -50,6 +50,18 @@ class PropertySpecTest {
       """.trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/952
+  @Test fun emptySetterCannotHaveBody() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("foo", String::class)
+          .mutable()
+          .setter(FunSpec.setterBuilder()
+              .addStatement("body()")
+              .build())
+          .build()
+    }.hasMessageThat().isEqualTo("parameterless setter cannot have code")
+  }
+
   @Test fun inlineSingleAccessor() {
     val prop = PropertySpec.builder("foo", String::class)
         .getter(FunSpec.getterBuilder()
