@@ -741,6 +741,27 @@ class FunSpecTest {
       |""".trimMargin())
   }
 
+  // https://github.com/square/kotlinpoet/issues/947
+  @Test fun ensureTrailingNewlineWithExpressionBody() {
+    val methodSpec = FunSpec.builder("function")
+        .addCode("return codeWithNoNewline()")
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |public fun function() = codeWithNoNewline()
+      |""".trimMargin())
+  }
+
+  @Test fun ensureTrailingNewlineWithExpressionBodyAndExistingNewline() {
+    val methodSpec = FunSpec.builder("function")
+        .addCode("return codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
+        .build()
+
+    assertThat(methodSpec.toString()).isEqualTo("""
+      |public fun function() = codeWithNoNewline()
+      |""".trimMargin())
+  }
+
   @Test fun ensureKdocTrailingNewline() {
     val methodSpec = FunSpec.builder("function")
         .addKdoc("This is a comment with no initial newline")
