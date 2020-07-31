@@ -53,18 +53,6 @@ public class FunSpec private constructor(
   public val body: CodeBlock = builder.body.build()
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
-  init {
-    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
-      "abstract function ${builder.name} cannot have code"
-    }
-    require(name != SETTER || parameters.size <= 1) {
-      "$name can have at most one parameter"
-    }
-    require(INLINE in modifiers || typeVariables.none { it.isReified }) {
-      "only type parameters of inline functions can be reified!"
-    }
-  }
-
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
   internal fun emit(
@@ -501,9 +489,15 @@ public class FunSpec private constructor(
     }
 
     public fun build(): FunSpec {
-      check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
-      check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
-      check(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
+      require(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
+      require(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
+      require(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
+      require(body.isEmpty() || ABSTRACT !in modifiers) {
+        "abstract function $name cannot have code"
+      }
+      require(INLINE in modifiers || typeVariables.none { it.isReified }) {
+        "only type parameters of inline functions can be reified!"
+      }
       return FunSpec(this)
     }
   }

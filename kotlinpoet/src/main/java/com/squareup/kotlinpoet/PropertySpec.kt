@@ -41,18 +41,6 @@ public class PropertySpec private constructor(
   public val setter: FunSpec? = builder.setter
   public val receiverType: TypeName? = builder.receiverType
 
-  init {
-    require(typeVariables.none { it.isReified } ||
-        (getter != null || setter != null) &&
-        (getter == null || KModifier.INLINE in getter.modifiers) &&
-        (setter == null || KModifier.INLINE in setter.modifiers)) {
-      "only type parameters of properties with inline getters and/or setters can be reified!"
-    }
-    require(mutable || setter == null) {
-      "only a mutable property can have a setter"
-    }
-  }
-
   internal fun emit(
     codeWriter: CodeWriter,
     implicitModifiers: Set<KModifier>,
@@ -258,12 +246,21 @@ public class PropertySpec private constructor(
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
 
     public fun build(): PropertySpec {
-      if (KModifier.INLINE in modifiers) {
-        throw IllegalArgumentException("KotlinPoet doesn't allow setting the inline modifier on " +
-            "properties. You should mark either the getter, the setter, or both inline.")
+      require(KModifier.INLINE !in modifiers) {
+        "KotlinPoet doesn't allow setting the inline modifier on " +
+            "properties. You should mark either the getter, the setter, or both inline."
       }
+      val getter = getter
+      val setter = setter
+      require(typeVariables.none { it.isReified } ||
+          (getter != null || setter != null) &&
+          (getter == null || KModifier.INLINE in getter.modifiers) &&
+          (setter == null || KModifier.INLINE in setter.modifiers)) {
+        "only type parameters of properties with inline getters and/or setters can be reified!"
+      }
+      require(mutable || setter == null) { "only a mutable property can have a setter" }
       for (it in modifiers) {
-          if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
+        if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }

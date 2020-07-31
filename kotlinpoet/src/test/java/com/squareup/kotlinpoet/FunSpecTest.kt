@@ -826,4 +826,36 @@ class FunSpecTest {
       |}
       |""".trimMargin())
   }
+
+  @Test fun typeVariablesOnAccessorNotAllowed() {
+    val typeVariable = TypeVariableName("T")
+    assertThrows<IllegalArgumentException> {
+      FunSpec.setterBuilder()
+          .addTypeVariable(typeVariable)
+          .build()
+    }.hasMessageThat().isEqualTo("set() cannot have type variables")
+
+    assertThrows<IllegalArgumentException> {
+      FunSpec.getterBuilder()
+          .addTypeVariable(typeVariable)
+          .build()
+    }.hasMessageThat().isEqualTo("get() cannot have type variables")
+  }
+
+  @Test fun multipleParametersOnSetterNotAllowed() {
+    assertThrows<IllegalArgumentException> {
+      FunSpec.setterBuilder()
+          .addParameter("value1", String::class)
+          .addParameter("value2", String::class)
+          .build()
+    }.hasMessageThat().isEqualTo("set() can have at most one parameter")
+  }
+
+  @Test fun parametersOnGetterNotAllowed() {
+    assertThrows<IllegalArgumentException> {
+      FunSpec.getterBuilder()
+          .addParameter("value1", String::class)
+          .build()
+    }.hasMessageThat().isEqualTo("get() cannot have parameters")
+  }
 }
