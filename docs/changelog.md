@@ -394,5 +394,5 @@ _2017-05-16_
 
  * Initial public release.
 
- [kotlinpoet-metadata]: kotlinpoet-metadata/README.md
- [kotlinpoet-metadata-specs]: kotlinpoet-metadata-specs/README.md
+ [kotlinpoet-metadata]: ../kotlinpoet-metadata/README.md
+ [kotlinpoet-metadata-specs]: ..//kotlinpoet_metadata_specs
