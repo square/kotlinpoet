@@ -47,7 +47,7 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo("""
       |var foo: kotlin.String
       |  private set
-      """.trimMargin())
+      |""".trimMargin())
   }
 
   // https://github.com/square/kotlinpoet/issues/952
