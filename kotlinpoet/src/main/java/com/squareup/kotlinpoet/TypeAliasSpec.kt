@@ -124,11 +124,7 @@ public class TypeAliasSpec private constructor(
         addAnnotation(annotation.asClassName())
 
     public fun build(): TypeAliasSpec {
-      for (it in modifiers) {
-        require(it in ALLOWABLE_MODIFIERS) {
-          "unexpected typealias modifier $it"
-        }
-      }
+      modifiers.checkTarget(KModifier.Target.TYPE_ALIAS)
       return TypeAliasSpec(this)
     }
 

@@ -15,6 +15,17 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.Target.ACCESSOR
+import com.squareup.kotlinpoet.KModifier.Target.CLASS
+import com.squareup.kotlinpoet.KModifier.Target.CLASS_TYPE_PARAMETER
+import com.squareup.kotlinpoet.KModifier.Target.FUNCTION
+import com.squareup.kotlinpoet.KModifier.Target.FUNCTION_TYPE_PARAMETER
+import com.squareup.kotlinpoet.KModifier.Target.INTERFACE
+import com.squareup.kotlinpoet.KModifier.Target.OBJECT
+import com.squareup.kotlinpoet.KModifier.Target.PARAMETER
+import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
+import com.squareup.kotlinpoet.KModifier.Target.TYPE_ALIAS
+
 public enum class KModifier(
   internal val keyword: String,
   private vararg val targets: Target
@@ -23,61 +34,77 @@ public enum class KModifier(
   // https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers
 
   // Access.
-  PUBLIC("public", Target.PROPERTY),
-  PROTECTED("protected", Target.PROPERTY),
-  PRIVATE("private", Target.PROPERTY),
-  INTERNAL("internal", Target.PROPERTY),
+  PUBLIC("public", *Target.declarations, TYPE_ALIAS, PARAMETER),
+  PROTECTED("protected", *Target.declarations, PARAMETER),
+  PRIVATE("private", *Target.declarations, TYPE_ALIAS, PARAMETER),
+  INTERNAL("internal", *Target.declarations, TYPE_ALIAS, PARAMETER),
 
   // Multiplatform modules.
-  EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
+  EXPECT("expect", *Target.declarations),
+  ACTUAL("actual", *Target.declarations, TYPE_ALIAS),
 
-  FINAL("final", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OPEN("open", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  ABSTRACT("abstract", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  SEALED("sealed", Target.CLASS),
-  CONST("const", Target.PROPERTY),
+  FINAL("final", CLASS, FUNCTION, PROPERTY, PARAMETER),
+  OPEN("open", CLASS, FUNCTION, PROPERTY, PARAMETER),
+  ABSTRACT("abstract", CLASS, FUNCTION, PROPERTY, PARAMETER),
+  SEALED("sealed", CLASS),
+  CONST("const", PROPERTY),
 
-  EXTERNAL("external", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-  OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
-  LATEINIT("lateinit", Target.PROPERTY),
-  TAILREC("tailrec", Target.FUNCTION),
-  VARARG("vararg", Target.PARAMETER),
-  SUSPEND("suspend", Target.FUNCTION),
-  INNER("inner", Target.CLASS),
+  EXTERNAL("external", *Target.declarations),
+  OVERRIDE("override", FUNCTION, PROPERTY, PARAMETER),
+  LATEINIT("lateinit", PROPERTY),
+  TAILREC("tailrec", FUNCTION),
+  VARARG("vararg", PARAMETER),
+  SUSPEND("suspend", FUNCTION),
+  INNER("inner", CLASS),
 
-  ENUM("enum", Target.CLASS),
-  ANNOTATION("annotation", Target.CLASS),
-  FUN("fun", Target.INTERFACE),
+  ENUM("enum", CLASS),
+  ANNOTATION("annotation", CLASS),
+  FUN("fun", INTERFACE),
 
-  COMPANION("companion", Target.CLASS),
+  COMPANION("companion", OBJECT),
 
   // Call-site compiler tips.
-  INLINE("inline", Target.FUNCTION),
-  NOINLINE("noinline", Target.PARAMETER),
-  CROSSINLINE("crossinline", Target.PARAMETER),
-  REIFIED("reified", Target.TYPE_PARAMETER),
+  INLINE("inline", FUNCTION, CLASS, PROPERTY, ACCESSOR),
+  NOINLINE("noinline", PARAMETER),
+  CROSSINLINE("crossinline", PARAMETER),
+  REIFIED("reified", FUNCTION_TYPE_PARAMETER),
 
-  INFIX("infix", Target.FUNCTION),
-  OPERATOR("operator", Target.FUNCTION),
+  INFIX("infix", FUNCTION),
+  OPERATOR("operator", FUNCTION),
 
-  DATA("data", Target.CLASS),
+  DATA("data", CLASS),
 
-  IN("in", Target.VARIANCE_ANNOTATION),
-  OUT("out", Target.VARIANCE_ANNOTATION),
+  IN("in", CLASS_TYPE_PARAMETER),
+  OUT("out", CLASS_TYPE_PARAMETER),
   ;
 
   internal enum class Target {
     CLASS,
-    VARIANCE_ANNOTATION,
-    PARAMETER,
-    TYPE_PARAMETER,
-    FUNCTION,
-    PROPERTY,
+    OBJECT,
     INTERFACE,
+    TYPE_ALIAS,
+
+    FUNCTION,
+    CONSTRUCTOR,
+    ACCESSOR,
+
+    PROPERTY,
+
+    PARAMETER,
+    FUNCTION_TYPE_PARAMETER,
+    CLASS_TYPE_PARAMETER,
+    ;
+
+    companion object {
+      val declarations = arrayOf(CLASS, OBJECT, INTERFACE, FUNCTION, CONSTRUCTOR, ACCESSOR, PROPERTY)
+    }
   }
 
   internal fun checkTarget(target: Target) {
     require(target in targets) { "unexpected modifier $this for $target" }
   }
+}
+
+internal fun Iterable<KModifier>.checkTarget(target: KModifier.Target) {
+  this.forEach { it.checkTarget(target) }
 }
