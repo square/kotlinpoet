@@ -11,10 +11,6 @@ remote_branch: gh-pages
 
 copyright: 'Copyright &copy; 2015 Square, Inc.'
 
-# Hide the Edit button, as it doesn't work with the way MkDocs
-# is configured in this repo.
-edit_uri: ""
-
 theme:
   name: 'material'
   logo: 'images/icon-square.png'
