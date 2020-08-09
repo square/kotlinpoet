@@ -27,12 +27,6 @@ if ! [ $local ]; then
   ./gradlew dokka
 fi
 
-# Fix *.md links to point to where the docs live under Mkdocs.
-# Linux
-# sed -i 's/kotlinpoet-metadata-specs\/README.md/\/kotlinpoet_metadata_specs/' docs/changelog.md
-# OSX
-sed -i "" 's/kotlinpoet-metadata-specs\/README.md/\/kotlinpoet_metadata_specs/' docs/changelog.md
-
 # Build the site and push the new files up to GitHub
 if ! [ $local ]; then
   mkdocs gh-deploy
