@@ -15,8 +15,8 @@
  */
 object versions {
   object kotlin {
-    const val plugin = "1.4-M2"
-    const val libs = "1.3.72"
+    const val plugin = "1.4.0"
+    const val libs = "1.4.0"
   }
   const val spotless = "3.27.0"
   const val ktlint = "0.36.0"
