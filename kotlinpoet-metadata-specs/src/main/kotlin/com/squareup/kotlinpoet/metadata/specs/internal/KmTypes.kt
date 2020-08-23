@@ -109,13 +109,13 @@ internal fun ImmutableKmType.toTypeName(
               // Extension function type! T.(). First parameter is actually the receiver.
               LambdaTypeName.get(
                   receiver = parameters[0],
-                  parameters = *parameters.drop(1).toTypedArray(),
+                  parameters = parameters.drop(1).toTypedArray(),
                   returnType = returnType
               )
             } else {
               LambdaTypeName.get(
                   receiver = null,
-                  parameters = *parameters,
+                  parameters = parameters,
                   returnType = returnType
               )
             }
