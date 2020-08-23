@@ -47,7 +47,6 @@ afterEvaluate {
 }
 
 dependencies {
-  api(deps.kotlin.stdlib)
   api(project(":kotlinpoet-metadata-specs"))
   add("compileShaded", deps.autoCommon)
 }

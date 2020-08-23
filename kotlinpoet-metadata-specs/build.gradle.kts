@@ -44,7 +44,6 @@ afterEvaluate {
 }
 
 dependencies {
-  api(deps.kotlin.stdlib)
   api(project(":kotlinpoet"))
   api(project(":kotlinpoet-metadata"))
 
