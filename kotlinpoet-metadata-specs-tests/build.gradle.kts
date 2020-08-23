@@ -26,7 +26,6 @@ compileTestKotlin.kotlinOptions {
 }
 
 dependencies {
-  testImplementation(deps.kotlin.stdlib)
   testImplementation(project(":kotlinpoet"))
   testImplementation(project(":kotlinpoet-metadata"))
   testImplementation(project(":kotlinpoet-metadata-specs"))

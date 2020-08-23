@@ -43,7 +43,6 @@ afterEvaluate {
 }
 
 dependencies {
-  api(deps.kotlin.stdlib)
   implementation(deps.kotlin.reflect)
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
