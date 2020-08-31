@@ -4,7 +4,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.testutil.TestScript
 import com.squareup.kotlinpoet.typeNameOf
-import org.junit.Test
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
@@ -12,6 +11,7 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 import kotlin.test.assertTrue
+import org.junit.Test
 
 class ParameterWithSpaceCompileTest {
   @Test
