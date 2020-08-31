@@ -34,5 +34,7 @@ object deps {
     const val compileTesting = "com.google.testing.compile:compile-testing:0.15"
     const val jimfs = "com.google.jimfs:jimfs:1.1"
     const val ecj = "org.eclipse.jdt.core.compiler:ecj:4.6.1"
+    const val kotlinScript = "org.jetbrains.kotlin:kotlin-scripting-jvm:${versions.kotlin}"
+    const val kotlinScriptHost = "org.jetbrains.kotlin:kotlin-scripting-jvm-host:${versions.kotlin}"
   }
 }

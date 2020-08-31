@@ -29,3 +29,4 @@ include(
     ":kotlinpoet-metadata-specs",
     ":kotlinpoet-metadata-specs-tests"
 )
+include("test-util")
