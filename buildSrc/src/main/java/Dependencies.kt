@@ -17,9 +17,9 @@ object versions {
   const val kotlin = "1.4.0"
   const val spotless = "3.27.0"
   const val ktlint = "0.36.0"
-  const val mavenPublish = "0.8.0"
+  const val mavenPublish = "0.13.0-SNAPSHOT"
   const val shadowPlugin = "5.1.0"
-  const val dokka = "0.10.0"
+  const val dokka = "1.4.0"
 }
 
 object deps {
