@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
 /*
  * Copyright (C) 2019 Square, Inc.
  *
@@ -14,10 +16,8 @@
  * limitations under the License.
  */
 plugins {
-  id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
+  id("com.github.johnrengelman.shadow") version versions.shadowPlugin
 }
-
-apply(from = "shading-config.gradle")
 
 val GROUP: String by project
 val VERSION_NAME: String by project
@@ -31,7 +31,52 @@ tasks.named<Jar>("jar") {
   }
 }
 
+val shade: Configuration = configurations.maybeCreate("compileShaded")
+configurations.getByName("compileOnly").extendsFrom(shade)
 dependencies {
   api(project(":kotlinpoet-metadata-specs"))
-  add("compileShaded", deps.autoCommon)
+  // Unshaded stable guava dep for auto-common
+  // `api` due to https://youtrack.jetbrains.com/issue/KT-41702
+  api(deps.guava)
+
+  // Shade auto-common as it's unstable
+  shade(deps.autoCommon) {
+    exclude(group = "com.google.guava")
+  }
+}
+
+val relocateShadowJar = tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
+  target = tasks.shadowJar.get()
+}
+
+val shadowJar = tasks.shadowJar.apply {
+  configure {
+    dependsOn(relocateShadowJar)
+    minimize()
+    archiveClassifier.set("")
+    configurations = listOf(shade)
+    relocate(
+      "com.google.auto.common",
+      "com.squareup.kotlinpoet.classinspector.elements.shaded.com.google.auto.common"
+    )
+  }
+}
+
+artifacts {
+  runtime(shadowJar)
+  archives(shadowJar)
+}
+
+// Shadow plugin doesn't natively support gradle metadata, so we have to tell the maven plugin where
+// to get a jar now.
+afterEvaluate {
+  configure<PublishingExtension> {
+    publications.withType<MavenPublication>().configureEach {
+      if (name == "pluginMaven") {
+        // This is to properly wire the shadow jar's gradle metadata and pom information
+        setArtifacts(artifacts.matching { it.classifier != "" })
+        artifact(shadowJar)
+      }
+    }
+  }
 }
