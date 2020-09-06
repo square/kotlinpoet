@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -20,6 +21,7 @@ plugins {
   kotlin("jvm") version versions.kotlin apply false
   id("org.jetbrains.dokka") version versions.dokka apply false
   id("com.diffplug.gradle.spotless") version versions.spotless
+  id("com.vanniktech.maven.publish") version versions.mavenPublish apply false
 }
 
 spotless {
@@ -47,6 +49,20 @@ subprojects {
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     configure<KotlinProjectExtension> {
       explicitApi()
+    }
+  }
+
+  apply(plugin = "org.jetbrains.kotlin.jvm")
+  if (name != "kotlinpoet-metadata-specs-test") {
+    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "com.vanniktech.maven.publish")
+    afterEvaluate {
+      tasks.named<DokkaTask>("dokka") {
+        // TODO(egorand): Re-enable when https://github.com/Kotlin/dokka/issues/512 is fixed
+        // skipDeprecated = true
+        outputDirectory = "$rootDir/docs/1.x"
+        outputFormat = "gfm"
+      }
     }
   }
 }

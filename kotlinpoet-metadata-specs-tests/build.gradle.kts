@@ -15,10 +15,6 @@
  */
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-plugins {
-  kotlin("jvm")
-}
-
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
   freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xjvm-default=enable")

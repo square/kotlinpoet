@@ -13,15 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-plugins {
-  kotlin("jvm")
-  id("org.jetbrains.dokka")
-  id("com.vanniktech.maven.publish") version versions.mavenPublish
-}
-
 val GROUP: String by project
 val VERSION_NAME: String by project
 
@@ -31,15 +22,6 @@ version = VERSION_NAME
 tasks.named<Jar>("jar") {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata.specs")
-  }
-}
-
-afterEvaluate {
-  tasks.named<DokkaTask>("dokka") {
-    // TODO(egorand): Re-enable when https://github.com/Kotlin/dokka/issues/512 is fixed
-    // skipDeprecated = true
-    outputDirectory = "$rootDir/docs/1.x"
-    outputFormat = "gfm"
   }
 }
 
