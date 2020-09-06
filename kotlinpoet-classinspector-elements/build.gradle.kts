@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-  kotlin("jvm")
-  id("org.jetbrains.dokka")
   id("com.github.johnrengelman.shadow") version versions.shadowPlugin apply false
-  id("com.vanniktech.maven.publish") version versions.mavenPublish
 }
 
 apply(from = "shading-config.gradle")
@@ -34,15 +28,6 @@ version = VERSION_NAME
 tasks.named<Jar>("jar") {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.classinspector.elements")
-  }
-}
-
-afterEvaluate {
-  tasks.named<DokkaTask>("dokka") {
-    // TODO(egorand): Re-enable when https://github.com/Kotlin/dokka/issues/512 is fixed
-    // skipDeprecated = true
-    outputDirectory = "$rootDir/docs/1.x"
-    outputFormat = "gfm"
   }
 }
 
