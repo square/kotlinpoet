@@ -37,7 +37,6 @@ subprojects {
   repositories {
     mavenCentral()
     jcenter()
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
   }
   tasks.withType<KotlinCompile> {
     kotlinOptions {
@@ -53,15 +52,15 @@ subprojects {
   }
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
-  if (name != "kotlinpoet-metadata-specs-test") {
+  if (name != "kotlinpoet-metadata-specs-tests") {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     afterEvaluate {
-      tasks.named<DokkaTask>("dokka") {
-        // TODO(egorand): Re-enable when https://github.com/Kotlin/dokka/issues/512 is fixed
-        // skipDeprecated = true
-        outputDirectory = "$rootDir/docs/1.x"
-        outputFormat = "gfm"
+      tasks.named<DokkaTask>("dokkaGfm") {
+        outputDirectory.set(rootDir.resolve("docs/1.x"))
+        dokkaSourceSets.configureEach {
+          skipDeprecated.set(true)
+        }
       }
     }
   }
