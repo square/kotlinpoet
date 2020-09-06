@@ -56,7 +56,7 @@ subprojects {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     afterEvaluate {
-      tasks.named<DokkaTask>("dokkaGfm") {
+      tasks.named<DokkaTask>("dokkaHtml") {
         outputDirectory.set(rootDir.resolve("docs/1.x"))
         dokkaSourceSets.configureEach {
           skipDeprecated.set(true)
