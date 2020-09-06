@@ -18,12 +18,13 @@ object versions {
   const val spotless = "3.27.0"
   const val ktlint = "0.36.0"
   const val mavenPublish = "0.13.0-SNAPSHOT"
-  const val shadowPlugin = "5.1.0"
+  const val shadowPlugin = "6.0.0"
   const val dokka = "1.4.0"
 }
 
 object deps {
-  const val autoCommon = "com.google.auto:auto-common:0.10"
+  const val autoCommon = "com.google.auto:auto-common:0.11"
+  const val guava = "com.google.guava:guava:29.0-jre"
   object kotlin {
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
     const val junit = "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
