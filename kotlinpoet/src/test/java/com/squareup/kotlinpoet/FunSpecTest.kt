@@ -363,7 +363,7 @@ class FunSpecTest {
     val booleanType = BOOLEAN
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(
-            parameters = *arrayOf(booleanType),
+            parameters = arrayOf(booleanType),
             returnType = unitType))
             .build())
         .returns(String::class)
@@ -379,7 +379,7 @@ class FunSpecTest {
     val unitType = UNIT
     val booleanType = BOOLEAN
     val stringType = String::class.asClassName()
-    val lambdaType = LambdaTypeName.get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+    val lambdaType = LambdaTypeName.get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaType).build())
         .returns(String::class)
@@ -396,7 +396,7 @@ class FunSpecTest {
     val booleanType = Boolean::class.asClassName()
     val stringType = String::class.asClassName()
     val lambdaTypeName = LambdaTypeName
-        .get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+        .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
         .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
@@ -414,7 +414,7 @@ class FunSpecTest {
     val booleanType = Boolean::class.asClassName()
     val stringType = String::class.asClassName().copy(nullable = true)
     val lambdaTypeName = LambdaTypeName
-        .get(parameters = *arrayOf(booleanType, stringType), returnType = unitType)
+        .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
         .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
         .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())

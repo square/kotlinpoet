@@ -189,11 +189,11 @@ class ClassNameTest {
 
   @Test fun emptySimpleNamesForbidden() {
     assertThrows<IllegalArgumentException> {
-      ClassName(packageName = "", simpleNames = *emptyArray())
+      ClassName(packageName = "", simpleNames = emptyArray())
     }.hasMessageThat().isEqualTo("simpleNames must not be empty")
 
     assertThrows<IllegalArgumentException> {
-      ClassName(packageName = "", simpleNames = *arrayOf("Foo", "Bar", ""))
+      ClassName(packageName = "", simpleNames = arrayOf("Foo", "Bar", ""))
     }.hasMessageThat().isEqualTo("simpleNames must not contain empty items: " +
         "[Foo, Bar, ]")
 
