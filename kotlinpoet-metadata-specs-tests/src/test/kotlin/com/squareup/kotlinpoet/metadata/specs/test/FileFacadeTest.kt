@@ -192,9 +192,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun synchronizedFun(): Unit {
       }
 
-      public val BINARY_PROP: Int = 11
+      public val BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      public val BOOL_PROP: Boolean = false
+      public val BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
       public const val CONST_BINARY_PROP: Int = 11
 
@@ -216,21 +216,21 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       public const val CONST_UNDERSCORES_PROP: Int = 1000000
 
-      public val DOUBLE_PROP: Double = 1.0
+      public val DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
-      public val FLOAT_PROP: Float = 1.0F
+      public val FLOAT_PROP: Float = throw NotImplementedError("Stub!")
 
-      public val HEX_PROP: Int = 15
+      public val HEX_PROP: Int = throw NotImplementedError("Stub!")
 
-      public val INT_PROP: Int = 1
+      public val INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      public val LONG_PROP: Long = 1L
+      public val LONG_PROP: Long = throw NotImplementedError("Stub!")
 
-      public val STRING_PROP: String = "prop"
+      public val STRING_PROP: String = throw NotImplementedError("Stub!")
 
-      public val UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public val UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      public val UNDERSCORES_PROP: Int = 1000000
+      public val UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
       public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
@@ -310,7 +310,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       import kotlin.String
 
-      public val prop: String = ""
+      public val prop: String = throw NotImplementedError("Stub!")
     """.trimIndent())
   }
 
@@ -351,7 +351,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.String
       import kotlin.jvm.JvmName
 
-      public val prop2: String = ""
+      public val prop2: String = throw NotImplementedError("Stub!")
     """.trimIndent())
   }
 }
