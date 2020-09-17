@@ -89,11 +89,47 @@ class UtilTest {
     assertThat("".isIdentifier).isFalse()
   }
 
+  @OptIn(ExperimentalStdlibApi::class)
   @Test fun escapeNonJavaIdentifiers() {
     assertThat("8startWithNumber".escapeIfNecessary()).isEqualTo("`8startWithNumber`")
     assertThat("with-hyphen".escapeIfNecessary()).isEqualTo("`with-hyphen`")
     assertThat("with space".escapeIfNecessary()).isEqualTo("`with·space`")
     assertThat("with_unicode_punctuation\u2026".escapeIfNecessary()).isEqualTo("`with_unicode_punctuation\u2026`")
+
+    val generated = FileSpec.builder("a", "b")
+      .addFunction(FunSpec.builder("foo").apply {
+        addParameter("aaa bbb", typeNameOf<(Int) -> String>())
+        val arg = mutableListOf<String>()
+        addStatement(
+          StringBuilder().apply {
+            repeat(10) {
+              append("%N($it) + ")
+              arg += "aaa bbb"
+            }
+            append("%N(100)")
+            arg += "aaa bbb"
+          }.toString(),
+          *arg.toTypedArray()
+        )
+      }.build())
+      .build()
+      .toString()
+    val expectedOutput = """
+      package a
+
+      import kotlin.Function1
+      import kotlin.Int
+      import kotlin.String
+      import kotlin.Unit
+
+      public fun foo(`aaa bbb`: Function1<Int, String>): Unit {
+        `aaa bbb`(0) + `aaa bbb`(1) + `aaa bbb`(2) + `aaa bbb`(3) + `aaa bbb`(4) + `aaa bbb`(5) +
+            `aaa bbb`(6) + `aaa bbb`(7) + `aaa bbb`(8) + `aaa bbb`(9) + `aaa bbb`(100)
+      }
+      
+    """.trimIndent()
+
+    assertThat(generated).isEqualTo(expectedOutput)
   }
 
   @Test fun escapeMultipleTimes() {
