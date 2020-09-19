@@ -49,7 +49,4 @@ dependencies {
   testImplementation(deps.test.compileTesting)
   testImplementation(deps.test.jimfs)
   testImplementation(deps.test.ecj)
-  testImplementation(deps.test.kotlinScript)
-  testImplementation(deps.test.kotlinScriptHost)
-  testImplementation(project(":test-util"))
 }
