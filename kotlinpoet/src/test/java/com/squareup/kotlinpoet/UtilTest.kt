@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import difflib.DiffUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -120,17 +119,17 @@ class UtilTest {
 
     val expectedOutput = """
       package a
-      
+
       import kotlin.Function1
       import kotlin.Int
       import kotlin.String
       import kotlin.Unit
-      
+
       public fun foo(`aaa bbb`: Function1<Int, String>): Unit {
         `aaa bbb`(0) + `aaa bbb`(1) + `aaa bbb`(2) + `aaa bbb`(3) + `aaa bbb`(4) + `aaa bbb`(5) +
             `aaa bbb`(6) + `aaa bbb`(7) + `aaa bbb`(8) + `aaa bbb`(9) + `aaa bbb`(100)
       }
-      
+
     """.trimIndent()
 
     assertThat(generated).isEqualTo(expectedOutput)
