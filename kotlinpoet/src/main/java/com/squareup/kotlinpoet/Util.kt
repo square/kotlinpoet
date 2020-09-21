@@ -227,7 +227,7 @@ private fun String.escapeIfHasAllowedCharacters() = if (hasAllowedCharacters && 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if (!Character.isJavaIdentifierStart(first()) ||
       drop(1).any { !Character.isJavaIdentifierPart(it) } && !alreadyEscaped()) {
-    "`$this`"
+    "`$this`".replace(' ', '·')
   } else {
     this
   }
