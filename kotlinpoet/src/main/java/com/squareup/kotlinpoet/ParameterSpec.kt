@@ -143,7 +143,10 @@ public class ParameterSpec private constructor(
       this.defaultValue = codeBlock
     }
 
-    public fun build(): ParameterSpec = ParameterSpec(this)
+    public fun build(): ParameterSpec {
+      modifiers.checkTarget(KModifier.Target.PARAMETER)
+      return ParameterSpec(this)
+    }
   }
 
   public companion object {

@@ -787,6 +787,12 @@ public class TypeSpec private constructor(
           throw IllegalArgumentException("Multiple companion objects are present but only one is allowed.")
         }
       }
+      val target = when (kind) {
+        Kind.CLASS -> KModifier.Target.CLASS
+        Kind.INTERFACE -> KModifier.Target.INTERFACE
+        Kind.OBJECT -> KModifier.Target.OBJECT
+      }
+      modifiers.checkTarget(target)
 
       return TypeSpec(this)
     }

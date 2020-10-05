@@ -124,7 +124,6 @@ class TypeSpecTest {
     val simpleThungOfBar = simpleThung.parameterizedBy(bar)
 
     val thungParameter = ParameterSpec.builder("thung", thungOfSuperFoo)
-        .addModifiers(KModifier.FINAL)
         .build()
     val aSimpleThung = TypeSpec.anonymousClassBuilder()
         .superclass(simpleThungOfBar)
@@ -157,8 +156,8 @@ class TypeSpecTest {
         |
         |public class Taco {
         |  public val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    public override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object :
-        |        SimpleThung<Bar>(thung) {
+        |    public override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
+        |        {
         |      public override fun doSomething(bar: Bar): Unit {
         |        /* code snippets */
         |      }
@@ -2013,13 +2012,13 @@ class TypeSpecTest {
     val taco = TypeSpec.classBuilder("Taco")
         .addFunction(FunSpec.builder("comparePrefix")
             .returns(stringComparator)
-            .addParameter("length", Int::class, KModifier.FINAL)
+            .addParameter("length", Int::class)
             .addComment("Return a new comparator for the target length.")
             .addStatement("return %L", prefixComparator)
             .build())
         .addFunction(FunSpec.builder("sortPrefix")
             .addParameter("list", listOfString)
-            .addParameter("length", Int::class, KModifier.FINAL)
+            .addParameter("length", Int::class)
             .addStatement("%T.sort(\nlist,\n%L)", Collections::class, prefixComparator)
             .build())
         .build()
@@ -2034,7 +2033,7 @@ class TypeSpecTest {
         |import kotlin.collections.List
         |
         |public class Taco {
-        |  public fun comparePrefix(final length: Int): Comparator<String> {
+        |  public fun comparePrefix(length: Int): Comparator<String> {
         |    // Return a new comparator for the target length.
         |    return object : Comparator<String> {
         |      public override fun compare(a: String, b: String): Int {
@@ -2045,7 +2044,7 @@ class TypeSpecTest {
         |    }
         |  }
         |
-        |  public fun sortPrefix(list: List<String>, final length: Int): Unit {
+        |  public fun sortPrefix(list: List<String>, length: Int): Unit {
         |    Collections.sort(
         |        list,
         |        object : Comparator<String> {

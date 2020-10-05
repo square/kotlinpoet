@@ -262,8 +262,8 @@ public class PropertySpec private constructor(
         throw IllegalArgumentException("KotlinPoet doesn't allow setting the inline modifier on " +
             "properties. You should mark either the getter, the setter, or both inline.")
       }
-      for (it in modifiers) {
-          if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
+      if (!isPrimaryConstructorParameter) {
+        modifiers.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }

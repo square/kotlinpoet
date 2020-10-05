@@ -511,6 +511,14 @@ public class FunSpec private constructor(
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
       check(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
+
+      val target = when {
+        name.isConstructor -> KModifier.Target.CONSTRUCTOR
+        name.isAccessor -> KModifier.Target.ACCESSOR
+        else -> KModifier.Target.FUNCTION
+      }
+      modifiers.checkTarget(target)
+
       return FunSpec(this)
     }
   }
