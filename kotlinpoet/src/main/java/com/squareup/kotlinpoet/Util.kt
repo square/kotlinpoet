@@ -163,7 +163,7 @@ private val IDENTIFIER_REGEX =
 
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
-// https://github.com/JetBrains/kotlin/blob/master/core/descriptors/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java
+// https://github.com/JetBrains/kotlin/search?q=KeywordStringsGenerated.java
 private val KEYWORDS = setOf(
     "package",
     "as",

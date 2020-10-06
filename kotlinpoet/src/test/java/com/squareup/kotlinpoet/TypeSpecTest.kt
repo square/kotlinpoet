@@ -893,6 +893,22 @@ class TypeSpecTest {
         |""".trimMargin())
   }
 
+  @Ignore("Broken, see https://github.com/square/kotlinpoet/issues/991")
+  @Test fun enumWithModifiedKeywords() {
+    val typeSpec = TypeSpec.enumBuilder("Sort")
+        .addEnumConstant("open")
+        .addEnumConstant("closed")
+        .build()
+    assertThat(toString(typeSpec)).isEqualTo("""
+        |package com.squareup.tacos
+        |
+        |public enum class Food {
+        |  `open`,
+        |  closed,
+        |}
+        |""".trimMargin())
+  }
+
   @Test fun interfaceExtends() {
     val taco = ClassName(tacosPackage, "Taco")
     val typeSpec = TypeSpec.interfaceBuilder("Taco")
