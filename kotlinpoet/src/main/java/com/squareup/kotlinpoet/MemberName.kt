@@ -33,11 +33,11 @@ public data class MemberName internal constructor(
 ) {
   public constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
   public constructor(enclosingClassName: ClassName, simpleName: String) :
-      this(enclosingClassName.packageName, enclosingClassName, simpleName)
+    this(enclosingClassName.packageName, enclosingClassName, simpleName)
   public constructor(packageName: String, operator: KOperator) :
-      this(packageName, null, operator.functionName, operator)
+    this(packageName, null, operator.functionName, operator)
   public constructor(enclosingClassName: ClassName, operator: KOperator) :
-      this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
+    this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
 
   /** Fully qualified name using `.` as a separator, like `kotlin.String.isBlank`. */
   public val canonicalName: String = buildString {
@@ -78,10 +78,10 @@ public data class MemberName internal constructor(
   public companion object {
     @Suppress("NOTHING_TO_INLINE")
     @JvmSynthetic @JvmStatic public inline fun ClassName.member(simpleName: String): MemberName =
-        MemberName(this, simpleName)
+      MemberName(this, simpleName)
     @JvmStatic @JvmName("get") public fun KClass<*>.member(simpleName: String): MemberName =
-        asClassName().member(simpleName)
+      asClassName().member(simpleName)
     @JvmStatic @JvmName("get") public fun Class<*>.member(simpleName: String): MemberName =
-        asClassName().member(simpleName)
+      asClassName().member(simpleName)
   }
 }

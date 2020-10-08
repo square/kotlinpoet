@@ -61,11 +61,11 @@ class UtilTest {
     stringLiteral("♦♥♠♣")
     stringLiteral("€\\t@\\t\${\'\$\'}", "€\t@\t$")
     assertThat(stringLiteralWithQuotes("abc();\ndef();"))
-        .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
+      .isEqualTo("\"\"\"\n|abc();\n|def();\n\"\"\".trimMargin()")
     stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!")
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0")
     assertThat(stringLiteralWithQuotes("abc();\ndef();", isConstantContext = true))
-        .isEqualTo("\"abc();\\ndef();\"")
+      .isEqualTo("\"abc();\\ndef();\"")
   }
 
   @Test fun legalIdentifiers() {
@@ -99,21 +99,23 @@ class UtilTest {
   @OptIn(ExperimentalStdlibApi::class)
   @Test fun escapeSpaceInName() {
     val generated = FileSpec.builder("a", "b")
-      .addFunction(FunSpec.builder("foo").apply {
-        addParameter("aaa bbb", typeNameOf<(Int) -> String>())
-        val arg = mutableListOf<String>()
-        addStatement(
-          StringBuilder().apply {
-            repeat(10) {
-              append("%N($it) + ")
+      .addFunction(
+        FunSpec.builder("foo").apply {
+          addParameter("aaa bbb", typeNameOf<(Int) -> String>())
+          val arg = mutableListOf<String>()
+          addStatement(
+            StringBuilder().apply {
+              repeat(10) {
+                append("%N($it) + ")
+                arg += "aaa bbb"
+              }
+              append("%N(100)")
               arg += "aaa bbb"
-            }
-            append("%N(100)")
-            arg += "aaa bbb"
-          }.toString(),
-          *arg.toTypedArray()
-        )
-      }.build())
+            }.toString(),
+            *arg.toTypedArray()
+          )
+        }.build()
+      )
       .build()
       .toString()
 
@@ -142,5 +144,5 @@ class UtilTest {
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
   private fun stringLiteral(expected: String, value: String) =
-      assertEquals("\"$expected\"", stringLiteralWithQuotes(value))
+    assertEquals("\"$expected\"", stringLiteralWithQuotes(value))
 }

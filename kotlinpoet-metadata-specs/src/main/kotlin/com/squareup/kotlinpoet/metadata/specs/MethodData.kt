@@ -41,35 +41,36 @@ public data class MethodData(
     containsReifiedTypeParameter: Boolean = false
   ): Collection<AnnotationSpec> {
     return ClassInspectorUtil.createAnnotations(
-        useSiteTarget) {
+      useSiteTarget
+    ) {
       addAll(annotations)
       if (isSynthetic && !containsReifiedTypeParameter) {
         add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
       addAll(jvmModifiers.map { it.annotationSpec() })
       exceptions.takeIf { it.isNotEmpty() }
-          ?.let {
-            add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget))
-          }
+        ?.let {
+          add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget))
+        }
     }
   }
 
   public companion object {
     public val SYNTHETIC: MethodData = MethodData(
-        annotations = emptyList(),
-        parameterAnnotations = emptyMap(),
-        isSynthetic = true,
-        jvmModifiers = emptySet(),
-        isOverride = false,
-        exceptions = emptyList()
+      annotations = emptyList(),
+      parameterAnnotations = emptyMap(),
+      isSynthetic = true,
+      jvmModifiers = emptySet(),
+      isOverride = false,
+      exceptions = emptyList()
     )
     public val EMPTY: MethodData = MethodData(
-        annotations = emptyList(),
-        parameterAnnotations = emptyMap(),
-        isSynthetic = false,
-        jvmModifiers = emptySet(),
-        isOverride = false,
-        exceptions = emptyList()
+      annotations = emptyList(),
+      parameterAnnotations = emptyMap(),
+      isSynthetic = false,
+      jvmModifiers = emptySet(),
+      isOverride = false,
+      exceptions = emptyList()
     )
   }
 }

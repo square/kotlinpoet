@@ -45,17 +45,17 @@ abstract class AbstractTypesTest {
 
   @Test fun getBasicTypeMirror() {
     assertThat(getMirror(Any::class.java).asTypeName())
-        .isEqualTo(Any::class.java.asClassName())
+      .isEqualTo(Any::class.java.asClassName())
     assertThat(getMirror(Charset::class.java).asTypeName())
-        .isEqualTo(Charset::class.asClassName())
+      .isEqualTo(Charset::class.asClassName())
     assertThat(getMirror(AbstractTypesTest::class.java).asTypeName())
-        .isEqualTo(AbstractTypesTest::class.asClassName())
+      .isEqualTo(AbstractTypesTest::class.asClassName())
   }
 
   @Test fun getParameterizedTypeMirror() {
     val setType = types.getDeclaredType(getElement(Set::class.java), getMirror(String::class.java))
     assertThat(setType.asTypeName())
-        .isEqualTo(Set::class.asClassName().parameterizedBy(String::class.asClassName()))
+      .isEqualTo(Set::class.asClassName().parameterizedBy(String::class.asClassName()))
   }
 
   @Test fun getErrorType() {
@@ -64,12 +64,12 @@ abstract class AbstractTypesTest {
   }
 
   internal class Parameterized<
-      Simple,
-      ExtendsClass : Number,
-      ExtendsInterface : Runnable,
-      ExtendsTypeVariable : Simple,
-      Intersection : Number,
-      IntersectionOfInterfaces : Runnable>
+    Simple,
+    ExtendsClass : Number,
+    ExtendsInterface : Runnable,
+    ExtendsTypeVariable : Simple,
+    Intersection : Number,
+    IntersectionOfInterfaces : Runnable>
   where Intersection : Runnable, IntersectionOfInterfaces : Serializable
 
   @Test fun getTypeVariableTypeMirror() {
@@ -81,19 +81,19 @@ abstract class AbstractTypesTest {
     val serializable = Serializable::class.asClassName()
 
     assertThat(typeVariables[0].asType().asTypeName())
-        .isEqualTo(TypeVariableName("Simple"))
+      .isEqualTo(TypeVariableName("Simple"))
     assertThat(typeVariables[1].asType().asTypeName())
-        .isEqualTo(TypeVariableName("ExtendsClass", number))
+      .isEqualTo(TypeVariableName("ExtendsClass", number))
     assertThat(typeVariables[2].asType().asTypeName())
-        .isEqualTo(TypeVariableName("ExtendsInterface", runnable))
+      .isEqualTo(TypeVariableName("ExtendsInterface", runnable))
     assertThat(typeVariables[3].asType().asTypeName())
-        .isEqualTo(TypeVariableName("ExtendsTypeVariable", TypeVariableName("Simple")))
+      .isEqualTo(TypeVariableName("ExtendsTypeVariable", TypeVariableName("Simple")))
     assertThat(typeVariables[4].asType().asTypeName())
-        .isEqualTo(TypeVariableName("Intersection", number, runnable))
+      .isEqualTo(TypeVariableName("Intersection", number, runnable))
     assertThat(typeVariables[5].asType().asTypeName())
-        .isEqualTo(TypeVariableName("IntersectionOfInterfaces", runnable, serializable))
+      .isEqualTo(TypeVariableName("IntersectionOfInterfaces", runnable, serializable))
     assertThat((typeVariables[4].asType().asTypeName() as TypeVariableName).bounds)
-        .containsExactly(number, runnable)
+      .containsExactly(number, runnable)
   }
 
   internal class Recursive<T : Map<List<T>, Set<Array<T>>>>
@@ -107,7 +107,7 @@ abstract class AbstractTypesTest {
     val typeVariableName = typeName.typeArguments[0] as TypeVariableName
     assertThat(typeVariableName.toString()).isEqualTo("T")
     assertThat(typeVariableName.bounds.toString())
-        .isEqualTo("[kotlin.collections.Map<kotlin.collections.List<out T>, out kotlin.collections.Set<out kotlin.Array<T>>>]")
+      .isEqualTo("[kotlin.collections.Map<kotlin.collections.List<out T>, out kotlin.collections.Set<out kotlin.Array<T>>>]")
   }
 
   @Test fun getPrimitiveTypeMirror() {
@@ -123,7 +123,7 @@ abstract class AbstractTypesTest {
 
   @Test fun getArrayTypeMirror() {
     assertThat(types.getArrayType(getMirror(String::class.java)).asTypeName())
-        .isEqualTo(ARRAY.parameterizedBy(String::class.asClassName()))
+      .isEqualTo(ARRAY.parameterizedBy(String::class.asClassName()))
   }
 
   @Test fun getVoidTypeMirror() {
@@ -189,17 +189,17 @@ abstract class AbstractTypesTest {
 
   @Test fun kType() {
     assertThat(Map::class.starProjectedType.asTypeName().toString())
-        .isEqualTo("kotlin.collections.Map<*, *>")
+      .isEqualTo("kotlin.collections.Map<*, *>")
     assertThat(Map::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asTypeName().toString())
-        .isEqualTo("kotlin.collections.Map<kotlin.String, *>")
+      .isEqualTo("kotlin.collections.Map<kotlin.String, *>")
     assertThat(Map.Entry::class.createType(listOf(KTypeProjection(KVariance.INVARIANT, String::class.createType(emptyList())), KTypeProjection.STAR)).asTypeName().toString())
-        .isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
+      .isEqualTo("kotlin.collections.Map.Entry<kotlin.String, *>")
     assertThat(Any::class.starProjectedType.withNullability(true).asTypeName().toString())
-        .isEqualTo("kotlin.Any?")
+      .isEqualTo("kotlin.Any?")
 
     val treeMapClass = java.util.TreeMap::class
     assertThat(treeMapClass.declaredFunctions.find { it.name == "parentOf" }!!.returnType.asTypeName().toString())
-        .isEqualTo("java.util.TreeMap.Entry<K, V>")
+      .isEqualTo("java.util.TreeMap.Entry<K, V>")
   }
 
   private class DeclaredTypeAsErrorType(private val declaredType: DeclaredType) : ErrorType {
@@ -214,7 +214,7 @@ abstract class AbstractTypesTest {
     override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P) = typeVisitor.visitError(this, p)
 
     override fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A> =
-        throw UnsupportedOperationException()
+      throw UnsupportedOperationException()
 
     override fun <A : Annotation> getAnnotation(annotationType: Class<A>): A = throw UnsupportedOperationException()
 

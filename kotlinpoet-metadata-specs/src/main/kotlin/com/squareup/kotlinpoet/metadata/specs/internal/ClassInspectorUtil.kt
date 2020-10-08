@@ -26,11 +26,11 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
-import java.util.Collections
-import java.util.TreeSet
 import kotlinx.metadata.isLocal
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import java.util.Collections
+import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
 public object ClassInspectorUtil {
@@ -42,39 +42,39 @@ public object ClassInspectorUtil {
   private val JVM_TRANSIENT = Transient::class.asClassName()
   private val JVM_VOLATILE = Volatile::class.asClassName()
   private val IMPLICIT_FIELD_ANNOTATIONS = setOf(
-      JVM_FIELD,
-      JVM_TRANSIENT,
-      JVM_VOLATILE
+    JVM_FIELD,
+    JVM_TRANSIENT,
+    JVM_VOLATILE
   )
   private val NOT_NULL = NotNull::class.asClassName()
   private val NULLABLE = Nullable::class.asClassName()
   private val EXTENSION_FUNCTION_TYPE = ExtensionFunctionType::class.asClassName()
   private val KOTLIN_INTRINSIC_ANNOTATIONS = setOf(
-      NOT_NULL,
-      NULLABLE,
-      EXTENSION_FUNCTION_TYPE
+    NOT_NULL,
+    NULLABLE,
+    EXTENSION_FUNCTION_TYPE
   )
 
   public val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
-      CHAR_SEQUENCE,
-      COMPARABLE,
-      ITERABLE,
-      COLLECTION,
-      LIST,
-      SET,
-      MAP,
-      MAP_ENTRY,
-      MUTABLE_ITERABLE,
-      MUTABLE_COLLECTION,
-      MUTABLE_LIST,
-      MUTABLE_SET,
-      MUTABLE_MAP,
-      MUTABLE_MAP_ENTRY
+    CHAR_SEQUENCE,
+    COMPARABLE,
+    ITERABLE,
+    COLLECTION,
+    LIST,
+    SET,
+    MAP,
+    MAP_ENTRY,
+    MUTABLE_ITERABLE,
+    MUTABLE_COLLECTION,
+    MUTABLE_LIST,
+    MUTABLE_SET,
+    MUTABLE_MAP,
+    MUTABLE_MAP_ENTRY
   )
 
   private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-      "org.jetbrains.annotations.NotNull",
-      "org.jetbrains.annotations.Nullable"
+    "org.jetbrains.annotations.NotNull",
+    "org.jetbrains.annotations.Nullable"
   )
 
   public fun filterOutNullabilityAnnotations(
@@ -83,7 +83,7 @@ public object ClassInspectorUtil {
     return annotations.filterNot {
       val typeName = it.typeName
       return@filterNot typeName is ClassName &&
-          typeName.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS
+        typeName.canonicalName in KOTLIN_NULLABILITY_ANNOTATIONS
     }
   }
 
@@ -110,9 +110,10 @@ public object ClassInspectorUtil {
     hasField: Boolean
   ): Boolean {
     return if (!hasGetter &&
-        !hasSetter &&
-        hasField &&
-        !property.isConst) {
+      !hasSetter &&
+      hasField &&
+      !property.isConst
+    ) {
       !(classInspector.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
     } else {
       false
@@ -128,10 +129,10 @@ public object ClassInspectorUtil {
     body: MutableCollection<AnnotationSpec>.() -> Unit
   ): Collection<AnnotationSpec> {
     val result = mutableSetOf<AnnotationSpec>()
-        .apply(body)
-        .filterNot { spec ->
-          spec.typeName in KOTLIN_INTRINSIC_ANNOTATIONS
-        }
+      .apply(body)
+      .filterNot { spec ->
+        spec.typeName in KOTLIN_INTRINSIC_ANNOTATIONS
+      }
     val withUseSiteTarget = if (siteTarget != null) {
       result.map {
         if (!(siteTarget == FIELD && it.typeName in IMPLICIT_FIELD_ANNOTATIONS)) {
@@ -159,13 +160,13 @@ public object ClassInspectorUtil {
     useSiteTarget: UseSiteTarget? = null
   ): AnnotationSpec {
     return AnnotationSpec.builder(Throws::class)
-        .addMember(
-            "exceptionClasses = %L",
-            exceptions.map { CodeBlock.of("%T::class", it) }
-                .joinToCode(prefix = "[", suffix = "]")
-        )
-        .useSiteTarget(useSiteTarget)
-        .build()
+      .addMember(
+        "exceptionClasses = %L",
+        exceptions.map { CodeBlock.of("%T::class", it) }
+          .joinToCode(prefix = "[", suffix = "]")
+      )
+      .useSiteTarget(useSiteTarget)
+      .build()
   }
 
   /**
@@ -184,30 +185,30 @@ public object ClassInspectorUtil {
     // Top-level: package/of/class/MyClass
     // Nested A:  package/of/class/MyClass.NestedClass
     val simpleName = kotlinMetadataName.substringAfterLast(
-        '/', // Drop the package name, e.g. "package/of/class/"
-        '.' // Drop any enclosing classes, e.g. "MyClass."
+      '/', // Drop the package name, e.g. "package/of/class/"
+      '.' // Drop any enclosing classes, e.g. "MyClass."
     )
     val packageName = kotlinMetadataName.substringBeforeLast(
-        delimiter = "/",
-        missingDelimiterValue = ""
+      delimiter = "/",
+      missingDelimiterValue = ""
     )
     val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
-        .removeSuffix(".") // Trailing "." if any
-        .removePrefix(packageName)
-        .removePrefix("/")
-        .let {
-          if (it.isNotEmpty()) {
-            it.split(".")
-          } else {
-            // Don't split, otherwise we end up with an empty string as the first element!
-            emptyList()
-          }
+      .removeSuffix(".") // Trailing "." if any
+      .removePrefix(packageName)
+      .removePrefix("/")
+      .let {
+        if (it.isNotEmpty()) {
+          it.split(".")
+        } else {
+          // Don't split, otherwise we end up with an empty string as the first element!
+          emptyList()
         }
-        .plus(simpleName)
+      }
+      .plus(simpleName)
 
     return ClassName(
-        packageName = packageName.replace("/", "."),
-        simpleNames = simpleNames
+      packageName = packageName.replace("/", "."),
+      simpleNames = simpleNames
     )
   }
 

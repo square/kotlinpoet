@@ -35,11 +35,11 @@ public data class PropertyData(
     // Don't add annotations that are already defined on the parent
     val higherScopedAnnotations = annotations.associateBy { it.typeName }
     val fieldAnnotations = fieldData?.allAnnotations.orEmpty()
-        .filterNot { it.typeName in higherScopedAnnotations }
-        .associateByTo(LinkedHashMap()) { it.typeName }
+      .filterNot { it.typeName in higherScopedAnnotations }
+      .associateByTo(LinkedHashMap()) { it.typeName }
     val getterAnnotations = getterData?.allAnnotations(GET).orEmpty()
-        .filterNot { it.typeName in higherScopedAnnotations }
-        .associateByTo(LinkedHashMap()) { it.typeName }
+      .filterNot { it.typeName in higherScopedAnnotations }
+      .associateByTo(LinkedHashMap()) { it.typeName }
 
     val finalTopAnnotations = annotations.toMutableList()
 
@@ -50,8 +50,8 @@ public data class PropertyData(
       for (sharedAnnotation in sharedAnnotations) {
         // Add it to the top-level annotations without a site-target
         finalTopAnnotations += getterAnnotations.getValue(sharedAnnotation).toBuilder()
-            .useSiteTarget(null)
-            .build()
+          .useSiteTarget(null)
+          .build()
 
         // Remove from field and getter
         fieldAnnotations.remove(sharedAnnotation)
@@ -62,8 +62,10 @@ public data class PropertyData(
     addAll(finalTopAnnotations)
     addAll(fieldAnnotations.values)
     addAll(getterAnnotations.values)
-    addAll(setterData?.allAnnotations(SET).orEmpty()
-        .filterNot { it.typeName in higherScopedAnnotations })
+    addAll(
+      setterData?.allAnnotations(SET).orEmpty()
+        .filterNot { it.typeName in higherScopedAnnotations }
+    )
     if (isJvmField) {
       add(ClassInspectorUtil.JVM_FIELD_SPEC)
     }

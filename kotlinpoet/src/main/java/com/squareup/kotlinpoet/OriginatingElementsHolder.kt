@@ -38,10 +38,10 @@ public interface OriginatingElementsHolder {
 }
 
 internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements() =
-    OriginatingElements(originatingElements.toImmutableList())
+  OriginatingElements(originatingElements.toImmutableList())
 
 internal fun List<Element>.buildOriginatingElements() =
-    OriginatingElements(toImmutableList())
+  OriginatingElements(toImmutableList())
 
 internal class OriginatingElements(
   override val originatingElements: List<Element>

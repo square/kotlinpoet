@@ -32,13 +32,13 @@ import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
+import org.junit.Ignore
+import org.junit.Test
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.test.fail
-import org.junit.Ignore
-import org.junit.Test
 
 @KotlinPoetMetadataPreview
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -48,14 +48,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun constructorData() {
     val typeSpec = ConstructorClass::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ConstructorClass(
         public val foo: kotlin.String,
         vararg bar: kotlin.Int
       ) {
         public constructor(bar: kotlin.Int)
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class ConstructorClass(val foo: String, vararg bar: Int) {
@@ -69,9 +71,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = Supertype::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Supertype : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseType(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseInterface
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   abstract class BaseType
@@ -79,15 +83,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   class Supertype : BaseType(), BaseInterface
 
   @IgnoreForHandlerType(
-      reason = "Elements properly resolves the string constant",
-      handlerType = ELEMENTS
+    reason = "Elements properly resolves the string constant",
+    handlerType = ELEMENTS
   )
   @Test
   fun propertiesReflective() {
     val typeSpec = Properties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Properties {
         public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
@@ -97,19 +102,21 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         public val foo: kotlin.String = throw NotImplementedError("Stub!")
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Elements properly resolves the string constant",
-      handlerType = REFLECTIVE
+    reason = "Elements properly resolves the string constant",
+    handlerType = REFLECTIVE
   )
   @Test
   fun propertiesElements() {
     val typeSpec = Properties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Properties {
         public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
@@ -119,7 +126,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         public val foo: kotlin.String = throw NotImplementedError("Stub!")
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Properties {
@@ -133,11 +141,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun companionObject() {
     val typeSpec = CompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class CompanionObject {
         public companion object
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class CompanionObject {
@@ -148,11 +158,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun namedCompanionObject() {
     val typeSpec = NamedCompanionObject::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class NamedCompanionObject {
         public companion object Named
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class NamedCompanionObject {
@@ -163,11 +175,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun generics() {
     val typeSpec = Generics::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Generics<out T, in R, V>(
         public val genericInput: T
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Generics<out T, in R, V>(val genericInput: T)
@@ -177,12 +191,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = TypeAliases::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class TypeAliases(
         public val foo: com.squareup.kotlinpoet.metadata.specs.test.TypeAliasName,
         public val bar: com.squareup.kotlinpoet.metadata.specs.test.GenericTypeAlias
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val fooPropertyType = typeSpec.propertySpecs.first { it.name == "foo" }.type
     val fooAliasData = fooPropertyType.tag<TypeNameAliasTag>()
@@ -201,12 +217,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun propertyMutability() {
     val typeSpec = PropertyMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class PropertyMutability(
         public val foo: kotlin.String,
         public var mutableFoo: kotlin.String
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class PropertyMutability(val foo: String, var mutableFoo: String)
@@ -215,12 +233,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun collectionMutability() {
     val typeSpec = CollectionMutability::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class CollectionMutability(
         public val immutableList: kotlin.collections.List<kotlin.String>,
         public val mutableList: kotlin.collections.MutableList<kotlin.String>
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class CollectionMutability(val immutableList: List<String>, val mutableList: MutableList<String>)
@@ -229,7 +249,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun suspendTypes() {
     val typeSpec = SuspendTypes::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class SuspendTypes {
         public val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = throw NotImplementedError("Stub!")
 
@@ -242,7 +263,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public suspend fun testSuspendFun(param1: kotlin.String): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class SuspendTypes {
@@ -262,7 +284,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun parameters() {
     val typeSpec = Parameters::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Parameters {
         public inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit {
         }
@@ -274,7 +297,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           throw NotImplementedError("Stub!")
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Parameters {
@@ -293,7 +317,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun lambdaReceiver() {
     val typeSpec = LambdaReceiver::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class LambdaReceiver {
         public fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit): kotlin.Unit {
         }
@@ -304,7 +329,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun lambdaReceiver3(block: kotlin.String.(kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class LambdaReceiver {
@@ -321,11 +347,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = NestedTypeAliasTest::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class NestedTypeAliasTest {
         public val prop: com.squareup.kotlinpoet.metadata.specs.test.NestedTypeAlias = throw NotImplementedError("Stub!")
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class NestedTypeAliasTest {
@@ -337,11 +365,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = InlineClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public inline class InlineClass(
         public val value: kotlin.String
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @Test
@@ -349,12 +379,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = FunctionsReferencingTypeParameters::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class FunctionsReferencingTypeParameters<T> {
         public fun test(param: T): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class FunctionsReferencingTypeParameters<T> {
@@ -367,7 +399,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = OverriddenThings::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public abstract class OverriddenThings : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
         public override var openProp: kotlin.String = throw NotImplementedError("Stub!")
 
@@ -379,7 +412,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public override fun openFunctionInterface(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   abstract class OverriddenThingsBase {
@@ -410,7 +444,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = DelegatedProperties::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class DelegatedProperties {
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
@@ -432,7 +467,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
          */
         public var mutableNullable: kotlin.String? by kotlin.properties.Delegates.observable(null) { _, _, _ -> }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class DelegatedProperties {
@@ -449,11 +485,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
     // TODO Assert this also excludes functions handled by the delegate
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ClassDelegation<T>(
         delegate: List<T>
       ): List<T> by delegate
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class ClassDelegation<T>(delegate: List<T>) : List<T> by delegate
@@ -463,13 +501,15 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = SimpleEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public enum class SimpleEnum {
         FOO,
         BAR,
         BAZ,
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   enum class SimpleEnum {
@@ -481,7 +521,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = ComplexEnum::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public enum class ComplexEnum(
         public val value: kotlin.String
       ) {
@@ -502,7 +543,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         },
         ;
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   enum class ComplexEnum(val value: String) {
@@ -528,14 +570,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = EnumWithAnnotation::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public enum class EnumWithAnnotation {
         FOO,
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR,
         BAZ,
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   enum class EnumWithAnnotation {
@@ -547,7 +591,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = ComplexEnumWithAnnotation::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public enum class ComplexEnumWithAnnotation(
         public val value: kotlin.String
       ) {
@@ -569,7 +614,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         },
         ;
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   enum class ComplexEnumWithAnnotation(val value: String) {
@@ -596,7 +642,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val testInterfaceSpec = TestInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(testInterfaceSpec.trimmedToString()).isEqualTo("""
+    assertThat(testInterfaceSpec.trimmedToString()).isEqualTo(
+      """
       public interface TestInterface {
         public fun complex(input: kotlin.String, input2: kotlin.String = throw NotImplementedError("Stub!")): kotlin.String {
           throw NotImplementedError("Stub!")
@@ -623,12 +670,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         public fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val subInterfaceSpec = SubInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(subInterfaceSpec.trimmedToString()).isEqualTo("""
+    assertThat(subInterfaceSpec.trimmedToString()).isEqualTo(
+      """
       public interface SubInterface : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TestInterface {
         public override fun hasDefault(): kotlin.Unit {
         }
@@ -640,12 +689,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun subInterfaceFunction(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val implSpec = TestSubInterfaceImpl::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(implSpec.trimmedToString()).isEqualTo("""
+    assertThat(implSpec.trimmedToString()).isEqualTo(
+      """
       public class TestSubInterfaceImpl : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
         public override fun noDefault(): kotlin.Unit {
         }
@@ -656,7 +707,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public override fun noDefaultWithInputDefault(input: kotlin.String): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   interface TestInterface {
@@ -717,9 +769,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = BackwardReferencingTypeVars::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public interface BackwardReferencingTypeVars<T> : kotlin.collections.List<kotlin.collections.Set<T>>
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   interface BackwardReferencingTypeVars<T> : List<Set<T>>
@@ -757,11 +811,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = MyAnnotation::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public annotation class MyAnnotation(
         public val value: kotlin.String
       )
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   annotation class MyAnnotation(val value: String)
@@ -771,7 +827,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = GenericClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class GenericClass<T> {
         public fun <T> functionAlsoWithT(param: T): kotlin.Unit {
         }
@@ -788,7 +845,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public inline fun <reified T> reified(param: T): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val func1TypeVar = typeSpec.funSpecs.find { it.name == "functionAlsoWithT" }!!.typeVariables.first()
     val classTypeVar = typeSpec.typeVariables.first()
@@ -813,11 +871,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = ComplexCompanionObject::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ComplexCompanionObject {
         public companion object ComplexObject : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionInterface
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   interface CompanionInterface
@@ -828,15 +888,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "TODO Synthetic methods that hold annotations aren't visible in these tests",
-      handlerType = ELEMENTS
+    reason = "TODO Synthetic methods that hold annotations aren't visible in these tests",
+    handlerType = ELEMENTS
   )
   @Test
   fun annotationsAreCopied() {
     val typeSpec = AnnotationHolders::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class AnnotationHolders @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation constructor() {
         @field:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         public var field: kotlin.String? = null
@@ -858,7 +919,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun function(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class AnnotationHolders @ConstructorAnnotation constructor() {
@@ -898,8 +960,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   annotation class FunctionAnnotation
 
   @IgnoreForHandlerType(
-      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
-      handlerType = REFLECTIVE
+    reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+    handlerType = REFLECTIVE
   )
   @Test
   fun constantValuesElements() {
@@ -907,7 +969,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
     // Note: formats like hex/binary/underscore are not available as formatted at runtime
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Constants(
         public val param: kotlin.String = throw NotImplementedError("Stub!")
       ) {
@@ -983,14 +1046,15 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     // TODO check with objects
   }
 
   @IgnoreForHandlerType(
-      reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
-      handlerType = ELEMENTS
+    reason = "Elements properly resolves the regular properties + JvmStatic, but reflection will not",
+    handlerType = ELEMENTS
   )
   @Test
   fun constantValuesReflective() {
@@ -998,7 +1062,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
     // Note: formats like hex/binary/underscore are not available as formatted in elements
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Constants(
         public val param: kotlin.String = throw NotImplementedError("Stub!")
       ) {
@@ -1074,7 +1139,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Constants(
@@ -1121,7 +1187,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = JvmAnnotations::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class JvmAnnotations {
         @get:kotlin.jvm.Synchronized
         public val synchronizedGetProp: kotlin.String? = null
@@ -1139,12 +1206,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun synchronizedFun(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val interfaceSpec = JvmAnnotationsInterface::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(interfaceSpec.trimmedToString()).isEqualTo("""
+    assertThat(interfaceSpec.trimmedToString()).isEqualTo(
+      """
       public interface JvmAnnotationsInterface {
         @kotlin.jvm.JvmDefault
         public fun defaultMethod(): kotlin.Unit {
@@ -1152,7 +1221,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         public fun notDefaultMethod(): kotlin.Unit
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class JvmAnnotations {
@@ -1178,13 +1248,15 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = NestedClasses::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class NestedClasses {
         public abstract class NestedClass<T> : kotlin.collections.List<T>
 
         public inner class NestedInnerClass
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class NestedClasses {
@@ -1193,16 +1265,17 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "Reflection properly resolves companion properties + JvmStatic + JvmName, but " +
-          "elements will not",
-      handlerType = ELEMENTS
+    reason = "Reflection properly resolves companion properties + JvmStatic + JvmName, but " +
+      "elements will not",
+    handlerType = ELEMENTS
   )
   @Test
   fun jvmNamesReflective() {
     val typeSpec = JvmNameData::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
         public val param: kotlin.String
@@ -1234,20 +1307,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Reflection properly resolves companion properties + JvmStatic + JvmName, but " +
-          "elements will not",
-      handlerType = REFLECTIVE
+    reason = "Reflection properly resolves companion properties + JvmStatic + JvmName, but " +
+      "elements will not",
+    handlerType = REFLECTIVE
   )
   @Test
   fun jvmNamesElements() {
     val typeSpec = JvmNameData::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
         public val param: kotlin.String
@@ -1279,7 +1354,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class JvmNameData(
@@ -1317,15 +1393,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "JvmOverloads is not runtime retained and thus not visible to reflection.",
-      handlerType = REFLECTIVE
+    reason = "JvmOverloads is not runtime retained and thus not visible to reflection.",
+    handlerType = REFLECTIVE
   )
   @Test
   fun overloads() {
     val typeSpec = Overloads::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Overloads @kotlin.jvm.JvmOverloads constructor(
         public val param1: kotlin.String,
         public val optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
@@ -1339,7 +1416,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         ): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Overloads @JvmOverloads constructor(
@@ -1357,15 +1435,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "Elements generates initializer values.",
-      handlerType = ELEMENTS
+    reason = "Elements generates initializer values.",
+    handlerType = ELEMENTS
   )
   @Test
   fun jvmFields_reflective() {
     val typeSpec = Fields::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Fields(
         @property:kotlin.jvm.JvmField
         public val param1: kotlin.String
@@ -1383,19 +1462,21 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           public val staticCompanionProp: kotlin.String = ""
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Elements generates initializer values.",
-      handlerType = REFLECTIVE
+    reason = "Elements generates initializer values.",
+    handlerType = REFLECTIVE
   )
   @Test
   fun jvmFields_elements() {
     val typeSpec = Fields::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Fields(
         @property:kotlin.jvm.JvmField
         public val param1: kotlin.String
@@ -1413,7 +1494,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           public val staticCompanionProp: kotlin.String = throw NotImplementedError("Stub!")
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Fields(
@@ -1429,16 +1511,17 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "Synthetic constructs aren't available in elements, so some information like " +
-          "JvmStatic can't be deduced.",
-      handlerType = ELEMENTS
+    reason = "Synthetic constructs aren't available in elements, so some information like " +
+      "JvmStatic can't be deduced.",
+    handlerType = ELEMENTS
   )
   @Test
   fun synthetics_reflective() {
     val typeSpec = Synthetics::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
         public val param: kotlin.String
@@ -1488,20 +1571,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Synthetic constructs aren't available in elements, so some information like " +
-          "JvmStatic can't be deduced.",
-      handlerType = REFLECTIVE
+    reason = "Synthetic constructs aren't available in elements, so some information like " +
+      "JvmStatic can't be deduced.",
+    handlerType = REFLECTIVE
   )
   @Test
   fun synthetics_elements() {
     val typeSpec = Synthetics::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
         public val param: kotlin.String
@@ -1550,7 +1635,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Synthetics(
@@ -1601,7 +1687,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = Throwing::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Throwing @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class]) constructor() {
         @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
@@ -1617,7 +1704,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun testFunction(): kotlin.Unit {
         }
       }
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   class Throwing @Throws(IllegalStateException::class) constructor() {
@@ -1639,14 +1727,15 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   // The meta-ist of metadata meta-tests.
   @IgnoreForHandlerType(
-      reason = "Reflection can't parse non-runtime retained annotations",
-      handlerType = REFLECTIVE
+    reason = "Reflection can't parse non-runtime retained annotations",
+    handlerType = REFLECTIVE
   )
   @Test
   fun metaTest_elements() {
     val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       @kotlin.SinceKotlin(version = "1.3")
       @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
@@ -1668,19 +1757,21 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "xi")
         public val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
       )
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   // The meta-ist of metadata meta-tests.
   @IgnoreForHandlerType(
-      reason = "Reflection can't parse non-runtime retained annotations",
-      handlerType = ELEMENTS
+    reason = "Reflection can't parse non-runtime retained annotations",
+    handlerType = ELEMENTS
   )
   @Test
   fun metaTest_reflection() {
     val typeSpec = Metadata::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
       @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
       public annotation class Metadata(
@@ -1701,7 +1792,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "xi")
         public val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
       )
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @Test
@@ -1709,7 +1801,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     // Make sure we parse class names correctly at all levels
     val typeSpec = ClassNesting::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ClassNesting {
         public class NestedClass {
           public class SuperNestedClass {
@@ -1717,20 +1810,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "compile-testing can't handle class names with dashes, will throw " +
-          "\"class file for com.squareup.kotlinpoet.metadata.specs.test.Fuzzy\$ClassNesting\$-Nested not found\"",
-      handlerType = ELEMENTS
+    reason = "compile-testing can't handle class names with dashes, will throw " +
+      "\"class file for com.squareup.kotlinpoet.metadata.specs.test.Fuzzy\$ClassNesting\$-Nested not found\"",
+    handlerType = ELEMENTS
   )
   @Test
   fun classNamesAndNesting_pathological() {
     // Make sure we parse class names correctly at all levels
     val typeSpec = `Fuzzy$ClassNesting`::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class `Fuzzy${'$'}ClassNesting` {
         public class `-Nested` {
           public class SuperNestedClass {
@@ -1738,19 +1833,21 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           }
         }
       }
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Property site-target annotations are always stored on the synthetic annotations " +
-          "method, which is not accessible in the elements API",
-      handlerType = ELEMENTS
+    reason = "Property site-target annotations are always stored on the synthetic annotations " +
+      "method, which is not accessible in the elements API",
+    handlerType = ELEMENTS
   )
   @Test
   fun parameterAnnotations_reflective() {
     val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ParameterAnnotations(
         @property:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "${'$'}{'${'$'}'}a")
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
@@ -1761,19 +1858,21 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }
       }
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Property site-target annotations are always stored on the synthetic annotations " +
-          "method, which is not accessible in the elements API",
-      handlerType = REFLECTIVE
+    reason = "Property site-target annotations are always stored on the synthetic annotations " +
+      "method, which is not accessible in the elements API",
+    handlerType = REFLECTIVE
   )
   @Test
   fun parameterAnnotations_elements() {
     val typeSpec = ParameterAnnotations::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class ParameterAnnotations(
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
         public val param1: kotlin.String,
@@ -1783,7 +1882,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun function(@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }
       }
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   annotation class CustomAnnotation(val name: String)
@@ -1797,32 +1897,36 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   @IgnoreForHandlerType(
-      reason = "Non-runtime annotations are not present for reflection.",
-      handlerType = ELEMENTS
+    reason = "Non-runtime annotations are not present for reflection.",
+    handlerType = ELEMENTS
   )
   @Test
   fun classAnnotations_reflective() {
     val typeSpec = ClassAnnotations::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
       public class ClassAnnotations
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      reason = "Non-runtime annotations are not present for reflection.",
-      handlerType = REFLECTIVE
+    reason = "Non-runtime annotations are not present for reflection.",
+    handlerType = REFLECTIVE
   )
   @Test
   fun classAnnotations_elements() {
     val typeSpec = ClassAnnotations::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BinaryCustomClassAnnotation(name = "Binary")
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
       public class ClassAnnotations
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @Retention(AnnotationRetention.SOURCE)
@@ -1843,7 +1947,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun typeAnnotations() {
     val typeSpec = TypeAnnotations::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class TypeAnnotations {
         public val foo: kotlin.collections.List<@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String> = throw NotImplementedError("Stub!")
 
@@ -1862,9 +1967,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
     fun <@TypeAnnotation T> bar(
       input: @TypeAnnotation String,
-        // TODO Needless parens below necessary until Kotlin 1.4
-        //  Or enable -XXLanguage:+NonParenthesizedAnnotationsOnFunctionalTypes
-        //  https://youtrack.jetbrains.com/issue/KT-31734
+      // TODO Needless parens below necessary until Kotlin 1.4
+      //  Or enable -XXLanguage:+NonParenthesizedAnnotationsOnFunctionalTypes
+      //  https://youtrack.jetbrains.com/issue/KT-31734
       input2: @TypeAnnotation() (@TypeAnnotation Int) -> @TypeAnnotation String
     ) {
     }
@@ -1875,7 +1980,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun backwardTypeVarReferences() {
     val typeSpec = Asset::class.toTypeSpecWithTestHandler()
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public class Asset<A : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> {
         public fun <D : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> function(): kotlin.Unit {
         }
@@ -1902,7 +2008,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = AbstractClass::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public abstract class AbstractClass {
         public val baz: kotlin.String? = null
 
@@ -1919,7 +2026,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           throw NotImplementedError("Stub!")
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   abstract class AbstractClass {
@@ -1940,13 +2048,15 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val typeSpec = InternalAbstractPropertyHolder::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo("""
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
       public abstract class InternalAbstractPropertyHolder {
         internal abstract val valProp: kotlin.String
 
         internal abstract var varProp: kotlin.String
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   abstract class InternalAbstractPropertyHolder {
@@ -1959,7 +2069,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     val abstractModalities = AbstractModalities::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(abstractModalities.trimmedToString()).isEqualTo("""
+    assertThat(abstractModalities.trimmedToString()).isEqualTo(
+      """
       public abstract class AbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         public val implicitFinalProp: kotlin.String? = null
 
@@ -1976,24 +2087,28 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public open fun openFun(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val finalAbstractModalities = FinalAbstractModalities::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(finalAbstractModalities.trimmedToString()).isEqualTo("""
+    assertThat(finalAbstractModalities.trimmedToString()).isEqualTo(
+      """
       public abstract class FinalAbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         public final override val interfaceProp: kotlin.String? = null
 
         public final override fun interfaceFun(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
 
     val modalities = Modalities::class.toTypeSpecWithTestHandler()
 
     //language=kotlin
-    assertThat(modalities.trimmedToString()).isEqualTo("""
+    assertThat(modalities.trimmedToString()).isEqualTo(
+      """
       public class Modalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.AbstractModalities() {
         public override val interfaceProp: kotlin.String? = null
 
@@ -2005,7 +2120,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public override fun openFun(): kotlin.Unit {
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   interface ModalitiesInterface {

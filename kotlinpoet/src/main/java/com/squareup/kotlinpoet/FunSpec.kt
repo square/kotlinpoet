@@ -49,7 +49,7 @@ public class FunSpec private constructor(
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
   public val delegateConstructor: String? = builder.delegateConstructor
   public val delegateConstructorArguments: List<CodeBlock> =
-      builder.delegateConstructorArguments.toImmutableList()
+    builder.delegateConstructorArguments.toImmutableList()
   public val body: CodeBlock = builder.body.build()
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
@@ -99,7 +99,8 @@ public class FunSpec private constructor(
 
     val isEmptyConstructor = isConstructor && body.isEmpty()
     if (modifiers.containsAnyOf(ABSTRACT, EXTERNAL, EXPECT) || EXPECT in implicitModifiers ||
-        isEmptyConstructor) {
+      isEmptyConstructor
+    ) {
       codeWriter.emit("\n")
       return
     }
@@ -150,8 +151,10 @@ public class FunSpec private constructor(
     }
 
     if (delegateConstructor != null) {
-      codeWriter.emitCode(delegateConstructorArguments
-          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"))
+      codeWriter.emitCode(
+        delegateConstructorArguments
+          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+      )
     }
   }
 
@@ -233,10 +236,11 @@ public class FunSpec private constructor(
 
   override fun toString(): String = buildCodeString {
     emit(
-        codeWriter = this,
-        enclosingName = "Constructor",
-        implicitModifiers = TypeSpec.Kind.CLASS.implicitFunctionModifiers(),
-        includeKdocTags = true)
+      codeWriter = this,
+      enclosingName = "Constructor",
+      implicitModifiers = TypeSpec.Kind.CLASS.implicitFunctionModifiers(),
+      includeKdocTags = true
+    )
   }
 
   @JvmOverloads
@@ -299,10 +303,10 @@ public class FunSpec private constructor(
     }
 
     public fun addAnnotation(annotation: Class<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addAnnotation(annotation: KClass<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -381,10 +385,10 @@ public class FunSpec private constructor(
     }
 
     @JvmOverloads public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
-        returns(returnType.asTypeName(), kdoc)
+      returns(returnType.asTypeName(), kdoc)
 
     public fun returns(returnType: Type, kdoc: String, vararg args: Any): Builder =
-        returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+      returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     @JvmOverloads public fun returns(
       returnType: KClass<*>,
@@ -392,7 +396,7 @@ public class FunSpec private constructor(
     ): Builder = returns(returnType.asTypeName(), kdoc)
 
     public fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any): Builder =
-        returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+      returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     public fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder = apply {
       for (parameterSpec in parameterSpecs) {
@@ -443,19 +447,19 @@ public class FunSpec private constructor(
     }
 
     public fun addParameter(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
-        addParameter(ParameterSpec.builder(name, type, *modifiers).build())
+      addParameter(ParameterSpec.builder(name, type, *modifiers).build())
 
     public fun addParameter(name: String, type: Type, vararg modifiers: KModifier): Builder =
-        addParameter(name, type.asTypeName(), *modifiers)
+      addParameter(name, type.asTypeName(), *modifiers)
 
     public fun addParameter(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
-        addParameter(name, type.asTypeName(), *modifiers)
+      addParameter(name, type.asTypeName(), *modifiers)
 
     public fun addParameter(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
-        addParameter(ParameterSpec.builder(name, type, modifiers).build())
+      addParameter(ParameterSpec.builder(name, type, modifiers).build())
 
     public fun addParameter(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
-        addParameter(name, type.asTypeName(), modifiers)
+      addParameter(name, type.asTypeName(), modifiers)
 
     public fun addParameter(
       name: String,
@@ -535,16 +539,18 @@ public class FunSpec private constructor(
     @JvmStatic public fun setterBuilder(): Builder = Builder(SETTER)
 
     @Deprecated(
-        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-            " the kotlinpoet-metadata APIs instead.",
-        level = WARNING
+      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+      level = WARNING
     )
     @JvmStatic
     public fun overriding(method: ExecutableElement): Builder {
       var modifiers: Set<Modifier> = method.modifiers
-      require(Modifier.PRIVATE !in modifiers &&
+      require(
+        Modifier.PRIVATE !in modifiers &&
           Modifier.FINAL !in modifiers &&
-          Modifier.STATIC !in modifiers) {
+          Modifier.STATIC !in modifiers
+      ) {
         "cannot override method with modifiers: $modifiers"
       }
 
@@ -558,33 +564,35 @@ public class FunSpec private constructor(
       funBuilder.jvmModifiers(modifiers)
 
       method.typeParameters
-          .map { it.asType() as TypeVariable }
-          .map { it.asTypeVariableName() }
-          .forEach { funBuilder.addTypeVariable(it) }
+        .map { it.asType() as TypeVariable }
+        .map { it.asTypeVariableName() }
+        .forEach { funBuilder.addTypeVariable(it) }
 
       funBuilder.returns(method.returnType.asTypeName())
       funBuilder.addParameters(ParameterSpec.parametersOf(method))
       if (method.isVarArgs) {
         funBuilder.parameters[funBuilder.parameters.lastIndex] = funBuilder.parameters.last()
-            .toBuilder()
-            .addModifiers(VARARG)
-            .build()
+          .toBuilder()
+          .addModifiers(VARARG)
+          .build()
       }
 
       if (method.thrownTypes.isNotEmpty()) {
         val throwsValueString = method.thrownTypes.joinToString { "%T::class" }
-        funBuilder.addAnnotation(AnnotationSpec.builder(Throws::class)
+        funBuilder.addAnnotation(
+          AnnotationSpec.builder(Throws::class)
             .addMember(throwsValueString, *method.thrownTypes.toTypedArray())
-            .build())
+            .build()
+        )
       }
 
       return funBuilder
     }
 
     @Deprecated(
-        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-            " the kotlinpoet-metadata APIs instead.",
-        level = WARNING
+      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+      level = WARNING
     )
     @JvmStatic
     public fun overriding(

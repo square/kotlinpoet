@@ -17,6 +17,12 @@ package com.squareup.kotlinpoet
 
 import com.google.common.base.Charsets.UTF_8
 import com.google.common.collect.ImmutableSet
+import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler
+import org.junit.Rule
+import org.junit.rules.TestRule
+import org.junit.runner.Description
+import org.junit.runners.JUnit4
+import org.junit.runners.model.Statement
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicReference
 import javax.annotation.processing.AbstractProcessor
@@ -30,12 +36,6 @@ import javax.lang.model.util.Types
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import kotlin.test.Ignore
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler
-import org.junit.Rule
-import org.junit.rules.TestRule
-import org.junit.runner.Description
-import org.junit.runners.JUnit4
-import org.junit.runners.model.Statement
 
 @Ignore("Not clear this test is useful to retain in the Kotlin world")
 class TypesEclipseTest : AbstractTypesTest() {
@@ -59,32 +59,34 @@ class TypesEclipseTest : AbstractTypesTest() {
       return object : Statement() {
         override fun evaluate() {
           val thrown = AtomicReference<Throwable>()
-          val successful = compile(listOf(object : AbstractProcessor() {
-            override fun getSupportedSourceVersion() = SourceVersion.latest()
+          val successful = compile(
+            listOf(object : AbstractProcessor() {
+              override fun getSupportedSourceVersion() = SourceVersion.latest()
 
-            override fun getSupportedAnnotationTypes() = setOf("*")
+              override fun getSupportedAnnotationTypes() = setOf("*")
 
-            @Synchronized override fun init(processingEnv: ProcessingEnvironment) {
-              super.init(processingEnv)
-              elements = processingEnv.elementUtils
-              types = processingEnv.typeUtils
-            }
-
-            override fun process(
-              annotations: Set<TypeElement>,
-              roundEnv: RoundEnvironment
-            ): Boolean {
-              // just run the test on the last round after compilation is over
-              if (roundEnv.processingOver()) {
-                try {
-                  base.evaluate()
-                } catch (e: Throwable) {
-                  thrown.set(e)
-                }
+              @Synchronized override fun init(processingEnv: ProcessingEnvironment) {
+                super.init(processingEnv)
+                elements = processingEnv.elementUtils
+                types = processingEnv.typeUtils
               }
-              return false
-            }
-          }))
+
+              override fun process(
+                annotations: Set<TypeElement>,
+                roundEnv: RoundEnvironment
+              ): Boolean {
+                // just run the test on the last round after compilation is over
+                if (roundEnv.processingOver()) {
+                  try {
+                    base.evaluate()
+                  } catch (e: Throwable) {
+                    thrown.set(e)
+                  }
+                }
+                return false
+              }
+            })
+          )
           check(successful)
           val t = thrown.get()
           if (t != null) {
@@ -112,13 +114,16 @@ class TypesEclipseTest : AbstractTypesTest() {
       val compiler = EclipseCompiler()
       val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
       val fileManager = compiler.getStandardFileManager(
-          diagnosticCollector, Locale.getDefault(), UTF_8)
-      val task = compiler.getTask(null,
-          fileManager,
-          diagnosticCollector,
-          ImmutableSet.of<String>(),
-          ImmutableSet.of(TypesEclipseTest::class.java.canonicalName),
-          ImmutableSet.of<JavaFileObject>())
+        diagnosticCollector, Locale.getDefault(), UTF_8
+      )
+      val task = compiler.getTask(
+        null,
+        fileManager,
+        diagnosticCollector,
+        ImmutableSet.of<String>(),
+        ImmutableSet.of(TypesEclipseTest::class.java.canonicalName),
+        ImmutableSet.of<JavaFileObject>()
+      )
       task.setProcessors(processors)
       return task.call()!!
     }

@@ -45,6 +45,9 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_NA
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -57,9 +60,6 @@ import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.LazyThreadSafetyMode.NONE
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.KotlinClassMetadata
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
@@ -76,7 +76,7 @@ public class ElementsClassInspector private constructor(
   private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
   private val jvmNameType = elements.getTypeElement(JVM_NAME.canonicalName)
   private val jvmNameName = ElementFilter.methodsIn(jvmNameType.enclosedElements)
-      .first { it.simpleName.toString() == "name" }
+    .first { it.simpleName.toString() == "name" }
 
   private fun lookupTypeElement(className: ClassName): TypeElement? {
     return typeElementCache.getOrPut(className) {
@@ -88,7 +88,7 @@ public class ElementsClassInspector private constructor(
 
   override fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer {
     val typeElement = lookupTypeElement(className)
-        ?: error("No type element found for: $className.")
+      ?: error("No type element found for: $className.")
 
     val metadata = typeElement.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
@@ -109,7 +109,7 @@ public class ElementsClassInspector private constructor(
     val signatureString = fieldSignature.asString()
     return variableElementCache.getOrPut(this to signatureString) {
       ElementFilter.fieldsIn(enclosedElements)
-          .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
+        .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
     }.nullableValue
   }
 
@@ -128,7 +128,7 @@ public class ElementsClassInspector private constructor(
     val signatureString = methodSignature.asString()
     return methodCache.getOrPut(this to signatureString) {
       elementFilter(enclosedElements)
-          .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
+        .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
     }.nullableValue
   }
 
@@ -145,7 +145,7 @@ public class ElementsClassInspector private constructor(
 
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-        annotationMirrors.map { AnnotationSpec.get(it) }
+      annotationMirrors.map { AnnotationSpec.get(it) }
     )
   }
 
@@ -161,7 +161,7 @@ public class ElementsClassInspector private constructor(
 
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-        annotationMirrors.map { AnnotationSpec.get(it) }
+      annotationMirrors.map { AnnotationSpec.get(it) }
     )
   }
 
@@ -171,25 +171,25 @@ public class ElementsClassInspector private constructor(
 
   override fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData {
     val enumType = lookupTypeElement(enumClassName)
-        ?: error("No type element found for: $enumClassName.")
+      ?: error("No type element found for: $enumClassName.")
     val enumTypeAsType = enumType.asType()
     val member = typeElementCache.getOrPut(enumClassName.nestedClass(memberName)) {
       ElementFilter.typesIn(enumType.enclosedElements)
-          .asSequence()
-          .filter { types.isSubtype(enumTypeAsType, it.superclass) }
-          .find { it.simpleName.contentEquals(memberName) }.toOptional()
+        .asSequence()
+        .filter { types.isSubtype(enumTypeAsType, it.superclass) }
+        .find { it.simpleName.contentEquals(memberName) }.toOptional()
     }.nullableValue
     val declarationContainer = member?.getAnnotation(Metadata::class.java)
-        ?.toImmutableKmClass()
+      ?.toImmutableKmClass()
 
     val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
-        .asSequence()
-        .find { it.simpleName.contentEquals(memberName) }
-        ?: error("Could not find the enum entry for: $enumClassName")
+      .asSequence()
+      .find { it.simpleName.contentEquals(memberName) }
+      ?: error("Could not find the enum entry for: $enumClassName")
 
     return EnumEntryData(
-        declarationContainer = declarationContainer,
-        annotations = entry.annotationSpecs()
+      declarationContainer = declarationContainer,
+      annotations = entry.annotationSpecs()
     )
   }
 
@@ -221,12 +221,12 @@ public class ElementsClassInspector private constructor(
     //       that order. Below, this means we just need to find the index of our target method
     //       and compare against only preceding ones.
     val methodList = methodMap.asMap()[simpleName.toString()]?.toList()
-        ?: return false
+      ?: return false
     val signature = jvmMethodSignature(types)
     return methodList.asSequence()
-        .filter { it.jvmMethodSignature(types) == signature }
-        .take(1)
-        .any { elements.overrides(this, it, type) }
+      .filter { it.jvmMethodSignature(types) == signature }
+      .take(1)
+      .any { elements.overrides(this, it, type) }
   }
 
   /**
@@ -256,9 +256,10 @@ public class ElementsClassInspector private constructor(
     }
     for (method in ElementFilter.methodsIn(enclosedElements)) {
       if (ElementsModifier.STATIC !in method.modifiers &&
-          ElementsModifier.FINAL !in method.modifiers &&
-          ElementsModifier.PRIVATE !in method.modifiers &&
-          method.isVisibleFrom(pkg)) {
+        ElementsModifier.FINAL !in method.modifiers &&
+        ElementsModifier.PRIVATE !in method.modifiers &&
+        method.isVisibleFrom(pkg)
+      ) {
         methodsAccumulator.put(method.simpleName.toString(), method)
       }
     }
@@ -296,142 +297,145 @@ public class ElementsClassInspector private constructor(
     val classIfCompanion by lazy(NONE) {
       if (isCompanionObject && parentClassName != null) {
         lookupTypeElement(parentClassName)
-            ?: error("No class found for: $parentClassName.")
+          ?: error("No class found for: $parentClassName.")
       } else {
         typeElement
       }
     }
 
     val propertyData = declarationContainer.properties
-        .asSequence()
-        .filter { it.isDeclaration }
-        .filterNot { it.isSynthesized }
-        .associateWith { property ->
-          val isJvmField = ClassInspectorUtil.computeIsJvmField(
-              property = property,
-              classInspector = this,
-              isCompanionObject = isCompanionObject,
-              hasGetter = property.getterSignature != null,
-              hasSetter = property.setterSignature != null,
-              hasField = property.fieldSignature != null
-          )
+      .asSequence()
+      .filter { it.isDeclaration }
+      .filterNot { it.isSynthesized }
+      .associateWith { property ->
+        val isJvmField = ClassInspectorUtil.computeIsJvmField(
+          property = property,
+          classInspector = this,
+          isCompanionObject = isCompanionObject,
+          hasGetter = property.getterSignature != null,
+          hasSetter = property.setterSignature != null,
+          hasField = property.fieldSignature != null
+        )
 
-          val fieldData = property.fieldSignature?.let fieldDataLet@{ fieldSignature ->
-            // Check the field in the parent first. For const/static/jvmField elements, these only
-            // exist in the parent and we want to check that if necessary to avoid looking up a
-            // non-existent field in the companion.
-            val parentModifiers = if (isCompanionObject && parentClassName != null) {
-              classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
-            } else {
-              emptySet()
-            }
-
-            val isStatic = JvmFieldModifier.STATIC in parentModifiers
-
-            // TODO we looked up field once, let's reuse it
-            val classForOriginalField = typeElement.takeUnless {
-              isCompanionObject &&
-                  (property.isConst || isJvmField || isStatic)
-            } ?: classIfCompanion
-
-            val field = classForOriginalField.lookupField(fieldSignature)
-                ?: return@fieldDataLet FieldData.SYNTHETIC
-            val constant = if (property.hasConstant) {
-              val fieldWithConstant = classIfCompanion.takeIf { it != typeElement }?.let {
-                if (it.kind.isInterface) {
-                  field
-                } else {
-                  // const properties are relocated to the enclosing class
-                  it.lookupField(fieldSignature)
-                      ?: return@fieldDataLet FieldData.SYNTHETIC
-                }
-              } ?: field
-              fieldWithConstant.constantValue()
-            } else {
-              null
-            }
-
-            val jvmModifiers = field.jvmModifiers(isJvmField) + parentModifiers
-
-            FieldData(
-                annotations = field.annotationSpecs(),
-                isSynthetic = false,
-                jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
-                  // JvmField companion objects don't need JvmStatic, it's implicit
-                  isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
-                },
-                constant = constant
-            )
+        val fieldData = property.fieldSignature?.let fieldDataLet@{ fieldSignature ->
+          // Check the field in the parent first. For const/static/jvmField elements, these only
+          // exist in the parent and we want to check that if necessary to avoid looking up a
+          // non-existent field in the companion.
+          val parentModifiers = if (isCompanionObject && parentClassName != null) {
+            classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
+          } else {
+            emptySet()
           }
 
-          val getterData = property.getterSignature?.let { getterSignature ->
-            val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
-            method?.methodData(
-                typeElement = typeElement,
-                hasAnnotations = property.getterFlags.hasAnnotations,
-                jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-                    ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
-                    ?: method
-            )
-                ?: return@let MethodData.SYNTHETIC
+          val isStatic = JvmFieldModifier.STATIC in parentModifiers
+
+          // TODO we looked up field once, let's reuse it
+          val classForOriginalField = typeElement.takeUnless {
+            isCompanionObject &&
+              (property.isConst || isJvmField || isStatic)
+          } ?: classIfCompanion
+
+          val field = classForOriginalField.lookupField(fieldSignature)
+            ?: return@fieldDataLet FieldData.SYNTHETIC
+          val constant = if (property.hasConstant) {
+            val fieldWithConstant = classIfCompanion.takeIf { it != typeElement }?.let {
+              if (it.kind.isInterface) {
+                field
+              } else {
+                // const properties are relocated to the enclosing class
+                it.lookupField(fieldSignature)
+                  ?: return@fieldDataLet FieldData.SYNTHETIC
+              }
+            } ?: field
+            fieldWithConstant.constantValue()
+          } else {
+            null
           }
 
-          val setterData = property.setterSignature?.let { setterSignature ->
-            val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
-            method?.methodData(
-                typeElement = typeElement,
-                hasAnnotations = property.setterFlags.hasAnnotations,
-                jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-                    ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
-                    ?: method,
-                knownIsOverride = getterData?.isOverride
-            )
-                ?: return@let MethodData.SYNTHETIC
-          }
+          val jvmModifiers = field.jvmModifiers(isJvmField) + parentModifiers
 
-          val annotations = mutableListOf<AnnotationSpec>()
-          if (property.hasAnnotations) {
-            property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
-              val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
-                  ?: return@let MethodData.SYNTHETIC
-              annotations += method.annotationSpecs()
-            }
-          }
-
-          // If a field is static in a companion object, remove the modifier and add the annotation
-          // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
-          // not legal
-          var finalFieldData = fieldData
-          fieldData?.jvmModifiers?.let {
-            if (isCompanionObject && JvmFieldModifier.STATIC in it) {
-              finalFieldData = fieldData.copy(jvmModifiers = fieldData.jvmModifiers
-                  .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC })
-              annotations += AnnotationSpec.builder(
-                  JVM_STATIC).build()
-            }
-          }
-
-          PropertyData(
-              annotations = annotations,
-              fieldData = finalFieldData,
-              getterData = getterData,
-              setterData = setterData,
-              isJvmField = isJvmField
+          FieldData(
+            annotations = field.annotationSpecs(),
+            isSynthetic = false,
+            jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
+              // JvmField companion objects don't need JvmStatic, it's implicit
+              isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+            },
+            constant = constant
           )
         }
+
+        val getterData = property.getterSignature?.let { getterSignature ->
+          val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
+          method?.methodData(
+            typeElement = typeElement,
+            hasAnnotations = property.getterFlags.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+              ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
+              ?: method
+          )
+            ?: return@let MethodData.SYNTHETIC
+        }
+
+        val setterData = property.setterSignature?.let { setterSignature ->
+          val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
+          method?.methodData(
+            typeElement = typeElement,
+            hasAnnotations = property.setterFlags.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+              ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
+              ?: method,
+            knownIsOverride = getterData?.isOverride
+          )
+            ?: return@let MethodData.SYNTHETIC
+        }
+
+        val annotations = mutableListOf<AnnotationSpec>()
+        if (property.hasAnnotations) {
+          property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
+            val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
+              ?: return@let MethodData.SYNTHETIC
+            annotations += method.annotationSpecs()
+          }
+        }
+
+        // If a field is static in a companion object, remove the modifier and add the annotation
+        // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
+        // not legal
+        var finalFieldData = fieldData
+        fieldData?.jvmModifiers?.let {
+          if (isCompanionObject && JvmFieldModifier.STATIC in it) {
+            finalFieldData = fieldData.copy(
+              jvmModifiers = fieldData.jvmModifiers
+                .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC }
+            )
+            annotations += AnnotationSpec.builder(
+              JVM_STATIC
+            ).build()
+          }
+        }
+
+        PropertyData(
+          annotations = annotations,
+          fieldData = finalFieldData,
+          getterData = getterData,
+          setterData = setterData,
+          isJvmField = isJvmField
+        )
+      }
 
     val methodData = declarationContainer.functions.associateWith { kmFunction ->
       val signature = kmFunction.signature
       if (signature != null) {
         val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
         method?.methodData(
-            typeElement = typeElement,
-            hasAnnotations = kmFunction.hasAnnotations,
-            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-                ?.lookupMethod(signature, ElementFilter::methodsIn)
-                ?: method
+          typeElement = typeElement,
+          hasAnnotations = kmFunction.hasAnnotations,
+          jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+            ?.lookupMethod(signature, ElementFilter::methodsIn)
+            ?: method
         )
-            ?: return@associateWith MethodData.SYNTHETIC
+          ?: return@associateWith MethodData.SYNTHETIC
       } else {
         MethodData.EMPTY
       }
@@ -452,35 +456,35 @@ public class ElementsClassInspector private constructor(
           val signature = kmConstructor.signature
           if (signature != null) {
             val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
-                ?: return@associateWith ConstructorData.EMPTY
+              ?: return@associateWith ConstructorData.EMPTY
             ConstructorData(
-                annotations = if (kmConstructor.hasAnnotations) {
-                  constructor.annotationSpecs()
-                } else {
-                  emptyList()
-                },
-                parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
-                isSynthetic = false,
-                jvmModifiers = constructor.jvmModifiers(),
-                exceptions = constructor.exceptionTypeNames()
+              annotations = if (kmConstructor.hasAnnotations) {
+                constructor.annotationSpecs()
+              } else {
+                emptyList()
+              },
+              parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+              isSynthetic = false,
+              jvmModifiers = constructor.jvmModifiers(),
+              exceptions = constructor.exceptionTypeNames()
             )
           } else {
             ConstructorData.EMPTY
           }
         }
         return ClassData(
-            declarationContainer = declarationContainer,
-            className = className,
-            annotations = if (declarationContainer.hasAnnotations) {
-              ClassInspectorUtil.createAnnotations {
-                addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
-              }
-            } else {
-              emptyList()
-            },
-            properties = propertyData,
-            constructors = constructorData,
-            methods = methodData
+          declarationContainer = declarationContainer,
+          className = className,
+          annotations = if (declarationContainer.hasAnnotations) {
+            ClassInspectorUtil.createAnnotations {
+              addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+            }
+          } else {
+            emptyList()
+          },
+          properties = propertyData,
+          constructors = constructorData,
+          methods = methodData
         )
       }
       is ImmutableKmPackage -> {
@@ -489,23 +493,25 @@ public class ElementsClassInspector private constructor(
         // @JvmName.
         var jvmName: String? = null
         val fileAnnotations = ClassInspectorUtil.createAnnotations(FILE) {
-          addAll(typeElement.annotationMirrors.map {
-            if (it.annotationType == jvmNameType) {
-              val nameValue = requireNotNull(it.elementValues[jvmNameName]) {
-                "No name property found on $it"
+          addAll(
+            typeElement.annotationMirrors.map {
+              if (it.annotationType == jvmNameType) {
+                val nameValue = requireNotNull(it.elementValues[jvmNameName]) {
+                  "No name property found on $it"
+                }
+                jvmName = nameValue.value as String
               }
-              jvmName = nameValue.value as String
+              AnnotationSpec.get(it)
             }
-            AnnotationSpec.get(it)
-          })
+          )
         }
         return FileData(
-            declarationContainer = declarationContainer,
-            annotations = fileAnnotations,
-            properties = propertyData,
-            methods = methodData,
-            className = className,
-            jvmName = jvmName
+          declarationContainer = declarationContainer,
+          annotations = fileAnnotations,
+          properties = propertyData,
+          methods = methodData,
+          className = className,
+          jvmName = jvmName
         )
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
@@ -525,12 +531,12 @@ public class ElementsClassInspector private constructor(
     knownIsOverride: Boolean? = null
   ): MethodData {
     return MethodData(
-        annotations = if (hasAnnotations) annotationSpecs() else emptyList(),
-        parameterAnnotations = parameters.indexedAnnotationSpecs(),
-        isSynthetic = false,
-        jvmModifiers = jvmInformationMethod.jvmModifiers(),
-        isOverride = knownIsOverride?.let { it } ?: isOverriddenIn(typeElement),
-        exceptions = exceptionTypeNames()
+      annotations = if (hasAnnotations) annotationSpecs() else emptyList(),
+      parameterAnnotations = parameters.indexedAnnotationSpecs(),
+      isSynthetic = false,
+      jvmModifiers = jvmInformationMethod.jvmModifiers(),
+      isOverride = knownIsOverride?.let { it } ?: isOverriddenIn(typeElement),
+      exceptions = exceptionTypeNames()
     )
   }
 
@@ -553,4 +559,5 @@ public class ElementsClassInspector private constructor(
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
 private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
-    this)
+  this
+)

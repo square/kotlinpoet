@@ -18,13 +18,13 @@
 
 package com.squareup.kotlinpoet.metadata
 
+import kotlinx.metadata.jvm.KotlinClassHeader
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import javax.lang.model.element.TypeElement
 import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
 import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.reflect.KClass
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
 
 /**
  * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
@@ -41,16 +41,16 @@ public fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKm
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetMetadataPreview
 public fun Class<*>.toImmutableKmClass(): ImmutableKmClass =
-    readMetadata(::getAnnotation).toImmutableKmClass()
+  readMetadata(::getAnnotation).toImmutableKmClass()
 /** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
 @KotlinPoetMetadataPreview
 public fun TypeElement.toImmutableKmClass(): ImmutableKmClass =
-    readMetadata(::getAnnotation).toImmutableKmClass()
+  readMetadata(::getAnnotation).toImmutableKmClass()
 
 @KotlinPoetMetadataPreview
 public fun Metadata.toImmutableKmClass(): ImmutableKmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>()
-      .toImmutableKmClass()
+    .toImmutableKmClass()
 }
 
 @KotlinPoetMetadataPreview
@@ -100,13 +100,13 @@ private inline fun readMetadata(lookup: ((Class<Metadata>) -> Metadata?)): Metad
 
 private fun Metadata.asClassHeader(): KotlinClassHeader {
   return KotlinClassHeader(
-      kind = kind,
-      metadataVersion = metadataVersion,
-      bytecodeVersion = bytecodeVersion,
-      data1 = data1,
-      data2 = data2,
-      extraString = extraString,
-      packageName = packageName,
-      extraInt = extraInt
+    kind = kind,
+    metadataVersion = metadataVersion,
+    bytecodeVersion = bytecodeVersion,
+    data1 = data1,
+    data2 = data2,
+    extraString = extraString,
+    packageName = packageName,
+    extraInt = extraInt
   )
 }

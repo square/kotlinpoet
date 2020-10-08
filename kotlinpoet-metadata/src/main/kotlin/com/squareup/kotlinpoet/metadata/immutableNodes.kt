@@ -19,7 +19,6 @@
 
 package com.squareup.kotlinpoet.metadata
 
-import java.util.Collections
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
@@ -66,6 +65,7 @@ import kotlinx.metadata.jvm.moduleName
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import java.util.Collections
 
 /**
  * Represents an immutable kotlinx-metadata type with a common [Flags] property.
@@ -98,7 +98,7 @@ public interface ImmutableKmDeclarationContainer {
  */
 @KotlinPoetMetadataPreview
 public fun KotlinClassMetadata.Class.toImmutableKmClass(): ImmutableKmClass =
-    toKmClass().toImmutable()
+  toKmClass().toImmutable()
 
 /**
  * Visits metadata of this class with a new [KmPackage] instance and returns an [ImmutableKmPackage]
@@ -106,29 +106,29 @@ public fun KotlinClassMetadata.Class.toImmutableKmClass(): ImmutableKmClass =
  */
 @KotlinPoetMetadataPreview
 public fun KotlinClassMetadata.FileFacade.toImmutableKmPackage(): ImmutableKmPackage =
-    toKmPackage().toImmutable()
+  toKmPackage().toImmutable()
 
 /** @return an immutable representation of this [KmClass]. */
 @KotlinPoetMetadataPreview
 @JvmName("immutableOf")
 public fun KmClass.toImmutable(): ImmutableKmClass {
   return ImmutableKmClass(
-      flags,
-      name,
-      typeParameters.map { it.toImmutable() },
-      supertypes.map { it.toImmutable() },
-      functions.map { it.toImmutable() },
-      properties.map { it.toImmutable() },
-      typeAliases.map { it.toImmutable() },
-      constructors.map { it.toImmutable() },
-      companionObject,
-      nestedClasses.toImmutableList(),
-      enumEntries.toImmutableList(),
-      sealedSubclasses.toImmutableList(),
-      versionRequirements.map { it.toImmutable() },
-      localDelegatedProperties.map { it.toImmutable() },
-      moduleName,
-      anonymousObjectOriginName
+    flags,
+    name,
+    typeParameters.map { it.toImmutable() },
+    supertypes.map { it.toImmutable() },
+    functions.map { it.toImmutable() },
+    properties.map { it.toImmutable() },
+    typeAliases.map { it.toImmutable() },
+    constructors.map { it.toImmutable() },
+    companionObject,
+    nestedClasses.toImmutableList(),
+    enumEntries.toImmutableList(),
+    sealedSubclasses.toImmutableList(),
+    versionRequirements.map { it.toImmutable() },
+    localDelegatedProperties.map { it.toImmutable() },
+    moduleName,
+    anonymousObjectOriginName
   )
 }
 
@@ -213,11 +213,11 @@ public data class ImmutableKmClass internal constructor(
 @JvmName("immutableOf")
 public fun KmPackage.toImmutable(): ImmutableKmPackage {
   return ImmutableKmPackage(
-      functions.map { it.toImmutable() },
-      properties.map { it.toImmutable() },
-      typeAliases.map { it.toImmutable() },
-      localDelegatedProperties.map { it.toImmutable() },
-      moduleName
+    functions.map { it.toImmutable() },
+    properties.map { it.toImmutable() },
+    typeAliases.map { it.toImmutable() },
+    localDelegatedProperties.map { it.toImmutable() },
+    moduleName
   )
 }
 
@@ -288,10 +288,10 @@ public data class ImmutableKmLambda internal constructor(val function: Immutable
 @JvmName("immutableOf")
 public fun KmConstructor.toImmutable(): ImmutableKmConstructor {
   return ImmutableKmConstructor(
-      flags = flags,
-      valueParameters = valueParameters.map { it.toImmutable() },
-      versionRequirements = versionRequirements.map { it.toImmutable() },
-      signature = signature
+    flags = flags,
+    valueParameters = valueParameters.map { it.toImmutable() },
+    versionRequirements = versionRequirements.map { it.toImmutable() },
+    signature = signature
   )
 }
 
@@ -330,16 +330,16 @@ public data class ImmutableKmConstructor internal constructor(
 @JvmName("immutableOf")
 public fun KmFunction.toImmutable(): ImmutableKmFunction {
   return ImmutableKmFunction(
-      flags,
-      name,
-      typeParameters.map { it.toImmutable() },
-      receiverParameterType?.toImmutable(),
-      valueParameters.map { it.toImmutable() },
-      returnType.toImmutable(),
-      versionRequirements.map { it.toImmutable() },
-      contract?.toImmutable(),
-      signature,
-      lambdaClassOriginName
+    flags,
+    name,
+    typeParameters.map { it.toImmutable() },
+    receiverParameterType?.toImmutable(),
+    valueParameters.map { it.toImmutable() },
+    returnType.toImmutable(),
+    versionRequirements.map { it.toImmutable() },
+    contract?.toImmutable(),
+    signature,
+    lambdaClassOriginName
   )
 }
 
@@ -399,20 +399,20 @@ public data class ImmutableKmFunction internal constructor(
 @JvmName("immutableOf")
 public fun KmProperty.toImmutable(): ImmutableKmProperty {
   return ImmutableKmProperty(
-      flags,
-      name,
-      getterFlags,
-      setterFlags,
-      typeParameters.map { it.toImmutable() },
-      receiverParameterType?.toImmutable(),
-      setterParameter?.toImmutable(),
-      returnType.toImmutable(),
-      versionRequirements.map { it.toImmutable() },
-      jvmFlags,
-      fieldSignature,
-      getterSignature,
-      setterSignature,
-      syntheticMethodForAnnotations
+    flags,
+    name,
+    getterFlags,
+    setterFlags,
+    typeParameters.map { it.toImmutable() },
+    receiverParameterType?.toImmutable(),
+    setterParameter?.toImmutable(),
+    returnType.toImmutable(),
+    versionRequirements.map { it.toImmutable() },
+    jvmFlags,
+    fieldSignature,
+    getterSignature,
+    setterSignature,
+    syntheticMethodForAnnotations
   )
 }
 
@@ -494,13 +494,13 @@ public data class ImmutableKmProperty internal constructor(
 @JvmName("immutableOf")
 public fun KmTypeAlias.toImmutable(): ImmutableKmTypeAlias {
   return ImmutableKmTypeAlias(
-      flags,
-      name,
-      typeParameters.map { it.toImmutable() },
-      underlyingType.toImmutable(),
-      expandedType.toImmutable(),
-      annotations.toImmutableList(),
-      versionRequirements.map { it.toImmutable() }
+    flags,
+    name,
+    typeParameters.map { it.toImmutable() },
+    underlyingType.toImmutable(),
+    expandedType.toImmutable(),
+    annotations.toImmutableList(),
+    versionRequirements.map { it.toImmutable() }
   )
 }
 
@@ -547,10 +547,10 @@ public data class ImmutableKmTypeAlias internal constructor(
 @JvmName("immutableOf")
 public fun KmValueParameter.toImmutable(): ImmutableKmValueParameter {
   return ImmutableKmValueParameter(
-      flags,
-      name,
-      type?.toImmutable(),
-      varargElementType?.toImmutable()
+    flags,
+    name,
+    type?.toImmutable(),
+    varargElementType?.toImmutable()
   )
 }
 
@@ -584,12 +584,12 @@ public data class ImmutableKmValueParameter internal constructor(
 @JvmName("immutableOf")
 public fun KmTypeParameter.toImmutable(): ImmutableKmTypeParameter {
   return ImmutableKmTypeParameter(
-      flags,
-      name,
-      id,
-      variance,
-      upperBounds.map { it.toImmutable() },
-      annotations.toImmutableList()
+    flags,
+    name,
+    id,
+    variance,
+    upperBounds.map { it.toImmutable() },
+    annotations.toImmutableList()
   )
 }
 
@@ -628,14 +628,14 @@ public data class ImmutableKmTypeParameter internal constructor(
 @JvmName("immutableOf")
 public fun KmType.toImmutable(): ImmutableKmType {
   return ImmutableKmType(
-      flags,
-      classifier,
-      arguments.map { it.toImmutable() },
-      abbreviatedType?.toImmutable(),
-      outerType?.toImmutable(),
-      flexibleTypeUpperBound?.toImmutable(),
-      isRaw,
-      annotations.toImmutableList()
+    flags,
+    classifier,
+    arguments.map { it.toImmutable() },
+    abbreviatedType?.toImmutable(),
+    outerType?.toImmutable(),
+    flexibleTypeUpperBound?.toImmutable(),
+    isRaw,
+    annotations.toImmutableList()
   )
 }
 
@@ -714,11 +714,11 @@ public data class ImmutableKmType internal constructor(
 @JvmName("immutableOf")
 public fun KmVersionRequirement.toImmutable(): ImmutableKmVersionRequirement {
   return ImmutableKmVersionRequirement(
-      kind,
-      level,
-      errorCode,
-      message,
-      version
+    kind,
+    level,
+    errorCode,
+    message,
+    version
   )
 }
 
@@ -787,10 +787,10 @@ public data class ImmutableKmContract internal constructor(val effects: List<Imm
 @JvmName("immutableOf")
 public fun KmEffect.toImmutable(): ImmutableKmEffect {
   return ImmutableKmEffect(
-      type,
-      invocationKind,
-      constructorArguments.map { it.toImmutable() },
-      conclusion?.toImmutable()
+    type,
+    invocationKind,
+    constructorArguments.map { it.toImmutable() },
+    conclusion?.toImmutable()
   )
 }
 
@@ -831,12 +831,12 @@ public data class ImmutableKmEffect internal constructor(
 @JvmName("immutableOf")
 public fun KmEffectExpression.toImmutable(): ImmutableKmEffectExpression {
   return ImmutableKmEffectExpression(
-      flags,
-      parameterIndex,
-      constantValue,
-      isInstanceType?.toImmutable(),
-      andArguments.map { it.toImmutable() },
-      orArguments.map { it.toImmutable() }
+    flags,
+    parameterIndex,
+    constantValue,
+    isInstanceType?.toImmutable(),
+    andArguments.map { it.toImmutable() },
+    orArguments.map { it.toImmutable() }
   )
 }
 

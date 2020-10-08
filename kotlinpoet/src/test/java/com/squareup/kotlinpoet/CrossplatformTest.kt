@@ -27,39 +27,50 @@ class CrossplatformTest {
     val expectTypeParam = TypeVariableName("V")
     val expectType = "AtomicRef"
     val expectSpec = TypeSpec.expectClassBuilder(expectType)
-        .addTypeVariable(expectTypeParam)
-        .addModifiers(KModifier.INTERNAL)
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("value", expectTypeParam)
-            .build())
-        .addProperty(PropertySpec.builder("value", expectTypeParam).build())
-        .addFunction(FunSpec.builder("get")
-            .returns(expectTypeParam)
-            .build())
-        .addFunction(FunSpec.builder("set")
-            .addParameter("value", expectTypeParam)
-            .build())
-        .addFunction(FunSpec.builder("getAndSet")
-            .addParameter("value", expectTypeParam)
-            .returns(expectTypeParam)
-            .build())
-        .addFunction(FunSpec.builder("compareAndSet")
-            .addParameter("expect", expectTypeParam)
-            .addParameter("update", expectTypeParam)
-            .returns(Boolean::class)
-            .build())
-        .build()
+      .addTypeVariable(expectTypeParam)
+      .addModifiers(KModifier.INTERNAL)
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("value", expectTypeParam)
+          .build()
+      )
+      .addProperty(PropertySpec.builder("value", expectTypeParam).build())
+      .addFunction(
+        FunSpec.builder("get")
+          .returns(expectTypeParam)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("set")
+          .addParameter("value", expectTypeParam)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("getAndSet")
+          .addParameter("value", expectTypeParam)
+          .returns(expectTypeParam)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("compareAndSet")
+          .addParameter("expect", expectTypeParam)
+          .addParameter("update", expectTypeParam)
+          .returns(Boolean::class)
+          .build()
+      )
+      .build()
     val actualName = AtomicReference::class.asTypeName().parameterizedBy(expectTypeParam)
     val actualSpec = TypeAliasSpec.builder(expectType, actualName)
-        .addTypeVariable(expectTypeParam)
-        .addModifiers(KModifier.ACTUAL)
-        .build()
+      .addTypeVariable(expectTypeParam)
+      .addModifiers(KModifier.ACTUAL)
+      .build()
     val fileSpec = FileSpec.builder("", "Test")
-        .addType(expectSpec)
-        .addTypeAlias(actualSpec)
-        .build()
+      .addType(expectSpec)
+      .addTypeAlias(actualSpec)
+      .build()
 
-    assertThat(fileSpec.toString()).isEqualTo("""
+    assertThat(fileSpec.toString()).isEqualTo(
+      """
       |import java.util.concurrent.atomic.AtomicReference
       |import kotlin.Boolean
       |import kotlin.Unit
@@ -79,23 +90,27 @@ class CrossplatformTest {
       |}
       |
       |public actual typealias AtomicRef<V> = AtomicReference<V>
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun expectWithSecondaryConstructors() {
     val expectSpec = TypeSpec.expectClassBuilder("IoException")
-        .addModifiers(KModifier.OPEN)
-        .superclass(Exception::class)
-        .addFunction(FunSpec.constructorBuilder().build())
-        .addFunction(FunSpec.constructorBuilder()
-            .addParameter("message", String::class)
-            .build())
-        .build()
+      .addModifiers(KModifier.OPEN)
+      .superclass(Exception::class)
+      .addFunction(FunSpec.constructorBuilder().build())
+      .addFunction(
+        FunSpec.constructorBuilder()
+          .addParameter("message", String::class)
+          .build()
+      )
+      .build()
     val fileSpec = FileSpec.builder("", "Test")
-        .addType(expectSpec)
-        .build()
+      .addType(expectSpec)
+      .build()
 
-    assertThat(fileSpec.toString()).isEqualTo("""
+    assertThat(fileSpec.toString()).isEqualTo(
+      """
       |import java.lang.Exception
       |import kotlin.String
       |
@@ -104,94 +119,117 @@ class CrossplatformTest {
       |
       |  public constructor(message: String)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun topLevelProperties() {
     val fileSpec = FileSpec.builder("", "Test")
-        .addProperty(PropertySpec.builder("bar", String::class, KModifier.EXPECT).build())
-        .addProperty(PropertySpec.builder("bar", String::class, KModifier.ACTUAL)
-            .initializer(CodeBlock.of("%S", "Hello"))
-            .build())
-        .build()
+      .addProperty(PropertySpec.builder("bar", String::class, KModifier.EXPECT).build())
+      .addProperty(
+        PropertySpec.builder("bar", String::class, KModifier.ACTUAL)
+          .initializer(CodeBlock.of("%S", "Hello"))
+          .build()
+      )
+      .build()
 
-    assertThat(fileSpec.toString()).isEqualTo("""
+    assertThat(fileSpec.toString()).isEqualTo(
+      """
       |import kotlin.String
       |
       |public expect val bar: String
       |
       |public actual val bar: String = "Hello"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun topLevelFunctions() {
     val fileSpec = FileSpec.builder("", "Test")
-        .addFunction(FunSpec.builder("f1")
-            .addModifiers(KModifier.EXPECT)
-            .returns(Int::class)
-            .build())
-        .addFunction(FunSpec.builder("f1")
-            .addModifiers(KModifier.ACTUAL)
-            .addStatement("return 1")
-            .build())
-        .build()
+      .addFunction(
+        FunSpec.builder("f1")
+          .addModifiers(KModifier.EXPECT)
+          .returns(Int::class)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("f1")
+          .addModifiers(KModifier.ACTUAL)
+          .addStatement("return 1")
+          .build()
+      )
+      .build()
 
-    assertThat(fileSpec.toString()).isEqualTo("""
+    assertThat(fileSpec.toString()).isEqualTo(
+      """
       |import kotlin.Int
       |
       |public expect fun f1(): Int
       |
       |public actual fun f1() = 1
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun initBlockInExpectForbidden() {
     assertThrows<IllegalStateException> {
       TypeSpec.expectClassBuilder("AtomicRef")
-          .addInitializerBlock(CodeBlock.of("println()"))
+        .addInitializerBlock(CodeBlock.of("println()"))
     }.hasMessageThat().isEqualTo("expect CLASS can't have initializer blocks")
   }
 
   @Test fun expectFunctionBodyForbidden() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.expectClassBuilder("AtomicRef")
-          .addFunction(FunSpec.builder("print")
-              .addStatement("println()")
-              .build())
-          .build()
+        .addFunction(
+          FunSpec.builder("print")
+            .addStatement("println()")
+            .build()
+        )
+        .build()
     }.hasMessageThat().isEqualTo("functions in expect classes can't have bodies")
   }
 
   @Test fun expectPropertyInitializerForbidden() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.expectClassBuilder("AtomicRef")
-          .addProperty(PropertySpec.builder("a", Boolean::class)
-              .initializer("true")
-              .build())
+        .addProperty(
+          PropertySpec.builder("a", Boolean::class)
+            .initializer("true")
+            .build()
+        )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have initializers")
   }
 
   @Test fun expectPropertyGetterForbidden() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.expectClassBuilder("AtomicRef")
-          .addProperty(PropertySpec.builder("a", Boolean::class)
-              .getter(FunSpec.getterBuilder()
-                  .addStatement("return true")
-                  .build())
-              .build())
+        .addProperty(
+          PropertySpec.builder("a", Boolean::class)
+            .getter(
+              FunSpec.getterBuilder()
+                .addStatement("return true")
+                .build()
+            )
+            .build()
+        )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }
 
   @Test fun expectPropertySetterForbidden() {
     assertThrows<IllegalArgumentException> {
       TypeSpec.expectClassBuilder("AtomicRef")
-          .addProperty(PropertySpec.builder("a", Boolean::class)
-              .mutable()
-              .setter(FunSpec.setterBuilder()
-                  .addParameter("value", Boolean::class)
-                  .addStatement("field = true")
-                  .build())
-              .build())
+        .addProperty(
+          PropertySpec.builder("a", Boolean::class)
+            .mutable()
+            .setter(
+              FunSpec.setterBuilder()
+                .addParameter("value", Boolean::class)
+                .addStatement("field = true")
+                .build()
+            )
+            .build()
+        )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }
 }

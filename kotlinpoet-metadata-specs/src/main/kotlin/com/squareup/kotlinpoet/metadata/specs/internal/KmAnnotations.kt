@@ -30,13 +30,13 @@ import kotlinx.metadata.KmAnnotationArgument.UShortValue
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
   val cn = createClassName(className)
   return AnnotationSpec.builder(cn)
-      .apply {
-        arguments.forEach { (name, arg) ->
-          addMember("%L = %L", name, arg.toCodeBlock())
-        }
+    .apply {
+      arguments.forEach { (name, arg) ->
+        addMember("%L = %L", name, arg.toCodeBlock())
       }
-      .tag(this)
-      .build()
+    }
+    .tag(this)
+    .build()
 }
 
 @KotlinPoetMetadataPreview

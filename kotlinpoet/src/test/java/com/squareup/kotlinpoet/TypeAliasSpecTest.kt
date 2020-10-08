@@ -26,112 +26,132 @@ class TypeAliasSpecTest {
 
   @Test fun simpleTypeAlias() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .build()
+      .builder("Word", String::class)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |public typealias Word = kotlin.String
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun typeVariable() {
     val v = TypeVariableName("V")
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", List::class.asClassName().parameterizedBy(v))
-        .addTypeVariable(v)
-        .build()
+      .builder("Word", List::class.asClassName().parameterizedBy(v))
+      .addTypeVariable(v)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |public typealias Word<V> = kotlin.collections.List<V>
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun publicVisibility() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addModifiers(KModifier.PUBLIC)
-        .build()
+      .builder("Word", String::class)
+      .addModifiers(KModifier.PUBLIC)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |public typealias Word = kotlin.String
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun internalVisibility() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addModifiers(KModifier.INTERNAL)
-        .build()
+      .builder("Word", String::class)
+      .addModifiers(KModifier.INTERNAL)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |internal typealias Word = kotlin.String
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun privateVisibility() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addModifiers(KModifier.PRIVATE)
-        .build()
+      .builder("Word", String::class)
+      .addModifiers(KModifier.PRIVATE)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |private typealias Word = kotlin.String
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun implTypeAlias() {
     val typeName = AtomicReference::class.asClassName().parameterizedBy(TypeVariableName("V"))
     val typeAliasSpec = TypeAliasSpec
-        .builder("AtomicRef", typeName)
-        .addModifiers(KModifier.ACTUAL)
-        .addTypeVariable(TypeVariableName("V"))
-        .build()
+      .builder("AtomicRef", typeName)
+      .addModifiers(KModifier.ACTUAL)
+      .addTypeVariable(TypeVariableName("V"))
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
         |public actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun kdoc() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addKdoc("Word is just a type alias for [String](%T).\n", String::class)
-        .build()
+      .builder("Word", String::class)
+      .addKdoc("Word is just a type alias for [String](%T).\n", String::class)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
       |/**
       | * Word is just a type alias for [String](kotlin.String).
       | */
       |public typealias Word = kotlin.String
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun annotations() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addAnnotation(AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
-            .addMember("value = %S", "words!")
-            .build())
-        .build()
+      .builder("Word", String::class)
+      .addAnnotation(
+        AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
+          .addMember("value = %S", "words!")
+          .build()
+      )
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
       |@com.squareup.kotlinpoet.TypeAliasAnnotation(value = "words!")
       |public typealias Word = kotlin.String
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun kdocWithoutNewLine() {
     val typeAliasSpec = TypeAliasSpec
-        .builder("Word", String::class)
-        .addKdoc("Word is just a type alias for [String](%T).", String::class)
-        .build()
+      .builder("Word", String::class)
+      .addKdoc("Word is just a type alias for [String](%T).", String::class)
+      .build()
 
-    assertThat(typeAliasSpec.toString()).isEqualTo("""
+    assertThat(typeAliasSpec.toString()).isEqualTo(
+      """
       |/**
       | * Word is just a type alias for [String](kotlin.String).
       | */
       |public typealias Word = kotlin.String
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun equalsAndHashCode() {
@@ -145,18 +165,18 @@ class TypeAliasSpecTest {
   @Test fun generalBuilderEqualityTest() {
     val typeParam = TypeVariableName("V")
     val typeAliasSpec = TypeAliasSpec
-        .builder("Bio", Pair::class.parameterizedBy(String::class, String::class))
-        .addKdoc("First nand Last Name.\n")
-        .addModifiers(KModifier.PUBLIC)
-        .addTypeVariable(typeParam)
-        .build()
+      .builder("Bio", Pair::class.parameterizedBy(String::class, String::class))
+      .addKdoc("First nand Last Name.\n")
+      .addModifiers(KModifier.PUBLIC)
+      .addTypeVariable(typeParam)
+      .build()
     assertThat(typeAliasSpec.toBuilder().build()).isEqualTo(typeAliasSpec)
   }
 
   @Test fun modifyModifiers() {
     val builder = TypeAliasSpec
-        .builder("Word", String::class)
-        .addModifiers(KModifier.PRIVATE)
+      .builder("Word", String::class)
+      .addModifiers(KModifier.PRIVATE)
 
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
@@ -166,8 +186,8 @@ class TypeAliasSpecTest {
 
   @Test fun modifyTypeVariableNames() {
     val builder = TypeAliasSpec
-        .builder("Word", String::class)
-        .addTypeVariable(TypeVariableName("V"))
+      .builder("Word", String::class)
+      .addTypeVariable(TypeVariableName("V"))
 
     val tVar = TypeVariableName("T")
     builder.typeVariables.clear()
@@ -178,14 +198,16 @@ class TypeAliasSpecTest {
 
   @Test fun modifyAnnotations() {
     val builder = TypeAliasSpec
-        .builder("Word", String::class)
-        .addAnnotation(AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
-            .addMember("value = %S", "value1")
-            .build())
+      .builder("Word", String::class)
+      .addAnnotation(
+        AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
+          .addMember("value = %S", "value1")
+          .build()
+      )
 
     val javaWord = AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
-        .addMember("value = %S", "value2")
-        .build()
+      .addMember("value = %S", "value2")
+      .build()
     builder.annotations.clear()
     builder.annotations.add(javaWord)
 
@@ -194,18 +216,22 @@ class TypeAliasSpecTest {
 
   @Test fun nameEscaping() {
     val typeAlias = TypeAliasSpec.builder("fun", String::class).build()
-    assertThat(typeAlias.toString()).isEqualTo("""
+    assertThat(typeAlias.toString()).isEqualTo(
+      """
       |public typealias `fun` = kotlin.String
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun annotatedLambdaType() {
     val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
     val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
     val spec = TypeAliasSpec.builder("lambda", type).build()
-    assertThat(spec.toString()).isEqualTo("""
+    assertThat(spec.toString()).isEqualTo(
+      """
       |public typealias lambda = @Annotation () -> kotlin.Unit
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 }
 

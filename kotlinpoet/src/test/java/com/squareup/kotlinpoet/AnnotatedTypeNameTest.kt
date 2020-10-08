@@ -48,9 +48,11 @@ class AnnotatedTypeNameTest {
     val expected = "@$NN @java.lang.Override kotlin.String"
     val type = String::class.asTypeName()
     val actual = type
-        .copy(annotations = type.annotations + NEVER_NULL +
-            AnnotationSpec.builder(Override::class).build())
-        .toString()
+      .copy(
+        annotations = type.annotations + NEVER_NULL +
+          AnnotationSpec.builder(Override::class).build()
+      )
+      .toString()
     assertEquals(expected, actual)
   }
 
@@ -94,14 +96,20 @@ class AnnotatedTypeNameTest {
   private fun annotatedEquivalence(type: TypeName) {
     assertFalse(type.isAnnotated)
     assertEquals(type, type)
-    assertEquals(type.copy(annotations = listOf(NEVER_NULL)),
-        type.copy(annotations = listOf(NEVER_NULL)))
+    assertEquals(
+      type.copy(annotations = listOf(NEVER_NULL)),
+      type.copy(annotations = listOf(NEVER_NULL))
+    )
     assertNotEquals(type, type.copy(annotations = listOf(NEVER_NULL)))
     assertEquals(type.hashCode().toLong(), type.hashCode().toLong())
-    assertEquals(type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
-        type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong())
-    assertNotEquals(type.hashCode().toLong(),
-        type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong())
+    assertEquals(
+      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
+      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong()
+    )
+    assertNotEquals(
+      type.hashCode().toLong(),
+      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong()
+    )
   }
 
   // https://github.com/square/javapoet/issues/431
@@ -120,10 +128,10 @@ class AnnotatedTypeNameTest {
   // https://github.com/square/javapoet/issues/431
   @Ignore @Test fun annotatedNestedParameterizedType() {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName +
-        " Entry<kotlin.Byte, kotlin.Byte>"
+      " Entry<kotlin.Byte, kotlin.Byte>"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
     val type = Map.Entry::class.parameterizedBy(Byte::class, Byte::class)
-        .copy(annotations = listOf(typeUseAnnotation))
+      .copy(annotations = listOf(typeUseAnnotation))
     val actual = type.toString()
     assertEquals(expected, actual)
   }

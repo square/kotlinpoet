@@ -25,7 +25,7 @@ import kotlin.reflect.KTypeParameter
 /** Returns a parameterized type equivalent to `type`.  */
 @JvmName("get")
 public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
-    ParameterizedTypeName.get(this, mutableMapOf())
+  ParameterizedTypeName.get(this, mutableMapOf())
 
 /** Returns a class name equivalent to given Kotlin KType.  */
 public fun KType.asTypeName(): TypeName {

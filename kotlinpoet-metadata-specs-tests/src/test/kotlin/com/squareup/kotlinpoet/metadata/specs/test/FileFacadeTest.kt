@@ -11,16 +11,18 @@ import org.junit.Test
 class FacadeFileTest : MultiClassInspectorTest() {
 
   @IgnoreForHandlerType(
-      handlerType = ELEMENTS,
-      reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
+    handlerType = ELEMENTS,
+    reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
   )
   @Test
   fun facadeFile_reflective() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("FacadeFile")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       @file:JvmName(name = "FacadeFile")
       @file:FileAnnotation(value = "file annotations!")
 
@@ -140,20 +142,23 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
       public typealias FacadeTypeAliasName = String
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      handlerType = REFLECTIVE,
-      reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
+    handlerType = REFLECTIVE,
+    reason = "Elements can detect JvmOverloads, JvmName not possible in reflection"
   )
   @Test
   fun facadeFile_elements() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.FacadeFile"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("FacadeFile")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       @file:FileAnnotation(value = "file annotations!")
       @file:JvmName(name = "FacadeFile")
 
@@ -273,77 +278,89 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
 
       public typealias FacadeTypeAliasName = String
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      handlerType = ELEMENTS,
-      reason = "JvmName not possible in reflection"
+    handlerType = ELEMENTS,
+    reason = "JvmName not possible in reflection"
   )
   @Test
   fun noJvmName_reflective() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("NoJvmNameFacadeFile")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import kotlin.String
 
       public val prop: String = ""
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      handlerType = REFLECTIVE,
-      reason = "JvmName not possible in reflection"
+    handlerType = REFLECTIVE,
+    reason = "JvmName not possible in reflection"
   )
   @Test
   fun noJvmName_elements() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.NoJvmNameFacadeFileKt"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("NoJvmNameFacadeFile")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import kotlin.String
 
       public val prop: String = throw NotImplementedError("Stub!")
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      handlerType = ELEMENTS,
-      reason = "JvmName not possible in reflection"
+    handlerType = ELEMENTS,
+    reason = "JvmName not possible in reflection"
   )
   @Test
   fun jvmName_with_kt_reflective() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("JvmName")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       package com.squareup.kotlinpoet.metadata.specs.test
 
       import kotlin.String
 
       public val prop2: String = ""
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @IgnoreForHandlerType(
-      handlerType = REFLECTIVE,
-      reason = "JvmName not possible in reflection"
+    handlerType = REFLECTIVE,
+    reason = "JvmName not possible in reflection"
   )
   @Test
   fun jvmName_with_kt_elements() {
     val fileSpec = Class.forName(
-        "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt").kotlin.toFileSpecWithTestHandler()
+      "com.squareup.kotlinpoet.metadata.specs.test.JvmNameKt"
+    ).kotlin.toFileSpecWithTestHandler()
     assertThat(fileSpec.name).isEqualTo("JvmName")
     //language=kotlin
-    assertThat(fileSpec.trimmedToString()).isEqualTo("""
+    assertThat(fileSpec.trimmedToString()).isEqualTo(
+      """
       @file:JvmName(name = "JvmNameKt")
 
       package com.squareup.kotlinpoet.metadata.specs.test
@@ -352,7 +369,8 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.JvmName
 
       public val prop2: String = throw NotImplementedError("Stub!")
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 }
 

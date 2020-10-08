@@ -73,17 +73,18 @@ class CodeBlockTest {
     val map = LinkedHashMap<String, Any>()
     map.put("text", "tacos")
     val block = CodeBlock.builder()
-        .addNamed("\"I like \" + %text:S + \". Do you like \" + %text:S + \"?\"", map)
-        .build()
+      .addNamed("\"I like \" + %text:S + \". Do you like \" + %text:S + \"?\"", map)
+      .build()
     assertThat(block.toString()).isEqualTo(
-        "\"I like \" + \"tacos\" + \". Do you like \" + \"tacos\" + \"?\"")
+      "\"I like \" + \"tacos\" + \". Do you like \" + \"tacos\" + \"?\""
+    )
   }
 
   @Test fun namedAndNoArgFormat() {
     val map = LinkedHashMap<String, Any>()
     map.put("text", "tacos")
     val block = CodeBlock.builder()
-        .addNamed("⇥\n%text:L for\n⇤%%3.50", map).build()
+      .addNamed("⇥\n%text:L for\n⇤%%3.50", map).build()
     assertThat(block.toString()).isEqualTo("\n  tacos for\n%3.50")
   }
 
@@ -108,11 +109,12 @@ class CodeBlockTest {
     map.put("text", "tacos")
 
     val block = CodeBlock.builder()
-        .addNamed("%pipe:T.out.println(\"Let's eat some %text:L\");", map)
-        .build()
+      .addNamed("%pipe:T.out.println(\"Let's eat some %text:L\");", map)
+      .build()
 
     assertThat(block.toString()).isEqualTo(
-        "java.lang.System.out.println(\"Let's eat some tacos\");")
+      "java.lang.System.out.println(\"Let's eat some tacos\");"
+    )
   }
 
   @Test fun namedNewline() {
@@ -180,41 +182,45 @@ class CodeBlockTest {
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
     val block = CodeBlock.builder()
-        .add("%1T.out.println(%1S)", System::class.asClassName())
-        .build()
+      .add("%1T.out.println(%1S)", System::class.asClassName())
+      .build()
     assertThat(block.toString()).isEqualTo("java.lang.System.out.println(\"java.lang.System\")")
   }
 
   @Test fun tooManyStatementEnters() {
     val codeBlock = CodeBlock.builder()
-        .addStatement("print(«%L»)", "1 + 1")
-        .build()
+      .addStatement("print(«%L»)", "1 + 1")
+      .build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("""
+    }.hasMessageThat().isEqualTo(
+      """
       |Can't open a new statement until the current statement is closed (opening « followed
       |by another « without a closing »).
       |Current code block:
       |- Format parts: [«, print(, «, %L, », ), \n, »]
       |- Arguments: [1 + 1]
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun statementExitWithoutStatementEnter() {
     val codeBlock = CodeBlock.builder()
-        .addStatement("print(%L»)", "1 + 1")
-        .build()
+      .addStatement("print(%L»)", "1 + 1")
+      .build()
     assertThrows<IllegalStateException> {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo("""
+    }.hasMessageThat().isEqualTo(
+      """
       |Can't close a statement that hasn't been opened (closing » is not preceded by an
       |opening «).
       |Current code block:
       |- Format parts: [«, print(, %L, », ), \n, »]
       |- Arguments: [1 + 1]
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun nullableType() {
@@ -223,17 +229,17 @@ class CodeBlockTest {
     assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
     val list = (List::class.asClassName().copy(nullable = true) as ClassName)
-        .parameterizedBy(Int::class.asTypeName().copy(nullable = true))
-        .copy(nullable = true)
+      .parameterizedBy(Int::class.asTypeName().copy(nullable = true))
+      .copy(nullable = true)
     val listBlock = CodeBlock.of("%T", list)
     assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
     val map = (Map::class.asClassName().copy(nullable = true) as ClassName)
-        .parameterizedBy(String::class.asTypeName().copy(nullable = true), list)
-        .copy(nullable = true)
+      .parameterizedBy(String::class.asTypeName().copy(nullable = true), list)
+      .copy(nullable = true)
     val mapBlock = CodeBlock.of("%T", map)
     assertThat(mapBlock.toString())
-        .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
+      .isEqualTo("kotlin.collections.Map<kotlin.String?, kotlin.collections.List<kotlin.Int?>?>?")
 
     val rarr = WildcardTypeName.producerOf(String::class.asTypeName().copy(nullable = true))
     val rarrBlock = CodeBlock.of("%T", rarr)
@@ -241,183 +247,236 @@ class CodeBlockTest {
   }
 
   @Test fun withoutPrefixMatching() {
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("")))
-        .isEqualTo(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("ab")))
-        .isEqualTo(CodeBlock.of("cd %S efgh %S ijkl", "x", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd ")))
-        .isEqualTo(CodeBlock.of("%S efgh %S ijkl", "x", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S", "x")))
-        .isEqualTo(CodeBlock.of(" efgh %S ijkl", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S ef", "x")))
-        .isEqualTo(CodeBlock.of("gh %S ijkl", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x")))
-        .isEqualTo(CodeBlock.of("%S ijkl", "y"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y")))
-        .isEqualTo(CodeBlock.of(" ijkl"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y")))
-        .isEqualTo(CodeBlock.of("kl"))
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
-        .isEqualTo(CodeBlock.of(""))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of(""))
+    )
+      .isEqualTo(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("ab"))
+    )
+      .isEqualTo(CodeBlock.of("cd %S efgh %S ijkl", "x", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd "))
+    )
+      .isEqualTo(CodeBlock.of("%S efgh %S ijkl", "x", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S", "x"))
+    )
+      .isEqualTo(CodeBlock.of(" efgh %S ijkl", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S ef", "x"))
+    )
+      .isEqualTo(CodeBlock.of("gh %S ijkl", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x"))
+    )
+      .isEqualTo(CodeBlock.of("%S ijkl", "y"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y"))
+    )
+      .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y"))
+    )
+      .isEqualTo(CodeBlock.of("kl"))
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    )
+      .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun withoutPrefixNoArgs() {
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("")))
-        .isEqualTo(CodeBlock.of("abcd %% efgh %% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("ab")))
-        .isEqualTo(CodeBlock.of("cd %% efgh %% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd ")))
-        .isEqualTo(CodeBlock.of("%% efgh %% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %%")))
-        .isEqualTo(CodeBlock.of(" efgh %% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% ef")))
-        .isEqualTo(CodeBlock.of("gh %% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh ")))
-        .isEqualTo(CodeBlock.of("%% ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %%")))
-        .isEqualTo(CodeBlock.of(" ijkl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij")))
-        .isEqualTo(CodeBlock.of("kl"))
-    assertThat(CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl")))
-        .isEqualTo(CodeBlock.of(""))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of(""))
+    )
+      .isEqualTo(CodeBlock.of("abcd %% efgh %% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("ab"))
+    )
+      .isEqualTo(CodeBlock.of("cd %% efgh %% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd "))
+    )
+      .isEqualTo(CodeBlock.of("%% efgh %% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %%"))
+    )
+      .isEqualTo(CodeBlock.of(" efgh %% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% ef"))
+    )
+      .isEqualTo(CodeBlock.of("gh %% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh "))
+    )
+      .isEqualTo(CodeBlock.of("%% ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %%"))
+    )
+      .isEqualTo(CodeBlock.of(" ijkl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij"))
+    )
+      .isEqualTo(CodeBlock.of("kl"))
+    assertThat(
+      CodeBlock.of("abcd %% efgh %% ijkl")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl"))
+    )
+      .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun withoutPrefixArgMismatch() {
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z")))
-        .isNull()
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y")))
-        .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z"))
+    )
+      .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y"))
+    )
+      .isNull()
   }
 
   @Test fun withoutPrefixFormatPartMismatch() {
-    assertThat(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y")))
-        .isNull()
-    assertThat(CodeBlock.of("abcd %S efgh %% ijkl", "x")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x")))
-        .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y"))
+    )
+      .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh %% ijkl", "x")
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x"))
+    )
+      .isNull()
   }
 
   @Test fun withoutPrefixTooShort() {
-    assertThat(CodeBlock.of("abcd %S efgh %S", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
-        .isNull()
-    assertThat(CodeBlock.of("abcd %S efgh", "x")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")))
-        .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh %S", "x", "y")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    )
+      .isNull()
+    assertThat(
+      CodeBlock.of("abcd %S efgh", "x")
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+    )
+      .isNull()
   }
 
   @Test fun trimEmpty() {
     assertThat(CodeBlock.of("").trim())
-        .isEqualTo(CodeBlock.of(""))
+      .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun trimNoPlaceholders() {
     assertThat(CodeBlock.of("return null").trim())
-        .isEqualTo(CodeBlock.of("return null"))
+      .isEqualTo(CodeBlock.of("return null"))
   }
 
   @Test fun trimPlaceholdersWithArgs() {
     assertThat(CodeBlock.of("return %S", "taco").trim())
-        .isEqualTo(CodeBlock.of("return %S", "taco"))
+      .isEqualTo(CodeBlock.of("return %S", "taco"))
   }
 
   @Test fun trimNoArgPlaceholderMiddle() {
     assertThat(CodeBlock.of("this.taco = %S", "taco").trim())
-        .isEqualTo(CodeBlock.of("this.taco = %S", "taco"))
+      .isEqualTo(CodeBlock.of("this.taco = %S", "taco"))
   }
 
   @Test fun trimNoArgPlaceholderStart() {
     assertThat(CodeBlock.of("⇥return ").trim())
-        .isEqualTo(CodeBlock.of("return "))
+      .isEqualTo(CodeBlock.of("return "))
   }
 
   @Test fun trimNoArgPlaceholderEnd() {
     assertThat(CodeBlock.of("return ⇥").trim())
-        .isEqualTo(CodeBlock.of("return "))
+      .isEqualTo(CodeBlock.of("return "))
   }
 
   @Test fun trimNoArgPlaceholdersStartEnd() {
     assertThat(CodeBlock.of("«return this»").trim())
-        .isEqualTo(CodeBlock.of("return this"))
+      .isEqualTo(CodeBlock.of("return this"))
   }
 
   @Test fun trimMultipleNoArgPlaceholders() {
     assertThat(
-        CodeBlock.of("«return if (x > %L) %S else %S»", 1, "a", "b").trim())
-        .isEqualTo(CodeBlock.of("return if (x > %L) %S else %S", 1, "a", "b"))
+      CodeBlock.of("«return if (x > %L) %S else %S»", 1, "a", "b").trim()
+    )
+      .isEqualTo(CodeBlock.of("return if (x > %L) %S else %S", 1, "a", "b"))
   }
 
   @Test fun trimOnlyNoArgPlaceholders() {
     assertThat(CodeBlock.of("«»⇥⇤").trim())
-        .isEqualTo(CodeBlock.of(""))
+      .isEqualTo(CodeBlock.of(""))
   }
 
   @Test fun replaceSimple() {
     assertThat(CodeBlock.of("%%⇥%%").replaceAll("%%", ""))
-        .isEqualTo(CodeBlock.of("⇥"))
+      .isEqualTo(CodeBlock.of("⇥"))
   }
 
   @Test fun replaceNoMatches() {
     assertThat(CodeBlock.of("%%⇥%%").replaceAll("⇤", ""))
-        .isEqualTo(CodeBlock.of("%%⇥%%"))
+      .isEqualTo(CodeBlock.of("%%⇥%%"))
   }
 
   @Test fun replaceRegex() {
     assertThat(CodeBlock.of("%%⇥%%⇤").replaceAll("[⇥|⇤]", ""))
-        .isEqualTo(CodeBlock.of("%%%%"))
+      .isEqualTo(CodeBlock.of("%%%%"))
   }
 
   @Test fun joinToCode() {
     val blocks = listOf(CodeBlock.of("%L", "taco1"), CodeBlock.of("%L", "taco2"), CodeBlock.of("%L", "taco3"))
     assertThat(blocks.joinToCode(prefix = "(", suffix = ")"))
-        .isEqualTo(CodeBlock.of("(%L, %L, %L)", "taco1", "taco2", "taco3"))
+      .isEqualTo(CodeBlock.of("(%L, %L, %L)", "taco1", "taco2", "taco3"))
   }
 
   @Test fun beginControlFlowWithParams() {
     val controlFlow = CodeBlock.builder()
-        .beginControlFlow("list.forEach { element ->")
-        .addStatement("println(element)")
-        .endControlFlow()
-        .build()
-    assertThat(controlFlow.toString()).isEqualTo("""
+      .beginControlFlow("list.forEach { element ->")
+      .addStatement("println(element)")
+      .endControlFlow()
+      .build()
+    assertThat(controlFlow.toString()).isEqualTo(
+      """
       |list.forEach { element ->
       |  println(element)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun beginControlFlowWithParamsAndTemplateString() {
     val controlFlow = CodeBlock.builder()
-        .beginControlFlow("listOf(\"\${1.toString()}\").forEach { element ->")
-        .addStatement("println(element)")
-        .endControlFlow()
-        .build()
-    assertThat(controlFlow.toString()).isEqualTo("""
+      .beginControlFlow("listOf(\"\${1.toString()}\").forEach { element ->")
+      .addStatement("println(element)")
+      .endControlFlow()
+      .build()
+    assertThat(controlFlow.toString()).isEqualTo(
+      """
       |listOf("${'$'}{1.toString()}").forEach { element ->
       |  println(element)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun buildCodeBlock() {
@@ -428,24 +487,29 @@ class CodeBlockTest {
       addStatement("println(%S)", "bar")
       endControlFlow()
     }
-    assertThat(codeBlock.toString()).isEqualTo("""
+    assertThat(codeBlock.toString()).isEqualTo(
+      """
       |if (2 == 2) {
       |  println("foo")
       |} else {
       |  println("bar")
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun nonWrappingControlFlow() {
     val file = FileSpec.builder("com.squareup.tacos", "Test")
-        .addFunction(FunSpec.builder("test")
-            .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line ")
-            .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2 ")
-            .endControlFlow()
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("test")
+          .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line ")
+          .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2 ")
+          .endControlFlow()
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
@@ -457,21 +521,24 @@ class CodeBlockTest {
       |      "Long string that would wrap the line 2 ") {
       |  }
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun ensureEndsWithNewLineWithNoArgs() {
     val codeBlock = CodeBlock.builder()
-        .addStatement("Modeling a kdoc")
-        .add("\n")
-        .addStatement("Statement with no args")
-        .build()
+      .addStatement("Modeling a kdoc")
+      .add("\n")
+      .addStatement("Statement with no args")
+      .build()
 
-    assertThat(codeBlock.ensureEndsWithNewLine().toString()).isEqualTo("""
+    assertThat(codeBlock.ensureEndsWithNewLine().toString()).isEqualTo(
+      """
       |Modeling a kdoc
       |
       |Statement with no args
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun `%N escapes keywords`() {

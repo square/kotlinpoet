@@ -18,13 +18,13 @@ package com.squareup.kotlinpoet
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
 import com.google.common.truth.Truth.assertThat
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.util.Date
 import kotlin.test.Test
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 
 class FileWritingTest {
   // Used for testing java.io File behavior.
@@ -140,51 +140,51 @@ class FileWritingTest {
     // TypeSpecs
     val element1_1 = FakeElement()
     val test1 = TypeSpec.classBuilder("Test1")
-        .addOriginatingElement(element1_1)
-        .build()
+      .addOriginatingElement(element1_1)
+      .build()
 
     val element2_1 = FakeElement()
     val element2_2 = FakeElement()
     val test2 = TypeSpec.classBuilder("Test2")
-        .addOriginatingElement(element2_1)
-        .addOriginatingElement(element2_2)
-        .build()
+      .addOriginatingElement(element2_1)
+      .addOriginatingElement(element2_2)
+      .build()
 
     // FunSpecs
     val element3_1 = FakeElement()
     val element3_2 = FakeElement()
     val test3 = FunSpec.builder("fun3")
-        .addOriginatingElement(element3_1)
-        .addOriginatingElement(element3_2)
-        .build()
+      .addOriginatingElement(element3_1)
+      .addOriginatingElement(element3_2)
+      .build()
 
     // PropertySpecs
     val element4_1 = FakeElement()
     val element4_2 = FakeElement()
     val test4 = PropertySpec.builder("property4", String::class)
-        .addOriginatingElement(element4_1)
-        .addOriginatingElement(element4_2)
-        .build()
+      .addOriginatingElement(element4_1)
+      .addOriginatingElement(element4_2)
+      .build()
 
     FileSpec.get("example", test1).writeTo(filer)
     FileSpec.get("example", test2).writeTo(filer)
     FileSpec.builder("example", "Test3")
-        .addFunction(test3)
-        .build()
-        .writeTo(filer)
+      .addFunction(test3)
+      .build()
+      .writeTo(filer)
     FileSpec.builder("example", "Test4")
-        .addProperty(test4)
-        .build()
-        .writeTo(filer)
+      .addProperty(test4)
+      .build()
+      .writeTo(filer)
 
     // Mixed
     FileSpec.builder("example", "Mixed")
-        .addType(test1)
-        .addType(test2)
-        .addFunction(test3)
-        .addProperty(test4)
-        .build()
-        .writeTo(filer)
+      .addType(test1)
+      .addType(test2)
+      .addFunction(test3)
+      .addProperty(test4)
+      .build()
+      .writeTo(filer)
 
     val testPath1 = fsRoot.resolve(fs.getPath("example", "Test1.kt"))
     assertThat(filer.getOriginatingElements(testPath1)).containsExactly(element1_1)
@@ -197,33 +197,33 @@ class FileWritingTest {
 
     val mixed = fsRoot.resolve(fs.getPath("example", "Mixed.kt"))
     assertThat(filer.getOriginatingElements(mixed)).containsExactly(
-        element1_1,
-        element2_1,
-        element2_2,
-        element3_1,
-        element3_2,
-        element4_1,
-        element4_2
+      element1_1,
+      element2_1,
+      element2_2,
+      element3_1,
+      element3_2,
+      element4_1,
+      element4_2
     )
   }
 
   @Test fun filerPassesOnlyUniqueOriginatingElements() {
     val element1 = FakeElement()
     val fun1 = FunSpec.builder("test1")
-        .addOriginatingElement(element1)
-        .build()
+      .addOriginatingElement(element1)
+      .build()
 
     val element2 = FakeElement()
     val fun2 = FunSpec.builder("test2")
-        .addOriginatingElement(element1)
-        .addOriginatingElement(element2)
-        .build()
+      .addOriginatingElement(element1)
+      .addOriginatingElement(element2)
+      .build()
 
     FileSpec.builder("example", "File")
-        .addFunction(fun1)
-        .addFunction(fun2)
-        .build()
-        .writeTo(filer)
+      .addFunction(fun1)
+      .addFunction(fun2)
+      .build()
+      .writeTo(filer)
 
     val file = fsRoot.resolve(fs.getPath("example", "File.kt"))
     assertThat(filer.getOriginatingElements(file)).containsExactly(element1, element2)
@@ -231,24 +231,27 @@ class FileWritingTest {
 
   @Test fun filerClassesWithTabIndent() {
     val test = TypeSpec.classBuilder("Test")
-        .addProperty("madeFreshDate", Date::class)
-        .addFunction(FunSpec.builder("main")
-            .addModifiers(KModifier.PUBLIC)
-            .addParameter("args", Array<String>::class.java)
-            .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
-            .build())
-        .build()
+      .addProperty("madeFreshDate", Date::class)
+      .addFunction(
+        FunSpec.builder("main")
+          .addModifiers(KModifier.PUBLIC)
+          .addParameter("args", Array<String>::class.java)
+          .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
+          .build()
+      )
+      .build()
     FileSpec.builder("foo", "Test")
-        .addType(test)
-        .indent("\t")
-        .build()
-        .writeTo(filer)
+      .addType(test)
+      .indent("\t")
+      .build()
+      .writeTo(filer)
 
     val fooPath = fsRoot.resolve(fs.getPath("foo", "Test.kt"))
     assertThat(Files.exists(fooPath)).isTrue()
     val source = String(Files.readAllBytes(fooPath))
 
-    assertThat(source).isEqualTo("""
+    assertThat(source).isEqualTo(
+      """
         |package foo
         |
         |import java.lang.String
@@ -264,7 +267,8 @@ class FileWritingTest {
         |${"\t\t"}System.out.println("Hello World!");
         |${"\t"}}
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   /**
@@ -273,18 +277,20 @@ class FileWritingTest {
    */
   @Test fun fileIsUtf8() {
     val source = FileSpec.builder("foo", "Taco")
-        .addType(TypeSpec.classBuilder("Taco").build())
-        .addComment("Pi\u00f1ata\u00a1")
-        .build()
+      .addType(TypeSpec.classBuilder("Taco").build())
+      .addComment("Pi\u00f1ata\u00a1")
+      .build()
     source.writeTo(fsRoot)
 
     val fooPath = fsRoot.resolve(fs.getPath("foo", "Taco.kt"))
-    assertThat(String(Files.readAllBytes(fooPath), UTF_8)).isEqualTo("""
+    assertThat(String(Files.readAllBytes(fooPath), UTF_8)).isEqualTo(
+      """
         |// Piñata¡
         |package foo
         |
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun fileWithKeywordName() {

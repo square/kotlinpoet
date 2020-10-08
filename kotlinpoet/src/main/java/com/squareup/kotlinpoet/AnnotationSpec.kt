@@ -32,8 +32,8 @@ public class AnnotationSpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap()
 ) : Taggable by tagMap {
   @Deprecated(
-      message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
-      replaceWith = ReplaceWith("typeName")
+    message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
+    replaceWith = ReplaceWith("typeName")
   )
   public val className: ClassName
     get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
@@ -70,10 +70,11 @@ public class AnnotationSpec private constructor(
     codeWriter.emit("(")
     if (members.size > 1) codeWriter.emit(whitespace).indent(1)
     codeWriter.emitCode(
-        codeBlock = members
-            .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
-            .joinToCode(separator = memberSeparator),
-        isConstantContext = true)
+      codeBlock = members
+        .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
+        .joinToCode(separator = memberSeparator),
+      isConstantContext = true
+    )
     if (members.size > 1) codeWriter.unindent(1).emit(whitespace)
     codeWriter.emit(")")
   }
@@ -120,7 +121,7 @@ public class AnnotationSpec private constructor(
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     public fun addMember(format: String, vararg args: Any): Builder =
-        addMember(CodeBlock.of(format, *args))
+      addMember(CodeBlock.of(format, *args))
 
     public fun addMember(codeBlock: CodeBlock): Builder = apply {
       members += codeBlock
@@ -157,16 +158,16 @@ public class AnnotationSpec private constructor(
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String) =
-        builder.add(Builder.memberForValue(o))
+      builder.add(Builder.memberForValue(o))
 
     override fun visitAnnotation(a: AnnotationMirror, name: String) =
-        builder.add("%L", get(a))
+      builder.add("%L", get(a))
 
     override fun visitEnumConstant(c: VariableElement, name: String) =
-        builder.add("%T.%L", c.asType(), c.simpleName)
+      builder.add("%T.%L", c.asType(), c.simpleName)
 
     override fun visitType(t: TypeMirror, name: String) =
-        builder.add("%T::class", t)
+      builder.add("%T::class", t)
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
       builder.add("[⇥⇥")
@@ -187,7 +188,7 @@ public class AnnotationSpec private constructor(
       try {
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
-            .tag(annotation)
+          .tag(annotation)
         val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
         for (method in methods) {
           val value = method.invoke(annotation)
@@ -223,9 +224,9 @@ public class AnnotationSpec private constructor(
     }
 
     @Deprecated(
-        message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-            " the kotlinpoet-metadata APIs instead.",
-        level = WARNING
+      message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+      level = WARNING
     )
     @JvmStatic
     public fun get(annotation: AnnotationMirror): AnnotationSpec {
@@ -248,9 +249,9 @@ public class AnnotationSpec private constructor(
     @JvmStatic public fun builder(type: ParameterizedTypeName): Builder = Builder(type)
 
     @JvmStatic public fun builder(type: Class<out Annotation>): Builder =
-        builder(type.asClassName())
+      builder(type.asClassName())
 
     @JvmStatic public fun builder(type: KClass<out Annotation>): Builder =
-        builder(type.asClassName())
+      builder(type.asClassName())
   }
 }
