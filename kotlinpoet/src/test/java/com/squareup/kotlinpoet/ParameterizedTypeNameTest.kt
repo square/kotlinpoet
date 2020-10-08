@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
+import org.junit.Test
 import java.io.Closeable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -26,19 +27,18 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
-import org.junit.Test
 
 class ParameterizedTypeNameTest {
   @Test fun classNamePlusParameter() {
     val typeName = ClassName("kotlin.collections", "List")
-        .plusParameter(ClassName("kotlin", "String"))
+      .plusParameter(ClassName("kotlin", "String"))
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.List<kotlin.String>")
   }
 
   @Test fun classNamePlusTwoParameters() {
     val typeName = ClassName("kotlin.collections", "Map")
-        .plusParameter(ClassName("kotlin", "String"))
-        .plusParameter(ClassName("kotlin", "Int"))
+      .plusParameter(ClassName("kotlin", "String"))
+      .plusParameter(ClassName("kotlin", "Int"))
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Int>")
   }
 
@@ -55,8 +55,8 @@ class ParameterizedTypeNameTest {
 
   @Test fun kClassPlusTwoParameters() {
     val typeName = Map::class
-        .plusParameter(String::class)
-        .plusParameter(Int::class)
+      .plusParameter(String::class)
+      .plusParameter(Int::class)
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Int>")
   }
 
@@ -107,8 +107,8 @@ class ParameterizedTypeNameTest {
 
   @Test fun classPlusTwoParameters() {
     val typeName = java.util.Map::class.java
-        .plusParameter(java.lang.String::class.java)
-        .plusParameter(java.lang.Integer::class.java)
+      .plusParameter(java.lang.String::class.java)
+      .plusParameter(java.lang.Integer::class.java)
     assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>")
   }
 
@@ -142,9 +142,9 @@ class ParameterizedTypeNameTest {
   @Test fun annotatedLambdaTypeParameter() {
     val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
     val typeName = Map::class.asTypeName()
-        .plusParameter(String::class.asTypeName())
-        .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
+      .plusParameter(String::class.asTypeName())
+      .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
     assertThat(typeName.toString())
-        .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
+      .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
   }
 }

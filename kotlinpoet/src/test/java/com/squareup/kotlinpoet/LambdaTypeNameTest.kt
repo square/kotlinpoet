@@ -31,73 +31,89 @@ class LambdaTypeNameTest {
 
   @Test fun receiverWithoutAnnotationHasNoParens() {
     val typeName = LambdaTypeName.get(
-            Int::class.asClassName(),
-            listOf(),
-            Unit::class.asTypeName())
+      Int::class.asClassName(),
+      listOf(),
+      Unit::class.asTypeName()
+    )
     assertThat(typeName.toString()).isEqualTo("kotlin.Int.() -> kotlin.Unit")
   }
 
   @Test fun receiverWithAnnotationHasParens() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasSomeAnnotation::class.java)
     val typeName = LambdaTypeName.get(
-            Int::class.asClassName().copy(
-                annotations = listOf(AnnotationSpec.get(annotation, includeDefaultValues = true))
-            ),
-            listOf(),
-            Unit::class.asTypeName())
+      Int::class.asClassName().copy(
+        annotations = listOf(AnnotationSpec.get(annotation, includeDefaultValues = true))
+      ),
+      listOf(),
+      Unit::class.asTypeName()
+    )
     assertThat(typeName.toString()).isEqualTo(
-            "(@com.squareup.kotlinpoet.LambdaTypeNameTest.HasSomeAnnotation kotlin.Int).() -> kotlin.Unit")
+      "(@com.squareup.kotlinpoet.LambdaTypeNameTest.HasSomeAnnotation kotlin.Int).() -> kotlin.Unit"
+    )
   }
 
   @Test fun paramsWithAnnotationsForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = arrayOf(ParameterSpec.builder("foo", Int::class)
-              .addAnnotation(Nullable::class)
-              .build()),
-          returnType = Unit::class.asTypeName())
+        parameters = arrayOf(
+          ParameterSpec.builder("foo", Int::class)
+            .addAnnotation(Nullable::class)
+            .build()
+        ),
+        returnType = Unit::class.asTypeName()
+      )
     }.hasMessageThat().isEqualTo("Parameters with annotations are not allowed")
   }
 
   @Test fun paramsWithModifiersForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = arrayOf(ParameterSpec.builder("foo", Int::class)
-              .addModifiers(VARARG)
-              .build()),
-          returnType = Unit::class.asTypeName())
+        parameters = arrayOf(
+          ParameterSpec.builder("foo", Int::class)
+            .addModifiers(VARARG)
+            .build()
+        ),
+        returnType = Unit::class.asTypeName()
+      )
     }.hasMessageThat().isEqualTo("Parameters with modifiers are not allowed")
   }
 
   @Test fun paramsWithDefaultValueForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
-          parameters = arrayOf(ParameterSpec.builder("foo", Int::class)
-              .defaultValue("42")
-              .build()),
-          returnType = Unit::class.asTypeName())
+        parameters = arrayOf(
+          ParameterSpec.builder("foo", Int::class)
+            .defaultValue("42")
+            .build()
+        ),
+        returnType = Unit::class.asTypeName()
+      )
     }.hasMessageThat().isEqualTo("Parameters with default values are not allowed")
   }
 
   @Test fun lambdaReturnType() {
     val returnTypeName = LambdaTypeName.get(
-        parameters = arrayOf(Int::class.asTypeName()),
-        returnType = Unit::class.asTypeName())
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = Unit::class.asTypeName()
+    )
     val typeName = LambdaTypeName.get(
-        parameters = arrayOf(Int::class.asTypeName()),
-        returnType = returnTypeName)
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = returnTypeName
+    )
     assertThat(typeName.toString())
-        .isEqualTo("(kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit)")
+      .isEqualTo("(kotlin.Int) -> ((kotlin.Int) -> kotlin.Unit)")
   }
 
   @Test fun lambdaParameterType() {
     val parameterTypeName = LambdaTypeName.get(
-        parameters = arrayOf(Int::class.asTypeName()),
-        returnType = Int::class.asTypeName())
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = Int::class.asTypeName()
+    )
     val typeName = LambdaTypeName.get(
-        parameters = arrayOf(parameterTypeName),
-        returnType = Unit::class.asTypeName())
+      parameters = arrayOf(parameterTypeName),
+      returnType = Unit::class.asTypeName()
+    )
     assertThat(typeName.toString())
-        .isEqualTo("((kotlin.Int) -> kotlin.Int) -> kotlin.Unit")
+      .isEqualTo("((kotlin.Int) -> kotlin.Int) -> kotlin.Unit")
   }
 }

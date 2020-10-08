@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.junit.Rule
 import java.io.Closeable
 import java.io.IOException
 import java.util.concurrent.Callable
@@ -31,7 +32,6 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import org.junit.Rule
 
 class FunSpecTest {
   @Rule @JvmField val compilation = CompilationRule()
@@ -49,8 +49,8 @@ class FunSpecTest {
   }
 
   private fun findFirst(elements: Collection<ExecutableElement>, name: String) =
-      elements.firstOrNull { it.simpleName.toString() == name }
-          ?: throw IllegalArgumentException("$name not found in $elements")
+    elements.firstOrNull { it.simpleName.toString() == name }
+      ?: throw IllegalArgumentException("$name not found in $elements")
 
   @Target(AnnotationTarget.VALUE_PARAMETER)
   internal annotation class Nullable
@@ -86,21 +86,25 @@ class FunSpecTest {
     val classElement = getElement(Everything::class.java)
     val methodElement = getOnlyElement(methodsIn(classElement.enclosedElements))
     val funSpec = FunSpec.overriding(methodElement).build()
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
         |@kotlin.jvm.Throws(java.io.IOException::class, java.lang.SecurityException::class)
         |protected override fun <T> everything(arg0: java.lang.String, arg1: java.util.List<out T>): java.lang.Runnable where T : java.lang.Runnable, T : java.io.Closeable {
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun overrideDoesNotCopyOverrideAnnotation() {
     val classElement = getElement(HasAnnotation::class.java)
     val exec = getOnlyElement(methodsIn(classElement.enclosedElements))
     val funSpec = FunSpec.overriding(exec).build()
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
         |public override fun toString(): java.lang.String {
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun overrideExtendsOthersWorksWithActualTypeParameters() {
@@ -109,17 +113,21 @@ class FunSpecTest {
     val methods = methodsIn(elements.getAllMembers(classElement))
     var exec = findFirst(methods, "call")
     var funSpec = FunSpec.overriding(exec, classType, types).build()
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
         |@kotlin.jvm.Throws(java.lang.Exception::class)
         |public override fun call(): java.lang.Integer {
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
     exec = findFirst(methods, "compareTo")
     funSpec = FunSpec.overriding(exec, classType, types).build()
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
         |public override fun compareTo(arg0: java.lang.Long): kotlin.Int {
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun overrideInvalidModifiers() {
@@ -141,59 +149,74 @@ class FunSpecTest {
 
   @Test fun nullableParam() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec
-            .builder("string", String::class.asTypeName().copy(nullable = true))
-            .build())
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter(
+        ParameterSpec
+          .builder("string", String::class.asTypeName().copy(nullable = true))
+          .build()
+      )
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(string: kotlin.String?): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun nullableReturnType() {
     val funSpec = FunSpec.builder("foo")
-        .returns(String::class.asTypeName().copy(nullable = true))
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .returns(String::class.asTypeName().copy(nullable = true))
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(): kotlin.String? {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun returnsUnitWithoutExpressionBody() {
     val funSpec = FunSpec.builder("foo")
-        .returns(Unit::class)
-        .build()
+      .returns(Unit::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun returnsUnitWithExpressionBody() {
     val funSpec = FunSpec.builder("foo")
-        .returns(Unit::class)
-        .addStatement("return bar()")
-        .build()
+      .returns(Unit::class)
+      .addStatement("return bar()")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(): kotlin.Unit = bar()
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("string", String::class.asTypeName())
-            .addKdoc("A string parameter.")
-            .build())
-        .addParameter(ParameterSpec.builder("number", Int::class.asTypeName())
-            .addKdoc("A number with a multi-line doc comment.\nYes,\nthese\nthings\nhappen.")
-            .build())
-        .addParameter(ParameterSpec.builder("nodoc", Boolean::class.asTypeName()).build())
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter(
+        ParameterSpec.builder("string", String::class.asTypeName())
+          .addKdoc("A string parameter.")
+          .build()
+      )
+      .addParameter(
+        ParameterSpec.builder("number", Int::class.asTypeName())
+          .addKdoc("A number with a multi-line doc comment.\nYes,\nthese\nthings\nhappen.")
+          .build()
+      )
+      .addParameter(ParameterSpec.builder("nodoc", Boolean::class.asTypeName()).build())
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @param string A string parameter.
       | * @param number A number with a multi-line doc comment.
@@ -208,32 +231,37 @@ class FunSpecTest {
       |  nodoc: kotlin.Boolean
       |): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamWithKdocToBuilder() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("string", String::class.asTypeName())
-            .addKdoc("A string parameter.")
-            .build()
-            .toBuilder()
-            .addKdoc(" This is non null")
-            .build())
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter(
+        ParameterSpec.builder("string", String::class.asTypeName())
+          .addKdoc("A string parameter.")
+          .build()
+          .toBuilder()
+          .addKdoc(" This is non null")
+          .build()
+      )
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @param string A string parameter. This is non null
       | */
       |public fun foo(string: kotlin.String): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun originatingElementToBuilder() {
     val originatingElement = FakeElement()
     val funSpec = FunSpec.builder("foo")
-        .addOriginatingElement(originatingElement)
-        .build()
+      .addOriginatingElement(originatingElement)
+      .build()
 
     val newSpec = funSpec.toBuilder().build()
     assertThat(newSpec.originatingElements).containsExactly(originatingElement)
@@ -241,138 +269,164 @@ class FunSpecTest {
 
   @Test fun functionParamWithKdocAndReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("string", String::class)
-            .addKdoc("A string parameter.")
-            .build())
-        .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
-        .returns(String::class, kdoc = "the foo.")
-        .addStatement("return %S", "foo")
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter(
+        ParameterSpec.builder("string", String::class)
+          .addKdoc("A string parameter.")
+          .build()
+      )
+      .addParameter(ParameterSpec.builder("nodoc", Boolean::class).build())
+      .returns(String::class, kdoc = "the foo.")
+      .addStatement("return %S", "foo")
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @param string A string parameter.
       | * @return the foo.
       | */
       |public fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionWithModifiedReturnKdoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter("nodoc", Boolean::class)
-        .returns(String::class, kdoc = "the foo.")
-        .addStatement("return %S", "foo")
-        .build()
-        .toBuilder()
-        .returns(String::class, kdoc = "the modified foo.")
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter("nodoc", Boolean::class)
+      .returns(String::class, kdoc = "the foo.")
+      .addStatement("return %S", "foo")
+      .build()
+      .toBuilder()
+      .returns(String::class, kdoc = "the modified foo.")
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @return the modified foo.
       | */
       |public fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionWithThrows() {
     val funSpec = FunSpec.builder("foo")
-        .addStatement("throw %T()", AssertionError::class)
-        .returns(NOTHING)
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addStatement("throw %T()", AssertionError::class)
+      .returns(NOTHING)
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(): kotlin.Nothing = throw java.lang.AssertionError()
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionWithWordThrowDoesntConvertToExpressionFunction() {
     val throwSomethingElseFun = FunSpec.builder("throwOrDoSomethingElse")
-        .build()
+      .build()
 
     val funSpec = FunSpec.builder("foo")
-        .addStatement("%N()", throwSomethingElseFun)
-        .build()
+      .addStatement("%N()", throwSomethingElseFun)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(): kotlin.Unit {
       |  throwOrDoSomethingElse()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionWithReturnKDocAndMainKdoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter("nodoc", Boolean::class)
-        .returns(String::class, kdoc = "the foo.")
-        .addStatement("return %S", "foo")
-        .addKdoc("Do the foo")
-        .build()
-    assertThat(funSpec.toString()).isEqualTo("""
+      .addParameter("nodoc", Boolean::class)
+      .returns(String::class, kdoc = "the foo.")
+      .addStatement("return %S", "foo")
+      .addKdoc("Do the foo")
+      .build()
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * Do the foo
       | *
       | * @return the foo.
       | */
       |public fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamNoLambdaParam() {
     val unitType = UNIT
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = unitType)).build())
-        .returns(String::class)
-        .build()
+      .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = unitType)).build())
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionWithReturnKDoc() {
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = UNIT)).build())
-        .returns(String::class, CodeBlock.of("the foo."))
-        .build()
+      .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(returnType = UNIT)).build())
+      .returns(String::class, CodeBlock.of("the foo."))
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @return the foo.
       | */
       |public fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamNoLambdaParamWithReceiver() {
     val unitType = UNIT
     val lambdaTypeName = LambdaTypeName.get(receiver = INT, returnType = unitType)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
-        .returns(String::class)
-        .build()
+      .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: kotlin.Int.() -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamSingleLambdaParam() {
     val unitType = UNIT
     val booleanType = BOOLEAN
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", LambdaTypeName.get(
+      .addParameter(
+        ParameterSpec.builder(
+          "f",
+          LambdaTypeName.get(
             parameters = arrayOf(booleanType),
-            returnType = unitType))
-            .build())
-        .returns(String::class)
-        .build()
+            returnType = unitType
+          )
+        )
+          .build()
+      )
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: (kotlin.Boolean) -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamMultipleLambdaParam() {
@@ -381,14 +435,16 @@ class FunSpecTest {
     val stringType = String::class.asClassName()
     val lambdaType = LambdaTypeName.get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", lambdaType).build())
-        .returns(String::class)
-        .build()
+      .addParameter(ParameterSpec.builder("f", lambdaType).build())
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: (kotlin.Boolean, kotlin.String) -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamMultipleLambdaParamNullableLambda() {
@@ -396,17 +452,19 @@ class FunSpecTest {
     val booleanType = Boolean::class.asClassName()
     val stringType = String::class.asClassName()
     val lambdaTypeName = LambdaTypeName
-        .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
-        .copy(nullable = true)
+      .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
+      .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
-        .returns(String::class)
-        .build()
+      .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: ((kotlin.Boolean, kotlin.String) -> kotlin.Unit)?): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun functionParamMultipleNullableLambdaParam() {
@@ -414,88 +472,100 @@ class FunSpecTest {
     val booleanType = Boolean::class.asClassName()
     val stringType = String::class.asClassName().copy(nullable = true)
     val lambdaTypeName = LambdaTypeName
-        .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
-        .copy(nullable = true)
+      .get(parameters = arrayOf(booleanType, stringType), returnType = unitType)
+      .copy(nullable = true)
     val funSpec = FunSpec.builder("foo")
-        .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
-        .returns(String::class)
-        .build()
+      .addParameter(ParameterSpec.builder("f", lambdaTypeName).build())
+      .returns(String::class)
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun foo(f: ((kotlin.Boolean, kotlin.String?) -> kotlin.Unit)?): kotlin.String {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("list", List::class.parameterizedBy(Int::class))
-        .callThisConstructor("list[0]", "list[1]")
-        .build()
+      .addParameter("list", List::class.parameterizedBy(Int::class))
+      .callThisConstructor("list[0]", "list[1]")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public constructor(list: kotlin.collections.List<kotlin.Int>) : this(list[0], list[1])
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun superConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("list", List::class.parameterizedBy(Int::class))
-        .callSuperConstructor("list[0]", "list[1]")
-        .build()
+      .addParameter("list", List::class.parameterizedBy(Int::class))
+      .callSuperConstructor("list[0]", "list[1]")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun emptyConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("a", Int::class)
-        .callThisConstructor()
-        .build()
+      .addParameter("a", Int::class)
+      .callThisConstructor()
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public constructor(a: kotlin.Int) : this()
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun constructorDelegateWithBody() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("a", Int::class)
-        .callThisConstructor("a")
-        .addStatement("println()")
-        .build()
+      .addParameter("a", Int::class)
+      .callThisConstructor("a")
+      .addStatement("println()")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public constructor(a: kotlin.Int) : this(a) {
       |  println()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
     assertThrows<IllegalStateException> {
       FunSpec.builder("main")
-          .callThisConstructor("a", "b", "c")
+        .callThisConstructor("a", "b", "c")
     }.hasMessageThat().isEqualTo("only constructors can delegate to other constructors!")
   }
 
   @Test fun emptySecondaryConstructor() {
     val constructorSpec = FunSpec.constructorBuilder()
-        .addParameter("a", Int::class)
-        .build()
+      .addParameter("a", Int::class)
+      .build()
 
-    assertThat(constructorSpec.toString()).isEqualTo("""
+    assertThat(constructorSpec.toString()).isEqualTo(
+      """
       |public constructor(a: kotlin.Int)
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun reifiedTypesOnNonInlineFunctionsForbidden() {
     assertThrows<IllegalArgumentException> {
       FunSpec.builder("foo")
-          .addTypeVariable(TypeVariableName("T").copy(reified = true))
-          .build()
+        .addTypeVariable(TypeVariableName("T").copy(reified = true))
+        .build()
     }.hasMessageThat().isEqualTo("only type parameters of inline functions can be reified!")
   }
 
@@ -518,91 +588,108 @@ class FunSpecTest {
 
   @Test fun escapeKeywordInFunctionName() {
     val funSpec = FunSpec.builder("if")
-        .build()
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun `if`(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun escapePunctuationInFunctionName() {
     val funSpec = FunSpec.builder("with-hyphen")
-        .build()
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |public fun `with-hyphen`(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun generalBuilderEqualityTest() {
     val funSpec = FunSpec.Builder("getConfig")
-        .addKdoc("Fix me")
-        .addAnnotation(AnnotationSpec.builder(SuppressWarnings::class)
-            .build())
-        .addModifiers(KModifier.PROTECTED)
-        .addTypeVariable(TypeVariableName("T"))
-        .receiver(String::class)
-        .returns(String::class)
-        .addParameter(ParameterSpec.builder("config", String::class)
-            .build())
-        .addParameter(ParameterSpec.builder("override", TypeVariableName("T"))
-            .build())
-        .beginControlFlow("return when")
-        .addStatement("    override is String -> config + override")
-        .addStatement("    else -> config + %S", "{ttl:500}")
-        .endControlFlow()
-        .build()
+      .addKdoc("Fix me")
+      .addAnnotation(
+        AnnotationSpec.builder(SuppressWarnings::class)
+          .build()
+      )
+      .addModifiers(KModifier.PROTECTED)
+      .addTypeVariable(TypeVariableName("T"))
+      .receiver(String::class)
+      .returns(String::class)
+      .addParameter(
+        ParameterSpec.builder("config", String::class)
+          .build()
+      )
+      .addParameter(
+        ParameterSpec.builder("override", TypeVariableName("T"))
+          .build()
+      )
+      .beginControlFlow("return when")
+      .addStatement("    override is String -> config + override")
+      .addStatement("    else -> config + %S", "{ttl:500}")
+      .endControlFlow()
+      .build()
 
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
 
   @Test fun receiverWithKdoc() {
     val funSpec = FunSpec.builder("toBar")
-        .receiver(String::class, kdoc = "the string to transform.")
-        .returns(String::class)
-        .addStatement("return %S", "bar")
-        .build()
+      .receiver(String::class, kdoc = "the string to transform.")
+      .returns(String::class)
+      .addStatement("return %S", "bar")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * @receiver the string to transform.
       | */
       |public fun kotlin.String.toBar(): kotlin.String = "bar"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun receiverWithKdocAndMainKDoc() {
     val funSpec = FunSpec.builder("toBar")
-        .receiver(String::class, kdoc = "the string to transform.")
-        .returns(String::class)
-        .addKdoc("%L", "Converts to bar")
-        .addStatement("return %S", "bar")
-        .build()
+      .receiver(String::class, kdoc = "the string to transform.")
+      .returns(String::class)
+      .addKdoc("%L", "Converts to bar")
+      .addStatement("return %S", "bar")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * Converts to bar
       | *
       | * @receiver the string to transform.
       | */
       |public fun kotlin.String.toBar(): kotlin.String = "bar"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun withAllKdocTags() {
     val funSpec = FunSpec.builder("charAt")
-        .receiver(String::class, kdoc = "the string you want the char from.")
-        .returns(Char::class, kdoc = "The char at the given [position].")
-        .addParameter(ParameterSpec.builder("position", Int::class)
-            .addKdoc("the index of the character that is returned.")
-            .build())
-        .addKdoc("Returns the character at the given [position].\n\n")
-        .addStatement("return -1")
-        .build()
+      .receiver(String::class, kdoc = "the string you want the char from.")
+      .returns(Char::class, kdoc = "The char at the given [position].")
+      .addParameter(
+        ParameterSpec.builder("position", Int::class)
+          .addKdoc("the index of the character that is returned.")
+          .build()
+      )
+      .addKdoc("Returns the character at the given [position].\n\n")
+      .addStatement("return -1")
+      .build()
 
-    assertThat(funSpec.toString()).isEqualTo("""
+    assertThat(funSpec.toString()).isEqualTo(
+      """
       |/**
       | * Returns the character at the given [position].
       | *
@@ -611,14 +698,15 @@ class FunSpecTest {
       | * @return The char at the given [position].
       | */
       |public fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun constructorBuilderEqualityTest() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("list", List::class.parameterizedBy(Int::class))
-        .callThisConstructor("list[0]", "list[1]")
-        .build()
+      .addParameter("list", List::class.parameterizedBy(Int::class))
+      .callThisConstructor("list[0]", "list[1]")
+      .build()
 
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
@@ -626,20 +714,22 @@ class FunSpecTest {
   // https://github.com/square/kotlinpoet/issues/398
   @Test fun changingDelegateConstructorOverridesArgs() {
     val funSpec = FunSpec.constructorBuilder()
-        .addParameter("values", List::class.parameterizedBy(String::class))
-        .callSuperConstructor("values")
-        .build()
+      .addParameter("values", List::class.parameterizedBy(String::class))
+      .callSuperConstructor("values")
+      .build()
     val updatedFunSpec = funSpec.toBuilder()
-        .callSuperConstructor("values.toImmutableList()")
-        .build()
-    assertThat(updatedFunSpec.toString()).isEqualTo("""
+      .callSuperConstructor("values.toImmutableList()")
+      .build()
+    assertThat(updatedFunSpec.toString()).isEqualTo(
+      """
       |public constructor(values: kotlin.collections.List<kotlin.String>) : super(values.toImmutableList())
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun modifyModifiers() {
     val builder = FunSpec.builder("taco")
-        .addModifiers(KModifier.PRIVATE)
+      .addModifiers(KModifier.PRIVATE)
 
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
@@ -649,13 +739,15 @@ class FunSpecTest {
 
   @Test fun modifyAnnotations() {
     val builder = FunSpec.builder("taco")
-        .addAnnotation(AnnotationSpec.builder(JvmName::class.asClassName())
-            .addMember("name = %S", "jvmWord")
-            .build())
+      .addAnnotation(
+        AnnotationSpec.builder(JvmName::class.asClassName())
+          .addMember("name = %S", "jvmWord")
+          .build()
+      )
 
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
-        .addMember("name = %S", "javaWord")
-        .build()
+      .addMember("name = %S", "javaWord")
+      .build()
     builder.annotations.clear()
     builder.annotations.add(javaWord)
 
@@ -664,7 +756,7 @@ class FunSpecTest {
 
   @Test fun modifyTypeVariableNames() {
     val builder = FunSpec.builder("taco")
-        .addTypeVariable(TypeVariableName("V"))
+      .addTypeVariable(TypeVariableName("V"))
 
     val tVar = TypeVariableName("T")
     builder.typeVariables.clear()
@@ -675,7 +767,7 @@ class FunSpecTest {
 
   @Test fun modifyParameters() {
     val builder = FunSpec.builder("taco")
-        .addParameter(ParameterSpec.builder("topping", String::class.asClassName()).build())
+      .addParameter(ParameterSpec.builder("topping", String::class.asClassName()).build())
 
     val seasoning = ParameterSpec.builder("seasoning", String::class.asClassName()).build()
     builder.parameters.clear()
@@ -688,142 +780,168 @@ class FunSpecTest {
     val builder = FunSpec.builder("staticMethod")
     builder.jvmModifiers(listOf(Modifier.STATIC))
 
-    assertThat(builder.build().toString()).isEqualTo("""
+    assertThat(builder.build().toString()).isEqualTo(
+      """
       |@kotlin.jvm.JvmStatic
       |internal fun staticMethod(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun jvmFinalModifier() {
     val builder = FunSpec.builder("finalMethod")
     builder.jvmModifiers(listOf(Modifier.FINAL))
 
-    assertThat(builder.build().toString()).isEqualTo("""
+    assertThat(builder.build().toString()).isEqualTo(
+      """
       |internal final fun finalMethod(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun jvmSynchronizedModifier() {
     val builder = FunSpec.builder("synchronizedMethod")
     builder.jvmModifiers(listOf(Modifier.SYNCHRONIZED))
 
-    assertThat(builder.build().toString()).isEqualTo("""
+    assertThat(builder.build().toString()).isEqualTo(
+      """
       |@kotlin.jvm.Synchronized
       |internal fun synchronizedMethod(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun ensureTrailingNewline() {
     val methodSpec = FunSpec.builder("function")
-        .addCode("codeWithNoNewline()")
-        .build()
+      .addCode("codeWithNoNewline()")
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |public fun function(): kotlin.Unit {
       |  codeWithNoNewline()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   /** Ensures that we don't add a duplicate newline if one is already present.  */
   @Test fun ensureTrailingNewlineWithExistingNewline() {
     val methodSpec = FunSpec.builder("function")
-        .addCode("codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
-        .build()
+      .addCode("codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |public fun function(): kotlin.Unit {
       |  codeWithNoNewline()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   // https://github.com/square/kotlinpoet/issues/947
   @Test fun ensureTrailingNewlineWithExpressionBody() {
     val methodSpec = FunSpec.builder("function")
-        .addCode("return codeWithNoNewline()")
-        .build()
+      .addCode("return codeWithNoNewline()")
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |public fun function() = codeWithNoNewline()
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun ensureTrailingNewlineWithExpressionBodyAndExistingNewline() {
     val methodSpec = FunSpec.builder("function")
-        .addCode("return codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
-        .build()
+      .addCode("return codeWithNoNewline()\n") // Have a newline already, so ensure we're not adding one
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |public fun function() = codeWithNoNewline()
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun ensureKdocTrailingNewline() {
     val methodSpec = FunSpec.builder("function")
-        .addKdoc("This is a comment with no initial newline")
-        .build()
+      .addKdoc("This is a comment with no initial newline")
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |/**
       | * This is a comment with no initial newline
       | */
       |public fun function(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   /** Ensures that we don't add a duplicate newline if one is already present.  */
   @Test fun ensureKdocTrailingNewlineWithExistingNewline() {
     val methodSpec = FunSpec.builder("function")
-        .addKdoc("This is a comment with an initial newline\n")
-        .build()
+      .addKdoc("This is a comment with an initial newline\n")
+      .build()
 
-    assertThat(methodSpec.toString()).isEqualTo("""
+    assertThat(methodSpec.toString()).isEqualTo(
+      """
       |/**
       | * This is a comment with an initial newline
       | */
       |public fun function(): kotlin.Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun annotatedLambdaReceiverType() {
     val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
     val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
     val spec = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addFunction(FunSpec.builder("foo")
-            .receiver(type)
-            .build())
-        .build()
-    assertThat(spec.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("foo")
+          .receiver(type)
+          .build()
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
       |
       |public fun (@Annotation () -> Unit).foo(): Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun annotatedLambdaReturnType() {
     val annotation = AnnotationSpec.builder(ClassName("com.squareup.tacos", "Annotation")).build()
     val type = LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation))
     val spec = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addFunction(FunSpec.builder("foo")
-            .returns(type)
-            .build())
-        .build()
-    assertThat(spec.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("foo")
+          .returns(type)
+          .build()
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
       |
       |public fun foo(): @Annotation () -> Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 }

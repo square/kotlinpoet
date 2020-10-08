@@ -26,13 +26,14 @@ class MemberNameTest {
     val randomTaco = MemberName("com.squareup.tacos", "randomTaco")
     val bestTacoEver = MemberName("com.squareup.tacos", "bestTacoEver")
     val funSpec = FunSpec.builder("makeTastyTacos")
-        .addStatement("val randomTaco = %M()", randomTaco)
-        .addStatement("val bestTaco = %M", bestTacoEver)
-        .build()
+      .addStatement("val randomTaco = %M()", randomTaco)
+      .addStatement("val bestTaco = %M", bestTacoEver)
+      .build()
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(funSpec)
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(funSpec)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.bestTacoEver
@@ -43,18 +44,22 @@ class MemberNameTest {
       |  val randomTaco = randomTaco()
       |  val bestTaco = bestTacoEver
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberInsideCompanionObject() {
     val companion = ClassName("com.squareup.tacos", "Taco").nestedClass("Companion")
     val createTaco = MemberName(companion, "createTaco")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.Taco.Companion.createTaco
@@ -63,17 +68,21 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberInsideSamePackage() {
     val createTaco = MemberName("com.squareup.tacos", "createTaco")
     val file = FileSpec.builder("com.squareup.tacos", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
@@ -81,20 +90,24 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberInsideClassInSamePackage() {
     val createTaco = MemberName(
-        ClassName("com.squareup.tacos", "Town"),
-        "createTaco"
+      ClassName("com.squareup.tacos", "Town"),
+      "createTaco"
     )
     val file = FileSpec.builder("com.squareup.tacos", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import com.squareup.tacos.Town.createTaco
@@ -103,19 +116,23 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberNamesClash() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createSquareTaco)
-            .addStatement("%M()", createTwitterTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createSquareTaco)
+          .addStatement("%M()", createTwitterTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.createTaco
@@ -125,7 +142,8 @@ class MemberNameTest {
       |  createTaco()
       |  com.twitter.tacos.createTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberNamesInsideCompanionsClash() {
@@ -134,12 +152,15 @@ class MemberNameTest {
     val createSquareTaco = MemberName(squareTacos.nestedClass("Companion"), "createTaco")
     val createTwitterTaco = MemberName(twitterTacos.nestedClass("Companion"), "createTaco")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createSquareTaco)
-            .addStatement("%M()", createTwitterTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createSquareTaco)
+          .addStatement("%M()", createTwitterTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.SquareTacos.Companion.createTaco
@@ -150,19 +171,23 @@ class MemberNameTest {
       |  createTaco()
       |  TwitterTacos.Companion.createTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberAndClassNamesClash() {
     val squareTacosClass = ClassName("com.squareup.tacos", "SquareTacos")
     val squareTacosFunction = MemberName("com.squareup.tacos.math", "SquareTacos")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("val tacos = %T()", squareTacosClass)
-            .addStatement("%M(tacos)", squareTacosFunction)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("val tacos = %T()", squareTacosClass)
+          .addStatement("%M(tacos)", squareTacosFunction)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.SquareTacos
@@ -172,21 +197,25 @@ class MemberNameTest {
       |  val tacos = SquareTacos()
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addAliasedImport(createSquareTaco, "createSquareTaco")
-        .addAliasedImport(createTwitterTaco, "createTwitterTaco")
-        .addFunction(FunSpec.builder("makeTastyTacos")
-            .addStatement("%M()", createSquareTaco)
-            .addStatement("%M()", createTwitterTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addAliasedImport(createSquareTaco, "createSquareTaco")
+      .addAliasedImport(createTwitterTaco, "createTwitterTaco")
+      .addFunction(
+        FunSpec.builder("makeTastyTacos")
+          .addStatement("%M()", createSquareTaco)
+          .addStatement("%M()", createTwitterTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import kotlin.Unit
@@ -197,20 +226,26 @@ class MemberNameTest {
       |  createSquareTaco()
       |  createTwitterTaco()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun keywordsEscaping() {
     val `when` = MemberName("org.mockito", "when")
     val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
-        .addType(TypeSpec.classBuilder("TacoTest")
-            .addFunction(FunSpec.builder("setUp")
-                .addAnnotation(Before::class)
-                .addStatement("%M(tacoService.createTaco()).thenReturn(tastyTaco())", `when`)
-                .build())
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("TacoTest")
+          .addFunction(
+            FunSpec.builder("setUp")
+              .addAnnotation(Before::class)
+              .addStatement("%M(tacoService.createTaco()).thenReturn(tastyTaco())", `when`)
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
@@ -223,7 +258,8 @@ class MemberNameTest {
       |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
       |  }
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun clashingNamesKeywordsEscaping() {
@@ -232,12 +268,15 @@ class MemberNameTest {
     val whenSquareTaco = MemberName(squareTacos.nestedClass("Companion"), "when")
     val whenTwitterTaco = MemberName(twitterTacos.nestedClass("Companion"), "when")
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(FunSpec.builder("whenTastyTacos")
-            .addStatement("%M()", whenSquareTaco)
-            .addStatement("%M()", whenTwitterTaco)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("whenTastyTacos")
+          .addStatement("%M()", whenSquareTaco)
+          .addStatement("%M()", whenTwitterTaco)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.SquareTacos.Companion.`when`
@@ -248,21 +287,23 @@ class MemberNameTest {
       |  `when`()
       |  TwitterTacos.Companion.`when`()
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberReferences() {
     val randomTaco = MemberName("com.squareup.tacos", "randomTaco")
     val bestTacoEver = ClassName("com.squareup.tacos", "TacoTruck")
-        .member("bestTacoEver")
+      .member("bestTacoEver")
     val funSpec = FunSpec.builder("makeTastyTacos")
-        .addStatement("val randomTacoFactory = %L", randomTaco.reference())
-        .addStatement("val bestTacoFactory = %L", bestTacoEver.reference())
-        .build()
+      .addStatement("val randomTacoFactory = %L", randomTaco.reference())
+      .addStatement("val bestTacoFactory = %L", bestTacoEver.reference())
+      .build()
     val file = FileSpec.builder("com.example", "Tacos")
-        .addFunction(funSpec)
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(funSpec)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.TacoTruck
@@ -273,17 +314,21 @@ class MemberNameTest {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun spacesEscaping() {
     val produceTacos = MemberName("com.squareup.taco factory", "produce tacos")
     val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
-        .addFunction(FunSpec.builder("main")
-            .addStatement("println(%M())", produceTacos)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("println(%M())", produceTacos)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import com.squareup.`taco factory`.`produce tacos`
@@ -292,36 +337,40 @@ class MemberNameTest {
       |public fun main(): Unit {
       |  println(`produce tacos`())
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun memberExtension_className() {
     val regex = ClassName("kotlin.text", "Regex")
     assertThat(regex.member("fromLiteral"))
-        .isEqualTo(MemberName(regex, "fromLiteral"))
+      .isEqualTo(MemberName(regex, "fromLiteral"))
   }
 
   @Test fun memberExtension_kclass() {
     assertThat(Regex::class.member("fromLiteral"))
-        .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
+      .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
   }
 
   @Test fun memberExtension_class() {
     assertThat(Regex::class.java.member("fromLiteral"))
-        .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
+      .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
   }
 
   @Test fun `%N escapes MemberNames`() {
     val taco = ClassName("com.squareup.tacos", "Taco")
     val packager = ClassName("com.squareup.tacos", "TacoPackager")
     val file = FileSpec.builder("com.example", "Test")
-        .addFunction(FunSpec.builder("packageTacos")
-            .addParameter("tacos", LIST.parameterizedBy(taco))
-            .addParameter("packager", packager)
-            .addStatement("packager.%N(tacos)", packager.member("package"))
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("packageTacos")
+          .addParameter("tacos", LIST.parameterizedBy(taco))
+          .addParameter("packager", packager)
+          .addStatement("packager.%N(tacos)", packager.member("package"))
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.Taco
@@ -332,7 +381,8 @@ class MemberNameTest {
       |public fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
       |  packager.`package`(tacos)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun importOperator() {
@@ -341,15 +391,18 @@ class MemberNameTest {
     val iterator = MemberName("com.squareup.tacos.internal", KOperator.ITERATOR)
     val minusAssign = MemberName("com.squareup.tacos.internal", KOperator.MINUS_ASSIGN)
     val file = FileSpec.builder("com.example", "Test")
-        .addFunction(FunSpec.builder("makeTacoHealthy")
-            .addParameter("taco", taco)
-            .beginControlFlow("for (ingredient %M taco)", iterator)
-            .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
-            .endControlFlow()
-            .addStatement("return taco")
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("makeTacoHealthy")
+          .addParameter("taco", taco)
+          .beginControlFlow("for (ingredient %M taco)", iterator)
+          .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
+          .endControlFlow()
+          .addStatement("return taco")
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.tacos.Taco
@@ -364,6 +417,7 @@ class MemberNameTest {
       |  }
       |  return taco
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 }

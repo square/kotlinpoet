@@ -20,11 +20,11 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
+import org.junit.Rule
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 import kotlin.test.Test
-import org.junit.Rule
 
 class AnnotationSpecTest {
 
@@ -66,18 +66,20 @@ class AnnotationSpecTest {
     val p: Int,
     val q: AnnotationC = AnnotationC("foo"),
     val r: Array<KClass<out Number>> = arrayOf(
-        Byte::class, Short::class, Int::class, Long::class)
+      Byte::class, Short::class, Int::class, Long::class
+    )
   )
 
   @HasDefaultsAnnotation(
-      o = Breakfast.PANCAKES,
-      p = 1701,
-      f = 11.1,
-      m = intArrayOf(9, 8, 1),
-      l = Override::class,
-      j = AnnotationA(),
-      q = AnnotationC("bar"),
-      r = arrayOf(Float::class, Double::class))
+    o = Breakfast.PANCAKES,
+    p = 1701,
+    f = 11.1,
+    m = intArrayOf(9, 8, 1),
+    l = Override::class,
+    j = AnnotationA(),
+    q = AnnotationC("bar"),
+    r = arrayOf(Float::class, Double::class)
+  )
   inner class IsAnnotated
 
   @Rule @JvmField val compilation = CompilationRule()
@@ -98,7 +100,8 @@ class AnnotationSpecTest {
     val element = compilation.elements.getTypeElement(name)
     val annotation = AnnotationSpec.get(element.annotationMirrors[0])
 
-    assertThat(toString(annotation)).isEqualTo("""
+    assertThat(toString(annotation)).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -117,7 +120,8 @@ class AnnotationSpecTest {
         |  r = [Float::class, Double::class]
         |)
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun defaultAnnotationWithImport() {
@@ -127,7 +131,8 @@ class AnnotationSpecTest {
     val typeBuilder = TypeSpec.classBuilder(IsAnnotated::class.java.simpleName)
     typeBuilder.addAnnotation(annotation)
     val file = FileSpec.get("com.squareup.kotlinpoet", typeBuilder.build())
-    assertThat(file.toString()).isEqualTo("""
+    assertThat(file.toString()).isEqualTo(
+      """
         |package com.squareup.kotlinpoet
         |
         |import java.lang.Override
@@ -145,29 +150,35 @@ class AnnotationSpecTest {
         |  r = [Float::class, Double::class]
         |)
         |public class IsAnnotated
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun emptyArray() {
     val builder = AnnotationSpec.builder(HasDefaultsAnnotation::class.java)
     builder.addMember("%L = %L", "n", "[]")
-    assertThat(builder.build().toString()).isEqualTo("" +
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
         "n = []" +
-        ")")
+        ")"
+    )
     builder.addMember("%L = %L", "m", "[]")
-    assertThat(builder.build().toString()).isEqualTo("" +
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
         "@com.squareup.kotlinpoet.AnnotationSpecTest.HasDefaultsAnnotation(" +
         "n = [], " +
         "m = []" +
-        ")")
+        ")"
+    )
   }
 
   @Test fun reflectAnnotation() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation)
 
-    assertThat(toString(spec)).isEqualTo("""
+    assertThat(toString(spec)).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -185,14 +196,16 @@ class AnnotationSpecTest {
         |  r = [Float::class, Double::class]
         |)
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun reflectAnnotationWithDefaults() {
     val annotation = IsAnnotated::class.java.getAnnotation(HasDefaultsAnnotation::class.java)
     val spec = AnnotationSpec.get(annotation, true)
 
-    assertThat(toString(spec)).isEqualTo("""
+    assertThat(toString(spec)).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -221,67 +234,85 @@ class AnnotationSpecTest {
         |  r = [Float::class, Double::class]
         |)
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun useSiteTarget() {
     val builder = AnnotationSpec.builder(AnnotationA::class)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA"
+    )
     builder.useSiteTarget(AnnotationSpec.UseSiteTarget.FIELD)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@field:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@field:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA"
+    )
     builder.useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@get:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@get:com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA"
+    )
     builder.useSiteTarget(null)
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@com.squareup.kotlinpoet.AnnotationSpecTest.AnnotationA"
+    )
   }
 
   @Test fun deprecatedTest() {
     val annotation = AnnotationSpec.builder(Deprecated::class)
-        .addMember("%S", "Nope")
-        .addMember("%T(%S)", ReplaceWith::class, "Yep")
-        .build()
+      .addMember("%S", "Nope")
+      .addMember("%T(%S)", ReplaceWith::class, "Yep")
+      .build()
 
-    assertThat(annotation.toString()).isEqualTo("" +
-        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Yep\"))")
+    assertThat(annotation.toString()).isEqualTo(
+      "" +
+        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Yep\"))"
+    )
   }
 
   @Test fun modifyMembers() {
     val builder = AnnotationSpec.builder(Deprecated::class)
-        .addMember("%S", "Nope")
-        .addMember("%T(%S)", ReplaceWith::class, "Yep")
+      .addMember("%S", "Nope")
+      .addMember("%T(%S)", ReplaceWith::class, "Yep")
 
     builder.members.removeAt(1)
     builder.members.add(CodeBlock.of("%T(%S)", ReplaceWith::class, "Nope"))
 
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Nope\"))")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@kotlin.Deprecated(\"Nope\", kotlin.ReplaceWith(\"Nope\"))"
+    )
   }
 
   @Test fun annotationStringsAreConstant() {
     val text = "This is a long string with a newline\nin the middle."
     val builder = AnnotationSpec.builder(Deprecated::class)
-        .addMember("%S", text)
+      .addMember("%S", text)
 
-    assertThat(builder.build().toString()).isEqualTo("" +
-        "@kotlin.Deprecated(\"This is a long string with a newline\\nin the middle.\")")
+    assertThat(builder.build().toString()).isEqualTo(
+      "" +
+        "@kotlin.Deprecated(\"This is a long string with a newline\\nin the middle.\")"
+    )
   }
 
   @Test fun literalAnnotation() {
     val annotationSpec = AnnotationSpec.builder(Suppress::class)
-        .addMember("%S", "Things")
-        .build()
+      .addMember("%S", "Things")
+      .build()
 
     val file = FileSpec.builder("test", "Test")
-        .addFunction(FunSpec.builder("test")
-            .addStatement("%L", annotationSpec)
-            .addStatement("val annotatedString = %S", "AnnotatedString")
-            .build())
-        .build()
-    assertThat(file.toString().trim()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("test")
+          .addStatement("%L", annotationSpec)
+          .addStatement("val annotatedString = %S", "AnnotatedString")
+          .build()
+      )
+      .build()
+    assertThat(file.toString().trim()).isEqualTo(
+      """
       |package test
       |
       |import kotlin.Suppress
@@ -291,36 +322,40 @@ class AnnotationSpecTest {
       |  @Suppress("Things")
       |  val annotatedString = "AnnotatedString"
       |}
-    """.trimMargin())
+    """.trimMargin()
+    )
   }
 
   @Test fun functionOnlyLiteralAnnotation() {
     val annotation = AnnotationSpec
-        .builder(ClassName.bestGuess("Suppress"))
-        .addMember("%S", "UNCHECKED_CAST")
-        .build()
+      .builder(ClassName.bestGuess("Suppress"))
+      .addMember("%S", "UNCHECKED_CAST")
+      .build()
     val funSpec = FunSpec.builder("operation")
-        .addStatement("%L", annotation)
-        .build()
+      .addStatement("%L", annotation)
+      .build()
 
-    assertThat(funSpec.toString().trim()).isEqualTo("""
+    assertThat(funSpec.toString().trim()).isEqualTo(
+      """
       |public fun operation(): kotlin.Unit {
       |  @Suppress("UNCHECKED_CAST")
       |}
-      """.trimMargin())
+      """.trimMargin()
+    )
   }
 
   @Test fun getOnValueArrayTypeMirrorShouldNameValueArg() {
     val myClazz = compilation.elements
-        .getTypeElement(JavaClassWithArrayValueAnnotation::class.java.canonicalName)
+      .getTypeElement(JavaClassWithArrayValueAnnotation::class.java.canonicalName)
     val classBuilder = TypeSpec.classBuilder("Result")
 
     myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
-        .forEach {
-          classBuilder.addAnnotation(it)
-        }
+      .forEach {
+        classBuilder.addAnnotation(it)
+      }
 
-    assertThat(toString(classBuilder.build())).isEqualTo("""
+    assertThat(toString(classBuilder.build())).isEqualTo(
+      """
             |package com.squareup.tacos
             |
             |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
@@ -329,24 +364,26 @@ class AnnotationSpecTest {
             |
             |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
             |public class Result
-            |""".trimMargin())
+            |""".trimMargin()
+    )
   }
 
   @Test fun getOnVarargMirrorShouldNameValueArg() {
     val myClazz = compilation.elements
-        .getTypeElement(KotlinClassWithVarargAnnotation::class.java.canonicalName)
+      .getTypeElement(KotlinClassWithVarargAnnotation::class.java.canonicalName)
     val classBuilder = TypeSpec.classBuilder("Result")
 
     myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
-        .filter {
-          val typeName = it.typeName
-          return@filter typeName is ClassName && typeName.simpleName == "AnnotationWithArrayValue"
-        }
-        .forEach {
-          classBuilder.addAnnotation(it)
-        }
+      .filter {
+        val typeName = it.typeName
+        return@filter typeName is ClassName && typeName.simpleName == "AnnotationWithArrayValue"
+      }
+      .forEach {
+        classBuilder.addAnnotation(it)
+      }
 
-    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -355,16 +392,19 @@ class AnnotationSpecTest {
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
         |public class Result
-        """.trimMargin())
+        """.trimMargin()
+    )
   }
 
   @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
     val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(
-        JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java)
+      JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java
+    )
     val classBuilder = TypeSpec.classBuilder("Result")
-        .addAnnotation(AnnotationSpec.get(annotation))
+      .addAnnotation(AnnotationSpec.get(annotation))
 
-    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
@@ -373,16 +413,18 @@ class AnnotationSpecTest {
         |
         |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
         |public class Result
-        """.trimMargin())
+        """.trimMargin()
+    )
   }
 
   @Test fun getOnVarargAnnotationShouldNameValueArg() {
     val annotation = KotlinClassWithVarargAnnotation::class.java
-        .getAnnotation(AnnotationWithArrayValue::class.java)
+      .getAnnotation(AnnotationWithArrayValue::class.java)
     val classBuilder = TypeSpec.classBuilder("Result")
-        .addAnnotation(AnnotationSpec.get(annotation))
+      .addAnnotation(AnnotationSpec.get(annotation))
 
-    assertThat(toString(classBuilder.build()).trim()).isEqualTo("""
+    assertThat(toString(classBuilder.build()).trim()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.AnnotationSpecTest
@@ -391,7 +433,8 @@ class AnnotationSpecTest {
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
         |public class Result
-        """.trimMargin())
+        """.trimMargin()
+    )
   }
 
   @AnnotationWithArrayValue(Any::class, Boolean::class)
@@ -404,80 +447,109 @@ class AnnotationSpecTest {
     // Example from https://kotlinlang.org/docs/tutorials/android-plugin.html
     val externalClass = ClassName("com.squareup.parceler", "ExternalClass")
     val externalClassSpec = TypeSpec.classBuilder(externalClass)
-        .addProperty(PropertySpec.builder("value", Int::class)
-            .initializer("value")
-            .build())
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("value", Int::class)
-            .build())
-        .build()
+      .addProperty(
+        PropertySpec.builder("value", Int::class)
+          .initializer("value")
+          .build()
+      )
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("value", Int::class)
+          .build()
+      )
+      .build()
     val externalClassParceler = ClassName("com.squareup.parceler", "ExternalClassParceler")
     val parcel = ClassName("com.squareup.parceler", "Parcel")
     val externalClassParcelerSpec = TypeSpec.objectBuilder(externalClassParceler)
-        .addSuperinterface(ClassName("com.squareup.parceler", "Parceler")
-            .parameterizedBy(externalClass))
-        .addFunction(FunSpec.builder("create")
-            .addModifiers(OVERRIDE)
-            .addParameter("parcel", parcel)
-            .addStatement("return %T(parcel.readInt())", externalClass)
-            .build())
-        .addFunction(FunSpec.builder("write")
-            .addModifiers(OVERRIDE)
-            .receiver(externalClass)
-            .addParameter("parcel", parcel)
-            .addParameter("flags", Int::class)
-            .addStatement("parcel.writeInt(value)")
-            .build())
-        .build()
+      .addSuperinterface(
+        ClassName("com.squareup.parceler", "Parceler")
+          .parameterizedBy(externalClass)
+      )
+      .addFunction(
+        FunSpec.builder("create")
+          .addModifiers(OVERRIDE)
+          .addParameter("parcel", parcel)
+          .addStatement("return %T(parcel.readInt())", externalClass)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("write")
+          .addModifiers(OVERRIDE)
+          .receiver(externalClass)
+          .addParameter("parcel", parcel)
+          .addParameter("flags", Int::class)
+          .addStatement("parcel.writeInt(value)")
+          .build()
+      )
+      .build()
     val parcelize = ClassName("com.squareup.parceler", "Parcelize")
     val typeParceler = ClassName("com.squareup.parceler", "TypeParceler")
-    val typeParcelerAnnotation = AnnotationSpec.builder(typeParceler
+    val typeParcelerAnnotation = AnnotationSpec.builder(
+      typeParceler
         .plusParameter(externalClass)
-        .plusParameter(externalClassParceler))
-        .build()
+        .plusParameter(externalClassParceler)
+    )
+      .build()
     val classLocalParceler = TypeSpec.classBuilder("MyClass")
-        .addAnnotation(parcelize)
-        .addAnnotation(typeParcelerAnnotation)
-        .addProperty(PropertySpec.builder("external", externalClass)
-            .initializer("external")
-            .build())
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("external", externalClass)
-            .build())
-        .build()
+      .addAnnotation(parcelize)
+      .addAnnotation(typeParcelerAnnotation)
+      .addProperty(
+        PropertySpec.builder("external", externalClass)
+          .initializer("external")
+          .build()
+      )
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("external", externalClass)
+          .build()
+      )
+      .build()
     val propertyLocalParceler = TypeSpec.classBuilder("MyClass")
-        .addAnnotation(parcelize)
-        .addProperty(PropertySpec.builder("external", externalClass)
-            .addAnnotation(typeParcelerAnnotation)
-            .initializer("external")
-            .build())
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("external", externalClass)
-            .build())
-        .build()
+      .addAnnotation(parcelize)
+      .addProperty(
+        PropertySpec.builder("external", externalClass)
+          .addAnnotation(typeParcelerAnnotation)
+          .initializer("external")
+          .build()
+      )
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("external", externalClass)
+          .build()
+      )
+      .build()
     val writeWith = ClassName("com.squareup.parceler", "WriteWith")
     val writeWithExternalClass = externalClass
-        .copy(annotations = listOf(AnnotationSpec
+      .copy(
+        annotations = listOf(
+          AnnotationSpec
             .builder(writeWith.plusParameter(externalClassParceler))
-            .build()))
+            .build()
+        )
+      )
     val typeLocalParceler = TypeSpec.classBuilder("MyClass")
-        .addAnnotation(parcelize)
-        .addProperty(PropertySpec.builder("external", writeWithExternalClass)
-            .initializer("external")
-            .build())
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("external", writeWithExternalClass)
-            .build())
-        .build()
+      .addAnnotation(parcelize)
+      .addProperty(
+        PropertySpec.builder("external", writeWithExternalClass)
+          .initializer("external")
+          .build()
+      )
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("external", writeWithExternalClass)
+          .build()
+      )
+      .build()
     val file = FileSpec.builder("com.squareup.parceler", "Test")
-        .addType(externalClassSpec)
-        .addType(externalClassParcelerSpec)
-        .addType(classLocalParceler)
-        .addType(propertyLocalParceler)
-        .addType(typeLocalParceler)
-        .build()
+      .addType(externalClassSpec)
+      .addType(externalClassParcelerSpec)
+      .addType(classLocalParceler)
+      .addType(propertyLocalParceler)
+      .addType(typeLocalParceler)
+      .build()
     //language=kotlin
-    assertThat(file.toString()).isEqualTo("""
+    assertThat(file.toString()).isEqualTo(
+      """
       package com.squareup.parceler
 
       import kotlin.Int
@@ -512,12 +584,13 @@ class AnnotationSpecTest {
         public val external: @WriteWith<ExternalClassParceler> ExternalClass
       )
 
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   private fun toString(annotationSpec: AnnotationSpec) =
-      toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
+    toString(TypeSpec.classBuilder("Taco").addAnnotation(annotationSpec).build())
 
   private fun toString(typeSpec: TypeSpec) =
-      FileSpec.get("com.squareup.tacos", typeSpec).toString()
+    FileSpec.get("com.squareup.tacos", typeSpec).toString()
 }

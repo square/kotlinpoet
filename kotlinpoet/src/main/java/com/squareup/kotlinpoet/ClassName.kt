@@ -53,9 +53,9 @@ public fun KClass<*>.asClassName(): ClassName {
 
 /** Returns the class name for `element`. */
 @Deprecated(
-    message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-    level = WARNING
+  message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead.",
+  level = WARNING
 )
 @JvmName("get")
 public fun TypeElement.asClassName(): ClassName {

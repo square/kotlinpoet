@@ -17,21 +17,22 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class ClassNameTest {
   @Rule @JvmField var compilationRule = CompilationRule()
 
   @Test fun bestGuessForString_simpleClass() {
     assertThat(ClassName.bestGuess(String::class.java.name))
-        .isEqualTo(ClassName("java.lang", "String"))
+      .isEqualTo(ClassName("java.lang", "String"))
   }
 
   @Test fun bestGuessNonAscii() {
     val className = ClassName.bestGuess(
-        "com.\ud835\udc1andro\ud835\udc22d.\ud835\udc00ctiv\ud835\udc22ty")
+      "com.\ud835\udc1andro\ud835\udc22d.\ud835\udc00ctiv\ud835\udc22ty"
+    )
     assertEquals("com.\ud835\udc1andro\ud835\udc22d", className.packageName)
     assertEquals("\ud835\udc00ctiv\ud835\udc22ty", className.simpleName)
   }
@@ -42,19 +43,23 @@ class ClassNameTest {
 
   @Test fun bestGuessForString_nestedClass() {
     assertThat(ClassName.bestGuess(Map.Entry::class.java.canonicalName))
-        .isEqualTo(ClassName("java.util", "Map", "Entry"))
+      .isEqualTo(ClassName("java.util", "Map", "Entry"))
     assertThat(ClassName.bestGuess(OuterClass.InnerClass::class.java.canonicalName))
-        .isEqualTo(ClassName("com.squareup.kotlinpoet",
-            "ClassNameTest", "OuterClass", "InnerClass"))
+      .isEqualTo(
+        ClassName(
+          "com.squareup.kotlinpoet",
+          "ClassNameTest", "OuterClass", "InnerClass"
+        )
+      )
   }
 
   @Test fun bestGuessForString_defaultPackage() {
     assertThat(ClassName.bestGuess("SomeClass"))
-        .isEqualTo(ClassName("", "SomeClass"))
+      .isEqualTo(ClassName("", "SomeClass"))
     assertThat(ClassName.bestGuess("SomeClass.Nested"))
-        .isEqualTo(ClassName("", "SomeClass", "Nested"))
+      .isEqualTo(ClassName("", "SomeClass", "Nested"))
     assertThat(ClassName.bestGuess("SomeClass.Nested.EvenMore"))
-        .isEqualTo(ClassName("", "SomeClass", "Nested", "EvenMore"))
+      .isEqualTo(ClassName("", "SomeClass", "Nested", "EvenMore"))
   }
 
   @Test fun bestGuessForString_confusingInput() {
@@ -94,25 +99,25 @@ class ClassNameTest {
 
   @Test fun classNameFromClass() {
     assertThat(Any::class.java.asClassName().toString())
-        .isEqualTo("java.lang.Object")
+      .isEqualTo("java.lang.Object")
     assertThat(OuterClass.InnerClass::class.java.asClassName().toString())
-        .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
+      .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
   }
 
   @Test fun classNameFromKClass() {
     assertThat(Any::class.asClassName().toString())
-        .isEqualTo("kotlin.Any")
+      .isEqualTo("kotlin.Any")
     assertThat(OuterClass.InnerClass::class.asClassName().toString())
-        .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
+      .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
   }
 
   @Test fun peerClass() {
     assertThat(java.lang.Double::class.asClassName().peerClass("Short"))
-        .isEqualTo(java.lang.Short::class.asClassName())
+      .isEqualTo(java.lang.Short::class.asClassName())
     assertThat(ClassName("", "Double").peerClass("Short"))
-        .isEqualTo(ClassName("", "Short"))
+      .isEqualTo(ClassName("", "Short"))
     assertThat(ClassName("a.b", "Combo", "Taco").peerClass("Burrito"))
-        .isEqualTo(ClassName("a.b", "Combo", "Burrito"))
+      .isEqualTo(ClassName("a.b", "Combo", "Burrito"))
   }
 
   @Test fun fromClassRejectionTypes() {
@@ -142,40 +147,43 @@ class ClassNameTest {
 
   @Test fun reflectionName() {
     assertThat(ANY.reflectionName())
-        .isEqualTo("kotlin.Any")
+      .isEqualTo("kotlin.Any")
     assertThat(Thread.State::class.asClassName().reflectionName())
-        .isEqualTo("java.lang.Thread\$State")
+      .isEqualTo("java.lang.Thread\$State")
     assertThat(Map.Entry::class.asClassName().reflectionName())
-        .isEqualTo("kotlin.collections.Map\$Entry")
+      .isEqualTo("kotlin.collections.Map\$Entry")
     assertThat(ClassName("", "Foo").reflectionName())
-        .isEqualTo("Foo")
+      .isEqualTo("Foo")
     assertThat(ClassName("", "Foo", "Bar", "Baz").reflectionName())
-        .isEqualTo("Foo\$Bar\$Baz")
+      .isEqualTo("Foo\$Bar\$Baz")
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").reflectionName())
-        .isEqualTo("a.b.c.Foo\$Bar\$Baz")
+      .isEqualTo("a.b.c.Foo\$Bar\$Baz")
   }
 
   @Test fun constructorReferences() {
     assertThat(String::class.asClassName().constructorReference().toString())
-        .isEqualTo("::kotlin.String")
+      .isEqualTo("::kotlin.String")
     assertThat(Thread.State::class.asClassName().constructorReference().toString())
-        .isEqualTo("java.lang.Thread::State")
+      .isEqualTo("java.lang.Thread::State")
     assertThat(ClassName("", "Foo").constructorReference().toString())
-        .isEqualTo("::Foo")
+      .isEqualTo("::Foo")
     assertThat(ClassName("", "Foo", "Bar", "Baz").constructorReference().toString())
-        .isEqualTo("Foo.Bar::Baz")
+      .isEqualTo("Foo.Bar::Baz")
     assertThat(ClassName("a.b.c", "Foo", "Bar", "Baz").constructorReference().toString())
-        .isEqualTo("a.b.c.Foo.Bar::Baz")
+      .isEqualTo("a.b.c.Foo.Bar::Baz")
   }
 
   @Test fun spacesEscaping() {
     val tacoFactory = ClassName("com.squareup.taco factory", "Taco Factory")
     val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
-        .addFunction(FunSpec.builder("main")
-            .addStatement("println(%T.produceTacos())", tacoFactory)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("println(%T.produceTacos())", tacoFactory)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import com.squareup.`taco factory`.`Taco Factory`
@@ -184,7 +192,8 @@ class ClassNameTest {
       |public fun main(): Unit {
       |  println(`Taco Factory`.produceTacos())
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun emptySimpleNamesForbidden() {
@@ -194,8 +203,10 @@ class ClassNameTest {
 
     assertThrows<IllegalArgumentException> {
       ClassName(packageName = "", simpleNames = arrayOf("Foo", "Bar", ""))
-    }.hasMessageThat().isEqualTo("simpleNames must not contain empty items: " +
-        "[Foo, Bar, ]")
+    }.hasMessageThat().isEqualTo(
+      "simpleNames must not contain empty items: " +
+        "[Foo, Bar, ]"
+    )
 
     assertThrows<IllegalArgumentException> {
       ClassName(packageName = "", simpleNames = emptyList())
@@ -203,7 +214,9 @@ class ClassNameTest {
 
     assertThrows<IllegalArgumentException> {
       ClassName(packageName = "", simpleNames = listOf("Foo", "Bar", ""))
-    }.hasMessageThat().isEqualTo("simpleNames must not contain empty items: " +
-        "[Foo, Bar, ]")
+    }.hasMessageThat().isEqualTo(
+      "simpleNames must not contain empty items: " +
+        "[Foo, Bar, ]"
+    )
   }
 }

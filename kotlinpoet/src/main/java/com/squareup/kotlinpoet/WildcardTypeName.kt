@@ -21,14 +21,14 @@ import java.lang.reflect.WildcardType
 import kotlin.DeprecationLevel.WARNING
 
 @Deprecated(
-    message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-    level = WARNING
+  message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead.",
+  level = WARNING
 )
 @JvmName("get")
 public fun javax.lang.model.type.WildcardType.asWildcardTypeName(): TypeName =
-    WildcardTypeName.get(this, mutableMapOf())
+  WildcardTypeName.get(this, mutableMapOf())
 
 @JvmName("get")
 public fun WildcardType.asWildcardTypeName(): TypeName =
-    WildcardTypeName.get(this, mutableMapOf())
+  WildcardTypeName.get(this, mutableMapOf())

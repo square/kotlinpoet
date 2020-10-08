@@ -118,10 +118,10 @@ public class TypeAliasSpec private constructor(
     }
 
     public fun addAnnotation(annotation: Class<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addAnnotation(annotation: KClass<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun build(): TypeAliasSpec {
       for (it in modifiers) {
@@ -141,9 +141,9 @@ public class TypeAliasSpec private constructor(
     @JvmStatic public fun builder(name: String, type: TypeName): Builder = Builder(name, type)
 
     @JvmStatic public fun builder(name: String, type: Type): Builder =
-        builder(name, type.asTypeName())
+      builder(name, type.asTypeName())
 
     @JvmStatic public fun builder(name: String, type: KClass<*>): Builder =
-        builder(name, type.asTypeName())
+      builder(name, type.asTypeName())
   }
 }

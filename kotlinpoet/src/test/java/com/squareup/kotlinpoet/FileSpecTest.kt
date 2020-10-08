@@ -34,24 +34,25 @@ class FileSpecTest {
     val arrayList = ClassName("java.util", "ArrayList").parameterizedBy(hoverboard)
     val listOfHoverboards = list.parameterizedBy(hoverboard)
     val beyond = FunSpec.builder("beyond")
-        .returns(listOfHoverboards)
-        .addStatement("val result = %T()", arrayList)
-        .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
-        .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
-        .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
-        .addStatement("%T.sort(result)", Collections::class)
-        .addStatement("return if (result.isEmpty()) %T.emptyList() else result", Collections::class)
-        .build()
+      .returns(listOfHoverboards)
+      .addStatement("val result = %T()", arrayList)
+      .addStatement("result.add(%T.createNimbus(2000))", hoverboard)
+      .addStatement("result.add(%T.createNimbus(\"2001\"))", hoverboard)
+      .addStatement("result.add(%T.createNimbus(%T.THUNDERBOLT))", hoverboard, namedBoards)
+      .addStatement("%T.sort(result)", Collections::class)
+      .addStatement("return if (result.isEmpty()) %T.emptyList() else result", Collections::class)
+      .build()
     val hello = TypeSpec.classBuilder("HelloWorld")
-        .addFunction(beyond)
-        .build()
+      .addFunction(beyond)
+      .build()
     val source = FileSpec.builder("com.example.helloworld", "HelloWorld")
-        .addType(hello)
-        .addImport(hoverboard, "createNimbus")
-        .addImport(namedBoards, "THUNDERBOLT")
-        .addImport(Collections::class, "sort", "emptyList")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(hello)
+      .addImport(hoverboard, "createNimbus")
+      .addImport(namedBoards, "THUNDERBOLT")
+      .addImport(Collections::class, "sort", "emptyList")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.example.helloworld
         |
         |import com.mattel.Hoverboard
@@ -72,26 +73,34 @@ class FileSpecTest {
         |    return if (result.isEmpty()) emptyList() else result
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importStaticMixed() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addInitializerBlock(CodeBlock.builder()
-                .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
-                .addStatement("%T.gc()", System::class)
-                .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
-                .build())
-            .addFunction(FunSpec.constructorBuilder()
-                .addParameter("states", Thread.State::class.asClassName(), VARARG)
-                .build())
-            .build())
-        .addImport(Thread.State.BLOCKED)
-        .addImport(System::class, "gc", "out", "nanoTime")
-        .addImport(Thread.State::class, "valueOf")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addInitializerBlock(
+            CodeBlock.builder()
+              .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
+              .addStatement("%T.gc()", System::class)
+              .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
+              .build()
+          )
+          .addFunction(
+            FunSpec.constructorBuilder()
+              .addParameter("states", Thread.State::class.asClassName(), VARARG)
+              .build()
+          )
+          .build()
+      )
+      .addImport(Thread.State.BLOCKED)
+      .addImport(System::class, "gc", "out", "nanoTime")
+      .addImport(Thread.State::class, "valueOf")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import java.lang.System.gc
@@ -110,19 +119,25 @@ class FileSpecTest {
         |
         |  public constructor(vararg states: Thread.State)
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importTopLevel() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
-        .addFunction(FunSpec.builder("prepareTacos")
-            .returns(List::class.asClassName()
-                .parameterizedBy(ClassName("com.squareup.tacos", "Taco")))
-            .addCode("return wrap(INGREDIENTS)\n")
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addImport("com.squareup.tacos.internal", "INGREDIENTS", "wrap")
+      .addFunction(
+        FunSpec.builder("prepareTacos")
+          .returns(
+            List::class.asClassName()
+              .parameterizedBy(ClassName("com.squareup.tacos", "Taco"))
+          )
+          .addCode("return wrap(INGREDIENTS)\n")
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.tacos.internal.INGREDIENTS
@@ -130,21 +145,27 @@ class FileSpecTest {
         |import kotlin.collections.List
         |
         |public fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Ignore("addImport doesn't support members with %L")
   @Test
   fun importStaticDynamic() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addFunction(FunSpec.builder("main")
-                .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
-                .build())
-            .build())
-        .addImport(System::class, "out")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addFunction(
+            FunSpec.builder("main")
+              .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
+              .build()
+          )
+          .build()
+      )
+      .addImport(System::class, "out")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos;
         |
         |import static java.lang.System.out;
@@ -154,14 +175,16 @@ class FileSpecTest {
         |    out.println("hello");
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importStaticNone() {
     val source = FileSpec.builder("readme", "Util")
-        .addType(importStaticTypeSpec("Util"))
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(importStaticTypeSpec("Util"))
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package readme
         |
         |import java.lang.System
@@ -174,14 +197,16 @@ class FileSpecTest {
         |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importStaticOnce() {
     val source = FileSpec.builder("readme", "Util")
-        .addType(importStaticTypeSpec("Util"))
-        .addImport(TimeUnit.SECONDS).build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(importStaticTypeSpec("Util"))
+      .addImport(TimeUnit.SECONDS).build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package readme
         |
         |import java.lang.System
@@ -195,16 +220,18 @@ class FileSpecTest {
         |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importStaticTwice() {
     val source = FileSpec.builder("readme", "Util")
-        .addType(importStaticTypeSpec("Util"))
-        .addImport(TimeUnit.SECONDS)
-        .addImport(TimeUnit.MINUTES)
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(importStaticTypeSpec("Util"))
+      .addImport(TimeUnit.SECONDS)
+      .addImport(TimeUnit.MINUTES)
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package readme
         |
         |import java.lang.System
@@ -218,46 +245,52 @@ class FileSpecTest {
         |    return SECONDS.convert(minutes, MINUTES)
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun importStaticWildcardsForbidden() {
     assertThrows<IllegalArgumentException> {
       FileSpec.builder("readme", "Util")
-          .addType(importStaticTypeSpec("Util"))
-          .addImport(TimeUnit::class, "*")
+        .addType(importStaticTypeSpec("Util"))
+        .addImport(TimeUnit::class, "*")
     }.hasMessageThat().isEqualTo("Wildcard imports are not allowed")
   }
 
   private fun importStaticTypeSpec(name: String): TypeSpec {
     val funSpec = FunSpec.builder("minutesToSeconds")
-        .addModifiers(KModifier.PUBLIC)
-        .returns(Long::class)
-        .addParameter("minutes", Long::class)
-        .addStatement("%T.gc()", System::class)
-        .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
-        .build()
+      .addModifiers(KModifier.PUBLIC)
+      .returns(Long::class)
+      .addParameter("minutes", Long::class)
+      .addStatement("%T.gc()", System::class)
+      .addStatement("return %1T.SECONDS.convert(minutes, %1T.MINUTES)", TimeUnit::class)
+      .build()
     return TypeSpec.classBuilder(name).addFunction(funSpec).build()
   }
 
   @Test fun noImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco").build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(TypeSpec.classBuilder("Taco").build())
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun singleImport() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("madeFreshDate", Date::class)
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addProperty("madeFreshDate", Date::class)
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import java.util.Date
@@ -265,16 +298,20 @@ class FileSpecTest {
         |public class Taco {
         |  public val madeFreshDate: Date
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun singleImportEscapeKeywords() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("madeFreshDate", ClassName("com.squareup.is.fun.in", "Date"))
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addProperty("madeFreshDate", ClassName("com.squareup.is.fun.in", "Date"))
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.`is`.`fun`.`in`.Date
@@ -282,26 +319,32 @@ class FileSpecTest {
         |public class Taco {
         |  public val madeFreshDate: Date
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun escapeSpacesInPackageName() {
     val file = FileSpec.builder("com.squareup.taco factory", "TacoFactory")
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.squareup.`taco factory`
       |
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun conflictingImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("madeFreshDate", Date::class)
-            .addProperty("madeFreshDatabaseDate", ClassName("java.sql", "Date"))
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addProperty("madeFreshDate", Date::class)
+          .addProperty("madeFreshDatabaseDate", ClassName("java.sql", "Date"))
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import java.util.Date
@@ -311,17 +354,21 @@ class FileSpecTest {
         |
         |  public val madeFreshDatabaseDate: java.sql.Date
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun conflictingImportsEscapeKeywords() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("madeFreshDate1", ClassName("com.squareup.is.fun.in", "Date"))
-            .addProperty("madeFreshDate2", ClassName("com.squareup.do.val.var", "Date"))
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addProperty("madeFreshDate1", ClassName("com.squareup.is.fun.in", "Date"))
+          .addProperty("madeFreshDate2", ClassName("com.squareup.do.val.var", "Date"))
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.`is`.`fun`.`in`.Date
@@ -331,17 +378,21 @@ class FileSpecTest {
         |
         |  public val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun escapeSpacesInImports() {
     val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
     val file = FileSpec.builder("com.example", "TacoFactoryDemo")
-        .addFunction(FunSpec.builder("main")
-            .addStatement("println(%T.produceTacos())", tacoFactory)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("println(%T.produceTacos())", tacoFactory)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import com.squareup.`taco factory`.TacoFactory
@@ -350,18 +401,22 @@ class FileSpecTest {
       |public fun main(): Unit {
       |  println(TacoFactory.produceTacos())
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun escapeSpacesInAliasedImports() {
     val tacoFactory = ClassName("com.squareup.taco factory", "TacoFactory")
     val file = FileSpec.builder("com.example", "TacoFactoryDemo")
-        .addAliasedImport(tacoFactory, "La Taqueria")
-        .addFunction(FunSpec.builder("main")
-            .addStatement("println(%T.produceTacos())", tacoFactory)
-            .build())
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addAliasedImport(tacoFactory, "La Taqueria")
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("println(%T.produceTacos())", tacoFactory)
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |package com.example
       |
       |import kotlin.Unit
@@ -370,21 +425,27 @@ class FileSpecTest {
       |public fun main(): Unit {
       |  println(`La Taqueria`.produceTacos())
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun aliasedImports() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAliasedImport(java.lang.String::class.java, "JString")
-        .addAliasedImport(String::class, "KString")
-        .addProperty(PropertySpec.builder("a", java.lang.String::class.java)
-            .initializer("%T(%S)", java.lang.String::class.java, "a")
-            .build())
-        .addProperty(PropertySpec.builder("b", String::class)
-            .initializer("%S", "b")
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addAliasedImport(java.lang.String::class.java, "JString")
+      .addAliasedImport(String::class, "KString")
+      .addProperty(
+        PropertySpec.builder("a", java.lang.String::class.java)
+          .initializer("%T(%S)", java.lang.String::class.java, "a")
+          .build()
+      )
+      .addProperty(
+        PropertySpec.builder("b", String::class)
+          .initializer("%S", "b")
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import java.lang.String as JString
@@ -393,18 +454,22 @@ class FileSpecTest {
       |public val a: JString = JString("a")
       |
       |public val b: KString = "b"
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun enumAliasedImport() {
     val minsAlias = "MINS"
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
-        .addFunction(FunSpec.builder("sleepForFiveMins")
-            .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addAliasedImport(TimeUnit::class.asClassName(), "MINUTES", minsAlias)
+      .addFunction(
+        FunSpec.builder("sleepForFiveMins")
+          .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
       |package com.squareup.tacos
       |
       |import kotlin.Unit
@@ -413,25 +478,37 @@ class FileSpecTest {
       |public fun sleepForFiveMins(): Unit {
       |  MINS.sleep(5)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
-        .addType(TypeSpec.classBuilder("A")
-            .addType(TypeSpec.classBuilder("B")
-                .addType(TypeSpec.classBuilder("Twin").build())
-                .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
-                    .build())
-                .build())
-            .addType(TypeSpec.classBuilder("Twin")
-                .addType(TypeSpec.classBuilder("D")
-                    .build())
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("A")
+          .addType(
+            TypeSpec.classBuilder("B")
+              .addType(TypeSpec.classBuilder("Twin").build())
+              .addType(
+                TypeSpec.classBuilder("C")
+                  .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
+                  .build()
+              )
+              .build()
+          )
+          .addType(
+            TypeSpec.classBuilder("Twin")
+              .addType(
+                TypeSpec.classBuilder("D")
+                  .build()
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class A {
@@ -447,25 +524,37 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun conflictingChildName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
-        .addType(TypeSpec.classBuilder("A")
-            .addType(TypeSpec.classBuilder("B")
-                .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
-                    .addType(TypeSpec.classBuilder("Twin").build())
-                    .build())
-                .build())
-            .addType(TypeSpec.classBuilder("Twin")
-                .addType(TypeSpec.classBuilder("D")
-                    .build())
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("A")
+          .addType(
+            TypeSpec.classBuilder("B")
+              .addType(
+                TypeSpec.classBuilder("C")
+                  .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
+                  .addType(TypeSpec.classBuilder("Twin").build())
+                  .build()
+              )
+              .build()
+          )
+          .addType(
+            TypeSpec.classBuilder("Twin")
+              .addType(
+                TypeSpec.classBuilder("D")
+                  .build()
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class A {
@@ -481,27 +570,41 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun conflictingNameOutOfScope() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
-        .addType(TypeSpec.classBuilder("A")
-            .addType(TypeSpec.classBuilder("B")
-                .addType(TypeSpec.classBuilder("C")
-                    .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
-                    .addType(TypeSpec.classBuilder("Nested")
-                        .addType(TypeSpec.classBuilder("Twin").build())
-                        .build())
-                    .build())
-                .build())
-            .addType(TypeSpec.classBuilder("Twin")
-                .addType(TypeSpec.classBuilder("D")
-                    .build())
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("A")
+          .addType(
+            TypeSpec.classBuilder("B")
+              .addType(
+                TypeSpec.classBuilder("C")
+                  .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
+                  .addType(
+                    TypeSpec.classBuilder("Nested")
+                      .addType(TypeSpec.classBuilder("Twin").build())
+                      .build()
+                  )
+                  .build()
+              )
+              .build()
+          )
+          .addType(
+            TypeSpec.classBuilder("Twin")
+              .addType(
+                TypeSpec.classBuilder("D")
+                  .build()
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class A {
@@ -519,19 +622,25 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun nestedClassAndSuperclassShareName() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .superclass(ClassName("com.squareup.wire", "Message"))
-            .addType(TypeSpec.classBuilder("Builder")
-                .superclass(ClassName("com.squareup.wire", "Message", "Builder"))
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .superclass(ClassName("com.squareup.wire", "Message"))
+          .addType(
+            TypeSpec.classBuilder("Builder")
+              .superclass(ClassName("com.squareup.wire", "Message", "Builder"))
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import com.squareup.wire.Message
@@ -539,20 +648,26 @@ class FileSpecTest {
         |public class Taco : Message() {
         |  public class Builder : Message.Builder()
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   /** https://github.com/square/javapoet/issues/366  */
   @Test fun annotationIsNestedClass() {
     val source = FileSpec.builder("com.squareup.tacos", "TestComponent")
-        .addType(TypeSpec.classBuilder("TestComponent")
-            .addAnnotation(ClassName("dagger", "Component"))
-            .addType(TypeSpec.classBuilder("Builder")
-                .addAnnotation(ClassName("dagger", "Component", "Builder"))
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("TestComponent")
+          .addAnnotation(ClassName("dagger", "Component"))
+          .addType(
+            TypeSpec.classBuilder("Builder")
+              .addAnnotation(ClassName("dagger", "Component", "Builder"))
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import dagger.Component
@@ -562,20 +677,26 @@ class FileSpecTest {
         |  @Component.Builder
         |  public class Builder
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun defaultPackage() {
     val source = FileSpec.builder("", "HelloWorld")
-        .addType(TypeSpec.classBuilder("HelloWorld")
-            .addFunction(FunSpec.builder("main")
-                .addModifiers(KModifier.PUBLIC)
-                .addParameter("args", ARRAY.parameterizedBy(String::class.asClassName()))
-                .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
-                .build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("HelloWorld")
+          .addFunction(
+            FunSpec.builder("main")
+              .addModifiers(KModifier.PUBLIC)
+              .addParameter("args", ARRAY.parameterizedBy(String::class.asClassName()))
+              .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |import java.lang.System
         |import kotlin.Array
         |import kotlin.String
@@ -586,43 +707,51 @@ class FileSpecTest {
         |    System.out.println("Hello World!");
         |  }
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun defaultPackageTypesAreImported() {
     val source = FileSpec.builder("hello", "World")
-        .addType(TypeSpec.classBuilder("World")
-            .addSuperinterface(ClassName("", "Test"))
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("World")
+          .addSuperinterface(ClassName("", "Test"))
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package hello
         |
         |import Test
         |
         |public class World : Test
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun topOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco").build())
-        .addComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(TypeSpec.classBuilder("Taco").build())
+      .addComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |// Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun emptyLinesInTopOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco").build())
-        .addComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(TypeSpec.classBuilder("Taco").build())
+      .addComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |//
         |// GENERATED FILE:
         |//
@@ -631,17 +760,21 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun packageClassConflictsWithNestedClass() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addType(TypeSpec.classBuilder("Taco")
-            .addProperty("a", ClassName("com.squareup.tacos", "A"))
-            .addType(TypeSpec.classBuilder("A").build())
-            .build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .addProperty("a", ClassName("com.squareup.tacos", "A"))
+          .addType(TypeSpec.classBuilder("A").build())
+          .build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class Taco {
@@ -649,30 +782,38 @@ class FileSpecTest {
         |
         |  public class A
         |}
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun multipleTypesInOneFile() {
     val source = FileSpec.builder("com.squareup.tacos", "AB")
-        .addType(TypeSpec.classBuilder("A").build())
-        .addType(TypeSpec.classBuilder("B").build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addType(TypeSpec.classBuilder("A").build())
+      .addType(TypeSpec.classBuilder("B").build())
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |public class A
         |
         |public class B
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun simpleTypeAliases() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
-        .addTypeAlias(TypeAliasSpec.builder("FileTable",
-            Map::class.parameterizedBy(String::class, Int::class)).build())
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
+      .addTypeAlias(
+        TypeAliasSpec.builder(
+          "FileTable",
+          Map::class.parameterizedBy(String::class, Int::class)
+        ).build()
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.tacos
         |
         |import kotlin.Byte
@@ -683,18 +824,22 @@ class FileSpecTest {
         |public typealias Int8 = Byte
         |
         |public typealias FileTable = Map<String, Int>
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun fileAnnotations() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAnnotation(AnnotationSpec.builder(JvmName::class)
-            .useSiteTarget(FILE)
-            .addMember("%S", "TacoUtils")
-            .build())
-        .addAnnotation(JvmMultifileClass::class)
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .addAnnotation(
+        AnnotationSpec.builder(JvmName::class)
+          .useSiteTarget(FILE)
+          .addMember("%S", "TacoUtils")
+          .build()
+      )
+      .addAnnotation(JvmMultifileClass::class)
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |@file:JvmName("TacoUtils")
         |@file:JvmMultifileClass
         |
@@ -703,15 +848,16 @@ class FileSpecTest {
         |import kotlin.jvm.JvmMultifileClass
         |import kotlin.jvm.JvmName
         |
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun fileAnnotationMustHaveCorrectUseSiteTarget() {
     val builder = FileSpec.builder("com.squareup.tacos", "Taco")
     val annotation = AnnotationSpec.builder(JvmName::class)
-        .useSiteTarget(SET)
-        .addMember("value", "%S", "TacoUtils")
-        .build()
+      .useSiteTarget(SET)
+      .addMember("value", "%S", "TacoUtils")
+      .build()
     assertThrows<IllegalStateException> {
       builder.addAnnotation(annotation)
     }.hasMessageThat().isEqualTo("Use-site target SET not supported for file annotations.")
@@ -719,39 +865,45 @@ class FileSpecTest {
 
   @Test fun escapeKeywordInPackageName() {
     val source = FileSpec.builder("com.squareup.is.fun.in", "California")
-        .build()
-    assertThat(source.toString()).isEqualTo("""
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
         |package com.squareup.`is`.`fun`.`in`
         |
-        |""".trimMargin())
+        |""".trimMargin()
+    )
   }
 
   @Test fun generalBuilderEqualityTest() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addAnnotation(JvmMultifileClass::class)
-        .addComment("Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!")
-        .addImport("com.squareup.tacos.internal", "INGREDIENTS")
-        .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
-        .indent("  ")
-        .addFunction(FunSpec.builder("defaultIngredients")
-            .addCode("println(INGREDIENTS)\n")
-            .build())
-        .build()
+      .addAnnotation(JvmMultifileClass::class)
+      .addComment("Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!")
+      .addImport("com.squareup.tacos.internal", "INGREDIENTS")
+      .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
+      .indent("  ")
+      .addFunction(
+        FunSpec.builder("defaultIngredients")
+          .addCode("println(INGREDIENTS)\n")
+          .build()
+      )
+      .build()
 
     assertThat(source.toBuilder().build()).isEqualTo(source)
   }
 
   @Test fun modifyAnnotations() {
     val builder = FileSpec.builder("com.taco", "Taco")
-        .addAnnotation(AnnotationSpec.builder(JvmName::class.asClassName())
-            .useSiteTarget(FILE)
-            .addMember("name = %S", "JvmTaco")
-            .build())
+      .addAnnotation(
+        AnnotationSpec.builder(JvmName::class.asClassName())
+          .useSiteTarget(FILE)
+          .addMember("name = %S", "JvmTaco")
+          .build()
+      )
 
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
-        .useSiteTarget(FILE)
-        .addMember("name = %S", "JavaTaco")
-        .build()
+      .useSiteTarget(FILE)
+      .addMember("name = %S", "JavaTaco")
+      .build()
     builder.annotations.clear()
     builder.annotations.add(javaWord)
 
@@ -760,34 +912,36 @@ class FileSpecTest {
 
   @Test fun modifyImports() {
     val builder = FileSpec.builder("com.taco", "Taco")
-        .addImport("com.foo", "Foo")
+      .addImport("com.foo", "Foo")
 
     val currentImports = builder.imports
     builder.clearImports()
     builder.addImport("com.foo", "Foo2")
-        .apply {
-          for (current in currentImports) {
-            addImport(current)
-          }
+      .apply {
+        for (current in currentImports) {
+          addImport(current)
         }
-        .indent("")
+      }
+      .indent("")
 
-    assertThat(builder.build().toString()).isEqualTo("""
+    assertThat(builder.build().toString()).isEqualTo(
+      """
       package com.taco
 
       import com.foo.Foo
       import com.foo.Foo2
 
 
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @Test fun modifyMembers() {
     val builder = FileSpec.builder("com.taco", "Taco")
-        .addFunction(FunSpec.builder("aFunction").build())
-        .addProperty(PropertySpec.builder("aProperty", INT).initializer("1").build())
-        .addTypeAlias(TypeAliasSpec.builder("ATypeAlias", INT).build())
-        .addType(TypeSpec.classBuilder("AClass").build())
+      .addFunction(FunSpec.builder("aFunction").build())
+      .addProperty(PropertySpec.builder("aProperty", INT).initializer("1").build())
+      .addTypeAlias(TypeAliasSpec.builder("ATypeAlias", INT).build())
+      .addType(TypeSpec.classBuilder("AClass").build())
 
     builder.members.removeAll { it !is TypeSpec }
 
@@ -796,11 +950,11 @@ class FileSpecTest {
 
   @Test fun clearComment() {
     val builder = FileSpec.builder("com.taco", "Taco")
-        .addFunction(FunSpec.builder("aFunction").build())
-        .addComment("Hello!")
+      .addFunction(FunSpec.builder("aFunction").build())
+      .addComment("Hello!")
 
     builder.clearComment()
-        .addComment("Goodbye!")
+      .addComment("Goodbye!")
 
     assertThat(builder.build().comment.toString()).isEqualTo("Goodbye!")
   }
@@ -809,17 +963,22 @@ class FileSpecTest {
   @Test fun defaultPackageMemberImport() {
     val bigInteger = ClassName.bestGuess("bigInt.BigInteger")
     val spec = FileSpec.builder("testsrc", "Test")
-        .addImport("", "bigInt")
-        .addFunction(FunSpec.builder("add5ToInput")
-            .addParameter("input", Int::class)
-            .returns(bigInteger)
-            .addCode("""
+      .addImport("", "bigInt")
+      .addFunction(
+        FunSpec.builder("add5ToInput")
+          .addParameter("input", Int::class)
+          .returns(bigInteger)
+          .addCode(
+            """
                |val inputBigInt = bigInt(input)
                |return inputBigInt.add(5)
-               |""".trimMargin())
-            .build())
-        .build()
-    assertThat(spec.toString()).isEqualTo("""
+               |""".trimMargin()
+          )
+          .build()
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
       |package testsrc
       |
       |import bigInt
@@ -830,45 +989,56 @@ class FileSpecTest {
       |  val inputBigInt = bigInt(input)
       |  return inputBigInt.add(5)
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun longFilePackageName() {
     val spec = FileSpec.builder("com.squareup.taco.enchilada.quesadillas.tamales.burritos.super.burritos.trying.to.get.a.really.large.packagename", "Test")
-        .addFunction(FunSpec.builder("foo")
-            .build())
-        .build()
-    assertThat(spec.toString()).isEqualTo("""
+      .addFunction(
+        FunSpec.builder("foo")
+          .build()
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
       |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.get.a.really.large.packagename
       |
       |import kotlin.Unit
       |
       |public fun foo(): Unit {
       |}
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun importLongPackageName() {
     val spec = FileSpec.builder("testsrc", "Test")
-        .addImport("a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength", "MyClass")
-        .build()
-    assertThat(spec.toString()).isEqualTo("""
+      .addImport("a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength", "MyClass")
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
       |package testsrc
       |
       |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass
       |
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 
   @Test fun longComment() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
-        .addComment("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
-            "eiusmod tempor incididunt ut labore et dolore magna aliqua.")
-        .build()
-    assertThat(file.toString()).isEqualTo("""
+      .addComment(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
+          "eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
       |// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       |package com.squareup.tacos
       |
-      |""".trimMargin())
+      |""".trimMargin()
+    )
   }
 }

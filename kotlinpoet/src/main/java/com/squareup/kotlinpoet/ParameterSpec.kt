@@ -35,9 +35,9 @@ public class ParameterSpec private constructor(
   public val defaultValue: CodeBlock? = builder.defaultValue
 
   public constructor(name: String, type: TypeName, vararg modifiers: KModifier) :
-      this(builder(name, type, *modifiers))
+    this(builder(name, type, *modifiers))
   public constructor(name: String, type: TypeName, modifiers: Iterable<KModifier>) :
-      this(builder(name, type, modifiers))
+    this(builder(name, type, modifiers))
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -113,10 +113,10 @@ public class ParameterSpec private constructor(
     }
 
     public fun addAnnotation(annotation: Class<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addAnnotation(annotation: KClass<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -136,7 +136,7 @@ public class ParameterSpec private constructor(
     }
 
     public fun defaultValue(format: String, vararg args: Any?): Builder =
-        defaultValue(CodeBlock.of(format, *args))
+      defaultValue(CodeBlock.of(format, *args))
 
     public fun defaultValue(codeBlock: CodeBlock): Builder = apply {
       check(this.defaultValue == null) { "initializer was already set" }
@@ -148,27 +148,27 @@ public class ParameterSpec private constructor(
 
   public companion object {
     @Deprecated(
-        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-            " the kotlinpoet-metadata APIs instead.",
-        level = WARNING
+      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+      level = WARNING
     )
     @JvmStatic
     public fun get(element: VariableElement): ParameterSpec {
       val name = element.simpleName.toString()
       val type = element.asType().asTypeName()
       return builder(name, type)
-          .jvmModifiers(element.modifiers)
-          .build()
+        .jvmModifiers(element.modifiers)
+        .build()
     }
 
     @Deprecated(
-        message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-            " the kotlinpoet-metadata APIs instead.",
-        level = WARNING
+      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+        " the kotlinpoet-metadata APIs instead.",
+      level = WARNING
     )
     @JvmStatic
     public fun parametersOf(method: ExecutableElement): List<ParameterSpec> =
-        method.parameters.map(::get)
+      method.parameters.map(::get)
 
     @JvmStatic public fun builder(
       name: String,
@@ -179,7 +179,7 @@ public class ParameterSpec private constructor(
     }
 
     @JvmStatic public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
-        builder(name, type.asTypeName(), *modifiers)
+      builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic public fun builder(
       name: String,

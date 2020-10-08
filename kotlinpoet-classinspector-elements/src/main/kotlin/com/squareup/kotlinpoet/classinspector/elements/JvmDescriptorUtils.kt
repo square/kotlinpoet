@@ -1,5 +1,7 @@
 package com.squareup.kotlinpoet.classinspector.elements
 
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.NestingKind
@@ -26,8 +28,6 @@ import javax.lang.model.type.TypeVariable
 import javax.lang.model.type.WildcardType
 import javax.lang.model.util.AbstractTypeVisitor6
 import javax.lang.model.util.Types
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
 
 /*
  * Adapted from
@@ -94,28 +94,28 @@ internal val PrimitiveType.descriptor: String
  * @see [JvmDescriptorTypeVisitor]
  */
 internal fun TypeMirror.descriptor(types: Types): String =
-    accept(JvmDescriptorTypeVisitor, types)
+  accept(JvmDescriptorTypeVisitor, types)
 
 /**
  * @return the "field descriptor" of this type.
  * @see [JvmDescriptorTypeVisitor]
  */
 internal fun WildcardType.descriptor(types: Types): String =
-    types.erasure(this).descriptor(types)
+  types.erasure(this).descriptor(types)
 
 /**
  * @return the "field descriptor" of this type.
  * @see [JvmDescriptorTypeVisitor]
  */
 internal fun TypeVariable.descriptor(types: Types): String =
-    types.erasure(this).descriptor(types)
+  types.erasure(this).descriptor(types)
 
 /**
  * @return the "field descriptor" of this type.
  * @see [JvmDescriptorTypeVisitor]
  */
 internal fun ArrayType.descriptor(types: Types): String =
-    "[" + componentType.descriptor(types)
+  "[" + componentType.descriptor(types)
 
 /**
  * @return the "method descriptor" of this type.
@@ -167,9 +167,11 @@ internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>()
   override fun visitTypeVariable(t: TypeVariable, types: Types): String = t.descriptor(types)
 
   override fun visitNull(t: NullType, types: Types): String = visitUnknown(
-      t, types)
+    t, types
+  )
   override fun visitError(t: ErrorType, types: Types): String = visitUnknown(
-      t, types)
+    t, types
+  )
 
   override fun visitUnknown(t: TypeMirror, types: Types): String = error("Unsupported type $t")
 }

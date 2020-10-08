@@ -77,7 +77,7 @@ public inline fun <reified T : Any> Taggable.tag(): T? = tag(T::class)
  */
 
 public inline fun <reified T : Any> AnnotationSpec.Builder.tag(tag: T?): AnnotationSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -88,7 +88,7 @@ public inline fun <reified T : Any> AnnotationSpec.Builder.tag(tag: T?): Annotat
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> FileSpec.Builder.tag(tag: T?): FileSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -99,7 +99,7 @@ public inline fun <reified T : Any> FileSpec.Builder.tag(tag: T?): FileSpec.Buil
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> FunSpec.Builder.tag(tag: T?): FunSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -110,7 +110,7 @@ public inline fun <reified T : Any> FunSpec.Builder.tag(tag: T?): FunSpec.Builde
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> ParameterSpec.Builder.tag(tag: T?): ParameterSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -121,7 +121,7 @@ public inline fun <reified T : Any> ParameterSpec.Builder.tag(tag: T?): Paramete
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> PropertySpec.Builder.tag(tag: T?): PropertySpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -132,7 +132,7 @@ public inline fun <reified T : Any> PropertySpec.Builder.tag(tag: T?): PropertyS
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> TypeAliasSpec.Builder.tag(tag: T?): TypeAliasSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -143,7 +143,7 @@ public inline fun <reified T : Any> TypeAliasSpec.Builder.tag(tag: T?): TypeAlia
  * other APIs or callbacks.
  */
 public inline fun <reified T : Any> TypeSpec.Builder.tag(tag: T?): TypeSpec.Builder =
-    tag(T::class, tag)
+  tag(T::class, tag)
 
 internal fun Taggable.Builder<*>.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)) // Defensive copy
 

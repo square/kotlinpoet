@@ -42,10 +42,12 @@ public class PropertySpec private constructor(
   public val receiverType: TypeName? = builder.receiverType
 
   init {
-    require(typeVariables.none { it.isReified } ||
+    require(
+      typeVariables.none { it.isReified } ||
         (getter != null || setter != null) &&
         (getter == null || KModifier.INLINE in getter.modifiers) &&
-        (setter == null || KModifier.INLINE in setter.modifiers)) {
+        (setter == null || KModifier.INLINE in setter.modifiers)
+    ) {
       "only type parameters of properties with inline getters and/or setters can be reified!"
     }
     require(mutable || setter == null) {
@@ -62,7 +64,7 @@ public class PropertySpec private constructor(
     inlineAnnotations: Boolean = inline
   ) {
     val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
-        setter?.modifiers?.contains(KModifier.INLINE) ?: false
+      setter?.modifiers?.contains(KModifier.INLINE) ?: false
     val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
@@ -90,8 +92,8 @@ public class PropertySpec private constructor(
       }
       val initializerFormat = if (initializer.hasStatements()) "%L" else "«%L»"
       codeWriter.emitCode(
-          codeBlock = CodeBlock.of(initializerFormat, initializer),
-          isConstantContext = KModifier.CONST in modifiers
+        codeBlock = CodeBlock.of(initializerFormat, initializer),
+        isConstantContext = KModifier.CONST in modifiers
       )
     }
     codeWriter.emitWhereBlock(typeVariables)
@@ -115,7 +117,7 @@ public class PropertySpec private constructor(
 
   internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
     val builder = toBuilder()
-        .addAnnotations(parameter.annotations)
+      .addAnnotations(parameter.annotations)
     builder.isPrimaryConstructorParameter = true
     builder.modifiers += parameter.modifiers
     if (builder.kdoc.isEmpty()) {
@@ -157,7 +159,7 @@ public class PropertySpec private constructor(
     internal val name: String,
     internal val type: TypeName
   ) : Taggable.Builder<Builder>,
-      OriginatingElementsHolder.Builder<Builder> {
+    OriginatingElementsHolder.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -199,10 +201,10 @@ public class PropertySpec private constructor(
     }
 
     public fun addAnnotation(annotation: Class<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addAnnotation(annotation: KClass<*>): Builder =
-        addAnnotation(annotation.asClassName())
+      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -221,7 +223,7 @@ public class PropertySpec private constructor(
     }
 
     public fun initializer(format: String, vararg args: Any?): Builder =
-        initializer(CodeBlock.of(format, *args))
+      initializer(CodeBlock.of(format, *args))
 
     public fun initializer(codeBlock: CodeBlock): Builder = apply {
       check(this.initializer == null) { "initializer was already set" }
@@ -229,7 +231,7 @@ public class PropertySpec private constructor(
     }
 
     public fun delegate(format: String, vararg args: Any?): Builder =
-        delegate(CodeBlock.of(format, *args))
+      delegate(CodeBlock.of(format, *args))
 
     public fun delegate(codeBlock: CodeBlock): Builder = apply {
       check(this.initializer == null) { "initializer was already set" }
@@ -259,11 +261,13 @@ public class PropertySpec private constructor(
 
     public fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {
-        throw IllegalArgumentException("KotlinPoet doesn't allow setting the inline modifier on " +
-            "properties. You should mark either the getter, the setter, or both inline.")
+        throw IllegalArgumentException(
+          "KotlinPoet doesn't allow setting the inline modifier on " +
+            "properties. You should mark either the getter, the setter, or both inline."
+        )
       }
       for (it in modifiers) {
-          if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
+        if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
       }
       return PropertySpec(this)
     }
@@ -279,7 +283,7 @@ public class PropertySpec private constructor(
     }
 
     @JvmStatic public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
-        builder(name, type.asTypeName(), *modifiers)
+      builder(name, type.asTypeName(), *modifiers)
 
     @JvmStatic public fun builder(
       name: String,

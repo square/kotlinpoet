@@ -28,9 +28,6 @@ import com.squareup.kotlinpoet.metadata.specs.toFileSpec
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import com.squareup.kotlinpoet.metadata.toImmutable
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
-import java.lang.annotation.Inherited
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.reflect.KClass
 import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Assume
 import org.junit.Rule
@@ -39,6 +36,9 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.model.Statement
+import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.reflect.KClass
 
 /** Base test class that runs all tests with multiple [ClassInspectorTypes][ClassInspectorType]. */
 @RunWith(Parameterized::class)
@@ -49,8 +49,8 @@ abstract class MultiClassInspectorTest {
     @Parameterized.Parameters(name = "{0}")
     fun data(): Collection<Array<ClassInspectorType>> {
       return listOf(
-          arrayOf(ClassInspectorType.REFLECTIVE),
-          arrayOf(ClassInspectorType.ELEMENTS)
+        arrayOf(ClassInspectorType.REFLECTIVE),
+        arrayOf(ClassInspectorType.ELEMENTS)
       )
     }
   }
@@ -97,11 +97,12 @@ abstract class MultiClassInspectorTest {
     object : Statement() {
       override fun evaluate() {
         val annotation = description.getAnnotation(
-            IgnoreForHandlerType::class.java)
+          IgnoreForHandlerType::class.java
+        )
         val shouldIgnore = annotation?.handlerType == classInspectorType
         Assume.assumeTrue(
-            "Ignoring ${description.methodName}: ${annotation?.reason}",
-            !shouldIgnore
+          "Ignoring ${description.methodName}: ${annotation?.reason}",
+          !shouldIgnore
         )
         base.evaluate()
       }
@@ -115,8 +116,8 @@ abstract class MultiClassInspectorTest {
   protected fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
     val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
     return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
-        .toKmPackage()
-        .toImmutable()
-        .toFileSpec(classInspector, asClassName())
+      .toKmPackage()
+      .toImmutable()
+      .toFileSpec(classInspector, asClassName())
   }
 }

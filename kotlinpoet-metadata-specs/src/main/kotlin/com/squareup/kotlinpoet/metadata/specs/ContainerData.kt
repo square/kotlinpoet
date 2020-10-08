@@ -65,7 +65,7 @@ public data class FileData(
   override val methods: Map<ImmutableKmFunction, MethodData>,
   val className: ClassName,
   val jvmName: String? =
-      if (!className.simpleName.endsWith("Kt")) className.simpleName else null
+    if (!className.simpleName.endsWith("Kt")) className.simpleName else null
 ) : ContainerData {
 
   /**

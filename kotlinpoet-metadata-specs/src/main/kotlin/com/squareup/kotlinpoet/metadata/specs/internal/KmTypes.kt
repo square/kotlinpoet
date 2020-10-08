@@ -108,15 +108,15 @@ internal fun ImmutableKmType.toTypeName(
             val lambdaType = if (isExtensionType) {
               // Extension function type! T.(). First parameter is actually the receiver.
               LambdaTypeName.get(
-                  receiver = parameters[0],
-                  parameters = parameters.drop(1).toTypedArray(),
-                  returnType = returnType
+                receiver = parameters[0],
+                parameters = parameters.drop(1).toTypedArray(),
+                returnType = returnType
               )
             } else {
               LambdaTypeName.get(
-                  receiver = null,
-                  parameters = parameters,
-                  returnType = returnType
+                receiver = null,
+                parameters = parameters,
+                returnType = returnType
               )
             }
             lambdaType.copy(suspending = isSuspend)
@@ -144,7 +144,7 @@ internal fun ImmutableKmType.toTypeName(
     // type in tags for reference.
     val abbreviatedTypeName = it.toTypeName(typeParamResolver)
     abbreviatedTypeName.copy(
-        tags = mapOf(TypeNameAliasTag::class to TypeNameAliasTag(finalType))
+      tags = mapOf(TypeNameAliasTag::class to TypeNameAliasTag(finalType))
     )
   } ?: finalType
 }
@@ -155,9 +155,9 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
 ): TypeVariableName {
   val finalVariance = variance.toKModifier()
   val typeVariableName = TypeVariableName(
-      name = name,
-      bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
-      variance = finalVariance
+    name = name,
+    bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
+    variance = finalVariance
   )
   val annotations = ClassInspectorUtil.createAnnotations {
     for (annotation in annotations) {
@@ -165,9 +165,9 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
     }
   }.toList()
   return typeVariableName.copy(
-      reified = isReified,
-      tags = mapOf(ImmutableKmTypeParameter::class to this),
-      annotations = annotations
+    reified = isReified,
+    tags = mapOf(ImmutableKmTypeParameter::class to this),
+    annotations = annotations
   )
 }
 
@@ -198,8 +198,8 @@ internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
   val parametersMap = LinkedHashMap<Int, TypeVariableName>()
   val typeParamResolver = { id: Int ->
     parametersMap[id]
-        ?: fallback?.get(id)
-        ?: throw IllegalStateException("No type argument found for $id!")
+      ?: fallback?.get(id)
+      ?: throw IllegalStateException("No type argument found for $id!")
   }
 
   val resolver = object : TypeParameterResolver {

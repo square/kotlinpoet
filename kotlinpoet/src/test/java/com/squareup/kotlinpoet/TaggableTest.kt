@@ -29,13 +29,13 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
     @JvmStatic
     @Parameterized.Parameters(name = "{0}")
     fun data() = arrayOf(
-        AnnotationSpec.builder(JvmStatic::class),
-        FileSpec.builder("test", "Test"),
-        FunSpec.builder("test"),
-        ParameterSpec.builder("test", String::class.asClassName()),
-        PropertySpec.builder("test", String::class.asClassName()),
-        TypeAliasSpec.builder("Test", String::class.asClassName()),
-        TypeSpec.classBuilder("Test")
+      AnnotationSpec.builder(JvmStatic::class),
+      FileSpec.builder("test", "Test"),
+      FunSpec.builder("test"),
+      ParameterSpec.builder("test", String::class.asClassName()),
+      PropertySpec.builder("test", String::class.asClassName()),
+      TypeAliasSpec.builder("Test", String::class.asClassName()),
+      TypeSpec.classBuilder("Test")
     )
   }
 
@@ -84,45 +84,45 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
     return when (this) {
       is AnnotationSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .addMember(CodeBlock.of(""))
-            .build()
+          .tag(1)
+          .addMember(CodeBlock.of(""))
+          .build()
       }
       is FileSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .addComment("Test")
-            .build()
+          .tag(1)
+          .addComment("Test")
+          .build()
       }
       is FunSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .returns(String::class)
-            .build()
+          .tag(1)
+          .returns(String::class)
+          .build()
       }
       is ParameterSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .addModifiers(PUBLIC)
-            .build()
+          .tag(1)
+          .addModifiers(PUBLIC)
+          .build()
       }
       is PropertySpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .initializer(CodeBlock.of(""))
-            .build()
+          .tag(1)
+          .initializer(CodeBlock.of(""))
+          .build()
       }
       is TypeAliasSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .addKdoc(CodeBlock.of(""))
-            .build()
+          .tag(1)
+          .addKdoc(CodeBlock.of(""))
+          .build()
       }
       is TypeSpec.Builder -> build().apply {
         toBuilder()
-            .tag(1)
-            .addKdoc(CodeBlock.of(""))
-            .build()
+          .tag(1)
+          .addKdoc(CodeBlock.of(""))
+          .build()
       }
       else -> TODO("Unsupported type ${this::class.simpleName}")
     }

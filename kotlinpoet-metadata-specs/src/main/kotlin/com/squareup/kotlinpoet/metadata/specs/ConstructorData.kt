@@ -35,18 +35,18 @@ public data class ConstructorData(
     }
     addAll(jvmModifiers.map { it.annotationSpec() })
     exceptions.takeIf { it.isNotEmpty() }
-        ?.let {
-          add(ClassInspectorUtil.createThrowsSpec(it))
-        }
+      ?.let {
+        add(ClassInspectorUtil.createThrowsSpec(it))
+      }
   }
 
   public companion object {
     public val EMPTY: ConstructorData = ConstructorData(
-        annotations = emptyList(),
-        parameterAnnotations = emptyMap(),
-        isSynthetic = false,
-        jvmModifiers = emptySet(),
-        exceptions = emptyList()
+      annotations = emptyList(),
+      parameterAnnotations = emptyMap(),
+      isSynthetic = false,
+      jvmModifiers = emptySet(),
+      exceptions = emptyList()
     )
   }
 }

@@ -27,26 +27,26 @@ import kotlin.reflect.KVariance
 /** Returns type variable equivalent to `mirror`. */
 @JvmName("get")
 public fun TypeVariable.asTypeVariableName(): TypeVariableName =
-    (asElement() as TypeParameterElement).asTypeVariableName()
+  (asElement() as TypeParameterElement).asTypeVariableName()
 
 /** Returns type variable equivalent to `element`. */
 @JvmName("get")
 public fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()
   val boundsTypeNames = bounds.map(TypeMirror::asTypeName)
-      .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST)
+    .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST)
   return TypeVariableName.of(name, boundsTypeNames, variance = null)
 }
 
 public fun KTypeParameter.asTypeVariableName(): TypeVariableName {
   return TypeVariableName.of(
-      name = name,
-      bounds = upperBounds.map(KType::asTypeName)
-          .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST),
-      variance = when (variance) {
-        KVariance.INVARIANT -> null
-        KVariance.IN -> KModifier.IN
-        KVariance.OUT -> KModifier.OUT
-      }
+    name = name,
+    bounds = upperBounds.map(KType::asTypeName)
+      .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST),
+    variance = when (variance) {
+      KVariance.INVARIANT -> null
+      KVariance.IN -> KModifier.IN
+      KVariance.OUT -> KModifier.OUT
+    }
   )
 }

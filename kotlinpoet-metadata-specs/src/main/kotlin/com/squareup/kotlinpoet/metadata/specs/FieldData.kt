@@ -29,7 +29,8 @@ public data class FieldData(
    * and [isSynthetic].
    */
   val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations(
-      FIELD) {
+    FIELD
+  ) {
     addAll(annotations)
     if (isSynthetic) {
       add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
@@ -39,10 +40,10 @@ public data class FieldData(
 
   public companion object {
     public val SYNTHETIC: FieldData = FieldData(
-        annotations = emptyList(),
-        isSynthetic = true,
-        jvmModifiers = emptySet(),
-        constant = null
+      annotations = emptyList(),
+      isSynthetic = true,
+      jvmModifiers = emptySet(),
+      constant = null
     )
   }
 }

@@ -25,16 +25,16 @@ internal object NullAppendable : Appendable {
 }
 
 internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-    Collections.unmodifiableMap(LinkedHashMap(this))
+  Collections.unmodifiableMap(LinkedHashMap(this))
 
 internal fun <T> Collection<T>.toImmutableList(): List<T> =
-    Collections.unmodifiableList(ArrayList(this))
+  Collections.unmodifiableList(ArrayList(this))
 
 internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
-    Collections.unmodifiableSet(LinkedHashSet(this))
+  Collections.unmodifiableSet(LinkedHashSet(this))
 
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
-    enumValues<T>().filterTo(mutableSetOf(), this::contains)
+  enumValues<T>().filterTo(mutableSetOf(), this::contains)
 
 internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
@@ -50,7 +50,7 @@ internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifie
 }
 
 internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = null, t6: T? = null) =
-    this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
+  this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
 
 internal fun <T> Collection<T>.containsAnyOf(vararg t: T) = t.any(this::contains)
 
@@ -154,45 +154,47 @@ internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(t
 }
 
 private val IDENTIFIER_REGEX =
-    ("((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
-    "\\d*" +
-    "\\p{gc=Lu}*\\p{gc=Ll}*\\p{gc=Lt}*\\p{gc=Lm}*\\p{gc=Lo}*\\p{gc=Nl}*)" +
-    "|" +
-    "(`[^\n\r`]+`)")
+  (
+    "((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
+      "\\d*" +
+      "\\p{gc=Lu}*\\p{gc=Ll}*\\p{gc=Lt}*\\p{gc=Lm}*\\p{gc=Lo}*\\p{gc=Nl}*)" +
+      "|" +
+      "(`[^\n\r`]+`)"
+    )
     .toRegex()
 
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 // https://github.com/JetBrains/kotlin/search?q=KeywordStringsGenerated.java
 private val KEYWORDS = setOf(
-    "package",
-    "as",
-    "typealias",
-    "class",
-    "this",
-    "super",
-    "val",
-    "var",
-    "fun",
-    "for",
-    "null",
-    "true",
-    "false",
-    "is",
-    "in",
-    "throw",
-    "return",
-    "break",
-    "continue",
-    "object",
-    "if",
-    "try",
-    "else",
-    "while",
-    "do",
-    "when",
-    "interface",
-    "typeof"
+  "package",
+  "as",
+  "typealias",
+  "class",
+  "this",
+  "super",
+  "val",
+  "var",
+  "fun",
+  "for",
+  "null",
+  "true",
+  "false",
+  "is",
+  "in",
+  "throw",
+  "return",
+  "break",
+  "continue",
+  "object",
+  "if",
+  "try",
+  "else",
+  "while",
+  "do",
+  "when",
+  "interface",
+  "typeof"
 )
 
 private const val ALLOWED_CHARACTER = '$'
@@ -207,7 +209,8 @@ private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '
 private fun String.failIfEscapeInvalid() {
   require(!any { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
     "Can't escape identifier $this because it contains illegal characters: " +
-        ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("") }
+      ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("")
+  }
 }
 
 internal fun String.escapeIfNecessary(validate: Boolean = true): String {
@@ -226,7 +229,8 @@ private fun String.escapeIfHasAllowedCharacters() = if (hasAllowedCharacters && 
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if (!Character.isJavaIdentifierStart(first()) ||
-      drop(1).any { !Character.isJavaIdentifierPart(it) } && !alreadyEscaped()) {
+    drop(1).any { !Character.isJavaIdentifierPart(it) } && !alreadyEscaped()
+  ) {
     "`$this`".replace(' ', '·')
   } else {
     this
@@ -234,5 +238,5 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 }
 
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
-    .filter { it.isNotEmpty() }
-    .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+  .filter { it.isNotEmpty() }
+  .joinToString(delimiter.toString()) { it.escapeIfNecessary() }

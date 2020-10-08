@@ -235,9 +235,9 @@ internal class CodeWriter constructor(
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
             stringLiteralWithQuotes(
-                string,
-                escapeDollarSign = true,
-                isConstantContext = isConstantContext
+              string,
+              escapeDollarSign = true,
+              isConstantContext = isConstantContext
             )
           } else {
             "null"
@@ -256,9 +256,9 @@ internal class CodeWriter constructor(
           // Emit null as a literal null: no quotes.
           val literal = if (string != null) {
             stringLiteralWithQuotes(
-                string,
-                escapeDollarSign = false,
-                isConstantContext = isConstantContext
+              string,
+              escapeDollarSign = false,
+              isConstantContext = isConstantContext
             )
           } else {
             "null"
@@ -403,8 +403,10 @@ internal class CodeWriter constructor(
       if (resolved == c.copy(nullable = false, annotations = emptyList())) {
         if (alias != null) return alias
         val suffixOffset = c.simpleNames.size - 1
-        return className.simpleNames.subList(suffixOffset,
-            className.simpleNames.size).joinToString(".")
+        return className.simpleNames.subList(
+          suffixOffset,
+          className.simpleNames.size
+        ).joinToString(".")
       }
       c = c.enclosingClassName()
     }
@@ -554,9 +556,9 @@ internal class CodeWriter constructor(
         out.appendNonWrapping(line)
       } else {
         out.append(
-            line,
-            indentLevel = if (kdoc) indentLevel else indentLevel + 2,
-            linePrefix = if (kdoc) " * " else ""
+          line,
+          indentLevel = if (kdoc) indentLevel else indentLevel + 2,
+          linePrefix = if (kdoc) " * " else ""
         )
       }
       trailingNewline = false

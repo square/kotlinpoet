@@ -146,7 +146,7 @@ public class CodeBlock private constructor(
    * placeholders don't match their arguments.
    */
   internal fun replaceAll(oldValue: String, newValue: String) =
-      CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
+    CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
 
   internal fun hasStatements() = formatParts.any { "«" in it }
 
@@ -308,8 +308,10 @@ public class CodeBlock private constructor(
         }
 
         require(index >= 0 && index < args.size) {
-          "index ${index + 1} for '${format.substring(indexStart - 1,
-              indexEnd + 1)}' not in range (received ${args.size} arguments)"
+          "index ${index + 1} for '${format.substring(
+            indexStart - 1,
+            indexEnd + 1
+          )}' not in range (received ${args.size} arguments)"
         }
         require(!hasIndexed || !hasRelative) { "cannot mix indexed and positional parameters" }
 
@@ -344,7 +346,8 @@ public class CodeBlock private constructor(
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
         else -> throw IllegalArgumentException(
-            String.format("invalid format string: '%s'", format))
+          String.format("invalid format string: '%s'", format)
+        )
       }
     }
 
@@ -363,8 +366,10 @@ public class CodeBlock private constructor(
     private fun argToString(o: Any?) = o?.toString()
 
     private fun logDeprecationWarning(o: Any) {
-      println("Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
-          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead.")
+      println(
+        "Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
+          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead."
+      )
     }
 
     private fun argToType(o: Any?) = when (o) {
@@ -455,17 +460,17 @@ public class CodeBlock private constructor(
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
     @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
-        Builder().add(format, *args).build()
+      Builder().add(format, *args).build()
     @JvmStatic public fun builder(): Builder = Builder()
 
     internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
     internal val Char.isSingleCharNoArgPlaceholder get() = isOneOf('⇥', '⇤', '«', '»')
     internal val String.isPlaceholder
       get() = (length == 1 && first().isSingleCharNoArgPlaceholder) ||
-          (length == 2 && first().isMultiCharNoArgPlaceholder)
+        (length == 2 && first().isMultiCharNoArgPlaceholder)
 
     internal fun String.nextPotentialPlaceholderPosition(startIndex: Int) =
-        indexOfAny(charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
+      indexOfAny(charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
   }
 }
 
