@@ -1,4 +1,4 @@
-name: build
+name: Build
 
 on: [push, pull_request]
 
@@ -57,13 +57,3 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-
-      # TODO(egorand): Publish website
-      #
-      # - name: Prep mkdocs
-      #   run: .buildscript/prepare_mkdocs.sh
-      #
-      # - name: Deploy docs
-      #   uses: mhausenblas/mkdocs-deploy-gh-pages@master
-      #   env:
-      #     PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
