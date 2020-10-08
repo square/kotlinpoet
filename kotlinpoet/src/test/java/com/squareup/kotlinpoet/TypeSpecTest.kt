@@ -346,7 +346,7 @@ class TypeSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import javax.annotation.FreeRange
+        |import javax.`annotation`.FreeRange
         |import kotlin.String
         |
         |public class EthicalTaco {
@@ -1058,7 +1058,6 @@ class TypeSpecTest {
     )
   }
 
-  @Ignore("Broken, see https://github.com/square/kotlinpoet/issues/991")
   @Test fun enumWithConstructorsAndKeywords() {
     val primaryConstructor = FunSpec.constructorBuilder()
       .addParameter("value", Int::class)
@@ -2343,7 +2342,7 @@ class TypeSpecTest {
       .addAnnotation(ClassName("javax.annotation", "Nullable"))
       .build()
     assertThat(parameter.toString())
-      .isEqualTo("@javax.annotation.Nullable final taco: com.squareup.tacos.Taco")
+      .isEqualTo("@javax.`annotation`.Nullable final taco: com.squareup.tacos.Taco")
   }
 
   @Test fun classToString() {
@@ -3003,7 +3002,7 @@ class TypeSpecTest {
 
   @Test fun nameFromProperty() {
     val property = PropertySpec.builder("property", String::class).build()
-    assertThat(CodeBlock.of("%N", property).toString()).isEqualTo("property")
+    assertThat(CodeBlock.of("%N", property).toString()).isEqualTo("`property`")
   }
 
   @Test fun nameFromParameter() {
