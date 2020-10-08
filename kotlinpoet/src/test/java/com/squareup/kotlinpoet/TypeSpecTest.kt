@@ -894,17 +894,29 @@ class TypeSpecTest {
   }
 
   @Ignore("Broken, see https://github.com/square/kotlinpoet/issues/991")
-  @Test fun enumWithModifiedKeywords() {
+  @Test fun enumWithConstructorsAndKeywords() {
+    val primaryConstructor = FunSpec.constructorBuilder()
+        .addParameter("value", Int::class)
+        .build()
     val typeSpec = TypeSpec.enumBuilder("Sort")
-        .addEnumConstant("open")
-        .addEnumConstant("closed")
+        .primaryConstructor(primaryConstructor)
+        .addEnumConstant("open", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%L", 0)
+            .build())
+        .addEnumConstant("closed", TypeSpec.anonymousClassBuilder()
+            .addSuperclassConstructorParameter("%L", 1)
+            .build())
         .build()
     assertThat(toString(typeSpec)).isEqualTo("""
         |package com.squareup.tacos
         |
-        |public enum class Food {
-        |  `open`,
-        |  closed,
+        |import kotlin.Int
+        |
+        |public enum class Sort(
+        |  value: Int
+        |) {
+        |  `open`(0),
+        |  closed(1),
         |}
         |""".trimMargin())
   }
