@@ -290,10 +290,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit {
         }
 
-        public inline fun inline(crossinline param1: () -> kotlin.String): kotlin.Unit {
+        public inline fun `inline`(crossinline param1: () -> kotlin.String): kotlin.Unit {
         }
 
-        public inline fun noinline(noinline param1: () -> kotlin.String): kotlin.String {
+        public inline fun `noinline`(noinline param1: () -> kotlin.String): kotlin.String {
           throw NotImplementedError("Stub!")
         }
       }
@@ -382,7 +382,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class FunctionsReferencingTypeParameters<T> {
-        public fun test(param: T): kotlin.Unit {
+        public fun test(`param`: T): kotlin.Unit {
         }
       }
       """.trimIndent()
@@ -830,19 +830,19 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class GenericClass<T> {
-        public fun <T> functionAlsoWithT(param: T): kotlin.Unit {
+        public fun <T> functionAlsoWithT(`param`: T): kotlin.Unit {
         }
 
-        public fun <R> functionWithADifferentType(param: R): kotlin.Unit {
+        public fun <R> functionWithADifferentType(`param`: R): kotlin.Unit {
         }
 
-        public fun functionWithT(param: T): kotlin.Unit {
+        public fun functionWithT(`param`: T): kotlin.Unit {
         }
 
         /**
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
          */
-        public inline fun <reified T> reified(param: T): kotlin.Unit {
+        public inline fun <reified T> `reified`(`param`: T): kotlin.Unit {
         }
       }
       """.trimIndent()
@@ -900,7 +900,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class AnnotationHolders @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation constructor() {
         @field:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
-        public var field: kotlin.String? = null
+        public var `field`: kotlin.String? = null
 
         @get:com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.GetterAnnotation
         public var getter: kotlin.String? = null
@@ -972,7 +972,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Constants(
-        public val param: kotlin.String = throw NotImplementedError("Stub!")
+        public val `param`: kotlin.String = throw NotImplementedError("Stub!")
       ) {
         public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
@@ -1065,7 +1065,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Constants(
-        public val param: kotlin.String = throw NotImplementedError("Stub!")
+        public val `param`: kotlin.String = throw NotImplementedError("Stub!")
       ) {
         public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
@@ -1278,7 +1278,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
-        public val param: kotlin.String
+        public val `param`: kotlin.String
       ) {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
@@ -1325,7 +1325,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
-        public val param: kotlin.String
+        public val `param`: kotlin.String
       ) {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
@@ -1524,13 +1524,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
-        public val param: kotlin.String
+        public val `param`: kotlin.String
       ) {
         @field:kotlin.jvm.JvmSynthetic
         public val fieldProperty: kotlin.String? = null
 
         @field:kotlin.jvm.JvmSynthetic
-        public val property: kotlin.String? = null
+        public val `property`: kotlin.String? = null
 
         @get:kotlin.jvm.JvmSynthetic
         public val propertyGet: kotlin.String? = null
@@ -1589,13 +1589,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
-        public val param: kotlin.String
+        public val `param`: kotlin.String
       ) {
         @field:kotlin.jvm.JvmSynthetic
         public val fieldProperty: kotlin.String? = null
 
         @field:kotlin.jvm.JvmSynthetic
-        public val property: kotlin.String? = null
+        public val `property`: kotlin.String? = null
 
         @get:kotlin.jvm.JvmSynthetic
         public val propertyGet: kotlin.String? = null
@@ -1737,8 +1737,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @kotlin.SinceKotlin(version = "1.3")
-      @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
-      @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+      @kotlin.`annotation`.Retention(value = kotlin.`annotation`.AnnotationRetention.RUNTIME)
+      @kotlin.`annotation`.Target(allowedTargets = [kotlin.`annotation`.AnnotationTarget.CLASS])
       public annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
         public val kind: kotlin.Int = throw NotImplementedError("Stub!"),
@@ -1772,8 +1772,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
-      @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+      @kotlin.`annotation`.Retention(value = kotlin.`annotation`.AnnotationRetention.RUNTIME)
+      @kotlin.`annotation`.Target(allowedTargets = [kotlin.`annotation`.AnnotationTarget.CLASS])
       public annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
         public val kind: kotlin.Int = throw NotImplementedError("Stub!"),

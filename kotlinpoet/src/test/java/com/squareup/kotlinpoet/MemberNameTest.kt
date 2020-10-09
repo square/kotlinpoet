@@ -406,9 +406,9 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.Taco
+      |import com.squareup.tacos.`internal`.iterator
+      |import com.squareup.tacos.`internal`.minusAssign
       |import com.squareup.tacos.ingredient.Meat
-      |import com.squareup.tacos.internal.iterator
-      |import com.squareup.tacos.internal.minusAssign
       |import kotlin.Unit
       |
       |public fun makeTacoHealthy(taco: Taco): Unit {

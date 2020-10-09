@@ -80,13 +80,13 @@ class CrossplatformTest {
       |) {
       |  public val value: V
       |
-      |  public fun get(): V
+      |  public fun `get`(): V
       |
-      |  public fun set(value: V): Unit
+      |  public fun `set`(value: V): Unit
       |
       |  public fun getAndSet(value: V): V
       |
-      |  public fun compareAndSet(expect: V, update: V): Boolean
+      |  public fun compareAndSet(`expect`: V, update: V): Boolean
       |}
       |
       |public actual typealias AtomicRef<V> = AtomicReference<V>

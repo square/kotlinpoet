@@ -570,18 +570,18 @@ class AnnotationSpecTest {
       @Parcelize
       @TypeParceler<ExternalClass, ExternalClassParceler>
       public class MyClass(
-        public val external: ExternalClass
+        public val `external`: ExternalClass
       )
 
       @Parcelize
       public class MyClass(
         @TypeParceler<ExternalClass, ExternalClassParceler>
-        public val external: ExternalClass
+        public val `external`: ExternalClass
       )
 
       @Parcelize
       public class MyClass(
-        public val external: @WriteWith<ExternalClassParceler> ExternalClass
+        public val `external`: @WriteWith<ExternalClassParceler> ExternalClass
       )
 
       """.trimIndent()
