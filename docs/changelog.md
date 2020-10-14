@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+## Version 1.7.0
+
+_2020-10-14_
+
+ * New: Kotlin 1.4.10.
+ * New: Generated code is now compatible with the [explicit API mode][explicit-api-mode] by default.
+ * New: Escape soft and modifier keywords, in addition to hard keywords.
+ * New: Improve enum constants generation for cleaner diffs.
+ * New: Disallow setters on immutable properties.
+ * New: Ensure trailing new lines in expression bodies.
+ * New: Ensure trailing new lines after parameterless custom setters.
+ * Fix: Don't auto-convert properties with custom accessors to primary constructor properties.
+ * Fix: Don't allow parameterless setters with body.
+ * Fix: Prevent auto-wrapping spaces inside escaped keywords.
+
 ## Version 1.6.0
 
 _2020-05-28_
@@ -396,3 +411,4 @@ _2017-05-16_
 
  [kotlinpoet-metadata]: ../kotlinpoet_metadata
  [kotlinpoet-metadata-specs]: ../kotlinpoet_metadata_specs
+ [explicit-api-mode]: https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
