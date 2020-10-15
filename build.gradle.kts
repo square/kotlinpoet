@@ -44,6 +44,11 @@ subprojects {
       freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
   }
+  // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
+  tasks.withType<JavaCompile> {
+    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+    targetCompatibility = JavaVersion.VERSION_1_8.toString()
+  }
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     configure<KotlinProjectExtension> {
       explicitApi()
