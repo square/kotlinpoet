@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+## Version 1.7.1
+
+_2020-10-15_
+
+ * Fix: 1.7.0 was published using JDK 11 which set `"org.gradle.jvm.version"` to `"11"` in Gradle 
+   metadata, making it impossible to use the library on earlier Java versions (see 
+   [#999][issue-999]). 1.7.1 is published with JDK 8, which fixes the problem.
+
 ## Version 1.7.0
 
 _2020-10-14_
@@ -412,3 +420,4 @@ _2017-05-16_
  [kotlinpoet-metadata]: ../kotlinpoet_metadata
  [kotlinpoet-metadata-specs]: ../kotlinpoet_metadata_specs
  [explicit-api-mode]: https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
+ [issue-999]: https://github.com/square/kotlinpoet/issues/999

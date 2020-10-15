@@ -1362,14 +1362,14 @@ Download [the latest .jar][dl] or depend via Maven:
 <dependency>
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
 </dependency>
 ```
 
 or Gradle:
 
 ```groovy
-implementation("com.squareup:kotlinpoet:1.7.0")
+implementation("com.squareup:kotlinpoet:1.7.1")
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
