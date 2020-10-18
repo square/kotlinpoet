@@ -15,6 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.INTERNAL
+import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PROTECTED
+import com.squareup.kotlinpoet.KModifier.PUBLIC
+import java.util.EnumSet
+
 public enum class KModifier(
   internal val keyword: String,
   private vararg val targets: Target
@@ -81,3 +87,5 @@ public enum class KModifier(
     require(target in targets) { "unexpected modifier $this for $target" }
   }
 }
+
+internal val VISIBILITY_MODIFIERS: Set<KModifier> = EnumSet.of(PUBLIC, INTERNAL, PROTECTED, PRIVATE)

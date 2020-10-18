@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
 import java.util.function.Function
@@ -41,7 +42,7 @@ class PropertySpecTest {
       .mutable()
       .setter(
         FunSpec.setterBuilder()
-          .addModifiers(KModifier.PRIVATE)
+          .addModifiers(PRIVATE)
           .build()
       )
       .build()
@@ -213,7 +214,7 @@ class PropertySpecTest {
   @Test fun modifyModifiers() {
     val builder = PropertySpec
       .builder("word", String::class)
-      .addModifiers(KModifier.PRIVATE)
+      .addModifiers(PRIVATE)
 
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
@@ -242,7 +243,7 @@ class PropertySpecTest {
   // https://github.com/square/kotlinpoet/issues/437
   @Test fun typeVariable() {
     val t = TypeVariableName("T", Any::class)
-    val prop = PropertySpec.builder("someFunction", t, KModifier.PRIVATE)
+    val prop = PropertySpec.builder("someFunction", t, PRIVATE)
       .addTypeVariable(t)
       .receiver(KClass::class.asClassName().parameterizedBy(t))
       .getter(
@@ -264,7 +265,7 @@ class PropertySpecTest {
     val t = TypeVariableName("T", Serializable::class, Cloneable::class)
     val r = TypeVariableName("R", Any::class)
     val function = Function::class.asClassName().parameterizedBy(t, r)
-    val prop = PropertySpec.builder("property", String::class, KModifier.PRIVATE)
+    val prop = PropertySpec.builder("property", String::class, PRIVATE)
       .receiver(function)
       .addTypeVariables(listOf(t, r))
       .getter(
@@ -283,7 +284,7 @@ class PropertySpecTest {
 
   @Test fun reifiedTypeVariable() {
     val t = TypeVariableName("T").copy(reified = true)
-    val prop = PropertySpec.builder("someFunction", t, KModifier.PRIVATE)
+    val prop = PropertySpec.builder("someFunction", t, PRIVATE)
       .addTypeVariable(t)
       .receiver(KClass::class.asClassName().parameterizedBy(t))
       .getter(
@@ -486,6 +487,41 @@ class PropertySpecTest {
       |
       |public val foo: @Annotation () -> Unit
       |""".trimMargin()
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1002
+  @Test fun visibilityOmittedOnAccessors() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addProperty(
+        PropertySpec.builder("foo", String::class, PRIVATE)
+          .mutable()
+          .getter(
+            FunSpec.getterBuilder()
+              .addStatement("return %S", "foo")
+              .build()
+          )
+          .setter(
+            FunSpec.setterBuilder()
+              .addParameter("foo", String::class)
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      //language=kotlin
+      """
+        package com.squareup.tacos
+
+        import kotlin.String
+
+        private var foo: String
+          get() = "foo"
+          set(foo) {
+          }
+
+      """.trimIndent()
     )
   }
 }

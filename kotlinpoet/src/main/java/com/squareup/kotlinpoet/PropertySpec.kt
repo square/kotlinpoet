@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
 import java.lang.reflect.Type
+import java.util.EnumSet
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
@@ -98,10 +99,15 @@ public class PropertySpec private constructor(
     }
     codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
-    val implicitAccessorModifiers = if (isInlineProperty) {
-      implicitModifiers + KModifier.INLINE
-    } else {
-      implicitModifiers
+    val implicitAccessorModifiers = EnumSet.noneOf(KModifier::class.java)
+    for (modifier in implicitModifiers) {
+      // Omit visibility modifiers, accessor visibility will default to the property's visibility.
+      if (modifier !in VISIBILITY_MODIFIERS) {
+        implicitAccessorModifiers.add(modifier)
+      }
+    }
+    if (isInlineProperty) {
+      implicitAccessorModifiers.add(KModifier.INLINE)
     }
     if (getter != null) {
       codeWriter.emitCode("⇥")

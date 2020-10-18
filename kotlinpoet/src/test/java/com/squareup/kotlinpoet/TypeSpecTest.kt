@@ -691,7 +691,7 @@ class TypeSpecTest {
         |  contents: String
         |) {
         |  public val contents: String = contents
-        |    public get() {
+        |    get() {
         |      println("contents observed!")
         |      return field
         |    }
@@ -729,7 +729,7 @@ class TypeSpecTest {
         |  contents: String
         |) {
         |  public var contents: String = contents
-        |    public set(value) {
+        |    set(value) {
         |      println("contents changed!")
         |      field = value
         |    }

@@ -194,7 +194,7 @@ class JvmAnnotationsTest {
       |  public companion object {
       |    public val foo: String
       |      @JvmStatic
-      |      public get() = "foo"
+      |      get() = "foo"
       |  }
       |}
       |""".trimMargin()
@@ -235,7 +235,7 @@ class JvmAnnotationsTest {
       |  public companion object {
       |    public var foo: String = "foo"
       |      @JvmStatic
-      |      public set(value) {
+      |      set(value) {
       |      }
       |  }
       |}
@@ -350,7 +350,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String
       |  @Throws(IOException::class)
-      |  public get() = "foo"
+      |  get() = "foo"
       |""".trimMargin()
     )
   }
@@ -380,7 +380,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String
       |  @Throws(IOException::class)
-      |  public set(value) {
+      |  set(value) {
       |    print("foo")
       |  }
       |""".trimMargin()
@@ -532,7 +532,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String
       |  @JvmName("foo")
-      |  public get() = "foo"
+      |  get() = "foo"
       |""".trimMargin()
     )
   }
@@ -561,7 +561,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String = "foo"
       |  @JvmName("foo")
-      |  public set(value) {
+      |  set(value) {
       |  }
       |""".trimMargin()
     )
@@ -779,7 +779,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String
       |  @Synchronized
-      |  public get() = "foo"
+      |  get() = "foo"
       |""".trimMargin()
     )
   }
@@ -808,7 +808,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String = "foo"
       |  @Synchronized
-      |  public set(value) {
+      |  set(value) {
       |  }
       |""".trimMargin()
     )
@@ -1014,7 +1014,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String
       |  @Strictfp
-      |  public get() = "foo"
+      |  get() = "foo"
       |""".trimMargin()
     )
   }
@@ -1043,7 +1043,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String
       |  @Strictfp
-      |  public set(value) {
+      |  set(value) {
       |    print("foo")
       |  }
       |""".trimMargin()
