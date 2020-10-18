@@ -337,6 +337,18 @@ class FunSpecTest {
     )
   }
 
+  @Test fun expressionBodyIsDetectedWithNonBreakingSpace() {
+    val funSpec = FunSpec.builder("foo")
+      .addStatement("return·1")
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun foo() = 1
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionWithReturnKDocAndMainKdoc() {
     val funSpec = FunSpec.builder("foo")
       .addParameter("nodoc", Boolean::class)
