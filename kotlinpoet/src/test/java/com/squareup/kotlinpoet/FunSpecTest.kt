@@ -337,6 +337,31 @@ class FunSpecTest {
     )
   }
 
+  @Test fun expressionBodyIsDetectedReturnWithNonBreakingSpace() {
+    val funSpec = FunSpec.builder("foo")
+      .addStatement("return·1")
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun foo() = 1
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun expressionBodyIsDetectedThrowWithNonBreakingSpace() {
+    val funSpec = FunSpec.builder("foo")
+      .addStatement("throw·%T()", AssertionError::class)
+      .returns(NOTHING)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun foo(): kotlin.Nothing = throw java.lang.AssertionError()
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionWithReturnKDocAndMainKdoc() {
     val funSpec = FunSpec.builder("foo")
       .addParameter("nodoc", Boolean::class)
