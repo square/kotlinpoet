@@ -221,7 +221,8 @@ public class FunSpec private constructor(
       return asReturnExpressionBody
     }
     if (codeBlock.withoutPrefix(THROW_EXPRESSION_BODY_PREFIX_SPACE) != null ||
-      codeBlock.withoutPrefix(THROW_EXPRESSION_BODY_PREFIX_NBSP) != null) {
+      codeBlock.withoutPrefix(THROW_EXPRESSION_BODY_PREFIX_NBSP) != null
+    ) {
       return codeBlock
     }
     return null
