@@ -532,7 +532,7 @@ public class FunSpec private constructor(
     private val RETURN_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("return ")
     private val RETURN_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("return·")
     private val THROW_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("throw ")
-    private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw ·")
+    private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw·")
 
     @JvmStatic public fun builder(name: String): Builder = Builder(name)
 
