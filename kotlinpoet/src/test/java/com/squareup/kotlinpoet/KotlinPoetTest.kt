@@ -524,7 +524,7 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |public val String.extensionProperty: Int
-        |  public get() = length
+        |  get() = length
         |
         """.trimMargin()
     )
@@ -556,7 +556,7 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |public val ((String) -> String).extensionProperty: Int
-        |  public get() = length
+        |  get() = length
         |
         """.trimMargin()
     )
@@ -598,11 +598,11 @@ class KotlinPoetTest {
         |import kotlin.Int
         |
         |public var propertyWithCustomAccessors: Int = 1
-        |  public get() {
+        |  get() {
         |    println("getter")
         |    return field
         |  }
-        |  public set(value) {
+        |  set(value) {
         |    println("setter")
         |    field = value
         |  }
