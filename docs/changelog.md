@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 1.7.2
+
+_2020-10-20_
+
+ * New: Detect expression bodies with `return·` and `throw·` prefixes.
+ * Fix: Omit visibility modifiers on custom accessors.
+
 ## Version 1.7.1
 
 _2020-10-15_
