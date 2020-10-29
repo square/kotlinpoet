@@ -41,7 +41,7 @@ subprojects {
   tasks.withType<KotlinCompile> {
     kotlinOptions {
       jvmTarget = "1.8"
-      freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+      freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
