@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm") version versions.kotlin apply false
   id("org.jetbrains.dokka") version versions.dokka apply false
-  id("com.diffplug.gradle.spotless") version versions.spotless
+  id("com.diffplug.spotless") version versions.spotless
   id("com.vanniktech.maven.publish") version versions.mavenPublish apply false
 }
 
