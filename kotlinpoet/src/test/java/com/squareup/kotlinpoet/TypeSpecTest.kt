@@ -424,7 +424,7 @@ class TypeSpecTest {
         |    "User-Agent: foobar"
         |  )
         |  @POST("/foo/bar")
-        |  public fun fooBar(
+        |  public abstract fun fooBar(
         |    @Body things: Things<Thing>,
         |    @QueryMap(encodeValues = false) query: Map<String, String>,
         |    @Header("Authorization") authorization: String
@@ -1129,7 +1129,7 @@ class TypeSpecTest {
         |import kotlin.Unit
         |
         |public fun interface Taco {
-        |  public fun sam(): Unit
+        |  public abstract fun sam(): Unit
         |
         |  public fun notSam(): Unit {
         |  }
@@ -1604,7 +1604,7 @@ class TypeSpecTest {
         |import kotlin.Unit
         |
         |public interface Taco {
-        |  public fun aMethod(): Unit
+        |  public abstract fun aMethod(): Unit
         |
         |  public fun aDefaultMethod(): Unit {
         |  }
@@ -5140,6 +5140,38 @@ class TypeSpecTest {
     var typeSpec = TypeSpec.classBuilder("A\$B")
       .build()
     assertThat(typeSpec.toString()).isEqualTo("public class `A\$B`\n")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1011
+  @Test fun abstractInterfaceMembers() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addType(
+        TypeSpec.interfaceBuilder("Taco")
+          .addProperty("foo", String::class, ABSTRACT)
+          .addFunction(
+            FunSpec.builder("bar")
+              .addModifiers(ABSTRACT)
+              .returns(String::class)
+              .build()
+          )
+          .build()
+      )
+      .build()
+    // language=kotlin
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      public interface Taco {
+        public abstract val foo: String
+
+        public abstract fun bar(): String
+      }
+
+      """.trimIndent()
+    )
   }
 
   companion object {
