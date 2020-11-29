@@ -5,7 +5,7 @@ import kotlin.test.Test
 
 class DelegatedConstructorCallTest {
   @Test
-  fun defaultPresentInNonExternalClass() {
+  fun defaultPresentInClass() {
     val builder = TypeSpec.classBuilder("Test")
       .superclass(ClassName("testpackage", "TestSuper"))
     assertThat(builder.build().toString()).isEqualTo(
@@ -16,7 +16,7 @@ class DelegatedConstructorCallTest {
   }
 
   @Test
-  fun defaultPresentInNonExternalObject() {
+  fun defaultPresentInObject() {
     val builder = TypeSpec.objectBuilder("Test")
       .superclass(ClassName("testpackage", "TestSuper"))
     assertThat(builder.build().toString()).isEqualTo(
@@ -39,6 +39,30 @@ class DelegatedConstructorCallTest {
   }
 
   @Test
+  fun defaultNotPresentInExpectClass() {
+    val builder = TypeSpec.classBuilder("Test")
+      .addModifiers(KModifier.EXPECT)
+      .superclass(ClassName("testpackage", "TestSuper"))
+    assertThat(builder.build().toString()).isEqualTo(
+      """
+        |public expect class Test : testpackage.TestSuper
+        |""".trimMargin()
+    )
+  }
+
+  @Test
+  fun defaultNotPresentInExpectObject() {
+    val builder = TypeSpec.objectBuilder("Test")
+      .addModifiers(KModifier.EXPECT)
+      .superclass(ClassName("testpackage", "TestSuper"))
+    assertThat(builder.build().toString()).isEqualTo(
+      """
+        |public expect object Test : testpackage.TestSuper
+        |""".trimMargin()
+    )
+  }
+
+  @Test
   fun defaultNotPresentInExternalObject() {
     val builder = TypeSpec.objectBuilder("Test")
       .addModifiers(KModifier.EXTERNAL)
@@ -51,7 +75,7 @@ class DelegatedConstructorCallTest {
   }
 
   @Test
-  fun allowedInNonExternalClass() {
+  fun allowedInClass() {
     val builder = TypeSpec.classBuilder("Test")
       .superclass(ClassName("testpackage", "TestSuper"))
       .addSuperclassConstructorParameter("anything")
@@ -63,7 +87,7 @@ class DelegatedConstructorCallTest {
   }
 
   @Test
-  fun allowedInNonExternalObject() {
+  fun allowedInObject() {
     val builder = TypeSpec.objectBuilder("Test")
       .superclass(ClassName("testpackage", "TestSuper"))
       .addSuperclassConstructorParameter("anything")
@@ -75,7 +99,7 @@ class DelegatedConstructorCallTest {
   }
 
   @Test
-  fun allowedInNonExternalClassSecondary() {
+  fun allowedInClassSecondary() {
     val builder = TypeSpec.classBuilder("Test")
     val primaryConstructorBuilder = FunSpec.constructorBuilder()
     val primaryConstructor = primaryConstructorBuilder.build()

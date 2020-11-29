@@ -127,7 +127,7 @@ public class TypeSpec private constructor(
 
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
-          if (!areNestedExternal) {
+          if (!areNestedExternal && !modifiers.contains(EXPECT)) {
             listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParametersBlock))
           } else {
             listOf(CodeBlock.of(" %T", superclass))
@@ -201,7 +201,7 @@ public class TypeSpec private constructor(
 
         val types = listOf(superclass).filter { it != ANY }.map {
           if (primaryConstructor != null || funSpecs.none(FunSpec::isConstructor)) {
-            if (!areNestedExternal) {
+            if (!areNestedExternal && !modifiers.contains(EXPECT)) {
               CodeBlock.of("%T(%L)", it, superclassConstructorParametersBlock)
             } else {
               CodeBlock.of("%T", it)
