@@ -98,6 +98,9 @@ public class TypeSpec private constructor(
     implicitModifiers: Set<KModifier> = emptySet(),
     isNestedExternal: Boolean = false
   ) {
+    // Types.
+    val areNestedExternal = EXTERNAL in modifiers || isNestedExternal
+
     // Nested classes interrupt wrapped line indentation. Stash the current wrapping state and put
     // it back afterwards when this type is complete.
     val previousStatementLine = codeWriter.statementLine
@@ -124,7 +127,11 @@ public class TypeSpec private constructor(
 
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
-          listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParametersBlock))
+          if (!areNestedExternal && !modifiers.contains(EXPECT)) {
+            listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParametersBlock))
+          } else {
+            listOf(CodeBlock.of(" %T", superclass))
+          }
         } else {
           listOf()
         }
@@ -194,7 +201,11 @@ public class TypeSpec private constructor(
 
         val types = listOf(superclass).filter { it != ANY }.map {
           if (primaryConstructor != null || funSpecs.none(FunSpec::isConstructor)) {
-            CodeBlock.of("%T(%L)", it, superclassConstructorParametersBlock)
+            if (!areNestedExternal && !modifiers.contains(EXPECT)) {
+              CodeBlock.of("%T(%L)", it, superclassConstructorParametersBlock)
+            } else {
+              CodeBlock.of("%T", it)
+            }
           } else {
             CodeBlock.of("%T", it)
           }
@@ -286,9 +297,6 @@ public class TypeSpec private constructor(
         funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers + implicitModifiers), true)
         firstMember = false
       }
-
-      // Types.
-      val areNestedExternal = EXTERNAL in modifiers || isNestedExternal
 
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
@@ -450,6 +458,7 @@ public class TypeSpec private constructor(
     internal val initializerBlock = CodeBlock.builder()
     public var initializerIndex: Int = -1
     internal val isAnonymousClass get() = name == null && kind == Kind.CLASS
+    internal val isExternal get() = EXTERNAL in modifiers
     internal val isEnum get() = kind == Kind.CLASS && ENUM in modifiers
     internal val isAnnotation get() = kind == Kind.CLASS && ANNOTATION in modifiers
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
@@ -704,6 +713,13 @@ public class TypeSpec private constructor(
 
       if (superclassConstructorParameters.isNotEmpty()) {
         checkCanHaveSuperclass()
+
+        check(!isExternal) {
+          "delegated constructor call in external class is not allowed"
+        }
+      }
+      check(!(isExternal && funSpecs.any { it.delegateConstructor != null })) {
+        "delegated constructor call in external class is not allowed"
       }
 
       check(!(isAnonymousClass && typeVariables.isNotEmpty())) {
