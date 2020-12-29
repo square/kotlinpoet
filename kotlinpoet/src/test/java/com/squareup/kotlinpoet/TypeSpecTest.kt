@@ -2666,22 +2666,28 @@ class TypeSpecTest {
   }
 
   @Test fun inlineClassWithPrivateConstructor() {
-    assertThrows<IllegalStateException> {
-      TypeSpec.classBuilder("Guacamole")
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avocado", String::class)
-            .addModifiers(PRIVATE)
-            .build()
-        )
-        .addProperty(
-          PropertySpec.builder("avocado", String::class)
-            .initializer("avocado")
-            .build()
-        )
-        .addModifiers(INLINE)
-        .build()
-    }.hasMessageThat().isEqualTo("Inline classes must have a public primary constructor")
+    val guacamole = TypeSpec.classBuilder("Guacamole")
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("avocado", String::class)
+          .addModifiers(PRIVATE)
+          .build()
+      )
+      .addProperty(
+        PropertySpec.builder("avocado", String::class)
+          .initializer("avocado")
+          .build()
+      )
+      .addModifiers(INLINE)
+      .build()
+
+    assertThat(guacamole.toString()).isEqualTo(
+      """
+      |public inline class Guacamole private constructor(
+      |  public val avocado: kotlin.String
+      |)
+      |""".trimMargin()
+    )
   }
 
   @Test fun inlineEnumClass() {
