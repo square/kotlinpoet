@@ -558,9 +558,6 @@ public class TypeSpec private constructor(
       check(isSimpleClass || isEnum || kind == Kind.OBJECT) {
         "$kind can't have initializer blocks"
       }
-      check(!isInlineClass) {
-        "Inline classes can't have initializer blocks"
-      }
       check(EXPECT !in modifiers) {
         "expect $kind can't have initializer blocks"
       }
@@ -777,9 +774,6 @@ public class TypeSpec private constructor(
           check(!underlyingProperty.mutable) {
             "Inline classes must have a single read-only (val) property parameter."
           }
-        }
-        check(initializerBlock.isEmpty()) {
-          "Inline classes can't have initializer blocks"
         }
         check(superclass == Any::class.asTypeName()) {
           "Inline classes cannot have super classes"
