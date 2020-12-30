@@ -2553,22 +2553,31 @@ class TypeSpecTest {
   }
 
   @Test fun inlineClassWithInitBlock() {
-    assertThrows<IllegalStateException> {
-      TypeSpec.classBuilder("Guacamole")
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avacado", String::class)
-            .build()
-        )
-        .addProperty(
-          PropertySpec.builder("avacado", String::class)
-            .initializer("avacado")
-            .build()
-        )
-        .addInitializerBlock(CodeBlock.EMPTY)
-        .addModifiers(INLINE)
-        .build()
-    }.hasMessageThat().isEqualTo("Inline classes can't have initializer blocks")
+    val guacamole = TypeSpec.classBuilder("Guacamole")
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("avacado", String::class)
+          .build()
+      )
+      .addProperty(
+        PropertySpec.builder("avacado", String::class)
+          .initializer("avacado")
+          .build()
+      )
+      .addInitializerBlock(CodeBlock.EMPTY)
+      .addModifiers(INLINE)
+      .build()
+
+    assertThat(guacamole.toString()).isEqualTo(
+      """
+      |public inline class Guacamole(
+      |  public val avacado: kotlin.String
+      |) {
+      |  init {
+      |  }
+      |}
+      |""".trimMargin()
+    )
   }
 
   class InlineSuperClass
