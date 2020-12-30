@@ -756,9 +756,6 @@ public class TypeSpec private constructor(
           check(it.parameters.size == 1) {
             "Inline classes must have 1 parameter in constructor"
           }
-          check(PRIVATE !in it.modifiers && INTERNAL !in it.modifiers) {
-            "Inline classes must have a public primary constructor"
-          }
         }
 
         check(propertySpecs.size > 0) {
