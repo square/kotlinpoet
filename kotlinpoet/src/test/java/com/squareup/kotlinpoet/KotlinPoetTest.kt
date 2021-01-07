@@ -1189,4 +1189,38 @@ class KotlinPoetTest {
       |""".trimMargin()
     )
   }
+
+  // https://github.com/square/kotlinpoet/issues/1031
+  @Test fun superClassGetsFullyQualifiedOnConflict() {
+    val namespace = "test"
+
+    val kotlinExceptionName = ClassName("kotlin", "Exception")
+    val customExceptionName = ClassName(namespace, "Exception")
+    val customException = TypeSpec
+      .classBuilder("Exception")
+      .superclass(kotlinExceptionName)
+      .addFunction(
+        FunSpec
+          .builder("test")
+          .addParameter("e", customExceptionName)
+          .build()
+      )
+      .build()
+
+    val file = FileSpec.builder(namespace, "Exception")
+      .addType(customException)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package test
+      |
+      |import kotlin.Unit
+      |
+      |public class Exception : kotlin.Exception() {
+      |  public fun test(e: Exception): Unit {
+      |  }
+      |}
+      |""".trimMargin()
+    )
+  }
 }
