@@ -403,6 +403,7 @@ internal class CodeWriter constructor(
       if (resolved == c.copy(nullable = false, annotations = emptyList())) {
         if (alias != null) return alias
         val suffixOffset = c.simpleNames.size - 1
+        referencedNames.add(className.topLevelClassName().simpleName)
         return className.simpleNames.subList(
           suffixOffset,
           className.simpleNames.size
