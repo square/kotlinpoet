@@ -98,8 +98,9 @@ public class FunSpec private constructor(
     codeWriter.emitWhereBlock(typeVariables)
 
     val isEmptyConstructor = isConstructor && body.isEmpty()
-    if (modifiers.containsAnyOf(ABSTRACT, EXTERNAL, EXPECT) || EXPECT in implicitModifiers ||
-      isEmptyConstructor
+    val isExternal = EXTERNAL in modifiers || EXTERNAL in implicitModifiers
+    if (modifiers.containsAnyOf(ABSTRACT, EXPECT) || EXPECT in implicitModifiers ||
+      isEmptyConstructor || (isExternal && body.isEmpty())
     ) {
       codeWriter.emit("\n")
       return
