@@ -46,13 +46,12 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
-import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
-  private val classLoader: URLClassLoader?
+  private val classLoader: ClassLoader?
 ) : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
@@ -510,7 +509,7 @@ public class ReflectiveClassInspector private constructor(
   public companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
-    public fun create(classLoader: URLClassLoader? = null): ClassInspector {
+    public fun create(classLoader: ClassLoader? = null): ClassInspector {
       return ReflectiveClassInspector(classLoader)
     }
 
