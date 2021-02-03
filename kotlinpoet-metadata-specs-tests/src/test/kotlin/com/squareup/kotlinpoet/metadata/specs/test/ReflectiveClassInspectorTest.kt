@@ -18,59 +18,58 @@ import kotlin.test.assertNotNull
 @KotlinPoetMetadataPreview
 class ReflectiveClassInspectorTest {
 
-    data class Person(val name: String)
+  data class Person(val name: String)
 
-    /**
-     * Tests if the [ReflectiveClassInspector] can be created without a
-     * custom ClassLoader and still works.
-     */
-    @Test
-    fun standardClassLoaderTest() {
-        val classInspector = ReflectiveClassInspector.create()
-        val className = Person::class.asClassName()
-        val declarationContainer = classInspector.declarationContainerFor(className)
-        assertNotNull(declarationContainer)
-    }
+  /**
+   * Tests if the [ReflectiveClassInspector] can be created without a
+   * custom ClassLoader and still works.
+   */
+  @Test
+  fun standardClassLoaderTest() {
+    val classInspector = ReflectiveClassInspector.create()
+    val className = Person::class.asClassName()
+    val declarationContainer = classInspector.declarationContainerFor(className)
+    assertNotNull(declarationContainer)
+  }
 
-    /**
-     * Tests if the [ReflectiveClassInspector] can be created with a
-     * custom ClassLoader.
-     */
-    @Test
-    fun useACustomClassLoaderTest() {
-        val testClass = "Person"
-        val testPropertyName = "name"
-        val testPropertyType = "String"
-        val testPackageName = "com.test"
-        val testClassName = ClassName(testPackageName, testClass)
-        val testKtFileName = "KClass.kt"
+  /**
+   * Tests if the [ReflectiveClassInspector] can be created with a
+   * custom ClassLoader.
+   */
+  @Test
+  fun useACustomClassLoaderTest() {
+    val testClass = "Person"
+    val testPropertyName = "name"
+    val testPropertyType = "String"
+    val testPackageName = "com.test"
+    val testClassName = ClassName(testPackageName, testClass)
+    val testKtFileName = "KClass.kt"
 
-        val kotlinSource = SourceFile.kotlin(
-            testKtFileName,
-            """
+    val kotlinSource = SourceFile.kotlin(
+      testKtFileName,
+      """
             package $testPackageName
             data class $testClass(val $testPropertyName: $testPropertyType)
-            """.trimIndent()
-        )
+      """.trimIndent()
+    )
 
-        val result = KotlinCompilation().apply {
-            sources = listOf(kotlinSource)
-        }.compile()
+    val result = KotlinCompilation().apply {
+      sources = listOf(kotlinSource)
+    }.compile()
 
-        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
-        val classLoader = result.classLoader
-        val classInspector = ReflectiveClassInspector.create(classLoader)
+    assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+    val classLoader = result.classLoader
+    val classInspector = ReflectiveClassInspector.create(classLoader)
 
-        val declarationContainer = classInspector.declarationContainerFor(testClassName)
+    val declarationContainer = classInspector.declarationContainerFor(testClassName)
 
-        val properties = declarationContainer.properties
-        assertEquals(1, properties.size)
+    val properties = declarationContainer.properties
+    assertEquals(1, properties.size)
 
-        val testProperty = properties.findLast { it.name == testPropertyName }
-        assertNotNull(testProperty)
+    val testProperty = properties.findLast { it.name == testPropertyName }
+    assertNotNull(testProperty)
 
-        val returnType = testProperty.returnType
-        assertNotNull(returnType)
-    }
-
+    val returnType = testProperty.returnType
+    assertNotNull(returnType)
+  }
 }
