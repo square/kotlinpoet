@@ -365,6 +365,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
+      @kotlin.jvm.JvmInline
       public inline class InlineClass(
         public val value: kotlin.String
       )
