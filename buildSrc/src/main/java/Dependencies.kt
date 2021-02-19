@@ -35,6 +35,6 @@ object deps {
     const val compileTesting = "com.google.testing.compile:compile-testing:0.15"
     const val jimfs = "com.google.jimfs:jimfs:1.1"
     const val ecj = "org.eclipse.jdt.core.compiler:ecj:4.6.1"
-    const val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.3.1"
+    const val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.3.4"
   }
 }
