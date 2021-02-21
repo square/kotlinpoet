@@ -63,8 +63,11 @@ public class ReflectiveClassInspector private constructor(
   private fun lookupClass(className: ClassName): Class<*>? {
     return classCache.getOrPut(className) {
       try {
-        if (classLoader == null) Class.forName(className.reflectionName())
-        else Class.forName(className.reflectionName(), true, classLoader)
+        if (classLoader == null) {
+          Class.forName(className.reflectionName())
+        } else {
+          Class.forName(className.reflectionName(), true, classLoader)
+        }
       } catch (e: ClassNotFoundException) {
         null
       }.toOptional()
