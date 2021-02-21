@@ -30,4 +30,5 @@ dependencies {
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
+  testImplementation(deps.test.kotlinCompileTesting)
 }

@@ -50,7 +50,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
-public class ReflectiveClassInspector private constructor() : ClassInspector {
+public class ReflectiveClassInspector private constructor(
+  private val classLoader: ClassLoader?
+) : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
   private val methodCache = ConcurrentHashMap<Pair<Class<*>, String>, Optional<Method>>()
@@ -61,7 +63,11 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
   private fun lookupClass(className: ClassName): Class<*>? {
     return classCache.getOrPut(className) {
       try {
-        Class.forName(className.reflectionName())
+        if (classLoader == null) {
+          Class.forName(className.reflectionName())
+        } else {
+          Class.forName(className.reflectionName(), true, classLoader)
+        }
       } catch (e: ClassNotFoundException) {
         null
       }.toOptional()
@@ -355,7 +361,8 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
             clazz = targetClass,
             signature = getterSignature,
             hasAnnotations = property.getterFlags.hasAnnotations,
-            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(getterSignature) ?: method
+            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
+              ?.lookupMethod(getterSignature) ?: method
           )
             ?: error("No getter method $getterSignature found in $classIfCompanion.")
         }
@@ -366,7 +373,8 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
             clazz = targetClass,
             signature = setterSignature,
             hasAnnotations = property.setterFlags.hasAnnotations,
-            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(setterSignature) ?: method,
+            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
+              ?.lookupMethod(setterSignature) ?: method,
             knownIsOverride = getterData?.isOverride
           )
             ?: error("No setter method $setterSignature found in $classIfCompanion.")
@@ -401,7 +409,8 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
           clazz = targetClass,
           signature = signature,
           hasAnnotations = kmFunction.hasAnnotations,
-          jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature) ?: method
+          jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
+            ?: method
         )
           ?: error("No method $signature found in $targetClass.")
       } else {
@@ -503,31 +512,36 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
   public companion object {
     @JvmStatic
     @KotlinPoetMetadataPreview
-    public fun create(): ClassInspector {
-      return ReflectiveClassInspector()
+    public fun create(classLoader: ClassLoader? = null): ClassInspector {
+      return ReflectiveClassInspector(classLoader)
     }
 
-    private val Class<*>.descriptor: String get() {
-      return when {
-        isPrimitive -> when (kotlin) {
-          Byte::class -> "B"
-          Char::class -> "C"
-          Double::class -> "D"
-          Float::class -> "F"
-          Int::class -> "I"
-          Long::class -> "J"
-          Short::class -> "S"
-          Boolean::class -> "Z"
-          Void::class -> "V"
-          else -> throw RuntimeException("Unrecognized primitive $this")
+    private val Class<*>.descriptor: String
+      get() {
+        return when {
+          isPrimitive -> when (kotlin) {
+            Byte::class -> "B"
+            Char::class -> "C"
+            Double::class -> "D"
+            Float::class -> "F"
+            Int::class -> "I"
+            Long::class -> "J"
+            Short::class -> "S"
+            Boolean::class -> "Z"
+            Void::class -> "V"
+            else -> throw RuntimeException("Unrecognized primitive $this")
+          }
+          isArray -> name.replace('.', '/')
+          else -> "L$name;".replace('.', '/')
         }
-        isArray -> name.replace('.', '/')
-        else -> "L$name;".replace('.', '/')
       }
-    }
 
     private val Method.descriptor: String
-      get() = parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")${returnType.descriptor}") { it.descriptor }
+      get() = parameterTypes.joinToString(
+        separator = "",
+        prefix = "(",
+        postfix = ")${returnType.descriptor}"
+      ) { it.descriptor }
 
     /**
      * Returns the JVM signature in the form "$Name$MethodDescriptor", for example: `equals(Ljava/lang/Object;)Z`.
@@ -567,6 +581,7 @@ public class ReflectiveClassInspector private constructor() : ClassInspector {
  * TODO: Make this an inline class when inline classes are stable.
  */
 private data class Optional<out T : Any>(val nullableValue: T?)
+
 private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
   this
 )
