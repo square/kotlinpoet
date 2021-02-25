@@ -201,6 +201,42 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importedMemberAndClassFunctionNameClash() {
+    val kotlinErrorMember = MemberName("kotlin", "error")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+      .addType(
+        TypeSpec.classBuilder("TacoTest")
+          .addFunction(
+            FunSpec.builder("test")
+              .addStatement("%M(%S)", kotlinErrorMember, "errorText")
+              .build()
+          )
+          .addFunction(
+            FunSpec
+              .builder("error")
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |public class TacoTest {
+      |  public fun test(): Unit {
+      |    kotlin.error("errorText")
+      |  }
+      |
+      |  public fun error(): Unit {
+      |  }
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
