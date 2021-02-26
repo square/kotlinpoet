@@ -448,12 +448,25 @@ internal class CodeWriter constructor(
       return memberName.simpleName
     }
 
-    // We'll have to use the fully-qualified name. Mark the member as importable for a future pass.
-    if (!kdoc) {
+    // We'll have to use the fully-qualified name.
+    // Mark the member as importable for a future pass unless the name clashes with
+    // a method in the current context
+    if (!kdoc && !isMethodNameUsedInCurrentContext(memberName.simpleName)) {
       importableMember(memberName)
     }
 
     return memberName.canonicalName
+  }
+
+  // TODO(luqasn): also honor superclass members when resolving names.
+  private fun isMethodNameUsedInCurrentContext(simpleName: String): Boolean {
+    for (it in typeSpecStack.reversed()) {
+      if (it.funSpecs.any { it.name == simpleName })
+        return true
+      if (!it.modifiers.contains(KModifier.INNER))
+        break
+    }
+    return false
   }
 
   private fun importableType(className: ClassName) {
