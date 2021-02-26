@@ -237,6 +237,92 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importedMemberAndSuperClassFunctionNameClashForInnerClass() {
+    val kotlinErrorMember = MemberName("kotlin", "error")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+      .addType(
+        TypeSpec.classBuilder("Test")
+          .addFunction(
+            FunSpec
+              .builder("error")
+              .build()
+          )
+          .addType(
+            TypeSpec.classBuilder("TacoTest")
+              .addModifiers(KModifier.INNER)
+              .addFunction(
+                FunSpec.builder("test")
+                  .addStatement("%M(%S)", kotlinErrorMember, "errorText")
+                  .build()
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |public class Test {
+      |  public fun error(): Unit {
+      |  }
+      |
+      |  public inner class TacoTest {
+      |    public fun test(): Unit {
+      |      kotlin.error("errorText")
+      |    }
+      |  }
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun importedMemberAndSuperClassFunctionNameDontClashForNonInnerClass() {
+    val kotlinErrorMember = MemberName("kotlin", "error")
+    val file = FileSpec.builder("com.squareup.tacos", "TacoTest")
+      .addType(
+        TypeSpec.classBuilder("Test")
+          .addFunction(
+            FunSpec
+              .builder("error")
+              .build()
+          )
+          .addType(
+            TypeSpec.classBuilder("TacoTest")
+              .addFunction(
+                FunSpec.builder("test")
+                  .addStatement("%M(%S)", kotlinErrorMember, "errorText")
+                  .build()
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |import kotlin.error
+      |
+      |public class Test {
+      |  public fun error(): Unit {
+      |  }
+      |
+      |  public class TacoTest {
+      |    public fun test(): Unit {
+      |      error("errorText")
+      |    }
+      |  }
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
