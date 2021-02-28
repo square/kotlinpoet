@@ -21,14 +21,10 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata.specs")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.classinspector.reflective")
   }
 }
 
 dependencies {
-  api(project(":kotlinpoet"))
-  api(project(":kotlinpoet-metadata"))
-
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
+  api(project(":interop:kotlinx-metadata:specs"))
 }

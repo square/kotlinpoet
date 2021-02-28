@@ -22,9 +22,9 @@ pluginManagement {
 
 include(
     ":kotlinpoet",
-    ":kotlinpoet-classinspector-elements",
-    ":kotlinpoet-classinspector-reflective",
-    ":kotlinpoet-metadata",
-    ":kotlinpoet-metadata-specs",
-    ":kotlinpoet-metadata-specs-tests"
+    ":interop:kotlinx-metadata:classinspectors:elements",
+    ":interop:kotlinx-metadata:classinspectors:reflect",
+    ":interop:kotlinx-metadata:core",
+    ":interop:kotlinx-metadata:specs",
+    ":interop:kotlinx-metadata:specs-tests"
 )
