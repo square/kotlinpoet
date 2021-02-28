@@ -44,14 +44,13 @@ markdown_extensions:
 nav:
   - 'Overview':
     - 'KotlinPoet': index.md
-    - 'KotlinPoet Metadata': kotlinpoet_metadata.md
-    - 'KotlinPoet Metadata Specs': kotlinpoet_metadata_specs.md
+    - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
   - 'API':
     - 'kotlinpoet': 1.x/kotlinpoet/index.html
-    - 'kotlinpoet-classinspector-elements': 1.x/kotlinpoet-classinspector-elements/com.squareup.kotlinpoet.classinspector.elements/index.html
-    - 'kotlinpoet-classinspector-reflective': 1.x/kotlinpoet-classinspector-reflective/com.squareup.kotlinpoet.classinspector.reflective/index.html
-    - 'kotlinpoet-metadata': 1.x/kotlinpoet-metadata/com.squareup.kotlinpoet.metadata/index.html
-    - 'kotlinpoet-metadata-specs': 1.x/kotlinpoet-metadata-specs/com.squareup.kotlinpoet.metadata.specs/index.html
+    - 'interop-kotlinx-metadata-classinspectors-elements': 1.x/interop/kotlinx-metadata/classinspectors/elements/com.squareup.kotlinpoet.classinspector.elements/index.html
+    - 'interop-kotlinx-metadata-classinspectors-reflect': 1.x/interop/kotlinx-metadata/classinspectors/reflec/com.squareup.kotlinpoet.classinspector.reflective/index.html
+    - 'interop-kotlinx-metadata-core': 1.x/interop/kotlinx-metadata/core/com.squareup.kotlinpoet.metadata/index.html
+    - 'interop-kotlinx-metadata-specs': 1.x/interop/kotlinx-metadata/specs/com.squareup.kotlinpoet.metadata.specs/index.html
   - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
   - 'Change Log': changelog.md
   - 'Contributing': contributing.md
