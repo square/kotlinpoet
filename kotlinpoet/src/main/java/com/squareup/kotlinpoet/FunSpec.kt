@@ -97,11 +97,7 @@ public class FunSpec private constructor(
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    val isEmptyConstructor = isConstructor && body.isEmpty()
-    val isExternal = EXTERNAL in modifiers || EXTERNAL in implicitModifiers
-    if (modifiers.containsAnyOf(ABSTRACT, EXPECT) || EXPECT in implicitModifiers ||
-      isEmptyConstructor || (isExternal && body.isEmpty())
-    ) {
+    if (shouldOmitBody(implicitModifiers)) {
       codeWriter.emit("\n")
       return
     }
@@ -119,6 +115,17 @@ public class FunSpec private constructor(
     } else {
       codeWriter.emit("\n")
     }
+  }
+
+  private fun shouldOmitBody(
+    implicitModifiers: Set<KModifier>
+  ): Boolean {
+    val isEmptyConstructor = isConstructor && body.isEmpty()
+    val isExternal = EXTERNAL in modifiers || EXTERNAL in implicitModifiers
+    return modifiers.containsAnyOf(ABSTRACT, EXPECT) ||
+            EXPECT in implicitModifiers ||
+            isEmptyConstructor ||
+            (isExternal && body.isEmpty())
   }
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
