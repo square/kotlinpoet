@@ -117,16 +117,19 @@ public class FunSpec private constructor(
     }
   }
 
-  private fun shouldOmitBody(
-    implicitModifiers: Set<KModifier>
-  ): Boolean {
-    val isEmptyConstructor = isConstructor && body.isEmpty()
-    val isExternal = EXTERNAL in modifiers || EXTERNAL in implicitModifiers
-    return modifiers.containsAnyOf(ABSTRACT, EXPECT) ||
-            EXPECT in implicitModifiers ||
-            isEmptyConstructor ||
-            (isExternal && body.isEmpty())
+  private fun shouldOmitBody(implicitModifiers: Set<KModifier>): Boolean {
+    if (canNotHaveBody(implicitModifiers)) {
+      check(body.isEmpty()) { "function $name cannot have code" }
+      return true
+    }
+    return canBodyBeOmitted(implicitModifiers) && body.isEmpty()
   }
+
+  private fun canNotHaveBody(implicitModifiers: Set<KModifier>) =
+    ABSTRACT in modifiers || EXPECT in modifiers + implicitModifiers
+
+  private fun canBodyBeOmitted(implicitModifiers: Set<KModifier>) =
+    isConstructor || (modifiers + implicitModifiers).containsAnyOf(ABSTRACT, EXTERNAL)
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
     if (isConstructor) {
