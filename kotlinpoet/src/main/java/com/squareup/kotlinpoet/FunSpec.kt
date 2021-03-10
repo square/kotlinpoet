@@ -54,8 +54,8 @@ public class FunSpec private constructor(
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
-    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
-      "abstract function ${builder.name} cannot have code"
+    require(body.isEmpty() || !builder.modifiers.containsAnyOf(ABSTRACT, EXPECT)) {
+      "abstract or expect function ${builder.name} cannot have code"
     }
     if (name == SETTER) {
       require(parameters.size <= 1) {
