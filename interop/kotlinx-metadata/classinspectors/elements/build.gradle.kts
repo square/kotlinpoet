@@ -34,7 +34,7 @@ tasks.named<Jar>("jar") {
 val shade: Configuration = configurations.maybeCreate("compileShaded")
 configurations.getByName("compileOnly").extendsFrom(shade)
 dependencies {
-  api(project(":kotlinpoet-metadata-specs"))
+  api(project(":interop:kotlinx-metadata:specs"))
   // Unshaded stable guava dep for auto-common
   // `api` due to https://youtrack.jetbrains.com/issue/KT-41702
   api(deps.guava)

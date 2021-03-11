@@ -1,8 +1,8 @@
 KotlinPoet-metadata-specs
 =========================
 
-`KotlinPoet-metadata-specs` is an API for converting `kotlinpoet-metadata` types to KotlinPoet 
-source representations of their APIs. This includes full type resolution, signatures, 
+`interop:kotlinx-metadata:specs` is an API for converting `interop:kotlinx-metadata:core` types to 
+KotlinPoet source representations of their APIs. This includes full type resolution, signatures, 
 enclosed elements, and general stub source representations of the underlying API.
 
 ### Example
@@ -39,10 +39,10 @@ placeholders.
 
 - Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@file:` annotations are not supported yet.
-- `@JvmOverloads` annotations are only supported with `kotlinpoet-classinspector-elements` and not reflection.
-- Non-const literal values are only supported with `kotlinpoet-classinspector-reflective` and not reflection.
+- `@JvmOverloads` annotations are only supported with `interop:kotlinx-metadata/classinspectors:elements` and not reflection.
+- Non-const literal values are only supported with `interop:kotlinx-metadata/classinspectors:reflect` and not reflection.
 - ClassInspector data sourced from `synthetic` constructs are only supported with 
-`kotlinpoet-classinspector-reflective` and not elements. This is because the javax Elements API does not model
+`interop:kotlinx-metadata/classinspectors:reflect` and not elements. This is because the javax Elements API does not model
 synthetic constructs. This can yield some missing information, like static companion object properties 
 or `property:` site target annotations.
 - Annotations annotated with `AnnotationRetention.SOURCE` are not parsable in reflection nor javax elements.

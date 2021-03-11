@@ -1,10 +1,10 @@
 KotlinPoet-metadata
 ===================
 
-`KotlinPoet-metadata` is an API for working with Kotlin `@Metadata` annotations. Its API sits atop
- [kotlinx-metadata](https://github.com/JetBrains/kotlin/tree/master/libraries/kotlinx-metadata/jvm), 
- offering immutable versions of its types + JVM metadata information. This can be used to read 
- Kotlin language semantics off of class files.
+`interop:kotlinx-metadata:core` is an API for working with Kotlin `@Metadata` annotations. Its API 
+sits atop [kotlinx-metadata](https://github.com/JetBrains/kotlin/tree/master/libraries/kotlinx-metadata/jvm), 
+offering immutable versions of its types + JVM metadata information. This can be used to read 
+Kotlin language semantics off of `Class` or `TypeElement` `@Metadata` annotations.
 
 ### Example
 
@@ -51,5 +51,5 @@ val mutableKmClass: KmClass = kmClass.toMutable()
 
 ### Interop with KotlinPoet
 
-There is a separate `kotlinpoet-metadata-specs` artifact that offers interop APIs to create 
+There is a separate `interop:kotlinx-metadata:specs` artifact that offers interop APIs to create 
 `TypeSpec`/`FileSpec` representations of classes using this artifact for intermediary parsing.

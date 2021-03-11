@@ -56,12 +56,12 @@ subprojects {
   }
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
-  if (name != "kotlinpoet-metadata-specs-tests") {
+  if ("tests" !in name && buildFile.exists()) {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     afterEvaluate {
       tasks.named<DokkaTask>("dokkaHtml") {
-        outputDirectory.set(rootDir.resolve("docs/1.x"))
+        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x"))
         dokkaSourceSets.configureEach {
           skipDeprecated.set(true)
         }

@@ -23,10 +23,10 @@ compileTestKotlin.kotlinOptions {
 
 dependencies {
   testImplementation(project(":kotlinpoet"))
-  testImplementation(project(":kotlinpoet-metadata"))
-  testImplementation(project(":kotlinpoet-metadata-specs"))
-  testImplementation(project(":kotlinpoet-classinspector-elements"))
-  testImplementation(project(":kotlinpoet-classinspector-reflective"))
+  testImplementation(project(":interop:kotlinx-metadata:core"))
+  testImplementation(project(":interop:kotlinx-metadata:specs"))
+  testImplementation(project(":interop:kotlinx-metadata:classinspectors:elements"))
+  testImplementation(project(":interop:kotlinx-metadata:classinspectors:reflect"))
   testImplementation(deps.kotlin.junit)
   testImplementation(deps.test.truth)
   testImplementation(deps.test.compileTesting)
