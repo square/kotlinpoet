@@ -204,6 +204,9 @@ public data class ImmutableKmClass internal constructor(
       enumEntries += this@ImmutableKmClass.enumEntries
       sealedSubclasses += this@ImmutableKmClass.sealedSubclasses
       versionRequirements += this@ImmutableKmClass.versionRequirements.map { it.toMutable() }
+      localDelegatedProperties += this@ImmutableKmClass.localDelegatedProperties.map { it.toMutable() }
+      moduleName = this@ImmutableKmClass.moduleName
+      anonymousObjectOriginName = this@ImmutableKmClass.anonymousObjectOriginName
     }
   }
 }
@@ -256,6 +259,8 @@ public data class ImmutableKmPackage internal constructor(
       functions += this@ImmutableKmPackage.functions.map { it.toMutable() }
       properties += this@ImmutableKmPackage.properties.map { it.toMutable() }
       typeAliases += this@ImmutableKmPackage.typeAliases.map { it.toMutable() }
+      localDelegatedProperties += this@ImmutableKmPackage.localDelegatedProperties.map { it.toMutable() }
+      moduleName = this@ImmutableKmPackage.moduleName
     }
   }
 }
@@ -321,6 +326,7 @@ public data class ImmutableKmConstructor internal constructor(
     return KmConstructor(flags).apply {
       valueParameters += this@ImmutableKmConstructor.valueParameters.map { it.toMutable() }
       versionRequirements += this@ImmutableKmConstructor.versionRequirements.map { it.toMutable() }
+      signature = this@ImmutableKmConstructor.signature
     }
   }
 }
@@ -390,6 +396,8 @@ public data class ImmutableKmFunction internal constructor(
       returnType = this@ImmutableKmFunction.returnType.toMutable()
       versionRequirements += this@ImmutableKmFunction.versionRequirements.map { it.toMutable() }
       contract = this@ImmutableKmFunction.contract?.toMutable()
+      signature = this@ImmutableKmFunction.signature
+      lambdaClassOriginName = this@ImmutableKmFunction.lambdaClassOriginName
     }
   }
 }
@@ -485,6 +493,11 @@ public data class ImmutableKmProperty internal constructor(
       setterParameter = this@ImmutableKmProperty.setterParameter?.toMutable()
       returnType = this@ImmutableKmProperty.returnType.toMutable()
       versionRequirements += this@ImmutableKmProperty.versionRequirements.map { it.toMutable() }
+      jvmFlags = this@ImmutableKmProperty.jvmFlags
+      fieldSignature = this@ImmutableKmProperty.fieldSignature
+      getterSignature = this@ImmutableKmProperty.getterSignature
+      setterSignature = this@ImmutableKmProperty.setterSignature
+      syntheticMethodForAnnotations = this@ImmutableKmProperty.syntheticMethodForAnnotations
     }
   }
 }
@@ -619,6 +632,7 @@ public data class ImmutableKmTypeParameter internal constructor(
   public fun toMutable(): KmTypeParameter {
     return KmTypeParameter(flags, name, id, variance).apply {
       upperBounds += this@ImmutableKmTypeParameter.upperBounds.map { it.toMutable() }
+      annotations += this@ImmutableKmTypeParameter.annotations
     }
   }
 }
@@ -705,6 +719,8 @@ public data class ImmutableKmType internal constructor(
       abbreviatedType = this@ImmutableKmType.abbreviatedType?.toMutable()
       outerType = this@ImmutableKmType.outerType?.toMutable()
       flexibleTypeUpperBound = this@ImmutableKmType.flexibleTypeUpperBound?.toMutable()
+      isRaw = this@ImmutableKmType.isRaw
+      annotations += this@ImmutableKmType.annotations
     }
   }
 }
