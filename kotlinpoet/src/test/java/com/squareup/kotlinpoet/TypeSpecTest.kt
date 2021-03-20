@@ -1524,7 +1524,6 @@ class TypeSpecTest {
             TypeSpec.classBuilder("ClassC")
               .addFunction(
                 FunSpec.constructorBuilder()
-                  .addStatement("Unit")
                   .build()
               )
               .build()
@@ -1556,7 +1555,6 @@ class TypeSpecTest {
                 TypeSpec.classBuilder("ClassD")
                   .addFunction(
                     FunSpec.constructorBuilder()
-                      .addStatement("Unit")
                       .build()
                   )
                   .build()

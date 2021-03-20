@@ -54,8 +54,8 @@ public class FunSpec private constructor(
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
-    require(body.isEmpty() || ABSTRACT !in builder.modifiers) {
-      "abstract function ${builder.name} cannot have code"
+    require(body.isEmpty() || !builder.modifiers.containsAnyOf(ABSTRACT, EXPECT)) {
+      "abstract or expect function ${builder.name} cannot have code"
     }
     if (name == SETTER) {
       require(parameters.size <= 1) {
@@ -97,11 +97,7 @@ public class FunSpec private constructor(
     emitSignature(codeWriter, enclosingName)
     codeWriter.emitWhereBlock(typeVariables)
 
-    val isEmptyConstructor = isConstructor && body.isEmpty()
-    val isExternal = EXTERNAL in modifiers || EXTERNAL in implicitModifiers
-    if (modifiers.containsAnyOf(ABSTRACT, EXPECT) || EXPECT in implicitModifiers ||
-      isEmptyConstructor || (isExternal && body.isEmpty())
-    ) {
+    if (shouldOmitBody(implicitModifiers)) {
       codeWriter.emit("\n")
       return
     }
@@ -120,6 +116,20 @@ public class FunSpec private constructor(
       codeWriter.emit("\n")
     }
   }
+
+  private fun shouldOmitBody(implicitModifiers: Set<KModifier>): Boolean {
+    if (canNotHaveBody(implicitModifiers)) {
+      check(body.isEmpty()) { "function $name cannot have code" }
+      return true
+    }
+    return canBodyBeOmitted(implicitModifiers) && body.isEmpty()
+  }
+
+  private fun canNotHaveBody(implicitModifiers: Set<KModifier>) =
+    ABSTRACT in modifiers || EXPECT in modifiers + implicitModifiers
+
+  private fun canBodyBeOmitted(implicitModifiers: Set<KModifier>) =
+    isConstructor || (modifiers + implicitModifiers).containsAnyOf(ABSTRACT, EXTERNAL)
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
     if (isConstructor) {
