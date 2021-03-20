@@ -88,6 +88,7 @@ import com.squareup.kotlinpoet.metadata.isEnumEntry
 import com.squareup.kotlinpoet.metadata.isExpect
 import com.squareup.kotlinpoet.metadata.isExternal
 import com.squareup.kotlinpoet.metadata.isFinal
+import com.squareup.kotlinpoet.metadata.isFun
 import com.squareup.kotlinpoet.metadata.isInfix
 import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isInner
@@ -277,11 +278,17 @@ private fun ImmutableKmClass.toTypeSpec(
     else -> TypeSpec.classBuilder(simpleName)
   }
 
-  classData?.annotations
-    ?.filterNot {
-      it.typeName == METADATA || it.typeName in JAVA_ANNOTATION_ANNOTATIONS
+  classData?.run {
+    annotations
+      .filterNot {
+        it.typeName == METADATA || it.typeName in JAVA_ANNOTATION_ANNOTATIONS
+      }
+      .let(builder::addAnnotations)
+
+    if (declarationContainer.isFun) {
+      builder.addModifiers(KModifier.FUN)
     }
-    ?.let(builder::addAnnotations)
+  }
 
   if (isEnum) {
     enumEntries.forEach { entryName ->

@@ -105,6 +105,8 @@ public val Flags.isObjectClass: Boolean get() = Flag.Class.IS_OBJECT(this)
 @KotlinPoetMetadataPreview
 public val Flags.isInterface: Boolean get() = Flag.Class.IS_INTERFACE(this)
 @KotlinPoetMetadataPreview
+public val Flags.isFun: Boolean get() = Flag.Class.IS_FUN(this)
+@KotlinPoetMetadataPreview
 public val KmClass.isAnnotation: Boolean get() = flags.isAnnotationClass
 @KotlinPoetMetadataPreview
 public val KmClass.isClass: Boolean get() = flags.isClass
@@ -156,6 +158,8 @@ public val ImmutableKmClass.isInner: Boolean get() = flags.isInnerClass
 public val ImmutableKmClass.isObject: Boolean get() = flags.isObjectClass
 @KotlinPoetMetadataPreview
 public val ImmutableKmClass.isInterface: Boolean get() = flags.isInterface
+@KotlinPoetMetadataPreview
+public val ImmutableKmClass.isFun: Boolean get() = flags.isFun
 @KotlinPoetMetadataPreview
 public val ImmutableKmType.isSuspend: Boolean get() = flags.isSuspendType
 @KotlinPoetMetadataPreview
