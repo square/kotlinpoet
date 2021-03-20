@@ -88,6 +88,7 @@ import com.squareup.kotlinpoet.metadata.isEnumEntry
 import com.squareup.kotlinpoet.metadata.isExpect
 import com.squareup.kotlinpoet.metadata.isExternal
 import com.squareup.kotlinpoet.metadata.isFinal
+import com.squareup.kotlinpoet.metadata.isFun
 import com.squareup.kotlinpoet.metadata.isInfix
 import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isInner
@@ -272,7 +273,13 @@ private fun ImmutableKmClass.toTypeSpec(
     isEnum -> TypeSpec.enumBuilder(simpleName)
     isExpect -> TypeSpec.expectClassBuilder(simpleName)
     isObject -> TypeSpec.objectBuilder(simpleName)
-    isInterface -> TypeSpec.interfaceBuilder(simpleName)
+    isInterface -> {
+      if (classData?.declarationContainer?.isFun == true) {
+        TypeSpec.funInterfaceBuilder(simpleName)
+      } else {
+        TypeSpec.interfaceBuilder(simpleName)
+      }
+    }
     isEnumEntry -> TypeSpec.anonymousClassBuilder()
     else -> TypeSpec.classBuilder(simpleName)
   }

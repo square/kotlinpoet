@@ -2132,6 +2132,24 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     override fun openFun() {
     }
   }
+
+  @Test
+  fun funClass() {
+    val funInterface = FunInterface::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(funInterface.trimmedToString()).isEqualTo(
+      """
+      public fun interface FunInterface {
+        public abstract fun example(): kotlin.Unit
+      }
+      """.trimIndent()
+    )
+  }
+
+  fun interface FunInterface {
+    fun example()
+  }
 }
 
 class ClassNesting {
