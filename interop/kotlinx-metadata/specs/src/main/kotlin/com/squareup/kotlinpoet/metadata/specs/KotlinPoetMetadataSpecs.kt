@@ -273,22 +273,22 @@ private fun ImmutableKmClass.toTypeSpec(
     isEnum -> TypeSpec.enumBuilder(simpleName)
     isExpect -> TypeSpec.expectClassBuilder(simpleName)
     isObject -> TypeSpec.objectBuilder(simpleName)
-    isInterface -> TypeSpec.interfaceBuilder(simpleName)
+    isInterface -> {
+      if (classData?.declarationContainer?.isFun == true) {
+        TypeSpec.funInterfaceBuilder(simpleName)
+      } else {
+        TypeSpec.interfaceBuilder(simpleName)
+      }
+    }
     isEnumEntry -> TypeSpec.anonymousClassBuilder()
     else -> TypeSpec.classBuilder(simpleName)
   }
 
-  classData?.run {
-    annotations
-      .filterNot {
-        it.typeName == METADATA || it.typeName in JAVA_ANNOTATION_ANNOTATIONS
-      }
-      .let(builder::addAnnotations)
-
-    if (declarationContainer.isFun) {
-      builder.addModifiers(KModifier.FUN)
+  classData?.annotations
+    ?.filterNot {
+      it.typeName == METADATA || it.typeName in JAVA_ANNOTATION_ANNOTATIONS
     }
-  }
+    ?.let(builder::addAnnotations)
 
   if (isEnum) {
     enumEntries.forEach { entryName ->
