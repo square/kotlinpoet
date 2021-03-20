@@ -28,7 +28,7 @@ object deps {
   object kotlin {
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
     const val junit = "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
-    const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"
+    const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.2.0"
   }
   object test {
     const val truth = "com.google.truth:truth:1.0"
