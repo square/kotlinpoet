@@ -2141,8 +2141,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(funInterface.trimmedToString()).isEqualTo(
       """
       public fun interface FunInterface {
-        public fun example(): kotlin.Unit {
-        }
+        public abstract fun example(): kotlin.Unit
       }
       """.trimIndent()
     )
