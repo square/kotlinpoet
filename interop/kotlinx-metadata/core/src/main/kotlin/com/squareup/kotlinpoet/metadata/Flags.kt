@@ -163,7 +163,7 @@ public val ImmutableKmType.isNullable: Boolean get() = flags.isNullableType
 
 // Constructor flags.
 @KotlinPoetMetadataPreview
-public val Flags.isPrimaryConstructor: Boolean get() = Flag.Constructor.IS_PRIMARY(this)
+public val Flags.isPrimaryConstructor: Boolean get() = !Flag.Constructor.IS_SECONDARY(this)
 @KotlinPoetMetadataPreview
 public val KmConstructor.isPrimary: Boolean get() = flags.isPrimaryConstructor
 @KotlinPoetMetadataPreview
