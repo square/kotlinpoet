@@ -122,7 +122,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       """
       |public $modifierString class Guacamole(
       |  public val avocado: kotlin.String
-      |) : com.squareup.kotlinpoet.ValTypeSpecTest.InlineSuperInterface
+      |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
       |""".trimMargin()
     )
   }

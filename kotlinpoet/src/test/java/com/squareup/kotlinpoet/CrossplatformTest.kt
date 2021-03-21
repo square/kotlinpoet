@@ -76,15 +76,15 @@ class CrossplatformTest {
       |import kotlin.Unit
       |
       |internal expect class AtomicRef<V>(
-      |  value: V
+      |  `value`: V
       |) {
-      |  public val value: V
+      |  public val `value`: V
       |
       |  public fun `get`(): V
       |
-      |  public fun `set`(value: V): Unit
+      |  public fun `set`(`value`: V): Unit
       |
-      |  public fun getAndSet(value: V): V
+      |  public fun getAndSet(`value`: V): V
       |
       |  public fun compareAndSet(`expect`: V, update: V): Boolean
       |}

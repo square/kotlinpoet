@@ -556,7 +556,7 @@ class AnnotationSpecTest {
       import kotlin.Unit
 
       public class ExternalClass(
-        public val value: Int
+        public val `value`: Int
       )
 
       public object ExternalClassParceler : Parceler<ExternalClass> {

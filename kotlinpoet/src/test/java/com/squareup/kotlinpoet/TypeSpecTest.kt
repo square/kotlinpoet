@@ -717,7 +717,6 @@ class TypeSpecTest {
           .build()
       )
       .build()
-    println(toString(taco))
     assertThat(toString(taco)).isEqualTo(
       """
         |package com.squareup.tacos
@@ -728,7 +727,7 @@ class TypeSpecTest {
         |  contents: String
         |) {
         |  public var contents: String = contents
-        |    set(value) {
+        |    set(`value`) {
         |      println("contents changed!")
         |      field = value
         |    }
@@ -1083,7 +1082,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |public enum class Sort(
-        |  value: Int
+        |  `value`: Int
         |) {
         |  `open`(0),
         |  closed(1),

@@ -367,7 +367,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       @kotlin.jvm.JvmInline
       public inline class InlineClass(
-        public val value: kotlin.String
+        public val `value`: kotlin.String
       )
       """.trimIndent()
     )
@@ -523,7 +523,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public enum class ComplexEnum(
-        public val value: kotlin.String
+        public val `value`: kotlin.String
       ) {
         FOO {
           public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
@@ -587,7 +587,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public enum class ComplexEnumWithAnnotation(
-        public val value: kotlin.String
+        public val `value`: kotlin.String
       ) {
         FOO {
           public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
@@ -795,7 +795,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public annotation class MyAnnotation(
-        public val value: kotlin.String
+        public val `value`: kotlin.String
       )
       """.trimIndent()
     )
@@ -894,7 +894,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public var setter: kotlin.String? = null
 
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ConstructorAnnotation
-        public constructor(value: kotlin.String)
+        public constructor(`value`: kotlin.String)
 
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FunctionAnnotation
         public fun function(): kotlin.Unit {

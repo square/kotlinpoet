@@ -108,7 +108,7 @@ class PropertySpecTest {
       """
       |inline var foo: kotlin.String
       |  get() = "foo"
-      |  set(value) {
+      |  set(`value`) {
       |  }
       |""".trimMargin()
     )
