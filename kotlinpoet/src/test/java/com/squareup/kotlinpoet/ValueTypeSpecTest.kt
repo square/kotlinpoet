@@ -8,11 +8,11 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class ValTypeSpecTest(private val useVal: Boolean) {
+class ValueTypeSpecTest(private val useValue: Boolean) {
 
   companion object {
     @JvmStatic
-    @Parameterized.Parameters(name = "val={0}")
+    @Parameterized.Parameters(name = "value={0}")
     fun data(): Collection<Array<Any>> {
       return listOf(
         arrayOf(true),
@@ -21,11 +21,11 @@ class ValTypeSpecTest(private val useVal: Boolean) {
     }
   }
 
-  private val modifier = if (useVal) KModifier.VAL else INLINE
+  private val modifier = if (useValue) KModifier.VALUE else INLINE
   private val modifierString = modifier.keyword
 
-  private fun classBuilder() = if (useVal) {
-    TypeSpec.valClassBuilder("Guacamole")
+  private fun classBuilder() = if (useValue) {
+    TypeSpec.valueClassBuilder("Guacamole")
   } else {
     TypeSpec.classBuilder("Guacamole")
       .addModifiers(modifier)
@@ -98,7 +98,7 @@ class ValTypeSpecTest(private val useVal: Boolean) {
         )
         .superclass(InlineSuperClass::class)
         .build()
-    }.hasMessageThat().isEqualTo("val/inline classes cannot have super classes")
+    }.hasMessageThat().isEqualTo("value/inline classes cannot have super classes")
   }
 
   interface InlineSuperInterface
@@ -137,7 +137,7 @@ class ValTypeSpecTest(private val useVal: Boolean) {
         )
         .addProperty("garlic", String::class)
         .build()
-    }.hasMessageThat().isEqualTo("val/inline classes must have a single read-only (val) property parameter.")
+    }.hasMessageThat().isEqualTo("value/inline classes must have a single read-only (val) property parameter.")
   }
 
   @Test fun inlineClassWithoutProperties() {
@@ -149,7 +149,7 @@ class ValTypeSpecTest(private val useVal: Boolean) {
             .build()
         )
         .build()
-    }.hasMessageThat().isEqualTo("val/inline classes must have at least 1 property")
+    }.hasMessageThat().isEqualTo("value/inline classes must have at least 1 property")
   }
 
   @Test fun inlineClassWithMutableProperties() {
@@ -167,7 +167,7 @@ class ValTypeSpecTest(private val useVal: Boolean) {
             .build()
         )
         .build()
-    }.hasMessageThat().isEqualTo("val/inline classes must have a single read-only (val) property parameter.")
+    }.hasMessageThat().isEqualTo("value/inline classes must have a single read-only (val) property parameter.")
   }
 
   @Test
