@@ -245,6 +245,7 @@ private val KEYWORDS = setOf(
   "sealed",
   "suspend",
   "tailrec",
+  "value",
   "vararg",
 )
 
