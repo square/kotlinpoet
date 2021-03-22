@@ -15,7 +15,7 @@ data class Taco(val seasoning: String, val soft: Boolean) {
   }
 }
 
-val kmClass = Taco::class.toImmutableKmClass()
+val kmClass = Taco::class.toKmClass()
 
 // Now you can access misc information about Taco from a Kotlin lens
 println(kmClass.name)
@@ -33,20 +33,6 @@ Using the Taco example above, we can glean certain information:
 ```kotlin
 println("Is class? ${kmClass.isClass}")
 println("Is data class? ${kmClass.isData}")
-```
-
-### Interop with kotlinx-metadata
-
-To convert a kotlinx-metadata type to its analogous immutable type, simply call `toImmutable()`
-
-```kotlin
-val immutableKmClass: ImmutableKmClass = kmClass.toImmutable()
-```
-
-To convert an immutable type back to its analogous kotlinx-metadata type, call `toMutable()`.
-
-```kotlin
-val mutableKmClass: KmClass = kmClass.toMutable()
 ```
 
 ### Interop with KotlinPoet

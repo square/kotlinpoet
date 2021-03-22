@@ -6,9 +6,6 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
-import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -36,11 +33,18 @@ import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
-import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
+import com.squareup.kotlinpoet.metadata.toKmClass
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmPackage
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.fieldSignature
+import kotlinx.metadata.jvm.getterSignature
+import kotlinx.metadata.jvm.setterSignature
+import kotlinx.metadata.jvm.signature
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -76,14 +80,14 @@ public class ReflectiveClassInspector private constructor(
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = false
 
-  override fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer {
+  override fun declarationContainerFor(className: ClassName): KmDeclarationContainer {
     val clazz = lookupClass(className)
       ?: error("No type element found for: $className.")
 
     val metadata = clazz.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
-      is KotlinClassMetadata.Class -> kotlinClassMetadata.toImmutableKmClass()
-      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toImmutableKmPackage()
+      is KotlinClassMetadata.Class -> kotlinClassMetadata.toKmClass()
+      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toKmPackage()
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
     }
   }
@@ -220,7 +224,7 @@ public class ReflectiveClassInspector private constructor(
         // class.
         null
       } else {
-        enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toImmutableKmClass()
+        enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toKmClass()
       },
       annotations = clazz.getField(enumEntry.name).annotationSpecs()
     )
@@ -259,16 +263,16 @@ public class ReflectiveClassInspector private constructor(
   }
 
   override fun containerData(
-    declarationContainer: ImmutableKmDeclarationContainer,
+    declarationContainer: KmDeclarationContainer,
     className: ClassName,
     parentClassName: ClassName?
   ): ContainerData {
     val targetClass = lookupClass(className) ?: error("No class found for: $className.")
     val isCompanionObject: Boolean = when (declarationContainer) {
-      is ImmutableKmClass -> {
+      is KmClass -> {
         declarationContainer.isCompanionObject
       }
-      is ImmutableKmPackage -> {
+      is KmPackage -> {
         false
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
@@ -381,7 +385,7 @@ public class ReflectiveClassInspector private constructor(
         }
 
         val annotations = mutableListOf<AnnotationSpec>()
-        if (property.hasAnnotations) {
+        if (property.flags.hasAnnotations) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
             val method = targetClass.lookupMethod(annotationsHolderSignature)
               ?: error(
@@ -408,7 +412,7 @@ public class ReflectiveClassInspector private constructor(
         method?.methodData(
           clazz = targetClass,
           signature = signature,
-          hasAnnotations = kmFunction.hasAnnotations,
+          hasAnnotations = kmFunction.flags.hasAnnotations,
           jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
             ?: method
         )
@@ -419,8 +423,8 @@ public class ReflectiveClassInspector private constructor(
     }
 
     when (declarationContainer) {
-      is ImmutableKmClass -> {
-        val classAnnotations = if (declarationContainer.hasAnnotations) {
+      is KmClass -> {
+        val classAnnotations = if (declarationContainer.flags.hasAnnotations) {
           ClassInspectorUtil.createAnnotations {
             addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
           }
@@ -442,7 +446,7 @@ public class ReflectiveClassInspector private constructor(
             val constructor = targetClass.lookupConstructor(signature)
               ?: error("No constructor $signature found in $targetClass.")
             ConstructorData(
-              annotations = if (kmConstructor.hasAnnotations) {
+              annotations = if (kmConstructor.flags.hasAnnotations) {
                 constructor.annotationSpecs()
               } else {
                 emptyList()
@@ -465,7 +469,7 @@ public class ReflectiveClassInspector private constructor(
           methods = methodData
         )
       }
-      is ImmutableKmPackage -> {
+      is KmPackage -> {
         // There's no flag for checking if there are annotations, so we just eagerly check in this
         // case. All annotations on this class are file: site targets in source. This does not
         // include @JvmName since it does not have RUNTIME retention. In practice this doesn't

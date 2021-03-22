@@ -21,17 +21,17 @@ import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
-import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
-import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.KmFunction
+import kotlinx.metadata.KmProperty
+import kotlinx.metadata.KmTypeParameter
+import kotlinx.metadata.KmValueParameter
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -762,22 +762,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   @Test
   fun taggedTypes() {
     val typeSpec = TaggedTypes::class.toTypeSpecWithTestHandler()
-    assertThat(typeSpec.tag<ImmutableKmClass>()).isNotNull()
+    assertThat(typeSpec.tag<KmClass>()).isNotNull()
 
     val constructorSpec = typeSpec.primaryConstructor ?: fail("No constructor found!")
-    assertThat(constructorSpec.tag<ImmutableKmConstructor>()).isNotNull()
+    assertThat(constructorSpec.tag<KmConstructor>()).isNotNull()
 
     val parameterSpec = constructorSpec.parameters[0]
-    assertThat(parameterSpec.tag<ImmutableKmValueParameter>()).isNotNull()
+    assertThat(parameterSpec.tag<KmValueParameter>()).isNotNull()
 
     val typeVar = typeSpec.typeVariables[0]
-    assertThat(typeVar.tag<ImmutableKmTypeParameter>()).isNotNull()
+    assertThat(typeVar.tag<KmTypeParameter>()).isNotNull()
 
     val funSpec = typeSpec.funSpecs[0]
-    assertThat(funSpec.tag<ImmutableKmFunction>()).isNotNull()
+    assertThat(funSpec.tag<KmFunction>()).isNotNull()
 
     val propertySpec = typeSpec.propertySpecs[0]
-    assertThat(propertySpec.tag<ImmutableKmProperty>()).isNotNull()
+    assertThat(propertySpec.tag<KmProperty>()).isNotNull()
   }
 
   class TaggedTypes<T>(val param: T) {

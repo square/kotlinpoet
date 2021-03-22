@@ -55,15 +55,6 @@ import com.squareup.kotlinpoet.TypeAliasSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
-import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
-import com.squareup.kotlinpoet.metadata.ImmutableKmType
-import com.squareup.kotlinpoet.metadata.ImmutableKmTypeAlias
-import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
-import com.squareup.kotlinpoet.metadata.ImmutableKmWithFlags
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
@@ -121,12 +112,23 @@ import com.squareup.kotlinpoet.metadata.specs.internal.toAnnotationSpec
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import com.squareup.kotlinpoet.metadata.toKmClass
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.Flags
+import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.KmFunction
+import kotlinx.metadata.KmPackage
+import kotlinx.metadata.KmProperty
+import kotlinx.metadata.KmType
+import kotlinx.metadata.KmTypeAlias
+import kotlinx.metadata.KmValueParameter
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.jvmInternalName
+import kotlinx.metadata.jvm.setterSignature
+import kotlinx.metadata.jvm.signature
 import java.util.Locale
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -144,13 +146,13 @@ public fun KClass<*>.toTypeSpec(
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
   classInspector: ClassInspector? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
   classInspector: ClassInspector? = null
-): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
@@ -173,18 +175,18 @@ public fun TypeElement.toFileSpec(
   typeSpec = toTypeSpec(classInspector)
 )
 
-/** @return a [TypeSpec] ABI representation of this [ImmutableKmClass]. */
+/** @return a [TypeSpec] ABI representation of this [KmClass]. */
 @KotlinPoetMetadataPreview
-public fun ImmutableKmClass.toTypeSpec(
+public fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name)
 ): TypeSpec {
   return toTypeSpec(classInspector, className, null)
 }
 
-/** @return a [FileSpec] ABI representation of this [ImmutableKmClass]. */
+/** @return a [FileSpec] ABI representation of this [KmClass]. */
 @KotlinPoetMetadataPreview
-public fun ImmutableKmClass.toFileSpec(
+public fun KmClass.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name)
 ): FileSpec {
@@ -194,9 +196,9 @@ public fun ImmutableKmClass.toFileSpec(
   )
 }
 
-/** @return a [FileSpec] ABI representation of this [ImmutableKmPackage]. */
+/** @return a [FileSpec] ABI representation of this [KmPackage]. */
 @KotlinPoetMetadataPreview
-public fun ImmutableKmPackage.toFileSpec(
+public fun KmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName
 ): FileSpec {
@@ -204,11 +206,11 @@ public fun ImmutableKmPackage.toFileSpec(
   check(fileData is FileData?) {
     "Unexpected container data type: ${fileData?.javaClass}"
   }
-  val fileName = fileData?.let { (it as FileData).fileName } ?: className.simpleName
+  val fileName = fileData?.fileName ?: className.simpleName
   return FileSpec.builder(className.packageName, fileName)
     .apply {
       fileData?.let { data ->
-        (data as FileData).jvmName?.let { name ->
+        data.jvmName?.let { name ->
           addAnnotation(
             AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
               .addMember("name = %S", name)
@@ -254,7 +256,7 @@ public fun ImmutableKmPackage.toFileSpec(
 private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmClass.toTypeSpec(
+private fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName,
   parentClassName: ClassName?
@@ -314,7 +316,7 @@ private fun ImmutableKmClass.toTypeSpec(
   }
 
   if (!isEnumEntry) {
-    addVisibility { builder.addModifiers(it) }
+    flags.computeVisibility { builder.addModifiers(it) }
     builder.addModifiers(
       *flags.modalities
         .filterNot { it == FINAL } // Default
@@ -339,7 +341,7 @@ private fun ImmutableKmClass.toTypeSpec(
     // - First element of a non-interface type is the superclass (can be `Any`)
     // - First element of an interface type is the first superinterface
     val superClassFilter = classInspector?.let { handler ->
-      { type: ImmutableKmType ->
+      { type: KmType ->
         !handler.isInterface(createClassName((type.classifier as KmClassifier.Class).name))
       }
     } ?: { true }
@@ -494,14 +496,14 @@ private fun companionObjectName(name: String): String? {
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmConstructor.toFunSpec(
+private fun KmConstructor.toFunSpec(
   typeParamResolver: TypeParameterResolver,
   constructorData: ConstructorData?
 ): FunSpec {
   return FunSpec.constructorBuilder()
     .apply {
       addAnnotations(constructorData?.allAnnotations.orEmpty())
-      addVisibility { addModifiers(it) }
+      flags.computeVisibility { addModifiers(it) }
       addParameters(
         this@toFunSpec.valueParameters.mapIndexed { index, param ->
           param.toParameterSpec(
@@ -524,12 +526,12 @@ private fun ImmutableKmConstructor.toFunSpec(
 @KotlinPoetMetadataPreview
 private val ContainerData.isInterface: Boolean get() {
   return declarationContainer.let { container ->
-    container is ImmutableKmClass && container.isInterface
+    container is KmClass && container.isInterface
   }
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmFunction.toFunSpec(
+private fun KmFunction.toFunSpec(
   classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   classInspector: ClassInspector? = null,
   containerData: ContainerData? = null,
@@ -560,7 +562,7 @@ private fun ImmutableKmFunction.toFunSpec(
   return FunSpec.builder(name)
     .apply {
       addAnnotations(annotations)
-      addVisibility { addModifiers(it) }
+      flags.computeVisibility { addModifiers(it) }
       val isOverride = methodData?.isOverride == true
       addModifiers(
         flags.modalities
@@ -609,7 +611,7 @@ private fun ImmutableKmFunction.toFunSpec(
       val returnTypeName = this@toFunSpec.returnType.toTypeName(typeParamsResolver)
       if (returnTypeName != UNIT) {
         returns(returnTypeName)
-        if (!isAbstract) {
+        if (!flags.isAbstract) {
           addStatement(NOT_IMPLEMENTED)
         }
       }
@@ -620,7 +622,7 @@ private fun ImmutableKmFunction.toFunSpec(
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmValueParameter.toParameterSpec(
+private fun KmValueParameter.toParameterSpec(
   typeParamResolver: TypeParameterResolver,
   annotations: Collection<AnnotationSpec>
 ): ParameterSpec {
@@ -646,7 +648,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmProperty.toPropertySpec(
+private fun KmProperty.toPropertySpec(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   isConstructorParam: Boolean = false,
   classInspector: ClassInspector? = null,
@@ -661,8 +663,8 @@ private fun ImmutableKmProperty.toPropertySpec(
     if (hasGetter) {
       getterSignature?.let { getterSignature ->
         if (!containerData.isInterface &&
-          !isOpen &&
-          !isAbstract
+          !flags.isOpen &&
+          !flags.isAbstract
         ) {
           // Infer if JvmName was used
           // We skip interface types or open/abstract properties because they can't have @JvmName.
@@ -691,8 +693,8 @@ private fun ImmutableKmProperty.toPropertySpec(
           !containerData.declarationContainer.isAnnotation &&
           !containerData.declarationContainer.isInterface &&
           classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
-          !isOpen &&
-          !isAbstract
+          !flags.isOpen &&
+          !flags.isAbstract
         ) {
           // Infer if JvmName was used
           // We skip annotation types for this because they can't have vars.
@@ -729,7 +731,7 @@ private fun ImmutableKmProperty.toPropertySpec(
         }
         .toTreeSet()
       addAnnotations(finalAnnotations)
-      addVisibility { addModifiers(it) }
+      flags.computeVisibility { addModifiers(it) }
       addModifiers(
         flags.modalities
           .filterNot { it == FINAL && !isOverride } // Final is the default
@@ -779,7 +781,7 @@ private fun ImmutableKmProperty.toPropertySpec(
           constant != null -> initializer(constant)
           isConstructorParam -> initializer(name)
           returnTypeName.isNullable -> initializer("null")
-          isAbstract || isInInterface -> {
+          flags.isAbstract || isInInterface -> {
             // No-op, don't emit an initializer for abstract or interface properties
           }
           else -> initializer(NOT_IMPLEMENTED)
@@ -789,13 +791,13 @@ private fun ImmutableKmProperty.toPropertySpec(
       // since the delegate handles it
       // vals with initialized constants have a getter in bytecode but not a body in kotlin source
       val modifierSet = modifiers.toSet()
-      if (hasGetter && !isDelegated && !isAbstract) {
+      if (hasGetter && !isDelegated && !flags.isAbstract) {
         propertyAccessor(
           modifierSet, getterFlags,
           FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED), isOverride
         )?.let(::getter)
       }
-      if (hasSetter && !isDelegated && !isAbstract) {
+      if (hasSetter && !isDelegated && !flags.isAbstract) {
         propertyAccessor(modifierSet, setterFlags, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
@@ -844,14 +846,14 @@ private fun Set<PropertyAccessorFlag>.toKModifiersArray(): Array<KModifier> {
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
+private fun KmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
   val typeParamResolver = typeParameters.toTypeParameterResolver()
   return TypeAliasSpec.builder(name, underlyingType.toTypeName(typeParamResolver))
     .apply {
-      addVisibility {
+      flags.computeVisibility {
         addModifiers(it)
       }
-      if (hasAnnotations) {
+      if (flags.hasAnnotations) {
         val annotationSpecs = this@toTypeAliasSpec.annotations
           .map { it.toAnnotationSpec() }
         addAnnotations(annotationSpecs)
@@ -894,8 +896,8 @@ private val Flags.visibility: KModifier
   }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmWithFlags.addVisibility(body: (KModifier) -> Unit) {
-  val modifierVisibility = flags.visibility
+private fun Flags.computeVisibility(body: (KModifier) -> Unit) {
+  val modifierVisibility = visibility
   if (modifierVisibility != PUBLIC) {
     body(modifierVisibility)
   }

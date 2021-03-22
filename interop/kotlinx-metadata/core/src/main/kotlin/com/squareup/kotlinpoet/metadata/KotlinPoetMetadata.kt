@@ -18,6 +18,7 @@
 
 package com.squareup.kotlinpoet.metadata
 
+import kotlinx.metadata.KmClass
 import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import javax.lang.model.element.TypeElement
@@ -35,22 +36,22 @@ import kotlin.reflect.KClass
 @Target(CLASS, FUNCTION, PROPERTY)
 public annotation class KotlinPoetMetadataPreview
 
-/** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
+/** @return a new [KmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetMetadataPreview
-public fun KClass<*>.toImmutableKmClass(): ImmutableKmClass = java.toImmutableKmClass()
-/** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] class. */
+public fun KClass<*>.toKmClass(): KmClass = java.toKmClass()
+/** @return a new [KmClass] representation of the Kotlin metadata for [this] class. */
 @KotlinPoetMetadataPreview
-public fun Class<*>.toImmutableKmClass(): ImmutableKmClass =
-  readMetadata(::getAnnotation).toImmutableKmClass()
-/** @return a new [ImmutableKmClass] representation of the Kotlin metadata for [this] type. */
+public fun Class<*>.toKmClass(): KmClass =
+  readMetadata(::getAnnotation).toKmClass()
+/** @return a new [KmClass] representation of the Kotlin metadata for [this] type. */
 @KotlinPoetMetadataPreview
-public fun TypeElement.toImmutableKmClass(): ImmutableKmClass =
-  readMetadata(::getAnnotation).toImmutableKmClass()
+public fun TypeElement.toKmClass(): KmClass =
+  readMetadata(::getAnnotation).toKmClass()
 
 @KotlinPoetMetadataPreview
-public fun Metadata.toImmutableKmClass(): ImmutableKmClass {
+public fun Metadata.toKmClass(): KmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>()
-    .toImmutableKmClass()
+    .toKmClass()
 }
 
 @KotlinPoetMetadataPreview
@@ -81,7 +82,7 @@ public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetada
 /**
  * Returns the [KotlinClassMetadata] this represents. In general you should only use this function
  * when you don't know what the underlying [KotlinClassMetadata] subtype is, otherwise you should
- * use one of the more direct functions like [toImmutableKmClass].
+ * use one of the more direct functions like [toKmClass].
  */
 @KotlinPoetMetadataPreview
 public fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
