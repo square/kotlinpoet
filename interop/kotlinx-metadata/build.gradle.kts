@@ -70,7 +70,7 @@ val shadowJar = tasks.shadowJar.apply {
     configurations = listOf(shade)
     relocate(
       "com.google.auto.common",
-      "com.squareup.kotlinpoet.metadata.shaded.com.google.auto.common"
+      "com.squareup.kotlinpoet.interop.metadata.shaded.com.google.auto.common"
     )
   }
 }
