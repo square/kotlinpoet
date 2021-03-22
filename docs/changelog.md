@@ -1,6 +1,25 @@
 Change Log
 ==========
 
+## Version 1.8.0
+
+_2021-03-22_
+
+ * New: Restructure interop artifacts, starting with `kotlinx-metadata`.
+ 
+ * New: Kotlin 1.4.31.
+ * New: Add `KModifier.VALUE` to support `value class` declarations.
+ * New: Allow using a custom `ClassLoader` with `ReflectiveClassInspector`.
+ * New: Emit `abstract` modifier for abstract interface functions.
+ * Fix: Ensure `ImmutableKmProperty.toMutable()` copies `fieldSignature`.
+ * Fix: Prevent name clashes between an imported `MemberName` and a member in current scope.
+ * Fix: Prevent name clashes between a type and a supertype with the same name.
+ * Fix: Don't generate empty body for `expect` and `external` functions.
+ * Fix: Don't allow `expect` or `external` classes to initialize supertypes.
+ * Fix: Disallow delegate constructor calls in `external` classes.
+ * Fix: Allow non-public primary constructors inside inline/value classes.
+ * Fix: Allow init blocks inside inline/value classes.
+
 ## Version 1.7.2
 
 _2020-10-20_
