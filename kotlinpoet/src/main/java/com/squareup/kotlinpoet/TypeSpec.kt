@@ -25,8 +25,10 @@ import com.squareup.kotlinpoet.KModifier.FUN
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
+import com.squareup.kotlinpoet.KModifier.VALUE
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
@@ -462,7 +464,8 @@ public class TypeSpec private constructor(
     internal val isEnum get() = kind == Kind.CLASS && ENUM in modifiers
     internal val isAnnotation get() = kind == Kind.CLASS && ANNOTATION in modifiers
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
-    internal val isInlineClass get() = kind == Kind.CLASS && INLINE in modifiers
+    internal val isInlineOrValClass get() = kind == Kind.CLASS &&
+      (INLINE in modifiers || VALUE in modifiers)
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
     internal val isFunInterface get() = kind == Kind.INTERFACE && FUN in modifiers
 
@@ -530,9 +533,9 @@ public class TypeSpec private constructor(
           "expected a constructor but was ${primaryConstructor.name}"
         }
 
-        if (isInlineClass) {
+        if (isInlineOrValClass) {
           check(primaryConstructor.parameters.size == 1) {
-            "Inline classes must have 1 parameter in constructor"
+            "value/inline classes must have 1 parameter in constructor"
           }
         }
       }
@@ -549,8 +552,8 @@ public class TypeSpec private constructor(
       check(isSimpleClass || kind == Kind.OBJECT) {
         "only classes can have super classes, not $kind"
       }
-      check(!isInlineClass) {
-        "Inline classes cannot have super classes"
+      check(!isInlineOrValClass) {
+        "value/inline classes cannot have super classes"
       }
     }
 
@@ -731,8 +734,8 @@ public class TypeSpec private constructor(
         }
         when {
           kind == Kind.INTERFACE -> {
-            requireNoneOf(funSpec.modifiers, KModifier.INTERNAL, KModifier.PROTECTED)
-            requireNoneOrOneOf(funSpec.modifiers, KModifier.ABSTRACT, KModifier.PRIVATE)
+            requireNoneOf(funSpec.modifiers, INTERNAL, PROTECTED)
+            requireNoneOrOneOf(funSpec.modifiers, ABSTRACT, PRIVATE)
           }
           isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers(modifiers)) {
             "annotation class $name.${funSpec.name} " +
@@ -751,29 +754,29 @@ public class TypeSpec private constructor(
         }
       }
 
-      if (isInlineClass) {
+      if (isInlineOrValClass) {
         primaryConstructor?.let {
           check(it.parameters.size == 1) {
-            "Inline classes must have 1 parameter in constructor"
+            "value/inline classes must have 1 parameter in constructor"
           }
         }
 
         check(propertySpecs.size > 0) {
-          "Inline classes must have at least 1 property"
+          "value/inline classes must have at least 1 property"
         }
 
         val constructorParamName = primaryConstructor?.parameters?.firstOrNull()?.name
         constructorParamName?.let { paramName ->
           val underlyingProperty = propertySpecs.find { it.name == paramName }
           requireNotNull(underlyingProperty) {
-            "Inline classes must have a single read-only (val) property parameter."
+            "value/inline classes must have a single read-only (val) property parameter."
           }
           check(!underlyingProperty.mutable) {
-            "Inline classes must have a single read-only (val) property parameter."
+            "value/inline classes must have a single read-only (val) property parameter."
           }
         }
         check(superclass == Any::class.asTypeName()) {
-          "Inline classes cannot have super classes"
+          "value/inline classes cannot have super classes"
         }
       }
 
@@ -814,6 +817,9 @@ public class TypeSpec private constructor(
 
     @JvmStatic public fun expectClassBuilder(className: ClassName): Builder =
       expectClassBuilder(className.simpleName)
+
+    @JvmStatic public fun valueClassBuilder(name: String): Builder =
+      Builder(Kind.CLASS, name, VALUE)
 
     @JvmStatic public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
 

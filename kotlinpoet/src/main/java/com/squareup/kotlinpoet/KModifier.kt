@@ -54,6 +54,7 @@ public enum class KModifier(
 
   ENUM("enum", Target.CLASS),
   ANNOTATION("annotation", Target.CLASS),
+  VALUE("value", Target.CLASS),
   FUN("fun", Target.INTERFACE),
 
   COMPANION("companion", Target.CLASS),
