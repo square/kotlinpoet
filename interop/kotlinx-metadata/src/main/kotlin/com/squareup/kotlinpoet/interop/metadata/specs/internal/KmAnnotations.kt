@@ -2,9 +2,9 @@ package com.squareup.kotlinpoet.interop.metadata.specs.internal
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.interop.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.interop.metadata.specs.internal.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument

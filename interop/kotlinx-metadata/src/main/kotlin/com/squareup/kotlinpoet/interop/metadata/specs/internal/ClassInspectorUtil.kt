@@ -21,10 +21,10 @@ import com.squareup.kotlinpoet.MUTABLE_SET
 import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.interop.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.interop.metadata.isConst
 import com.squareup.kotlinpoet.interop.metadata.specs.ClassInspector
+import com.squareup.kotlinpoet.joinToCode
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.isLocal
 import org.jetbrains.annotations.NotNull
