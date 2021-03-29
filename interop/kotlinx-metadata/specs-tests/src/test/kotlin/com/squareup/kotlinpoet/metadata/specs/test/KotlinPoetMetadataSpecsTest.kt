@@ -645,11 +645,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun hasJvmDefault(): kotlin.Unit {
         }
 
-        public abstract fun noDefault(): kotlin.Unit
+        public fun noDefault(): kotlin.Unit
 
-        public abstract fun noDefaultWithInput(input: kotlin.String): kotlin.Unit
+        public fun noDefaultWithInput(input: kotlin.String): kotlin.Unit
 
-        public abstract fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit
+        public fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit
       }
       """.trimIndent()
     )
@@ -1200,7 +1200,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun defaultMethod(): kotlin.Unit {
         }
 
-        public abstract fun notDefaultMethod(): kotlin.Unit
+        public fun notDefaultMethod(): kotlin.Unit
       }
       """.trimIndent()
     )
@@ -1535,7 +1535,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
            * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
            */
           @kotlin.jvm.JvmSynthetic
-          public abstract fun interfaceFunction(): kotlin.Unit
+          public fun interfaceFunction(): kotlin.Unit
 
           public companion object {
             @get:kotlin.jvm.JvmSynthetic
@@ -1600,7 +1600,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
            * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
            */
           @kotlin.jvm.JvmSynthetic
-          public abstract fun interfaceFunction(): kotlin.Unit
+          public fun interfaceFunction(): kotlin.Unit
 
           public companion object {
             @get:kotlin.jvm.JvmSynthetic
@@ -2141,7 +2141,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(funInterface.trimmedToString()).isEqualTo(
       """
       public fun interface FunInterface {
-        public abstract fun example(): kotlin.Unit
+        public fun example(): kotlin.Unit
       }
       """.trimIndent()
     )
