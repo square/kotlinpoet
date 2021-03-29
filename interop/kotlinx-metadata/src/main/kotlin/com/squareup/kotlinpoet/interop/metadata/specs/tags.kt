@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
-}
+package com.squareup.kotlinpoet.interop.metadata.specs
 
-include(
-    ":kotlinpoet",
-    ":interop:kotlinx-metadata"
-)
+import com.squareup.kotlinpoet.TypeName
+
+/**
+ * This tag indicates that this [TypeName] represents a `typealias` type.
+ *
+ * @property [type] the underlying type for this alias.
+ */
+public class TypeNameAliasTag(public val type: TypeName)
