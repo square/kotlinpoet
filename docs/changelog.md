@@ -5,7 +5,6 @@ Change Log
 
 _2021-03-22_
 
- * New: Restructure interop artifacts, starting with `kotlinx-metadata`.
  
  * New: Kotlin 1.4.31.
  * New: Add `KModifier.VALUE` to support `value class` declarations.
@@ -19,6 +18,7 @@ _2021-03-22_
  * Fix: Disallow delegate constructor calls in `external` classes.
  * Fix: Allow non-public primary constructors inside inline/value classes.
  * Fix: Allow init blocks inside inline/value classes.
+ * Fix: Omit redundant `abstract` modifiers on members inside interfaces
 
 ## Version 1.7.2
 
