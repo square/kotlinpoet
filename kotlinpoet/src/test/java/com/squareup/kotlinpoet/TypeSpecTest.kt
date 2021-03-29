@@ -4949,9 +4949,11 @@ class TypeSpecTest {
       .addType(
         TypeSpec.interfaceBuilder("Taco")
           .addProperty("foo", String::class, ABSTRACT)
-          .addProperty(PropertySpec.builder("fooWithDefault", String::class)
-            .initializer("%S", "defaultValue")
-            .build())
+          .addProperty(
+            PropertySpec.builder("fooWithDefault", String::class)
+              .initializer("%S", "defaultValue")
+              .build()
+          )
           .addFunction(
             FunSpec.builder("bar")
               .addModifiers(ABSTRACT)
@@ -4975,11 +4977,11 @@ class TypeSpecTest {
 
       public interface Taco {
         public val foo: String
-      
+
         public val fooWithDefault: String = "defaultValue"
-      
+
         public fun bar(): String
-      
+
         public fun barWithDefault(): Unit {
         }
       }
