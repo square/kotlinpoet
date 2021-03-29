@@ -9,7 +9,7 @@ _2021-03-22_
  * New: Kotlin 1.4.31.
  * New: Add `KModifier.VALUE` to support `value class` declarations.
  * New: Allow using a custom `ClassLoader` with `ReflectiveClassInspector`.
- * New: Emit `abstract` modifier for abstract interface functions.
+ * New: Update to kotlinx-metadata 0.2.0.
  * Fix: Ensure `ImmutableKmProperty.toMutable()` copies `fieldSignature`.
  * Fix: Prevent name clashes between an imported `MemberName` and a member in current scope.
  * Fix: Prevent name clashes between a type and a supertype with the same name.
