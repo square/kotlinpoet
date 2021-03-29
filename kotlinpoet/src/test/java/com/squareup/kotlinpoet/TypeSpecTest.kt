@@ -423,7 +423,7 @@ class TypeSpecTest {
         |    "User-Agent: foobar"
         |  )
         |  @POST("/foo/bar")
-        |  public abstract fun fooBar(
+        |  public fun fooBar(
         |    @Body things: Things<Thing>,
         |    @QueryMap(encodeValues = false) query: Map<String, String>,
         |    @Header("Authorization") authorization: String
@@ -1127,7 +1127,7 @@ class TypeSpecTest {
         |import kotlin.Unit
         |
         |public fun interface Taco {
-        |  public abstract fun sam(): Unit
+        |  public fun sam(): Unit
         |
         |  public fun notSam(): Unit {
         |  }
@@ -1600,7 +1600,7 @@ class TypeSpecTest {
         |import kotlin.Unit
         |
         |public interface Taco {
-        |  public abstract fun aMethod(): Unit
+        |  public fun aMethod(): Unit
         |
         |  public fun aDefaultMethod(): Unit {
         |  }
@@ -4949,10 +4949,19 @@ class TypeSpecTest {
       .addType(
         TypeSpec.interfaceBuilder("Taco")
           .addProperty("foo", String::class, ABSTRACT)
+          .addProperty(
+            PropertySpec.builder("fooWithDefault", String::class)
+              .initializer("%S", "defaultValue")
+              .build()
+          )
           .addFunction(
             FunSpec.builder("bar")
               .addModifiers(ABSTRACT)
               .returns(String::class)
+              .build()
+          )
+          .addFunction(
+            FunSpec.builder("barWithDefault")
               .build()
           )
           .build()
@@ -4964,11 +4973,17 @@ class TypeSpecTest {
       package com.squareup.tacos
 
       import kotlin.String
+      import kotlin.Unit
 
       public interface Taco {
-        public abstract val foo: String
+        public val foo: String
 
-        public abstract fun bar(): String
+        public val fooWithDefault: String = "defaultValue"
+
+        public fun bar(): String
+
+        public fun barWithDefault(): Unit {
+        }
       }
 
       """.trimIndent()
@@ -4976,6 +4991,6 @@ class TypeSpecTest {
   }
 
   companion object {
-    private val donutsPackage = "com.squareup.donuts"
+    private const val donutsPackage = "com.squareup.donuts"
   }
 }

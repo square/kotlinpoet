@@ -128,8 +128,9 @@ public class FunSpec private constructor(
   private fun canNotHaveBody(implicitModifiers: Set<KModifier>) =
     ABSTRACT in modifiers || EXPECT in modifiers + implicitModifiers
 
-  private fun canBodyBeOmitted(implicitModifiers: Set<KModifier>) =
-    isConstructor || (modifiers + implicitModifiers).containsAnyOf(ABSTRACT, EXTERNAL)
+  private fun canBodyBeOmitted(implicitModifiers: Set<KModifier>) = isConstructor ||
+    EXTERNAL in (modifiers + implicitModifiers) ||
+    ABSTRACT in modifiers
 
   private fun emitSignature(codeWriter: CodeWriter, enclosingName: String?) {
     if (isConstructor) {

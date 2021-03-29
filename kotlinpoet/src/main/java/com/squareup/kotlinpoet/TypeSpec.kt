@@ -420,7 +420,7 @@ public class TypeSpec private constructor(
   ) {
     CLASS("class", setOf(PUBLIC), setOf(PUBLIC), setOf()),
     OBJECT("object", setOf(PUBLIC), setOf(PUBLIC), setOf()),
-    INTERFACE("interface", setOf(PUBLIC), setOf(PUBLIC), setOf());
+    INTERFACE("interface", setOf(PUBLIC, ABSTRACT), setOf(PUBLIC, ABSTRACT), setOf());
 
     internal fun implicitPropertyModifiers(modifiers: Set<KModifier>): Set<KModifier> {
       return defaultImplicitPropertyModifiers + when {
