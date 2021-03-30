@@ -1,8 +1,10 @@
 name: Publish docs
 
 on:
-  release:
-    types: [published]
+  pull_request:
+  push:
+    branches:
+      - master
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
@@ -15,21 +17,29 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Configure JDK
+        uses: actions/setup-java@v1
         with:
-          python-version: 3.8
+          java-version: 14
 
       - name: Prep docs
         run: ./gradlew dokkaHtml
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
       - name: Build mkdocs
         run: |
-          pip3 install -r mkdocs-requirements.txt
+          pip3 install -r .github/workflows/mkdocs-requirements.txt
           mkdocs build
 
       - name: Deploy 🚀
-        if: success()
+        if: success() && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
