@@ -36,7 +36,6 @@ spotless {
 subprojects {
   repositories {
     mavenCentral()
-    jcenter()
   }
   tasks.withType<KotlinCompile> {
     kotlinOptions {
