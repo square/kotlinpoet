@@ -558,4 +558,34 @@ class CodeBlockTest {
 
     assertThat(blockBuilder.build().toString()).isEmpty()
   }
+
+  @Test fun withIndent() {
+    val codeBlock = CodeBlock.Builder()
+      .apply {
+        addStatement("User(")
+        withIndent {
+          addStatement("age = 42,")
+          addStatement("cities = listOf(")
+          withIndent {
+            addStatement("%S,", "Berlin")
+            addStatement("%S,", "London")
+          }
+          addStatement(")")
+        }
+        addStatement(")")
+      }
+      .build()
+
+    assertThat(codeBlock.toString()).isEqualTo(
+      """
+      |User(
+      |  age = 42,
+      |  cities = listOf(
+      |    "Berlin",
+      |    "London",
+      |  )
+      |)
+      |""".trimMargin()
+    )
+  }
 }

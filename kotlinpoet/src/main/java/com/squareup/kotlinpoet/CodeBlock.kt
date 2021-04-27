@@ -492,3 +492,12 @@ public fun Collection<CodeBlock>.joinToCode(
 public inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock {
   return CodeBlock.builder().apply(builderAction).build()
 }
+
+/**
+ * Calls [CodeBlock.Builder.indent] then executes the the provided [builderAction] on the
+ * [CodeBlock.Builder] and then executes [CodeBlock.Builder.unindent] before returning the
+ * original [CodeBlock.Builder].
+ */
+public inline fun CodeBlock.Builder.withIndent(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock.Builder {
+  return indent().also(builderAction).unindent()
+}
