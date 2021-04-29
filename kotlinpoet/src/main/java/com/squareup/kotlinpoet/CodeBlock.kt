@@ -494,7 +494,7 @@ public inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): C
 }
 
 /**
- * Calls [CodeBlock.Builder.indent] then executes the the provided [builderAction] on the
+ * Calls [CodeBlock.Builder.indent] then executes the provided [builderAction] on the
  * [CodeBlock.Builder] and then executes [CodeBlock.Builder.unindent] before returning the
  * original [CodeBlock.Builder].
  */
