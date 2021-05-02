@@ -234,6 +234,7 @@ public class PropertySpec private constructor(
     public fun initializer(codeBlock: CodeBlock): Builder = apply {
       check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
+      this.delegated = false
     }
 
     public fun delegate(format: String, vararg args: Any?): Builder =
@@ -244,6 +245,13 @@ public class PropertySpec private constructor(
       this.initializer = codeBlock
       this.delegated = true
     }
+
+    public fun clearInitializer(): Builder = apply {
+      this.initializer = null
+      this.delegated = false
+    }
+
+    public fun clearDelegate(): Builder = clearInitializer()
 
     public fun getter(getter: FunSpec): Builder = apply {
       require(getter.name == GETTER) { "${getter.name} is not a getter" }

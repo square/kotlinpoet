@@ -143,6 +143,10 @@ public class ParameterSpec private constructor(
       this.defaultValue = codeBlock
     }
 
+    public fun clearDefaultValue(): Builder = apply {
+      this.defaultValue = null
+    }
+
     public fun build(): ParameterSpec = ParameterSpec(this)
   }
 
