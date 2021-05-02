@@ -404,23 +404,8 @@ class PropertySpecTest {
   }
 
   @Test fun doublePropertyInitialization() {
-    assertThrows<IllegalStateException> {
-      PropertySpec.builder("listA", String::class)
-        .initializer("foo")
-        .initializer("bar")
-        .build()
-    }
-
-    assertThrows<IllegalStateException> {
-      PropertySpec.builder("listA", String::class)
-        .initializer(CodeBlock.builder().add("foo").build())
-        .initializer(CodeBlock.builder().add("bar").build())
-        .build()
-    }
-
     val codeBlockInitializer = PropertySpec.builder("listA", String::class)
       .initializer(CodeBlock.builder().add("foo").build())
-      .clearInitializer()
       .initializer(CodeBlock.builder().add("bar").build())
       .build()
 
@@ -428,7 +413,6 @@ class PropertySpecTest {
 
     val formatInitializer = PropertySpec.builder("listA", String::class)
       .initializer("foo")
-      .clearInitializer()
       .initializer("bar")
       .build()
 
