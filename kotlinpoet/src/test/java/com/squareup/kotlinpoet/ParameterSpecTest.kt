@@ -129,4 +129,20 @@ class ParameterSpecTest {
       |""".trimMargin()
     )
   }
+
+  @Test fun doublePropertyInitialization() {
+    val codeBlockDefaultValue = ParameterSpec.builder("listA", String::class)
+      .defaultValue(CodeBlock.builder().add("foo").build())
+      .defaultValue(CodeBlock.builder().add("bar").build())
+      .build()
+
+    assertThat(CodeBlock.of("bar")).isEqualTo(codeBlockDefaultValue.defaultValue)
+
+    val formatDefaultValue = ParameterSpec.builder("listA", String::class)
+      .defaultValue("foo")
+      .defaultValue("bar")
+      .build()
+
+    assertThat(CodeBlock.of("bar")).isEqualTo(formatDefaultValue.defaultValue)
+  }
 }

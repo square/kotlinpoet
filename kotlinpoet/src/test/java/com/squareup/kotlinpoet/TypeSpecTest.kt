@@ -2524,22 +2524,6 @@ class TypeSpecTest {
     )
   }
 
-  @Test fun doublePropertyInitialization() {
-    assertThrows<IllegalStateException> {
-      PropertySpec.builder("listA", String::class)
-        .initializer("foo")
-        .initializer("bar")
-        .build()
-    }
-
-    assertThrows<IllegalStateException> {
-      PropertySpec.builder("listA", String::class)
-        .initializer(CodeBlock.builder().add("foo").build())
-        .initializer(CodeBlock.builder().add("bar").build())
-        .build()
-    }
-  }
-
   @Test fun multipleAnnotationAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addAnnotations(

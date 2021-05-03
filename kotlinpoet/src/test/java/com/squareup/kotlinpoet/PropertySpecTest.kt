@@ -403,6 +403,22 @@ class PropertySpecTest {
     )
   }
 
+  @Test fun doublePropertyInitialization() {
+    val codeBlockInitializer = PropertySpec.builder("listA", String::class)
+      .initializer(CodeBlock.builder().add("foo").build())
+      .initializer(CodeBlock.builder().add("bar").build())
+      .build()
+
+    assertThat(CodeBlock.of("bar")).isEqualTo(codeBlockInitializer.initializer)
+
+    val formatInitializer = PropertySpec.builder("listA", String::class)
+      .initializer("foo")
+      .initializer("bar")
+      .build()
+
+    assertThat(CodeBlock.of("bar")).isEqualTo(formatInitializer.initializer)
+  }
+
   @Test fun propertyKdocWithoutLinebreak() {
     val property = PropertySpec.builder("topping", String::class)
       .addKdoc("The topping you want on your pizza")

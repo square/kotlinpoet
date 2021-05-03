@@ -138,8 +138,7 @@ public class ParameterSpec private constructor(
     public fun defaultValue(format: String, vararg args: Any?): Builder =
       defaultValue(CodeBlock.of(format, *args))
 
-    public fun defaultValue(codeBlock: CodeBlock): Builder = apply {
-      check(this.defaultValue == null) { "initializer was already set" }
+    public fun defaultValue(codeBlock: CodeBlock?): Builder = apply {
       this.defaultValue = codeBlock
     }
 

@@ -231,33 +231,30 @@ public class PropertySpec private constructor(
     public fun initializer(format: String, vararg args: Any?): Builder =
       initializer(CodeBlock.of(format, *args))
 
-    public fun initializer(codeBlock: CodeBlock): Builder = apply {
-      check(this.initializer == null) { "initializer was already set" }
+    public fun initializer(codeBlock: CodeBlock?): Builder = apply {
       this.initializer = codeBlock
+      this.delegated = false
     }
 
     public fun delegate(format: String, vararg args: Any?): Builder =
       delegate(CodeBlock.of(format, *args))
 
     public fun delegate(codeBlock: CodeBlock): Builder = apply {
-      check(this.initializer == null) { "initializer was already set" }
       this.initializer = codeBlock
       this.delegated = true
     }
 
-    public fun getter(getter: FunSpec): Builder = apply {
-      require(getter.name == GETTER) { "${getter.name} is not a getter" }
-      check(this.getter == null) { "getter was already set" }
+    public fun getter(getter: FunSpec?): Builder = apply {
+      require(getter == null || getter.name == GETTER) { "${getter!!.name} is not a getter" }
       this.getter = getter
     }
 
-    public fun setter(setter: FunSpec): Builder = apply {
-      require(setter.name == SETTER) { "${setter.name} is not a setter" }
-      check(this.setter == null) { "setter was already set" }
+    public fun setter(setter: FunSpec?): Builder = apply {
+      require(setter == null || setter.name == SETTER) { "${setter!!.name} is not a setter" }
       this.setter = setter
     }
 
-    public fun receiver(receiverType: TypeName): Builder = apply {
+    public fun receiver(receiverType: TypeName?): Builder = apply {
       this.receiverType = receiverType
     }
 
