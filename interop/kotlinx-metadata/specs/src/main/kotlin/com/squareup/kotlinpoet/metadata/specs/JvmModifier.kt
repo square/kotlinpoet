@@ -12,5 +12,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
  */
 @KotlinPoetMetadataPreview
 public interface JvmModifier {
-  public fun annotationSpec(): AnnotationSpec
+  public fun annotationSpec(): AnnotationSpec? {
+    return null
+  }
 }

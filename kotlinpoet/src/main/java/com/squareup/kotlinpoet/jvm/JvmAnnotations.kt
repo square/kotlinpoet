@@ -51,6 +51,10 @@ private fun jvmSuppressWildcardsAnnotation(suppress: Boolean = true) =
     .apply { if (!suppress) addMember("suppress = false") }
     .build()
 
+public fun TypeSpec.Builder.jvmInline(): TypeSpec.Builder = addAnnotation(JvmInline::class)
+
+public fun TypeSpec.Builder.jvmRecord(): TypeSpec.Builder = addAnnotation(JvmRecord::class)
+
 public fun FunSpec.Builder.jvmStatic(): FunSpec.Builder = apply {
   check(!name.isConstructor) { "Can't apply @JvmStatic to a constructor!" }
   addAnnotation(JvmStatic::class)
@@ -121,7 +125,11 @@ public fun TypeName.jvmSuppressWildcards(suppress: Boolean = true): TypeName =
 public fun TypeName.jvmWildcard(): TypeName =
   copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
+@Suppress("DEPRECATION")
+@Deprecated("'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
 public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder =
   addAnnotation(JvmDefault::class)
 
+@Suppress("DEPRECATION")
+@Deprecated("'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
 public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = addAnnotation(JvmDefault::class)

@@ -33,7 +33,7 @@ public data class ConstructorData(
     if (isSynthetic) {
       add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
     }
-    addAll(jvmModifiers.map { it.annotationSpec() })
+    addAll(jvmModifiers.mapNotNull { it.annotationSpec() })
     exceptions.takeIf { it.isNotEmpty() }
       ?.let {
         add(ClassInspectorUtil.createThrowsSpec(it))

@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-  freeCompilerArgs = listOf("-Xinline-classes", "-Xjvm-default=enable")
-  jvmTarget = "1.8"
+  freeCompilerArgs = listOf("-Xjvm-default=all")
 }
 
 dependencies {

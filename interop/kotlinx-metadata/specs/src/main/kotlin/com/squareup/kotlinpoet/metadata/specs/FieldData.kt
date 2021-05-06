@@ -35,7 +35,7 @@ public data class FieldData(
     if (isSynthetic) {
       add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
     }
-    addAll(jvmModifiers.map { it.annotationSpec() })
+    addAll(jvmModifiers.mapNotNull(JvmFieldModifier::annotationSpec))
   }
 
   public companion object {

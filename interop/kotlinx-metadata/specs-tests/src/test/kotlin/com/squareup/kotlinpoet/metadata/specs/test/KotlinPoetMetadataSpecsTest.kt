@@ -366,7 +366,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @kotlin.jvm.JvmInline
-      public inline class InlineClass(
+      public value class InlineClass(
+        public val `value`: kotlin.String
+      )
+      """.trimIndent()
+    )
+  }
+
+  @Test
+  fun valueClass() {
+    val typeSpec = ValueClass::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
+      @kotlin.jvm.JvmInline
+      public value class ValueClass(
         public val `value`: kotlin.String
       )
       """.trimIndent()
@@ -2173,6 +2188,8 @@ private fun TypeSpec.trimmedToString(): String {
 }
 
 inline class InlineClass(val value: String)
+@JvmInline
+value class ValueClass(val value: String)
 
 typealias TypeAliasName = String
 typealias GenericTypeAlias = List<String>

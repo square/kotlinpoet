@@ -39,8 +39,9 @@ internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
     .build()
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 @KotlinPoetMetadataPreview
-internal fun KmAnnotationArgument<*>.toCodeBlock(): CodeBlock {
+internal fun KmAnnotationArgument.toCodeBlock(): CodeBlock {
   return when (this) {
     is ByteValue -> CodeBlock.of("%L", value)
     is CharValue -> CodeBlock.of("'%L'", value)
@@ -55,9 +56,9 @@ internal fun KmAnnotationArgument<*>.toCodeBlock(): CodeBlock {
     is UIntValue -> CodeBlock.of("%Lu", value)
     is ULongValue -> CodeBlock.of("%Lu", value)
     is StringValue -> CodeBlock.of("%S", value)
-    is KClassValue -> CodeBlock.of("%T::class", createClassName(value))
+    is KClassValue -> CodeBlock.of("%T::class", createClassName(className))
     is EnumValue -> CodeBlock.of("%T.%L", createClassName(enumClassName), enumEntryName)
-    is AnnotationValue -> CodeBlock.of("%L", value.toAnnotationSpec())
-    is ArrayValue -> value.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
+    is AnnotationValue -> CodeBlock.of("%L", annotation.toAnnotationSpec())
+    is ArrayValue -> elements.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
   }
 }

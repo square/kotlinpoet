@@ -110,12 +110,12 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
+        |  f = 11.1,
+        |  j = AnnotationSpecTest.AnnotationA(),
+        |  l = Override::class,
+        |  m = [9, 8, 1],
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
-        |  f = 11.1,
-        |  m = [9, 8, 1],
-        |  l = Override::class,
-        |  j = AnnotationSpecTest.AnnotationA(),
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
@@ -140,12 +140,12 @@ class AnnotationSpecTest {
         |import kotlin.Float
         |
         |@AnnotationSpecTest.HasDefaultsAnnotation(
+        |  f = 11.1,
+        |  j = AnnotationSpecTest.AnnotationA(),
+        |  l = Override::class,
+        |  m = [9, 8, 1],
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
-        |  f = 11.1,
-        |  m = [9, 8, 1],
-        |  l = Override::class,
-        |  j = AnnotationSpecTest.AnnotationA(),
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = [Float::class, Double::class]
         |)
