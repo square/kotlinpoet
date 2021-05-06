@@ -47,7 +47,7 @@ public data class MethodData(
       if (isSynthetic && !containsReifiedTypeParameter) {
         add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
-      addAll(jvmModifiers.map { it.annotationSpec() })
+      addAll(jvmModifiers.mapNotNull(JvmMethodModifier::annotationSpec))
       exceptions.takeIf { it.isNotEmpty() }
         ?.let {
           add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget))

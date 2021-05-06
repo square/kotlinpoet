@@ -36,6 +36,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
@@ -155,6 +156,7 @@ public class ElementsClassInspector private constructor(
       when (it) {
         ElementsModifier.SYNCHRONIZED -> SYNCHRONIZED
         ElementsModifier.STATIC -> STATIC
+        ElementsModifier.DEFAULT -> DEFAULT
         else -> null
       }
     }

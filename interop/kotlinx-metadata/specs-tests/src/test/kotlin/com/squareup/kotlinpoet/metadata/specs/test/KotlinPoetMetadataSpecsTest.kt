@@ -366,7 +366,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @kotlin.jvm.JvmInline
-      public inline class InlineClass(
+      public value class InlineClass(
         public val `value`: kotlin.String
       )
       """.trimIndent()
@@ -381,7 +381,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @kotlin.jvm.JvmInline
-      public value class InlineClass(
+      public value class ValueClass(
         public val `value`: kotlin.String
       )
       """.trimIndent()

@@ -30,6 +30,7 @@ import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.TRANSIENT
 import com.squareup.kotlinpoet.metadata.specs.JvmFieldModifier.VOLATILE
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
 import com.squareup.kotlinpoet.metadata.specs.MethodData
@@ -160,20 +161,23 @@ public class ReflectiveClassInspector private constructor(
   }
 
   private fun Method.jvmModifiers(): Set<JvmMethodModifier> {
-    return methodJvmModifiers(modifiers)
+    return methodJvmModifiers(modifiers, isDefault)
   }
 
   private fun Constructor<*>.jvmModifiers(): Set<JvmMethodModifier> {
-    return methodJvmModifiers(modifiers)
+    return methodJvmModifiers(modifiers, false)
   }
 
-  private fun methodJvmModifiers(modifiers: Int): Set<JvmMethodModifier> {
+  private fun methodJvmModifiers(modifiers: Int, isDefault: Boolean): Set<JvmMethodModifier> {
     val jvmMethodModifiers = mutableSetOf<JvmMethodModifier>()
     if (Modifier.isSynchronized(modifiers)) {
       jvmMethodModifiers += SYNCHRONIZED
     }
     if (Modifier.isStatic(modifiers)) {
       jvmMethodModifiers += STATIC
+    }
+    if (isDefault) {
+      jvmMethodModifiers += DEFAULT
     }
     return jvmMethodModifiers
   }

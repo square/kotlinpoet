@@ -113,6 +113,7 @@ import com.squareup.kotlinpoet.metadata.isVal
 import com.squareup.kotlinpoet.metadata.isValue
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
+import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createAnnotations
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
@@ -446,6 +447,8 @@ private fun ImmutableKmClass.toTypeSpec(
             // For interface methods, remove any body and mark the methods as abstract
             // IFF it doesn't have a default interface body.
             if (isInterface &&
+              annotations.none { it.typeName == JVM_DEFAULT } &&
+              (methodData?.jvmModifiers?.contains(DEFAULT) == false) &&
               !isKotlinDefaultInterfaceMethod()
             ) {
               addModifiers(ABSTRACT)
@@ -929,6 +932,8 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 }
 
 private val METADATA = Metadata::class.asClassName()
+@Suppress("DEPRECATION")
+private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 
 @PublishedApi
