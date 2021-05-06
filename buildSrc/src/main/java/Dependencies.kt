@@ -24,7 +24,7 @@ object versions {
 
 object deps {
   const val autoCommon = "com.google.auto:auto-common:0.11"
-  const val guava = "com.google.guava:guava:29.0-jre"
+  const val guava = "com.google.guava:guava:30.1.1-jre"
   object kotlin {
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
     const val junit = "org.jetbrains.kotlin:kotlin-test-junit:${versions.kotlin}"
