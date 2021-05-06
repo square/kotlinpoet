@@ -20,9 +20,11 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier.DATA
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
@@ -1103,6 +1105,65 @@ class JvmAnnotationsTest {
       |  @JvmDefault
       |  public fun foo(): String = "foo"
       |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun jvmInlineClass() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addType(
+        TypeSpec.valueClassBuilder("Taco")
+          .jvmInline()
+          .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("value", STRING)
+            .build())
+          .addProperty(PropertySpec.builder("value", STRING)
+            .initializer("value")
+            .build())
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.jvm.JvmInline
+      |
+      |@JvmInline
+      |public value class Taco(
+      |  public val `value`: String
+      |)
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun jvmRecordClass() {
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addType(
+        TypeSpec.classBuilder("Taco")
+          .jvmRecord()
+          .addModifiers(DATA)
+          .primaryConstructor(FunSpec.constructorBuilder()
+            .addParameter("value", STRING)
+            .build())
+          .addProperty(PropertySpec.builder("value", STRING)
+            .initializer("value")
+            .build())
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.String
+      |import kotlin.jvm.JvmRecord
+      |
+      |@JvmRecord
+      |public data class Taco(
+      |  public val `value`: String
+      |)
       |""".trimMargin()
     )
   }
