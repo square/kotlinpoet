@@ -47,6 +47,7 @@ import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.SUSPEND
 import com.squareup.kotlinpoet.KModifier.TAILREC
+import com.squareup.kotlinpoet.KModifier.VALUE
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
@@ -109,6 +110,7 @@ import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.metadata.isSynthesized
 import com.squareup.kotlinpoet.metadata.isTailRec
 import com.squareup.kotlinpoet.metadata.isVal
+import com.squareup.kotlinpoet.metadata.isValue
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
@@ -147,6 +149,7 @@ public fun Class<*>.toTypeSpec(
 ): TypeSpec = toImmutableKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
+@Suppress("DEPRECATION")
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
   classInspector: ClassInspector? = null
@@ -204,11 +207,11 @@ public fun ImmutableKmPackage.toFileSpec(
   check(fileData is FileData?) {
     "Unexpected container data type: ${fileData?.javaClass}"
   }
-  val fileName = fileData?.let { (it as FileData).fileName } ?: className.simpleName
+  val fileName = fileData?.fileName ?: className.simpleName
   return FileSpec.builder(className.packageName, fileName)
     .apply {
       fileData?.let { data ->
-        (data as FileData).jvmName?.let { name ->
+        data.jvmName?.let { name ->
           addAnnotation(
             AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
               .addMember("name = %S", name)
@@ -327,8 +330,8 @@ private fun ImmutableKmClass.toTypeSpec(
     if (isExternal) {
       builder.addModifiers(EXTERNAL)
     }
-    if (isInline) {
-      builder.addModifiers(INLINE)
+    if (isValue) {
+      builder.addModifiers(VALUE)
     }
     if (isInner) {
       builder.addModifiers(INNER)
@@ -443,7 +446,6 @@ private fun ImmutableKmClass.toTypeSpec(
             // For interface methods, remove any body and mark the methods as abstract
             // IFF it doesn't have a default interface body.
             if (isInterface &&
-              annotations.none { it.typeName == JVM_DEFAULT } &&
               !isKotlinDefaultInterfaceMethod()
             ) {
               addModifiers(ABSTRACT)
@@ -901,23 +903,8 @@ private fun ImmutableKmWithFlags.addVisibility(body: (KModifier) -> Unit) {
   }
 }
 
-// TODO This is a copy of the stdlib version. Use it directly once it's out of experimental
 private fun String.safeCapitalize(locale: Locale): String {
-  if (isNotEmpty()) {
-    val firstChar = this[0]
-    if (firstChar.isLowerCase()) {
-      return buildString {
-        val titleChar = firstChar.toTitleCase()
-        if (titleChar != firstChar.toUpperCase()) {
-          append(titleChar)
-        } else {
-          append(this@safeCapitalize.substring(0, 1).toUpperCase(locale))
-        }
-        append(this@safeCapitalize.substring(1))
-      }
-    }
-  }
-  return this
+  return replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 }
 
 @KotlinPoetMetadataPreview
@@ -942,7 +929,6 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 }
 
 private val METADATA = Metadata::class.asClassName()
-private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
 
 @PublishedApi

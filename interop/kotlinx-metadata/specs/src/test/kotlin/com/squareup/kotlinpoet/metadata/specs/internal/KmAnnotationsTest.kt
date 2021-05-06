@@ -22,6 +22,7 @@ import kotlinx.metadata.KmAnnotationArgument.ULongValue
 import kotlinx.metadata.KmAnnotationArgument.UShortValue
 import kotlin.test.Test
 
+@OptIn(ExperimentalUnsignedTypes::class)
 @KotlinPoetMetadataPreview
 class KmAnnotationsTest {
 
@@ -133,7 +134,7 @@ class KmAnnotationsTest {
   @Test fun uByteValue() {
     val annotation = KmAnnotation(
       "test/UByteValueAnnotation",
-      mapOf("value" to UByteValue(2))
+      mapOf("value" to UByteValue(2u))
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """
@@ -145,7 +146,7 @@ class KmAnnotationsTest {
   @Test fun uShortValue() {
     val annotation = KmAnnotation(
       "test/UShortValueAnnotation",
-      mapOf("value" to UShortValue(2))
+      mapOf("value" to UShortValue(2u))
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """
@@ -157,7 +158,7 @@ class KmAnnotationsTest {
   @Test fun uIntValue() {
     val annotation = KmAnnotation(
       "test/UIntValueAnnotation",
-      mapOf("value" to UIntValue(2))
+      mapOf("value" to UIntValue(2u))
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """
@@ -169,7 +170,7 @@ class KmAnnotationsTest {
   @Test fun uLongValue() {
     val annotation = KmAnnotation(
       "test/ULongValueAnnotation",
-      mapOf("value" to ULongValue(2))
+      mapOf("value" to ULongValue(2u))
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """
@@ -193,7 +194,7 @@ class KmAnnotationsTest {
   @Test fun kClassValue() {
     val annotation = KmAnnotation(
       "test/KClassValueAnnotation",
-      mapOf("value" to KClassValue("test/OtherClass"))
+      mapOf("value" to KClassValue("test/OtherClass", 0))
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """

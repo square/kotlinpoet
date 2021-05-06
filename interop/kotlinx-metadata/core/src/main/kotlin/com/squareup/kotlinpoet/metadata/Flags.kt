@@ -97,7 +97,7 @@ public val Flags.isExpectClass: Boolean get() = Flag.Class.IS_EXPECT(this)
 @KotlinPoetMetadataPreview
 public val Flags.isExternalClass: Boolean get() = Flag.Class.IS_EXTERNAL(this)
 @KotlinPoetMetadataPreview
-public val Flags.isInlineClass: Boolean get() = Flag.Class.IS_INLINE(this)
+public val Flags.isValueClass: Boolean get() = Flag.Class.IS_VALUE(this)
 @KotlinPoetMetadataPreview
 public val Flags.isInnerClass: Boolean get() = Flag.Class.IS_INNER(this)
 @KotlinPoetMetadataPreview
@@ -123,7 +123,7 @@ public val KmClass.isExpect: Boolean get() = flags.isExpectClass
 @KotlinPoetMetadataPreview
 public val KmClass.isExternal: Boolean get() = flags.isExternalClass
 @KotlinPoetMetadataPreview
-public val KmClass.isInline: Boolean get() = flags.isInlineClass
+public val KmClass.isValue: Boolean get() = flags.isValueClass
 @KotlinPoetMetadataPreview
 public val KmClass.isInner: Boolean get() = flags.isInnerClass
 @KotlinPoetMetadataPreview
@@ -151,7 +151,7 @@ public val ImmutableKmClass.isExpect: Boolean get() = flags.isExpectClass
 @KotlinPoetMetadataPreview
 public val ImmutableKmClass.isExternal: Boolean get() = flags.isExternalClass
 @KotlinPoetMetadataPreview
-public val ImmutableKmClass.isInline: Boolean get() = flags.isInlineClass
+public val ImmutableKmClass.isValue: Boolean get() = flags.isValueClass
 @KotlinPoetMetadataPreview
 public val ImmutableKmClass.isInner: Boolean get() = flags.isInnerClass
 @KotlinPoetMetadataPreview
