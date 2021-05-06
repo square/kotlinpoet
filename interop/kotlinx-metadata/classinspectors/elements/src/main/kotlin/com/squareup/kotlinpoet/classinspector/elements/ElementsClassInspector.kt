@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isDeclaration
 import com.squareup.kotlinpoet.metadata.isInline
 import com.squareup.kotlinpoet.metadata.isSynthesized
+import com.squareup.kotlinpoet.metadata.isValue
 import com.squareup.kotlinpoet.metadata.readKotlinClassMetadata
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
@@ -144,6 +145,7 @@ public class ElementsClassInspector private constructor(
   }
 
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
+    @Suppress("DEPRECATION")
     return filterOutNullabilityAnnotations(
       annotationMirrors.map { AnnotationSpec.get(it) }
     )
@@ -160,12 +162,14 @@ public class ElementsClassInspector private constructor(
   }
 
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
+    @Suppress("DEPRECATION")
     return filterOutNullabilityAnnotations(
       annotationMirrors.map { AnnotationSpec.get(it) }
     )
   }
 
   private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
+    @Suppress("DEPRECATION")
     return thrownTypes.map { it.asTypeName() }
   }
 
@@ -444,7 +448,7 @@ public class ElementsClassInspector private constructor(
     when (declarationContainer) {
       is ImmutableKmClass -> {
         val constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
-          if (declarationContainer.isAnnotation || declarationContainer.isInline) {
+          if (declarationContainer.isAnnotation || declarationContainer.isValue) {
             //
             // Annotations are interfaces in bytecode, but kotlin metadata will still report a
             // constructor signature
@@ -477,6 +481,7 @@ public class ElementsClassInspector private constructor(
           className = className,
           annotations = if (declarationContainer.hasAnnotations) {
             ClassInspectorUtil.createAnnotations {
+              @Suppress("DEPRECATION")
               addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
             }
           } else {
@@ -501,6 +506,7 @@ public class ElementsClassInspector private constructor(
                 }
                 jvmName = nameValue.value as String
               }
+              @Suppress("DEPRECATION")
               AnnotationSpec.get(it)
             }
           )
