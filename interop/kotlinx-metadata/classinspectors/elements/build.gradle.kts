@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-
 /*
  * Copyright (C) 2019 Square, Inc.
  *
@@ -15,10 +13,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-  id("com.github.johnrengelman.shadow") version versions.shadowPlugin
-}
-
 val GROUP: String by project
 val VERSION_NAME: String by project
 
@@ -31,38 +25,8 @@ tasks.named<Jar>("jar") {
   }
 }
 
-val shade: Configuration = configurations.maybeCreate("compileShaded")
-configurations.getByName("compileOnly").extendsFrom(shade)
 dependencies {
   api(project(":interop:kotlinx-metadata:specs"))
-  // Unshaded stable guava dep for auto-common
-  // `api` due to https://youtrack.jetbrains.com/issue/KT-41702
   api(deps.guava)
-
-  // Shade auto-common as it's unstable
-  shade(deps.autoCommon) {
-    exclude(group = "com.google.guava")
-  }
-}
-
-val relocateShadowJar = tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
-  target = tasks.shadowJar.get()
-}
-
-val shadowJar = tasks.shadowJar.apply {
-  configure {
-    dependsOn(relocateShadowJar)
-    minimize()
-    archiveClassifier.set("")
-    configurations = listOf(shade)
-    relocate(
-      "com.google.auto.common",
-      "com.squareup.kotlinpoet.classinspector.elements.shaded.com.google.auto.common"
-    )
-  }
-}
-
-artifacts {
-  runtime(shadowJar)
-  archives(shadowJar)
+  api(deps.autoCommon)
 }
