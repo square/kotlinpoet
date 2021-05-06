@@ -15,7 +15,7 @@
  */
 object versions {
   const val kotlin = "1.5.0"
-  const val spotless = "5.7.0"
+  const val spotless = "5.12.4"
   const val ktlint = "0.39.0"
   const val mavenPublish = "0.13.0"
   const val shadowPlugin = "6.0.0"
