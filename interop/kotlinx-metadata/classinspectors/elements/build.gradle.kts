@@ -27,6 +27,6 @@ tasks.named<Jar>("jar") {
 
 dependencies {
   api(project(":interop:kotlinx-metadata:specs"))
-  api(deps.guava)
-  api(deps.autoCommon)
+  api(libs.guava)
+  api(libs.auto.common)
 }

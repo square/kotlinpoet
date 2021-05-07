@@ -37,23 +37,23 @@ jobs:
       - name: Test
         run: ./gradlew build
 
-  publish:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    needs:
-      - jvm
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Configure JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-
-      - name: Upload Artifacts
-        run: ./gradlew uploadArchives
-        env:
-          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+#  publish:
+#    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/master'
+#    needs:
+#      - jvm
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Configure JDK
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 14
+#
+#      - name: Upload Artifacts
+#        run: ./gradlew uploadArchives
+#        env:
+#          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+#          ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}

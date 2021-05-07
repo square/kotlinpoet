@@ -18,16 +18,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version versions.kotlin apply false
-  id("org.jetbrains.dokka") version versions.dokka apply false
-  id("com.diffplug.spotless") version versions.spotless
-  id("com.vanniktech.maven.publish") version versions.mavenPublish apply false
+  kotlin("jvm") version "1.5.0" apply false
+  id("org.jetbrains.dokka") version "1.4.32" apply false
+  id("com.vanniktech.maven.publish") version "0.13.0" apply false
+  id("com.diffplug.spotless") version "5.12.4" apply true
 }
 
 spotless {
   kotlin {
     target("**/*.kt")
-    ktlint(versions.ktlint).userData(mapOf("indent_size" to "2"))
+    ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -42,14 +42,14 @@ subprojects {
       freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
   }
-  // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
+  // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata. TODO probably turn it up to 11 🤘
   tasks.withType<JavaCompile> {
     sourceCompatibility = JavaVersion.VERSION_1_8.toString()
     targetCompatibility = JavaVersion.VERSION_1_8.toString()
   }
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     configure<KotlinProjectExtension> {
-      explicitApi()
+      explicitApi() // TODO what does this do 👀
     }
   }
 
