@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import java.util.Collections
 
+@Suppress("MatchingDeclarationName")
 internal object NullAppendable : Appendable {
   override fun append(charSequence: CharSequence) = this
   override fun append(charSequence: CharSequence, start: Int, end: Int) = this
@@ -55,6 +56,7 @@ internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = 
 internal fun <T> Collection<T>.containsAnyOf(vararg t: T) = t.any(this::contains)
 
 // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
+@Suppress("ImplicitDefaultLocale") // TODO Huh??
 internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\b' -> "\\b" // \u0008: backspace (BS)
   c == '\t' -> "\\t" // \u0009: horizontal tab (HT)
@@ -77,6 +79,7 @@ private val Char.isIsoControl: Boolean
   }
 
 /** Returns the string literal representing `value`, including wrapping double quotes.  */
+@Suppress("MagicNumber", "LoopWithTooManyJumpStatements")
 internal fun stringLiteralWithQuotes(
   value: String,
   escapeDollarSign: Boolean = true,

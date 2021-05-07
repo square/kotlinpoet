@@ -53,6 +53,7 @@ public fun Metadata.toImmutableKmClass(): ImmutableKmClass {
     .toImmutableKmClass()
 }
 
+@Suppress("ThrowsCount", "TooGenericExceptionThrown")
 @KotlinPoetMetadataPreview
 public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T {
   val expectedType = T::class

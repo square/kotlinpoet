@@ -34,6 +34,8 @@ import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration. */
+// TODO Also needs a lot of love
+@Suppress("LongMethod", "ComplexMethod")
 public class TypeSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
@@ -94,6 +96,7 @@ public class TypeSpec private constructor(
     return builder
   }
 
+  @Suppress("ReturnCount")
   internal fun emit(
     codeWriter: CodeWriter,
     enumName: String?,
@@ -302,7 +305,12 @@ public class TypeSpec private constructor(
 
       for (typeSpec in typeSpecs) {
         if (!firstMember) codeWriter.emit("\n")
-        typeSpec.emit(codeWriter, null, kind.implicitTypeModifiers(modifiers + implicitModifiers), isNestedExternal = areNestedExternal)
+        typeSpec.emit(
+          codeWriter,
+          null,
+          kind.implicitTypeModifiers(modifiers + implicitModifiers),
+          isNestedExternal = areNestedExternal
+        )
         firstMember = false
       }
 
@@ -319,6 +327,7 @@ public class TypeSpec private constructor(
   }
 
   /** Returns the properties that can be declared inline as constructor parameters. */
+  @Suppress("LoopWithTooManyJumpStatements")
   private fun constructorProperties(): Map<String, PropertySpec> {
     if (primaryConstructor == null) return emptyMap()
 
@@ -464,8 +473,9 @@ public class TypeSpec private constructor(
     internal val isEnum get() = kind == Kind.CLASS && ENUM in modifiers
     internal val isAnnotation get() = kind == Kind.CLASS && ANNOTATION in modifiers
     internal val isCompanion get() = kind == Kind.OBJECT && COMPANION in modifiers
-    internal val isInlineOrValClass get() = kind == Kind.CLASS &&
-      (INLINE in modifiers || VALUE in modifiers)
+    internal val isInlineOrValClass
+      get() = kind == Kind.CLASS &&
+        (INLINE in modifiers || VALUE in modifiers)
     internal val isSimpleClass get() = kind == Kind.CLASS && !isEnum && !isAnnotation
     internal val isFunInterface get() = kind == Kind.INTERFACE && FUN in modifiers
 
@@ -636,7 +646,8 @@ public class TypeSpec private constructor(
       addSuperinterface(superinterface, CodeBlock.of(constructorParameter))
     }
 
-    @JvmOverloads public fun addEnumConstant(
+    @JvmOverloads
+    public fun addEnumConstant(
       name: String,
       typeSpec: TypeSpec = anonymousClassBuilder().build()
     ): Builder = apply {
@@ -807,50 +818,68 @@ public class TypeSpec private constructor(
   }
 
   public companion object {
-    @JvmStatic public fun classBuilder(name: String): Builder = Builder(Kind.CLASS, name)
+    @JvmStatic
+    public fun classBuilder(name: String): Builder = Builder(Kind.CLASS, name)
 
-    @JvmStatic public fun classBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun classBuilder(className: ClassName): Builder =
       classBuilder(className.simpleName)
 
-    @JvmStatic public fun expectClassBuilder(name: String): Builder =
+    @JvmStatic
+    public fun expectClassBuilder(name: String): Builder =
       Builder(Kind.CLASS, name, EXPECT)
 
-    @JvmStatic public fun expectClassBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun expectClassBuilder(className: ClassName): Builder =
       expectClassBuilder(className.simpleName)
 
-    @JvmStatic public fun valueClassBuilder(name: String): Builder =
+    @JvmStatic
+    public fun valueClassBuilder(name: String): Builder =
       Builder(Kind.CLASS, name, VALUE)
 
-    @JvmStatic public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
+    @JvmStatic
+    public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
 
-    @JvmStatic public fun objectBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun objectBuilder(className: ClassName): Builder =
       objectBuilder(className.simpleName)
 
-    @JvmStatic @JvmOverloads public fun companionObjectBuilder(name: String? = null): Builder =
+    @JvmStatic
+    @JvmOverloads
+    public fun companionObjectBuilder(name: String? = null): Builder =
       Builder(Kind.OBJECT, name, COMPANION)
 
-    @JvmStatic public fun interfaceBuilder(name: String): Builder = Builder(Kind.INTERFACE, name)
+    @JvmStatic
+    public fun interfaceBuilder(name: String): Builder = Builder(Kind.INTERFACE, name)
 
-    @JvmStatic public fun interfaceBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun interfaceBuilder(className: ClassName): Builder =
       interfaceBuilder(className.simpleName)
 
-    @JvmStatic public fun funInterfaceBuilder(name: String): Builder =
+    @JvmStatic
+    public fun funInterfaceBuilder(name: String): Builder =
       Builder(Kind.INTERFACE, name, FUN)
 
-    @JvmStatic public fun funInterfaceBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun funInterfaceBuilder(className: ClassName): Builder =
       funInterfaceBuilder(className.simpleName)
 
-    @JvmStatic public fun enumBuilder(name: String): Builder = Builder(Kind.CLASS, name, ENUM)
+    @JvmStatic
+    public fun enumBuilder(name: String): Builder = Builder(Kind.CLASS, name, ENUM)
 
-    @JvmStatic public fun enumBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun enumBuilder(className: ClassName): Builder =
       enumBuilder(className.simpleName)
 
-    @JvmStatic public fun anonymousClassBuilder(): Builder = Builder(Kind.CLASS, null)
+    @JvmStatic
+    public fun anonymousClassBuilder(): Builder = Builder(Kind.CLASS, null)
 
-    @JvmStatic public fun annotationBuilder(name: String): Builder =
+    @JvmStatic
+    public fun annotationBuilder(name: String): Builder =
       Builder(Kind.CLASS, name, ANNOTATION)
 
-    @JvmStatic public fun annotationBuilder(className: ClassName): Builder =
+    @JvmStatic
+    public fun annotationBuilder(className: ClassName): Builder =
       annotationBuilder(className.simpleName)
   }
 }

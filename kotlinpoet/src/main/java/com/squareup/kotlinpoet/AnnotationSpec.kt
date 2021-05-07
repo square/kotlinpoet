@@ -27,6 +27,8 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration. */
+// TODO Also pretty gross
+@Suppress("TooGenericExceptionCaught", "TooGenericExceptionThrown")
 public class AnnotationSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
@@ -180,6 +182,7 @@ public class AnnotationSpec private constructor(
     }
   }
 
+  @Suppress("LoopWithTooManyJumpStatements")
   public companion object {
     @JvmStatic @JvmOverloads public fun get(
       annotation: Annotation,

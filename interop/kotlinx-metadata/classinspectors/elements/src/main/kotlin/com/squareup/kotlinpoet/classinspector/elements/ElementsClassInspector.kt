@@ -247,6 +247,7 @@ public class ElementsClassInspector private constructor(
    * Adapted from AutoCommon's private [MoreElements.getLocalAndInheritedMethods] methods'
    * implementations, before overridden methods are stripped.
    */
+  @Suppress("ComplexCondition")
   private fun TypeElement.getAllMethods(
     pkg: PackageElement,
     methodsAccumulator: SetMultimap<String, ExecutableElement>
@@ -282,6 +283,7 @@ public class ElementsClassInspector private constructor(
     }
   }
 
+  @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
   override fun containerData(
     declarationContainer: ImmutableKmDeclarationContainer,
     className: ClassName,

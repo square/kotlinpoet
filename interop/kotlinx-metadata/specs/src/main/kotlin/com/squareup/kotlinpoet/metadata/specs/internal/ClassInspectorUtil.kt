@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable
 import java.util.Collections
 import java.util.TreeSet
 
+@Suppress("ComplexCondition")
 @KotlinPoetMetadataPreview
 public object ClassInspectorUtil {
   public val JVM_NAME: ClassName = JvmName::class.asClassName()

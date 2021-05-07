@@ -39,9 +39,6 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.KotlinClassMetadata
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -49,7 +46,11 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 
+@Suppress("SwallowedException")
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
   private val classLoader: ClassLoader?
@@ -262,6 +263,7 @@ public class ReflectiveClassInspector private constructor(
     return lookupClass(className)?.lookupMethod(methodSignature) != null
   }
 
+  @Suppress("LongMethod", "ComplexMethod")
   override fun containerData(
     declarationContainer: ImmutableKmDeclarationContainer,
     className: ClassName,
@@ -520,6 +522,7 @@ public class ReflectiveClassInspector private constructor(
       return ReflectiveClassInspector(classLoader)
     }
 
+    @Suppress("TooGenericExceptionThrown")
     private val Class<*>.descriptor: String
       get() {
         return when {
@@ -552,7 +555,8 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmMethodSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the
+     * [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Method.jvmMethodSignature: String get() = "$name$descriptor"
 
@@ -564,7 +568,8 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmMethodSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the
+     * [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Constructor<*>.jvmMethodSignature: String get() = "<init>$descriptor"
 
@@ -573,7 +578,8 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmFieldSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the
+     * [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Field.jvmFieldSignature: String get() = "$name:${type.descriptor}"
   }

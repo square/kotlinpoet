@@ -43,6 +43,8 @@ import kotlin.reflect.KClass
  * - Imports
  * - Members
  */
+// TODO This one ain't so bad
+@Suppress("TooGenericExceptionCaught", "FunctionParameterNaming", "FunctionParameterNaming")
 public class FileSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap()
@@ -220,6 +222,7 @@ public class FileSpec private constructor(
     return builder
   }
 
+  @Suppress("UnusedPrivateMember")
   public class Builder internal constructor(
     public val packageName: String,
     public val name: String

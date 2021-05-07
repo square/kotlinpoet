@@ -13,12 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-val GROUP: String by project
-val VERSION_NAME: String by project
-
-group = GROUP
-version = VERSION_NAME
-
 tasks.named<Jar>("jar") {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.classinspector.elements")

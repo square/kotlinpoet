@@ -1,69 +1,79 @@
-/*
- * Copyright (C) 2019 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm") version "1.5.0" apply false
-  id("org.jetbrains.dokka") version "1.4.32" apply false
-  id("com.vanniktech.maven.publish") version "0.13.0" apply false
-  id("com.diffplug.spotless") version "5.12.4" apply true
+  id("io.gitlab.arturbosch.detekt") version "1.16.0-RC2" apply false
+  id("com.adarshr.test-logger") version "3.0.0" apply false
 }
 
-spotless {
-  kotlin {
-    target("**/*.kt")
-    ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
-    trimTrailingWhitespace()
-    endWithNewline()
-  }
-}
-
+// TODO why does allprojects break?
 subprojects {
-  repositories {
-    mavenCentral()
-  }
-  tasks.withType<KotlinCompile> {
-    kotlinOptions {
-      freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+  group = "org.leafygreens"
+  version = run {
+    val baseVersion =
+      project.findProperty("project.version") ?: error("project.version must be set in gradle.properties")
+    when ((project.findProperty("release") as? String)?.toBoolean()) {
+      true -> baseVersion
+      else -> "$baseVersion-SNAPSHOT"
     }
   }
+
+  repositories {
+    mavenCentral()
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") }
+  }
+
+  apply(plugin = "org.jetbrains.kotlin.jvm")
+  apply(plugin = "io.gitlab.arturbosch.detekt")
+  apply(plugin = "com.adarshr.test-logger")
+  apply(plugin = "idea")
+
+  tasks.withType<KotlinCompile> {
+    kotlinOptions {
+      freeCompilerArgs = freeCompilerArgs + listOf("-Xopt-in=kotlin.RequiresOptIn")
+    }
+  }
+
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata. TODO probably turn it up to 11 🤘
   tasks.withType<JavaCompile> {
     sourceCompatibility = JavaVersion.VERSION_1_8.toString()
     targetCompatibility = JavaVersion.VERSION_1_8.toString()
   }
+
+  // TODO what does this do 👀
   pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
     configure<KotlinProjectExtension> {
-      explicitApi() // TODO what does this do 👀
+      explicitApi()
     }
   }
 
-  apply(plugin = "org.jetbrains.kotlin.jvm")
-  if ("tests" !in name && buildFile.exists()) {
-    apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "com.vanniktech.maven.publish")
-    afterEvaluate {
-      tasks.named<DokkaTask>("dokkaHtml") {
-        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x"))
-        dokkaSourceSets.configureEach {
-          skipDeprecated.set(true)
-        }
-      }
-    }
+  configure<com.adarshr.gradle.testlogger.TestLoggerExtension> {
+    setTheme("standard")
+    setLogLevel("lifecycle")
+    showExceptions = true
+    showStackTraces = true
+    showFullStackTraces = false
+    showCauses = true
+    slowThreshold = 2000
+    showSummary = true
+    showSimpleNames = false
+    showPassed = true
+    showSkipped = true
+    showFailed = true
+    showStandardStreams = false
+    showPassedStandardStreams = true
+    showSkippedStandardStreams = true
+    showFailedStandardStreams = true
+  }
+
+  configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    toolVersion = "1.16.0-RC2"
+    config = files("${rootProject.projectDir}/detekt.yml")
+    buildUponDefaultConfig = true
+  }
+
+  configure<JavaPluginExtension> {
+    withSourcesJar()
   }
 }

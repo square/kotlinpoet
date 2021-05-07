@@ -53,6 +53,8 @@ internal fun buildCodeString(
  * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
+// TODO This class needs a lot of love
+@Suppress("NestedBlockDepth", "LongMethod", "ComplexMethod", "")
 internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = DEFAULT_INDENT,
@@ -355,6 +357,7 @@ internal class CodeWriter constructor(
     }
   }
 
+  @Suppress("ReturnCount")
   private fun emitStaticImportMember(canonical: String, part: String): Boolean {
     val partWithoutLeadingDot = part.substring(1)
     if (partWithoutLeadingDot.isEmpty()) return false
@@ -388,6 +391,7 @@ internal class CodeWriter constructor(
    * available imports and the current scope to find the shortest name available. It does not honor
    * names visible due to inheritance.
    */
+  @Suppress("ReturnCount")
   fun lookupName(className: ClassName): String {
     // Find the shortest suffix of className that resolves to className. This uses both local type
     // names (so `Entry` in `Map` refers to `Map.Entry`). Also uses imports.
@@ -431,6 +435,7 @@ internal class CodeWriter constructor(
     return className.canonicalName
   }
 
+  @Suppress("ReturnCount")
   fun lookupName(memberName: MemberName): String {
     val simpleName = memberImports[memberName.canonicalName]?.alias ?: memberName.simpleName
     // Match an imported member.
@@ -498,6 +503,7 @@ internal class CodeWriter constructor(
    * imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
+  @Suppress("ReturnCount")
   private fun resolve(simpleName: String): ClassName? {
     // Match a child of the current (potentially nested) class.
     for (i in typeSpecStack.indices.reversed()) {
@@ -579,6 +585,7 @@ internal class CodeWriter constructor(
     }
   }
 
+  @Suppress("UnusedPrivateMember")
   private fun emitIndentation() {
     for (j in 0 until indentLevel) {
       out.appendNonWrapping(indent)
@@ -592,6 +599,7 @@ internal class CodeWriter constructor(
    * there are no other opposing modifiers (like [KModifier.PROTECTED] etc.) supplied by the
    * consumer.
    */
+  @Suppress("ReturnCount")
   private fun shouldEmitPublicModifier(
     modifiers: Set<KModifier>,
     implicitModifiers: Set<KModifier>

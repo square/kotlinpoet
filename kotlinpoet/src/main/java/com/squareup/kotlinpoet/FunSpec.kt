@@ -213,6 +213,7 @@ public class FunSpec private constructor(
    *   - It's a getter/setter on a property
    *   - It's an expression body
    */
+  @Suppress("ReturnCount")
   private fun emitUnitReturnType(): Boolean {
     if (isConstructor) {
       return false
@@ -225,6 +226,7 @@ public class FunSpec private constructor(
     return body.asExpressionBody() == null
   }
 
+  @Suppress("ReturnCount")
   private fun CodeBlock.asExpressionBody(): CodeBlock? {
     val codeBlock = this.trim()
     val asReturnExpressionBody = codeBlock.withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX_SPACE)

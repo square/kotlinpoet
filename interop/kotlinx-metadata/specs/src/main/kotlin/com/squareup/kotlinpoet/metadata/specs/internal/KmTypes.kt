@@ -56,6 +56,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
   }
 }
 
+@Suppress("NestedBlockDepth")
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmTypeProjection.toTypeName(
   typeParamResolver: TypeParameterResolver
@@ -74,6 +75,7 @@ internal fun ImmutableKmTypeProjection.toTypeName(
  * "source" representation. This includes converting [functions][kotlin.Function] and `suspend`
  * types to appropriate [lambda representations][LambdaTypeName].
  */
+@Suppress("ReturnCount", "NestedBlockDepth")
 @KotlinPoetMetadataPreview
 internal fun ImmutableKmType.toTypeName(
   typeParamResolver: TypeParameterResolver

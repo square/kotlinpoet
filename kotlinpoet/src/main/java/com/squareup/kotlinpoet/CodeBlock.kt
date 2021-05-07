@@ -73,6 +73,7 @@ public class CodeBlock private constructor(
    * This is a pretty basic implementation that might not cover cases like mismatched whitespace. We
    * could offer something more lenient if necessary.
    */
+  @Suppress("ReturnCount") // TODO Meh
   internal fun withoutPrefix(prefix: CodeBlock): CodeBlock? {
     if (formatParts.size < prefix.formatParts.size) return null
     if (args.size < prefix.args.size) return null
@@ -252,6 +253,7 @@ public class CodeBlock private constructor(
      * Mixing relative and positional arguments in a call to add is invalid and will result in an
      * error.
      */
+    @Suppress("LoopWithTooManyJumpStatements") // TODO Oh yea dis some shit
     public fun add(format: String, vararg args: Any?): Builder = apply {
       var hasRelative = false
       var hasIndexed = false
@@ -337,6 +339,7 @@ public class CodeBlock private constructor(
       }
     }
 
+    @Suppress("ImplicitDefaultLocale") // TODO Huh??
     private fun addArgument(format: String, c: Char, arg: Any?) {
       when (c) {
         'N' -> this.args += argToName(arg).escapeIfNecessary()

@@ -126,16 +126,16 @@ import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
 import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.squareup.kotlinpoet.tag
-import kotlinx.metadata.Flags
-import kotlinx.metadata.KmClassifier
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.jvmInternalName
 import java.util.Locale
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import kotlin.reflect.KClass
+import kotlinx.metadata.Flags
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.jvmInternalName
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
@@ -144,6 +144,7 @@ public fun KClass<*>.toTypeSpec(
 ): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
+@Suppress("ComplexCondition")
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
   classInspector: ClassInspector? = null
@@ -257,6 +258,7 @@ public fun ImmutableKmPackage.toFileSpec(
 
 private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 
+@Suppress("ComplexCondition", "ComplexMethod", "LongMethod")
 @KotlinPoetMetadataPreview
 private fun ImmutableKmClass.toTypeSpec(
   classInspector: ClassInspector?,
@@ -309,7 +311,8 @@ private fun ImmutableKmClass.toTypeSpec(
       } else {
         TypeSpec.anonymousClassBuilder()
           .addKdoc(
-            "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body."
+            "No ClassInspector was available during metadata parsing, " +
+              "so this entry may not be reflected accurately if it has a class body."
           )
           .build()
       }
@@ -411,7 +414,8 @@ private fun ImmutableKmClass.toTypeSpec(
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
           .addKdoc(
-            "No ClassInspector was available during metadata parsing, so this companion object's API/contents may not be reflected accurately."
+            "No ClassInspector was available during metadata parsing, so " +
+              "this companion object's API/contents may not be reflected accurately."
           )
           .build()
       }
@@ -482,7 +486,8 @@ private fun ImmutableKmClass.toTypeSpec(
     } else {
       TypeSpec.classBuilder(it)
         .addKdoc(
-          "No ClassInspector was available during metadata parsing, so this nested class's API/contents may not be reflected accurately."
+          "No ClassInspector was available during metadata parsing, " +
+            "so this nested class's API/contents may not be reflected accurately."
         )
         .build()
     }
@@ -527,12 +532,14 @@ private fun ImmutableKmConstructor.toFunSpec(
 }
 
 @KotlinPoetMetadataPreview
-private val ContainerData.isInterface: Boolean get() {
-  return declarationContainer.let { container ->
-    container is ImmutableKmClass && container.isInterface
+private val ContainerData.isInterface: Boolean
+  get() {
+    return declarationContainer.let { container ->
+      container is ImmutableKmClass && container.isInterface
+    }
   }
-}
 
+@Suppress("LongMethod", "ComplexMethod")
 @KotlinPoetMetadataPreview
 private fun ImmutableKmFunction.toFunSpec(
   classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
@@ -650,6 +657,7 @@ private fun ImmutableKmValueParameter.toParameterSpec(
     .build()
 }
 
+@Suppress("ComplexCondition", "ComplexMethod", "LongMethod")
 @KotlinPoetMetadataPreview
 private fun ImmutableKmProperty.toPropertySpec(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
@@ -932,6 +940,7 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 }
 
 private val METADATA = Metadata::class.asClassName()
+
 @Suppress("DEPRECATION")
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()
