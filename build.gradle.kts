@@ -5,6 +5,14 @@ plugins {
   kotlin("jvm") version "1.5.0" apply false
   id("io.gitlab.arturbosch.detekt") version "1.16.0-RC2" apply false
   id("com.adarshr.test-logger") version "3.0.0" apply false
+  id("com.github.jakemarsden.git-hooks") version "0.0.2" apply true
+}
+
+gitHooks {
+  setHooks(mapOf(
+    "pre-commit" to "detekt",
+    "pre-push" to "test"
+  ))
 }
 
 // TODO why does allprojects break?
