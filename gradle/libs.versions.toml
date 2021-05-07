@@ -1,0 +1,38 @@
+[versions]
+kotlin = "1.5.0"
+spotless = "5.12.4"
+ktlint = "0.41.0"
+maven-publish = "0.13.0"
+dokka = "1.4.32"
+auto-common = "1.0"
+guava = "30.1.1-jre"
+slf4j = "1.7.30"
+logback = "1.2.3"
+truth = "1.1.2"
+compile-testing = "0.19"
+jimfs = "1.1"
+ecj = "4.6.1"
+kt-compile-testing = "1.4.0"
+kotlinx-metadata-jvm = "0.3.0"
+
+[libraries]
+# Google
+auto-common = { group = "com.google.auto", name = "auto-common", version.ref = "auto-common" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+# Kotlin
+reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+kotlinx-metadata = { group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm" }
+# Logging
+slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+logback-core = { group = "ch.qos.logback", name = "logback-core", version.ref = "logback" }
+# Testing
+kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+compile-testing = { group = "com.google.testing.compile", name = "compile-testing", version.ref = "compile-testing" }
+jimfs = { group = "com.google.jimfs", name = "jimfs", version.ref = "jimfs" }
+ecj = { group = "org.eclipse.jdt.core.compiler", name = "ecj", version.ref = "ecj" }
+kt-compile-testing = { group = "com.github.tschuchortdev", name = "kotlin-compile-testing", version.ref = "kt-compile-testing" }
+
+[bundles]
+logging = [ "slf4j", "logback-classic", "logback-core" ]

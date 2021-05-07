@@ -29,6 +29,6 @@ dependencies {
   api(project(":kotlinpoet"))
   api(project(":interop:kotlinx-metadata:core"))
 
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
+  testImplementation(libs.kotlin.test.junit)
+  testImplementation(libs.truth)
 }

@@ -21,16 +21,16 @@ version = VERSION_NAME
 
 tasks.named<Jar>("jar") {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet") // todo what does this do 👀
   }
 }
 
 dependencies {
-  implementation(deps.kotlin.reflect)
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
-  testImplementation(deps.test.compileTesting)
-  testImplementation(deps.test.jimfs)
-  testImplementation(deps.test.ecj)
-  testImplementation(deps.test.kotlinCompileTesting)
+  implementation(libs.reflect)
+  testImplementation(libs.kotlin.test.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.compile.testing)
+  testImplementation(libs.jimfs)
+  testImplementation(libs.ecj)
+  testImplementation(libs.kt.compile.testing)
 }

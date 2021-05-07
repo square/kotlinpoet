@@ -26,7 +26,7 @@ tasks.named<Jar>("jar") {
 }
 
 dependencies {
-  api(deps.kotlin.metadata)
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
+  api(libs.kotlinx.metadata)
+  testImplementation(libs.kotlin.test.junit)
+  testImplementation(libs.truth)
 }
