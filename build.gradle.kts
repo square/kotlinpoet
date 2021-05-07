@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.adarshr.gradle.testlogger.TestLoggerExtension
+import com.adarshr.gradle.testlogger.theme.ThemeType
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
   kotlin("jvm") version "1.5.0" apply false
@@ -15,8 +18,7 @@ gitHooks {
   ))
 }
 
-// TODO why does allprojects break?
-subprojects {
+allprojects {
   group = "org.leafygreens"
   version = run {
     val baseVersion =
@@ -43,22 +45,19 @@ subprojects {
     }
   }
 
-  // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata. TODO probably turn it up to 11 🤘
-  tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-    targetCompatibility = JavaVersion.VERSION_1_8.toString()
-  }
-
-  // TODO what does this do 👀
-  pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-    configure<KotlinProjectExtension> {
-      explicitApi()
+  tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+      jvmTarget = "11"
     }
   }
 
-  configure<com.adarshr.gradle.testlogger.TestLoggerExtension> {
-    setTheme("standard")
-    setLogLevel("lifecycle")
+  configure<KotlinProjectExtension> {
+    explicitApi = ExplicitApiMode.Strict
+  }
+
+  configure<TestLoggerExtension> {
+    theme = ThemeType.MOCHA
+    logLevel = LogLevel.LIFECYCLE
     showExceptions = true
     showStackTraces = true
     showFullStackTraces = false

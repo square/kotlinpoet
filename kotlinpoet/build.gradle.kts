@@ -1,22 +1,6 @@
-/*
- * Copyright (C) 2019 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-tasks.named<Jar>("jar") {
-  manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet") // todo what does this do 👀
-  }
+plugins {
+  `java-library`
+  `maven-publish`
 }
 
 dependencies {
@@ -27,4 +11,27 @@ dependencies {
   testImplementation(libs.jimfs)
   testImplementation(libs.ecj)
   testImplementation(libs.kt.compile.testing)
+}
+
+java {
+  withSourcesJar()
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GithubPackages"
+      url = uri("https://maven.pkg.github.com/lg-backbone/hear-ye")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
+  publications {
+    create<MavenPublication>("hear-ye") {
+      from(components["kotlin"])
+      artifact(tasks.sourcesJar)
+    }
+  }
 }

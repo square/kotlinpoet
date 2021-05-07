@@ -15,9 +15,6 @@ reports
 *.iml
 classes
 
-# Mkdocs files
-docs/1.x/*
-
 obj
 
 .DS_Store
