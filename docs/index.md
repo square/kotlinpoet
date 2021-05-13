@@ -1281,14 +1281,22 @@ KotlinPoet provides API for creating Type Aliases, which supports simple class n
 types and lambdas:
 
 ```kotlin
+val k = TypeVariableName("K")
+val t = TypeVariableName("T")
+
 val fileTable = Map::class.asClassName()
-    .parameterizedBy(TypeVariableName("K"), Set::class.parameterizedBy(File::class))
-val predicate = LambdaTypeName.get(parameters = *arrayOf(TypeVariableName("T")),
+    .parameterizedBy(k, Set::class.parameterizedBy(File::class))
+
+val predicate = LambdaTypeName.get(parameters = arrayOf(t),
     returnType = Boolean::class.asClassName())
-val helloWorld = FileSpec.builder("com.example", "HelloWorld")
+val kotlinFile = FileSpec.builder("com.example", "HelloWorld")
     .addTypeAlias(TypeAliasSpec.builder("Word", String::class).build())
-    .addTypeAlias(TypeAliasSpec.builder("FileTable<K>", fileTable).build())
-    .addTypeAlias(TypeAliasSpec.builder("Predicate<T>", predicate).build())
+    .addTypeAlias(TypeAliasSpec.builder("FileTable", fileTable)
+            .addTypeVariable(k)
+            .build())
+    .addTypeAlias(TypeAliasSpec.builder("Predicate", predicate)
+            .addTypeVariable(t)
+            .build())
     .build()
 ```
 
