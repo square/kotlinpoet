@@ -1289,14 +1289,14 @@ val fileTable = Map::class.asClassName()
 
 val predicate = LambdaTypeName.get(parameters = arrayOf(t),
     returnType = Boolean::class.asClassName())
-val kotlinFile = FileSpec.builder("com.example", "HelloWorld")
+val helloWorld = FileSpec.builder("com.example", "HelloWorld")
     .addTypeAlias(TypeAliasSpec.builder("Word", String::class).build())
     .addTypeAlias(TypeAliasSpec.builder("FileTable", fileTable)
-            .addTypeVariable(k)
-            .build())
+        .addTypeVariable(k)
+        .build())
     .addTypeAlias(TypeAliasSpec.builder("Predicate", predicate)
-            .addTypeVariable(t)
-            .build())
+        .addTypeVariable(t)
+        .build())
     .build()
 ```
 
