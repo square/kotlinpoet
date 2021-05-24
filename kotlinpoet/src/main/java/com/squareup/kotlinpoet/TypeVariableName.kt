@@ -222,11 +222,19 @@ public class TypeVariableName private constructor(
 }
 
 /** Returns type variable equivalent to `mirror`. */
+@DelicateKotlinPoetApi(
+  message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead."
+)
 @JvmName("get")
 public fun TypeVariable.asTypeVariableName(): TypeVariableName =
   (asElement() as TypeParameterElement).asTypeVariableName()
 
 /** Returns type variable equivalent to `element`. */
+@DelicateKotlinPoetApi(
+  message = "Element APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead."
+)
 @JvmName("get")
 public fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
   val name = simpleName.toString()

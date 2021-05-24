@@ -20,7 +20,6 @@ package com.squareup.kotlinpoet
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import javax.lang.model.element.TypeParameterElement
-import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 public class WildcardTypeName private constructor(
@@ -62,7 +61,12 @@ public class WildcardTypeName private constructor(
     @JvmStatic public fun producerOf(outType: TypeName): WildcardTypeName =
       WildcardTypeName(listOf(outType), emptyList())
 
-    @JvmStatic public fun producerOf(outType: Type): WildcardTypeName =
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    public fun producerOf(outType: Type): WildcardTypeName =
       producerOf(outType.asTypeName())
 
     @JvmStatic public fun producerOf(outType: KClass<*>): WildcardTypeName =
@@ -75,7 +79,12 @@ public class WildcardTypeName private constructor(
     @JvmStatic public fun consumerOf(inType: TypeName): WildcardTypeName =
       WildcardTypeName(listOf(ANY), listOf(inType))
 
-    @JvmStatic public fun consumerOf(inType: Type): WildcardTypeName =
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    public fun consumerOf(inType: Type): WildcardTypeName =
       consumerOf(inType.asTypeName())
 
     @JvmStatic public fun consumerOf(inType: KClass<*>): WildcardTypeName =
@@ -110,15 +119,18 @@ public class WildcardTypeName private constructor(
   }
 }
 
-@Deprecated(
+@DelicateKotlinPoetApi(
   message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
-  level = WARNING
+    " the kotlinpoet-metadata APIs instead."
 )
 @JvmName("get")
 public fun javax.lang.model.type.WildcardType.asWildcardTypeName(): TypeName =
   WildcardTypeName.get(this, mutableMapOf())
 
+@DelicateKotlinPoetApi(
+  message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead."
+)
 @JvmName("get")
 public fun WildcardType.asWildcardTypeName(): TypeName =
   WildcardTypeName.get(this, mutableMapOf())

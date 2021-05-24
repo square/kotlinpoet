@@ -15,9 +15,10 @@
  */
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-  freeCompilerArgs = listOf("-Xjvm-default=all")
+tasks.withType<KotlinCompile>().named("compileTestKotlin") {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjvm-default=all")
+  }
 }
 
 dependencies {

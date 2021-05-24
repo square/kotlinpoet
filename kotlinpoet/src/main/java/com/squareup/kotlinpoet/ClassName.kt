@@ -23,7 +23,6 @@ import javax.lang.model.element.NestingKind.MEMBER
 import javax.lang.model.element.NestingKind.TOP_LEVEL
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
-import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A fully-qualified class name for top-level and member classes.  */
@@ -209,6 +208,10 @@ public class ClassName internal constructor(
   }
 }
 
+@DelicateKotlinPoetApi(
+  message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
+    " the kotlinpoet-metadata APIs instead."
+)
 @JvmName("get")
 public fun Class<*>.asClassName(): ClassName {
   require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
@@ -235,10 +238,9 @@ public fun KClass<*>.asClassName(): ClassName {
 }
 
 /** Returns the class name for `element`. */
-@Deprecated(
+@DelicateKotlinPoetApi(
   message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
-  level = WARNING
+    " the kotlinpoet-metadata APIs instead."
 )
 @JvmName("get")
 public fun TypeElement.asClassName(): ClassName {

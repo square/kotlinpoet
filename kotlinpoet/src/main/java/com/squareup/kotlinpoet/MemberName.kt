@@ -81,7 +81,14 @@ public data class MemberName internal constructor(
       MemberName(this, simpleName)
     @JvmStatic @JvmName("get") public fun KClass<*>.member(simpleName: String): MemberName =
       asClassName().member(simpleName)
-    @JvmStatic @JvmName("get") public fun Class<*>.member(simpleName: String): MemberName =
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    @JvmName("get")
+    public fun Class<*>.member(simpleName: String): MemberName =
       asClassName().member(simpleName)
   }
 }

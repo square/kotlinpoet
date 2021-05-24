@@ -555,10 +555,9 @@ public class FunSpec private constructor(
 
     @JvmStatic public fun setterBuilder(): Builder = Builder(SETTER)
 
-    @Deprecated(
+    @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-      level = WARNING
+        " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun overriding(method: ExecutableElement): Builder {
