@@ -1,7 +1,7 @@
 package com.squareup.kotlinpoet
 
 /**
- * Marks declarations in the KotlinPoet that are **delicate** &mdash;
+ * Marks declarations in the KotlinPoet API that are **delicate** &mdash;
  * they have limited use-case and shall be used with care in general code.
  * Any use of a delicate declaration has to be carefully reviewed to make sure it is
  * properly used and does not create problems like lossy Java -> Kotlin type parsing.
