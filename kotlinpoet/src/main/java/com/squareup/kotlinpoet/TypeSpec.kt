@@ -500,6 +500,10 @@ public class TypeSpec private constructor(
     public fun addAnnotation(annotation: ClassName): Builder =
       addAnnotation(AnnotationSpec.builder(annotation).build())
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addAnnotation(annotation: Class<*>): Builder =
       addAnnotation(annotation.asClassName())
 
@@ -566,6 +570,10 @@ public class TypeSpec private constructor(
       }
     }
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun superclass(superclass: Type): Builder = superclass(superclass.asTypeName())
 
     public fun superclass(superclass: KClass<*>): Builder = superclass(superclass.asTypeName())
@@ -607,6 +615,10 @@ public class TypeSpec private constructor(
       }
     }
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addSuperinterface(
       superinterface: Type,
       delegate: CodeBlock = CodeBlock.EMPTY
@@ -662,6 +674,10 @@ public class TypeSpec private constructor(
     public fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
       addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
       addProperty(name, type.asTypeName(), *modifiers)
 
@@ -671,6 +687,10 @@ public class TypeSpec private constructor(
     public fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
       addProperty(PropertySpec.builder(name, type, modifiers).build())
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
       addProperty(name, type.asTypeName(), modifiers)
 

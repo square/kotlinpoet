@@ -19,7 +19,6 @@ import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.VariableElement
-import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated parameter declaration. */
@@ -146,10 +145,9 @@ public class ParameterSpec private constructor(
   }
 
   public companion object {
-    @Deprecated(
+    @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-      level = WARNING
+        " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun get(element: VariableElement): ParameterSpec {
@@ -160,10 +158,9 @@ public class ParameterSpec private constructor(
         .build()
     }
 
-    @Deprecated(
+    @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-      level = WARNING
+        " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun parametersOf(method: ExecutableElement): List<ParameterSpec> =

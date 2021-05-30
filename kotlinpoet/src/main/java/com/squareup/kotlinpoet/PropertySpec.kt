@@ -206,6 +206,10 @@ public class PropertySpec private constructor(
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addAnnotation(annotation: Class<*>): Builder =
       addAnnotation(annotation.asClassName())
 
@@ -258,6 +262,10 @@ public class PropertySpec private constructor(
       this.receiverType = receiverType
     }
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
@@ -302,7 +310,12 @@ public class PropertySpec private constructor(
       return Builder(name, type).addModifiers(modifiers)
     }
 
-    @JvmStatic public fun builder(
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    public fun builder(
       name: String,
       type: Type,
       modifiers: Iterable<KModifier>

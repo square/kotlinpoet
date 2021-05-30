@@ -194,6 +194,10 @@ public class ParameterizedTypeName internal constructor(
 }
 
 /** Returns a parameterized type equivalent to `type`.  */
+@DelicateKotlinPoetApi(
+  message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+    "using the kotlinpoet-metadata APIs instead."
+)
 @JvmName("get")
 public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
   ParameterizedTypeName.get(this, mutableMapOf())

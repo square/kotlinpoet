@@ -117,6 +117,10 @@ public class TypeAliasSpec private constructor(
       annotations += AnnotationSpec.builder(annotation).build()
     }
 
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
     public fun addAnnotation(annotation: Class<*>): Builder =
       addAnnotation(annotation.asClassName())
 
@@ -140,7 +144,12 @@ public class TypeAliasSpec private constructor(
   public companion object {
     @JvmStatic public fun builder(name: String, type: TypeName): Builder = Builder(name, type)
 
-    @JvmStatic public fun builder(name: String, type: Type): Builder =
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    public fun builder(name: String, type: Type): Builder =
       builder(name, type.asTypeName())
 
     @JvmStatic public fun builder(name: String, type: KClass<*>): Builder =

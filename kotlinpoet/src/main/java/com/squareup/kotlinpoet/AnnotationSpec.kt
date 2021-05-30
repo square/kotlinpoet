@@ -23,7 +23,6 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleAnnotationValueVisitor7
-import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration. */
@@ -181,7 +180,13 @@ public class AnnotationSpec private constructor(
   }
 
   public companion object {
-    @JvmStatic @JvmOverloads public fun get(
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    @JvmOverloads
+    public fun get(
       annotation: Annotation,
       includeDefaultValues: Boolean = false
     ): AnnotationSpec {
@@ -223,10 +228,9 @@ public class AnnotationSpec private constructor(
       }
     }
 
-    @Deprecated(
+    @DelicateKotlinPoetApi(
       message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
-      level = WARNING
+        " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun get(annotation: AnnotationMirror): AnnotationSpec {
@@ -248,7 +252,12 @@ public class AnnotationSpec private constructor(
 
     @JvmStatic public fun builder(type: ParameterizedTypeName): Builder = Builder(type)
 
-    @JvmStatic public fun builder(type: Class<out Annotation>): Builder =
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead."
+    )
+    @JvmStatic
+    public fun builder(type: Class<out Annotation>): Builder =
       builder(type.asClassName())
 
     @JvmStatic public fun builder(type: KClass<out Annotation>): Builder =
