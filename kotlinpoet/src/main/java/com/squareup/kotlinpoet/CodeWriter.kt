@@ -451,8 +451,11 @@ internal class CodeWriter constructor(
     // We'll have to use the fully-qualified name.
     // Mark the member as importable for a future pass unless the name clashes with
     // a method in the current context
-    if (!kdoc && (memberName.isExtension ||
-          !isMethodNameUsedInCurrentContext(memberName.simpleName))) {
+    if (!kdoc && (
+      memberName.isExtension ||
+        !isMethodNameUsedInCurrentContext(memberName.simpleName)
+      )
+    ) {
       importableMember(memberName)
     }
 

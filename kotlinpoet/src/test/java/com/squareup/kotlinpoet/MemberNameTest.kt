@@ -554,14 +554,16 @@ class MemberNameTest {
             FunSpec.builder("hashCode")
               .addModifiers(OVERRIDE)
               .returns(INT)
-              .addCode(buildCodeBlock {
-                addStatement("var result = super.hashCode")
-                beginControlFlow("if (result == 0)")
-                addStatement("result = result * 37 + embedded_message.%M()", hashCode)
-                addStatement("super.hashCode = result")
-                endControlFlow()
-                addStatement("return result")
-              })
+              .addCode(
+                buildCodeBlock {
+                  addStatement("var result = super.hashCode")
+                  beginControlFlow("if (result == 0)")
+                  addStatement("result = result * 37 + embedded_message.%M()", hashCode)
+                  addStatement("super.hashCode = result")
+                  endControlFlow()
+                  addStatement("return result")
+                }
+              )
               .build()
           )
           .build()
@@ -571,7 +573,7 @@ class MemberNameTest {
     assertThat(file.toString()).isEqualTo(
       """
       package com.squareup.tacos
-    
+
       import kotlin.Int
       import kotlin.hashCode
 
