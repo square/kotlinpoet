@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 object versions {
-  const val kotlin = "1.5.0"
-  const val spotless = "5.12.4"
+  const val kotlin = "1.5.10"
+  const val spotless = "5.12.5"
   const val ktlint = "0.41.0"
   const val mavenPublish = "0.13.0"
   const val dokka = "1.4.32"
@@ -30,10 +30,10 @@ object deps {
     const val metadata = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0"
   }
   object test {
-    const val truth = "com.google.truth:truth:1.1.2"
+    const val truth = "com.google.truth:truth:1.1.3"
     const val compileTesting = "com.google.testing.compile:compile-testing:0.19"
-    const val jimfs = "com.google.jimfs:jimfs:1.1"
+    const val jimfs = "com.google.jimfs:jimfs:1.2"
     const val ecj = "org.eclipse.jdt.core.compiler:ecj:4.6.1"
-    const val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.0"
+    const val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.1"
   }
 }
