@@ -451,7 +451,8 @@ internal class CodeWriter constructor(
     // We'll have to use the fully-qualified name.
     // Mark the member as importable for a future pass unless the name clashes with
     // a method in the current context
-    if (!kdoc && !isMethodNameUsedInCurrentContext(memberName.simpleName)) {
+    if (!kdoc && (memberName.isExtension ||
+          !isMethodNameUsedInCurrentContext(memberName.simpleName))) {
       importableMember(memberName)
     }
 
@@ -604,7 +605,8 @@ internal class CodeWriter constructor(
       return false
     }
 
-    val containsOtherVisibility = modifiers.containsAnyOf(KModifier.PRIVATE, KModifier.INTERNAL, KModifier.PROTECTED)
+    val containsOtherVisibility =
+      modifiers.containsAnyOf(KModifier.PRIVATE, KModifier.INTERNAL, KModifier.PROTECTED)
 
     return !containsOtherVisibility
   }
