@@ -73,7 +73,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class Supertype : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseType(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseInterface
+      public class Supertype() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseType(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BaseInterface
       """.trimIndent()
     )
   }
@@ -93,7 +93,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class Properties {
+      public class Properties() {
         public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
         public val bar: kotlin.String? = null
@@ -117,7 +117,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class Properties {
+      public class Properties() {
         public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
 
         public val bar: kotlin.String? = null
@@ -143,7 +143,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class CompanionObject {
+      public class CompanionObject() {
         public companion object
       }
       """.trimIndent()
@@ -160,7 +160,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class NamedCompanionObject {
+      public class NamedCompanionObject() {
         public companion object Named
       }
       """.trimIndent()
@@ -251,7 +251,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class SuspendTypes {
+      public class SuspendTypes() {
         public val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = throw NotImplementedError("Stub!")
 
         public suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String): kotlin.Unit {
@@ -286,7 +286,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class Parameters {
+      public class Parameters() {
         public inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")): kotlin.Unit {
         }
 
@@ -317,7 +317,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class LambdaReceiver {
+      public class LambdaReceiver() {
         public fun lambdaReceiver(block: kotlin.String.() -> kotlin.Unit): kotlin.Unit {
         }
 
@@ -347,7 +347,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class NestedTypeAliasTest {
+      public class NestedTypeAliasTest() {
         public val prop: com.squareup.kotlinpoet.metadata.specs.test.NestedTypeAlias = throw NotImplementedError("Stub!")
       }
       """.trimIndent()
@@ -395,7 +395,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class FunctionsReferencingTypeParameters<T> {
+      public class FunctionsReferencingTypeParameters<T>() {
         public fun test(`param`: T): kotlin.Unit {
         }
       }
@@ -415,7 +415,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public abstract class OverriddenThings : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
+      public abstract class OverriddenThings() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
         public override var openProp: kotlin.String = throw NotImplementedError("Stub!")
 
         public override var openPropInterface: kotlin.String = throw NotImplementedError("Stub!")
@@ -460,7 +460,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class DelegatedProperties {
+      public class DelegatedProperties() {
         /**
          * Note: delegation is ABI stub only and not guaranteed to match source code.
          */
@@ -517,7 +517,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public enum class SimpleEnum {
+      public enum class SimpleEnum() {
         FOO,
         BAR,
         BAZ,
@@ -580,7 +580,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public enum class EnumWithAnnotation {
+      public enum class EnumWithAnnotation() {
         FOO,
         @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR,
@@ -693,7 +693,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(implSpec.trimmedToString()).isEqualTo(
       """
-      public class TestSubInterfaceImpl : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
+      public class TestSubInterfaceImpl() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.SubInterface {
         public override fun noDefault(): kotlin.Unit {
         }
 
@@ -825,7 +825,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class GenericClass<T> {
+      public class GenericClass<T>() {
         public fun <T> functionAlsoWithT(`param`: T): kotlin.Unit {
         }
 
@@ -869,7 +869,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class ComplexCompanionObject {
+      public class ComplexCompanionObject() {
         public companion object ComplexObject : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionBase(), com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.CompanionInterface
       }
       """.trimIndent()
@@ -1185,7 +1185,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class JvmAnnotations {
+      public class JvmAnnotations() {
         @get:kotlin.jvm.Synchronized
         public val synchronizedGetProp: kotlin.String? = null
 
@@ -1246,10 +1246,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class NestedClasses {
-        public abstract class NestedClass<T> : kotlin.collections.List<T>
+      public class NestedClasses() {
+        public abstract class NestedClass<T>() : kotlin.collections.List<T>
 
-        public inner class NestedInnerClass
+        public inner class NestedInnerClass()
       }
       """.trimIndent()
     )
@@ -1799,10 +1799,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class ClassNesting {
-        public class NestedClass {
-          public class SuperNestedClass {
-            public inner class SuperDuperInnerClass
+      public class ClassNesting() {
+        public class NestedClass() {
+          public class SuperNestedClass() {
+            public inner class SuperDuperInnerClass()
           }
         }
       }
@@ -1822,10 +1822,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class `Fuzzy${'$'}ClassNesting` {
-        public class `-Nested` {
-          public class SuperNestedClass {
-            public inner class `-${'$'}Fuzzy${'$'}Super${'$'}Weird-Nested${'$'}Name`
+      public class `Fuzzy${'$'}ClassNesting`() {
+        public class `-Nested`() {
+          public class SuperNestedClass() {
+            public inner class `-${'$'}Fuzzy${'$'}Super${'$'}Weird-Nested${'$'}Name`()
           }
         }
       }
@@ -1903,7 +1903,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
-      public class ClassAnnotations
+      public class ClassAnnotations()
       """.trimIndent()
     )
   }
@@ -1920,7 +1920,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.BinaryCustomClassAnnotation(name = "Binary")
       @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.RuntimeCustomClassAnnotation(name = "Runtime")
-      public class ClassAnnotations
+      public class ClassAnnotations()
       """.trimIndent()
     )
   }
@@ -1945,7 +1945,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class TypeAnnotations {
+      public class TypeAnnotations() {
         public val foo: kotlin.collections.List<@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String> = throw NotImplementedError("Stub!")
 
         public fun <T> bar(input: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String, input2: @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation (@com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.Int) -> @com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.TypeAnnotation kotlin.String): kotlin.Unit {
@@ -1978,13 +1978,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public class Asset<A : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> {
+      public class Asset<A : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>>() {
         public fun <D : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset<A>> function(): kotlin.Unit {
         }
 
-        public class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>
+        public class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>()
 
-        public class AssetOut<out B : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetOut<B>>
+        public class AssetOut<out B : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Asset.AssetOut<B>>()
       }
       """.trimIndent()
     )
@@ -2006,7 +2006,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public abstract class AbstractClass {
+      public abstract class AbstractClass() {
         public val baz: kotlin.String? = null
 
         public abstract val foo: kotlin.String
@@ -2044,7 +2044,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
-      public abstract class InternalAbstractPropertyHolder {
+      public abstract class InternalAbstractPropertyHolder() {
         internal abstract val valProp: kotlin.String
 
         internal abstract var varProp: kotlin.String
@@ -2065,7 +2065,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(abstractModalities.trimmedToString()).isEqualTo(
       """
-      public abstract class AbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
+      public abstract class AbstractModalities() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         public val implicitFinalProp: kotlin.String? = null
 
         public override val interfaceProp: kotlin.String? = null
@@ -2089,7 +2089,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(finalAbstractModalities.trimmedToString()).isEqualTo(
       """
-      public abstract class FinalAbstractModalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
+      public abstract class FinalAbstractModalities() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         public final override val interfaceProp: kotlin.String? = null
 
         public final override fun interfaceFun(): kotlin.Unit {
@@ -2103,7 +2103,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     //language=kotlin
     assertThat(modalities.trimmedToString()).isEqualTo(
       """
-      public class Modalities : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.AbstractModalities() {
+      public class Modalities() : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.AbstractModalities() {
         public override val interfaceProp: kotlin.String? = null
 
         public override val openProp: kotlin.String? = null

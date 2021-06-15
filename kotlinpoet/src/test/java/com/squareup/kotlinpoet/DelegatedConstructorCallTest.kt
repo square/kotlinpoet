@@ -110,7 +110,7 @@ class DelegatedConstructorCallTest {
     builder.addFunction(secondaryConstructorBuilder.build())
     assertThat(builder.build().toString()).isEqualTo(
       """
-        |public class Test {
+        |public class Test() {
         |  public constructor(foo: kotlin.String) : this()
         |}
         |""".trimMargin()

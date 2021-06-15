@@ -956,8 +956,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |public class Location<P, Q> : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q :
-        |    Comparable {
+        |public class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q
+        |    : Comparable {
         |  public val x: P
         |
         |  public val y: @A Q
@@ -1362,7 +1362,7 @@ class TypeSpecTest {
         |
         |import java.lang.Deprecated
         |
-        |annotation class Bar {
+        |annotation class Bar() {
         |  fun value(): Deprecated default @Deprecated
         |}
         |""".trimMargin()
@@ -4138,8 +4138,8 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |public class StringToInteger : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0
-        |    }), Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
+        |public class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?:
+        |    0 }), Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -4969,6 +4969,23 @@ class TypeSpecTest {
         public fun barWithDefault(): Unit {
         }
       }
+
+      """.trimIndent()
+    )
+  }
+
+  @Test fun emptyConstructorGenerated() {
+    val taco = TypeSpec.classBuilder("Taco")
+      .primaryConstructor(FunSpec.constructorBuilder().build())
+      .build()
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addType(taco)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      public class Taco()
 
       """.trimIndent()
     )

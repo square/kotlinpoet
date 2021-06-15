@@ -214,13 +214,10 @@ public class ParameterSpec private constructor(
 internal fun List<ParameterSpec>.emit(
   codeWriter: CodeWriter,
   forceNewLines: Boolean = false,
-  forceParensOnEmpty: Boolean = true,
   emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
 ) = with(codeWriter) {
-  val emitParens = isNotEmpty() || forceParensOnEmpty
-  if (emitParens) {
-    emit("(")
-  }
+  emit("(")
+
   if (size > 0) {
     val emitNewLines = size > 2 || forceNewLines
     if (emitNewLines) {
@@ -237,7 +234,5 @@ internal fun List<ParameterSpec>.emit(
       emit("\n")
     }
   }
-  if (emitParens) {
-    emit(")")
-  }
+  emit(")")
 }
