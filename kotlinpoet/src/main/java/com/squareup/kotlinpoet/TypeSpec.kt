@@ -166,27 +166,24 @@ public class TypeSpec private constructor(
 
         primaryConstructor?.let {
           codeWriter.pushType(this) // avoid name collisions when emitting primary constructor
-          var useKeyword = false
-          var emittedAnnotations = false
+          val emittedAnnotations = it.annotations.isNotEmpty()
+          val useKeyword = it.annotations.isNotEmpty() || it.modifiers.isNotEmpty()
 
           if (it.annotations.isNotEmpty()) {
             codeWriter.emit(" ")
             codeWriter.emitAnnotations(it.annotations, true)
-            useKeyword = true
-            emittedAnnotations = true
           }
 
           if (it.modifiers.isNotEmpty()) {
             if (!emittedAnnotations) codeWriter.emit(" ")
             codeWriter.emitModifiers(it.modifiers)
-            useKeyword = true
           }
 
           if (useKeyword) {
             codeWriter.emit("constructor")
           }
 
-          it.parameters.emit(codeWriter, forceParensOnEmpty = useKeyword, forceNewLines = true) { param ->
+          it.parameters.emit(codeWriter, forceNewLines = true) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(
@@ -198,6 +195,7 @@ public class TypeSpec private constructor(
               param.emit(codeWriter, emitKdoc = true, inlineAnnotations = false)
             }
           }
+
           codeWriter.popType()
         }
 
