@@ -168,6 +168,7 @@ internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 // https://kotlinlang.org/docs/reference/keyword-reference.html
 private val KEYWORDS = setOf(
   // Hard keywords
+  "_",
   "as",
   "break",
   "class",
@@ -251,9 +252,13 @@ private val KEYWORDS = setOf(
 
 private const val ALLOWED_CHARACTER = '$'
 
+private const val UNDERSCORE_CHARACTER = '_'
+
 internal val String.isKeyword get() = this in KEYWORDS
 
 internal val String.hasAllowedCharacters get() = this.any { it == ALLOWED_CHARACTER }
+
+internal val String.allCharactersAreUnderscore get() = this.all { it == UNDERSCORE_CHARACTER }
 
 // https://github.com/JetBrains/kotlin/blob/master/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JvmSimpleNameBacktickChecker.kt
 private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
@@ -265,19 +270,19 @@ private fun String.failIfEscapeInvalid() {
   }
 }
 
-internal fun String.escapeIfNecessary(validate: Boolean = true): String {
-  val escapedString = escapeIfNotJavaIdentifier().escapeIfKeyword().escapeIfHasAllowedCharacters()
-  if (validate) {
-    escapedString.failIfEscapeInvalid()
-  }
-  return escapedString
-}
+internal fun String.escapeIfNecessary(validate: Boolean = true): String = escapeIfNotJavaIdentifier()
+    .escapeIfKeyword()
+    .escapeIfHasAllowedCharacters()
+    .escapeIfAllCharactersAreUnderscore()
+    .apply { if (!validate) failIfEscapeInvalid() }
 
 private fun String.alreadyEscaped() = startsWith("`") && endsWith("`")
 
 private fun String.escapeIfKeyword() = if (isKeyword && !alreadyEscaped()) "`$this`" else this
 
 private fun String.escapeIfHasAllowedCharacters() = if (hasAllowedCharacters && !alreadyEscaped()) "`$this`" else this
+
+private fun String.escapeIfAllCharactersAreUnderscore() = if (allCharactersAreUnderscore && !alreadyEscaped()) "`$this`" else this
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if (!Character.isJavaIdentifierStart(first()) ||
