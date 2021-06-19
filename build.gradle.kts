@@ -28,8 +28,6 @@ spotless {
   kotlin {
     target("**/*.kt")
     ktlint(versions.ktlint).userData(mapOf("indent_size" to "2"))
-    trimTrailingWhitespace()
-    endWithNewline()
   }
 }
 
