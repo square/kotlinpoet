@@ -270,10 +270,10 @@ private fun String.failIfEscapeInvalid() {
 }
 
 internal fun String.escapeIfNecessary(validate: Boolean = true): String = escapeIfNotJavaIdentifier()
-    .escapeIfKeyword()
-    .escapeIfHasAllowedCharacters()
-    .escapeIfAllCharactersAreUnderscore()
-    .apply { if (!validate) failIfEscapeInvalid() }
+  .escapeIfKeyword()
+  .escapeIfHasAllowedCharacters()
+  .escapeIfAllCharactersAreUnderscore()
+  .apply { if (validate) failIfEscapeInvalid() }
 
 private fun String.alreadyEscaped() = startsWith("`") && endsWith("`")
 
