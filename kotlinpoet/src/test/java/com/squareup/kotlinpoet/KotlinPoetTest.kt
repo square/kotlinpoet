@@ -1224,10 +1224,10 @@ class KotlinPoetTest {
     )
   }
 
-  @Test fun allStringsAreEscaped() {
-    val file = FileSpec.builder("com.squareup.tacos", "SourceWithEscapedStrings")
+  @Test fun allStringsAreUnderscore() {
+    val file = FileSpec.builder("com.squareup.tacos", "SourceWithUnderscores")
       .addType(
-        TypeSpec.classBuilder("SourceWithEscapedStrings")
+        TypeSpec.classBuilder("SourceWithUnderscores")
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("_", Float::class)
@@ -1253,7 +1253,7 @@ class KotlinPoetTest {
       |
       |import kotlin.Float
       |
-      |public class SourceWithEscapedStrings(
+      |public class SourceWithUnderscores(
       |  public val `_`: Float,
       |  public val `____`: Float
       |)
