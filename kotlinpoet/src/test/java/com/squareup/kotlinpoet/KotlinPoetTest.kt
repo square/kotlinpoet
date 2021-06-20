@@ -1223,4 +1223,41 @@ class KotlinPoetTest {
       |""".trimMargin()
     )
   }
+
+  @Test fun allStringsAreEscaped() {
+    val file = FileSpec.builder("com.squareup.tacos", "SourceWithEscapedStrings")
+      .addType(
+        TypeSpec.classBuilder("SourceWithEscapedStrings")
+          .primaryConstructor(
+            FunSpec.constructorBuilder()
+              .addParameter("_", Float::class)
+              .addParameter("____", Float::class)
+              .build()
+          )
+          .addProperty(
+            PropertySpec.builder("_", Float::class)
+              .initializer("_")
+              .build()
+          )
+          .addProperty(
+            PropertySpec.builder("____", Float::class)
+              .initializer("____")
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Float
+      |
+      |public class SourceWithEscapedStrings(
+      |  public val `_`: Float,
+      |  public val `____`: Float
+      |)
+      |""".trimMargin()
+    )
+  }
 }
