@@ -1223,4 +1223,41 @@ class KotlinPoetTest {
       |""".trimMargin()
     )
   }
+
+  @Test fun allStringsAreUnderscore() {
+    val file = FileSpec.builder("com.squareup.tacos", "SourceWithUnderscores")
+      .addType(
+        TypeSpec.classBuilder("SourceWithUnderscores")
+          .primaryConstructor(
+            FunSpec.constructorBuilder()
+              .addParameter("_", Float::class)
+              .addParameter("____", Float::class)
+              .build()
+          )
+          .addProperty(
+            PropertySpec.builder("_", Float::class)
+              .initializer("_")
+              .build()
+          )
+          .addProperty(
+            PropertySpec.builder("____", Float::class)
+              .initializer("____")
+              .build()
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Float
+      |
+      |public class SourceWithUnderscores(
+      |  public val `_`: Float,
+      |  public val `____`: Float
+      |)
+      |""".trimMargin()
+    )
+  }
 }
