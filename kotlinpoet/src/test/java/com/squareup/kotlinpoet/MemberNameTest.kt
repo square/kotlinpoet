@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.junit.Before
@@ -540,6 +541,54 @@ class MemberNameTest {
       |  return taco
       |}
       |""".trimMargin()
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1089
+  @Test fun `extension MemberName imported if name clash`() {
+    val hashCode = MemberName("kotlin", "hashCode", isExtension = true)
+    val file = FileSpec.builder("com.squareup.tacos", "Message")
+      .addType(
+        TypeSpec.classBuilder("Message")
+          .addFunction(
+            FunSpec.builder("hashCode")
+              .addModifiers(OVERRIDE)
+              .returns(INT)
+              .addCode(
+                buildCodeBlock {
+                  addStatement("var result = super.hashCode")
+                  beginControlFlow("if (result == 0)")
+                  addStatement("result = result * 37 + embedded_message.%M()", hashCode)
+                  addStatement("super.hashCode = result")
+                  endControlFlow()
+                  addStatement("return result")
+                }
+              )
+              .build()
+          )
+          .build()
+      )
+      .build()
+    //language=kotlin
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.Int
+      import kotlin.hashCode
+
+      public class Message {
+        public override fun hashCode(): Int {
+          var result = super.hashCode
+          if (result == 0) {
+            result = result * 37 + embedded_message.hashCode()
+            super.hashCode = result
+          }
+          return result
+        }
+      }
+
+      """.trimIndent()
     )
   }
 }

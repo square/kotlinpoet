@@ -24,20 +24,89 @@ import kotlin.reflect.KClass
  * @param enclosingClassName e.g. `Map.Entry.Companion`, if the member is declared inside the
  * companion object of the Map.Entry class
  * @param simpleName e.g. `isBlank`, `size`
+ * @param isExtension whether the member is an extension property or an extension function. Default
+ * is false.
+ *
+ * If there is a member with the same name as this member in a local scope, the generated code will
+ * include this member's fully-qualified name to avoid ambiguity, e.g.:
+ *
+ * ```kotlin
+ * package com.squareup.tacos
+ *
+ * import kotlin.Unit
+ *
+ * public class TacoTest {
+ *   public fun test(): Unit {
+ *     kotlin.error("errorText")
+ *   }
+ *
+ *   public fun error(): Unit {
+ *   }
+ * }
+ * ```
+ *
+ * However, since Kotlin compiler does not allow fully-qualified extension members, if [isExtension]
+ * is set to true for this [MemberName], the generated code will include an import for this member
+ * and its simple name at the call site, e.g.:
+ *
+ * ```kotlin
+ * package com.squareup.tacos
+ *
+ * import kotlin.Unit
+ * import kotlin.hashCode
+ *
+ * public class TacoTest {
+ *   public override fun hashCode(): Unit {
+ *     var result = super.hashCode
+ *     if (result == 0) {
+ *       result = result * 37 + embedded_message.hashCode()
+ *       super.hashCode = result
+ *     }
+ *     return result
+ *   }
+ * }
+ * ```
  */
 public data class MemberName internal constructor(
   public val packageName: String,
   public val enclosingClassName: ClassName?,
   public val simpleName: String,
-  public val operator: KOperator? = null
+  public val operator: KOperator? = null,
+  public val isExtension: Boolean = false,
 ) {
-  public constructor(packageName: String, simpleName: String) : this(packageName, null, simpleName)
-  public constructor(enclosingClassName: ClassName, simpleName: String) :
-    this(enclosingClassName.packageName, enclosingClassName, simpleName)
-  public constructor(packageName: String, operator: KOperator) :
-    this(packageName, null, operator.functionName, operator)
-  public constructor(enclosingClassName: ClassName, operator: KOperator) :
-    this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
+  // TODO(egorand): Reduce the number of overloaded constructors in KotlinPoet 2.0.
+
+  public constructor(
+    packageName: String,
+    simpleName: String
+  ) : this(packageName, enclosingClassName = null, simpleName)
+
+  public constructor(
+    packageName: String,
+    simpleName: String,
+    isExtension: Boolean
+  ) : this(packageName, enclosingClassName = null, simpleName, operator = null, isExtension)
+
+  public constructor(
+    enclosingClassName: ClassName,
+    simpleName: String
+  ) : this(enclosingClassName.packageName, enclosingClassName, simpleName)
+
+  public constructor(
+    enclosingClassName: ClassName,
+    simpleName: String,
+    isExtension: Boolean
+  ) : this(enclosingClassName.packageName, enclosingClassName, simpleName, operator = null, isExtension)
+
+  public constructor(
+    packageName: String,
+    operator: KOperator
+  ) : this(packageName, enclosingClassName = null, operator.functionName, operator)
+
+  public constructor(
+    enclosingClassName: ClassName,
+    operator: KOperator
+  ) : this(enclosingClassName.packageName, enclosingClassName, operator.functionName, operator)
 
   /** Fully qualified name using `.` as a separator, like `kotlin.String.isBlank`. */
   public val canonicalName: String = buildString {
