@@ -1,10 +1,24 @@
 Change Log
 ==========
 
+## Version 1.9.0
+
+_2021-06-22_
+
+ * New: Kotlin 1.5.10.
+ * New: Previously deprecated API to interop with Java reflection and Mirror API have been
+   un-deprecated and marked with `@DelicateKotlinPoetApi` annotation.
+ * New: `CodeBlock.Builder.withIndent` helper function.
+ * New: Allow changing initializers and default values in `ParameterSpec.Builder` and 
+   `PropertySpec.Builder` after they were set.
+ * New: `MemberName.isExtension` property that instructs KotlinPoet to always import the member,
+   even if conflicting declarations are present in the same scope.
+ * Fix: Escape member names that only contain underscores.
+ * Fix: Always emit an empty primary constructor if it was set via `TypeSpec.primaryConstructor`.
+
 ## Version 1.8.0
 
 _2021-03-29_
-
  
  * New: Kotlin 1.4.31.
  * New: Add `KModifier.VALUE` to support `value class` declarations.
