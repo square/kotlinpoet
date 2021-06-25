@@ -59,7 +59,8 @@ subprojects {
     apply(plugin = "com.vanniktech.maven.publish")
     afterEvaluate {
       tasks.named<DokkaTask>("dokkaHtml") {
-        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x"))
+        val projectFolder = project.path.trim(':').replace(':', '-')
+        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
         dokkaSourceSets.configureEach {
           skipDeprecated.set(true)
         }
