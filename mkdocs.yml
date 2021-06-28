@@ -47,10 +47,10 @@ nav:
     - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
   - 'API':
     - 'kotlinpoet': 1.x/kotlinpoet/index.html
-    - 'interop-kotlinx-metadata-classinspectors-elements': 1.x/elements/index.html
-    - 'interop-kotlinx-metadata-classinspectors-reflect': 1.x/reflect/index.html
-    - 'interop-kotlinx-metadata-core': 1.x/core/index.html
-    - 'interop-kotlinx-metadata-specs': 1.x/specs/index.html
+    - 'interop-kotlinx-metadata-classinspectors-elements': 1.x/interop-kotlinx-metadata-classinspectors-elements/index.html
+    - 'interop-kotlinx-metadata-classinspectors-reflect': 1.x/interop-kotlinx-metadata-classinspectors-reflect/index.html
+    - 'interop-kotlinx-metadata-core': 1.x/interop-kotlinx-metadata-core/index.html
+    - 'interop-kotlinx-metadata-specs': 1.x/interop-kotlinx-metadata-specs/index.html
   - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
   - 'Change Log': changelog.md
   - 'Contributing': contributing.md
