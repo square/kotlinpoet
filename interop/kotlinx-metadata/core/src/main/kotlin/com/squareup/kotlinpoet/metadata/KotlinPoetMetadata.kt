@@ -87,7 +87,7 @@ public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetada
 public fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
   val metadata = KotlinClassMetadata.read(asClassHeader())
   checkNotNull(metadata) {
-    "Could not parse metadata! This should only happen if you're using Kotlin <1.1."
+    "Could not parse metadata! Try bumping kotlinpoet and/or kotlinx-metadata version."
   }
   return metadata
 }
