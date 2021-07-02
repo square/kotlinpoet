@@ -141,6 +141,10 @@ class UtilTest {
     assertThat("A-\$B".escapeIfNecessary()).isEqualTo("`A-\$B`")
   }
 
+  @Test fun escapeEscaped() {
+    assertThat("`A`".escapeIfNecessary()).isEqualTo("`A`")
+  }
+
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
   private fun stringLiteral(expected: String, value: String) =
