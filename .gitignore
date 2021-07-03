@@ -3,6 +3,7 @@
 .project
 .settings
 eclipsebin
+local.properties
 
 bin
 gen
