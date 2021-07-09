@@ -18,7 +18,7 @@ object versions {
   const val spotless = "5.13.0"
   const val ktlint = "0.41.0"
   const val mavenPublish = "0.15.1"
-  const val dokka = "1.4.32"
+  const val dokka = "1.5.0"
 }
 
 object deps {
