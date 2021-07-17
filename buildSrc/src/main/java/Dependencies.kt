@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 object versions {
-  const val kotlin = "1.5.20"
-  const val spotless = "5.13.0"
+  const val kotlin = "1.5.21"
+  const val spotless = "5.14.1"
   const val ktlint = "0.41.0"
-  const val mavenPublish = "0.15.1"
+  const val mavenPublish = "0.17.0"
   const val dokka = "1.5.0"
 }
 
 object deps {
-  const val autoCommon = "com.google.auto:auto-common:1.0.1"
+  const val autoCommon = "com.google.auto:auto-common:1.1"
   const val guava = "com.google.guava:guava:30.1.1-jre"
   object kotlin {
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
