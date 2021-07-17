@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CodeBlock</title>
+<link href="../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="kotlinpoet::com.squareup.kotlinpoet/CodeBlock///PointingToDeclaration//434084118">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">kotlinpoet</a>/<a href="../index.html">com.squareup.kotlinpoet</a>/<a href="index.html">CodeBlock</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Code</span><wbr></wbr><span>Block</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">class <a href="index.html">CodeBlock</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">A fragment of a .kt file, potentially containing declarations, statements, and documentation. Code blocks are not necessarily well-formed Kotlin code, and are not validated. This class assumes kotlinc will check correctness later!</p><p class="paragraph">Code blocks support placeholders like <a href="https://docs.oracle.com/javase/8/docs/api/java/text/Format.html">java.text.Format</a>. This class primarily uses a percent sign <code>%</code> but has its own set of permitted placeholders:</p><ul><li><p class="paragraph"><code>%L</code> emits a literal value with no escaping. Arguments for literals may be strings,     primitives, <a href="../-type-spec/index.html">type declarations</a>, <a href="../-annotation-spec/index.html">annotations</a> and even other code     blocks.</p></li><li><p class="paragraph"><code>%N</code> emits a name, using name collision avoidance where necessary. Arguments for names may     be strings (actually any <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char-sequence/index.html">character sequence</a>), <a href="../-parameter-spec/index.html">parameters</a>,     <a href="../-property-spec/index.html">properties</a>, <a href="../-fun-spec/index.html">functions</a>, and <a href="../-type-spec/index.html">types</a>.</p></li><li><p class="paragraph"><code>%S</code> escapes the value as a string, wraps it with double quotes, and emits that. For     example, <code>6&quot; sandwich</code> is emitted <code>&quot;6\&quot; sandwich&quot;</code>. <code>%S</code> will also escape all dollar signs     (<code>$</code>), use <code>%P</code> for string templates.</p></li><li><p class="paragraph"><code>%P</code> - Similar to <code>%S</code>, but doesn't escape dollar signs (<code>$</code>) to allow creation of string     templates. If the string contains dollar signs that should be escaped - use <code>%S</code>.</p></li><li><p class="paragraph"><code>%T</code> emits a type reference. Types will be imported if possible. Arguments for types may be     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">classes</a>.</p></li><li><p class="paragraph"><code>%M</code> emits a member reference. A member is either a function or a property. If the member is     importable, e.g. it's a top-level function or a property declared inside an object, the import     will be resolved if possible. Arguments for members must be of type <a href="../-member-name/index.html">MemberName</a>.</p></li><li><p class="paragraph"><code>%%</code> emits a percent sign.</p></li><li><p class="paragraph"><code>·</code> emits a space that never wraps. KotlinPoet prefers to wrap lines longer than 100 columns.     It does this by replacing normal spaces with a newline and indent. Note that spaces in strings     are never wrapped.</p></li><li><p class="paragraph"><code>⇥</code> increases the indentation level.</p></li><li><p class="paragraph"><code>⇤</code> decreases the indentation level.</p></li><li><p class="paragraph"><code>«</code> begins a statement. For multiline statements, every line after the first line is     double-indented.</p></li><li><p class="paragraph"><code>»</code> ends a statement.</p></li></ul></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Functions">Functions</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="-1657502597%2FClasslikes%2F434084118" anchor-label="Builder" id="-1657502597%2FClasslikes%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-builder/index.html">Builder</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1657502597%2FClasslikes%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">class <a href="-builder/index.html">Builder</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1372542186%2FClasslikes%2F434084118" anchor-label="Companion" id="1372542186%2FClasslikes%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-companion/index.html">Companion</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1372542186%2FClasslikes%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">object <a href="-companion/index.html">Companion</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="-732281270%2FFunctions%2F434084118" anchor-label="equals" id="-732281270%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="equals.html">equals</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-732281270%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">open operator override fun <a href="equals.html">equals</a>(other: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>?): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="583386972%2FFunctions%2F434084118" anchor-label="hashCode" id="583386972%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="hash-code.html">hashCode</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="583386972%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">open override fun <a href="hash-code.html">hashCode</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1543039936%2FFunctions%2F434084118" anchor-label="isEmpty" id="-1543039936%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="is-empty.html">isEmpty</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1543039936%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">fun <a href="is-empty.html">isEmpty</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1543039936%2FFunctions%2F434084118" anchor-label="isEmpty" id="-1543039936%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a><div class="brief "><a data-name="-1543039936%2FFunctions%2F434084118" anchor-label="isEmpty" id="-1543039936%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>A heterogeneous list containing string literals and value placeholders.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1702616979%2FFunctions%2F434084118" anchor-label="isNotEmpty" id="1702616979%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="is-not-empty.html">isNotEmpty</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1702616979%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">fun <a href="is-not-empty.html">isNotEmpty</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-318361853%2FFunctions%2F434084118" anchor-label="toBuilder" id="-318361853%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-builder.html">toBuilder</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-318361853%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">fun <a href="to-builder.html">toBuilder</a>(): <a href="-builder/index.html">CodeBlock.Builder</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="405220907%2FFunctions%2F434084118" anchor-label="toString" id="405220907%2FFunctions%2F434084118" data-filterable-set=":kotlinpoet:dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-string.html">toString</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="405220907%2FFunctions%2F434084118"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlinpoet:dokkaHtml/main" data-filterable-set=":kotlinpoet:dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlinpoet:dokkaHtml/main"><div class="symbol monospace">open override fun <a href="to-string.html">toString</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

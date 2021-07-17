@@ -1,0 +1,2177 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Kotlin API for generating .kt source files">
+      
+      
+      
+        <meta name="author" content="Square, Inc.">
+      
+      <link rel="shortcut icon" href="images/icon-square.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.7">
+    
+    
+      
+        <title>KotlinPoet - KotlinPoet</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.b8ac9624.min.css">
+      
+        <link rel="stylesheet" href="assets/stylesheets/palette.28f3ef9a.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#00bcd4">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="css/app.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="cyan" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kotlinpoet" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="." title="KotlinPoet" class="md-header-nav__button md-logo" aria-label="KotlinPoet">
+      
+  <img src="images/icon-square.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis md-ellipsis">
+          KotlinPoet
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/square/kotlinpoet/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KotlinPoet
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="KotlinPoet" class="md-nav__button md-logo" aria-label="KotlinPoet">
+      
+  <img src="images/icon-square.png" alt="logo">
+
+    </a>
+    KotlinPoet
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/square/kotlinpoet/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KotlinPoet
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1" checked>
+    
+    <label class="md-nav__link" for="nav-1">
+      Overview
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Overview" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Overview
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        KotlinPoet
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="." title="KotlinPoet" class="md-nav__link md-nav__link--active">
+      KotlinPoet
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-control-flow" class="md-nav__link">
+    Code &amp; Control Flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s-for-strings" class="md-nav__link">
+    %S for Strings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p-for-string-templates" class="md-nav__link">
+    %P for String Templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#t-for-types" class="md-nav__link">
+    %T for Types
+  </a>
+  
+    <nav class="md-nav" aria-label="%T for Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nullable-types" class="md-nav__link">
+    Nullable Types
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#m-for-members" class="md-nav__link">
+    %M for Members
+  </a>
+  
+    <nav class="md-nav" aria-label="%M for Members">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#membername-and-operators" class="md-nav__link">
+    MemberName and operators
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#n-for-names" class="md-nav__link">
+    %N for Names
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#l-for-literals" class="md-nav__link">
+    %L for Literals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-block-format-strings" class="md-nav__link">
+    Code block format strings
+  </a>
+  
+    <nav class="md-nav" aria-label="Code block format strings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relative-arguments" class="md-nav__link">
+    Relative Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positional-arguments" class="md-nav__link">
+    Positional Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    Named Arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extension-functions" class="md-nav__link">
+    Extension functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-expression-functions" class="md-nav__link">
+    Single-expression functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-function-arguments" class="md-nav__link">
+    Default function arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spaces-wrap-by-default" class="md-nav__link">
+    Spaces wrap by default!
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    Constructors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inline-properties" class="md-nav__link">
+    Inline properties
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    Objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    Enums
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anonymous-inner-classes" class="md-nav__link">
+    Anonymous Inner Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    Annotations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-aliases" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#callable-references" class="md-nav__link">
+    Callable References
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download" class="md-nav__link">
+    Download
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="interop-kotlinx-metadata/" title="Interop - kotlinx-metadata" class="md-nav__link">
+      Interop - kotlinx-metadata
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      API
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="API" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="1.x/kotlinpoet/" title="kotlinpoet" class="md-nav__link">
+      kotlinpoet
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="1.x/interop-kotlinx-metadata-classinspectors-elements/" title="interop-kotlinx-metadata-classinspectors-elements" class="md-nav__link">
+      interop-kotlinx-metadata-classinspectors-elements
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="1.x/interop-kotlinx-metadata-classinspectors-reflect/" title="interop-kotlinx-metadata-classinspectors-reflect" class="md-nav__link">
+      interop-kotlinx-metadata-classinspectors-reflect
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="1.x/interop-kotlinx-metadata-core/" title="interop-kotlinx-metadata-core" class="md-nav__link">
+      interop-kotlinx-metadata-core
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="1.x/interop-kotlinx-metadata-specs/" title="interop-kotlinx-metadata-specs" class="md-nav__link">
+      interop-kotlinx-metadata-specs
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active" title="Stack Overflow ⏏" class="md-nav__link">
+      Stack Overflow ⏏
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="changelog/" title="Change Log" class="md-nav__link">
+      Change Log
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="contributing/" title="Contributing" class="md-nav__link">
+      Contributing
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-control-flow" class="md-nav__link">
+    Code &amp; Control Flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s-for-strings" class="md-nav__link">
+    %S for Strings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p-for-string-templates" class="md-nav__link">
+    %P for String Templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#t-for-types" class="md-nav__link">
+    %T for Types
+  </a>
+  
+    <nav class="md-nav" aria-label="%T for Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nullable-types" class="md-nav__link">
+    Nullable Types
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#m-for-members" class="md-nav__link">
+    %M for Members
+  </a>
+  
+    <nav class="md-nav" aria-label="%M for Members">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#membername-and-operators" class="md-nav__link">
+    MemberName and operators
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#n-for-names" class="md-nav__link">
+    %N for Names
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#l-for-literals" class="md-nav__link">
+    %L for Literals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-block-format-strings" class="md-nav__link">
+    Code block format strings
+  </a>
+  
+    <nav class="md-nav" aria-label="Code block format strings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relative-arguments" class="md-nav__link">
+    Relative Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positional-arguments" class="md-nav__link">
+    Positional Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-arguments" class="md-nav__link">
+    Named Arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extension-functions" class="md-nav__link">
+    Extension functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-expression-functions" class="md-nav__link">
+    Single-expression functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-function-arguments" class="md-nav__link">
+    Default function arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spaces-wrap-by-default" class="md-nav__link">
+    Spaces wrap by default!
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    Constructors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inline-properties" class="md-nav__link">
+    Inline properties
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    Objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    Enums
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anonymous-inner-classes" class="md-nav__link">
+    Anonymous Inner Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    Annotations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-aliases" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#callable-references" class="md-nav__link">
+    Callable References
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download" class="md-nav__link">
+    Download
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/square/kotlinpoet/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="kotlinpoet">KotlinPoet<a class="headerlink" href="#kotlinpoet" title="Permanent link">&para;</a></h1>
+<p><code>KotlinPoet</code> is a Kotlin and Java API for generating <code>.kt</code> source files.</p>
+<p>Source file generation can be useful when doing things such as annotation processing or interacting
+with metadata files (e.g., database schemas, protocol formats). By generating code, you eliminate
+the need to write boilerplate while also keeping a single source of truth for the metadata.</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>Here&rsquo;s a <code>HelloWorld</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Greeter</span><span class="p">(</span><span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">greet</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;&quot;&quot;Hello, $name&quot;&quot;&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="k">vararg</span> <span class="n">args</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">Greeter</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">]).</span><span class="n">greet</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>And this is the code to generate it with KotlinPoet:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">greeterClass</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;Greeter&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;Greeter&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">primaryConstructor</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">constructorBuilder</span><span class="p">()</span>
+            <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;greet&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(%P)&quot;</span><span class="p">,</span> <span class="s">&quot;Hello, \$name&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;args&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">VARARG</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;%T(args[0]).greet()&quot;</span><span class="p">,</span> <span class="n">greeterClass</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="n">file</span><span class="p">.</span><span class="n">writeTo</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="k">out</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The <a href="https://square.github.io/kotlinpoet/1.x/kotlinpoet/com.squareup.kotlinpoet/">KDoc</a> catalogs the complete KotlinPoet API, which is inspired by <a href="https://github.com/square/javapoet/">JavaPoet</a>.</p>
+<h3 id="code-control-flow">Code &amp; Control Flow<a class="headerlink" href="#code-control-flow" title="Permanent link">&para;</a></h3>
+<p>Most of KotlinPoet&rsquo;s API uses immutable Kotlin objects. There&rsquo;s also builders, method chaining
+and varargs to make the API friendly. KotlinPoet offers models for Kotlin files (<code>FileSpec</code>),
+classes, interfaces &amp; objects (<code>TypeSpec</code>), type aliases (<code>TypeAliasSpec</code>),
+properties (<code>PropertySpec</code>), functions &amp; constructors (<code>FunSpec</code>), parameters (<code>ParameterSpec</code>) and
+annotations (<code>AnnotationSpec</code>).</p>
+<p>But the <em>body</em> of methods and constructors is not modeled. There&rsquo;s no expression class, no
+statement class or syntax tree nodes. Instead, KotlinPoet uses strings for code blocks, and you can 
+take advantage of Kotlin&rsquo;s multiline strings to make this look nice:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">main</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addCode</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        |var total = 0</span>
+<span class="s">        |for (i in 0 until 10) {</span>
+<span class="s">        |    total += i</span>
+<span class="s">        |}</span>
+<span class="s">        |&quot;&quot;&quot;</span><span class="p">.</span><span class="n">trimMargin</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="py">total</span> <span class="p">=</span> <span class="m">0</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="m">0</span> <span class="n">until</span> <span class="m">10</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">total</span> <span class="p">+=</span> <span class="n">i</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>There are additional APIs to assist with newlines, braces and indentation:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">main</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;var total = 0&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">beginControlFlow</span><span class="p">(</span><span class="s">&quot;for (i in 0 until 10)&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;total += i&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">endControlFlow</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This example is lame because the generated code is constant! Suppose instead of just adding 0 to 10,
+we want to make the operation and range configurable. Here&rsquo;s a method that generates a method:</p>
+<div class="highlight"><pre><span></span><code><span class="k">private</span> <span class="k">fun</span> <span class="nf">computeRange</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">FunSpec</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;var result = 1&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">beginControlFlow</span><span class="p">(</span><span class="s">&quot;for (i in $from until $to)&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result = result $op i&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">endControlFlow</span><span class="p">()</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return result&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>And here&rsquo;s what we get when we call <code>computeRange("multiply10to20", 10, 20, "*")</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">multiply10to20</span><span class="p">():</span> <span class="n">kotlin</span><span class="p">.</span><span class="n">Int</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="py">result</span> <span class="p">=</span> <span class="m">1</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="m">10</span> <span class="n">until</span> <span class="m">20</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="p">=</span> <span class="n">result</span> <span class="p">*</span> <span class="n">i</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Methods generating methods! And since KotlinPoet generates source instead of bytecode, you can
+read through it to make sure it&rsquo;s right.</p>
+<h3 id="s-for-strings">%S for Strings<a class="headerlink" href="#s-for-strings" title="Permanent link">&para;</a></h3>
+<p>When emitting code that includes string literals, we can use <strong><code>%S</code></strong> to emit a <strong>string</strong>, complete
+with wrapping quotation marks and escaping. Here&rsquo;s a program that emits 3 methods, each of which
+returns its own name:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">whatsMyNameYo</span><span class="p">(</span><span class="s">&quot;slimShady&quot;</span><span class="p">))</span>
+      <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">whatsMyNameYo</span><span class="p">(</span><span class="s">&quot;eminem&quot;</span><span class="p">))</span>
+      <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">whatsMyNameYo</span><span class="p">(</span><span class="s">&quot;marshallMathers&quot;</span><span class="p">))</span>
+      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+  <span class="k">val</span> <span class="py">kotlinFile</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example.helloworld&quot;</span><span class="p">,</span> <span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="n">helloWorld</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+  <span class="n">kotlinFile</span><span class="p">.</span><span class="n">writeTo</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="k">out</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">fun</span> <span class="nf">whatsMyNameYo</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">FunSpec</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %S&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>In this case, using <code>%S</code> gives us quotation marks:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">slimShady</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;slimShady&quot;</span>
+
+    <span class="k">fun</span> <span class="nf">eminem</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;eminem&quot;</span>
+
+    <span class="k">fun</span> <span class="nf">marshallMathers</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;marshallMathers&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="p-for-string-templates">%P for String Templates<a class="headerlink" href="#p-for-string-templates" title="Permanent link">&para;</a></h3>
+<p><code>%S</code> also handles the escaping of dollar signs (<code>$</code>), to avoid inadvertent creation of string 
+templates, which may fail to compile in generated code:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">stringWithADollar</span> <span class="p">=</span> <span class="s">&quot;Your total is &quot;</span> <span class="p">+</span> <span class="s">&quot;$&quot;</span> <span class="p">+</span> <span class="s">&quot;50&quot;</span>
+<span class="k">val</span> <span class="py">funSpec</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;printTotal&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %S&quot;</span><span class="p">,</span> <span class="n">stringWithADollar</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>produces:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">printTotal</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;Your total is ${&#39;$&#39;}50&quot;</span>
+</code></pre></div>
+
+<p>If you need to generate string templates, use <code>%P</code>, which doesn&rsquo;t escape dollars:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">amount</span> <span class="p">=</span> <span class="m">50</span>
+<span class="k">val</span> <span class="py">stringWithADollar</span> <span class="p">=</span> <span class="s">&quot;Your total is &quot;</span> <span class="p">+</span> <span class="s">&quot;$&quot;</span> <span class="p">+</span> <span class="s">&quot;amount&quot;</span>
+<span class="k">val</span> <span class="py">funSpec</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;printTotal&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %P&quot;</span><span class="p">,</span> <span class="n">stringWithADollar</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>produces:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">printTotal</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;Your total is $amount&quot;</span>
+</code></pre></div>
+
+<p>You can also use <code>CodeBlock</code>s as arguments to <code>%P</code>, which is handy when you need to reference
+importable types or members inside the string template:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;Digits&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;print&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;digits&quot;</span><span class="p">,</span> <span class="n">IntArray</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(%P)&quot;</span><span class="p">,</span> <span class="n">buildCodeBlock</span> <span class="p">{</span>
+          <span class="k">val</span> <span class="py">contentToString</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;kotlin.collections&quot;</span><span class="p">,</span> <span class="s">&quot;contentToString&quot;</span><span class="p">)</span>
+          <span class="n">add</span><span class="p">(</span><span class="s">&quot;These are the digits: \${digits.%M()}&quot;</span><span class="p">,</span> <span class="n">contentToString</span><span class="p">)</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The snippet above will produce the following output, handling the imports properly:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">kotlin.IntArray</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.contentToString</span>
+
+<span class="k">fun</span> <span class="nf">print</span><span class="p">(</span><span class="n">digits</span><span class="p">:</span> <span class="n">IntArray</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;&quot;&quot;These are the digits: ${digits.contentToString()}&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="t-for-types">%T for Types<a class="headerlink" href="#t-for-types" title="Permanent link">&para;</a></h3>
+<p>KotlinPoet has rich built-in support for types, including automatic generation of <code>import</code>
+statements. Just use <strong><code>%T</code></strong> to reference <strong>types</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">today</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;today&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Date</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %T()&quot;</span><span class="p">,</span> <span class="n">Date</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">today</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">kotlinFile</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example.helloworld&quot;</span><span class="p">,</span> <span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="n">helloWorld</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="n">kotlinFile</span><span class="p">.</span><span class="n">writeTo</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="k">out</span><span class="p">)</span>
+</code></pre></div>
+
+<p>That generates the following <code>.kt</code> file, complete with the necessary <code>import</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example.helloworld</span>
+
+<span class="k">import</span> <span class="nn">java.util.Date</span>
+
+<span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">today</span><span class="p">():</span> <span class="n">Date</span> <span class="p">=</span> <span class="n">Date</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>We passed <code>Date::class</code> to reference a class that just-so-happens to be available when we&rsquo;re
+generating code. This doesn&rsquo;t need to be the case. Here&rsquo;s a similar example, but this one
+references a class that doesn&rsquo;t exist (yet):</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">hoverboard</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.mattel&quot;</span><span class="p">,</span> <span class="s">&quot;Hoverboard&quot;</span><span class="p">)</span>
+
+<span class="k">val</span> <span class="py">tomorrow</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;tomorrow&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">hoverboard</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %T()&quot;</span><span class="p">,</span> <span class="n">hoverboard</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>And that not-yet-existent class is imported as well:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example.helloworld</span>
+
+<span class="k">import</span> <span class="nn">com.mattel.Hoverboard</span>
+
+<span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">tomorrow</span><span class="p">():</span> <span class="n">Hoverboard</span> <span class="p">=</span> <span class="n">Hoverboard</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The <code>ClassName</code> type is very important, and you&rsquo;ll need it frequently when you&rsquo;re using KotlinPoet.
+It can identify any <em>declared</em> class. Declared types are just the beginning of Kotlin&rsquo;s rich type
+system: we also have arrays, parameterized types, wildcard types, lambda types and type variables. 
+KotlinPoet has classes for building each of these:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span> <span class="nn">com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy</span>
+
+<span class="k">val</span> <span class="py">hoverboard</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.mattel&quot;</span><span class="p">,</span> <span class="s">&quot;Hoverboard&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">list</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;kotlin.collections&quot;</span><span class="p">,</span> <span class="s">&quot;List&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">arrayList</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;kotlin.collections&quot;</span><span class="p">,</span> <span class="s">&quot;ArrayList&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">listOfHoverboards</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">hoverboard</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">arrayListOfHoverboards</span> <span class="p">=</span> <span class="n">arrayList</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">hoverboard</span><span class="p">)</span>
+
+<span class="k">val</span> <span class="py">thing</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.misc&quot;</span><span class="p">,</span> <span class="s">&quot;Thing&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">array</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;kotlin&quot;</span><span class="p">,</span> <span class="s">&quot;Array&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">producerArrayOfThings</span> <span class="p">=</span> <span class="n">array</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">WildcardTypeName</span><span class="p">.</span><span class="n">producerOf</span><span class="p">(</span><span class="n">thing</span><span class="p">))</span>
+
+<span class="k">val</span> <span class="py">beyond</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;beyond&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">listOfHoverboards</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val result = %T()&quot;</span><span class="p">,</span> <span class="n">arrayListOfHoverboards</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result += %T()&quot;</span><span class="p">,</span> <span class="n">hoverboard</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result += %T()&quot;</span><span class="p">,</span> <span class="n">hoverboard</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result += %T()&quot;</span><span class="p">,</span> <span class="n">hoverboard</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return result&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">printThings</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;printThings&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;things&quot;</span><span class="p">,</span> <span class="n">producerArrayOfThings</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(things)&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>KotlinPoet will decompose each type and import its components where possible.</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example.helloworld</span>
+
+<span class="k">import</span> <span class="nn">com.mattel.Hoverboard</span>
+<span class="k">import</span> <span class="nn">com.misc.Thing</span>
+<span class="k">import</span> <span class="nn">kotlin.Array</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.ArrayList</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.List</span>
+
+<span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">beyond</span><span class="p">():</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Hoverboard</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">ArrayList</span><span class="p">&lt;</span><span class="n">Hoverboard</span><span class="p">&gt;()</span>
+        <span class="n">result</span> <span class="p">+=</span> <span class="n">Hoverboard</span><span class="p">()</span>
+        <span class="n">result</span> <span class="p">+=</span> <span class="n">Hoverboard</span><span class="p">()</span>
+        <span class="n">result</span> <span class="p">+=</span> <span class="n">Hoverboard</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">printThings</span><span class="p">(</span><span class="n">things</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="k">out</span> <span class="n">Thing</span><span class="p">&gt;)</span> <span class="p">{</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">things</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="nullable-types">Nullable Types<a class="headerlink" href="#nullable-types" title="Permanent link">&para;</a></h4>
+<p>KotlinPoet supports nullable types. To convert a <code>TypeName</code> into its nullable counterpart, use the 
+<code>copy()</code> method with <code>nullable</code> parameter set to <code>true</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">java</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;java&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">asTypeName</span><span class="p">().</span><span class="n">copy</span><span class="p">(</span><span class="n">nullable</span> <span class="p">=</span> <span class="k">true</span><span class="p">))</span>
+    <span class="p">.</span><span class="n">mutable</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;null&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">java</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s">&quot;kotlin&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>generates:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">var</span> <span class="py">java</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+
+    <span class="k">private</span> <span class="k">val</span> <span class="py">kotlin</span><span class="p">:</span> <span class="n">String</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="m-for-members">%M for Members<a class="headerlink" href="#m-for-members" title="Permanent link">&para;</a></h3>
+<p>Similar to types, KotlinPoet has a special placeholder for <strong>members</strong> (functions and properties),
+which comes handy when your code needs to access top-level members and members declared inside
+objects. Use <strong><code>%M</code></strong> to reference members, pass an instance of <code>MemberName</code> as the argument for the
+placeholder, and KotlinPoet will handle imports automatically:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">createTaco</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;createTaco&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">isVegan</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;isVegan&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.squareup.example&quot;</span><span class="p">,</span> <span class="s">&quot;TacoTest&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val taco = %M()&quot;</span><span class="p">,</span> <span class="n">createTaco</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(taco.%M)&quot;</span><span class="p">,</span> <span class="n">isVegan</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The code above generates the following file:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.squareup.example</span>
+
+<span class="k">import</span> <span class="nn">com.squareup.tacos.createTaco</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.isVegan</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">val</span> <span class="py">taco</span> <span class="p">=</span> <span class="n">createTaco</span><span class="p">()</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">taco</span><span class="p">.</span><span class="n">isVegan</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>As you can see, it&rsquo;s also possible to use <code>%M</code> to reference extension functions and properties. You 
+just need to make sure the member can be imported without simple name collisions, otherwise 
+importing will fail and the code generator output will not pass compilation. There&rsquo;s a way to work 
+around such cases though - use <code>FileSpec.addAliasedImport()</code> to create an alias for a clashing 
+<code>MemberName</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">createTaco</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;createTaco&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">createCake</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.cakes&quot;</span><span class="p">,</span> <span class="s">&quot;createCake&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">isTacoVegan</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;isVegan&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">isCakeVegan</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.cakes&quot;</span><span class="p">,</span> <span class="s">&quot;isVegan&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.squareup.example&quot;</span><span class="p">,</span> <span class="s">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAliasedImport</span><span class="p">(</span><span class="n">isTacoVegan</span><span class="p">,</span> <span class="s">&quot;isTacoVegan&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAliasedImport</span><span class="p">(</span><span class="n">isCakeVegan</span><span class="p">,</span> <span class="s">&quot;isCakeVegan&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val taco = %M()&quot;</span><span class="p">,</span> <span class="n">createTaco</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val cake = %M()&quot;</span><span class="p">,</span> <span class="n">createCake</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(taco.%M)&quot;</span><span class="p">,</span> <span class="n">isTacoVegan</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(cake.%M)&quot;</span><span class="p">,</span> <span class="n">isCakeVegan</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</code></pre></div>
+
+<p>KotlinPoet will produce an aliased import for <code>com.squareup.tacos2.isVegan</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.squareup.example</span>
+
+<span class="k">import</span> <span class="nn">com.squareup.cakes.createCake</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.createTaco</span>
+<span class="k">import</span> <span class="nn">com.squareup.cakes.isVegan</span> <span class="k">as</span> <span class="n">isCakeVegan</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.isVegan</span> <span class="k">as</span> <span class="n">isTacoVegan</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">val</span> <span class="py">taco</span> <span class="p">=</span> <span class="n">createTaco</span><span class="p">()</span>
+    <span class="k">val</span> <span class="py">cake</span> <span class="p">=</span> <span class="n">createCake</span><span class="p">()</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">taco</span><span class="p">.</span><span class="n">isTacoVegan</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">cake</span><span class="p">.</span><span class="n">isCakeVegan</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="membername-and-operators">MemberName and operators<a class="headerlink" href="#membername-and-operators" title="Permanent link">&para;</a></h4>
+<p>MemberName also supports operators, you can use <code>MemberName(String, KOperator)</code> or <code>MemberName(ClassName, KOperator)</code>
+to import and reference operators.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">taco</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;Taco&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">meat</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos.ingredient&quot;</span><span class="p">,</span> <span class="s">&quot;Meat&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">iterator</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos.internal&quot;</span><span class="p">,</span> <span class="n">KOperator</span><span class="p">.</span><span class="n">ITERATOR</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">minusAssign</span> <span class="p">=</span> <span class="n">MemberName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos.internal&quot;</span><span class="p">,</span> <span class="n">KOperator</span><span class="p">.</span><span class="n">MINUS_ASSIGN</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;makeTacoHealthy&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;taco&quot;</span><span class="p">,</span> <span class="n">taco</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">beginControlFlow</span><span class="p">(</span><span class="s">&quot;for (ingredient %M taco)&quot;</span><span class="p">,</span> <span class="n">iterator</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;if (ingredient is %T) taco %M ingredient&quot;</span><span class="p">,</span> <span class="n">meat</span><span class="p">,</span> <span class="n">minusAssign</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">endControlFlow</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return taco&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</code></pre></div>
+
+<p>KotlinPoet will import the extension operator functions and emit the operator.</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">com.squareup.tacos.Taco</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.ingredient.Meat</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.internal.iterator</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.internal.minusAssign</span>
+
+<span class="k">fun</span> <span class="nf">makeTacoHealthy</span><span class="p">(</span><span class="n">taco</span><span class="p">:</span> <span class="n">Taco</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">ingredient</span> <span class="k">in</span> <span class="n">taco</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ingredient</span> <span class="k">is</span> <span class="n">Meat</span><span class="p">)</span> <span class="n">taco</span> <span class="p">-=</span> <span class="n">ingredient</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">taco</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="n-for-names">%N for Names<a class="headerlink" href="#n-for-names" title="Permanent link">&para;</a></h3>
+<p>Generated code is often self-referential. Use <strong><code>%N</code></strong> to refer to another generated declaration by
+its name. Here&rsquo;s a method that calls another:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">byteToHex</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">String</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">CharArray</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
+  <span class="n">result</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">hexDigit</span><span class="p">((</span><span class="n">b</span> <span class="n">ushr</span> <span class="m">4</span><span class="p">)</span> <span class="n">and</span> <span class="m">0</span><span class="n">xf</span><span class="p">)</span>
+  <span class="n">result</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">hexDigit</span><span class="p">(</span><span class="n">b</span> <span class="n">and</span> <span class="m">0</span><span class="n">xf</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">hexDigit</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Char</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="p">&lt;</span> <span class="m">10</span><span class="p">)</span> <span class="n">i</span> <span class="p">+</span> <span class="sc">&#39;0&#39;</span><span class="p">.</span><span class="n">toInt</span><span class="p">()</span> <span class="k">else</span> <span class="n">i</span> <span class="p">-</span> <span class="m">10</span> <span class="p">+</span> <span class="sc">&#39;a&#39;</span><span class="p">.</span><span class="n">toInt</span><span class="p">()).</span><span class="n">toChar</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>When generating the code above, we pass the <code>hexDigit()</code> method as an argument to the <code>byteToHex()</code>
+method using <code>%N</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">hexDigit</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;hexDigit&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;i&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Char</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return (if (i &lt; 10) i + &#39;0&#39;.toInt() else i - 10 + &#39;a&#39;.toInt()).toChar()&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">byteToHex</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;byteToHex&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val result = CharArray(2)&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result[0] = %N((b ushr 4) and 0xf)&quot;</span><span class="p">,</span> <span class="n">hexDigit</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result[1] = %N(b and 0xf)&quot;</span><span class="p">,</span> <span class="n">hexDigit</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return String(result)&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Another handy feature that <code>%N</code> provides is automatically escaping names that contain illegal 
+identifier characters with double ticks. Suppose your code creates a <code>MemberName</code> with a Kotlin
+keyword as the simple name:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">taco</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;Taco&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">packager</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.squareup.tacos&quot;</span><span class="p">,</span> <span class="s">&quot;TacoPackager&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">file</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;packageTacos&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;tacos&quot;</span><span class="p">,</span> <span class="n">LIST</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">taco</span><span class="p">))</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;packager&quot;</span><span class="p">,</span> <span class="n">packager</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;packager.%N(tacos)&quot;</span><span class="p">,</span> <span class="n">packager</span><span class="p">.</span><span class="n">member</span><span class="p">(</span><span class="s">&quot;package&quot;</span><span class="p">))</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p><code>%N</code> will escape the name for you, ensuring that the output will pass compilation:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">com.squareup.tacos.Taco</span>
+<span class="k">import</span> <span class="nn">com.squareup.tacos.TacoPackager</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.List</span>
+
+<span class="k">fun</span> <span class="nf">packageTacos</span><span class="p">(</span><span class="n">tacos</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Taco</span><span class="p">&gt;,</span> <span class="n">packager</span><span class="p">:</span> <span class="n">TacoPackager</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">packager</span><span class="p">.</span><span class="n">`package`</span><span class="p">(</span><span class="n">tacos</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="l-for-literals">%L for Literals<a class="headerlink" href="#l-for-literals" title="Permanent link">&para;</a></h3>
+<p>Although Kotlin&rsquo;s string templates usually work well in cases when you want to include literals into 
+generated code, KotlinPoet offers additional syntax inspired-by but incompatible-with
+<a href="https://developer.android.com/reference/java/util/Formatter.html"><code>String.format()</code></a>. It accepts <strong><code>%L</code></strong> to emit a <strong>literal</strong> value in the output. This
+works just like <code>Formatter</code>&lsquo;s <code>%s</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">private</span> <span class="k">fun</span> <span class="nf">computeRange</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">FunSpec</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;var result = 0&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">beginControlFlow</span><span class="p">(</span><span class="s">&quot;for (i in %L until %L)&quot;</span><span class="p">,</span> <span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;result = result %L i&quot;</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">endControlFlow</span><span class="p">()</span>
+      <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return result&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Literals are emitted directly to the output code with no escaping. Arguments for literals may be
+strings, primitives, and a few KotlinPoet types described below.</p>
+<h3 id="code-block-format-strings">Code block format strings<a class="headerlink" href="#code-block-format-strings" title="Permanent link">&para;</a></h3>
+<p>Code blocks may specify the values for their placeholders in a few ways. Only one style may be used
+for each operation on a code block.</p>
+<h4 id="relative-arguments">Relative Arguments<a class="headerlink" href="#relative-arguments" title="Permanent link">&para;</a></h4>
+<p>Pass an argument value for each placeholder in the format string to <code>CodeBlock.add()</code>. In each
+example, we generate code to say &ldquo;I ate 3 tacos&rdquo;</p>
+<div class="highlight"><pre><span></span><code><span class="n">CodeBlock</span><span class="p">.</span><span class="n">builder</span><span class="p">().</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;I ate %L %L&quot;</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="s">&quot;tacos&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h4 id="positional-arguments">Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permanent link">&para;</a></h4>
+<p>Place an integer index (1-based) before the placeholder in the format string to specify which
+ argument to use.</p>
+<div class="highlight"><pre><span></span><code><span class="n">CodeBlock</span><span class="p">.</span><span class="n">builder</span><span class="p">().</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;I ate %2L %1L&quot;</span><span class="p">,</span> <span class="s">&quot;tacos&quot;</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</code></pre></div>
+
+<h4 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h4>
+<p>Use the syntax <code>%argumentName:X</code> where <code>X</code> is the format character and call <code>CodeBlock.addNamed()</code>
+with a map containing all argument keys in the format string. Argument names use characters in
+<code>a-z</code>, <code>A-Z</code>, <code>0-9</code>, and <code>_</code>, and must start with a lowercase character.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">map</span> <span class="p">=</span> <span class="n">LinkedHashMap</span><span class="p">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">Any</span><span class="p">&gt;()</span>
+<span class="n">map</span> <span class="p">+=</span> <span class="s">&quot;food&quot;</span> <span class="n">to</span> <span class="s">&quot;tacos&quot;</span>
+<span class="n">map</span> <span class="p">+=</span> <span class="s">&quot;count&quot;</span> <span class="n">to</span> <span class="m">3</span>
+<span class="n">CodeBlock</span><span class="p">.</span><span class="n">builder</span><span class="p">().</span><span class="n">addNamed</span><span class="p">(</span><span class="s">&quot;I ate %count:L %food:L&quot;</span><span class="p">,</span> <span class="n">map</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h3>
+<p>All of the above functions have a code body. Use <code>KModifier.ABSTRACT</code> to get a function without any
+body. This is only legal if it is enclosed by an abstract class or an interface.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">flux</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;flux&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PROTECTED</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">abstract</span> <span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">protected</span> <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">flux</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The other modifiers work where permitted.</p>
+<p>Methods also have parameters, varargs, KDoc, annotations, type variables, return type and receiver
+type for extension functions. All of these are configured with <code>FunSpec.Builder</code>.</p>
+<h4 id="extension-functions">Extension functions<a class="headerlink" href="#extension-functions" title="Permanent link">&para;</a></h4>
+<p>Extension functions can be generated by specifying a <code>receiver</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">square</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;square&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">receiver</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;var s = this * this&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return s&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which outputs:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nc">Int</span><span class="p">.</span><span class="nf">square</span><span class="p">():</span> <span class="n">Int</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">s</span> <span class="p">=</span> <span class="k">this</span> <span class="p">*</span> <span class="k">this</span>
+  <span class="k">return</span> <span class="n">s</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="single-expression-functions">Single-expression functions<a class="headerlink" href="#single-expression-functions" title="Permanent link">&para;</a></h4>
+<p>KotlinPoet can recognize single-expression functions and print them out properly. It treats
+each function with a body that starts with <code>return</code> as a single-expression function:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">abs</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return if (x &lt; 0) -x else x&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which outputs:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">abs</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="p">&lt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">-</span><span class="n">x</span> <span class="k">else</span> <span class="n">x</span>
+</code></pre></div>
+
+<h4 id="default-function-arguments">Default function arguments<a class="headerlink" href="#default-function-arguments" title="Permanent link">&para;</a></h4>
+<p>Consider the example below.
+Function argument <code>b</code> has a default value of 0 to avoid overloading this function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Int</span> <span class="p">=</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">print</span><span class="p">(</span><span class="s">&quot;a + b = ${ a + b }&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Use the <code>defaultValue()</code> builder function to declare default value for a function argument.</p>
+<div class="highlight"><pre><span></span><code><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="n">ParameterSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">defaultValue</span><span class="p">(</span><span class="s">&quot;%L&quot;</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;print(\&quot;a + b = ${ a + b }\&quot;)&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<h4 id="spaces-wrap-by-default">Spaces wrap by default!<a class="headerlink" href="#spaces-wrap-by-default" title="Permanent link">&para;</a></h4>
+<p>In order to provide meaningful formatting, KotlinPoet would replace spaces, found in blocks of code,
+with new line symbols, in cases when the line of code exceeds the length limit. Let&rsquo;s take this 
+function for example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">funSpec</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return (100..10000).map { number -&gt; number * number }.map { number -&gt; number.toString() }.also { string -&gt; println(string) }&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Depending on where it&rsquo;s found in the file, it may end up being printed out like this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">=</span> <span class="p">(</span><span class="m">100.</span><span class="p">.</span><span class="m">10000</span><span class="p">).</span><span class="n">map</span> <span class="p">{</span> <span class="n">number</span> <span class="p">-&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span> <span class="p">}.</span><span class="n">map</span> <span class="p">{</span> <span class="n">number</span> <span class="p">-&gt;</span> <span class="n">number</span><span class="p">.</span><span class="n">toString</span><span class="p">()</span> <span class="p">}.</span><span class="n">also</span> 
+<span class="p">{</span> <span class="n">string</span> <span class="p">-&gt;</span> <span class="n">println</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div>
+
+<p>Unfortunately this code is broken: the compiler expects <code>also</code> and <code>{</code> to be on the same line. 
+KotlinPoet is unable to understand the context of the expression and fix the formatting for you, but 
+there&rsquo;s a trick you can use to declare a non-breaking space - use the <code>·</code> symbol where you would 
+otherwise use a space. Let&rsquo;s apply this to our example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">funSpec</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return (100..10000).map·{ number -&gt; number * number }.map·{ number -&gt; number.toString() }.also·{ string -&gt; println(string) }&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This will now produce the following result:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">=</span> <span class="p">(</span><span class="m">100.</span><span class="p">.</span><span class="m">10000</span><span class="p">).</span><span class="n">map</span> <span class="p">{</span> <span class="n">number</span> <span class="p">-&gt;</span> <span class="n">number</span> <span class="p">*</span> <span class="n">number</span> <span class="p">}.</span><span class="n">map</span> <span class="p">{</span> <span class="n">number</span> <span class="p">-&gt;</span> <span class="n">number</span><span class="p">.</span><span class="n">toString</span><span class="p">()</span>
+<span class="p">}.</span><span class="n">also</span> <span class="p">{</span> <span class="n">string</span> <span class="p">-&gt;</span> <span class="n">println</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div>
+
+<p>The code is now correct and will compile properly. It still doesn&rsquo;t look perfect - you can play with
+replacing other spaces in the code block with <code>·</code> symbols to achieve better formatting.</p>
+<h3 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">&para;</a></h3>
+<p><code>FunSpec</code> is a slight misnomer; it can also be used for constructors:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">flux</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">constructorBuilder</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;this.%N = %N&quot;</span><span class="p">,</span> <span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="s">&quot;greeting&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">greeting</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="k">constructor</span><span class="p">(</span><span class="n">greeting</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">greeting</span> <span class="p">=</span> <span class="n">greeting</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>For the most part, constructors work just like methods. When emitting code, KotlinPoet will place
+constructors before methods in the output file.</p>
+<p>Often times you&rsquo;ll need to generate the primary constructor for a class:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">primaryConstructor</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This code, however, generates the following:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span><span class="p">(</span><span class="n">greeting</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">greeting</span><span class="p">:</span> <span class="n">String</span>
+    <span class="n">init</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">greeting</span> <span class="p">=</span> <span class="n">greeting</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>By default, KotlinPoet won&rsquo;t merge primary constructor parameters and properties, even if they share
+the same name. To achieve the effect, you have to tell KotlinPoet that the property is initialized 
+via the constructor parameter:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">flux</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">constructorBuilder</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">primaryConstructor</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;greeting&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Now we&rsquo;re getting the following output:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">greeting</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Notice that KotlinPoet omits <code>{}</code> for classes with empty bodies.</p>
+<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
+<p>Declare parameters on methods and constructors with either <code>ParameterSpec.builder()</code> or
+<code>FunSpec</code>&lsquo;s convenient <code>addParameter()</code> API:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">ParameterSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">defaultValue</span><span class="p">(</span><span class="s">&quot;\&quot;pie\&quot;&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">welcomeOverlords</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;welcomeOverlords&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="n">android</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;robot&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>The code above generates:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fun</span> <span class="nf">welcomeOverlords</span><span class="p">(</span><span class="n">android</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;pie&quot;</span><span class="p">,</span> <span class="n">robot</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The extended <code>Builder</code> form is necessary when the parameter has annotations (such as <code>@Inject</code>).</p>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h3>
+<p>Like parameters, properties can be created either with builders or by using convenient helper methods:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">android</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s">&quot;robot&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">val</span> <span class="py">android</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="k">private</span> <span class="k">val</span> <span class="py">robot</span><span class="p">:</span> <span class="n">String</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The extended <code>Builder</code> form is necessary when a field has KDoc, annotations, or a field
+initializer. Field initializers use the same <a href="https://developer.android.com/reference/java/util/Formatter.html"><code>String.format()</code></a>-like syntax as the code
+blocks above:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;%S + %L&quot;</span><span class="p">,</span> <span class="s">&quot;Oreo v.&quot;</span><span class="p">,</span> <span class="m">8.1</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates:</p>
+<div class="highlight"><pre><span></span><code><span class="k">private</span> <span class="k">val</span> <span class="py">android</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;Oreo v.&quot;</span> <span class="p">+</span> <span class="m">8.1</span>
+</code></pre></div>
+
+<p>By default <code>PropertySpec.Builder</code> produces <code>val</code> properties. Use <code>mutable()</code> if you need a
+<code>var</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">mutable</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;%S + %L&quot;</span><span class="p">,</span> <span class="s">&quot;Oreo v.&quot;</span><span class="p">,</span> <span class="m">8.1</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<h4 id="inline-properties">Inline properties<a class="headerlink" href="#inline-properties" title="Permanent link">&para;</a></h4>
+<p>The way KotlinPoet models inline properties deserves special mention. The following snippet of code:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">INLINE</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>will produce an error:</p>
+<div class="highlight"><pre><span></span><code>java.lang.IllegalArgumentException: KotlinPoet doesn&#39;t allow setting the inline modifier on 
+properties. You should mark either the getter, the setter, or both inline.
+</code></pre></div>
+
+<p>Indeed, a property marked with <code>inline</code> should have at least one accessor which will be inlined by
+the compiler. Let&rsquo;s add a getter to this property:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">getter</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">getterBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">INLINE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %S&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>The result is the following:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span><span class="p">:</span> <span class="n">kotlin</span><span class="p">.</span><span class="n">String</span>
+    <span class="k">inline</span> <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;foo&quot;</span>
+</code></pre></div>
+
+<p>Now, what if we wanted to add a non-inline setter to the property above? We can do so without 
+modifying any of the code we wrote previously:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span> <span class="p">=</span> <span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;android&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">getter</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">getterBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">INLINE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %S&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">setter</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">setterBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>We get the expected result:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">android</span><span class="p">:</span> <span class="n">kotlin</span><span class="p">.</span><span class="n">String</span>
+    <span class="k">inline</span> <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;foo&quot;</span>
+    <span class="k">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<p>Finally, if we go back and add <code>KModifier.INLINE</code> to the setter, KotlinPoet can wrap it nicely and
+produce the following result:</p>
+<div class="highlight"><pre><span></span><code><span class="k">inline</span> <span class="k">val</span> <span class="py">android</span><span class="p">:</span> <span class="n">kotlin</span><span class="p">.</span><span class="n">String</span>
+    <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;foo&quot;</span>
+    <span class="k">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<p>Removing the modifier from either the getter or the setter will unwrap the expression back. </p>
+<p>If, on the other hand, KotlinPoet had allowed marking a property <code>inline</code> directly, the programmer 
+would have had to manually add/remove the modifier whenever the state of the accessors changes in 
+order to get correct and compilable output. We&rsquo;re solving this problem by making accessors the 
+source of truth for the <code>inline</code> modifier.  </p>
+<h3 id="interfaces">Interfaces<a class="headerlink" href="#interfaces" title="Permanent link">&para;</a></h3>
+<p>KotlinPoet has no trouble with interfaces. Note that interface methods must always be <code>ABSTRACT</code>. 
+The modifier is necessary when defining the interface:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">interfaceBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s">&quot;buzz&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;beep&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>But these modifiers are omitted when the code is generated. These are the default so we don&rsquo;t need
+to include them for <code>kotlinc</code>&lsquo;s benefit!</p>
+<div class="highlight"><pre><span></span><code><span class="k">interface</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">val</span> <span class="py">buzz</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="k">fun</span> <span class="nf">beep</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Kotlin 1.4 adds support for functional interfaces via <code>fun interface</code> syntax. To create this in 
+KotlinPoet, use <code>TypeSpec.funInterfaceBuilder()</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">funInterfaceBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;beep&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1">// Generates...</span>
+<span class="k">fun</span> <span class="nf">interface</span> <span class="n">HelloWorld</span> <span class="p">{</span>
+  <span class="k">fun</span> <span class="nf">beep</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link">&para;</a></h3>
+<p>KotlinPoet supports objects:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">objectBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;buzz&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;%S&quot;</span><span class="p">,</span> <span class="s">&quot;buzz&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;beep&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(%S)&quot;</span><span class="p">,</span> <span class="s">&quot;Beep!&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Similarly, you can create companion objects and add them to classes using <code>addType()</code>: </p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">companion</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">companionObjectBuilder</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;buzz&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;%S&quot;</span><span class="p">,</span> <span class="s">&quot;buzz&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;beep&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;println(%S)&quot;</span><span class="p">,</span> <span class="s">&quot;Beep!&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="k">companion</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>You can provide an optional name for a companion object.</p>
+<h3 id="enums">Enums<a class="headerlink" href="#enums" title="Permanent link">&para;</a></h3>
+<p>Use <code>enumBuilder</code> to create the enum type, and <code>addEnumConstant()</code> for each value:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">enumBuilder</span><span class="p">(</span><span class="s">&quot;Roshambo&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;ROCK&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;SCISSORS&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;PAPER&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>To generate this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">enum</span> <span class="k">class</span> <span class="nc">Roshambo</span> <span class="p">{</span>
+    <span class="n">ROCK</span><span class="p">,</span>
+
+    <span class="n">SCISSORS</span><span class="p">,</span>
+
+    <span class="n">PAPER</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Fancy enums are supported, where the enum values override methods or call a superclass constructor.
+Here&rsquo;s a comprehensive example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">enumBuilder</span><span class="p">(</span><span class="s">&quot;Roshambo&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">primaryConstructor</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">constructorBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;handsign&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;ROCK&quot;</span><span class="p">,</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">anonymousClassBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addSuperclassConstructorParameter</span><span class="p">(</span><span class="s">&quot;%S&quot;</span><span class="p">,</span> <span class="s">&quot;fist&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;toString&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">OVERRIDE</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %S&quot;</span><span class="p">,</span> <span class="s">&quot;avalanche!&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;SCISSORS&quot;</span><span class="p">,</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">anonymousClassBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addSuperclassConstructorParameter</span><span class="p">(</span><span class="s">&quot;%S&quot;</span><span class="p">,</span> <span class="s">&quot;peace&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addEnumConstant</span><span class="p">(</span><span class="s">&quot;PAPER&quot;</span><span class="p">,</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">anonymousClassBuilder</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">addSuperclassConstructorParameter</span><span class="p">(</span><span class="s">&quot;%S&quot;</span><span class="p">,</span> <span class="s">&quot;flat&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addProperty</span><span class="p">(</span><span class="n">PropertySpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;handsign&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">,</span> <span class="n">KModifier</span><span class="p">.</span><span class="n">PRIVATE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">initializer</span><span class="p">(</span><span class="s">&quot;handsign&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">enum</span> <span class="k">class</span> <span class="nc">Roshambo</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">handsign</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ROCK</span><span class="p">(</span><span class="s">&quot;fist&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">toString</span><span class="p">():</span> <span class="n">String</span> <span class="p">=</span> <span class="s">&quot;avalanche!&quot;</span>
+    <span class="p">},</span>
+
+    <span class="n">SCISSORS</span><span class="p">(</span><span class="s">&quot;peace&quot;</span><span class="p">),</span>
+
+    <span class="n">PAPER</span><span class="p">(</span><span class="s">&quot;flat&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="anonymous-inner-classes">Anonymous Inner Classes<a class="headerlink" href="#anonymous-inner-classes" title="Permanent link">&para;</a></h3>
+<p>In the enum code, we used <code>TypeSpec.anonymousClassBuilder()</code>. Anonymous inner classes can also be 
+used in code blocks. They are values that can be referenced with <code>%L</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">comparator</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">anonymousClassBuilder</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">addSuperinterface</span><span class="p">(</span><span class="n">Comparator</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">))</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;compare&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">OVERRIDE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return %N.length - %N.length&quot;</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">TypeSpec</span><span class="p">.</span><span class="n">classBuilder</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;sortByLength&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="n">List</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">))</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;%N.sortedWith(%L)&quot;</span><span class="p">,</span> <span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This generates a method that contains a class that contains a method:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">HelloWorld</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">sortByLength</span><span class="p">(</span><span class="n">strings</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+        <span class="n">strings</span><span class="p">.</span><span class="n">sortedWith</span><span class="p">(</span><span class="k">object</span> <span class="p">:</span> <span class="nc">Comparator</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">{</span>
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">compare</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="n">length</span> <span class="p">-</span> <span class="n">b</span><span class="p">.</span><span class="n">length</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>One particularly tricky part of defining anonymous inner classes is the arguments to the superclass
+constructor. To pass them use <code>TypeSpec.Builder</code>&lsquo;s <code>addSuperclassConstructorParameter()</code> method. </p>
+<h3 id="annotations">Annotations<a class="headerlink" href="#annotations" title="Permanent link">&para;</a></h3>
+<p>Simple annotations are easy:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">test</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;test string equality&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAnnotation</span><span class="p">(</span><span class="n">Test</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;assertThat(%1S).isEqualTo(%1S)&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this function with an <code>@Test</code> annotation:</p>
+<div class="highlight"><pre><span></span><code><span class="n">@Test</span>
+<span class="k">fun</span> <span class="nf">`test string equality`</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">assertThat</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">).</span><span class="n">isEqualTo</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Use <code>AnnotationSpec.builder()</code> to set properties on annotations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">logRecord</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;recordEvent&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAnnotation</span><span class="p">(</span><span class="n">AnnotationSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">Headers</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;accept = %S&quot;</span><span class="p">,</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;userAgent = %S&quot;</span><span class="p">,</span> <span class="s">&quot;Square Cash&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;logRecord&quot;</span><span class="p">,</span> <span class="n">LogRecord</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">LogReceipt</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this annotation with <code>accept</code> and <code>userAgent</code> properties:</p>
+<div class="highlight"><pre><span></span><code><span class="n">@Headers</span><span class="p">(</span>
+        <span class="n">accept</span> <span class="p">=</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span><span class="p">,</span>
+        <span class="n">userAgent</span> <span class="p">=</span> <span class="s">&quot;Square Cash&quot;</span>
+<span class="p">)</span>
+<span class="k">abstract</span> <span class="k">fun</span> <span class="nf">recordEvent</span><span class="p">(</span><span class="n">logRecord</span><span class="p">:</span> <span class="n">LogRecord</span><span class="p">):</span> <span class="n">LogReceipt</span>
+</code></pre></div>
+
+<p>When you get fancy, annotation values can be annotations themselves. Use <code>%L</code> for embedded
+annotations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">headerList</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;HeaderList&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">header</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;Header&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">logRecord</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;recordEvent&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addModifiers</span><span class="p">(</span><span class="n">KModifier</span><span class="p">.</span><span class="n">ABSTRACT</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAnnotation</span><span class="p">(</span><span class="n">AnnotationSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">headerList</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addMember</span><span class="p">(</span>
+            <span class="s">&quot;[\n⇥%L,\n%L⇤\n]&quot;</span><span class="p">,</span>
+            <span class="n">AnnotationSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;name = %S&quot;</span><span class="p">,</span> <span class="s">&quot;Accept&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;value = %S&quot;</span><span class="p">,</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">build</span><span class="p">(),</span>
+            <span class="n">AnnotationSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;name = %S&quot;</span><span class="p">,</span> <span class="s">&quot;User-Agent&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">addMember</span><span class="p">(</span><span class="s">&quot;value = %S&quot;</span><span class="p">,</span> <span class="s">&quot;Square Cash&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addParameter</span><span class="p">(</span><span class="s">&quot;logRecord&quot;</span><span class="p">,</span> <span class="n">logRecordName</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">logReceipt</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">@HeaderList</span><span class="p">([</span>
+    <span class="n">Header</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s">&quot;Accept&quot;</span><span class="p">,</span> <span class="n">value</span> <span class="p">=</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span><span class="p">),</span>
+    <span class="n">Header</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s">&quot;User-Agent&quot;</span><span class="p">,</span> <span class="n">value</span> <span class="p">=</span> <span class="s">&quot;Square Cash&quot;</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">abstract</span> <span class="k">fun</span> <span class="nf">recordEvent</span><span class="p">(</span><span class="n">logRecord</span><span class="p">:</span> <span class="n">LogRecord</span><span class="p">):</span> <span class="n">LogReceipt</span>
+</code></pre></div>
+
+<p>KotlinPoet supports use-site targets for annotations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">utils</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;Utils&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addAnnotation</span><span class="p">(</span><span class="n">AnnotationSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="n">JvmName</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">useSiteTarget</span><span class="p">(</span><span class="n">UseSiteTarget</span><span class="p">.</span><span class="n">FILE</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;abs&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">receiver</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">returns</span><span class="p">(</span><span class="n">Int</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;return if (this &lt; 0) -this else this&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Will output this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">@file</span><span class="p">:</span><span class="n">JvmName</span>
+
+<span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">kotlin.Int</span>
+<span class="k">import</span> <span class="nn">kotlin.jvm.JvmName</span>
+
+<span class="k">fun</span> <span class="nc">Int</span><span class="p">.</span><span class="nf">abs</span><span class="p">():</span> <span class="n">Int</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="p">&lt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">-</span><span class="k">this</span> <span class="k">else</span> <span class="k">this</span>
+</code></pre></div>
+
+<h3 id="type-aliases">Type Aliases<a class="headerlink" href="#type-aliases" title="Permanent link">&para;</a></h3>
+<p>KotlinPoet provides API for creating Type Aliases, which supports simple class names, parameterized
+types and lambdas:</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">k</span> <span class="p">=</span> <span class="n">TypeVariableName</span><span class="p">(</span><span class="s">&quot;K&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">t</span> <span class="p">=</span> <span class="n">TypeVariableName</span><span class="p">(</span><span class="s">&quot;T&quot;</span><span class="p">)</span>
+
+<span class="k">val</span> <span class="py">fileTable</span> <span class="p">=</span> <span class="n">Map</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">asClassName</span><span class="p">()</span>
+    <span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Set</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">parameterizedBy</span><span class="p">(</span><span class="n">File</span><span class="o">::</span><span class="k">class</span><span class="p">))</span>
+
+<span class="k">val</span> <span class="py">predicate</span> <span class="p">=</span> <span class="n">LambdaTypeName</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">parameters</span> <span class="p">=</span> <span class="n">arrayOf</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+    <span class="n">returnType</span> <span class="p">=</span> <span class="n">Boolean</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">asClassName</span><span class="p">())</span>
+<span class="k">val</span> <span class="py">helloWorld</span> <span class="p">=</span> <span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addTypeAlias</span><span class="p">(</span><span class="n">TypeAliasSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;Word&quot;</span><span class="p">,</span> <span class="n">String</span><span class="o">::</span><span class="k">class</span><span class="p">).</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addTypeAlias</span><span class="p">(</span><span class="n">TypeAliasSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;FileTable&quot;</span><span class="p">,</span> <span class="n">fileTable</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addTypeVariable</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addTypeAlias</span><span class="p">(</span><span class="n">TypeAliasSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;Predicate&quot;</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">addTypeVariable</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">build</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Which generates the following:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">java.io.File</span>
+<span class="k">import</span> <span class="nn">kotlin.Boolean</span>
+<span class="k">import</span> <span class="nn">kotlin.String</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.Map</span>
+<span class="k">import</span> <span class="nn">kotlin.collections.Set</span>
+
+<span class="n">typealias</span> <span class="n">Word</span> <span class="p">=</span> <span class="n">String</span>
+
+<span class="n">typealias</span> <span class="n">FileTable</span><span class="p">&lt;</span><span class="n">K</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">Map</span><span class="p">&lt;</span><span class="n">K</span><span class="p">,</span> <span class="n">Set</span><span class="p">&lt;</span><span class="n">File</span><span class="p">&gt;&gt;</span>
+
+<span class="n">typealias</span> <span class="n">Predicate</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">=</span> <span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Boolean</span>
+</code></pre></div>
+
+<h3 id="callable-references">Callable References<a class="headerlink" href="#callable-references" title="Permanent link">&para;</a></h3>
+<p><a href="https://kotlinlang.org/docs/reference/reflection.html#callable-references">Callable references</a> to
+constructors, functions, and properties may be emitted via:</p>
+<ul>
+<li><code>ClassName.constructorReference()</code> for constructors</li>
+<li><code>MemberName.reference()</code> for functions and properties</li>
+</ul>
+<p>For example,</p>
+<div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">helloClass</span> <span class="p">=</span> <span class="n">ClassName</span><span class="p">(</span><span class="s">&quot;com.example.hello&quot;</span><span class="p">,</span> <span class="s">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">worldFunction</span><span class="p">:</span> <span class="n">MemberName</span> <span class="p">=</span> <span class="n">helloClass</span><span class="p">.</span><span class="n">member</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">)</span>
+<span class="k">val</span> <span class="py">byeProperty</span><span class="p">:</span> <span class="n">MemberName</span> <span class="p">=</span> <span class="n">helloClass</span><span class="p">.</span><span class="n">nestedClass</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">).</span><span class="n">member</span><span class="p">(</span><span class="s">&quot;bye&quot;</span><span class="p">)</span>
+
+<span class="k">val</span> <span class="py">factoriesFun</span> <span class="p">=</span> <span class="n">FunSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;factories&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val hello = %L&quot;</span><span class="p">,</span> <span class="n">helloClass</span><span class="p">.</span><span class="n">constructorReference</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val world = %L&quot;</span><span class="p">,</span> <span class="n">worldFunction</span><span class="p">.</span><span class="n">reference</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">addStatement</span><span class="p">(</span><span class="s">&quot;val bye = %L&quot;</span><span class="p">,</span> <span class="n">byeProperty</span><span class="p">.</span><span class="n">reference</span><span class="p">())</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="n">FileSpec</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span><span class="s">&quot;com.example&quot;</span><span class="p">,</span> <span class="s">&quot;HelloWorld&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">addFunction</span><span class="p">(</span><span class="n">factoriesFun</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">build</span><span class="p">()</span>
+</code></pre></div>
+
+<p>would generate:</p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.example</span>
+
+<span class="k">import</span> <span class="nn">com.example.hello.Hello</span>
+
+<span class="k">fun</span> <span class="nf">factories</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">val</span> <span class="py">hello</span> <span class="p">=</span> <span class="o">::</span><span class="n">Hello</span>
+  <span class="k">val</span> <span class="py">world</span> <span class="p">=</span> <span class="n">Hello</span><span class="o">::</span><span class="n">world</span>
+  <span class="k">val</span> <span class="py">bye</span> <span class="p">=</span> <span class="n">Hello</span><span class="p">.</span><span class="n">World</span><span class="o">::</span><span class="n">bye</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Top-level classes and members with conflicting names may require aliased imports, as with
+<a href="#m-for-members">member names</a>.</p>
+<h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">&para;</a></h2>
+<p>Download <a href="https://search.maven.org/remote_content?g=com.squareup&amp;a=kotlinpoet&amp;v=LATEST">the latest .jar</a> or depend via Maven:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.squareup<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>kotlinpoet<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.9.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+
+<p>or Gradle:</p>
+<div class="highlight"><pre><span></span><code><span class="n">implementation</span><span class="o">(</span><span class="s2">&quot;com.squareup:kotlinpoet:1.9.0&quot;</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Snapshots of the development version are available in <a href="https://oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/">Sonatype&rsquo;s <code>snapshots</code> repository</a>.</p>
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code>Copyright 2017 Square, Inc.
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+        
+          <a href="interop-kotlinx-metadata/" title="Interop - kotlinx-metadata" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Interop - kotlinx-metadata
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2015 Square, Inc.
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="assets/javascripts/vendor.d1f5a259.min.js"></script>
+      <script src="assets/javascripts/bundle.d5fec882.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: ".",
+          features: [],
+          search: Object.assign({
+            worker: "assets/javascripts/worker/search.fae956e7.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

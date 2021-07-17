@@ -1,0 +1,14 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements////PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/index.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector.Companion///PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/-companion/index.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector.Companion/create/#javax.lang.model.util.Elements#javax.lang.model.util.Types/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/-companion/create.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector///PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/index.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/containerData/#com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer#com.squareup.kotlinpoet.ClassName#com.squareup.kotlinpoet.ClassName?/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/container-data.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/declarationContainerFor/#com.squareup.kotlinpoet.ClassName/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/declaration-container-for.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/enumEntry/#com.squareup.kotlinpoet.ClassName#kotlin.String/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/enum-entry.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/isInterface/#com.squareup.kotlinpoet.ClassName/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/is-interface.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/methodExists/#com.squareup.kotlinpoet.ClassName#kotlinx.metadata.jvm.JvmMethodSignature/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/method-exists.html
+$dokka.location:com.squareup.kotlinpoet.classinspector.elements/ElementsClassInspector/supportsNonRuntimeRetainedAnnotations/#/PointingToDeclaration/elements/com.squareup.kotlinpoet.classinspector.elements/-elements-class-inspector/supports-non-runtime-retained-annotations.html
+com.squareup.kotlinpoet.classinspector.elements
+
