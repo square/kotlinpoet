@@ -19,7 +19,7 @@ val VERSION_NAME: String by project
 group = GROUP
 version = VERSION_NAME
 
-tasks.named<Jar>("jar") {
+tasks.jar {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km")
   }

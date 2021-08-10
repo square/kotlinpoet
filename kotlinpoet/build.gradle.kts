@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val GROUP: String by project
 val VERSION_NAME: String by project
@@ -21,13 +20,13 @@ val VERSION_NAME: String by project
 group = GROUP
 version = VERSION_NAME
 
-tasks.named<Jar>("jar") {
+tasks.jar {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
   }
 }
 
-tasks.withType<KotlinCompile>().named("compileTestKotlin") {
+tasks.compileTestKotlin {
   kotlinOptions {
     freeCompilerArgs = listOf("-Xopt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
