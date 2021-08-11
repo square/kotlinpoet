@@ -12,6 +12,7 @@ env:
 jobs:
   deploy-website:
     runs-on: ubuntu-latest
+    if: github.repository == 'square/kotlinpoet'
 
     steps:
       - name: Checkout the repo
