@@ -204,7 +204,7 @@ public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
 
 /**
  * Returns a [TypeName] equivalent to the given Kotlin KType using reflection, maybe using kotlin-reflect
- * if required
+ * if required.
  */
 public fun KType.asTypeName(): TypeName {
   val classifier = this.classifier
