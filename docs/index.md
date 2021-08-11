@@ -1366,7 +1366,7 @@ kotlin-reflect
 
 To generate source code from any [`KType`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-type/), including information that's not accessible to the builtin reflection APIs, KotlinPoet depends on [kotlin-reflect](https://kotlinlang.org/docs/reflection.html#jvm-dependency). `kotlin-reflect` can read the metadata of your classes and access this extra information. KotlinPoet can for an example, read the type parameters and their [variance](https://kotlinlang.org/docs/generics.html#variance) from a generic `KType` and generate appropriate source code.
 
-`kotlin-reflect` is a relatively big dependency though and in some cases it is desirable to remove it from the final executable/app to save some space and/or simplify the proguard/R8 setup. It is possible to do so and still use most of the KotlinPoet APIs:
+`kotlin-reflect` is a relatively big dependency though and in some cases it is desirable to remove it from the final executable to save some space and/or simplify the proguard/R8 setup (for example for a Gradle plugin that generates Kotlin code). It is possible to do so and still use most of the KotlinPoet APIs:
 
 ```kotlin
 dependencies {
