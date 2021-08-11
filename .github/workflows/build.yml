@@ -39,7 +39,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.repository == 'square/kotlinpoet' && github.ref == 'refs/heads/master'
     needs:
       - jvm
 
