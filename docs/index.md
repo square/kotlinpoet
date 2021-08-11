@@ -60,7 +60,7 @@ properties (`PropertySpec`), functions & constructors (`FunSpec`), parameters (`
 annotations (`AnnotationSpec`).
 
 But the _body_ of methods and constructors is not modeled. There's no expression class, no
-statement class or syntax tree nodes. Instead, KotlinPoet uses strings for code blocks, and you can 
+statement class or syntax tree nodes. Instead, KotlinPoet uses strings for code blocks, and you can
 take advantage of Kotlin's multiline strings to make this look nice:
 
 ```kotlin
@@ -140,11 +140,11 @@ fun main(args: Array<String>) {
       .addFunction(whatsMyNameYo("eminem"))
       .addFunction(whatsMyNameYo("marshallMathers"))
       .build()
-  
+
   val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
       .addType(helloWorld)
       .build()
-  
+
   kotlinFile.writeTo(System.out)
 }
 
@@ -170,7 +170,7 @@ class HelloWorld {
 
 ### %P for String Templates
 
-`%S` also handles the escaping of dollar signs (`$`), to avoid inadvertent creation of string 
+`%S` also handles the escaping of dollar signs (`$`), to avoid inadvertent creation of string
 templates, which may fail to compile in generated code:
 
 ```kotlin
@@ -294,7 +294,7 @@ class HelloWorld {
 
 The `ClassName` type is very important, and you'll need it frequently when you're using KotlinPoet.
 It can identify any _declared_ class. Declared types are just the beginning of Kotlin's rich type
-system: we also have arrays, parameterized types, wildcard types, lambda types and type variables. 
+system: we also have arrays, parameterized types, wildcard types, lambda types and type variables.
 KotlinPoet has classes for building each of these:
 
 ```kotlin
@@ -353,7 +353,7 @@ class HelloWorld {
 
 #### Nullable Types
 
-KotlinPoet supports nullable types. To convert a `TypeName` into its nullable counterpart, use the 
+KotlinPoet supports nullable types. To convert a `TypeName` into its nullable counterpart, use the
 `copy()` method with `nullable` parameter set to `true`:
 
 ```kotlin
@@ -412,10 +412,10 @@ fun main() {
 }
 ```
 
-As you can see, it's also possible to use `%M` to reference extension functions and properties. You 
-just need to make sure the member can be imported without simple name collisions, otherwise 
-importing will fail and the code generator output will not pass compilation. There's a way to work 
-around such cases though - use `FileSpec.addAliasedImport()` to create an alias for a clashing 
+As you can see, it's also possible to use `%M` to reference extension functions and properties. You
+just need to make sure the member can be imported without simple name collisions, otherwise
+importing will fail and the code generator output will not pass compilation. There's a way to work
+around such cases though - use `FileSpec.addAliasedImport()` to create an alias for a clashing
 `MemberName`:
 
 ```kotlin
@@ -434,7 +434,7 @@ val file = FileSpec.builder("com.squareup.example", "Test")
         .build())
     .build()
 println(file)
-``` 
+```
 
 KotlinPoet will produce an aliased import for `com.squareup.tacos2.isVegan`:
 
@@ -533,7 +533,7 @@ val byteToHex = FunSpec.builder("byteToHex")
     .build()
 ```
 
-Another handy feature that `%N` provides is automatically escaping names that contain illegal 
+Another handy feature that `%N` provides is automatically escaping names that contain illegal
 identifier characters with double ticks. Suppose your code creates a `MemberName` with a Kotlin
 keyword as the simple name:
 
@@ -565,7 +565,7 @@ fun packageTacos(tacos: List<Taco>, packager: TacoPackager) {
 
 ### %L for Literals
 
-Although Kotlin's string templates usually work well in cases when you want to include literals into 
+Although Kotlin's string templates usually work well in cases when you want to include literals into
 generated code, KotlinPoet offers additional syntax inspired-by but incompatible-with
 [`String.format()`][formatter]. It accepts **`%L`** to emit a **literal** value in the output. This
 works just like `Formatter`'s `%s`:
@@ -621,7 +621,7 @@ map += "food" to "tacos"
 map += "count" to 3
 CodeBlock.builder().addNamed("I ate %count:L %food:L", map)
 ```
-  
+
 ### Functions
 
 All of the above functions have a code body. Use `KModifier.ABSTRACT` to get a function without any
@@ -718,7 +718,7 @@ FunSpec.builder("add")
 #### Spaces wrap by default!
 
 In order to provide meaningful formatting, KotlinPoet would replace spaces, found in blocks of code,
-with new line symbols, in cases when the line of code exceeds the length limit. Let's take this 
+with new line symbols, in cases when the line of code exceeds the length limit. Let's take this
 function for example:
 
 ```kotlin
@@ -730,13 +730,13 @@ val funSpec = FunSpec.builder("foo")
 Depending on where it's found in the file, it may end up being printed out like this:
 
 ```kotlin
-fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString() }.also 
+fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString() }.also
 { string -> println(string) }
 ```
 
-Unfortunately this code is broken: the compiler expects `also` and `{` to be on the same line. 
-KotlinPoet is unable to understand the context of the expression and fix the formatting for you, but 
-there's a trick you can use to declare a non-breaking space - use the `·` symbol where you would 
+Unfortunately this code is broken: the compiler expects `also` and `{` to be on the same line.
+KotlinPoet is unable to understand the context of the expression and fix the formatting for you, but
+there's a trick you can use to declare a non-breaking space - use the `·` symbol where you would
 otherwise use a space. Let's apply this to our example:
 
 ```kotlin
@@ -793,7 +793,7 @@ val helloWorld = TypeSpec.classBuilder("HelloWorld")
     .primaryConstructor(flux)
     .addProperty("greeting", String::class, KModifier.PRIVATE)
     .build()
-``` 
+```
 
 This code, however, generates the following:
 
@@ -807,7 +807,7 @@ class HelloWorld(greeting: String) {
 ```
 
 By default, KotlinPoet won't merge primary constructor parameters and properties, even if they share
-the same name. To achieve the effect, you have to tell KotlinPoet that the property is initialized 
+the same name. To achieve the effect, you have to tell KotlinPoet that the property is initialized
 via the constructor parameter:
 
 ```kotlin
@@ -923,7 +923,7 @@ val android = PropertySpec.builder("android", String::class)
 will produce an error:
 
 ```
-java.lang.IllegalArgumentException: KotlinPoet doesn't allow setting the inline modifier on 
+java.lang.IllegalArgumentException: KotlinPoet doesn't allow setting the inline modifier on
 properties. You should mark either the getter, the setter, or both inline.
 ```
 
@@ -946,7 +946,7 @@ val android: kotlin.String
     inline get() = "foo"
 ```
 
-Now, what if we wanted to add a non-inline setter to the property above? We can do so without 
+Now, what if we wanted to add a non-inline setter to the property above? We can do so without
 modifying any of the code we wrote previously:
 
 ```kotlin
@@ -980,16 +980,16 @@ inline val android: kotlin.String
     }
 ```
 
-Removing the modifier from either the getter or the setter will unwrap the expression back. 
+Removing the modifier from either the getter or the setter will unwrap the expression back.
 
-If, on the other hand, KotlinPoet had allowed marking a property `inline` directly, the programmer 
-would have had to manually add/remove the modifier whenever the state of the accessors changes in 
-order to get correct and compilable output. We're solving this problem by making accessors the 
-source of truth for the `inline` modifier.  
+If, on the other hand, KotlinPoet had allowed marking a property `inline` directly, the programmer
+would have had to manually add/remove the modifier whenever the state of the accessors changes in
+order to get correct and compilable output. We're solving this problem by making accessors the
+source of truth for the `inline` modifier.
 
 ### Interfaces
 
-KotlinPoet has no trouble with interfaces. Note that interface methods must always be `ABSTRACT`. 
+KotlinPoet has no trouble with interfaces. Note that interface methods must always be `ABSTRACT`.
 The modifier is necessary when defining the interface:
 
 ```kotlin
@@ -1012,7 +1012,7 @@ interface HelloWorld {
 }
 ```
 
-Kotlin 1.4 adds support for functional interfaces via `fun interface` syntax. To create this in 
+Kotlin 1.4 adds support for functional interfaces via `fun interface` syntax. To create this in
 KotlinPoet, use `TypeSpec.funInterfaceBuilder()`.
 
 ```kotlin
@@ -1043,7 +1043,7 @@ val helloWorld = TypeSpec.objectBuilder("HelloWorld")
     .build()
 ```
 
-Similarly, you can create companion objects and add them to classes using `addType()`: 
+Similarly, you can create companion objects and add them to classes using `addType()`:
 
 ```kotlin
 val companion = TypeSpec.companionObjectBuilder()
@@ -1130,7 +1130,7 @@ enum class Roshambo(private val handsign: String) {
 
 ### Anonymous Inner Classes
 
-In the enum code, we used `TypeSpec.anonymousClassBuilder()`. Anonymous inner classes can also be 
+In the enum code, we used `TypeSpec.anonymousClassBuilder()`. Anonymous inner classes can also be
 used in code blocks. They are values that can be referenced with `%L`:
 
 ```kotlin
@@ -1166,7 +1166,7 @@ class HelloWorld {
 ```
 
 One particularly tricky part of defining anonymous inner classes is the arguments to the superclass
-constructor. To pass them use `TypeSpec.Builder`'s `addSuperclassConstructorParameter()` method. 
+constructor. To pass them use `TypeSpec.Builder`'s `addSuperclassConstructorParameter()` method.
 
 ### Annotations
 
@@ -1392,7 +1392,7 @@ License
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+       https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,

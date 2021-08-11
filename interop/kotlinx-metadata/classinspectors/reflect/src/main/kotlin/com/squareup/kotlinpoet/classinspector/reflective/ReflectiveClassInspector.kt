@@ -552,7 +552,7 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmMethodSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Method.jvmMethodSignature: String get() = "$name$descriptor"
 
@@ -564,7 +564,7 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmMethodSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Constructor<*>.jvmMethodSignature: String get() = "<init>$descriptor"
 
@@ -573,7 +573,7 @@ public class ReflectiveClassInspector private constructor(
      *
      * Useful for comparing with [JvmFieldSignature].
      *
-     * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+     * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
      */
     private val Field.jvmFieldSignature: String get() = "$name:${type.descriptor}"
   }
