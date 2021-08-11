@@ -1371,7 +1371,7 @@ To generate source code from any [`KType`](https://kotlinlang.org/api/latest/jvm
 ```kotlin
 dependencies {
   implementation("com.squareup:kotlinpoet:1.9.0") {
-    exlude(module = "kotlin-reflect")
+    exclude(module = "kotlin-reflect")
   }
 }
 ```
