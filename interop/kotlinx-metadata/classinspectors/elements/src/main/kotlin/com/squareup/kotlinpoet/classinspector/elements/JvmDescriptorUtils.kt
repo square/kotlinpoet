@@ -36,7 +36,7 @@ import javax.lang.model.util.Types
  */
 
 /**
- * For reference, see the [JVM specification, section 4.2](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.2).
+ * For reference, see the [JVM specification, section 4.2](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.2).
  *
  * @return the name of this [Element] in its "internal form".
  */
@@ -132,7 +132,7 @@ internal fun ExecutableType.descriptor(types: Types): String {
  *
  * Useful for comparing with [JvmMethodSignature].
  *
- * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+ * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
  */
 internal fun ExecutableElement.jvmMethodSignature(types: Types): String {
   return "$simpleName${asType().descriptor(types)}"
@@ -143,7 +143,7 @@ internal fun ExecutableElement.jvmMethodSignature(types: Types): String {
  *
  * Useful for comparing with [JvmFieldSignature].
  *
- * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+ * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
  */
 internal fun VariableElement.jvmFieldSignature(types: Types): String {
   return "$simpleName:${asType().descriptor(types)}"
@@ -154,7 +154,7 @@ internal fun VariableElement.jvmFieldSignature(types: Types): String {
  * - a "field descriptor", for example: `Ljava/lang/Object;`
  * - a "method descriptor", for example: `(Ljava/lang/Object;)Z`
  *
- * For reference, see the [JVM specification, section 4.3](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
+ * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
  */
 internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>() {
   override fun visitNoType(t: NoType, types: Types): String = t.descriptor
