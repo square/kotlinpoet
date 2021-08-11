@@ -1378,7 +1378,7 @@ dependencies {
 
 The main APIs that require `kotlin-reflect` are [`KType.asTypeName()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/as-type-name.html) and [`typeNameOf<T>()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/type-name-of.html). If you're calling one of these without `kotlin-reflect` in the classpath and the type is generic or has annotations you will get a crash.
 
-You can replace it with code that passes type parameters or annotations explicitely and doesn't need `kotlin-reflect`. For example:
+You can replace it with code that passes type parameters or annotations explicitly and doesn't need `kotlin-reflect`. For example:
 
 ```kotlin
 // Replace
