@@ -202,7 +202,10 @@ public class ParameterizedTypeName internal constructor(
 public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
   ParameterizedTypeName.get(this, mutableMapOf())
 
-/** Returns a class name equivalent to given Kotlin KType.  */
+/**
+ * Returns a [TypeName] equivalent to the given Kotlin KType using reflection, maybe using kotlin-reflect
+ * if required.
+ */
 public fun KType.asTypeName(): TypeName {
   val classifier = this.classifier
   if (classifier is KTypeParameter) {
