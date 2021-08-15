@@ -33,10 +33,16 @@ spotless {
   }
 }
 
-subprojects {
+allprojects {
+  group = property("GROUP") as String
+  version = property("VERSION_NAME") as String
+
   repositories {
     mavenCentral()
   }
+}
+
+subprojects {
   tasks.withType<KotlinCompile> {
     kotlinOptions {
       freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
