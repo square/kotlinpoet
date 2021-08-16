@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-val GROUP: String by project
-val VERSION_NAME: String by project
-
-group = GROUP
-version = VERSION_NAME
-
 tasks.jar {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
