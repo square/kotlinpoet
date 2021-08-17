@@ -60,25 +60,6 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
 
-  deploy-website:
-    runs-on: ubuntu-latest
-    if: github.repository == 'square/kotlinpoet' && github.ref == 'refs/heads/master'
-    needs:
-      - jvm
-
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v2
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-
-      - name: Configure JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: 14
-
       - name: Prep docs
         run: ./gradlew dokkaHtml
 
