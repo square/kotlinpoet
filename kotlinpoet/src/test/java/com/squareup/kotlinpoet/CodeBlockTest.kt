@@ -64,14 +64,14 @@ class CodeBlockTest {
 
   @Test fun simpleNamedArgument() {
     val map = LinkedHashMap<String, Any>()
-    map.put("text", "taco")
+    map["text"] = "taco"
     val block = CodeBlock.builder().addNamed("%text:S", map).build()
     assertThat(block.toString()).isEqualTo("\"taco\"")
   }
 
   @Test fun repeatedNamedArgument() {
     val map = LinkedHashMap<String, Any>()
-    map.put("text", "tacos")
+    map["text"] = "tacos"
     val block = CodeBlock.builder()
       .addNamed("\"I like \" + %text:S + \". Do you like \" + %text:S + \"?\"", map)
       .build()
@@ -82,7 +82,7 @@ class CodeBlockTest {
 
   @Test fun namedAndNoArgFormat() {
     val map = LinkedHashMap<String, Any>()
-    map.put("text", "tacos")
+    map["text"] = "tacos"
     val block = CodeBlock.builder()
       .addNamed("⇥\n%text:L for\n⇤%%3.50", map).build()
     assertThat(block.toString()).isEqualTo("\n  tacos for\n%3.50")
@@ -98,15 +98,15 @@ class CodeBlockTest {
   @Test fun lowerCaseNamed() {
     assertThrows<IllegalArgumentException> {
       val map = LinkedHashMap<String, Any>()
-      map.put("Text", "tacos")
+      map["Text"] = "tacos"
       CodeBlock.builder().addNamed("%Text:S", map).build()
     }.hasMessageThat().isEqualTo("argument 'Text' must start with a lowercase character")
   }
 
   @Test fun multipleNamedArguments() {
     val map = LinkedHashMap<String, Any>()
-    map.put("pipe", System::class)
-    map.put("text", "tacos")
+    map["pipe"] = System::class
+    map["text"] = "tacos"
 
     val block = CodeBlock.builder()
       .addNamed("%pipe:T.out.println(\"Let's eat some %text:L\");", map)
@@ -119,14 +119,14 @@ class CodeBlockTest {
 
   @Test fun namedNewline() {
     val map = LinkedHashMap<String, Any>()
-    map.put("clazz", java.lang.Integer::class)
+    map["clazz"] = java.lang.Integer::class
     val block = CodeBlock.builder().addNamed("%clazz:T\n", map).build()
     assertThat(block.toString()).isEqualTo("kotlin.Int\n")
   }
 
   @Test fun danglingNamed() {
     val map = LinkedHashMap<String, Any>()
-    map.put("clazz", Int::class)
+    map["clazz"] = Int::class
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().addNamed("%clazz:T%", map).build()
     }.hasMessageThat().isEqualTo("dangling % at end")

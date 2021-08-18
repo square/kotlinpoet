@@ -120,9 +120,9 @@ class TypesEclipseTest : AbstractTypesTest() {
         null,
         fileManager,
         diagnosticCollector,
-        ImmutableSet.of<String>(),
+        ImmutableSet.of(),
         ImmutableSet.of(TypesEclipseTest::class.java.canonicalName),
-        ImmutableSet.of<JavaFileObject>()
+        ImmutableSet.of()
       )
       task.setProcessors(processors)
       return task.call()!!

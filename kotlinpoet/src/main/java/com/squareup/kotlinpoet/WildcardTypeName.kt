@@ -95,15 +95,15 @@ public class WildcardTypeName private constructor(
       typeVariables: Map<TypeParameterElement, TypeVariableName>
     ): TypeName {
       val outType = mirror.extendsBound
-      if (outType == null) {
+      return if (outType == null) {
         val inType = mirror.superBound
-        return if (inType == null) {
+        if (inType == null) {
           STAR
         } else {
           consumerOf(get(inType, typeVariables))
         }
       } else {
-        return producerOf(get(outType, typeVariables))
+        producerOf(get(outType, typeVariables))
       }
     }
 

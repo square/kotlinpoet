@@ -212,7 +212,7 @@ public sealed class TypeName constructor(
         is WildcardType -> WildcardTypeName.get(type, map)
         is TypeVariable<*> -> TypeVariableName.get(type, map)
         is GenericArrayType -> ARRAY.parameterizedBy(get(type.genericComponentType, map))
-        else -> throw IllegalArgumentException("unexpected type: " + type)
+        else -> throw IllegalArgumentException("unexpected type: $type")
       }
     }
   }

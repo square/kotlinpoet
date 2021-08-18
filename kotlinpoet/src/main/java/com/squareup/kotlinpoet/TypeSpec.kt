@@ -807,8 +807,7 @@ public class TypeSpec private constructor(
         }
       }
 
-      val companionObjectsCount = typeSpecs.count { it.isCompanion }
-      when (companionObjectsCount) {
+      when (typeSpecs.count { it.isCompanion }) {
         0 -> Unit
         1 -> {
           require(isSimpleClass || kind == Kind.INTERFACE || isEnum || isAnnotation) {
