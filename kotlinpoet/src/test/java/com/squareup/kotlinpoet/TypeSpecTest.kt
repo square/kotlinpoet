@@ -31,9 +31,9 @@ import com.squareup.kotlinpoet.jvm.throws
 import org.junit.Rule
 import java.io.IOException
 import java.io.Serializable
+import java.lang.Deprecated
 import java.math.BigDecimal
 import java.util.AbstractSet
-import java.util.Arrays
 import java.util.Collections
 import java.util.Comparator
 import java.util.EventListener
@@ -2527,11 +2527,11 @@ class TypeSpecTest {
   @Test fun multipleAnnotationAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addAnnotations(
-        Arrays.asList(
+        listOf(
           AnnotationSpec.builder(SuppressWarnings::class)
             .addMember("%S", "unchecked")
             .build(),
-          AnnotationSpec.builder(java.lang.Deprecated::class).build()
+          AnnotationSpec.builder(Deprecated::class).build()
         )
       )
       .build()
@@ -2552,9 +2552,9 @@ class TypeSpecTest {
   @Test fun multiplePropertyAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addProperties(
-        Arrays.asList(
+        listOf(
           PropertySpec.builder("ANSWER", Int::class, KModifier.CONST).build(),
-          PropertySpec.builder("price", BigDecimal::class, KModifier.PRIVATE).build()
+          PropertySpec.builder("price", BigDecimal::class, PRIVATE).build()
         )
       )
       .build()
@@ -2577,14 +2577,14 @@ class TypeSpecTest {
   @Test fun multipleFunctionAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addFunctions(
-        Arrays.asList(
+        listOf(
           FunSpec.builder("getAnswer")
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(PUBLIC)
             .returns(Int::class)
             .addStatement("return %L", 42)
             .build(),
           FunSpec.builder("getRandomQuantity")
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(PUBLIC)
             .returns(Int::class)
             .addKdoc("chosen by fair dice roll ;)\n")
             .addStatement("return %L", 4)
@@ -2613,7 +2613,7 @@ class TypeSpecTest {
   @Test fun multipleSuperinterfaceAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addSuperinterfaces(
-        Arrays.asList(
+        listOf(
           Serializable::class.asTypeName(),
           EventListener::class.asTypeName()
         )
@@ -2634,7 +2634,7 @@ class TypeSpecTest {
   @Test fun multipleTypeVariableAddition() {
     val location = TypeSpec.classBuilder("Location")
       .addTypeVariables(
-        Arrays.asList(
+        listOf(
           TypeVariableName("T"),
           TypeVariableName("P", Number::class)
         )
@@ -2654,7 +2654,7 @@ class TypeSpecTest {
   @Test fun multipleTypeAddition() {
     val taco = TypeSpec.classBuilder("Taco")
       .addTypes(
-        Arrays.asList(
+        listOf(
           TypeSpec.classBuilder("Topping").build(),
           TypeSpec.classBuilder("Sauce").build()
         )

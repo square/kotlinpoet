@@ -54,31 +54,29 @@ class AnnotationSpecTest {
     val d: Long = 8,
     val e: Float = 9.0f,
     val f: Double = 10.0,
-    val g: CharArray = charArrayOf('\u0000', '\uCAFE', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'),
+    val g: CharArray = ['\u0000', '\uCAFE', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'],
     val h: Boolean = true,
     val i: Breakfast = Breakfast.WAFFLES,
     val j: AnnotationA = AnnotationA(),
     val k: String = "maple",
     val l: KClass<out Annotation> = AnnotationB::class,
-    val m: IntArray = intArrayOf(1, 2, 3),
-    val n: Array<Breakfast> = arrayOf(Breakfast.WAFFLES, Breakfast.PANCAKES),
+    val m: IntArray = [1, 2, 3],
+    val n: Array<Breakfast> = [Breakfast.WAFFLES, Breakfast.PANCAKES],
     val o: Breakfast,
     val p: Int,
     val q: AnnotationC = AnnotationC("foo"),
-    val r: Array<KClass<out Number>> = arrayOf(
-      Byte::class, Short::class, Int::class, Long::class
-    )
+    val r: Array<KClass<out Number>> = [Byte::class, Short::class, Int::class, Long::class]
   )
 
   @HasDefaultsAnnotation(
     o = Breakfast.PANCAKES,
     p = 1701,
     f = 11.1,
-    m = intArrayOf(9, 8, 1),
+    m = [9, 8, 1],
     l = Override::class,
     j = AnnotationA(),
     q = AnnotationC("bar"),
-    r = arrayOf(Float::class, Double::class)
+    r = [Float::class, Double::class]
   )
   inner class IsAnnotated
 

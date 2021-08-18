@@ -215,7 +215,7 @@ public class CodeBlock private constructor(
         var matchResult: MatchResult? = null
         val colon = format.indexOf(':', p)
         if (colon != -1) {
-          val endIndex = Math.min(colon + 2, format.length)
+          val endIndex = (colon + 2).coerceAtMost(format.length)
           matchResult = NAMED_ARGUMENT.matchEntire(format.substring(p, endIndex))
         }
         if (matchResult != null) {
@@ -226,7 +226,7 @@ public class CodeBlock private constructor(
           val formatChar = matchResult.groupValues[TYPE_NAME].first()
           addArgument(format, formatChar, arguments[argumentName])
           formatParts += "%$formatChar"
-          p += matchResult.range.endInclusive + 1
+          p += matchResult.range.last + 1
         } else if (format[p].isSingleCharNoArgPlaceholder) {
           formatParts += format.substring(p, p + 1)
           p++

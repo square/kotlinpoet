@@ -286,7 +286,7 @@ public class FileSpec private constructor(
     }
 
     public fun addImport(constant: Enum<*>): Builder = addImport(
-      (constant as java.lang.Enum<*>).getDeclaringClass().asClassName(), constant.name
+      (constant as java.lang.Enum<*>).declaringClass.asClassName(), constant.name
     )
 
     public fun addImport(`class`: Class<*>, vararg names: String): Builder = apply {

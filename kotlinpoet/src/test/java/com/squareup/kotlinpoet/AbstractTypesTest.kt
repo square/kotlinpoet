@@ -19,9 +19,11 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
 import java.nio.charset.Charset
+import javax.lang.model.element.Element
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ErrorType
 import javax.lang.model.type.TypeKind
+import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVisitor
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -68,9 +70,10 @@ abstract class AbstractTypesTest {
     ExtendsClass : Number,
     ExtendsInterface : Runnable,
     ExtendsTypeVariable : Simple,
-    Intersection : Number,
-    IntersectionOfInterfaces : Runnable>
-  where Intersection : Runnable, IntersectionOfInterfaces : Serializable
+    Intersection,
+    IntersectionOfInterfaces>
+  where IntersectionOfInterfaces : Runnable, Intersection : Number, Intersection : Runnable,
+        IntersectionOfInterfaces : Serializable
 
   @Test fun getTypeVariableTypeMirror() {
     val typeVariables = getElement(Parameterized::class.java).typeParameters
@@ -203,15 +206,15 @@ abstract class AbstractTypesTest {
   }
 
   private class DeclaredTypeAsErrorType(private val declaredType: DeclaredType) : ErrorType {
-    override fun asElement() = declaredType.asElement()
+    override fun asElement(): Element = declaredType.asElement()
 
-    override fun getEnclosingType() = declaredType.enclosingType
+    override fun getEnclosingType(): TypeMirror = declaredType.enclosingType
 
-    override fun getTypeArguments() = declaredType.typeArguments
+    override fun getTypeArguments(): MutableList<out TypeMirror> = declaredType.typeArguments
 
-    override fun getKind() = declaredType.kind
+    override fun getKind(): TypeKind = declaredType.kind
 
-    override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P) = typeVisitor.visitError(this, p)
+    override fun <R, P> accept(typeVisitor: TypeVisitor<R, P>, p: P): R = typeVisitor.visitError(this, p)
 
     override fun <A : Annotation> getAnnotationsByType(annotationType: Class<A>): Array<A> =
       throw UnsupportedOperationException()
