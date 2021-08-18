@@ -1966,7 +1966,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       // TODO Needless parens below necessary until Kotlin 1.4
       //  Or enable -XXLanguage:+NonParenthesizedAnnotationsOnFunctionalTypes
       //  https://youtrack.jetbrains.com/issue/KT-31734
-      input2: @TypeAnnotation() (@TypeAnnotation Int) -> @TypeAnnotation String
+      input2: @TypeAnnotation (@TypeAnnotation Int) -> @TypeAnnotation String
     ) {
     }
   }

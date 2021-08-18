@@ -22,7 +22,6 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import org.junit.Rule
 import java.lang.annotation.Inherited
-import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 import kotlin.test.Test
 
@@ -438,7 +437,7 @@ class AnnotationSpecTest {
   @AnnotationWithArrayValue(Any::class, Boolean::class)
   class KotlinClassWithVarargAnnotation
 
-  @Retention(RUNTIME)
+  @Retention(AnnotationRetention.RUNTIME)
   internal annotation class AnnotationWithArrayValue(vararg val value: KClass<*>)
 
   @Test fun annotationsWithTypeParameters() {

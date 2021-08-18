@@ -508,7 +508,7 @@ public class ReflectiveClassInspector private constructor(
       parameterAnnotations = parameters.indexedAnnotationSpecs(),
       isSynthetic = isSynthetic,
       jvmModifiers = jvmInformationMethod.jvmModifiers(),
-      isOverride = knownIsOverride?.let { it } ?: signature.isOverriddenIn(clazz),
+      isOverride = knownIsOverride ?: signature.isOverriddenIn(clazz),
       exceptions = exceptionTypeNames()
     )
   }

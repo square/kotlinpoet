@@ -407,8 +407,8 @@ public class ElementsClassInspector private constructor(
         // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
         // not legal
         var finalFieldData = fieldData
-        fieldData?.jvmModifiers?.let {
-          if (isCompanionObject && JvmFieldModifier.STATIC in it) {
+        fieldData?.jvmModifiers?.let { modifiers ->
+          if (isCompanionObject && JvmFieldModifier.STATIC in modifiers) {
             finalFieldData = fieldData.copy(
               jvmModifiers = fieldData.jvmModifiers
                 .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC }
@@ -541,7 +541,7 @@ public class ElementsClassInspector private constructor(
       parameterAnnotations = parameters.indexedAnnotationSpecs(),
       isSynthetic = false,
       jvmModifiers = jvmInformationMethod.jvmModifiers(),
-      isOverride = knownIsOverride?.let { it } ?: isOverriddenIn(typeElement),
+      isOverride = knownIsOverride ?: isOverriddenIn(typeElement),
       exceptions = exceptionTypeNames()
     )
   }

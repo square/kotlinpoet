@@ -4922,7 +4922,7 @@ class TypeSpecTest {
   }
 
   @Test fun escapeAllowedCharacters() {
-    var typeSpec = TypeSpec.classBuilder("A\$B")
+    val typeSpec = TypeSpec.classBuilder("A\$B")
       .build()
     assertThat(typeSpec.toString()).isEqualTo("public class `A\$B`\n")
   }
