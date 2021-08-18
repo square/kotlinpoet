@@ -105,7 +105,7 @@ abstract class AbstractTypesTest {
     val typeMirror = getElement(Recursive::class.java).asType()
     val typeName = typeMirror.asTypeName() as ParameterizedTypeName
     val className = Recursive::class.java.canonicalName
-    assertThat(typeName.toString()).isEqualTo(className + "<T>")
+    assertThat(typeName.toString()).isEqualTo("$className<T>")
 
     val typeVariableName = typeName.typeArguments[0] as TypeVariableName
     assertThat(typeVariableName.toString()).isEqualTo("T")

@@ -51,8 +51,7 @@ internal class LineWrapper(
 
     var pos = 0
     while (pos < s.length) {
-      val c = s[pos]
-      when (c) {
+      when (s[pos]) {
         ' ' -> {
           // Each space starts a new empty segment.
           this.indentLevel = indentLevel

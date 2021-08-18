@@ -188,7 +188,6 @@ public class ElementsClassInspector private constructor(
       ?.toImmutableKmClass()
 
     val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
-      .asSequence()
       .find { it.simpleName.contentEquals(memberName) }
       ?: error("Could not find the enum entry for: $enumClassName")
 

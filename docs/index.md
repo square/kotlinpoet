@@ -1157,11 +1157,9 @@ This generates a method that contains a class that contains a method:
 
 ```kotlin
 class HelloWorld {
-    fun sortByLength(strings: List<String>) {
-        strings.sortedWith(object : Comparator<String> {
-            override fun compare(a: String, b: String): Int = a.length - b.length
-        })
-    }
+  fun sortByLength(strings: List<String>) {
+    strings.sortedWith { a, b -> a.length - b.length }
+  }
 }
 ```
 

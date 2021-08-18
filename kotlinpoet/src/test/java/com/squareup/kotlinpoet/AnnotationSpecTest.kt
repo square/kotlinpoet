@@ -42,7 +42,7 @@ class AnnotationSpecTest {
     WAFFLES, PANCAKES;
 
     override fun toString(): String {
-      return name + " with cherries!"
+      return "$name with cherries!"
     }
   }
 

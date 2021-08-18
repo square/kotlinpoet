@@ -138,7 +138,7 @@ class LineWrappingTest {
     val funSpecBuilder = FunSpec.builder("call")
     funSpecBuilder.addCode("«call(")
     for (i in 0..31) {
-      funSpecBuilder.addParameter("s" + i, String::class)
+      funSpecBuilder.addParameter("s$i", String::class)
       funSpecBuilder.addCode(if (i > 0) ", %S" else "%S", i)
     }
     funSpecBuilder.addCode(")»\n")
