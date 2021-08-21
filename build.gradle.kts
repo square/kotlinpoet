@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  alias(libs.plugins.kotlin.jvm)
-  alias(libs.plugins.dokka)
-  alias(libs.plugins.spotless)
-  alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.kotlin.jvm) apply false
+  alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.spotless) apply false
+  alias(libs.plugins.mavenPublish) apply false
 }
 
 allprojects {
