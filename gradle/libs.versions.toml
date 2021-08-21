@@ -20,6 +20,11 @@ mavenPublish = "0.17.0"
 dokka = "1.5.0"
 
 [libraries]
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
+
 autoCommon = { module = "com.google.auto:auto-common", version = "1.1" }
 guava = { module = "com.google.guava:guava", version = "30.1.1-jre" }
 

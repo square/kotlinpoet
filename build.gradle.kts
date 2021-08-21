@@ -18,11 +18,17 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-plugins {
-  kotlin("jvm") version libs.versions.kotlin.get() apply false
-  id("org.jetbrains.dokka") version libs.versions.dokka.get() apply false
-  id("com.diffplug.spotless") version libs.versions.spotless.get() apply false
-  id("com.vanniktech.maven.publish") version libs.versions.mavenPublish.get() apply false
+buildscript {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+  dependencies {
+    classpath(libs.kotlin.gradle)
+    classpath(libs.dokka)
+    classpath(libs.spotless)
+    classpath(libs.mavenPublish)
+  }
 }
 
 allprojects {
