@@ -27,11 +27,11 @@ tasks.compileTestKotlin {
 }
 
 dependencies {
-  implementation(deps.kotlin.reflect)
-  testImplementation(deps.kotlin.junit)
-  testImplementation(deps.test.truth)
-  testImplementation(deps.test.compileTesting)
-  testImplementation(deps.test.jimfs)
-  testImplementation(deps.test.ecj)
-  testImplementation(deps.test.kotlinCompileTesting)
+  implementation(libs.kotlin.reflect)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.compileTesting)
+  testImplementation(libs.jimfs)
+  testImplementation(libs.ecj)
+  testImplementation(libs.kotlinCompileTesting)
 }

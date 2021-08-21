@@ -28,3 +28,5 @@ include(
     ":interop:kotlinx-metadata:specs",
     ":interop:kotlinx-metadata:specs-tests"
 )
+
+enableFeaturePreview("VERSION_CATALOGS")
