@@ -45,13 +45,11 @@ subprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8.toString()
     targetCompatibility = JavaVersion.VERSION_1_8.toString()
   }
-  pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-    configure<KotlinProjectExtension> {
-      explicitApi()
-    }
-  }
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
+  configure<KotlinProjectExtension> {
+    explicitApi()
+  }
   if ("tests" !in name && buildFile.exists()) {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
