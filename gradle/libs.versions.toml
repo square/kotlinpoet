@@ -19,6 +19,12 @@ ktlint = "0.41.0"
 mavenPublish = "0.17.0"
 dokka = "1.5.0"
 
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+
 [libraries]
 autoCommon = { module = "com.google.auto:auto-common", version = "1.1" }
 guava = { module = "com.google.guava:guava", version = "30.1.1-jre" }
