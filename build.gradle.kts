@@ -67,14 +67,12 @@ subprojects {
   }
 
   apply(plugin = "com.diffplug.spotless")
-  pluginManager.withPlugin("com.diffplug.spotless") {
-    configure<SpotlessExtension> {
-      kotlin {
-        target("**/*.kt")
-        ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
-        trimTrailingWhitespace()
-        endWithNewline()
-      }
+  configure<SpotlessExtension> {
+    kotlin {
+      target("**/*.kt")
+      ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
+      trimTrailingWhitespace()
+      endWithNewline()
     }
   }
 }
