@@ -18,16 +18,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version versions.kotlin apply false
-  id("org.jetbrains.dokka") version versions.dokka apply false
-  id("com.diffplug.spotless") version versions.spotless
-  id("com.vanniktech.maven.publish") version versions.mavenPublish apply false
+  kotlin("jvm") version libs.versions.kotlin.get() apply false
+  id("org.jetbrains.dokka") version libs.versions.dokka.get() apply false
+  id("com.diffplug.spotless") version libs.versions.spotless.get()
+  id("com.vanniktech.maven.publish") version libs.versions.mavenPublish.get() apply false
 }
 
 spotless {
   kotlin {
     target("**/*.kt")
-    ktlint(versions.ktlint).userData(mapOf("indent_size" to "2"))
+    ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
     trimTrailingWhitespace()
     endWithNewline()
   }

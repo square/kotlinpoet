@@ -1,0 +1,34 @@
+# Copyright (C) 2021 Square, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+[versions]
+kotlin = "1.5.21"
+spotless = "5.14.1"
+ktlint = "0.41.0"
+mavenPublish = "0.17.0"
+dokka = "1.5.0"
+
+[libraries]
+autoCommon = { module = "com.google.auto:auto-common", version = "1.1" }
+guava = { module = "com.google.guava:guava", version = "30.1.1-jre" }
+
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.3.0" }
+
+truth = { module = "com.google.truth:truth", version = "1.1.3" }
+compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.19" }
+jimfs = { module = "com.google.jimfs:jimfs", version = "1.2" }
+ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }
+kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version = "1.4.2" }
