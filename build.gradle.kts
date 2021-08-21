@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -20,17 +21,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm") version libs.versions.kotlin.get() apply false
   id("org.jetbrains.dokka") version libs.versions.dokka.get() apply false
-  id("com.diffplug.spotless") version libs.versions.spotless.get()
+  id("com.diffplug.spotless") version libs.versions.spotless.get() apply false
   id("com.vanniktech.maven.publish") version libs.versions.mavenPublish.get() apply false
-}
-
-spotless {
-  kotlin {
-    target("**/*.kt")
-    ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
-    trimTrailingWhitespace()
-    endWithNewline()
-  }
 }
 
 allprojects {
@@ -70,6 +62,18 @@ subprojects {
         dokkaSourceSets.configureEach {
           skipDeprecated.set(true)
         }
+      }
+    }
+  }
+
+  apply(plugin = "com.diffplug.spotless")
+  pluginManager.withPlugin("com.diffplug.spotless") {
+    configure<SpotlessExtension> {
+      kotlin {
+        target("**/*.kt")
+        ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
+        trimTrailingWhitespace()
+        endWithNewline()
       }
     }
   }
