@@ -14,16 +14,13 @@
 
 [versions]
 kotlin = "1.5.21"
-spotless = "5.14.1"
 ktlint = "0.41.0"
-mavenPublish = "0.17.0"
-dokka = "1.5.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+dokka = { id = "org.jetbrains.dokka", version = "1.5.0" }
+spotless = { id = "com.diffplug.spotless", version = "5.14.1" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.17.0" }
 
 [libraries]
 autoCommon = { module = "com.google.auto:auto-common", version = "1.1" }
