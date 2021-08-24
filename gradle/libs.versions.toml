@@ -13,17 +13,17 @@
 # limitations under the License.
 
 [versions]
-kotlin = "1.5.21"
+kotlin = "1.5.30"
 ktlint = "0.41.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version = "1.5.0" }
-spotless = { id = "com.diffplug.spotless", version = "5.14.1" }
+spotless = { id = "com.diffplug.spotless", version = "5.14.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.17.0" }
 
 [libraries]
-autoCommon = { module = "com.google.auto:auto-common", version = "1.1" }
+autoCommon = { module = "com.google.auto:auto-common", version = "1.1.2" }
 guava = { module = "com.google.guava:guava", version = "30.1.1-jre" }
 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -34,4 +34,4 @@ truth = { module = "com.google.truth:truth", version = "1.1.3" }
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.19" }
 jimfs = { module = "com.google.jimfs:jimfs", version = "1.2" }
 ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }
-kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version = "1.4.2" }
+kotlinCompileTesting = { module = "com.github.tschuchortdev:kotlin-compile-testing", version = "1.4.3" }
