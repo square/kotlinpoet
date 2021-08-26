@@ -152,6 +152,7 @@ public class AnnotationSpec private constructor(
   /**
    * Annotation value visitor adding members to the given builder instance.
    */
+  @OptIn(DelicateKotlinPoetApi::class)
   private class Visitor(
     val builder: CodeBlock.Builder
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
@@ -163,10 +164,10 @@ public class AnnotationSpec private constructor(
       builder.add("%L", get(a))
 
     override fun visitEnumConstant(c: VariableElement, name: String) =
-      builder.add("%T.%L", c.asType(), c.simpleName)
+      builder.add("%T.%L", c.asType().asTypeName(), c.simpleName)
 
     override fun visitType(t: TypeMirror, name: String) =
-      builder.add("%T::class", t)
+      builder.add("%T::class", t.asTypeName())
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
       builder.add("[⇥⇥")
@@ -191,6 +192,7 @@ public class AnnotationSpec private constructor(
       includeDefaultValues: Boolean = false
     ): AnnotationSpec {
       try {
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
           .tag(annotation)
