@@ -2180,8 +2180,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   open class Node<T : Node<T, R>, R : Node<R, T>> {
-    var t : T? = null
-    var r : R? = null
+    var t: T? = null
+    var r: R? = null
   }
 }
 
