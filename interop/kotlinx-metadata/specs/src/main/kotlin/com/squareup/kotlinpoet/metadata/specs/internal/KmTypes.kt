@@ -213,8 +213,7 @@ internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
   for (typeParam in this) {
     // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
     // replacement later that may add bounds referencing this.
-    val id = typeParam.id
-    parametersMap[id] = TypeVariableName(typeParam.name)
+    parametersMap[typeParam.id] = TypeVariableName(typeParam.name)
   }
 
   for (typeParam in this) {
