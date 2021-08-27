@@ -2162,6 +2162,27 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   fun interface FunInterface {
     fun example()
   }
+
+  @Test
+  fun selfReferencingTypeParams() {
+    val typeSpec = Node::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(typeSpec.trimmedToString()).isEqualTo(
+      """
+      public open class Node<T : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Node<T, R>, R : com.squareup.kotlinpoet.metadata.specs.test.KotlinPoetMetadataSpecsTest.Node<R, T>>() {
+        public var r: R? = null
+
+        public var t: T? = null
+      }
+      """.trimIndent()
+    )
+  }
+
+  open class Node<T : Node<T, R>, R : Node<R, T>> {
+    var t: T? = null
+    var r: R? = null
+  }
 }
 
 class ClassNesting {
