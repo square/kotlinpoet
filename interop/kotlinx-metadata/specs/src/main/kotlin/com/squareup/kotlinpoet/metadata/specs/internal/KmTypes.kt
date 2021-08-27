@@ -178,6 +178,7 @@ private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
   // TODO tag typeFlexibilityId somehow?
   return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
 }
+
 internal interface TypeParameterResolver {
   val parametersMap: Map<Int, TypeVariableName>
   operator fun get(index: Int): TypeVariableName
@@ -209,12 +210,16 @@ internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
   }
 
   // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
-  forEach {
+  for (typeParam in this) {
     // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
     // replacement later that may add bounds referencing this.
-    parametersMap[it.id] = TypeVariableName(it.name)
+    val id = typeParam.id
+    parametersMap[id] = TypeVariableName(typeParam.name)
+  }
+
+  for (typeParam in this) {
     // Now replace it with the full version.
-    parametersMap[it.id] = it.toTypeVariableName(resolver)
+    parametersMap[typeParam.id] = typeParam.toTypeVariableName(resolver)
   }
 
   return resolver
