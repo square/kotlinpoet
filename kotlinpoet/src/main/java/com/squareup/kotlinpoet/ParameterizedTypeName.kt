@@ -50,6 +50,15 @@ public class ParameterizedTypeName internal constructor(
     return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations, tags)
   }
 
+  public fun copy(
+    nullable: Boolean = this.isNullable,
+    annotations: List<AnnotationSpec> = this.annotations,
+    tags: Map<KClass<*>, Any> = this.tags,
+    typeArguments: List<TypeName> = this.typeArguments
+  ): ParameterizedTypeName {
+    return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations, tags)
+  }
+
   public fun plusParameter(typeArgument: TypeName): ParameterizedTypeName =
     ParameterizedTypeName(
       enclosingType, rawType, typeArguments + typeArgument, isNullable,
