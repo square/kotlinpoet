@@ -45,7 +45,7 @@ class TypesEclipseTest : AbstractTypesTest() {
    *
    * To use this rule in a test, just add the following field:
    *
-   * ```
+   * ```java
    *   public CompilationRule compilationRule = new CompilationRule();
    * ```
    *
