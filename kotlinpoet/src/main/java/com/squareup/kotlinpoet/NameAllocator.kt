@@ -22,7 +22,7 @@ import java.util.UUID
  * first create an instance and allocate all of the names that you need. Typically this is a
  * mix of user-supplied names and constants:
  *
- * ```
+ * ```kotlin
  * val nameAllocator = NameAllocator()
  * for (property in properties) {
  *   nameAllocator.newName(property.name, property)
@@ -37,7 +37,7 @@ import java.util.UUID
  *
  * Once we've allocated names we can use them when generating code:
  *
- * ```
+ * ```kotlin
  * val builder = FunSpec.builder("toString")
  *     .addModifiers(KModifier.OVERRIDE)
  *     .returns(String::class)
@@ -56,7 +56,7 @@ import java.util.UUID
  * The above code generates unique names if presented with conflicts. Given user-supplied properties
  * with names `ab` and `sb` this generates the following:
  *
- * ```
+ * ```kotlin
  * override fun toString(): kotlin.String {
  *   val sb_ = java.lang.StringBuilder()
  *   sb_.append(ab)
