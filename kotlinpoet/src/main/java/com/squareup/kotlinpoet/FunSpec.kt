@@ -159,7 +159,7 @@ public class FunSpec private constructor(
     if (returnType != null) {
       codeWriter.emitCode(": %T", returnType)
     } else if (emitUnitReturnType()) {
-      codeWriter.emitCode(": %T", Unit::class.asTypeName())
+      codeWriter.emitCode(": %T", UNIT)
     }
 
     if (delegateConstructor != null) {
