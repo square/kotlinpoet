@@ -220,7 +220,7 @@ public sealed class TypeName constructor(
 
 @JvmField public val ANY: ClassName = ClassName("kotlin", "Any")
 @JvmField public val ARRAY: ClassName = ClassName("kotlin", "Array")
-@JvmField public val UNIT: ClassName = Unit::class.asClassName()
+@JvmField public val UNIT: ClassName = ClassName("kotlin", "Unit")
 @JvmField public val BOOLEAN: ClassName = ClassName("kotlin", "Boolean")
 @JvmField public val BYTE: ClassName = ClassName("kotlin", "Byte")
 @JvmField public val SHORT: ClassName = ClassName("kotlin", "Short")
