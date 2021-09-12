@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
+
+tasks.jar {
+  manifest {
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.ksp")
   }
 }
 
-include(
-    ":kotlinpoet",
-    ":interop:kotlinx-metadata:classinspectors:elements",
-    ":interop:kotlinx-metadata:classinspectors:reflect",
-    ":interop:kotlinx-metadata:core",
-    ":interop:kotlinx-metadata:specs",
-    ":interop:kotlinx-metadata:specs-tests",
-    ":interop:ksp"
-)
-
-enableFeaturePreview("VERSION_CATALOGS")
+dependencies {
+  api(project(":kotlinpoet"))
+  api(libs.ksp.api)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
+}
