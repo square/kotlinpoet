@@ -22,7 +22,7 @@ tasks.jar {
 
 dependencies {
   api(project(":kotlinpoet"))
-  api(libs.ksp.api)
+  compileOnly(libs.ksp.api)
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
 }
