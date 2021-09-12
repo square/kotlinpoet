@@ -20,13 +20,6 @@ import kotlin.reflect.KClass
 /**
  * Represents the name of a member (such as a function or a property).
  *
- * @param packageName e.g. `kotlin.collections`
- * @param enclosingClassName e.g. `Map.Entry.Companion`, if the member is declared inside the
- * companion object of the Map.Entry class
- * @param simpleName e.g. `isBlank`, `size`
- * @param isExtension whether the member is an extension property or an extension function. Default
- * is false.
- *
  * If there is a member with the same name as this member in a local scope, the generated code will
  * include this member's fully-qualified name to avoid ambiguity, e.g.:
  *
@@ -66,6 +59,13 @@ import kotlin.reflect.KClass
  *   }
  * }
  * ```
+ *
+ * @param packageName e.g. `kotlin.collections`
+ * @param enclosingClassName e.g. `Map.Entry.Companion`, if the member is declared inside the
+ * companion object of the Map.Entry class
+ * @param simpleName e.g. `isBlank`, `size`
+ * @param isExtension whether the member is an extension property or an extension function. Default
+ * is false.
  */
 public data class MemberName internal constructor(
   public val packageName: String,
