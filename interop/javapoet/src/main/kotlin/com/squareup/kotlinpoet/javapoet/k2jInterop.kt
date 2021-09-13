@@ -33,16 +33,16 @@ import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.STRING
 
-public fun KClassName.toJClassName(shouldBox: Boolean = false): JTypeName {
+public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (copy(nullable = false)) {
-    BOOLEAN -> JTypeName.BOOLEAN.boxIfPrimitive(shouldBox || isNullable)
-    BYTE -> JTypeName.BYTE.boxIfPrimitive(shouldBox || isNullable)
-    CHAR -> JTypeName.CHAR.boxIfPrimitive(shouldBox || isNullable)
-    SHORT -> JTypeName.SHORT.boxIfPrimitive(shouldBox || isNullable)
-    INT -> JTypeName.INT.boxIfPrimitive(shouldBox || isNullable)
-    LONG -> JTypeName.LONG.boxIfPrimitive(shouldBox || isNullable)
-    FLOAT -> JTypeName.FLOAT.boxIfPrimitive(shouldBox || isNullable)
-    DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(shouldBox || isNullable)
+    BOOLEAN -> JTypeName.BOOLEAN.boxIfPrimitive(boxIfPrimitive || isNullable)
+    BYTE -> JTypeName.BYTE.boxIfPrimitive(boxIfPrimitive || isNullable)
+    CHAR -> JTypeName.CHAR.boxIfPrimitive(boxIfPrimitive || isNullable)
+    SHORT -> JTypeName.SHORT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    INT -> JTypeName.INT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
+    FLOAT -> JTypeName.FLOAT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(boxIfPrimitive || isNullable)
     ANY -> JTypeName.OBJECT
     STRING -> PoetInterop.CN_JAVA_STRING
     LIST -> PoetInterop.CN_JAVA_LIST
@@ -68,7 +68,7 @@ public fun KParameterizedTypeName.toJParameterizedOrArrayTypeName(): JTypeName {
     else -> {
       JParameterizedTypeName.get(
         rawType.toJClassName() as JClassName,
-        *typeArguments.map { it.toJTypeName(shouldBox = true) }.toTypedArray()
+        *typeArguments.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray()
       )
     }
   }
@@ -82,12 +82,12 @@ public fun KParameterizedTypeName.toJParameterizedTypeName(): JParameterizedType
 }
 
 public fun KTypeVariableName.toJTypeVariableName(): JTypeVariableName {
-  return JTypeVariableName.get(name, *bounds.map { it.toJTypeName(shouldBox = true) }.toTypedArray())
+  return JTypeVariableName.get(name, *bounds.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray())
 }
 
-public fun KTypeName.toJTypeName(shouldBox: Boolean = false): JTypeName {
+public fun KTypeName.toJTypeName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (this) {
-    is KClassName -> toJClassName(shouldBox)
+    is KClassName -> toJClassName(boxIfPrimitive)
     Dynamic -> throw IllegalStateException("Not applicable in Java!")
     // TODO should we return a ParameterizedTypeName of the KFunction?
     is LambdaTypeName -> throw IllegalStateException("Not applicable in Java!")
