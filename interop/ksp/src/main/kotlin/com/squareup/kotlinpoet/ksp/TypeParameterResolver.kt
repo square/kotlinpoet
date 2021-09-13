@@ -26,12 +26,9 @@ public interface TypeParameterResolver {
      * are known to not have arguments, such as top-level classes.
      */
     public val EMPTY: TypeParameterResolver = object : TypeParameterResolver {
-      override val parametersMap: Map<String, TypeVariableName>
-        get() = emptyMap()
+      override val parametersMap: Map<String, TypeVariableName> = emptyMap()
 
-      override fun get(index: String): TypeVariableName {
-        error("No TypeParameter found for index $index")
-      }
+      override fun get(index: String): TypeVariableName = throw NoSuchElementException("No TypeParameter found for index $index")
     }
   }
 }
