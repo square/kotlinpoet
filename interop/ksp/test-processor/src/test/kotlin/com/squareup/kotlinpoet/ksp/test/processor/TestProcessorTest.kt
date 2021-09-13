@@ -43,6 +43,9 @@ class TestProcessorTest {
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
+           typealias TypeAliasName = String
+           typealias GenericTypeAlias = List<String>
+
            @ExampleAnnotation
            class SmokeTestClass<T, R : Any, E : Enum<E>> {
              private val propA: String = ""
@@ -63,6 +66,42 @@ class TestProcessorTest {
              fun <F> functionC(param1: String, param2: T, param3: F, param4: F?): R {
                TODO()
              }
+
+             suspend fun functionD(
+               param1: () -> String,
+               param2: (String) -> String,
+               param3: String.() -> String
+             ) {
+             }
+
+             // A whole bunch of wild types from Moshi's codegen smoke tests
+             fun wildTypes(
+               age: Int,
+               nationalities: List<String>,
+               weight: Float,
+               tattoos: Boolean = false,
+               race: String?,
+               hasChildren: Boolean = false,
+               favoriteFood: String? = null,
+               favoriteDrink: String? = "Water",
+               wildcardOut: MutableList<out String>,
+               nullableWildcardOut: MutableList<out String?>,
+               wildcardIn: Array<in String>,
+               any: List<*>,
+               anyTwo: List<Any>,
+               anyOut: MutableList<out Any>,
+               nullableAnyOut: MutableList<out Any?>,
+               favoriteThreeNumbers: IntArray,
+               favoriteArrayValues: Array<String>,
+               favoriteNullableArrayValues: Array<String?>,
+               nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
+               // These are actually currently rendered incorrectly and always unwrapped
+               aliasedName: TypeAliasName,
+               genericAlias: GenericTypeAlias,
+               nestedArray: Array<Map<String, Any>>?
+             ) {
+
+             }
            }
            """
       )
@@ -76,9 +115,20 @@ class TestProcessorTest {
       package test
 
       import kotlin.Any
+      import kotlin.Array
+      import kotlin.Boolean
       import kotlin.Enum
+      import kotlin.Float
+      import kotlin.Function0
+      import kotlin.Function1
       import kotlin.Int
+      import kotlin.IntArray
       import kotlin.String
+      import kotlin.Unit
+      import kotlin.collections.List
+      import kotlin.collections.Map
+      import kotlin.collections.MutableList
+      import kotlin.collections.Set
 
       public class SmokeTestClass<T, R : Any, E : Enum<E>> {
         private val propA: String
@@ -106,6 +156,39 @@ class TestProcessorTest {
           param4: F?
         ): R {
         }
+
+        public suspend fun functionD(
+          param1: Function0<String>,
+          param2: Function1<String, String>,
+          param3: Function1<String, String>
+        ): Unit {
+        }
+
+        public fun wildTypes(
+          age: Int,
+          nationalities: List<String>,
+          weight: Float,
+          tattoos: Boolean,
+          race: String?,
+          hasChildren: Boolean,
+          favoriteFood: String?,
+          favoriteDrink: String?,
+          wildcardOut: MutableList<out String>,
+          nullableWildcardOut: MutableList<out String?>,
+          wildcardIn: Array<in String>,
+          any: List<*>,
+          anyTwo: List<Any>,
+          anyOut: MutableList<out Any>,
+          nullableAnyOut: MutableList<*>,
+          favoriteThreeNumbers: IntArray,
+          favoriteArrayValues: Array<String>,
+          favoriteNullableArrayValues: Array<String?>,
+          nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
+          aliasedName: String,
+          genericAlias: List<String>,
+          nestedArray: Array<Map<String, Any>>?
+        ): Unit {
+        }
       }
 
       """.trimIndent()
@@ -113,22 +196,12 @@ class TestProcessorTest {
   }
 
   // TODO
-  //  - writeTo
-  //  - originating files
   //  - typealias
   //  - generic typealias
-  //  - class
-  //  - generic class
-  //  - function
-  //  - generic function
-  //  - generic property
-  //  - nullable type
   //  - complicated self referencing generics
   //  - generic annotation
-  //  - wildcardtypename
   //  - unnamed parameter
-  //  - function types
-  //  - suspend types
+  //  - toTypeName() unwraps typealiases
 
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
