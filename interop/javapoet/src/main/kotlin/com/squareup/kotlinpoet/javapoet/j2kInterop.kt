@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet.javapoet
 
 import com.squareup.javapoet.ArrayTypeName
+import com.squareup.javapoet.TypeName
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
@@ -30,6 +31,7 @@ import com.squareup.kotlinpoet.MAP
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.SHORT
+import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
 
 public fun JClassName.toKClassName(): KClassName {
@@ -49,6 +51,15 @@ public fun JTypeVariableName.toKTypeVariableName(): KTypeVariableName {
     KTypeVariableName(name)
   } else {
     KTypeVariableName(name, *bounds.map { it.toKTypeName() }.toTypedArray())
+  }
+}
+
+public fun JWildcardTypeName.toKWildcardTypeName(): KWildcardTypeName {
+  return if (lowerBounds.size == 1) {
+    KWildcardTypeName.consumerOf(lowerBounds.first().toKTypeName())
+  } else when (val upperBound = upperBounds[0]) {
+    TypeName.OBJECT -> STAR
+    else -> KWildcardTypeName.producerOf(upperBound.toKTypeName())
   }
 }
 
@@ -72,7 +83,7 @@ public fun JTypeName.toKTypeName(): KTypeName {
     }
     is JParameterizedTypeName -> toKParameterizedTypeName()
     is JTypeVariableName -> toKTypeVariableName()
-    is JWildcardTypeName -> TODO()
+    is JWildcardTypeName -> toKWildcardTypeName()
     is ArrayTypeName -> ARRAY.parameterizedBy(componentType.toKTypeName())
     else -> when (unboxIfBoxedPrimitive()) {
       JTypeName.BOOLEAN -> BOOLEAN
