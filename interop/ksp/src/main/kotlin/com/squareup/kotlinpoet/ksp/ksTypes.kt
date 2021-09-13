@@ -56,7 +56,15 @@ public fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
   val type = when (val decl = declaration) {
-    is KSClassDeclaration -> decl.toClassName().parameterizedBy(arguments.map { it.toTypeName(typeParamResolver) })
+    is KSClassDeclaration -> {
+      decl.toClassName().let { cn ->
+        if (arguments.isEmpty()) {
+          cn
+        } else {
+          cn.parameterizedBy(arguments.map { it.toTypeName(typeParamResolver) })
+        }
+      }
+    }
     is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
     is KSTypeAlias -> {
       val extraResolver = if (decl.typeParameters.isEmpty()) {
