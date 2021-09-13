@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
+  alias(libs.plugins.ksp) apply false
   alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
@@ -50,7 +51,7 @@ subprojects {
   configure<KotlinProjectExtension> {
     explicitApi()
   }
-  if ("tests" !in name && buildFile.exists()) {
+  if ("test" !in name && buildFile.exists()) {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     afterEvaluate {

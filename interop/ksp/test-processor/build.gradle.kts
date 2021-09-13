@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2021 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
+
+plugins {
+  id("com.google.devtools.ksp")
 }
 
-include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata:classinspectors:elements",
-    ":interop:kotlinx-metadata:classinspectors:reflect",
-    ":interop:kotlinx-metadata:core",
-    ":interop:kotlinx-metadata:specs",
-    ":interop:kotlinx-metadata:specs-tests",
-    ":interop:ksp",
-    ":interop:ksp:test-processor",
-)
-
-enableFeaturePreview("VERSION_CATALOGS")
+dependencies {
+  implementation(project(":kotlinpoet"))
+  implementation(project(":interop:ksp"))
+  compileOnly(libs.ksp.api)
+  ksp(libs.autoService.ksp)
+}
