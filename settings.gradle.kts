@@ -27,7 +27,7 @@ include(
     ":interop:kotlinx-metadata:core",
     ":interop:kotlinx-metadata:specs",
     ":interop:kotlinx-metadata:specs-tests",
-    ":interop:ksp"
+    ":interop:ksp",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")
