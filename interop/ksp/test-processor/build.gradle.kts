@@ -21,6 +21,7 @@ plugins {
 dependencies {
   implementation(project(":kotlinpoet"))
   implementation(project(":interop:ksp"))
+  implementation(libs.autoService)
   compileOnly(libs.ksp.api)
   ksp(libs.autoService.ksp)
 }
