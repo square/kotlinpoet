@@ -40,6 +40,7 @@ class TestProcessorTest {
         "Example.kt",
         """
            package test
+
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
            @ExampleAnnotation
@@ -72,7 +73,41 @@ class TestProcessorTest {
       .readText()
     assertThat(generatedFileText).isEqualTo(
       """
-      TODO
+      package test
+
+      import kotlin.Any
+      import kotlin.Enum
+      import kotlin.Int
+      import kotlin.String
+
+      public class SmokeTestClass<T, R : Any, E : Enum<E>> {
+        private val propA: String
+
+        internal val propB: String
+
+        public val propC: Int
+
+        public val propD: Int?
+
+        public lateinit var propE: String
+
+        public var propF: T?
+
+        public fun functionA(): String {
+        }
+
+        public fun functionB(): R {
+        }
+
+        public fun <F> functionC(
+          param1: String,
+          param2: T,
+          param3: F,
+          param4: F?
+        ): R {
+        }
+      }
+
       """.trimIndent()
     )
   }

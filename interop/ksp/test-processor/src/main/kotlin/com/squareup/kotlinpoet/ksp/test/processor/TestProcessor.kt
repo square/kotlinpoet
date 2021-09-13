@@ -106,6 +106,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               } ?: ParameterSpec.unnamed(parameterType)
             }
           )
+          .returns(function.returnType!!.toTypeName(functionTypeParams))
           .build()
       )
     }
