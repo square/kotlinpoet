@@ -24,4 +24,8 @@ dependencies {
   implementation(libs.autoService)
   compileOnly(libs.ksp.api)
   ksp(libs.autoService.ksp)
+  testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlinCompileTesting.ksp)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
 }
