@@ -24,6 +24,8 @@ dependencies {
   implementation(libs.autoService)
   compileOnly(libs.ksp.api)
   ksp(libs.autoService.ksp)
+  // Always force the latest version of the KSP impl in tests to match what we're building against
+  testImplementation(libs.ksp)
   testImplementation(libs.kotlinCompileTesting)
   testImplementation(libs.kotlinCompileTesting.ksp)
   testImplementation(libs.kotlin.junit)
