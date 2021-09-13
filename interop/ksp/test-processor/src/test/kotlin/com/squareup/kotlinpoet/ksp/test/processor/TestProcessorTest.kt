@@ -56,15 +56,15 @@ class TestProcessorTest {
              var propF: T? = null
 
              fun functionA(): String {
-               TODO()
+               error()
              }
 
              fun functionB(): R {
-               TODO()
+               error()
              }
 
              fun <F> functionC(param1: String, param2: T, param3: F, param4: F?): R {
-               TODO()
+               error()
              }
 
              suspend fun functionD(
