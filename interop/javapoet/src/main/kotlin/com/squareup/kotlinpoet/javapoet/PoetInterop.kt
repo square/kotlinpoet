@@ -17,10 +17,6 @@ package com.squareup.kotlinpoet.javapoet
 
 /** Various JavaPoet and KotlinPoet representations of some common types. */
 internal object PoetInterop {
-  internal val CN_KOTLIN_STRING = KClassName("kotlin", "String")
-  internal val CN_KOTLIN_LIST = KClassName("kotlin", "List")
-  internal val CN_KOTLIN_SET = KClassName("kotlin", "Set")
-  internal val CN_KOTLIN_MAP = KClassName("kotlin", "Map")
   internal val CN_JAVA_STRING = JClassName.get("java.lang", "String")
   internal val CN_JAVA_LIST = JClassName.get("java.util", "List")
   internal val CN_JAVA_SET = JClassName.get("java.util", "Set")
