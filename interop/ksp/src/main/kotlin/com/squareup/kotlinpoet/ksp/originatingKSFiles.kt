@@ -109,8 +109,8 @@ public fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Build
  * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
  *
  * @see FileSpec.originatingKSFiles
- * @param codeGenerator the [CodeGenerator] to write to
- * @param aggregating flag indicating if this is an aggregating
+ * @param codeGenerator the [CodeGenerator] to write to.
+ * @param aggregating flag indicating if this is an aggregating symbol processor.
  */
 @KotlinPoetKspPreview
 public fun FileSpec.writeTo(
@@ -137,7 +137,7 @@ public fun FileSpec.writeTo(
  *
  * @see FileSpec.originatingKSFiles
  * @see FileSpec.writeTo
- * @param aggregating flag indicating if this is an aggregating
+ * @param aggregating flag indicating if this is an aggregating symbol processor.
  */
 @KotlinPoetKspPreview
 public fun FileSpec.kspDependencies(
