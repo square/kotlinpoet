@@ -45,9 +45,16 @@ import com.squareup.kotlinpoet.ksp.writeTo
  */
 @OptIn(KotlinPoetKspPreview::class)
 class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
+
+  // Temporary to disable multiple rounds in tests due to https://github.com/google/ksp/issues/621
+  private var hasRun = false
+
   override fun process(resolver: Resolver): List<KSAnnotated> {
-    resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
-      .forEach(::process)
+    if (!hasRun) {
+      hasRun = true
+      resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
+        .forEach(::process)
+    }
     return emptyList()
   }
 
