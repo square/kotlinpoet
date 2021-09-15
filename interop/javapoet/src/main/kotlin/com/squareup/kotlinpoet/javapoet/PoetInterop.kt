@@ -22,4 +22,5 @@ internal object PoetInterop {
   internal val CN_JAVA_LIST = JClassName.get("java.util", "List")
   internal val CN_JAVA_SET = JClassName.get("java.util", "Set")
   internal val CN_JAVA_MAP = JClassName.get("java.util", "Map")
+  internal val CN_JAVA_ENUM = JClassName.get("java.lang", "Enum")
 }

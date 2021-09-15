@@ -21,31 +21,58 @@ import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.BYTE
+import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CHAR
+import com.squareup.kotlinpoet.CHAR_ARRAY
 import com.squareup.kotlinpoet.DOUBLE
+import com.squareup.kotlinpoet.DOUBLE_ARRAY
+import com.squareup.kotlinpoet.ENUM
 import com.squareup.kotlinpoet.FLOAT
+import com.squareup.kotlinpoet.FLOAT_ARRAY
 import com.squareup.kotlinpoet.INT
+import com.squareup.kotlinpoet.INT_ARRAY
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.LONG
+import com.squareup.kotlinpoet.LONG_ARRAY
 import com.squareup.kotlinpoet.MAP
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.SHORT
+import com.squareup.kotlinpoet.SHORT_ARRAY
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
 
 @KotlinPoetJavaPoetPreview
 public fun JClassName.toKClassName(): KClassName {
-  return if (simpleNames().size == 1) {
-    KClassName(packageName(), simpleName())
-  } else {
-    KClassName(packageName(), simpleNames().first(), *simpleNames().drop(1).toTypedArray())
+  return when (this) {
+    JTypeName.BOOLEAN.box() -> BOOLEAN
+    JTypeName.BYTE.box() -> BYTE
+    JTypeName.CHAR.box() -> CHAR
+    JTypeName.SHORT.box() -> SHORT
+    JTypeName.INT.box() -> INT
+    JTypeName.LONG.box() -> LONG
+    JTypeName.FLOAT.box() -> FLOAT
+    JTypeName.DOUBLE.box() -> DOUBLE
+    JTypeName.OBJECT -> ANY
+    PoetInterop.CN_JAVA_STRING -> STRING
+    PoetInterop.CN_JAVA_LIST -> LIST
+    PoetInterop.CN_JAVA_SET -> SET
+    PoetInterop.CN_JAVA_MAP -> MAP
+    PoetInterop.CN_JAVA_ENUM -> ENUM
+    else -> {
+      if (simpleNames().size == 1) {
+        KClassName(packageName(), simpleName())
+      } else {
+        KClassName(packageName(), simpleNames().first(), *simpleNames().drop(1).toTypedArray())
+      }
+    }
   }
 }
 
 @KotlinPoetJavaPoetPreview
 public fun JParameterizedTypeName.toKParameterizedTypeName(): KParameterizedTypeName {
-  return rawType.toKClassName().parameterizedBy(*typeArguments.map { it.toKTypeName() }.toTypedArray())
+  return rawType.toKClassName()
+    .parameterizedBy(*typeArguments.map { it.toKTypeName() }.toTypedArray())
 }
 
 @KotlinPoetJavaPoetPreview
@@ -70,26 +97,22 @@ public fun JWildcardTypeName.toKWildcardTypeName(): KWildcardTypeName {
 @KotlinPoetJavaPoetPreview
 public fun JTypeName.toKTypeName(): KTypeName {
   return when (this) {
-    is JClassName -> when (this) {
-      JTypeName.BOOLEAN.box() -> BOOLEAN
-      JTypeName.BYTE.box() -> BYTE
-      JTypeName.CHAR.box() -> CHAR
-      JTypeName.SHORT.box() -> SHORT
-      JTypeName.INT.box() -> INT
-      JTypeName.LONG.box() -> LONG
-      JTypeName.FLOAT.box() -> FLOAT
-      JTypeName.DOUBLE.box() -> DOUBLE
-      JTypeName.OBJECT -> ANY
-      PoetInterop.CN_JAVA_STRING -> STRING
-      PoetInterop.CN_JAVA_LIST -> LIST
-      PoetInterop.CN_JAVA_SET -> SET
-      PoetInterop.CN_JAVA_MAP -> MAP
-      else -> toKClassName()
-    }
+    is JClassName -> toKClassName()
     is JParameterizedTypeName -> toKParameterizedTypeName()
     is JTypeVariableName -> toKTypeVariableName()
     is JWildcardTypeName -> toKWildcardTypeName()
-    is ArrayTypeName -> ARRAY.parameterizedBy(componentType.toKTypeName())
+    is ArrayTypeName -> {
+      when (componentType) {
+        JTypeName.BYTE -> BYTE_ARRAY
+        JTypeName.CHAR -> CHAR_ARRAY
+        JTypeName.SHORT -> SHORT_ARRAY
+        JTypeName.INT -> INT_ARRAY
+        JTypeName.LONG -> LONG_ARRAY
+        JTypeName.FLOAT -> FLOAT_ARRAY
+        JTypeName.DOUBLE -> DOUBLE_ARRAY
+        else -> ARRAY.parameterizedBy(componentType.toKTypeName())
+      }
+    }
     else -> when (unboxIfBoxedPrimitive()) {
       JTypeName.BOOLEAN -> BOOLEAN
       JTypeName.BYTE -> BYTE

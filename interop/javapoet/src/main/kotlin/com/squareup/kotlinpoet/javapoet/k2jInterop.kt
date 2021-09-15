@@ -20,37 +20,66 @@ import com.squareup.javapoet.TypeName
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
+import com.squareup.kotlinpoet.BOOLEAN_ARRAY
 import com.squareup.kotlinpoet.BYTE
+import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CHAR
+import com.squareup.kotlinpoet.CHAR_ARRAY
 import com.squareup.kotlinpoet.DOUBLE
+import com.squareup.kotlinpoet.DOUBLE_ARRAY
 import com.squareup.kotlinpoet.Dynamic
+import com.squareup.kotlinpoet.ENUM
 import com.squareup.kotlinpoet.FLOAT
+import com.squareup.kotlinpoet.FLOAT_ARRAY
 import com.squareup.kotlinpoet.INT
+import com.squareup.kotlinpoet.INT_ARRAY
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.LONG
+import com.squareup.kotlinpoet.LONG_ARRAY
 import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.MAP
+import com.squareup.kotlinpoet.MUTABLE_LIST
+import com.squareup.kotlinpoet.MUTABLE_MAP
+import com.squareup.kotlinpoet.MUTABLE_SET
 import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.SHORT
+import com.squareup.kotlinpoet.SHORT_ARRAY
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
+import com.squareup.kotlinpoet.U_BYTE
+import com.squareup.kotlinpoet.U_BYTE_ARRAY
+import com.squareup.kotlinpoet.U_INT
+import com.squareup.kotlinpoet.U_INT_ARRAY
+import com.squareup.kotlinpoet.U_LONG
+import com.squareup.kotlinpoet.U_LONG_ARRAY
+import com.squareup.kotlinpoet.U_SHORT
+import com.squareup.kotlinpoet.U_SHORT_ARRAY
 
 @KotlinPoetJavaPoetPreview
 public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (copy(nullable = false)) {
     BOOLEAN -> JTypeName.BOOLEAN.boxIfPrimitive(boxIfPrimitive || isNullable)
-    BYTE -> JTypeName.BYTE.boxIfPrimitive(boxIfPrimitive || isNullable)
+    BYTE, U_BYTE -> JTypeName.BYTE.boxIfPrimitive(boxIfPrimitive || isNullable)
     CHAR -> JTypeName.CHAR.boxIfPrimitive(boxIfPrimitive || isNullable)
-    SHORT -> JTypeName.SHORT.boxIfPrimitive(boxIfPrimitive || isNullable)
-    INT -> JTypeName.INT.boxIfPrimitive(boxIfPrimitive || isNullable)
-    LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
+    SHORT, U_SHORT -> JTypeName.SHORT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    INT, U_INT -> JTypeName.INT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    LONG, U_LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
     FLOAT -> JTypeName.FLOAT.boxIfPrimitive(boxIfPrimitive || isNullable)
     DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(boxIfPrimitive || isNullable)
     ANY -> JTypeName.OBJECT
     STRING -> PoetInterop.CN_JAVA_STRING
-    LIST -> PoetInterop.CN_JAVA_LIST
-    SET -> PoetInterop.CN_JAVA_SET
-    MAP -> PoetInterop.CN_JAVA_MAP
+    LIST, MUTABLE_LIST -> PoetInterop.CN_JAVA_LIST
+    SET, MUTABLE_SET -> PoetInterop.CN_JAVA_SET
+    MAP, MUTABLE_MAP -> PoetInterop.CN_JAVA_MAP
+    BOOLEAN_ARRAY -> ArrayTypeName.of(JTypeName.BOOLEAN)
+    BYTE_ARRAY, U_BYTE_ARRAY -> ArrayTypeName.of(JTypeName.BYTE)
+    CHAR_ARRAY -> ArrayTypeName.of(JTypeName.CHAR)
+    SHORT_ARRAY, U_SHORT_ARRAY -> ArrayTypeName.of(JTypeName.SHORT)
+    INT_ARRAY, U_INT_ARRAY -> ArrayTypeName.of(JTypeName.INT)
+    LONG_ARRAY, U_LONG_ARRAY -> ArrayTypeName.of(JTypeName.LONG)
+    FLOAT_ARRAY -> ArrayTypeName.of(JTypeName.FLOAT)
+    DOUBLE_ARRAY -> ArrayTypeName.of(JTypeName.DOUBLE)
+    ENUM -> PoetInterop.CN_JAVA_ENUM
     else -> {
       if (simpleNames.size == 1) {
         JClassName.get(packageName, simpleName)
