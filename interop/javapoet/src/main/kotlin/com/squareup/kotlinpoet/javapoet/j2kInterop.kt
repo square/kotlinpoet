@@ -34,6 +34,7 @@ import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
 
+@KotlinPoetJavaPoetPreview
 public fun JClassName.toKClassName(): KClassName {
   return if (simpleNames().size == 1) {
     KClassName(packageName(), simpleName())
@@ -42,10 +43,12 @@ public fun JClassName.toKClassName(): KClassName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun JParameterizedTypeName.toKParameterizedTypeName(): KParameterizedTypeName {
   return rawType.toKClassName().parameterizedBy(*typeArguments.map { it.toKTypeName() }.toTypedArray())
 }
 
+@KotlinPoetJavaPoetPreview
 public fun JTypeVariableName.toKTypeVariableName(): KTypeVariableName {
   return if (bounds.isEmpty()) {
     KTypeVariableName(name)
@@ -54,6 +57,7 @@ public fun JTypeVariableName.toKTypeVariableName(): KTypeVariableName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun JWildcardTypeName.toKWildcardTypeName(): KWildcardTypeName {
   return if (lowerBounds.size == 1) {
     KWildcardTypeName.consumerOf(lowerBounds.first().toKTypeName())
@@ -63,6 +67,7 @@ public fun JWildcardTypeName.toKWildcardTypeName(): KWildcardTypeName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun JTypeName.toKTypeName(): KTypeName {
   return when (this) {
     is JClassName -> when (this) {
@@ -99,12 +104,14 @@ public fun JTypeName.toKTypeName(): KTypeName {
   }
 }
 
+@OptIn(KotlinPoetJavaPoetPreview::class)
 internal fun JTypeName.unboxIfBoxedPrimitive(): JTypeName {
   return if (isBoxedPrimitive) {
     unbox()
   } else this
 }
 
+@OptIn(KotlinPoetJavaPoetPreview::class)
 internal fun JTypeName.boxIfPrimitive(extraCondition: Boolean = true): JTypeName {
   return if (extraCondition && isPrimitive && !isBoxedPrimitive) {
     box()

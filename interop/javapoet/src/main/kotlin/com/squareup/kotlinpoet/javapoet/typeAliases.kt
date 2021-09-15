@@ -19,18 +19,44 @@ package com.squareup.kotlinpoet.javapoet
  * Useful typealiases for colliding names
  */
 
+@KotlinPoetJavaPoetPreview
 public typealias KTypeName = com.squareup.kotlinpoet.TypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias KClassName = com.squareup.kotlinpoet.ClassName
+
+@KotlinPoetJavaPoetPreview
 public typealias KTypeVariableName = com.squareup.kotlinpoet.TypeVariableName
+
+@KotlinPoetJavaPoetPreview
 public typealias KParameterizedTypeName = com.squareup.kotlinpoet.ParameterizedTypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias KWildcardTypeName = com.squareup.kotlinpoet.WildcardTypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias KTypeSpec = com.squareup.kotlinpoet.TypeSpec
+
+@KotlinPoetJavaPoetPreview
 public typealias KAnnotationSpec = com.squareup.kotlinpoet.AnnotationSpec
 
+@KotlinPoetJavaPoetPreview
 public typealias JTypeName = com.squareup.javapoet.TypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias JClassName = com.squareup.javapoet.ClassName
+
+@KotlinPoetJavaPoetPreview
 public typealias JTypeVariableName = com.squareup.javapoet.TypeVariableName
+
+@KotlinPoetJavaPoetPreview
 public typealias JParameterizedTypeName = com.squareup.javapoet.ParameterizedTypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias JWildcardTypeName = com.squareup.javapoet.WildcardTypeName
+
+@KotlinPoetJavaPoetPreview
 public typealias JTypeSpec = com.squareup.javapoet.TypeSpec
+
+@KotlinPoetJavaPoetPreview
 public typealias JAnnotationSpec = com.squareup.javapoet.AnnotationSpec

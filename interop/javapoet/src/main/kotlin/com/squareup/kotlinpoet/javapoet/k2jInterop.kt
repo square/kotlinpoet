@@ -35,6 +35,7 @@ import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
 
+@KotlinPoetJavaPoetPreview
 public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (copy(nullable = false)) {
     BOOLEAN -> JTypeName.BOOLEAN.boxIfPrimitive(boxIfPrimitive || isNullable)
@@ -60,6 +61,7 @@ public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun KParameterizedTypeName.toJParameterizedOrArrayTypeName(): JTypeName {
   return when (rawType) {
     ARRAY -> {
@@ -76,6 +78,7 @@ public fun KParameterizedTypeName.toJParameterizedOrArrayTypeName(): JTypeName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun KParameterizedTypeName.toJParameterizedTypeName(): JParameterizedTypeName {
   check(rawType != ARRAY) {
     "Array type! JavaPoet arrays are a custom TypeName. Use this function only for things you know are not arrays"
@@ -83,10 +86,12 @@ public fun KParameterizedTypeName.toJParameterizedTypeName(): JParameterizedType
   return toJParameterizedOrArrayTypeName() as JParameterizedTypeName
 }
 
+@KotlinPoetJavaPoetPreview
 public fun KTypeVariableName.toJTypeVariableName(): JTypeVariableName {
   return JTypeVariableName.get(name, *bounds.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray())
 }
 
+@KotlinPoetJavaPoetPreview
 public fun KWildcardTypeName.toJWildcardTypeName(): JWildcardTypeName {
   return if (this == STAR) {
     JWildcardTypeName.subtypeOf(TypeName.OBJECT)
@@ -97,6 +102,7 @@ public fun KWildcardTypeName.toJWildcardTypeName(): JWildcardTypeName {
   }
 }
 
+@KotlinPoetJavaPoetPreview
 public fun KTypeName.toJTypeName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (this) {
     is KClassName -> toJClassName(boxIfPrimitive)

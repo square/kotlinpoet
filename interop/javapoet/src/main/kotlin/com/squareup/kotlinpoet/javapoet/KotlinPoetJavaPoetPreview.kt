@@ -15,11 +15,16 @@
  */
 package com.squareup.kotlinpoet.javapoet
 
-/** Various JavaPoet and KotlinPoet representations of some common types. */
-@OptIn(KotlinPoetJavaPoetPreview::class)
-internal object PoetInterop {
-  internal val CN_JAVA_STRING = JClassName.get("java.lang", "String")
-  internal val CN_JAVA_LIST = JClassName.get("java.util", "List")
-  internal val CN_JAVA_SET = JClassName.get("java.util", "Set")
-  internal val CN_JAVA_MAP = JClassName.get("java.util", "Map")
-}
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.PROPERTY
+import kotlin.annotation.AnnotationTarget.TYPEALIAS
+
+/**
+ * Indicates that a given API is part of the experimental KotlinPoet JavaPoet support and is
+ * subject to API changes.
+ */
+@RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, FUNCTION, PROPERTY, TYPEALIAS)
+public annotation class KotlinPoetJavaPoetPreview
