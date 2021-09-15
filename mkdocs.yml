@@ -54,6 +54,7 @@ nav:
     - 'interop-kotlinx-metadata-classinspectors-reflect': 1.x/interop-kotlinx-metadata-classinspectors-reflect/index.html
     - 'interop-kotlinx-metadata-core': 1.x/interop-kotlinx-metadata-core/index.html
     - 'interop-kotlinx-metadata-specs': 1.x/interop-kotlinx-metadata-specs/index.html
+    - 'interop-ksp': 1.x/interop-ksp/index.html
   - 'Stack Overflow ⏏': https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active
   - 'Change Log': changelog.md
   - 'Contributing': contributing.md
