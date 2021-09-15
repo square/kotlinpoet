@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2021 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
+package com.squareup.kotlinpoet.javapoet
+
+/** Various JavaPoet and KotlinPoet representations of some common types. */
+@OptIn(KotlinPoetJavaPoetPreview::class)
+internal object PoetInterop {
+  internal val CN_JAVA_STRING = JClassName.get("java.lang", "String")
+  internal val CN_JAVA_LIST = JClassName.get("java.util", "List")
+  internal val CN_JAVA_SET = JClassName.get("java.util", "Set")
+  internal val CN_JAVA_MAP = JClassName.get("java.util", "Map")
+  internal val CN_JAVA_ENUM = JClassName.get("java.lang", "Enum")
 }
-
-include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata:classinspectors:elements",
-    ":interop:kotlinx-metadata:classinspectors:reflect",
-    ":interop:kotlinx-metadata:core",
-    ":interop:kotlinx-metadata:specs",
-    ":interop:kotlinx-metadata:specs-tests",
-    ":interop:ksp",
-)
-
-enableFeaturePreview("VERSION_CATALOGS")
