@@ -44,9 +44,11 @@ markdown_extensions:
 nav:
   - 'Overview':
     - 'KotlinPoet': index.md
+    - 'Interop - JavaPoet': interop-javapoet.md
     - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
   - 'API':
     - 'kotlinpoet': 1.x/kotlinpoet/index.html
+    - 'interop-javapoet': 1.x/interop-javapoet/index.html
     - 'interop-kotlinx-metadata-classinspectors-elements': 1.x/interop-kotlinx-metadata-classinspectors-elements/index.html
     - 'interop-kotlinx-metadata-classinspectors-reflect': 1.x/interop-kotlinx-metadata-classinspectors-reflect/index.html
     - 'interop-kotlinx-metadata-core': 1.x/interop-kotlinx-metadata-core/index.html
