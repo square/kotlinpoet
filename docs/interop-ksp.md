@@ -1,16 +1,16 @@
-KotlinPoet-ksp
+KSP Extensions for KotlinPoet
 ==============
 
 `interop:ksp` is an interop API for converting
 [Kotlin Symbol Processing](https://github.com/google/ksp) (KSP) types to KotlinPoet types and
 writing to KSP `CodeGenerator`.
 
-Note that this API is currently in preview and subject to API changes. Usage of them requires opting
+Note that this API is currently in preview and subject to API changes. Usage of it requires opting
 in to the `@KotlinPoetKspPreview` annotation.
 
 ### Examples
 
-Examples are based on reading the following property as a `KSProperty`
+Examples are based on reading the following property as a `KSProperty`:
 
 ```kotlin
 class Taco {
@@ -59,7 +59,7 @@ into most `toTypeName()` (or similar) functions to give them access to enclosing
 that they may reference.
 
 The canonical way to create an instance of this is to call `toTypeParameterResolver()` on a
-`List<toTypeParameterResolver>`.
+`List<KSTypeParameter>`.
 
 Consider the following class and function
 
@@ -106,7 +106,7 @@ val seasoningType = ksFunction.parameterTypes.map { it.toTypeName(functionTypePa
 KSP supports [incremental processing](https://github.com/google/ksp/blob/main/docs/incremental.md) as
 long as symbol processors properly indicate originating files in generated new files and whether or
 not they are `aggregating`. `kotlinpoet-ksp` supports this via `OriginatingKSFiles`, which is a simple
-API that sits atop KotlinPoet's `Taggable` API. To use this, simple add relevant originating files to
+API that sits atop KotlinPoet's `Taggable` API. To use this, simply add relevant originating files to
 any `TypeSpec`, `TypeAliasSpec`, `PropertySpec`, or `FunSpec` builders.
 
 ```kotlin
