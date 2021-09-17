@@ -242,9 +242,42 @@ class TestProcessorTest {
     )
   }
 
-  // TODO
-  //  - complicated self referencing generics
-  //  - unnamed parameter
+  @Test
+  fun complexSelfReferencingTypeArgs() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           open class Node<T : Node<T, R>, R : Node<R, T>> {
+             var t: T? = null
+             var r: R? = null
+           }
+           """
+      )
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt")
+      .readText()
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      public open class Node<T : Node<T, R>, R : Node<R, T>> {
+        public var t: T?
+
+        public var r: R?
+      }
+
+      """.trimIndent()
+    )
+  }
 
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
