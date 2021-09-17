@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet.ksp
+package com.squareup.kotlinpoet.ksp.test.processor
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.ClassName
+import com.google.auto.service.AutoService
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
-/** Returns the [ClassName] representation of this [KSClassDeclaration]. */
-@KotlinPoetKspPreview
-public fun KSClassDeclaration.toClassName(): ClassName {
-  return toClassNameInternal()
+@AutoService(SymbolProcessorProvider::class)
+class TestProcessorProvider : SymbolProcessorProvider {
+  override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+    return TestProcessor(environment)
+  }
 }

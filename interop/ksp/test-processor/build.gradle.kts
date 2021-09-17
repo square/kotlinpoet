@@ -13,13 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet.ksp
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.ClassName
+plugins {
+  id("com.google.devtools.ksp")
+}
 
-/** Returns the [ClassName] representation of this [KSClassDeclaration]. */
-@KotlinPoetKspPreview
-public fun KSClassDeclaration.toClassName(): ClassName {
-  return toClassNameInternal()
+dependencies {
+  implementation(project(":kotlinpoet"))
+  implementation(project(":interop:ksp"))
+  implementation(libs.autoService)
+  compileOnly(libs.ksp.api)
+  ksp(libs.autoService.ksp)
+  // Always force the latest version of the KSP impl in tests to match what we're building against
+  testImplementation(libs.ksp)
+  testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlinCompileTesting.ksp)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
 }

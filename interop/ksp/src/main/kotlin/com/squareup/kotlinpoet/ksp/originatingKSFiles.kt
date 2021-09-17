@@ -119,6 +119,24 @@ public fun FileSpec.writeTo(
   originatingKSFiles: Iterable<KSFile> = originatingKSFiles()
 ) {
   val dependencies = kspDependencies(aggregating, originatingKSFiles)
+  writeTo(codeGenerator, dependencies)
+}
+
+/**
+ * Writes this [FileSpec] to a given [codeGenerator] with the given [dependencies].
+ *
+ * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
+ *
+ * @see FileSpec.originatingKSFiles
+ * @see kspDependencies
+ * @param codeGenerator the [CodeGenerator] to write to.
+ * @param dependencies the [Dependencies] to create a new file with.
+ */
+@KotlinPoetKspPreview
+public fun FileSpec.writeTo(
+  codeGenerator: CodeGenerator,
+  dependencies: Dependencies
+) {
   val file = codeGenerator.createNewFile(dependencies, packageName, name)
   // Don't use writeTo(file) because that tries to handle directories under the hood
   OutputStreamWriter(file, StandardCharsets.UTF_8)

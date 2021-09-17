@@ -13,13 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet.ksp
+package com.squareup.kotlinpoet.ksp.test.processor
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.ClassName
-
-/** Returns the [ClassName] representation of this [KSClassDeclaration]. */
-@KotlinPoetKspPreview
-public fun KSClassDeclaration.toClassName(): ClassName {
-  return toClassNameInternal()
-}
+annotation class ExampleAnnotation

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
+  alias(libs.plugins.ksp) apply false
   alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
@@ -47,12 +48,12 @@ subprojects {
   }
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
-  configure<KotlinProjectExtension> {
-    explicitApi()
-  }
-  if ("tests" !in name && buildFile.exists()) {
+  if ("test" !in name && buildFile.exists()) {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
+    configure<KotlinProjectExtension> {
+      explicitApi()
+    }
     afterEvaluate {
       tasks.named<DokkaTask>("dokkaHtml") {
         val projectFolder = project.path.trim(':').replace(':', '-')
