@@ -2,7 +2,7 @@ KSP Extensions for KotlinPoet
 ==============
 
 `interop:ksp` is an interop API for converting
-[Kotlin Symbol Processing](https://github.com/google/ksp) (KSP) types to KotlinPoet types and
+[Kotlin Symbol Processing][ksp] (KSP) types to KotlinPoet types and
 writing to KSP `CodeGenerator`.
 
 Note that this API is currently in preview and subject to API changes. Usage of it requires opting
@@ -103,7 +103,7 @@ val seasoningType = ksFunction.parameterTypes.map { it.toTypeName(functionTypePa
 
 ### Incremental Processing
 
-KSP supports [incremental processing](https://github.com/google/ksp/blob/main/docs/incremental.md) as
+KSP supports [incremental processing][incremental] as
 long as symbol processors properly indicate originating files in generated new files and whether or
 not they are `aggregating`. `kotlinpoet-ksp` supports this via `OriginatingKSFiles`, which is a simple
 API that sits atop KotlinPoet's `Taggable` API. To use this, simply add relevant originating files to
@@ -124,3 +124,6 @@ you don't need to do this manually.
 
 Lastly - `FileSpec.writeTo(CodeGenerator, ...)` also requires you to specify if your processor is
 _aggregating_ or not via required parameter by the same name.
+
+ [ksp]: https://github.com/google/ksp
+ [incremental]: https://github.com/google/ksp/blob/main/docs/incremental.md
