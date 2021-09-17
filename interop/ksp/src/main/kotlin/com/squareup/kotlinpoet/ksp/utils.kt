@@ -15,9 +15,12 @@
  */
 package com.squareup.kotlinpoet.ksp
 
+import com.google.devtools.ksp.isLocal
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 
 internal fun TypeName.rawType(): ClassName {
@@ -42,4 +45,24 @@ internal fun TypeName.findRawType(): ClassName? {
     }
     else -> null
   }
+}
+
+internal fun ClassName.withTypeArguments(arguments: List<TypeName>): TypeName {
+  return if (arguments.isEmpty()) {
+    this
+  } else {
+    this.parameterizedBy(arguments)
+  }
+}
+
+internal fun KSDeclaration.toClassNameInternal(): ClassName {
+  require(!isLocal()) {
+    "Local/anonymous classes are not supported!"
+  }
+  val pkgName = packageName.asString()
+  val typesString = checkNotNull(qualifiedName).asString().removePrefix("$pkgName.")
+
+  val simpleNames = typesString
+    .split(".")
+  return ClassName(pkgName, simpleNames)
 }

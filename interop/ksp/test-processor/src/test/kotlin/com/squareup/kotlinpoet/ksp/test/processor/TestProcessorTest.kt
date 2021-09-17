@@ -19,6 +19,7 @@ import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
+import com.tschuchort.compiletesting.kspArgs
 import com.tschuchort.compiletesting.kspIncremental
 import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.symbolProcessorProviders
@@ -184,8 +185,8 @@ class TestProcessorTest {
           favoriteArrayValues: Array<String>,
           favoriteNullableArrayValues: Array<String?>,
           nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
-          aliasedName: String,
-          genericAlias: List<String>,
+          aliasedName: TypeAliasName,
+          genericAlias: GenericTypeAlias<String>,
           nestedArray: Array<Map<String, Any>>?
         ): Unit {
         }
@@ -195,13 +196,55 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun unwrapTypeAliases() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           typealias TypeAliasName = String
+           typealias GenericTypeAlias = List<String>
+
+           @ExampleAnnotation
+           class Example {
+             fun aliases(
+               aliasedName: TypeAliasName,
+               genericAlias: GenericTypeAlias
+             ) {
+             }
+           }
+           """
+      )
+    )
+    compilation.kspArgs["unwrapTypeAliases"] = "true"
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      import kotlin.String
+      import kotlin.Unit
+      import kotlin.collections.List
+
+      public class Example {
+        public fun aliases(aliasedName: String, genericAlias: List<String>): Unit {
+        }
+      }
+
+      """.trimIndent()
+    )
+  }
+
   // TODO
-  //  - typealias
-  //  - generic typealias
   //  - complicated self referencing generics
-  //  - generic annotation
   //  - unnamed parameter
-  //  - toTypeName() unwraps typealiases
 
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()

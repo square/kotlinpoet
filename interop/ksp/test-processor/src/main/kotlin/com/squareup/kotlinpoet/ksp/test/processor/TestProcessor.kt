@@ -46,6 +46,8 @@ import com.squareup.kotlinpoet.ksp.writeTo
 @OptIn(KotlinPoetKspPreview::class)
 class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
 
+  private val unwrapTypeAliases = env.options["unwrapTypeAliases"]?.toBooleanStrictOrNull() ?: false
+
   override fun process(resolver: Resolver): List<KSAnnotated> {
     resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
       .forEach(::process)
@@ -62,14 +64,14 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         addModifiers(decl.modifiers.mapNotNull { it.toKModifier() })
       }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
-    classBuilder.addTypeVariables(decl.typeParameters.map { it.toTypeVariableName(classTypeParams) })
+    classBuilder.addTypeVariables(decl.typeParameters.map { it.toTypeVariableName(classTypeParams, unwrapTypeAliases) })
 
     // Add properties
     for (property in decl.getDeclaredProperties()) {
       classBuilder.addProperty(
         PropertySpec.builder(
           property.simpleName.getShortName(),
-          property.type.toTypeName(classTypeParams)
+          property.type.toTypeName(classTypeParams, unwrapTypeAliases)
         )
           .addOriginatingKSFile(decl.containingFile!!)
           .mutable(property.isMutable)
@@ -91,16 +93,16 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             function.getVisibility().toKModifier()?.let { addModifiers(it) }
             addModifiers(function.modifiers.mapNotNull { it.toKModifier() })
           }
-          .addTypeVariables(function.typeParameters.map { it.toTypeVariableName(functionTypeParams) })
+          .addTypeVariables(function.typeParameters.map { it.toTypeVariableName(functionTypeParams, unwrapTypeAliases) })
           .addParameters(
             function.parameters.map { parameter ->
-              val parameterType = parameter.type.toTypeName(functionTypeParams)
+              val parameterType = parameter.type.toTypeName(functionTypeParams, unwrapTypeAliases)
               parameter.name?.let {
                 ParameterSpec.builder(it.getShortName(), parameterType).build()
               } ?: ParameterSpec.unnamed(parameterType)
             }
           )
-          .returns(function.returnType!!.toTypeName(functionTypeParams))
+          .returns(function.returnType!!.toTypeName(functionTypeParams, unwrapTypeAliases))
           .build()
       )
     }
