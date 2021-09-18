@@ -25,7 +25,6 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.isExtensionType
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isReified
@@ -49,6 +48,15 @@ import kotlinx.metadata.KmVariance.INVARIANT
 import kotlinx.metadata.KmVariance.OUT
 import kotlinx.metadata.jvm.annotations
 import kotlinx.metadata.jvm.signature
+
+/**
+ * `true` if this is an extension type (i.e. String.() -> Unit vs (String) -> Unit).
+ *
+ * See details: https://discuss.kotlinlang.org/t/announcing-kotlinx-metadata-jvm-library-for-reading-modifying-metadata-of-kotlin-jvm-class-files/7980/27
+ */
+public val KmType.isExtensionType: Boolean get() {
+  return annotations.any { it.className == "kotlin/ExtensionFunctionType" }
+}
 
 @KotlinPoetMetadataPreview
 internal val KmClass.primaryConstructor: KmConstructor?
