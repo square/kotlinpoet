@@ -26,7 +26,6 @@ import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType
 import com.squareup.kotlinpoet.metadata.specs.toFileSpec
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
-import com.squareup.kotlinpoet.metadata.toImmutable
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Assume
@@ -117,7 +116,6 @@ abstract class MultiClassInspectorTest {
     val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
     return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
       .toKmPackage()
-      .toImmutable()
       .toFileSpec(classInspector, asClassName())
   }
 }
