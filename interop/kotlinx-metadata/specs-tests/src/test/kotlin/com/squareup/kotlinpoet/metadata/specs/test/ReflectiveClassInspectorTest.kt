@@ -2,7 +2,7 @@ package com.squareup.kotlinpoet.metadata.specs.test
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.classinspector.reflective.ReflectiveClassInspector
+import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile

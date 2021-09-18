@@ -1,8 +1,8 @@
 KotlinPoet-metadata-specs
 =========================
 
-`interop:kotlinx-metadata:specs` is an API for converting `interop:kotlinx-metadata:core` types to 
-KotlinPoet source representations of their APIs. This includes full type resolution, signatures, 
+`interop:kotlinx-metadata:specs` is an API for converting `interop:kotlinx-metadata:core` types to
+KotlinPoet source representations of their APIs. This includes full type resolution, signatures,
 enclosed elements, and general stub source representations of the underlying API.
 
 ### Example
@@ -32,17 +32,17 @@ annotations, companion objects, certain JVM modifiers, overrides, and more. Whil
 `Elements` implementations are available under the `kotlinpoet-classinspector-*` artifacts.
 
 Generated sources are solely _stub_ implementations, meaning implementation details of elements
-like functions, property getters, and delegated properties are simply stubbed with `TODO()` 
+like functions, property getters, and delegated properties are simply stubbed with `TODO()`
 placeholders.
 
 ### Known limitations
 
 - Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@file:` annotations are not supported yet.
-- `@JvmOverloads` annotations are only supported with `interop:kotlinx-metadata/classinspectors:elements` and not reflection.
-- Non-const literal values are only supported with `interop:kotlinx-metadata/classinspectors:reflect` and not reflection.
-- ClassInspector data sourced from `synthetic` constructs are only supported with 
-`interop:kotlinx-metadata/classinspectors:reflect` and not elements. This is because the javax Elements API does not model
-synthetic constructs. This can yield some missing information, like static companion object properties 
+- `@JvmOverloads` annotations are only supported with `ElementsClassInspector` and not reflection.
+- Non-const literal values are only supported with `ReflectiveClassInspector` and not reflection.
+- ClassInspector data sourced from `synthetic` constructs are only supported with
+`ReflectiveClassInspector` and not elements. This is because the javax Elements API does not model
+synthetic constructs. This can yield some missing information, like static companion object properties
 or `property:` site target annotations.
 - Annotations annotated with `AnnotationRetention.SOURCE` are not parsable in reflection nor javax elements.

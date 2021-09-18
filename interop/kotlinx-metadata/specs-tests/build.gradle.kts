@@ -25,7 +25,6 @@ dependencies {
   testImplementation(project(":interop:kotlinx-metadata:core"))
   testImplementation(project(":interop:kotlinx-metadata:specs"))
   testImplementation(project(":interop:kotlinx-metadata:classinspectors:elements"))
-  testImplementation(project(":interop:kotlinx-metadata:classinspectors:reflect"))
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
   testImplementation(libs.compileTesting)
