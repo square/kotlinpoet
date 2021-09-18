@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.classinspector.elements
+package com.squareup.kotlinpoet.metadata.classinspectors
 
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -12,9 +12,6 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
-import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -44,11 +41,18 @@ import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
-import com.squareup.kotlinpoet.metadata.toImmutableKmPackage
+import com.squareup.kotlinpoet.metadata.toKmClass
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmPackage
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.fieldSignature
+import kotlinx.metadata.jvm.getterSignature
+import kotlinx.metadata.jvm.setterSignature
+import kotlinx.metadata.jvm.signature
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -87,14 +91,14 @@ public class ElementsClassInspector private constructor(
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = true
 
-  override fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer {
+  override fun declarationContainerFor(className: ClassName): KmDeclarationContainer {
     val typeElement = lookupTypeElement(className)
       ?: error("No type element found for: $className.")
 
     val metadata = typeElement.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
-      is KotlinClassMetadata.Class -> kotlinClassMetadata.toImmutableKmClass()
-      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toImmutableKmPackage()
+      is KotlinClassMetadata.Class -> kotlinClassMetadata.toKmClass()
+      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toKmPackage()
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
     }
   }
@@ -184,8 +188,7 @@ public class ElementsClassInspector private constructor(
         .filter { types.isSubtype(enumTypeAsType, it.superclass) }
         .find { it.simpleName.contentEquals(memberName) }.toOptional()
     }.nullableValue
-    val declarationContainer = member?.getAnnotation(Metadata::class.java)
-      ?.toImmutableKmClass()
+    val declarationContainer = member?.getAnnotation(Metadata::class.java)?.toKmClass()
 
     val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
       .find { it.simpleName.contentEquals(memberName) }
@@ -282,16 +285,16 @@ public class ElementsClassInspector private constructor(
   }
 
   override fun containerData(
-    declarationContainer: ImmutableKmDeclarationContainer,
+    declarationContainer: KmDeclarationContainer,
     className: ClassName,
     parentClassName: ClassName?
   ): ContainerData {
     val typeElement: TypeElement = lookupTypeElement(className) ?: error("No class found for: $className.")
     val isCompanionObject = when (declarationContainer) {
-      is ImmutableKmClass -> {
+      is KmClass -> {
         declarationContainer.isCompanionObject
       }
-      is ImmutableKmPackage -> {
+      is KmPackage -> {
         false
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
@@ -395,7 +398,7 @@ public class ElementsClassInspector private constructor(
         }
 
         val annotations = mutableListOf<AnnotationSpec>()
-        if (property.hasAnnotations) {
+        if (property.flags.hasAnnotations) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
             val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
               ?: return@let MethodData.SYNTHETIC
@@ -434,7 +437,7 @@ public class ElementsClassInspector private constructor(
         val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
         method?.methodData(
           typeElement = typeElement,
-          hasAnnotations = kmFunction.hasAnnotations,
+          hasAnnotations = kmFunction.flags.hasAnnotations,
           jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
             ?.lookupMethod(signature, ElementFilter::methodsIn)
             ?: method
@@ -446,7 +449,7 @@ public class ElementsClassInspector private constructor(
     }
 
     when (declarationContainer) {
-      is ImmutableKmClass -> {
+      is KmClass -> {
         val constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
           if (declarationContainer.isAnnotation || declarationContainer.isValue) {
             //
@@ -462,7 +465,7 @@ public class ElementsClassInspector private constructor(
             val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
               ?: return@associateWith ConstructorData.EMPTY
             ConstructorData(
-              annotations = if (kmConstructor.hasAnnotations) {
+              annotations = if (kmConstructor.flags.hasAnnotations) {
                 constructor.annotationSpecs()
               } else {
                 emptyList()
@@ -479,7 +482,7 @@ public class ElementsClassInspector private constructor(
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,
-          annotations = if (declarationContainer.hasAnnotations) {
+          annotations = if (declarationContainer.flags.hasAnnotations) {
             ClassInspectorUtil.createAnnotations {
               @Suppress("DEPRECATION")
               addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
@@ -492,7 +495,7 @@ public class ElementsClassInspector private constructor(
           methods = methodData
         )
       }
-      is ImmutableKmPackage -> {
+      is KmPackage -> {
         // There's no flag for checking if there are annotations, so we just eagerly check in this
         // case. All annotations on this class are file: site targets in source. This includes
         // @JvmName.
@@ -557,13 +560,3 @@ public class ElementsClassInspector private constructor(
     private val JVM_STATIC = JvmStatic::class.asClassName()
   }
 }
-
-/**
- * Simple `Optional` implementation for use in collections that don't allow `null` values.
- *
- * TODO: Make this an inline class when inline classes are stable.
- */
-private data class Optional<out T : Any>(val nullableValue: T?)
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
-  this
-)

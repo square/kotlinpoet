@@ -35,9 +35,17 @@ import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.toKmClass
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmPackage
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.fieldSignature
+import kotlinx.metadata.jvm.getterSignature
+import kotlinx.metadata.jvm.setterSignature
+import kotlinx.metadata.jvm.signature
+import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -45,14 +53,6 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmDeclarationContainer
-import kotlinx.metadata.KmPackage
-import kotlinx.metadata.jvm.fieldSignature
-import kotlinx.metadata.jvm.getterSignature
-import kotlinx.metadata.jvm.setterSignature
-import kotlinx.metadata.jvm.signature
-import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
@@ -582,14 +582,3 @@ public class ReflectiveClassInspector private constructor(
     private val Field.jvmFieldSignature: String get() = "$name:${type.descriptor}"
   }
 }
-
-/**
- * Simple `Optional` implementation for use in collections that don't allow `null` values.
- *
- * TODO: Make this an inline class when inline classes are stable.
- */
-private data class Optional<out T : Any>(val nullableValue: T?)
-
-private fun <T : Any> T?.toOptional(): Optional<T> = Optional(
-  this
-)

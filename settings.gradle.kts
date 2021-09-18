@@ -23,7 +23,6 @@ pluginManagement {
 include(
     ":kotlinpoet",
     ":interop:javapoet",
-    ":interop:kotlinx-metadata:classinspectors:elements",
     ":interop:kotlinx-metadata:core",
     ":interop:kotlinx-metadata:specs",
     ":interop:kotlinx-metadata:specs-tests",

@@ -19,9 +19,9 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
-import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
+import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType
 import com.squareup.kotlinpoet.metadata.specs.toFileSpec

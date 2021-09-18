@@ -24,7 +24,6 @@ dependencies {
   testImplementation(project(":kotlinpoet"))
   testImplementation(project(":interop:kotlinx-metadata:core"))
   testImplementation(project(":interop:kotlinx-metadata:specs"))
-  testImplementation(project(":interop:kotlinx-metadata:classinspectors:elements"))
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
   testImplementation(libs.compileTesting)

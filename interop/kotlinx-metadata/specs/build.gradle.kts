@@ -23,6 +23,8 @@ tasks.jar {
 dependencies {
   api(project(":kotlinpoet"))
   api(project(":interop:kotlinx-metadata:core"))
+  api(libs.guava)
+  api(libs.autoCommon)
 
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
