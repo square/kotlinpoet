@@ -2,6 +2,7 @@ package com.squareup.kotlinpoet.metadata.specs.internal
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.specs.toAnnotationSpec
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
 import kotlinx.metadata.KmAnnotationArgument.ArrayValue

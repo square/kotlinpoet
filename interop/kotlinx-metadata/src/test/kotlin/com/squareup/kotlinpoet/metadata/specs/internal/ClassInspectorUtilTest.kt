@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 import kotlin.test.Test
 
 @KotlinPoetMetadataPreview

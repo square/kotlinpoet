@@ -1,10 +1,10 @@
-package com.squareup.kotlinpoet.metadata.specs.internal
+package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument

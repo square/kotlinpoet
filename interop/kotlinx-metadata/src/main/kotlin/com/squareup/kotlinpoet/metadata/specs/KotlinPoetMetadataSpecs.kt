@@ -61,6 +61,10 @@ import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_EXTERNAL
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_INLINE
 import com.squareup.kotlinpoet.metadata.PropertyAccessorFlag.IS_NOT_DEFAULT
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createAnnotations
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.toTreeSet
 import com.squareup.kotlinpoet.metadata.declaresDefaultValue
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasGetter
@@ -105,16 +109,6 @@ import com.squareup.kotlinpoet.metadata.isValue
 import com.squareup.kotlinpoet.metadata.isVar
 import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createAnnotations
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.createClassName
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.toTreeSet
-import com.squareup.kotlinpoet.metadata.specs.internal.TypeParameterResolver
-import com.squareup.kotlinpoet.metadata.specs.internal.primaryConstructor
-import com.squareup.kotlinpoet.metadata.specs.internal.toAnnotationSpec
-import com.squareup.kotlinpoet.metadata.specs.internal.toTypeName
-import com.squareup.kotlinpoet.metadata.specs.internal.toTypeParameterResolver
-import com.squareup.kotlinpoet.metadata.specs.internal.toTypeVariableName
 import com.squareup.kotlinpoet.metadata.toKmClass
 import com.squareup.kotlinpoet.tag
 import kotlinx.metadata.Flags

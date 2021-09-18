@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
 import com.squareup.kotlinpoet.metadata.isAnnotation
@@ -30,13 +31,11 @@ import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.STATIC
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.SYNCHRONIZED
+import com.squareup.kotlinpoet.metadata.specs.KM_CONSTRUCTOR_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.KM_FUNCTION_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.KM_PROPERTY_COMPARATOR
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
-import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
-import com.squareup.kotlinpoet.metadata.specs.internal.KM_CONSTRUCTOR_COMPARATOR
-import com.squareup.kotlinpoet.metadata.specs.internal.KM_FUNCTION_COMPARATOR
-import com.squareup.kotlinpoet.metadata.specs.internal.KM_PROPERTY_COMPARATOR
 import com.squareup.kotlinpoet.metadata.toKmClass
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer

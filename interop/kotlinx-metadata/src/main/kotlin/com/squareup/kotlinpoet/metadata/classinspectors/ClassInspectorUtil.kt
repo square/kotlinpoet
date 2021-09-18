@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.metadata.specs.internal
+package com.squareup.kotlinpoet.metadata.classinspectors
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
@@ -33,8 +33,8 @@ import java.util.Collections
 import java.util.TreeSet
 
 @KotlinPoetMetadataPreview
-public object ClassInspectorUtil {
-  public val JVM_NAME: ClassName = JvmName::class.asClassName()
+internal object ClassInspectorUtil {
+  val JVM_NAME: ClassName = JvmName::class.asClassName()
   private val JVM_FIELD = JvmField::class.asClassName()
   internal val JVM_FIELD_SPEC = AnnotationSpec.builder(JVM_FIELD).build()
   internal val JVM_SYNTHETIC = JvmSynthetic::class.asClassName()
@@ -55,7 +55,7 @@ public object ClassInspectorUtil {
     EXTENSION_FUNCTION_TYPE
   )
 
-  public val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
+  val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
     CHAR_SEQUENCE,
     COMPARABLE,
     ITERABLE,
@@ -77,7 +77,7 @@ public object ClassInspectorUtil {
     "org.jetbrains.annotations.Nullable"
   )
 
-  public fun filterOutNullabilityAnnotations(
+  fun filterOutNullabilityAnnotations(
     annotations: List<AnnotationSpec>
   ): List<AnnotationSpec> {
     return annotations.filterNot {
@@ -88,7 +88,7 @@ public object ClassInspectorUtil {
   }
 
   /** @return a [CodeBlock] representation of a [literal] value. */
-  public fun codeLiteralOf(literal: Any): CodeBlock {
+  fun codeLiteralOf(literal: Any): CodeBlock {
     return when (literal) {
       is String -> CodeBlock.of("%S", literal)
       is Long -> CodeBlock.of("%LL", literal)
@@ -101,7 +101,7 @@ public object ClassInspectorUtil {
    * Infers if [property] is a jvm field and should be annotated as such given the input
    * parameters.
    */
-  public fun computeIsJvmField(
+  fun computeIsJvmField(
     property: KmProperty,
     classInspector: ClassInspector,
     isCompanionObject: Boolean,
@@ -124,7 +124,7 @@ public object ClassInspectorUtil {
    * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
    *         input annotations from [body].
    */
-  public fun createAnnotations(
+  fun createAnnotations(
     siteTarget: UseSiteTarget? = null,
     body: MutableCollection<AnnotationSpec>.() -> Unit
   ): Collection<AnnotationSpec> {
@@ -155,7 +155,7 @@ public object ClassInspectorUtil {
    * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
    *         [exceptions].
    */
-  public fun createThrowsSpec(
+  fun createThrowsSpec(
     exceptions: Collection<TypeName>,
     useSiteTarget: UseSiteTarget? = null
   ): AnnotationSpec {
@@ -178,7 +178,7 @@ public object ClassInspectorUtil {
    * Local classes are prefixed with ".", but for KotlinPoetMetadataSpecs' use case we don't deal
    * with those.
    */
-  public fun createClassName(kotlinMetadataName: String): ClassName {
+  fun createClassName(kotlinMetadataName: String): ClassName {
     require(!kotlinMetadataName.isLocal) {
       "Local/anonymous classes are not supported!"
     }
@@ -212,7 +212,7 @@ public object ClassInspectorUtil {
     )
   }
 
-  public fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
+  fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
     return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
       addAll(this@toTreeSet)
     }
