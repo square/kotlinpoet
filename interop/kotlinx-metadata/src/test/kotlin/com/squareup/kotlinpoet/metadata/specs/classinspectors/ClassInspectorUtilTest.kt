@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.metadata.specs.internal
+package com.squareup.kotlinpoet.metadata.specs.classinspectors
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.AnnotationSpec
