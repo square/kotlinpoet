@@ -22,8 +22,7 @@ tasks.compileTestKotlin {
 
 dependencies {
   testImplementation(project(":kotlinpoet"))
-  testImplementation(project(":interop:kotlinx-metadata:core"))
-  testImplementation(project(":interop:kotlinx-metadata:specs"))
+  testImplementation(project(":interop:kotlinx-metadata"))
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
   testImplementation(libs.compileTesting)

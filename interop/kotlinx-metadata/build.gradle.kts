@@ -16,12 +16,16 @@
 
 tasks.jar {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.km")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata")
   }
 }
 
 dependencies {
+  api(libs.autoCommon)
+  api(libs.guava)
   api(libs.kotlin.metadata)
+  api(project(":kotlinpoet"))
+
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
 }
