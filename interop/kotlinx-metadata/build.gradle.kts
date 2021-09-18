@@ -20,6 +20,12 @@ tasks.jar {
   }
 }
 
+tasks.compileTestKotlin {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjvm-default=all")
+  }
+}
+
 dependencies {
   api(libs.autoCommon)
   api(libs.guava)
@@ -28,4 +34,6 @@ dependencies {
 
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
+  testImplementation(libs.compileTesting)
+  testImplementation(libs.kotlinCompileTesting)
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.squareup.kotlinpoet.metadata.specs.test
+package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FileSpec
@@ -22,10 +22,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
-import com.squareup.kotlinpoet.metadata.specs.ClassInspector
-import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType
-import com.squareup.kotlinpoet.metadata.specs.toFileSpec
-import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
+import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Assume

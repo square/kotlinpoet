@@ -24,7 +24,6 @@ include(
     ":kotlinpoet",
     ":interop:javapoet",
     ":interop:kotlinx-metadata",
-    ":interop:kotlinx-metadata:specs-tests",
     ":interop:ksp",
     ":interop:ksp:test-processor",
 )

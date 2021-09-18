@@ -1,4 +1,4 @@
-package com.squareup.kotlinpoet.metadata.specs.test
+package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
