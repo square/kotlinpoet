@@ -2,19 +2,19 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
-import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
-import com.squareup.kotlinpoet.metadata.ImmutableKmPackage
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.KmFunction
+import kotlinx.metadata.KmPackage
+import kotlinx.metadata.KmProperty
 
 /**
  * Represents relevant information on a declaration container used for [ClassInspector]. Can only
  * ever be applied on a Kotlin type (i.e. is annotated with [Metadata]).
  *
- * @property declarationContainer the [ImmutableKmDeclarationContainer] as parsed from the class's
+ * @property declarationContainer the [KmDeclarationContainer] as parsed from the class's
  *           [@Metadata][Metadata] annotation.
  * @property annotations declared annotations on this class.
  * @property properties the mapping of [declarationContainer]'s properties to parsed [PropertyData].
@@ -22,17 +22,17 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
  */
 @KotlinPoetMetadataPreview
 public interface ContainerData {
-  public val declarationContainer: ImmutableKmDeclarationContainer
+  public val declarationContainer: KmDeclarationContainer
   public val annotations: Collection<AnnotationSpec>
-  public val properties: Map<ImmutableKmProperty, PropertyData>
-  public val methods: Map<ImmutableKmFunction, MethodData>
+  public val properties: Map<KmProperty, PropertyData>
+  public val methods: Map<KmFunction, MethodData>
 }
 
 /**
  * Represents relevant information on a Kotlin class used for [ClassInspector]. Can only ever be
  * applied on a class and not file facades.
  *
- * @property declarationContainer the [ImmutableKmClass] as parsed from the class's
+ * @property declarationContainer the [KmClass] as parsed from the class's
  *           [@Metadata][Metadata] annotation.
  * @property className the KotlinPoet [ClassName] of the class.
  * @property constructors the mapping of [declarationContainer]'s constructors to parsed
@@ -40,18 +40,18 @@ public interface ContainerData {
  */
 @KotlinPoetMetadataPreview
 public data class ClassData(
-  override val declarationContainer: ImmutableKmClass,
+  override val declarationContainer: KmClass,
   val className: ClassName,
   override val annotations: Collection<AnnotationSpec>,
-  override val properties: Map<ImmutableKmProperty, PropertyData>,
-  val constructors: Map<ImmutableKmConstructor, ConstructorData>,
-  override val methods: Map<ImmutableKmFunction, MethodData>
+  override val properties: Map<KmProperty, PropertyData>,
+  val constructors: Map<KmConstructor, ConstructorData>,
+  override val methods: Map<KmFunction, MethodData>
 ) : ContainerData
 
 /**
  * Represents relevant information on a file facade used for [ClassInspector].
  *
- * @property declarationContainer the [ImmutableKmClass] as parsed from the class's
+ * @property declarationContainer the [KmClass] as parsed from the class's
  *           [@Metadata][Metadata] annotation.
  * @property className the KotlinPoet [ClassName] of the underlying facade class in JVM.
  * @property jvmName the `@JvmName` of the class or null if it does not have a custom name.
@@ -59,10 +59,10 @@ public data class ClassData(
  */
 @KotlinPoetMetadataPreview
 public data class FileData(
-  override val declarationContainer: ImmutableKmPackage,
+  override val declarationContainer: KmPackage,
   override val annotations: Collection<AnnotationSpec>,
-  override val properties: Map<ImmutableKmProperty, PropertyData>,
-  override val methods: Map<ImmutableKmFunction, MethodData>,
+  override val properties: Map<KmProperty, PropertyData>,
+  override val methods: Map<KmFunction, MethodData>,
   val className: ClassName,
   val jvmName: String? =
     if (!className.simpleName.endsWith("Kt")) className.simpleName else null
@@ -78,12 +78,12 @@ public data class FileData(
 /**
  * Represents relevant information on a Kotlin enum entry.
  *
- * @property declarationContainer the [ImmutableKmClass] as parsed from the entry's
+ * @property declarationContainer the [KmClass] as parsed from the entry's
  * [@Metadata][Metadata] annotation.
  * @property annotations the annotations for the entry
  */
 @KotlinPoetMetadataPreview
 public data class EnumEntryData(
-  val declarationContainer: ImmutableKmClass?,
+  val declarationContainer: KmClass?,
   val annotations: Collection<AnnotationSpec>
 )

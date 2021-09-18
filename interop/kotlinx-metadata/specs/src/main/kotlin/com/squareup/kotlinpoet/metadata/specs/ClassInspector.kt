@@ -16,9 +16,9 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmDeclarationContainer
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.jvm.JvmMethodSignature
 
 /** A basic interface for looking up JVM information about a given Class. */
@@ -35,13 +35,13 @@ public interface ClassInspector {
   /**
    * Creates a new [ContainerData] instance for a given [declarationContainer].
    *
-   * @param declarationContainer the source [ImmutableKmDeclarationContainer] to read from.
+   * @param declarationContainer the source [KmDeclarationContainer] to read from.
    * @param className the [ClassName] of the target class to to read from.
    * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner,
    * or is a companion object.
    */
   public fun containerData(
-    declarationContainer: ImmutableKmDeclarationContainer,
+    declarationContainer: KmDeclarationContainer,
     className: ClassName,
     parentClassName: ClassName?
   ): ContainerData
@@ -51,10 +51,10 @@ public interface ClassInspector {
    * always be Kotlin, so Metadata can be relied on for this.
    *
    * @param className The [ClassName] representation of the class.
-   * @return the read [ImmutableKmDeclarationContainer] from its metadata. If no class or facade
+   * @return the read [KmDeclarationContainer] from its metadata. If no class or facade
    *         file was found, this should throw an exception.
    */
-  public fun declarationContainerFor(className: ClassName): ImmutableKmDeclarationContainer
+  public fun declarationContainerFor(className: ClassName): KmDeclarationContainer
 
   /**
    * Looks up a class and returns whether or not it is an interface. Note that this class can be
@@ -104,13 +104,13 @@ public fun ClassInspector.containerData(
  * Kotlin, so Metadata can be relied on for this.
  *
  * @param className The [ClassName] representation of the class.
- * @return the read [ImmutableKmClass] from its metadata. If no class was found, this should throw
+ * @return the read [KmClass] from its metadata. If no class was found, this should throw
  *         an exception.
  */
 @KotlinPoetMetadataPreview
-public fun ClassInspector.classFor(className: ClassName): ImmutableKmClass {
+public fun ClassInspector.classFor(className: ClassName): KmClass {
   val container = declarationContainerFor(className)
-  check(container is ImmutableKmClass) {
+  check(container is KmClass) {
     "Container is not a class! Was ${container.javaClass.simpleName}"
   }
   return container

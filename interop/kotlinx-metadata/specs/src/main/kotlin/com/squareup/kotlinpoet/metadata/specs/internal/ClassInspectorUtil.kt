@@ -22,10 +22,10 @@ import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.joinToCode
-import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import kotlinx.metadata.KmProperty
 import kotlinx.metadata.isLocal
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -102,7 +102,7 @@ public object ClassInspectorUtil {
    * parameters.
    */
   public fun computeIsJvmField(
-    property: ImmutableKmProperty,
+    property: KmProperty,
     classInspector: ClassInspector,
     isCompanionObject: Boolean,
     hasGetter: Boolean,

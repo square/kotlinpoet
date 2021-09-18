@@ -24,28 +24,30 @@ import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
-import com.squareup.kotlinpoet.metadata.ImmutableKmClass
-import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
-import com.squareup.kotlinpoet.metadata.ImmutableKmFlexibleTypeUpperBound
-import com.squareup.kotlinpoet.metadata.ImmutableKmType
-import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
-import com.squareup.kotlinpoet.metadata.ImmutableKmTypeProjection
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.isExtensionType
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isReified
 import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
+import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmClassifier.TypeAlias
 import kotlinx.metadata.KmClassifier.TypeParameter
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.KmFlexibleTypeUpperBound
+import kotlinx.metadata.KmType
+import kotlinx.metadata.KmTypeParameter
+import kotlinx.metadata.KmTypeProjection
 import kotlinx.metadata.KmVariance
 import kotlinx.metadata.KmVariance.IN
 import kotlinx.metadata.KmVariance.INVARIANT
 import kotlinx.metadata.KmVariance.OUT
+import kotlinx.metadata.jvm.annotations
 
 @KotlinPoetMetadataPreview
-internal val ImmutableKmClass.primaryConstructor: ImmutableKmConstructor?
+internal val KmClass.primaryConstructor: KmConstructor?
   get() = constructors.find { it.isPrimary }
 
 internal fun KmVariance.toKModifier(): KModifier? {
@@ -57,7 +59,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
 }
 
 @KotlinPoetMetadataPreview
-internal fun ImmutableKmTypeProjection.toTypeName(
+internal fun KmTypeProjection.toTypeName(
   typeParamResolver: TypeParameterResolver
 ): TypeName {
   val typename = type?.toTypeName(typeParamResolver) ?: STAR
@@ -70,12 +72,12 @@ internal fun ImmutableKmTypeProjection.toTypeName(
 }
 
 /**
- * Converts a given [ImmutableKmType] into a KotlinPoet representation, attempting to give a correct
+ * Converts a given [KmType] into a KotlinPoet representation, attempting to give a correct
  * "source" representation. This includes converting [functions][kotlin.Function] and `suspend`
  * types to appropriate [lambda representations][LambdaTypeName].
  */
 @KotlinPoetMetadataPreview
-internal fun ImmutableKmType.toTypeName(
+internal fun KmType.toTypeName(
   typeParamResolver: TypeParameterResolver
 ): TypeName {
   val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
@@ -150,7 +152,7 @@ internal fun ImmutableKmType.toTypeName(
 }
 
 @KotlinPoetMetadataPreview
-internal fun ImmutableKmTypeParameter.toTypeVariableName(
+internal fun KmTypeParameter.toTypeVariableName(
   typeParamResolver: TypeParameterResolver
 ): TypeVariableName {
   val finalVariance = variance.toKModifier()
@@ -166,13 +168,13 @@ internal fun ImmutableKmTypeParameter.toTypeVariableName(
   }.toList()
   return typeVariableName.copy(
     reified = isReified,
-    tags = mapOf(ImmutableKmTypeParameter::class to this),
+    tags = mapOf(KmTypeParameter::class to this),
     annotations = annotations
   )
 }
 
 @KotlinPoetMetadataPreview
-private fun ImmutableKmFlexibleTypeUpperBound.toTypeName(
+private fun KmFlexibleTypeUpperBound.toTypeName(
   typeParamResolver: TypeParameterResolver
 ): TypeName {
   // TODO tag typeFlexibilityId somehow?
@@ -193,7 +195,7 @@ internal interface TypeParameterResolver {
 }
 
 @KotlinPoetMetadataPreview
-internal fun List<ImmutableKmTypeParameter>.toTypeParameterResolver(
+internal fun List<KmTypeParameter>.toTypeParameterResolver(
   fallback: TypeParameterResolver? = null
 ): TypeParameterResolver {
   val parametersMap = LinkedHashMap<Int, TypeVariableName>()

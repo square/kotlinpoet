@@ -50,28 +50,6 @@ public val Flags.isProtected: Boolean get() = Flag.IS_PROTECTED(this)
 public val Flags.isPublic: Boolean get() = Flag.IS_PUBLIC(this)
 @KotlinPoetMetadataPreview
 public val Flags.isSealed: Boolean get() = Flag.IS_SEALED(this)
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.hasAnnotations: Boolean get() = flags.hasAnnotations
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isAbstract: Boolean get() = flags.isAbstract
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isFinal: Boolean get() = flags.isFinal
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isInternal: Boolean get() = flags.isInternal
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isLocal: Boolean get() = flags.isLocal
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isOpen: Boolean get() = flags.isOpen
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isPrivate: Boolean get() = flags.isPrivate
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isPrivate_to_this: Boolean get() = flags.isPrivate_to_this
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isProtected: Boolean get() = flags.isProtected
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isPublic: Boolean get() = flags.isPublic
-@KotlinPoetMetadataPreview
-public val ImmutableKmWithFlags.isSealed: Boolean get() = flags.isSealed
 
 // Type flags.
 @KotlinPoetMetadataPreview
@@ -131,39 +109,11 @@ public val KmClass.isObject: Boolean get() = flags.isObjectClass
 @KotlinPoetMetadataPreview
 public val KmClass.isInterface: Boolean get() = flags.isInterface
 @KotlinPoetMetadataPreview
+public val KmClass.isFun: Boolean get() = flags.isFun
+@KotlinPoetMetadataPreview
 public val KmType.isSuspend: Boolean get() = flags.isSuspendType
 @KotlinPoetMetadataPreview
 public val KmType.isNullable: Boolean get() = flags.isNullableType
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isAnnotation: Boolean get() = flags.isAnnotationClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isClass: Boolean get() = flags.isClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isCompanionObject: Boolean get() = flags.isCompanionObjectClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isData: Boolean get() = flags.isDataClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isEnum: Boolean get() = flags.isEnumClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isEnumEntry: Boolean get() = flags.isEnumEntryClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isExpect: Boolean get() = flags.isExpectClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isExternal: Boolean get() = flags.isExternalClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isValue: Boolean get() = flags.isValueClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isInner: Boolean get() = flags.isInnerClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isObject: Boolean get() = flags.isObjectClass
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isInterface: Boolean get() = flags.isInterface
-@KotlinPoetMetadataPreview
-public val ImmutableKmClass.isFun: Boolean get() = flags.isFun
-@KotlinPoetMetadataPreview
-public val ImmutableKmType.isSuspend: Boolean get() = flags.isSuspendType
-@KotlinPoetMetadataPreview
-public val ImmutableKmType.isNullable: Boolean get() = flags.isNullableType
 
 // Constructor flags.
 @KotlinPoetMetadataPreview
@@ -172,10 +122,6 @@ public val Flags.isPrimaryConstructor: Boolean get() = !Flag.Constructor.IS_SECO
 public val KmConstructor.isPrimary: Boolean get() = flags.isPrimaryConstructor
 @KotlinPoetMetadataPreview
 public val KmConstructor.isSecondary: Boolean get() = !isPrimary
-@KotlinPoetMetadataPreview
-public val ImmutableKmConstructor.isPrimary: Boolean get() = flags.isPrimaryConstructor
-@KotlinPoetMetadataPreview
-public val ImmutableKmConstructor.isSecondary: Boolean get() = !isPrimary
 
 // Function flags.
 @KotlinPoetMetadataPreview
@@ -222,28 +168,6 @@ public val KmFunction.isExternal: Boolean get() = flags.isExternalFunction
 public val KmFunction.isSuspend: Boolean get() = flags.isSuspendFunction
 @KotlinPoetMetadataPreview
 public val KmFunction.isExpect: Boolean get() = flags.isExpectFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isDeclaration: Boolean get() = flags.isDeclarationFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isFakeOverride: Boolean get() = flags.isFakeOverrideFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isDelegation: Boolean get() = flags.isDelegationFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isSynthesized: Boolean get() = flags.isSynthesizedFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isOperator: Boolean get() = flags.isOperatorFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isInfix: Boolean get() = flags.isInfixFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isInline: Boolean get() = flags.isInlineFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isTailRec: Boolean get() = flags.isTailRecFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isExternal: Boolean get() = flags.isExternalFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isSuspend: Boolean get() = flags.isSuspendFunction
-@KotlinPoetMetadataPreview
-public val ImmutableKmFunction.isExpect: Boolean get() = flags.isExpectFunction
 
 // Parameter flags.
 @KotlinPoetMetadataPreview
@@ -253,15 +177,6 @@ public val KmValueParameter.declaresDefaultValue: Boolean get() =
 public val KmValueParameter.isCrossInline: Boolean get() = Flag.ValueParameter.IS_CROSSINLINE(flags)
 @KotlinPoetMetadataPreview
 public val KmValueParameter.isNoInline: Boolean get() = Flag.ValueParameter.IS_NOINLINE(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmValueParameter.declaresDefaultValue: Boolean
-  get() = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmValueParameter.isCrossInline: Boolean
-  get() = Flag.ValueParameter.IS_CROSSINLINE(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmValueParameter.isNoInline: Boolean
-  get() = Flag.ValueParameter.IS_NOINLINE(flags)
 
 // Property flags.
 @KotlinPoetMetadataPreview
@@ -294,34 +209,6 @@ public val KmProperty.isSynthesized: Boolean get() = Flag.Property.IS_SYNTHESIZE
 public val KmProperty.isVar: Boolean get() = Flag.Property.IS_VAR(flags)
 @KotlinPoetMetadataPreview
 public val KmProperty.isVal: Boolean get() = !isVar
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.hasConstant: Boolean get() = Flag.Property.HAS_CONSTANT(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.hasGetter: Boolean get() = Flag.Property.HAS_GETTER(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.hasSetter: Boolean get() = Flag.Property.HAS_SETTER(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isConst: Boolean get() = Flag.Property.IS_CONST(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isDeclaration: Boolean get() = Flag.Property.IS_DECLARATION(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isDelegated: Boolean get() = Flag.Property.IS_DELEGATED(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isDelegation: Boolean get() = Flag.Property.IS_DELEGATION(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isExpect: Boolean get() = Flag.Property.IS_EXPECT(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isExternal: Boolean get() = Flag.Property.IS_EXTERNAL(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isFakeOverride: Boolean get() = flags.isFakeOverrideProperty
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isLateinit: Boolean get() = Flag.Property.IS_LATEINIT(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isSynthesized: Boolean get() = Flag.Property.IS_SYNTHESIZED(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isVar: Boolean get() = Flag.Property.IS_VAR(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmProperty.isVal: Boolean get() = !isVar
 
 // Property Accessor Flags
 @KotlinPoetMetadataPreview
@@ -337,8 +224,6 @@ public val Flags.isPropertyAccessorNotDefault: Boolean
 // TypeParameter flags.
 @KotlinPoetMetadataPreview
 public val KmTypeParameter.isReified: Boolean get() = Flag.TypeParameter.IS_REIFIED(flags)
-@KotlinPoetMetadataPreview
-public val ImmutableKmTypeParameter.isReified: Boolean get() = Flag.TypeParameter.IS_REIFIED(flags)
 
 // Property Accessor Flags
 public enum class PropertyAccessorFlag {
@@ -348,11 +233,11 @@ public enum class PropertyAccessorFlag {
 }
 
 @KotlinPoetMetadataPreview
-public val ImmutableKmProperty.setterPropertyAccessorFlags: Set<PropertyAccessorFlag>
+public val KmProperty.setterPropertyAccessorFlags: Set<PropertyAccessorFlag>
   get() = setterFlags.propertyAccessorFlags
 
 @KotlinPoetMetadataPreview
-public val ImmutableKmProperty.getterPropertyAccessorFlags: Set<PropertyAccessorFlag>
+public val KmProperty.getterPropertyAccessorFlags: Set<PropertyAccessorFlag>
   get() = getterFlags.propertyAccessorFlags
 
 @KotlinPoetMetadataPreview
