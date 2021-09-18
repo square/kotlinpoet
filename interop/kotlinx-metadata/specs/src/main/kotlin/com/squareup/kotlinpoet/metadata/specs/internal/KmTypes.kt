@@ -33,10 +33,13 @@ import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmClassifier.Class
 import kotlinx.metadata.KmClassifier.TypeAlias
 import kotlinx.metadata.KmClassifier.TypeParameter
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.KmFlexibleTypeUpperBound
+import kotlinx.metadata.KmFunction
+import kotlinx.metadata.KmProperty
 import kotlinx.metadata.KmType
 import kotlinx.metadata.KmTypeParameter
 import kotlinx.metadata.KmTypeProjection
@@ -45,6 +48,7 @@ import kotlinx.metadata.KmVariance.IN
 import kotlinx.metadata.KmVariance.INVARIANT
 import kotlinx.metadata.KmVariance.OUT
 import kotlinx.metadata.jvm.annotations
+import kotlinx.metadata.jvm.signature
 
 @KotlinPoetMetadataPreview
 internal val KmClass.primaryConstructor: KmConstructor?
@@ -224,4 +228,58 @@ internal fun List<KmTypeParameter>.toTypeParameterResolver(
   }
 
   return resolver
+}
+
+internal val KM_PROPERTY_COMPARATOR = Comparator<KmProperty> { o1, o2 ->
+  // No need to check fields, getters, etc as properties must have distinct names
+  o1.name.compareTo(o2.name)
+}
+
+internal val KM_FUNCTION_COMPARATOR = Comparator<KmFunction> { o1, o2 ->
+  var result = o1.name.compareTo(o2.name)
+  if (result != 0) return@Comparator result
+
+  val signature1 = o1.signature
+  val signature2 = o2.signature
+  if (signature1 != null && signature2 != null) {
+    result = signature1.asString().compareTo(signature2.asString())
+    if (result != 0) return@Comparator result
+  }
+
+  // Fallback - calculate signature
+  val manualSignature1 = o1.computeSignature()
+  val manualSignature2 = o2.computeSignature()
+  manualSignature1.compareTo(manualSignature2)
+}
+
+internal val KM_CONSTRUCTOR_COMPARATOR = Comparator<KmConstructor> { o1, o2 ->
+  val signature1 = o1.signature
+  val signature2 = o2.signature
+  if (signature1 != null && signature2 != null) {
+    val result = signature1.asString().compareTo(signature2.asString())
+    if (result != 0) return@Comparator result
+  }
+
+  // Fallback - calculate signature
+  val manualSignature1 = o1.computeSignature()
+  val manualSignature2 = o2.computeSignature()
+  manualSignature1.compareTo(manualSignature2)
+}
+
+// Computes a simple signature string good enough for hashing
+private fun KmFunction.computeSignature(): String {
+  return "$name(${valueParameters.joinToString(",") { it.type.simpleName }})${returnType.simpleName}"
+}
+
+private fun KmConstructor.computeSignature(): String {
+  return "$<init>(${valueParameters.joinToString(",") { it.type.simpleName }})"
+}
+
+private val KmType?.simpleName: String get() {
+  if (this == null) return "void"
+  return when (val c = classifier) {
+    is Class -> c.name
+    is TypeParameter -> "Object"
+    is TypeAlias -> c.name
+  }
 }

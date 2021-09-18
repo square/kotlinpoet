@@ -34,6 +34,9 @@ import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_CONSTRUCTOR_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_FUNCTION_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_PROPERTY_COMPARATOR
 import com.squareup.kotlinpoet.metadata.toKmClass
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
@@ -51,6 +54,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
+import java.util.TreeMap
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -296,7 +300,7 @@ public class ReflectiveClassInspector private constructor(
       .asSequence()
       .filter { it.isDeclaration }
       .filterNot { it.isSynthesized }
-      .associateWith { property ->
+      .associateWithTo(TreeMap(KM_PROPERTY_COMPARATOR)) { property ->
         val isJvmField = ClassInspectorUtil.computeIsJvmField(
           property = property,
           classInspector = this,
@@ -409,22 +413,23 @@ public class ReflectiveClassInspector private constructor(
         )
       }
 
-    val methodData = declarationContainer.functions.associateWith { kmFunction ->
-      val signature = kmFunction.signature
-      if (signature != null) {
-        val method = targetClass.lookupMethod(signature)
-        method?.methodData(
-          clazz = targetClass,
-          signature = signature,
-          hasAnnotations = kmFunction.flags.hasAnnotations,
-          jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
-            ?: method
-        )
-          ?: error("No method $signature found in $targetClass.")
-      } else {
-        MethodData.EMPTY
+    val methodData = declarationContainer.functions
+      .associateWithTo(TreeMap(KM_FUNCTION_COMPARATOR)) { kmFunction ->
+        val signature = kmFunction.signature
+        if (signature != null) {
+          val method = targetClass.lookupMethod(signature)
+          method?.methodData(
+            clazz = targetClass,
+            signature = signature,
+            hasAnnotations = kmFunction.flags.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
+              ?: method
+          )
+            ?: error("No method $signature found in $targetClass.")
+        } else {
+          MethodData.EMPTY
+        }
       }
-    }
 
     when (declarationContainer) {
       is KmClass -> {
@@ -435,35 +440,36 @@ public class ReflectiveClassInspector private constructor(
         } else {
           emptyList()
         }
-        val constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
-          if (declarationContainer.isAnnotation || declarationContainer.isValue) {
-            //
-            // Annotations are interfaces in reflection, but kotlin metadata will still report a
-            // constructor signature
-            //
-            // Inline classes have no constructors at runtime
-            //
-            return@associateWith ConstructorData.EMPTY
+        val constructorData = declarationContainer.constructors
+          .associateWithTo(TreeMap(KM_CONSTRUCTOR_COMPARATOR)) { kmConstructor ->
+            if (declarationContainer.isAnnotation || declarationContainer.isValue) {
+              //
+              // Annotations are interfaces in reflection, but kotlin metadata will still report a
+              // constructor signature
+              //
+              // Inline classes have no constructors at runtime
+              //
+              return@associateWithTo ConstructorData.EMPTY
+            }
+            val signature = kmConstructor.signature
+            if (signature != null) {
+              val constructor = targetClass.lookupConstructor(signature)
+                ?: error("No constructor $signature found in $targetClass.")
+              ConstructorData(
+                annotations = if (kmConstructor.flags.hasAnnotations) {
+                  constructor.annotationSpecs()
+                } else {
+                  emptyList()
+                },
+                parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+                isSynthetic = constructor.isSynthetic,
+                jvmModifiers = constructor.jvmModifiers(),
+                exceptions = constructor.exceptionTypeNames()
+              )
+            } else {
+              ConstructorData.EMPTY
+            }
           }
-          val signature = kmConstructor.signature
-          if (signature != null) {
-            val constructor = targetClass.lookupConstructor(signature)
-              ?: error("No constructor $signature found in $targetClass.")
-            ConstructorData(
-              annotations = if (kmConstructor.flags.hasAnnotations) {
-                constructor.annotationSpecs()
-              } else {
-                emptyList()
-              },
-              parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
-              isSynthetic = constructor.isSynthetic,
-              jvmModifiers = constructor.jvmModifiers(),
-              exceptions = constructor.exceptionTypeNames()
-            )
-          } else {
-            ConstructorData.EMPTY
-          }
-        }
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,

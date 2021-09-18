@@ -41,6 +41,9 @@ import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil.filterOutNullabilityAnnotations
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_CONSTRUCTOR_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_FUNCTION_COMPARATOR
+import com.squareup.kotlinpoet.metadata.specs.internal.KM_PROPERTY_COMPARATOR
 import com.squareup.kotlinpoet.metadata.toKmClass
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
@@ -53,6 +56,7 @@ import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import java.util.TreeMap
 import java.util.concurrent.ConcurrentHashMap
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind.INTERFACE
@@ -314,7 +318,7 @@ public class ElementsClassInspector private constructor(
       .asSequence()
       .filter { it.isDeclaration }
       .filterNot { it.isSynthesized }
-      .associateWith { property ->
+      .associateWithTo(TreeMap(KM_PROPERTY_COMPARATOR)) { property ->
         val isJvmField = ClassInspectorUtil.computeIsJvmField(
           property = property,
           classInspector = this,
@@ -431,54 +435,56 @@ public class ElementsClassInspector private constructor(
         )
       }
 
-    val methodData = declarationContainer.functions.associateWith { kmFunction ->
-      val signature = kmFunction.signature
-      if (signature != null) {
-        val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
-        method?.methodData(
-          typeElement = typeElement,
-          hasAnnotations = kmFunction.flags.hasAnnotations,
-          jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-            ?.lookupMethod(signature, ElementFilter::methodsIn)
-            ?: method
-        )
-          ?: return@associateWith MethodData.SYNTHETIC
-      } else {
-        MethodData.EMPTY
+    val methodData = declarationContainer.functions
+      .associateWithTo(TreeMap(KM_FUNCTION_COMPARATOR)) { kmFunction ->
+        val signature = kmFunction.signature
+        if (signature != null) {
+          val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
+          method?.methodData(
+            typeElement = typeElement,
+            hasAnnotations = kmFunction.flags.hasAnnotations,
+            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
+              ?.lookupMethod(signature, ElementFilter::methodsIn)
+              ?: method
+          )
+            ?: return@associateWithTo MethodData.SYNTHETIC
+        } else {
+          MethodData.EMPTY
+        }
       }
-    }
 
     when (declarationContainer) {
       is KmClass -> {
-        val constructorData = declarationContainer.constructors.associateWith { kmConstructor ->
-          if (declarationContainer.isAnnotation || declarationContainer.isValue) {
-            //
-            // Annotations are interfaces in bytecode, but kotlin metadata will still report a
-            // constructor signature
-            //
-            // Inline classes have no constructors at runtime
-            //
-            return@associateWith ConstructorData.EMPTY
+        val constructorData = declarationContainer.constructors
+          .associateWithTo(TreeMap(KM_CONSTRUCTOR_COMPARATOR)) { kmConstructor ->
+            if (declarationContainer.isAnnotation || declarationContainer.isValue) {
+              //
+              // Annotations are interfaces in bytecode, but kotlin metadata will still report a
+              // constructor signature
+              //
+              // Inline classes have no constructors at runtime
+              //
+              return@associateWithTo ConstructorData.EMPTY
+            }
+            val signature = kmConstructor.signature
+            if (signature != null) {
+              val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
+                ?: return@associateWithTo ConstructorData.EMPTY
+              ConstructorData(
+                annotations = if (kmConstructor.flags.hasAnnotations) {
+                  constructor.annotationSpecs()
+                } else {
+                  emptyList()
+                },
+                parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
+                isSynthetic = false,
+                jvmModifiers = constructor.jvmModifiers(),
+                exceptions = constructor.exceptionTypeNames()
+              )
+            } else {
+              ConstructorData.EMPTY
+            }
           }
-          val signature = kmConstructor.signature
-          if (signature != null) {
-            val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
-              ?: return@associateWith ConstructorData.EMPTY
-            ConstructorData(
-              annotations = if (kmConstructor.flags.hasAnnotations) {
-                constructor.annotationSpecs()
-              } else {
-                emptyList()
-              },
-              parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
-              isSynthetic = false,
-              jvmModifiers = constructor.jvmModifiers(),
-              exceptions = constructor.exceptionTypeNames()
-            )
-          } else {
-            ConstructorData.EMPTY
-          }
-        }
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,
