@@ -73,10 +73,9 @@ placeholders.
 
 ### Known limitations
 
-- Only `KotlinClassMetadata.Class` supported for now. No support for `FileFacade`, `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
-- `@file:` annotations are not supported yet.
+- Only `KotlinClassMetadata.Class` and `KotlinClassMetadata.FileFacade` are supported for now. No support for `SyntheticClass`, `MultiFileClassFacade`, or `MultiFileClassPart`
 - `@JvmOverloads` annotations are only supported with `ElementsClassInspector` and not reflection.
-- Non-const literal values are only supported with `ReflectiveClassInspector` and not reflection.
+- Non-const literal values are only supported with `ElementsClassInspector` and not reflection.
 - ClassInspector data sourced from `synthetic` constructs are only supported with
   `ReflectiveClassInspector` and not elements. This is because the javax Elements API does not model
   synthetic constructs. This can yield some missing information, like static companion object properties
