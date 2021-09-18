@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2021 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
-}
+package com.squareup.kotlinpoet.ksp
 
-include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata:classinspectors:elements",
-    ":interop:kotlinx-metadata:classinspectors:reflect",
-    ":interop:kotlinx-metadata:core",
-    ":interop:kotlinx-metadata:specs",
-    ":interop:kotlinx-metadata:specs-tests",
-    ":interop:ksp",
-    ":interop:ksp:test-processor",
-)
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.PROPERTY
 
-enableFeaturePreview("VERSION_CATALOGS")
+/**
+ * Indicates that a given API is part of the experimental KotlinPoet KSP support. This exists
+ * because KotlinPoet support of KSP is in preview and subject to change.
+ */
+@RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, FUNCTION, PROPERTY)
+public annotation class KotlinPoetKspPreview
