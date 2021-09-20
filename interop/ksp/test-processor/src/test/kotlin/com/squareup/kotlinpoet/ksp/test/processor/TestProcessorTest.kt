@@ -46,6 +46,7 @@ class TestProcessorTest {
 
            typealias TypeAliasName = String
            typealias GenericTypeAlias = List<String>
+           typealias ParameterizedTypeAlias<T> = List<T>
 
            @ExampleAnnotation
            class SmokeTestClass<T, R : Any, E : Enum<E>> {
@@ -99,6 +100,7 @@ class TestProcessorTest {
                // These are actually currently rendered incorrectly and always unwrapped
                aliasedName: TypeAliasName,
                genericAlias: GenericTypeAlias,
+               parameterizedTypeAlias: ParameterizedTypeAlias<String>,
                nestedArray: Array<Map<String, Any>>?
              ) {
 
@@ -186,7 +188,8 @@ class TestProcessorTest {
           favoriteNullableArrayValues: Array<String?>,
           nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
           aliasedName: TypeAliasName,
-          genericAlias: GenericTypeAlias<String>,
+          genericAlias: GenericTypeAlias,
+          parameterizedTypeAlias: ParameterizedTypeAlias<String>,
           nestedArray: Array<Map<String, Any>>?
         ): Unit {
         }
