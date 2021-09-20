@@ -112,6 +112,21 @@ class ParameterizedTypeNameTest {
     assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>")
   }
 
+  @Test fun copyingTypeArguments() {
+    val typeName = java.util.Map::class.java
+      .plusParameter(java.lang.String::class.java)
+      .plusParameter(java.lang.Integer::class.java)
+      .nestedClass(
+        "Entry",
+        listOf(
+          java.lang.String::class.java.asClassName(),
+          java.lang.Integer::class.java.asClassName()
+        )
+      )
+      .copy(typeArguments = listOf(STAR, STAR))
+    assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>.Entry<*, *>")
+  }
+
   interface Projections {
     val outVariance: KClass<out Annotation>
     val inVariance: KClass<in Test>
