@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2021 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
-  }
-}
+package com.squareup.kotlinpoet.metadata.classinspectors
 
-include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata",
-    ":interop:ksp",
-    ":interop:ksp:test-processor",
+/**
+ * Simple `Optional` implementation for use in collections that don't allow `null` values.
+ */
+internal data class Optional<out T : Any>(val nullableValue: T?)
+
+internal fun <T : Any> T?.toOptional(): Optional<T> = Optional(
+  this
 )
-
-enableFeaturePreview("VERSION_CATALOGS")
