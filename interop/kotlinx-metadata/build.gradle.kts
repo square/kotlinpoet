@@ -27,8 +27,8 @@ tasks.compileTestKotlin {
 }
 
 dependencies {
-  api(libs.autoCommon)
-  api(libs.guava)
+  implementation(libs.autoCommon)
+  implementation(libs.guava)
   api(libs.kotlin.metadata)
   api(project(":kotlinpoet"))
 
