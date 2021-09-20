@@ -13,16 +13,16 @@
 # limitations under the License.
 
 [versions]
-kotlin = "1.5.30"
+kotlin = "1.5.31"
 kct = "1.4.4"
 ksp = "1.5.30-1.0.0"
 ktlint = "0.41.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-dokka = { id = "org.jetbrains.dokka", version = "1.5.0" }
+dokka = { id = "org.jetbrains.dokka", version = "1.5.30" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-spotless = { id = "com.diffplug.spotless", version = "5.14.3" }
+spotless = { id = "com.diffplug.spotless", version = "5.15.0" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.17.0" }
 
 [libraries]
