@@ -22,7 +22,7 @@ jobs:
           - 14
           - 15
           - 16
-          - 17-ea
+          - 17
 
     steps:
       - name: Checkout
