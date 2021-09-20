@@ -64,14 +64,30 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         addModifiers(decl.modifiers.mapNotNull { it.toKModifier() })
       }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
-    classBuilder.addTypeVariables(decl.typeParameters.map { it.toTypeVariableName(classTypeParams, unwrapTypeAliases) })
+    classBuilder.addTypeVariables(
+      decl.typeParameters.map { typeParam ->
+        typeParam.toTypeVariableName(classTypeParams).let {
+          if (unwrapTypeAliases) {
+            it.unwrapTypeAlias()
+          } else {
+            it
+          }
+        }
+      }
+    )
 
     // Add properties
     for (property in decl.getDeclaredProperties()) {
       classBuilder.addProperty(
         PropertySpec.builder(
           property.simpleName.getShortName(),
-          property.type.toTypeName(classTypeParams, unwrapTypeAliases)
+          property.type.toTypeName(classTypeParams).let {
+            if (unwrapTypeAliases) {
+              it.unwrapTypeAlias()
+            } else {
+              it
+            }
+          }
         )
           .addOriginatingKSFile(decl.containingFile!!)
           .mutable(property.isMutable)
@@ -93,16 +109,40 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             function.getVisibility().toKModifier()?.let { addModifiers(it) }
             addModifiers(function.modifiers.mapNotNull { it.toKModifier() })
           }
-          .addTypeVariables(function.typeParameters.map { it.toTypeVariableName(functionTypeParams, unwrapTypeAliases) })
+          .addTypeVariables(
+            function.typeParameters.map { typeParam ->
+              typeParam.toTypeVariableName(functionTypeParams).let {
+                if (unwrapTypeAliases) {
+                  it.unwrapTypeAlias()
+                } else {
+                  it
+                }
+              }
+            }
+          )
           .addParameters(
             function.parameters.map { parameter ->
-              val parameterType = parameter.type.toTypeName(functionTypeParams, unwrapTypeAliases)
+              val parameterType = parameter.type.toTypeName(functionTypeParams).let {
+                if (unwrapTypeAliases) {
+                  it.unwrapTypeAlias()
+                } else {
+                  it
+                }
+              }
               parameter.name?.let {
                 ParameterSpec.builder(it.getShortName(), parameterType).build()
               } ?: ParameterSpec.unnamed(parameterType)
             }
           )
-          .returns(function.returnType!!.toTypeName(functionTypeParams, unwrapTypeAliases))
+          .returns(
+            function.returnType!!.toTypeName(functionTypeParams).let {
+              if (unwrapTypeAliases) {
+                it.unwrapTypeAlias()
+              } else {
+                it
+              }
+            }
+          )
           .build()
       )
     }

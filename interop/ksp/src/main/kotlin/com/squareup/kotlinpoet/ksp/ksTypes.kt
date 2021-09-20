@@ -31,6 +31,7 @@ import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 
 /** Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration]. */
 @KotlinPoetKspPreview
@@ -49,13 +50,10 @@ public fun KSType.toClassName(): ClassName {
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
- * @param unwrapTypeAliases optionally controls whether typealiases should be unwrapped to their
- *                          aliased type. Useful in cases where only the aliased type matters
  */
 @KotlinPoetKspPreview
 public fun KSType.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
-  unwrapTypeAliases: Boolean = false
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
@@ -68,16 +66,17 @@ public fun KSType.toTypeName(
       } else {
         decl.typeParameters.toTypeParameterResolver(typeParamResolver)
       }
-      val firstPass = if (unwrapTypeAliases) {
-        decl.type.resolve()
-          .toTypeName(extraResolver, unwrapTypeAliases)
-          .copy(nullable = isMarkedNullable)
-          .rawType()
-      } else {
-        decl.toClassNameInternal()
-      }
-      firstPass
-        .withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
+      val mappedArgs = arguments.map { it.toTypeName(typeParamResolver) }
+
+      val abbreviatedType = decl.type.resolve()
+        .toTypeName(extraResolver)
+        .copy(nullable = isMarkedNullable)
+        .rawType()
+        .withTypeArguments(mappedArgs)
+
+      decl.toClassNameInternal()
+        .withTypeArguments(mappedArgs)
+        .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
     }
     else -> error("Unsupported type: $declaration")
   }
@@ -92,16 +91,13 @@ public fun KSType.toTypeName(
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
- * @param unwrapTypeAliases optionally controls whether typealiases should be unwrapped to their
- *                          aliased type. Useful in cases where only the aliased type matters
  */
 @KotlinPoetKspPreview
 public fun KSTypeParameter.toTypeVariableName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
-  unwrapTypeAliases: Boolean = false
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeVariableName {
   val typeVarName = name.getShortName()
-  val typeVarBounds = bounds.map { it.toTypeName(typeParamResolver, unwrapTypeAliases) }.toList()
+  val typeVarBounds = bounds.map { it.toTypeName(typeParamResolver) }.toList()
   val typeVarVariance = when (variance) {
     COVARIANT -> KModifier.OUT
     CONTRAVARIANT -> KModifier.IN
@@ -117,15 +113,12 @@ public fun KSTypeParameter.toTypeVariableName(
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
- * @param unwrapTypeAliases optionally controls whether typealiases should be unwrapped to their
- *                          aliased type. Useful in cases where only the aliased type matters
  */
 @KotlinPoetKspPreview
 public fun KSTypeArgument.toTypeName(
-  typeParamResolver: TypeParameterResolver,
-  unwrapTypeAliases: Boolean = false
+  typeParamResolver: TypeParameterResolver
 ): TypeName {
-  val typeName = type?.resolve()?.toTypeName(typeParamResolver, unwrapTypeAliases) ?: return STAR
+  val typeName = type?.resolve()?.toTypeName(typeParamResolver) ?: return STAR
   return when (variance) {
     COVARIANT -> WildcardTypeName.producerOf(typeName)
     CONTRAVARIANT -> WildcardTypeName.consumerOf(typeName)
@@ -141,14 +134,10 @@ public fun KSTypeArgument.toTypeName(
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
- * @param unwrapTypeAliases optionally controls whether typealiases should be unwrapped to their
- *                          aliased type. Useful in cases where only the aliased type matters
  */
 @KotlinPoetKspPreview
 public fun KSTypeReference.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
-  unwrapTypeAliases: Boolean = false
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
-  val type = resolve()
-  return type.toTypeName(typeParamResolver, unwrapTypeAliases)
+  return resolve().toTypeName(typeParamResolver)
 }

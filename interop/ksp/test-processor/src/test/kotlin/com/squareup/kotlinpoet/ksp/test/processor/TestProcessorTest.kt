@@ -208,12 +208,14 @@ class TestProcessorTest {
 
            typealias TypeAliasName = String
            typealias GenericTypeAlias = List<String>
+           typealias GenericMapTypeAlias<V, K> = Map<K, V>
 
            @ExampleAnnotation
            class Example {
              fun aliases(
                aliasedName: TypeAliasName,
-               genericAlias: GenericTypeAlias
+               genericAlias: GenericTypeAlias,
+               genericMapAlias: GenericMapTypeAlias<String, Int>,
              ) {
              }
            }
@@ -229,12 +231,18 @@ class TestProcessorTest {
       """
       package test
 
+      import kotlin.Int
       import kotlin.String
       import kotlin.Unit
       import kotlin.collections.List
+      import kotlin.collections.Map
 
       public class Example {
-        public fun aliases(aliasedName: String, genericAlias: List<String>): Unit {
+        public fun aliases(
+          aliasedName: String,
+          genericAlias: List<String>,
+          genericMapAlias: Map<Int, String>
+        ): Unit {
         }
       }
 

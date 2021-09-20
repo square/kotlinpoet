@@ -30,6 +30,7 @@ import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.isReified
 import com.squareup.kotlinpoet.metadata.isSuspend
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmClassifier.Class
@@ -158,7 +159,7 @@ internal fun KmType.toTypeName(
     // type in tags for reference.
     val abbreviatedTypeName = it.toTypeName(typeParamResolver)
     abbreviatedTypeName.copy(
-      tags = mapOf(TypeNameAliasTag::class to TypeNameAliasTag(finalType))
+      tags = mapOf(TypeAliasTag::class to TypeAliasTag(finalType))
     )
   } ?: finalType
 }
