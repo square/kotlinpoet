@@ -8,6 +8,12 @@ writing to KSP `CodeGenerator`.
 Note that this API is currently in preview and subject to API changes. Usage of it requires opting
 in to the `@KotlinPoetKspPreview` annotation.
 
+```kotlin
+dependencies {
+  implementation("com.squareup:kotlinpoet-ksp:<version>")
+}
+```
+
 ### Examples
 
 Examples are based on reading the following property as a `KSProperty`:
@@ -124,6 +130,10 @@ you don't need to do this manually.
 
 Lastly - `FileSpec.writeTo(CodeGenerator, ...)` also requires you to specify if your processor is
 _aggregating_ or not via required parameter by the same name.
+
+### TypeAlias Handling
+
+For `typealias` types, KSP interop will store a `TypeAliasTag` in the `TypeName`'s tags with a reference to the abbreviated type. This can be useful for APIs that want to resolve all un-aliased types.
 
  [ksp]: https://github.com/google/ksp
  [incremental]: https://github.com/google/ksp/blob/main/docs/incremental.md
