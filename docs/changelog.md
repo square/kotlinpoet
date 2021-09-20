@@ -16,6 +16,7 @@ Thanks to [@martinbonnin][martinbonnin], [@idanakav][idanakav], [@goooler][goool
    maven artifact. The previous `kotlinpoet-metadata-*` subartifacts are no longer published.
  * New: `TypeNameAliasTag` has been moved to KotlinPoet's main artifact under `TypeAliasTag`, for
    reuse with KSP interop.
+ * `ImmutableKm*` classes have been removed. They were deemed to be a needless abstraction over the base `kotlinx-metadata` Km types. All usages of these should be substituted with their non-immutable base types.
  * Fix: Fix self-referencing type variables in metadata parsing.
  * Fix: Use delicate APIs rather than noisy logging ones when converting annotation mirrors in
    `AnnotationSpec.get`.
