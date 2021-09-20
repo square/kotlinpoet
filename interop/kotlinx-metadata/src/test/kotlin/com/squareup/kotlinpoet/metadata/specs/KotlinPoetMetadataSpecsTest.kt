@@ -22,10 +22,10 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.tag
-import com.squareup.kotlinpoet.tags.TypeAliasTag
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
+import com.squareup.kotlinpoet.tag
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.KmFunction
