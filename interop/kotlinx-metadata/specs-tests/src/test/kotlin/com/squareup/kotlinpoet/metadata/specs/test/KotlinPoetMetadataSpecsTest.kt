@@ -28,10 +28,10 @@ import com.squareup.kotlinpoet.metadata.ImmutableKmProperty
 import com.squareup.kotlinpoet.metadata.ImmutableKmTypeParameter
 import com.squareup.kotlinpoet.metadata.ImmutableKmValueParameter
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.specs.TypeNameAliasTag
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.test.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -201,14 +201,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     )
 
     val fooPropertyType = typeSpec.propertySpecs.first { it.name == "foo" }.type
-    val fooAliasData = fooPropertyType.tag<TypeNameAliasTag>()
+    val fooAliasData = fooPropertyType.tag<TypeAliasTag>()
     checkNotNull(fooAliasData)
-    assertThat(fooAliasData.type).isEqualTo(STRING)
+    assertThat(fooAliasData.abbreviatedType).isEqualTo(STRING)
 
     val barPropertyType = typeSpec.propertySpecs.first { it.name == "bar" }.type
-    val barAliasData = barPropertyType.tag<TypeNameAliasTag>()
+    val barAliasData = barPropertyType.tag<TypeAliasTag>()
     checkNotNull(barAliasData)
-    assertThat(barAliasData.type).isEqualTo(LIST.parameterizedBy(STRING))
+    assertThat(barAliasData.abbreviatedType).isEqualTo(LIST.parameterizedBy(STRING))
   }
 
   class TypeAliases(val foo: TypeAliasName, val bar: GenericTypeAlias)
