@@ -65,7 +65,8 @@ To aid with this, `toTypeSpec()` and `toFileSpec()` accept optional `ClassInspec
 to assist in parsing/understanding the underlying JVM code. This is important for things like
 annotations, companion objects, certain JVM modifiers, overrides, and more. While it is optional,
 represented sources can be incomplete without this information available. Reflective and javax
-`Elements` implementations are available under the `kotlinpoet-classinspector-*` artifacts.
+`Elements` implementations are available under the
+`com.squareup.kotlinpoet.metadata.classinspectors` package.
 
 Generated sources are solely _stub_ implementations, meaning implementation details of elements
 like functions, property getters, and delegated properties are simply stubbed with `TODO()`
