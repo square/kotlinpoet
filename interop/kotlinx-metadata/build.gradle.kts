@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
+
+tasks.jar {
+  manifest {
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata")
   }
 }
 
-include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata",
-    ":interop:ksp",
-    ":interop:ksp:test-processor",
-)
+tasks.compileTestKotlin {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjvm-default=all")
+  }
+}
 
-enableFeaturePreview("VERSION_CATALOGS")
+dependencies {
+  implementation(libs.autoCommon)
+  implementation(libs.guava)
+  api(libs.kotlin.metadata)
+  api(project(":kotlinpoet"))
+
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.compileTesting)
+  testImplementation(libs.kotlinCompileTesting)
+}
