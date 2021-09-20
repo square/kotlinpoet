@@ -1370,7 +1370,7 @@ To generate source code from any [`KType`](https://kotlinlang.org/api/latest/jvm
 
 ```kotlin
 dependencies {
-  implementation("com.squareup:kotlinpoet:1.9.0") {
+  implementation("com.squareup:kotlinpoet:<version>") {
     exclude(module = "kotlin-reflect")
   }
 }
@@ -1399,14 +1399,14 @@ Download [the latest .jar][dl] or depend via Maven:
 <dependency>
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>1.9.0</version>
+  <version>1.10.0</version>
 </dependency>
 ```
 
 or Gradle:
 
 ```groovy
-implementation("com.squareup:kotlinpoet:1.9.0")
+implementation("com.squareup:kotlinpoet:1.10.0")
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].

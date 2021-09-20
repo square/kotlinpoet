@@ -1,6 +1,29 @@
 Change Log
 ==========
 
+## Version 1.10.0
+
+_2021-09-20_
+
+Thanks to [@martinbonnin][martinbonnin], [@idanakav][idanakav], [@goooler][goooler], and
+[@anandwana001][anandwana001] for contributing to this release.
+
+ * New: Add a new [KSP][ksp] interop artifact. See [docs][ksp-interop-docs] for more details
+ * New: Allow copying a `ParameterizedTypeName` with new type arguments via new `copy()` overload.
+ * kotlinx-metadata artifacts have been consolidated to a single `com.squareup:kotlinpoet-metadata`
+   maven artifact. The previous `kotlinpoet-metadata-*` subartifacts are no longer published.
+ * New: `TypeNameAliasTag` has been moved to KotlinPoet's main artifact under `TypeAliasTag`, for
+   reuse with KSP interop.
+ * Fix: Fix self-referencing type variables in metadata parsing.
+ * Fix: Use delicate APIs rather than noisy logging ones when converting annotation mirrors in
+   `AnnotationSpec.get`.
+ * Fix: Update error message when metadata cannot be read to a more actionable one.
+ * Fix: Avoid escaping already escaped strings.
+ * Add docs about `kotlin-reflect` usage.
+ * Avoid using kotlin-reflect for looking up `Unit` types where possible.
+ * Test all the way up to JDK 17.
+ * Update Kotlin to 1.5.31
+
 ## Version 1.9.0
 
 _2021-06-22_
@@ -9,7 +32,7 @@ _2021-06-22_
  * New: Previously deprecated API to interop with Java reflection and Mirror API have been
    un-deprecated and marked with `@DelicateKotlinPoetApi` annotation.
  * New: `CodeBlock.Builder.withIndent` helper function.
- * New: Allow changing initializers and default values in `ParameterSpec.Builder` and 
+ * New: Allow changing initializers and default values in `ParameterSpec.Builder` and
    `PropertySpec.Builder` after they were set.
  * New: `MemberName.isExtension` property that instructs KotlinPoet to always import the member,
    even if conflicting declarations are present in the same scope.
@@ -19,7 +42,7 @@ _2021-06-22_
 ## Version 1.8.0
 
 _2021-03-29_
- 
+
  * New: Kotlin 1.4.31.
  * New: Add `KModifier.VALUE` to support `value class` declarations.
  * New: Allow using a custom `ClassLoader` with `ReflectiveClassInspector`.
@@ -45,8 +68,8 @@ _2020-10-20_
 
 _2020-10-15_
 
- * Fix: 1.7.0 was published using JDK 11 which set `"org.gradle.jvm.version"` to `"11"` in Gradle 
-   metadata, making it impossible to use the library on earlier Java versions (see 
+ * Fix: 1.7.0 was published using JDK 11 which set `"org.gradle.jvm.version"` to `"11"` in Gradle
+   metadata, making it impossible to use the library on earlier Java versions (see
    [#999][issue-999]). 1.7.1 is published with JDK 8, which fixes the problem.
 
 ## Version 1.7.0
@@ -69,23 +92,23 @@ _2020-10-14_
 _2020-05-28_
 
  * New: Deprecate Mirror API integrations.
- 
-   Mirror API integrations, such as `TypeElement.asClassName()` and 
+
+   Mirror API integrations, such as `TypeElement.asClassName()` and
    `FunSpec.overriding(ExecutableElement)`, are being deprecated in this release. These KotlinPoet
    APIs are most often used in annotation processors. Since kapt runs annotation processors over
-   stubs, which are Java files, a lot of the Kotlin-specific information gets lost in translation 
+   stubs, which are Java files, a lot of the Kotlin-specific information gets lost in translation
    and cannot be accessed by KotlinPoet through the Mirror API integrations. Examples include:
-   
-   - Alias types, such as `kotlin.String`, get converted to their JVM representations, such as 
+
+   - Alias types, such as `kotlin.String`, get converted to their JVM representations, such as
      `java.lang.String`.
    - Type nullability information is not accessible.
    - `suspend` functions are seen as simple functions with an additional `Continuation` parameter.
-   
-   The correct solution is to switch to [KotlinPoet-metadata][kotlinpoet-metadata] or 
+
+   The correct solution is to switch to [KotlinPoet-metadata][kotlinpoet-metadata] or
    [KotlinPoet-metadata-specs][kotlinpoet-metadata-specs] API, which fetches Kotlin-specific
    information from the `@Metadata` annotation and produces correct KotlinPoet Specs. We may explore
    adding new metadata-based alternatives to the deprecated APIs in the future.
- 
+
  * New: Kotlin 1.3.72.
  * New: Improve `MemberName` to support operator overloading.
  * New: Support generics in `AnnotationSpec`.
@@ -101,10 +124,10 @@ _2020-05-28_
 _2020-01-09_
 
  KotlinPoet now targets JDK8, which means that executing a build that includes KotlinPoet as a
- dependency on a machine with an older version of JDK installed won't work. **This has no effect on 
- the code that KotlinPoet produces**: the code can still be compiled against JDK6, as long as it 
+ dependency on a machine with an older version of JDK installed won't work. **This has no effect on
+ the code that KotlinPoet produces**: the code can still be compiled against JDK6, as long as it
  doesn't use any features that were introduced in newer releases.
- 
+
  * New: Kotlin 1.3.61.
  * New: Add support for processing FileFacades in KotlinPoet-metadata.
  * New: Add support for inner nested and companion objects on annotation classes.
@@ -116,24 +139,24 @@ _2020-01-09_
  * Fix: Properly escape type alias names with backticks.
  * Fix: Allow creating `TypeSpec`s with names that can be escaped with backticks.
  * Fix: Properly escape enum constant names with backticks.
- * Fix: Maintain proper ordering of properties and initializers when emitting a `TypeSpec`. 
+ * Fix: Maintain proper ordering of properties and initializers when emitting a `TypeSpec`.
    **Note**: with this change, any properties declared after any initializer blocks will not be
    added to the primary constructor and will instead be emitted inside the `TypeSpec` body.
  * Fix: Don't emit a leading new line if type KDoc is empty but parameter KDocs are present.
  * Fix: Ensure KotlinPoet-metadata resolves package names properly.
- 
+
  ## Version 1.4.4
 
 _2019-11-16_
 
  * Fix: Support reified inline types in KotlinPoet-metadata.
- 
+
 ## Version 1.4.3
 
 _2019-10-30_
 
  * Fix: Don't emit stubs for abstract functions in KotlinPoet-metadata.
- 
+
 ## Version 1.4.2
 
 _2019-10-28_
@@ -156,22 +179,22 @@ _2019-10-18_
 
 _2019-09-24_
 
- * New: This release introduces the new KotlinPoet-metadata API that makes it easy to introspect 
-   Kotlin types and build KotlinPoet Specs based on that data. 
-   
-   The strategy for type introspection is driven by `ClassInspector`, which is a basic interface for 
-   looking up JVM information about a given Class. This optionally is used by the 
-   `toTypeSpec()`/`toFileSpec()` APIs in `kotlinpoet-metadata-specs` artifact to inform about 
-   Classes with information that isn’t present in metadata (overrides, JVM modifiers, etc). There 
-   are two batteries-included implementations available in `ReflectiveClassInspector` 
-   (for reflection) and `ElementsClassInspector` (for the javax Elements API in annotation 
-   processing). These implementations are available through their respective 
-   `kotlinpoet-classinspector-*` artifacts. For more information refer to the 
+ * New: This release introduces the new KotlinPoet-metadata API that makes it easy to introspect
+   Kotlin types and build KotlinPoet Specs based on that data.
+
+   The strategy for type introspection is driven by `ClassInspector`, which is a basic interface for
+   looking up JVM information about a given Class. This optionally is used by the
+   `toTypeSpec()`/`toFileSpec()` APIs in `kotlinpoet-metadata-specs` artifact to inform about
+   Classes with information that isn’t present in metadata (overrides, JVM modifiers, etc). There
+   are two batteries-included implementations available in `ReflectiveClassInspector`
+   (for reflection) and `ElementsClassInspector` (for the javax Elements API in annotation
+   processing). These implementations are available through their respective
+   `kotlinpoet-classinspector-*` artifacts. For more information refer to the
    [KotlinPoet-metadata-specs README][kotlinpoet-metadata-specs].
-   
+
    At the time of this release the API is in experimental mode and has to be opted into via the
    `KotlinPoetMetadataPreview` annotation.
- 
+
  * New: Kotlin 1.3.50.
  * New: A new constructor to simplify creation of `ParameterSpec` instances.
  * New: New `ClassName` constructors.
@@ -210,13 +233,13 @@ _2019-05-30_
 ## Version 1.2.0
 
 _2019-03-28_
- 
+
  * New: Add writeTo(Filer) and originating element API.
  * New: Make *Spec types taggable.
  * New: Make FunSpec.Builder#addCode take vararg Any?.
  * Fix: Import members from default package.
  * Fix: Add non-wrapping spaces in control flow creation methods.
- * Fix: Named "value" argument being omitted in annotation array types. 
+ * Fix: Named "value" argument being omitted in annotation array types.
 
 ## Version 1.1.0
 
@@ -461,3 +484,10 @@ _2017-05-16_
  [kotlinpoet-metadata-specs]: ../kotlinpoet_metadata_specs
  [explicit-api-mode]: https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
  [issue-999]: https://github.com/square/kotlinpoet/issues/999
+ [ksp]: https://github.com/google/ksp
+ [ksp-interop-docs]: https://square.github.io/kotlinpoet/interop-ksp/
+
+ [martinbonnin]: https://github.com/martinbonnin
+ [idanakav]: https://github.com/idanakav
+ [goooler]: https://github.com/goooler
+ [anandwana001]: https://github.com/anandwana001
