@@ -26,6 +26,19 @@ tasks.compileTestKotlin {
   }
 }
 
+spotless {
+  kotlin {
+    targetExclude(
+      // Non-Square licensed files
+      "src/main/java/com/squareup/kotlinpoet/ClassName.kt",
+      "src/test/java/com/squareup/kotlinpoet/AbstractTypesTest.kt",
+      "src/test/java/com/squareup/kotlinpoet/ClassNameTest.kt",
+      "src/test/java/com/squareup/kotlinpoet/TypesEclipseTest.kt",
+      "src/test/java/com/squareup/kotlinpoet/TypesTest.kt",
+    )
+  }
+}
+
 dependencies {
   implementation(libs.kotlin.reflect)
   testImplementation(libs.kotlin.junit)
