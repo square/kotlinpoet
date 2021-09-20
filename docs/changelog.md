@@ -8,7 +8,9 @@ _2021-09-20_
 Thanks to [@martinbonnin][martinbonnin], [@idanakav][idanakav], [@goooler][goooler], and
 [@anandwana001][anandwana001] for contributing to this release.
 
- * New: Add a new [KSP][ksp] interop artifact. See [docs][ksp-interop-docs] for more details
+ * New: Add a new [KSP][ksp] interop artifact. See [docs][ksp-interop-docs] for more details.
+ * New: Add a new [JavaPoet][javapoet] interop artifact. See [docs][javapoet-interop-docs] for more
+   details.
  * New: Allow copying a `ParameterizedTypeName` with new type arguments via new `copy()` overload.
  * kotlinx-metadata artifacts have been consolidated to a single `com.squareup:kotlinpoet-metadata`
    maven artifact. The previous `kotlinpoet-metadata-*` subartifacts are no longer published.
@@ -22,7 +24,7 @@ Thanks to [@martinbonnin][martinbonnin], [@idanakav][idanakav], [@goooler][goool
  * Add docs about `kotlin-reflect` usage.
  * Avoid using kotlin-reflect for looking up `Unit` types where possible.
  * Test all the way up to JDK 17.
- * Update Kotlin to 1.5.31
+ * Update Kotlin to 1.5.31.
 
 ## Version 1.9.0
 
@@ -486,6 +488,8 @@ _2017-05-16_
  [issue-999]: https://github.com/square/kotlinpoet/issues/999
  [ksp]: https://github.com/google/ksp
  [ksp-interop-docs]: https://square.github.io/kotlinpoet/interop-ksp/
+ [javapoet]: https://github.com/square/javapoet
+ [javapoet-interop-docs]: https://square.github.io/kotlinpoet/interop-javapoet/
 
  [martinbonnin]: https://github.com/martinbonnin
  [idanakav]: https://github.com/idanakav
