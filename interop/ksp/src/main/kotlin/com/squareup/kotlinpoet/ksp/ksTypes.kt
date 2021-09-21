@@ -53,8 +53,13 @@ public fun KSType.toClassName(): ClassName {
  */
 @KotlinPoetKspPreview
 public fun KSType.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
-  typeArguments: List<KSTypeArgument> = emptyList(),
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
+): TypeName = toTypeName(typeParamResolver, emptyList())
+
+@KotlinPoetKspPreview
+internal fun KSType.toTypeName(
+  typeParamResolver: TypeParameterResolver,
+  typeArguments: List<KSTypeArgument>,
 ): TypeName {
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
