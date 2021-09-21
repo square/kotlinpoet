@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+## Version 1.10.1
+
+_2021-09-21_
+
+Thanks to [@evant][evant] for contributing to this release.
+
+ * Fix: Correct generation of typealiases with type args in KSP interop.
+ * Fix: Add missing default `TypeParameterResolver.EMPTY` argument to
+   `fun KSTypeArgument.toTypeName` in KSP interop.
+
 ## Version 1.10.0
 
 _2021-09-20_
@@ -496,3 +506,4 @@ _2017-05-16_
  [idanakav]: https://github.com/idanakav
  [goooler]: https://github.com/goooler
  [anandwana001]: https://github.com/anandwana001
+ [evant]: https://github.com/evant
