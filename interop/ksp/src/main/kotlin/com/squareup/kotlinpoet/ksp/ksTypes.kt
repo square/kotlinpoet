@@ -124,7 +124,7 @@ public fun KSTypeParameter.toTypeVariableName(
  */
 @KotlinPoetKspPreview
 public fun KSTypeArgument.toTypeName(
-  typeParamResolver: TypeParameterResolver
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
   val typeName = type?.toTypeName(typeParamResolver) ?: return STAR
   return when (variance) {
