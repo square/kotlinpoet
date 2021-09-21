@@ -54,6 +54,12 @@ public fun KSType.toClassName(): ClassName {
 @KotlinPoetKspPreview
 public fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
+): TypeName = toTypeName(typeParamResolver, emptyList())
+
+@KotlinPoetKspPreview
+internal fun KSType.toTypeName(
+  typeParamResolver: TypeParameterResolver,
+  typeArguments: List<KSTypeArgument>,
 ): TypeName {
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
@@ -74,8 +80,10 @@ public fun KSType.toTypeName(
         .rawType()
         .withTypeArguments(mappedArgs)
 
+      val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
+
       decl.toClassNameInternal()
-        .withTypeArguments(mappedArgs)
+        .withTypeArguments(aliasArgs)
         .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
     }
     else -> error("Unsupported type: $declaration")
@@ -118,7 +126,7 @@ public fun KSTypeParameter.toTypeVariableName(
 public fun KSTypeArgument.toTypeName(
   typeParamResolver: TypeParameterResolver
 ): TypeName {
-  val typeName = type?.resolve()?.toTypeName(typeParamResolver) ?: return STAR
+  val typeName = type?.toTypeName(typeParamResolver) ?: return STAR
   return when (variance) {
     COVARIANT -> WildcardTypeName.producerOf(typeName)
     CONTRAVARIANT -> WildcardTypeName.consumerOf(typeName)
@@ -139,5 +147,5 @@ public fun KSTypeArgument.toTypeName(
 public fun KSTypeReference.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
-  return resolve().toTypeName(typeParamResolver)
+  return resolve().toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
 }
