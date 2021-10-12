@@ -23,7 +23,7 @@ public data class Import internal constructor(
   private val importString = buildString {
     append(qualifiedName.escapeSegmentsIfNecessary())
     if (alias != null) {
-      append(" as ${alias.escapeIfNecessary()}")
+      append("·as·${alias.escapeIfNecessary()}")
     }
   }
 

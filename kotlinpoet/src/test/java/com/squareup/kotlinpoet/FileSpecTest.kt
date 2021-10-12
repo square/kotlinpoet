@@ -1026,6 +1026,20 @@ class FileSpecTest {
     )
   }
 
+  @Test fun importAliasedLongPackageName() {
+    val spec = FileSpec.builder("testsrc", "Test")
+      .addAliasedImport(ClassName("a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength", "MyClass"), "MyClassAlias")
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |package testsrc
+      |
+      |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass as MyClassAlias
+      |
+      |""".trimMargin()
+    )
+  }
+
   @Test fun longComment() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
       .addComment(
