@@ -28,6 +28,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JAVA_DEPRECATED
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.hasAnnotations
@@ -421,6 +422,8 @@ public class ElementsClassInspector private constructor(
             val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
               ?: return@let MethodData.SYNTHETIC
             annotations += method.annotationSpecs()
+              // Cover for https://github.com/square/kotlinpoet/issues/1046
+              .filterNot { it.typeName == JAVA_DEPRECATED }
           }
         }
 

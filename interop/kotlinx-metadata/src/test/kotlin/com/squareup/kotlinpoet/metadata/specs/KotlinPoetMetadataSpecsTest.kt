@@ -13,7 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("RemoveRedundantQualifierName", "RedundantSuspendModifier", "NOTHING_TO_INLINE")
+@file:OptIn(KotlinPoetMetadataPreview::class)
+@file:Suppress(
+  "DEPRECATION",
+  "NOTHING_TO_INLINE",
+  "RedundantSuspendModifier",
+  "RedundantUnitReturnType",
+  "RedundantVisibilityModifier",
+  "RemoveEmptyPrimaryConstructor",
+  "RemoveRedundantQualifierName",
+  "UNUSED_PARAMETER",
+  "unused",
+)
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.common.truth.Truth.assertThat
@@ -40,8 +51,6 @@ import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.test.fail
 
-@KotlinPoetMetadataPreview
-@Suppress("unused", "UNUSED_PARAMETER")
 class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   @Test

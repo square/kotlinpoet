@@ -22,6 +22,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JAVA_DEPRECATED
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.hasAnnotations
 import com.squareup.kotlinpoet.metadata.hasConstant
@@ -415,6 +416,8 @@ public class ReflectiveClassInspector private constructor(
                   " found in $targetClass."
               )
             annotations += method.annotationSpecs()
+              // Cover for https://github.com/square/kotlinpoet/issues/1046
+              .filterNot { it.typeName == JAVA_DEPRECATED }
           }
         }
 
