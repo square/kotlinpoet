@@ -170,12 +170,12 @@ public class AnnotationSpec private constructor(
       builder.add("%T::class", t.asTypeName())
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
-      builder.add("[⇥⇥")
+      builder.add("arrayOf(⇥⇥")
       values.forEachIndexed { index, value ->
         if (index > 0) builder.add(", ")
         value.accept(this, name)
       }
-      builder.add("⇤⇤]")
+      builder.add("⇤⇤)")
       return builder
     }
   }
@@ -207,12 +207,12 @@ public class AnnotationSpec private constructor(
           val member = CodeBlock.builder()
           member.add("%L = ", method.name)
           if (value.javaClass.isArray) {
-            member.add("[⇥⇥")
+            member.add("arrayOf(⇥⇥")
             for (i in 0 until Array.getLength(value)) {
               if (i > 0) member.add(", ")
               member.add(Builder.memberForValue(Array.get(value, i)))
             }
-            member.add("⇤⇤]")
+            member.add("⇤⇤)")
             builder.addMember(member.build())
             continue
           }
