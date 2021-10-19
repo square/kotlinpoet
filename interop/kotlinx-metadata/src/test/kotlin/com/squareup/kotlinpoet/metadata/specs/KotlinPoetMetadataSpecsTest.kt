@@ -1744,7 +1744,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       @kotlin.SinceKotlin(version = "1.3")
       @kotlin.`annotation`.Retention(value = kotlin.`annotation`.AnnotationRetention.RUNTIME)
-      @kotlin.`annotation`.Target(allowedTargets = [kotlin.`annotation`.AnnotationTarget.CLASS])
+      @kotlin.`annotation`.Target(allowedTargets = arrayOf(kotlin.`annotation`.AnnotationTarget.CLASS))
       public annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
         public val kind: kotlin.Int = throw NotImplementedError("Stub!"),
@@ -1779,7 +1779,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       @kotlin.`annotation`.Retention(value = kotlin.`annotation`.AnnotationRetention.RUNTIME)
-      @kotlin.`annotation`.Target(allowedTargets = [kotlin.`annotation`.AnnotationTarget.CLASS])
+      @kotlin.`annotation`.Target(allowedTargets = arrayOf(kotlin.`annotation`.AnnotationTarget.CLASS))
       public annotation class Metadata(
         @get:kotlin.jvm.JvmName(name = "k")
         public val kind: kotlin.Int = throw NotImplementedError("Stub!"),

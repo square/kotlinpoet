@@ -110,11 +110,11 @@ class AnnotationSpecTest {
         |  f = 11.1,
         |  j = AnnotationSpecTest.AnnotationA(),
         |  l = Override::class,
-        |  m = [9, 8, 1],
+        |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = [Float::class, Double::class]
+        |  r = arrayOf(Float::class, Double::class)
         |)
         |public class Taco
         |""".trimMargin()
@@ -140,11 +140,11 @@ class AnnotationSpecTest {
         |  f = 11.1,
         |  j = AnnotationSpecTest.AnnotationA(),
         |  l = Override::class,
-        |  m = [9, 8, 1],
+        |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = [Float::class, Double::class]
+        |  r = arrayOf(Float::class, Double::class)
         |)
         |public class IsAnnotated
         |""".trimMargin()
@@ -186,11 +186,11 @@ class AnnotationSpecTest {
         |@AnnotationSpecTest.HasDefaultsAnnotation(
         |  f = 11.1,
         |  l = Override::class,
-        |  m = [9, 8, 1],
+        |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = [Float::class, Double::class]
+        |  r = arrayOf(Float::class, Double::class)
         |)
         |public class Taco
         |""".trimMargin()
@@ -217,18 +217,18 @@ class AnnotationSpecTest {
         |  d = 8,
         |  e = 9.0f,
         |  f = 11.1,
-        |  g = ['\u0000', '쫾', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'],
+        |  g = arrayOf('\u0000', '쫾', 'z', '€', 'ℕ', '"', '\'', '\t', '\n'),
         |  h = true,
         |  i = AnnotationSpecTest.Breakfast.WAFFLES,
         |  j = AnnotationSpecTest.AnnotationA(),
         |  k = "maple",
         |  l = Override::class,
-        |  m = [9, 8, 1],
-        |  n = [AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES],
+        |  m = arrayOf(9, 8, 1),
+        |  n = arrayOf(AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = [Float::class, Double::class]
+        |  r = arrayOf(Float::class, Double::class)
         |)
         |public class Taco
         |""".trimMargin()
@@ -359,7 +359,8 @@ class AnnotationSpecTest {
             |import java.lang.Boolean
             |import java.lang.Object
             |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
+            |        Boolean::class))
             |public class Result
             |""".trimMargin()
     )
@@ -387,7 +388,7 @@ class AnnotationSpecTest {
         |import java.lang.Object
         |import kotlin.Boolean
         |
-        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
         """.trimMargin()
     )
@@ -408,7 +409,8 @@ class AnnotationSpecTest {
         |import java.lang.Boolean
         |import java.lang.Object
         |
-        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
+        |        Boolean::class))
         |public class Result
         """.trimMargin()
     )
@@ -428,7 +430,7 @@ class AnnotationSpecTest {
         |import java.lang.Object
         |import kotlin.Boolean
         |
-        |@AnnotationSpecTest.AnnotationWithArrayValue(value = [Object::class, Boolean::class])
+        |@AnnotationSpecTest.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
         """.trimMargin()
     )
