@@ -1055,4 +1055,47 @@ class FileSpecTest {
       |""".trimMargin()
     )
   }
+
+  class WackyKey
+  class OhNoThisDoesNotCompile
+
+  @OptIn(ExperimentalStdlibApi::class)
+  @Test fun longCommentWithTypes() {
+    val someLongParameterizedTypeName = typeNameOf<List<Map<in String, Collection<Map<WackyKey, out OhNoThisDoesNotCompile>>>>>()
+    val param = ParameterSpec.builder("foo", someLongParameterizedTypeName).build()
+    val someLongLambdaTypeName = LambdaTypeName.get(STRING, listOf(param), STRING).copy(suspending = true)
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addFunction(
+        FunSpec.builder("f1")
+          .addComment("this is a long line with a possibly long parameterized type with annotation: %T", someLongParameterizedTypeName)
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("f2")
+          .addComment("this is a very very very very very very very very very very long line with a very long lambda type: %T", someLongLambdaTypeName)
+          .build()
+      )
+      .build()
+
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import com.squareup.kotlinpoet.FileSpecTest
+      |import kotlin.String
+      |import kotlin.Unit
+      |import kotlin.collections.Collection
+      |import kotlin.collections.List
+      |import kotlin.collections.Map
+      |
+      |public fun f1(): Unit {
+      |  // this is a long line with a possibly long parameterized type with annotation: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>
+      |}
+      |
+      |public fun f2(): Unit {
+      |  // this is a very very very very very very very very very very long line with a very long lambda type: suspend String.(foo: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>) -> String
+      |}
+      |""".trimMargin()
+    )
+  }
 }

@@ -46,9 +46,9 @@ public class WildcardTypeName private constructor(
 
   override fun emit(out: CodeWriter): CodeWriter {
     return when {
-      inTypes.size == 1 -> out.emitCode("in %T", inTypes[0])
+      inTypes.size == 1 -> out.emitCode("in·%T", inTypes[0])
       outTypes == STAR.outTypes -> out.emit("*")
-      else -> out.emitCode("out %T", outTypes[0])
+      else -> out.emitCode("out·%T", outTypes[0])
     }
   }
 

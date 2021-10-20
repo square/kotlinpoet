@@ -59,7 +59,7 @@ public class LambdaTypeName private constructor(
     }
 
     if (isSuspending) {
-      out.emit("suspend ")
+      out.emit("suspend·")
     }
 
     receiver?.let {
@@ -71,7 +71,7 @@ public class LambdaTypeName private constructor(
     }
 
     parameters.emit(out)
-    out.emitCode(if (returnType is LambdaTypeName) " -> (%T)" else " -> %T", returnType)
+    out.emitCode(if (returnType is LambdaTypeName) "·->·(%T)" else "·->·%T", returnType)
 
     if (isNullable) {
       out.emit(")")
