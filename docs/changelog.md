@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+## Version 1.10.2
+
+_2021-10-22_
+
+Thanks to [@glureau][glureau] and [@goooler][goooler] for contributing to this release.
+
+* New: Switch `AnnotationSpec.get()` to use the `arrayOf()` syntax instead of `[]`.
+* Fix: Don't wrap aliasing imports with long package names.
+* Fix: Don't wrap type names inside line comments.
+* Fix: Ignore Java's `@Deprecated` annotations on synthetic methods for annotations.
+
 ## Version 1.10.1
 
 _2021-09-21_
@@ -507,3 +518,4 @@ _2017-05-16_
  [goooler]: https://github.com/goooler
  [anandwana001]: https://github.com/anandwana001
  [evant]: https://github.com/evant
+ [glureau]: https://github.com/glureau
