@@ -211,7 +211,7 @@ public class TypeSpec private constructor(
           }
         }
         val superTypes = types + superinterfaces.entries.map { (type, init) ->
-          if (init == null) CodeBlock.of("%T", type) else CodeBlock.of("%T by $init", type)
+          if (init == null) CodeBlock.of("%T", type) else CodeBlock.of("%T by %L", type, init)
         }
 
         if (superTypes.isNotEmpty()) {
