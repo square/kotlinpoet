@@ -4991,6 +4991,30 @@ class TypeSpecTest {
     )
   }
 
+  // Regression test for https://github.com/square/kotlinpoet/issues/1176
+  @Test fun `templates in class delegation blocks should be imported too`() {
+    val taco = TypeSpec.classBuilder("TacoShim")
+      .addSuperinterface(
+        ClassName("test", "Taco"),
+        CodeBlock.of("%T", ClassName("test", "RealTaco"))
+      )
+      .build()
+    val file = FileSpec.builder("com.squareup.tacos", "Tacos")
+      .addType(taco)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import test.RealTaco
+      import test.Taco
+
+      public class TacoShim : Taco by RealTaco
+
+      """.trimIndent()
+    )
+  }
+
   companion object {
     private const val donutsPackage = "com.squareup.donuts"
   }
