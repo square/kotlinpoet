@@ -4134,12 +4134,13 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |import java.lang.Runnable
+        |import java.util.logging.Logger
         |import kotlin.Function
         |import kotlin.Int
         |import kotlin.String
         |
         |public class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?:
-        |    0 }), Runnable by Runnable ({ java.util.logging.Logger.debug("Hello world") })
+        |    0 }), Runnable by Runnable ({ Logger.debug("Hello world") })
         |""".trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
@@ -4986,6 +4987,30 @@ class TypeSpecTest {
       package com.squareup.tacos
 
       public class Taco()
+
+      """.trimIndent()
+    )
+  }
+
+  // Regression test for https://github.com/square/kotlinpoet/issues/1176
+  @Test fun `templates in class delegation blocks should be imported too`() {
+    val taco = TypeSpec.classBuilder("TacoShim")
+      .addSuperinterface(
+        ClassName("test", "Taco"),
+        CodeBlock.of("%T", ClassName("test", "RealTaco"))
+      )
+      .build()
+    val file = FileSpec.builder("com.squareup.tacos", "Tacos")
+      .addType(taco)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import test.RealTaco
+      import test.Taco
+
+      public class TacoShim : Taco by RealTaco
 
       """.trimIndent()
     )
