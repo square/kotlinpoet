@@ -61,6 +61,9 @@ internal fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver,
   typeArguments: List<KSTypeArgument>,
 ): TypeName {
+  require(!isError) {
+    "Error type '$this' is not resolvable in the current round of processing."
+  }
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
       decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
