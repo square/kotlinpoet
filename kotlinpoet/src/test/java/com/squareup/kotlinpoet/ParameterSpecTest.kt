@@ -16,7 +16,9 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import javax.lang.model.element.Modifier
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class ParameterSpecTest {
   @Test fun equalsAndHashCode() {
@@ -27,10 +29,10 @@ class ParameterSpecTest {
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
     a = ParameterSpec.builder("i", Int::class)
-      .addModifiers(KModifier.FINAL)
+      .addModifiers(KModifier.NOINLINE)
       .build()
     b = ParameterSpec.builder("i", Int::class)
-      .addModifiers(KModifier.FINAL)
+      .addModifiers(KModifier.NOINLINE)
       .build()
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
@@ -61,12 +63,12 @@ class ParameterSpecTest {
   @Test fun modifyModifiers() {
     val builder = ParameterSpec
       .builder("word", String::class)
-      .addModifiers(KModifier.PRIVATE)
+      .addModifiers(KModifier.NOINLINE)
 
     builder.modifiers.clear()
-    builder.modifiers.add(KModifier.INTERNAL)
+    builder.modifiers.add(KModifier.CROSSINLINE)
 
-    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+    assertThat(builder.build().modifiers).containsExactly(KModifier.CROSSINLINE)
   }
 
   @Test fun modifyAnnotations() {
@@ -144,5 +146,33 @@ class ParameterSpecTest {
       .build()
 
     assertThat(CodeBlock.of("bar")).isEqualTo(formatDefaultValue.defaultValue)
+  }
+
+  @Suppress("DEPRECATION_ERROR")
+  @Test
+  fun jvmModifiersAreNotAllowed() {
+    val e = assertFailsWith<IllegalArgumentException> {
+      ParameterSpec.builder("value", INT)
+        .jvmModifiers(listOf(Modifier.FINAL))
+        .build()
+    }
+    assertThat(e).hasMessageThat().contains("JVM modifiers are not permitted on parameters in Kotlin")
+  }
+
+  @Test
+  fun illegalModifiers() {
+    val builder = ParameterSpec.builder("value", INT)
+
+    val e = assertFailsWith<IllegalArgumentException> {
+      // Legal
+      builder.addModifiers(KModifier.NOINLINE)
+      builder.addModifiers(KModifier.CROSSINLINE)
+      builder.addModifiers(KModifier.VARARG)
+      // Everything else is illegal
+      builder.addModifiers(KModifier.FINAL)
+      builder.addModifiers(KModifier.PRIVATE)
+      builder.build()
+    }
+    assertThat(e).hasMessageThat().contains("Modifiers [FINAL, PRIVATE] are not allowed on Kotlin parameters. Allowed modifiers: [VARARG, NOINLINE, CROSSINLINE]")
   }
 }
