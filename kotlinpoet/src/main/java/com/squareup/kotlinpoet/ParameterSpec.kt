@@ -15,10 +15,14 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.KModifier.CROSSINLINE
+import com.squareup.kotlinpoet.KModifier.NOINLINE
+import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.VariableElement
+import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 /** A generated parameter declaration. */
@@ -29,7 +33,16 @@ public class ParameterSpec private constructor(
   public val name: String = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
   public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  public val modifiers: Set<KModifier> = builder.modifiers
+    .also {
+      LinkedHashSet(it).apply {
+        removeAll(ALLOWED_PARAMETER_MODIFIERS)
+        if (!isEmpty()) {
+          throw IllegalArgumentException("Modifiers $this are not allowed on Kotlin parameters. Allowed modifiers: $ALLOWED_PARAMETER_MODIFIERS")
+        }
+      }
+    }
+    .toImmutableSet()
   public val type: TypeName = builder.type
   public val defaultValue: CodeBlock? = builder.defaultValue
 
@@ -125,13 +138,13 @@ public class ParameterSpec private constructor(
       this.modifiers += modifiers
     }
 
+    @Deprecated(
+      "There are no jvm modifiers applicable to parameters in Kotlin",
+      ReplaceWith(""),
+      level = ERROR
+    )
     public fun jvmModifiers(modifiers: Iterable<Modifier>): Builder = apply {
-      for (modifier in modifiers) {
-        when (modifier) {
-          Modifier.FINAL -> this.modifiers += KModifier.FINAL
-          else -> throw IllegalArgumentException("unexpected parameter modifier $modifier")
-        }
-      }
+      throw IllegalArgumentException("JVM modifiers are not permitted on parameters in Kotlin")
     }
 
     public fun defaultValue(format: String, vararg args: Any?): Builder =
@@ -154,7 +167,6 @@ public class ParameterSpec private constructor(
       val name = element.simpleName.toString()
       val type = element.asType().asTypeName()
       return builder(name, type)
-        .jvmModifiers(element.modifiers)
         .build()
     }
 
@@ -210,6 +222,9 @@ public class ParameterSpec private constructor(
     @JvmStatic public fun unnamed(type: TypeName): ParameterSpec = Builder("", type).build()
   }
 }
+
+// From https://kotlinlang.org/spec/syntax-and-grammar.html#grammar-rule-parameterModifier
+private val ALLOWED_PARAMETER_MODIFIERS = setOf(VARARG, NOINLINE, CROSSINLINE)
 
 internal fun List<ParameterSpec>.emit(
   codeWriter: CodeWriter,

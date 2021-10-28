@@ -129,7 +129,6 @@ class TypeSpecTest {
     val simpleThungOfBar = simpleThung.parameterizedBy(bar)
 
     val thungParameter = ParameterSpec.builder("thung", thungOfSuperFoo)
-      .addModifiers(KModifier.FINAL)
       .build()
     val aSimpleThung = TypeSpec.anonymousClassBuilder()
       .superclass(simpleThungOfBar)
@@ -169,8 +168,8 @@ class TypeSpecTest {
         |
         |public class Taco {
         |  public val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    public override fun call(final thung: Thung<in Foo>): Thung<in Bar> = object :
-        |        SimpleThung<Bar>(thung) {
+        |    public override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
+        |        {
         |      public override fun doSomething(bar: Bar): Unit {
         |        /* code snippets */
         |      }
@@ -2334,11 +2333,11 @@ class TypeSpecTest {
 
   @Test fun parameterToString() {
     val parameter = ParameterSpec.builder("taco", ClassName(tacosPackage, "Taco"))
-      .addModifiers(KModifier.FINAL)
+      .addModifiers(KModifier.CROSSINLINE)
       .addAnnotation(ClassName("javax.annotation", "Nullable"))
       .build()
     assertThat(parameter.toString())
-      .isEqualTo("@javax.`annotation`.Nullable final taco: com.squareup.tacos.Taco")
+      .isEqualTo("@javax.`annotation`.Nullable crossinline taco: com.squareup.tacos.Taco")
   }
 
   @Test fun classToString() {
@@ -2446,7 +2445,7 @@ class TypeSpecTest {
       .addFunction(
         FunSpec.builder("comparePrefix")
           .returns(stringComparator)
-          .addParameter("length", Int::class, KModifier.FINAL)
+          .addParameter("length", Int::class)
           .addComment("Return a new comparator for the target length.")
           .addStatement("return %L", prefixComparator)
           .build()
@@ -2454,7 +2453,7 @@ class TypeSpecTest {
       .addFunction(
         FunSpec.builder("sortPrefix")
           .addParameter("list", listOfString)
-          .addParameter("length", Int::class, KModifier.FINAL)
+          .addParameter("length", Int::class)
           .addStatement("%T.sort(\nlist,\n%L)", Collections::class, prefixComparator)
           .build()
       )
@@ -2471,7 +2470,7 @@ class TypeSpecTest {
         |import kotlin.collections.List
         |
         |public class Taco {
-        |  public fun comparePrefix(final length: Int): Comparator<String> {
+        |  public fun comparePrefix(length: Int): Comparator<String> {
         |    // Return a new comparator for the target length.
         |    return object : Comparator<String> {
         |      public override fun compare(a: String, b: String): Int {
@@ -2482,7 +2481,7 @@ class TypeSpecTest {
         |    }
         |  }
         |
-        |  public fun sortPrefix(list: List<String>, final length: Int): Unit {
+        |  public fun sortPrefix(list: List<String>, length: Int): Unit {
         |    Collections.sort(
         |        list,
         |        object : Comparator<String> {
@@ -3983,7 +3982,6 @@ class TypeSpecTest {
   fun classHeaderAnnotations() {
     val idParameterSpec = ParameterSpec.builder("id", Int::class)
       .addAnnotation(ClassName("com.squareup.kotlinpoet", "Id"))
-      .addModifiers(PRIVATE)
       .defaultValue("1")
       .build()
 
@@ -3996,6 +3994,7 @@ class TypeSpecTest {
       )
       .addProperty(
         PropertySpec.builder("id", Int::class)
+          .addModifiers(PRIVATE)
           .initializer("id")
           .addAnnotation(ClassName("com.squareup.kotlinpoet", "OrderBy"))
           .build()

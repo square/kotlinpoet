@@ -16,7 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.KModifier.PUBLIC
+import com.squareup.kotlinpoet.KModifier.CROSSINLINE
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -103,7 +103,7 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
       is ParameterSpec.Builder -> build().apply {
         toBuilder()
           .tag(1)
-          .addModifiers(PUBLIC)
+          .addModifiers(CROSSINLINE)
           .build()
       }
       is PropertySpec.Builder -> build().apply {
