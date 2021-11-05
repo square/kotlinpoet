@@ -48,6 +48,7 @@ import kotlin.reflect.KFunction
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.fail
 
 class TypeSpecTest {
@@ -5013,6 +5014,42 @@ class TypeSpecTest {
 
       """.trimIndent()
     )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1183
+  @Test fun `forbidden enum constant names`() {
+    var exception = assertFailsWith<IllegalArgumentException> {
+      TypeSpec.enumBuilder("Topping")
+        .addEnumConstant("name")
+    }
+    assertThat(exception.message)
+      .isEqualTo("constant with name \"name\" conflicts with a property with the same name")
+
+    @Suppress("RemoveExplicitTypeArguments")
+    exception = assertFailsWith<IllegalArgumentException> {
+      TypeSpec.enumBuilder("Topping")
+        .addEnumConstant("ordinal")
+    }
+    assertThat(exception.message)
+      .isEqualTo("constant with name \"ordinal\" conflicts with a property with the same name")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1183
+  @Test fun `forbidden enum property names`() {
+    var exception = assertFailsWith<IllegalArgumentException> {
+      TypeSpec.enumBuilder("Topping")
+        .addProperty("name", String::class)
+    }
+    assertThat(exception.message)
+      .isEqualTo("name is a final supertype member and can't be redeclared or overridden")
+
+    @Suppress("RemoveExplicitTypeArguments")
+    exception = assertFailsWith<IllegalArgumentException> {
+      TypeSpec.enumBuilder("Topping")
+        .addProperty("ordinal", String::class)
+    }
+    assertThat(exception.message)
+      .isEqualTo("ordinal is a final supertype member and can't be redeclared or overridden")
   }
 
   companion object {
