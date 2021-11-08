@@ -651,7 +651,7 @@ public class TypeSpec private constructor(
       typeSpec: TypeSpec = anonymousClassBuilder().build()
     ): Builder = apply {
       require(name != "name" && name != "ordinal") {
-        "constant with name \"$name\" conflicts with a property with the same name"
+        "constant with name \"$name\" conflicts with a supertype member with the same name"
       }
       enumConstants[name] = typeSpec
     }
