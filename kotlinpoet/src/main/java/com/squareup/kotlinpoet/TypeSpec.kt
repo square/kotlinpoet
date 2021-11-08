@@ -650,6 +650,9 @@ public class TypeSpec private constructor(
       name: String,
       typeSpec: TypeSpec = anonymousClassBuilder().build()
     ): Builder = apply {
+      require(name != "name" && name != "ordinal") {
+        "constant with name \"$name\" conflicts with a supertype member with the same name"
+      }
       enumConstants[name] = typeSpec
     }
 
@@ -664,6 +667,11 @@ public class TypeSpec private constructor(
         }
         require(propertySpec.getter == null && propertySpec.setter == null) {
           "properties in expect classes can't have getters and setters"
+        }
+      }
+      if (isEnum) {
+        require(propertySpec.name != "name" && propertySpec.name != "ordinal") {
+          "${propertySpec.name} is a final supertype member and can't be redeclared or overridden"
         }
       }
       propertySpecs += propertySpec
