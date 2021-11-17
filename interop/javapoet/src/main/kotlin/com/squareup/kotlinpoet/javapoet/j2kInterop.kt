@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.BYTE
 import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CHAR
 import com.squareup.kotlinpoet.CHAR_ARRAY
+import com.squareup.kotlinpoet.CHAR_SEQUENCE
 import com.squareup.kotlinpoet.DOUBLE
 import com.squareup.kotlinpoet.DOUBLE_ARRAY
 import com.squareup.kotlinpoet.ENUM
@@ -41,6 +42,7 @@ import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.SHORT_ARRAY
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
+import com.squareup.kotlinpoet.UNIT
 
 @KotlinPoetJavaPoetPreview
 public fun JClassName.toKClassName(): KClassName {
@@ -53,7 +55,9 @@ public fun JClassName.toKClassName(): KClassName {
     JTypeName.LONG.box() -> LONG
     JTypeName.FLOAT.box() -> FLOAT
     JTypeName.DOUBLE.box() -> DOUBLE
+    JTypeName.VOID.box() -> UNIT
     JTypeName.OBJECT -> ANY
+    PoetInterop.CN_JAVA_CHAR_SEQUENCE -> CHAR_SEQUENCE
     PoetInterop.CN_JAVA_STRING -> STRING
     PoetInterop.CN_JAVA_LIST -> LIST
     PoetInterop.CN_JAVA_SET -> SET
@@ -122,6 +126,7 @@ public fun JTypeName.toKTypeName(): KTypeName {
       JTypeName.LONG -> LONG
       JTypeName.FLOAT -> FLOAT
       JTypeName.DOUBLE -> DOUBLE
+      JTypeName.VOID -> UNIT
       else -> error("Unrecognized type $this")
     }
   }
