@@ -43,7 +43,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.typeNameOf
 import org.junit.Test
 
-@OptIn(ExperimentalStdlibApi::class, KotlinPoetJavaPoetPreview::class)
+@OptIn(KotlinPoetJavaPoetPreview::class)
 class PoetInteropTest {
 
   @Test

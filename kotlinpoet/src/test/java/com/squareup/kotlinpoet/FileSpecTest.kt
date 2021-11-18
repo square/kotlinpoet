@@ -1059,7 +1059,6 @@ class FileSpecTest {
   class WackyKey
   class OhNoThisDoesNotCompile
 
-  @OptIn(ExperimentalStdlibApi::class)
   @Test fun longCommentWithTypes() {
     val someLongParameterizedTypeName = typeNameOf<List<Map<in String, Collection<Map<WackyKey, out OhNoThisDoesNotCompile>>>>>()
     val param = ParameterSpec.builder("foo", someLongParameterizedTypeName).build()
