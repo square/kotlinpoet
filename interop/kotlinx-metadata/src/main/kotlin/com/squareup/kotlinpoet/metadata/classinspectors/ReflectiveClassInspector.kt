@@ -410,14 +410,11 @@ public class ReflectiveClassInspector private constructor(
         val annotations = mutableListOf<AnnotationSpec>()
         if (property.flags.hasAnnotations) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
-            val method = targetClass.lookupMethod(annotationsHolderSignature)
-              ?: error(
-                "Method $annotationsHolderSignature (synthetic method for annotations)" +
-                  " found in $targetClass."
-              )
-            annotations += method.annotationSpecs()
-              // Cover for https://github.com/square/kotlinpoet/issues/1046
-              .filterNot { it.typeName == JAVA_DEPRECATED }
+            targetClass.lookupMethod(annotationsHolderSignature)?.let { method ->
+              annotations += method.annotationSpecs()
+                // Cover for https://github.com/square/kotlinpoet/issues/1046
+                .filterNot { it.typeName == JAVA_DEPRECATED }
+            }
           }
         }
 
