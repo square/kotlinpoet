@@ -96,7 +96,6 @@ class UtilTest {
     assertThat("with_unicode_punctuation\u2026".escapeIfNecessary()).isEqualTo("`with_unicode_punctuation\u2026`")
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   @Test fun escapeSpaceInName() {
     val generated = FileSpec.builder("a", "b")
       .addFunction(

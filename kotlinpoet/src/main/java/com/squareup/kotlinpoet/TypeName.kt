@@ -294,5 +294,4 @@ public fun Type.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
  * Returns a [TypeName] equivalent of the reified type parameter [T] using reflection, maybe using kotlin-reflect
  * if required.
  */
-@ExperimentalStdlibApi
 public inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
