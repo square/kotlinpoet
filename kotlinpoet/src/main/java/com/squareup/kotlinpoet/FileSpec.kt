@@ -54,6 +54,8 @@ public class FileSpec private constructor(
   public val members: List<Any> = builder.members.toList()
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
+  private val isScript = builder.isScript
+  private val extension = if (isScript) "kts" else "kt"
 
   @Throws(IOException::class)
   public fun writeTo(out: Appendable) {
@@ -91,7 +93,7 @@ public class FileSpec private constructor(
 
     Files.createDirectories(outputDirectory)
 
-    val outputPath = outputDirectory.resolve("$name.kt")
+    val outputPath = outputDirectory.resolve("$name.$extension")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
   }
 
@@ -109,7 +111,7 @@ public class FileSpec private constructor(
     val filerSourceFile = filer.createResource(
       StandardLocation.SOURCE_OUTPUT,
       packageName,
-      "$name.kt",
+      "$name.$extension",
       *originatingElements.toTypedArray()
     )
     try {
@@ -192,7 +194,7 @@ public class FileSpec private constructor(
         if (packageName.isEmpty())
           name else
           packageName.replace('.', '/') + '/' + name
-        ) + ".kt"
+        ) + ".$extension"
     )
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
@@ -210,7 +212,7 @@ public class FileSpec private constructor(
 
   @JvmOverloads
   public fun toBuilder(packageName: String = this.packageName, name: String = this.name): Builder {
-    val builder = Builder(packageName, name)
+    val builder = Builder(packageName, name, isScript)
     builder.annotations.addAll(annotations)
     builder.comment.add(comment)
     builder.members.addAll(this.members)
@@ -222,7 +224,8 @@ public class FileSpec private constructor(
 
   public class Builder internal constructor(
     public val packageName: String,
-    public val name: String
+    public val name: String,
+    internal val isScript: Boolean,
   ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
@@ -387,7 +390,10 @@ public class FileSpec private constructor(
     }
 
     @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
-      Builder(packageName, fileName)
+      Builder(packageName, fileName, isScript = false)
+
+    @JvmStatic public fun scriptBuilder(fileName: String, packageName: String = ""): Builder =
+      Builder(packageName, fileName, isScript = true)
   }
 }
 
