@@ -733,7 +733,7 @@ class FileSpecTest {
   @Test fun topOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
       .addType(TypeSpec.classBuilder("Taco").build())
-      .addComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
+      .addFileComment("Generated %L by KotlinPoet. DO NOT EDIT!", "2015-01-13")
       .build()
     assertThat(source.toString()).isEqualTo(
       """
@@ -748,7 +748,7 @@ class FileSpecTest {
   @Test fun emptyLinesInTopOfFileComment() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
       .addType(TypeSpec.classBuilder("Taco").build())
-      .addComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
+      .addFileComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
       .build()
     assertThat(source.toString()).isEqualTo(
       """
@@ -877,7 +877,7 @@ class FileSpecTest {
   @Test fun generalBuilderEqualityTest() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
       .addAnnotation(JvmMultifileClass::class)
-      .addComment("Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!")
+      .addFileComment("Generated 2015-01-13 by KotlinPoet. DO NOT EDIT!")
       .addImport("com.squareup.tacos.internal", "INGREDIENTS")
       .addTypeAlias(TypeAliasSpec.builder("Int8", Byte::class).build())
       .indent("  ")
@@ -951,10 +951,10 @@ class FileSpecTest {
   @Test fun clearComment() {
     val builder = FileSpec.builder("com.taco", "Taco")
       .addFunction(FunSpec.builder("aFunction").build())
-      .addComment("Hello!")
+      .addFileComment("Hello!")
 
     builder.clearComment()
-      .addComment("Goodbye!")
+      .addFileComment("Goodbye!")
 
     assertThat(builder.build().comment.toString()).isEqualTo("Goodbye!")
   }
@@ -1042,7 +1042,7 @@ class FileSpecTest {
 
   @Test fun longComment() {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
-      .addComment(
+      .addFileComment(
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
           "eiusmod tempor incididunt ut labore et dolore magna aliqua."
       )
@@ -1094,6 +1094,40 @@ class FileSpecTest {
       |public fun f2(): Unit {
       |  // this is a very very very very very very very very very very long line with a very long lambda type: suspend String.(foo: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>) -> String
       |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun simpleScriptTest() {
+    val spec = FileSpec.scriptBuilder("Taco")
+      .addProperty(PropertySpec.builder("prop", String::class).initializer("\"hi\"").build())
+      .addCode("\n")
+      .addStatement("println(%S)", "hello!")
+      .addCode("\n")
+      .addFunction(
+        FunSpec.builder("localFun")
+          .build()
+      )
+      .addCode("\n")
+      .addType(TypeSpec.classBuilder("Yay").build())
+      .addCode("\n")
+      .addStatement("val yayInstance = Yay()")
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |import kotlin.String
+      |import kotlin.Unit
+      |
+      |val prop: String = "hi"
+      |
+      |println("hello!")
+      |
+      |public fun localFun(): Unit {
+      |}
+      |
+      |public class Yay
+      |
+      |val yayInstance = Yay()
       |""".trimMargin()
     )
   }
