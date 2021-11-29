@@ -47,7 +47,6 @@ import com.squareup.kotlinpoet.SHORT
 import com.squareup.kotlinpoet.SHORT_ARRAY
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.STRING
-import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.U_BYTE
 import com.squareup.kotlinpoet.U_BYTE_ARRAY
 import com.squareup.kotlinpoet.U_INT
@@ -68,7 +67,6 @@ public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
     LONG, U_LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
     FLOAT -> JTypeName.FLOAT.boxIfPrimitive(boxIfPrimitive || isNullable)
     DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(boxIfPrimitive || isNullable)
-    UNIT -> JTypeName.VOID
     ANY -> JTypeName.OBJECT
     CHAR_SEQUENCE -> PoetInterop.CN_JAVA_CHAR_SEQUENCE
     STRING -> PoetInterop.CN_JAVA_STRING
