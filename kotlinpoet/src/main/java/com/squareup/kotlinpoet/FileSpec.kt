@@ -53,9 +53,9 @@ public class FileSpec private constructor(
   public val name: String = builder.name
   public val members: List<Any> = builder.members.toList()
   public val body: CodeBlock = builder.body.build()
+  public val isScript: Boolean = builder.isScript
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
-  private val isScript = builder.isScript
   private val extension = if (isScript) "kts" else "kt"
 
   @Throws(IOException::class)
@@ -231,7 +231,7 @@ public class FileSpec private constructor(
   public class Builder internal constructor(
     public val packageName: String,
     public val name: String,
-    internal val isScript: Boolean,
+    public val isScript: Boolean,
   ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
@@ -269,6 +269,7 @@ public class FileSpec private constructor(
     public fun addAnnotation(annotation: KClass<*>): Builder =
       addAnnotation(annotation.asClassName())
 
+    /** Adds a file-site comment. This is prefixed to the start of the file and different from [addBodyComment]. */
     public fun addFileComment(format: String, vararg args: Any): Builder = apply {
       comment.add(format.replace(' ', '·'), *args)
     }
@@ -402,18 +403,31 @@ public class FileSpec private constructor(
     }
 
     public fun addCode(format: String, vararg args: Any?): Builder = apply {
+      check(isScript) {
+        "addCode() is only allowed in script files"
+      }
       body.add(format, *args)
     }
 
     public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
+      check(isScript) {
+        "addNamedCode() is only allowed in script files"
+      }
       body.addNamed(format, args)
     }
 
     public fun addCode(codeBlock: CodeBlock): Builder = apply {
+      check(isScript) {
+        "addCode() is only allowed in script files"
+      }
       body.add(codeBlock)
     }
 
+    /** Adds a comment to the body of this script file in the order that it was added. */
     public fun addBodyComment(format: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "addBodyComment() is only allowed in script files"
+      }
       body.add("//·${format.replace(' ', '·')}\n", *args)
     }
 
@@ -422,6 +436,9 @@ public class FileSpec private constructor(
      * Shouldn't contain braces or newline characters.
      */
     public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "beginControlFlow() is only allowed in script files"
+      }
       body.beginControlFlow(controlFlow, *args)
     }
 
@@ -430,18 +447,30 @@ public class FileSpec private constructor(
      * Shouldn't contain braces or newline characters.
      */
     public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "nextControlFlow() is only allowed in script files"
+      }
       body.nextControlFlow(controlFlow, *args)
     }
 
     public fun endControlFlow(): Builder = apply {
+      check(isScript) {
+        "endControlFlow() is only allowed in script files"
+      }
       body.endControlFlow()
     }
 
     public fun addStatement(format: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "addStatement() is only allowed in script files"
+      }
       body.addStatement(format, *args)
     }
 
     public fun clearBody(): Builder = apply {
+      check(isScript) {
+        "clearBody() is only allowed in script files"
+      }
       body.clear()
     }
 
