@@ -52,8 +52,11 @@ public class FileSpec private constructor(
   public val packageName: String = builder.packageName
   public val name: String = builder.name
   public val members: List<Any> = builder.members.toList()
+  public val body: CodeBlock = builder.body.build()
+  public val isScript: Boolean = builder.isScript
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
+  private val extension = if (isScript) "kts" else "kt"
 
   @Throws(IOException::class)
   public fun writeTo(out: Appendable) {
@@ -91,7 +94,7 @@ public class FileSpec private constructor(
 
     Files.createDirectories(outputDirectory)
 
-    val outputPath = outputDirectory.resolve("$name.kt")
+    val outputPath = outputDirectory.resolve("$name.$extension")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
   }
 
@@ -109,7 +112,7 @@ public class FileSpec private constructor(
     val filerSourceFile = filer.createResource(
       StandardLocation.SOURCE_OUTPUT,
       packageName,
-      "$name.kt",
+      "$name.$extension",
       *originatingElements.toTypedArray()
     )
     try {
@@ -161,14 +164,18 @@ public class FileSpec private constructor(
       codeWriter.emit("\n")
     }
 
-    members.forEachIndexed { index, member ->
-      if (index > 0) codeWriter.emit("\n")
-      when (member) {
-        is TypeSpec -> member.emit(codeWriter, null)
-        is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC), true)
-        is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
-        is TypeAliasSpec -> member.emit(codeWriter)
-        else -> throw AssertionError()
+    if (isScript) {
+      codeWriter.emitCode(body)
+    } else {
+      members.forEachIndexed { index, member ->
+        if (index > 0) codeWriter.emit("\n")
+        when (member) {
+          is TypeSpec -> member.emit(codeWriter, null)
+          is FunSpec -> member.emit(codeWriter, null, setOf(KModifier.PUBLIC), true)
+          is PropertySpec -> member.emit(codeWriter, setOf(KModifier.PUBLIC))
+          is TypeAliasSpec -> member.emit(codeWriter)
+          else -> throw AssertionError()
+        }
       }
     }
 
@@ -192,7 +199,7 @@ public class FileSpec private constructor(
         if (packageName.isEmpty())
           name else
           packageName.replace('.', '/') + '/' + name
-        ) + ".kt"
+        ) + ".$extension"
     )
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
@@ -210,19 +217,21 @@ public class FileSpec private constructor(
 
   @JvmOverloads
   public fun toBuilder(packageName: String = this.packageName, name: String = this.name): Builder {
-    val builder = Builder(packageName, name)
+    val builder = Builder(packageName, name, isScript)
     builder.annotations.addAll(annotations)
     builder.comment.add(comment)
     builder.members.addAll(this.members)
     builder.indent = indent
     builder.memberImports.addAll(memberImports.values)
     builder.tags += tagMap.tags
+    builder.body.add(body)
     return builder
   }
 
   public class Builder internal constructor(
     public val packageName: String,
-    public val name: String
+    public val name: String,
+    public val isScript: Boolean,
   ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
@@ -232,6 +241,7 @@ public class FileSpec private constructor(
     public val imports: List<Import> get() = memberImports.toList()
     public val members: MutableList<Any> = mutableListOf()
     public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    internal val body = CodeBlock.builder()
 
     /**
      * Add an annotation to the file.
@@ -240,13 +250,14 @@ public class FileSpec private constructor(
      * or not have a use-site target specified (in which case it will be changed to `file`).
      */
     public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      annotations += when (annotationSpec.useSiteTarget) {
+      val spec = when (annotationSpec.useSiteTarget) {
         FILE -> annotationSpec
         null -> annotationSpec.toBuilder().useSiteTarget(FILE).build()
         else -> error(
           "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
         )
       }
+      annotations += spec
     }
 
     public fun addAnnotation(annotation: ClassName): Builder =
@@ -258,31 +269,55 @@ public class FileSpec private constructor(
     public fun addAnnotation(annotation: KClass<*>): Builder =
       addAnnotation(annotation.asClassName())
 
-    public fun addComment(format: String, vararg args: Any): Builder = apply {
+    /** Adds a file-site comment. This is prefixed to the start of the file and different from [addBodyComment]. */
+    public fun addFileComment(format: String, vararg args: Any): Builder = apply {
       comment.add(format.replace(' ', '·'), *args)
     }
+
+    @Deprecated(
+      "Use addFileComment() instead.",
+      ReplaceWith("addFileComment(format, args)"),
+      DeprecationLevel.ERROR
+    )
+    public fun addComment(format: String, vararg args: Any): Builder = addFileComment(format, *args)
 
     public fun clearComment(): Builder = apply {
       comment.clear()
     }
 
     public fun addType(typeSpec: TypeSpec): Builder = apply {
-      members += typeSpec
+      if (isScript) {
+        body.add("%L", typeSpec)
+      } else {
+        members += typeSpec
+      }
     }
 
     public fun addFunction(funSpec: FunSpec): Builder = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
         "cannot add ${funSpec.name} to file $name"
       }
-      members += funSpec
+      if (isScript) {
+        body.add("%L", funSpec)
+      } else {
+        members += funSpec
+      }
     }
 
     public fun addProperty(propertySpec: PropertySpec): Builder = apply {
-      members += propertySpec
+      if (isScript) {
+        body.add("%L", propertySpec)
+      } else {
+        members += propertySpec
+      }
     }
 
     public fun addTypeAlias(typeAliasSpec: TypeAliasSpec): Builder = apply {
-      members += typeAliasSpec
+      if (isScript) {
+        body.add("%L", typeAliasSpec)
+      } else {
+        members += typeAliasSpec
+      }
     }
 
     public fun addImport(constant: Enum<*>): Builder = addImport(
@@ -367,6 +402,78 @@ public class FileSpec private constructor(
       this.indent = indent
     }
 
+    public fun addCode(format: String, vararg args: Any?): Builder = apply {
+      check(isScript) {
+        "addCode() is only allowed in script files"
+      }
+      body.add(format, *args)
+    }
+
+    public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
+      check(isScript) {
+        "addNamedCode() is only allowed in script files"
+      }
+      body.addNamed(format, args)
+    }
+
+    public fun addCode(codeBlock: CodeBlock): Builder = apply {
+      check(isScript) {
+        "addCode() is only allowed in script files"
+      }
+      body.add(codeBlock)
+    }
+
+    /** Adds a comment to the body of this script file in the order that it was added. */
+    public fun addBodyComment(format: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "addBodyComment() is only allowed in script files"
+      }
+      body.add("//·${format.replace(' ', '·')}\n", *args)
+    }
+
+    /**
+     * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
+     * Shouldn't contain braces or newline characters.
+     */
+    public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "beginControlFlow() is only allowed in script files"
+      }
+      body.beginControlFlow(controlFlow, *args)
+    }
+
+    /**
+     * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
+     * Shouldn't contain braces or newline characters.
+     */
+    public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "nextControlFlow() is only allowed in script files"
+      }
+      body.nextControlFlow(controlFlow, *args)
+    }
+
+    public fun endControlFlow(): Builder = apply {
+      check(isScript) {
+        "endControlFlow() is only allowed in script files"
+      }
+      body.endControlFlow()
+    }
+
+    public fun addStatement(format: String, vararg args: Any): Builder = apply {
+      check(isScript) {
+        "addStatement() is only allowed in script files"
+      }
+      body.addStatement(format, *args)
+    }
+
+    public fun clearBody(): Builder = apply {
+      check(isScript) {
+        "clearBody() is only allowed in script files"
+      }
+      body.clear()
+    }
+
     public fun build(): FileSpec {
       for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
@@ -387,7 +494,10 @@ public class FileSpec private constructor(
     }
 
     @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
-      Builder(packageName, fileName)
+      Builder(packageName, fileName, isScript = false)
+
+    @JvmStatic public fun scriptBuilder(fileName: String, packageName: String = ""): Builder =
+      Builder(packageName, fileName, isScript = true)
   }
 }
 

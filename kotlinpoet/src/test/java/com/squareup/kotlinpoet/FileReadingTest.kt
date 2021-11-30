@@ -54,7 +54,7 @@ class FileReadingTest {
   @Test fun javaFileObjectInputStreamIsUtf8() {
     val source = FileSpec.builder("foo", "Test")
       .addType(TypeSpec.classBuilder("Test").build())
-      .addComment("Pi\u00f1ata\u00a1")
+      .addFileComment("Pi\u00f1ata\u00a1")
       .build()
     val bytes = ByteStreams.toByteArray(source.toJavaFileObject().openInputStream())
 

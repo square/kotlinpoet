@@ -91,7 +91,7 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
       is FileSpec.Builder -> build().apply {
         toBuilder()
           .tag(1)
-          .addComment("Test")
+          .addFileComment("Test")
           .build()
       }
       is FunSpec.Builder -> build().apply {

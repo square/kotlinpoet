@@ -278,7 +278,7 @@ class FileWritingTest {
   @Test fun fileIsUtf8() {
     val source = FileSpec.builder("foo", "Taco")
       .addType(TypeSpec.classBuilder("Taco").build())
-      .addComment("Pi\u00f1ata\u00a1")
+      .addFileComment("Pi\u00f1ata\u00a1")
       .build()
     source.writeTo(fsRoot)
 
