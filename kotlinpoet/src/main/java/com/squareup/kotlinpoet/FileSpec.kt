@@ -257,11 +257,7 @@ public class FileSpec private constructor(
           "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
         )
       }
-      if (isScript) {
-        body.add("%L", spec)
-      } else {
-        annotations += spec
-      }
+      annotations += spec
     }
 
     public fun addAnnotation(annotation: ClassName): Builder =
