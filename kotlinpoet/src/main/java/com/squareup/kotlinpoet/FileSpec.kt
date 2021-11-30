@@ -52,6 +52,7 @@ public class FileSpec private constructor(
   public val packageName: String = builder.packageName
   public val name: String = builder.name
   public val members: List<Any> = builder.members.toList()
+  public val defaultImports: Set<String> = builder.defaultImports.toSet()
   public val body: CodeBlock = builder.body.build()
   public val isScript: Boolean = builder.isScript
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
@@ -65,7 +66,7 @@ public class FileSpec private constructor(
       NullAppendable, indent, memberImports,
       columnLimit = Integer.MAX_VALUE
     )
-    emit(importsCollector)
+    emit(importsCollector, collectingImports = true)
     val suggestedTypeImports = importsCollector.suggestedTypeImports()
     val suggestedMemberImports = importsCollector.suggestedMemberImports()
     importsCollector.close()
@@ -75,7 +76,7 @@ public class FileSpec private constructor(
       out, indent, memberImports, suggestedTypeImports,
       suggestedMemberImports
     )
-    emit(codeWriter)
+    emit(codeWriter, collectingImports = false)
     codeWriter.close()
   }
 
@@ -126,7 +127,7 @@ public class FileSpec private constructor(
     }
   }
 
-  private fun emit(codeWriter: CodeWriter) {
+  private fun emit(codeWriter: CodeWriter, collectingImports: Boolean) {
     if (comment.isNotEmpty()) {
       codeWriter.emitComment(comment)
     }
@@ -147,14 +148,26 @@ public class FileSpec private constructor(
 
     val importedTypeNames = codeWriter.importedTypes.values.map { it.canonicalName }
     val importedMemberNames = codeWriter.importedMembers.values.map { it.canonicalName }
+
+    // If we don't have default imports or are collecting them, we don't need to filter
+    var defaultImportsFilter: (String) -> Boolean = { true }
+    if (!collectingImports && defaultImports.isNotEmpty()) {
+      val defaultImports = defaultImports.map(String::escapeSegmentsIfNecessary)
+      defaultImportsFilter = { importName ->
+        importName.substringBeforeLast(".") in defaultImports
+      }
+    }
     // Aliased imports should always appear at the bottom of the imports list.
     val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
     val imports = (importedTypeNames + importedMemberNames)
+      .asSequence()
       .filterNot { it in memberImports.keys }
       .map { it.escapeSegmentsIfNecessary() }
-      .plus(nonAliasedImports.map { it.toString() })
+      .plus(nonAliasedImports.asSequence().map { it.toString() })
+      .filterNot(defaultImportsFilter)
       .toSortedSet()
       .plus(aliasedImports.map { it.toString() }.toSortedSet())
+      .toList()
 
     if (imports.isNotEmpty()) {
       for (import in imports) {
@@ -223,6 +236,7 @@ public class FileSpec private constructor(
     builder.members.addAll(this.members)
     builder.indent = indent
     builder.memberImports.addAll(memberImports.values)
+    builder.defaultImports.addAll(defaultImports)
     builder.tags += tagMap.tags
     builder.body.add(body)
     return builder
@@ -238,6 +252,7 @@ public class FileSpec private constructor(
     internal var indent = DEFAULT_INDENT
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
+    public val defaultImports: MutableSet<String> = mutableSetOf()
     public val imports: List<Import> get() = memberImports.toList()
     public val members: MutableList<Any> = mutableListOf()
     public val annotations: MutableList<AnnotationSpec> = mutableListOf()
@@ -398,6 +413,28 @@ public class FileSpec private constructor(
       memberImports += Import(memberName.canonicalName, `as`)
     }
 
+    /** Adds a default import for the given [packageName]. */
+    public fun addDefaultPackageImport(packageName: String): Builder = apply {
+      defaultImports += packageName
+    }
+
+    /**
+     * Adds Kotlin's standard default package imports as described
+     * [here](https://kotlinlang.org/docs/packages.html#default-imports).
+     */
+    public fun addKotlinDefaultImports(
+      includeJvm: Boolean = true,
+      includeJs: Boolean = true
+    ): Builder = apply {
+      defaultImports += KOTLIN_DEFAULT_IMPORTS
+      if (includeJvm) {
+        defaultImports += KOTLIN_DEFAULT_JVM_IMPORTS
+      }
+      if (includeJs) {
+        defaultImports += KOTLIN_DEFAULT_JS_IMPORTS
+      }
+    }
+
     public fun indent(indent: String): Builder = apply {
       this.indent = indent
     }
@@ -502,3 +539,16 @@ public class FileSpec private constructor(
 }
 
 internal const val DEFAULT_INDENT = "  "
+
+private val KOTLIN_DEFAULT_IMPORTS = setOf(
+  "kotlin",
+  "kotlin.annotation",
+  "kotlin.collections",
+  "kotlin.comparisons",
+  "kotlin.io",
+  "kotlin.ranges",
+  "kotlin.sequences",
+  "kotlin.text",
+)
+private val KOTLIN_DEFAULT_JVM_IMPORTS = setOf("java.lang")
+private val KOTLIN_DEFAULT_JS_IMPORTS = setOf("kotlin.js")
