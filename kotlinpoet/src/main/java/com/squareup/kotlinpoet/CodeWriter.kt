@@ -378,7 +378,12 @@ internal class CodeWriter constructor(
       is TypeSpec -> o.emit(this, null)
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
       is PropertySpec -> o.emit(this, emptySet())
-      is FunSpec -> o.emit(this, null, setOf(KModifier.PUBLIC), true)
+      is FunSpec -> o.emit(
+        codeWriter = this,
+        enclosingName = null,
+        implicitModifiers = setOf(KModifier.PUBLIC),
+        includeKdocTags = true
+      )
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
       else -> emit(o.toString())
