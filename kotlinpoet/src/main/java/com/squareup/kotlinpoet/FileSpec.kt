@@ -427,7 +427,7 @@ public class FileSpec private constructor(
 
     /**
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
-     * *     Shouldn't contain braces or newline characters.
+     * Shouldn't contain braces or newline characters.
      */
     public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
       body.nextControlFlow(controlFlow, *args)
