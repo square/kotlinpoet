@@ -167,7 +167,6 @@ public class FileSpec private constructor(
       .filterNot(defaultImportsFilter)
       .toSortedSet()
       .plus(aliasedImports.map { it.toString() }.toSortedSet())
-      .toList()
 
     if (imports.isNotEmpty()) {
       for (import in imports) {
