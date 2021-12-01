@@ -413,7 +413,12 @@ public class FileSpec private constructor(
       memberImports += Import(memberName.canonicalName, `as`)
     }
 
-    /** Adds a default import for the given [packageName]. */
+    /**
+     * Adds a default import for the given [packageName].
+     *
+     * The format of this should be the qualified name of the package, e.g. `kotlin`, `java.lang`,
+     * `org.gradle.api`, etc.
+     */
     public fun addDefaultPackageImport(packageName: String): Builder = apply {
       defaultImports += packageName
     }
