@@ -247,6 +247,9 @@ private val KEYWORDS = setOf(
   "tailrec",
   "value",
   "vararg",
+
+  // Other reserved keywords
+  "yield",
 )
 
 private const val ALLOWED_CHARACTER = '$'
