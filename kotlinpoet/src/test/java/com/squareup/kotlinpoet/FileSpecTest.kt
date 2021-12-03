@@ -22,7 +22,9 @@ import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.Collections
 import java.util.Date
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -1128,6 +1130,29 @@ class FileSpecTest {
       |public class Yay
       |
       |val yayInstance = Yay()
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun defaultImports() {
+    val spec = FileSpec.scriptBuilder("Taco")
+      .addProperty(PropertySpec.builder("prop0", STRING.copy(nullable = true)).initializer("null").build())
+      .addProperty(PropertySpec.builder("prop1", INT.copy(nullable = true)).initializer("null").build())
+      .addProperty(PropertySpec.builder("prop2", typeNameOf<Map<String, Any>?>()).initializer("null").build())
+      .addProperty(PropertySpec.builder("prop3", typeNameOf<Callable<String>?>()).initializer("null").build())
+      .addProperty(PropertySpec.builder("prop4", typeNameOf<Function<Int, Int>?>()).initializer("null").build())
+      .addKotlinDefaultImports()
+      .addDefaultPackageImport("java.util.function")
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |import java.util.concurrent.Callable
+      |
+      |val prop0: String? = null
+      |val prop1: Int? = null
+      |val prop2: Map<String, Any>? = null
+      |val prop3: @FunctionalInterface Callable<String>? = null
+      |val prop4: @FunctionalInterface Function<Int, Int>? = null
       |""".trimMargin()
     )
   }
