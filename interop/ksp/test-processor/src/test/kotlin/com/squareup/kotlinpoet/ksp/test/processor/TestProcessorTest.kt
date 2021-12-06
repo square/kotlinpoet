@@ -52,7 +52,7 @@ class TestProcessorTest {
            typealias ParameterizedTypeAlias<T> = List<T>
 
            @ComprehensiveAnnotation<String>(
-             boolean = true,
+             true, // Omit the name intentionally here to test names are still picked up
              booleanArray = [true],
              byte = 0.toByte(),
              byteArray = [0.toByte()],
@@ -77,6 +77,7 @@ class TestProcessorTest {
            )
            @ExampleAnnotation
            class SmokeTestClass<T, R : Any, E : Enum<E>> {
+             @field:AnotherAnnotation("siteTargeting")
              private val propA: String = ""
              internal val propB: String = ""
              val propC: Int = 0
@@ -185,9 +186,11 @@ class TestProcessorTest {
         enumValue = AnnotationEnumValue.ONE,
         enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
         anotherAnnotation = AnotherAnnotation(input = "Hello"),
-        anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello"))
+        anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+        defaultingString = "defaultValue"
       )
       public class SmokeTestClass<T, R : Any, E : Enum<E>> {
+        @field:AnotherAnnotation(input = "siteTargeting")
         private val propA: String
 
         internal val propB: String

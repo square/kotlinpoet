@@ -100,6 +100,10 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           .apply {
             property.getVisibility().toKModifier()?.let { addModifiers(it) }
             addModifiers(property.modifiers.mapNotNull { it.toKModifier() })
+            addAnnotations(
+              property.annotations
+                .map { it.toAnnotationSpec() }.asIterable()
+            )
           }
           .build()
       )

@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet.ksp
 
+import com.google.devtools.ksp.symbol.AnnotationUseSiteTarget
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -22,6 +23,7 @@ import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 
@@ -30,6 +32,7 @@ import com.squareup.kotlinpoet.CodeBlock
 public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
   val element = annotationType.resolve().unwrapTypeAlias().declaration as KSClassDeclaration
   val builder = AnnotationSpec.builder(element.toClassName())
+  useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
   for (argument in arguments) {
     val member = CodeBlock.builder()
     val name = argument.name!!.getShortName()
@@ -38,6 +41,18 @@ public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
     builder.addMember(member.build())
   }
   return builder.build()
+}
+
+private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget get() = when (this) {
+  AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
+  AnnotationUseSiteTarget.PROPERTY -> UseSiteTarget.PROPERTY
+  AnnotationUseSiteTarget.FIELD -> UseSiteTarget.FIELD
+  AnnotationUseSiteTarget.GET -> UseSiteTarget.GET
+  AnnotationUseSiteTarget.SET -> UseSiteTarget.SET
+  AnnotationUseSiteTarget.RECEIVER -> UseSiteTarget.RECEIVER
+  AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
+  AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
+  AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
 }
 
 internal fun KSType.unwrapTypeAlias(): KSType {

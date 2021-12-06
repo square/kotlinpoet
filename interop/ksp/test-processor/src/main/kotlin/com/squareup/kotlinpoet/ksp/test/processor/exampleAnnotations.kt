@@ -42,6 +42,8 @@ annotation class ComprehensiveAnnotation<T : CharSequence>(
   val enumValueArray: Array<AnnotationEnumValue>,
   val anotherAnnotation: AnotherAnnotation,
   val anotherAnnotationArray: Array<AnotherAnnotation>,
+  // This is still included even when the argument is omitted until https://github.com/google/ksp/issues/674
+  val defaultingString: String = "defaultValue",
 )
 
 annotation class AnotherAnnotation(val input: String)
