@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet.javapoet
 /** Various JavaPoet and KotlinPoet representations of some common types. */
 @OptIn(KotlinPoetJavaPoetPreview::class)
 internal object PoetInterop {
+  internal val CN_JAVA_CHAR_SEQUENCE = JClassName.get("java.lang", "CharSequence")
   internal val CN_JAVA_STRING = JClassName.get("java.lang", "String")
   internal val CN_JAVA_LIST = JClassName.get("java.util", "List")
   internal val CN_JAVA_SET = JClassName.get("java.util", "Set")

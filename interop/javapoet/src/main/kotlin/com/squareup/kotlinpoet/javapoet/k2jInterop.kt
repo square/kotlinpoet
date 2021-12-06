@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.BYTE
 import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CHAR
 import com.squareup.kotlinpoet.CHAR_ARRAY
+import com.squareup.kotlinpoet.CHAR_SEQUENCE
 import com.squareup.kotlinpoet.DOUBLE
 import com.squareup.kotlinpoet.DOUBLE_ARRAY
 import com.squareup.kotlinpoet.Dynamic
@@ -67,6 +68,7 @@ public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
     FLOAT -> JTypeName.FLOAT.boxIfPrimitive(boxIfPrimitive || isNullable)
     DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(boxIfPrimitive || isNullable)
     ANY -> JTypeName.OBJECT
+    CHAR_SEQUENCE -> PoetInterop.CN_JAVA_CHAR_SEQUENCE
     STRING -> PoetInterop.CN_JAVA_STRING
     LIST, MUTABLE_LIST -> PoetInterop.CN_JAVA_LIST
     SET, MUTABLE_SET -> PoetInterop.CN_JAVA_SET

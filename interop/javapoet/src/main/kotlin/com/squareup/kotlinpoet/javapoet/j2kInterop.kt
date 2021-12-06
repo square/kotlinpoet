@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.BYTE
 import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CHAR
 import com.squareup.kotlinpoet.CHAR_ARRAY
+import com.squareup.kotlinpoet.CHAR_SEQUENCE
 import com.squareup.kotlinpoet.DOUBLE
 import com.squareup.kotlinpoet.DOUBLE_ARRAY
 import com.squareup.kotlinpoet.ENUM
@@ -54,6 +55,7 @@ public fun JClassName.toKClassName(): KClassName {
     JTypeName.FLOAT.box() -> FLOAT
     JTypeName.DOUBLE.box() -> DOUBLE
     JTypeName.OBJECT -> ANY
+    PoetInterop.CN_JAVA_CHAR_SEQUENCE -> CHAR_SEQUENCE
     PoetInterop.CN_JAVA_STRING -> STRING
     PoetInterop.CN_JAVA_LIST -> LIST
     PoetInterop.CN_JAVA_SET -> SET
