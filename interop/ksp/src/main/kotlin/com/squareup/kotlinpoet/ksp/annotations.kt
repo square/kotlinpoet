@@ -26,12 +26,16 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /** Returns an [AnnotationSpec] representation of this [KSAnnotation] instance. */
 @KotlinPoetKspPreview
 public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
-  val element = annotationType.resolve().unwrapTypeAlias().declaration as KSClassDeclaration
-  val builder = AnnotationSpec.builder(element.toClassName())
+  val builder = when (val type = annotationType.resolve().unwrapTypeAlias().toTypeName()) {
+    is ClassName -> AnnotationSpec.builder(type)
+    is ParameterizedTypeName -> AnnotationSpec.builder(type)
+    else -> error("This is never possible.")
+  }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
   // TODO support type params once they're exposed https://github.com/google/ksp/issues/753
   for (argument in arguments) {

@@ -164,7 +164,7 @@ class TestProcessorTest {
       import kotlin.collections.MutableList
       import kotlin.collections.Set
 
-      @ComprehensiveAnnotation(
+      @ComprehensiveAnnotation<String>(
         boolean = true,
         booleanArray = arrayOf(true),
         byte = 0.toByte(),
