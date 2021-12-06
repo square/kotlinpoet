@@ -33,6 +33,7 @@ public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
   val element = annotationType.resolve().unwrapTypeAlias().declaration as KSClassDeclaration
   val builder = AnnotationSpec.builder(element.toClassName())
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
+  // TODO support type params once they're exposed https://github.com/google/ksp/issues/753
   for (argument in arguments) {
     val member = CodeBlock.builder()
     val name = argument.name!!.getShortName()
