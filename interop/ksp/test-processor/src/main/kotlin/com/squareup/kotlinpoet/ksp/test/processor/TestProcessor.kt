@@ -33,6 +33,7 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.kspDependencies
 import com.squareup.kotlinpoet.ksp.originatingKSFiles
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
@@ -62,6 +63,11 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
       .apply {
         decl.getVisibility().toKModifier()?.let { addModifiers(it) }
         addModifiers(decl.modifiers.mapNotNull { it.toKModifier() })
+        addAnnotations(
+          decl.annotations
+            .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
+            .map { it.toAnnotationSpec() }.asIterable()
+        )
       }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
     classBuilder.addTypeVariables(
@@ -94,6 +100,10 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           .apply {
             property.getVisibility().toKModifier()?.let { addModifiers(it) }
             addModifiers(property.modifiers.mapNotNull { it.toKModifier() })
+            addAnnotations(
+              property.annotations
+                .map { it.toAnnotationSpec() }.asIterable()
+            )
           }
           .build()
       )

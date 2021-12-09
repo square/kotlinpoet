@@ -42,14 +42,42 @@ class TestProcessorTest {
         """
            package test
 
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+           import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
            typealias TypeAliasName = String
            typealias GenericTypeAlias = List<String>
            typealias ParameterizedTypeAlias<T> = List<T>
 
+           @ComprehensiveAnnotation<String>(
+             true, // Omit the name intentionally here to test names are still picked up
+             booleanArray = [true],
+             byte = 0.toByte(),
+             byteArray = [0.toByte()],
+             short = 0.toShort(),
+             shortArray = [0.toShort()],
+             int = 0,
+             intArray = [0],
+             long = 0L,
+             longArray = [0L],
+             float = 0f,
+             floatArray = [0f],
+             double = 0.0,
+             doubleArray = [0.0],
+             string = "Hello",
+             stringArray = ["Hello"],
+             someClass = String::class,
+             someClasses = [String::class, Int::class],
+             enumValue = AnnotationEnumValue.ONE,
+             enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
+             anotherAnnotation = AnotherAnnotation("Hello"),
+             anotherAnnotationArray = [AnotherAnnotation("Hello")]
+           )
            @ExampleAnnotation
            class SmokeTestClass<T, R : Any, E : Enum<E>> {
+             @field:AnotherAnnotation("siteTargeting")
              private val propA: String = ""
              internal val propB: String = ""
              val propC: Int = 0
@@ -117,6 +145,9 @@ class TestProcessorTest {
       """
       package test
 
+      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+      import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+      import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
       import kotlin.Any
       import kotlin.Array
       import kotlin.Boolean
@@ -133,7 +164,33 @@ class TestProcessorTest {
       import kotlin.collections.MutableList
       import kotlin.collections.Set
 
+      @ComprehensiveAnnotation<String>(
+        boolean = true,
+        booleanArray = arrayOf(true),
+        byte = 0.toByte(),
+        byteArray = arrayOf(0.toByte()),
+        short = 0.toShort(),
+        shortArray = arrayOf(0.toShort()),
+        int = 0,
+        intArray = arrayOf(0),
+        long = 0,
+        longArray = arrayOf(0),
+        float = 0.0f,
+        floatArray = arrayOf(0.0f),
+        double = 0.0,
+        doubleArray = arrayOf(0.0),
+        string = "Hello",
+        stringArray = arrayOf("Hello"),
+        someClass = String::class,
+        someClasses = arrayOf(String::class, Int::class),
+        enumValue = AnnotationEnumValue.ONE,
+        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+        anotherAnnotation = AnotherAnnotation(input = "Hello"),
+        anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+        defaultingString = "defaultValue"
+      )
       public class SmokeTestClass<T, R : Any, E : Enum<E>> {
+        @field:AnotherAnnotation(input = "siteTargeting")
         private val propA: String
 
         internal val propB: String
