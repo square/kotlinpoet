@@ -23,5 +23,5 @@ In `~/.gradle/gradle.properties`, set the following:
 
  * `ORG_GRADLE_PROJECT_mavenCentralUsername` - Sonatype username for releasing to `com.squareup`.
  * `ORG_GRADLE_PROJECT_mavenCentralPassword` - Sonatype password for releasing to `com.squareup`.
- 
- [sonatype]: https://oss.sonatype.org/ 
+
+ [sonatype]: https://s01.oss.sonatype.org/
