@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.vanniktech.maven.publish.MavenPublishPluginExtension
+import com.vanniktech.maven.publish.SonatypeHost.S01
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -62,6 +64,9 @@ subprojects {
           skipDeprecated.set(true)
         }
       }
+    }
+    configure<MavenPublishPluginExtension> {
+      sonatypeHost = S01
     }
   }
 
