@@ -16,8 +16,20 @@ theme:
   logo: 'images/icon-square.png'
   favicon: 'images/icon-square.png'
   palette:
-    primary: 'cyan'
-    accent: 'deep-purple'
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: 'cyan'
+      accent: 'deep-purple'
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: 'cyan'
+      accent: 'deep-purple'
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
 
 extra_css:
   - 'css/app.css'
