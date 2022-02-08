@@ -27,5 +27,3 @@ include(
     ":interop:ksp",
     ":interop:ksp:test-processor",
 )
-
-enableFeaturePreview("VERSION_CATALOGS")
