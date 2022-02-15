@@ -13,13 +13,15 @@ the need to write boilerplate while also keeping a single source of truth for th
 Here's a `HelloWorld` file:
 
 ```kotlin
-class Greeter(val name: String) {
-  fun greet() {
+public class Greeter(
+  public val name: String
+) {
+  public fun greet(): Unit {
     println("""Hello, $name""")
   }
 }
 
-fun main(vararg args: String) {
+public fun main(vararg args: String): Unit {
   Greeter(args[0]).greet()
 }
 ```
@@ -50,6 +52,8 @@ file.writeTo(System.out)
 ```
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].
+
+Note that KotlinPoet generates code which supports explicit API mode: https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors. Therefore, redundant `public` modifiers are always generated.
 
 ### Code & Control Flow
 
