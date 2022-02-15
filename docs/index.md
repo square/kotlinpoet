@@ -53,7 +53,7 @@ file.writeTo(System.out)
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].
 
-Note that KotlinPoet generates code which supports explicit API mode: https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors. Therefore, redundant `public` modifiers are always generated.
+Note that KotlinPoet generates code which supports [explicit API mode](https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors). Therefore, redundant `public` modifiers are always generated.
 
 ### Code & Control Flow
 
