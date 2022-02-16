@@ -51,6 +51,11 @@ file.writeTo(System.out)
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].
 
+**Note:** In order to maximize portability, KotlinPoet generates code with explicit visibility 
+modifiers. This ensures compatibility with both standard Kotlin projects as well as projects
+using [explicit API mode](https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors).
+Examples in this file omit those modifiers for brevity.
+
 ### Code & Control Flow
 
 Most of KotlinPoet's API uses immutable Kotlin objects. There's also builders, method chaining
