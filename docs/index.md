@@ -7,7 +7,6 @@ Source file generation can be useful when doing things such as annotation proces
 with metadata files (e.g., database schemas, protocol formats). By generating code, you eliminate
 the need to write boilerplate while also keeping a single source of truth for the metadata.
 
-
 ### Example
 
 Here's a `HelloWorld` file:
@@ -29,29 +28,39 @@ And this is the code to generate it with KotlinPoet:
 ```kotlin
 val greeterClass = ClassName("", "Greeter")
 val file = FileSpec.builder("", "HelloWorld")
-    .addType(TypeSpec.classBuilder("Greeter")
-        .primaryConstructor(FunSpec.constructorBuilder()
-            .addParameter("name", String::class)
-            .build())
-        .addProperty(PropertySpec.builder("name", String::class)
-            .initializer("name")
-            .build())
-        .addFunction(FunSpec.builder("greet")
-            .addStatement("println(%P)", "Hello, \$name")
-            .build())
-        .build())
-    .addFunction(FunSpec.builder("main")
-        .addParameter("args", String::class, VARARG)
-        .addStatement("%T(args[0]).greet()", greeterClass)
-        .build())
-    .build()
+  .addType(
+    TypeSpec.classBuilder("Greeter")
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("name", String::class)
+          .build()
+      )
+      .addProperty(
+        PropertySpec.builder("name", String::class)
+          .initializer("name")
+          .build()
+      )
+      .addFunction(
+        FunSpec.builder("greet")
+          .addStatement("println(%P)", "Hello, \$name")
+          .build()
+      )
+      .build()
+  )
+  .addFunction(
+    FunSpec.builder("main")
+      .addParameter("args", String::class, VARARG)
+      .addStatement("%T(args[0]).greet()", greeterClass)
+      .build()
+  )
+  .build()
 
 file.writeTo(System.out)
 ```
 
 The [KDoc][kdoc] catalogs the complete KotlinPoet API, which is inspired by [JavaPoet][javapoet].
 
-**Note:** In order to maximize portability, KotlinPoet generates code with explicit visibility 
+**Note:** In order to maximize portability, KotlinPoet generates code with explicit visibility
 modifiers. This ensures compatibility with both standard Kotlin projects as well as projects
 using [explicit API mode](https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors).
 Examples in this file omit those modifiers for brevity.
@@ -70,23 +79,23 @@ take advantage of Kotlin's multiline strings to make this look nice:
 
 ```kotlin
 val main = FunSpec.builder("main")
-    .addCode("""
-        |var total = 0
-        |for (i in 0 until 10) {
-        |    total += i
-        |}
-        |""".trimMargin())
-    .build()
+  .addCode("""
+    |var total = 0
+    |for (i in 0 until 10) {
+    |    total += i
+    |}
+    |""".trimMargin())
+  .build()
 ```
 
 Which generates this:
 
 ```kotlin
 fun main() {
-    var total = 0
-    for (i in 0 until 10) {
-        total += i
-    }
+  var total = 0
+  for (i in 0 until 10) {
+    total += i
+  }
 }
 ```
 
@@ -94,11 +103,11 @@ There are additional APIs to assist with newlines, braces and indentation:
 
 ```kotlin
 val main = FunSpec.builder("main")
-    .addStatement("var total = 0")
-    .beginControlFlow("for (i in 0 until 10)")
-    .addStatement("total += i")
-    .endControlFlow()
-    .build()
+  .addStatement("var total = 0")
+  .beginControlFlow("for (i in 0 until 10)")
+  .addStatement("total += i")
+  .endControlFlow()
+  .build()
 ```
 
 This example is lame because the generated code is constant! Suppose instead of just adding 0 to 10,
@@ -107,13 +116,13 @@ we want to make the operation and range configurable. Here's a method that gener
 ```kotlin
 private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec {
   return FunSpec.builder(name)
-      .returns(Int::class)
-      .addStatement("var result = 1")
-      .beginControlFlow("for (i in $from until $to)")
-      .addStatement("result = result $op i")
-      .endControlFlow()
-      .addStatement("return result")
-      .build()
+    .returns(Int::class)
+    .addStatement("var result = 1")
+    .beginControlFlow("for (i in $from until $to)")
+    .addStatement("result = result $op i")
+    .endControlFlow()
+    .addStatement("return result")
+    .build()
 }
 ```
 
@@ -121,11 +130,11 @@ And here's what we get when we call `computeRange("multiply10to20", 10, 20, "*")
 
 ```kotlin
 fun multiply10to20(): kotlin.Int {
-    var result = 1
-    for (i in 10 until 20) {
-        result = result * i
-    }
-    return result
+  var result = 1
+  for (i in 10 until 20) {
+    result = result * i
+  }
+  return result
 }
 ```
 
@@ -141,23 +150,23 @@ returns its own name:
 ```kotlin
 fun main(args: Array<String>) {
   val helloWorld = TypeSpec.classBuilder("HelloWorld")
-      .addFunction(whatsMyNameYo("slimShady"))
-      .addFunction(whatsMyNameYo("eminem"))
-      .addFunction(whatsMyNameYo("marshallMathers"))
-      .build()
+    .addFunction(whatsMyNameYo("slimShady"))
+    .addFunction(whatsMyNameYo("eminem"))
+    .addFunction(whatsMyNameYo("marshallMathers"))
+    .build()
 
   val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
-      .addType(helloWorld)
-      .build()
+    .addType(helloWorld)
+    .build()
 
   kotlinFile.writeTo(System.out)
 }
 
 private fun whatsMyNameYo(name: String): FunSpec {
   return FunSpec.builder(name)
-      .returns(String::class)
-      .addStatement("return %S", name)
-      .build()
+    .returns(String::class)
+    .addStatement("return %S", name)
+    .build()
 }
 ```
 
@@ -165,11 +174,11 @@ In this case, using `%S` gives us quotation marks:
 
 ```kotlin
 class HelloWorld {
-    fun slimShady(): String = "slimShady"
+  fun slimShady(): String = "slimShady"
 
-    fun eminem(): String = "eminem"
+  fun eminem(): String = "eminem"
 
-    fun marshallMathers(): String = "marshallMathers"
+  fun marshallMathers(): String = "marshallMathers"
 }
 ```
 
@@ -181,9 +190,9 @@ templates, which may fail to compile in generated code:
 ```kotlin
 val stringWithADollar = "Your total is " + "$" + "50"
 val funSpec = FunSpec.builder("printTotal")
-    .returns(String::class)
-    .addStatement("return %S", stringWithADollar)
-    .build()
+  .returns(String::class)
+  .addStatement("return %S", stringWithADollar)
+  .build()
 ```
 
 produces:
@@ -198,9 +207,9 @@ If you need to generate string templates, use `%P`, which doesn't escape dollars
 val amount = 50
 val stringWithADollar = "Your total is " + "$" + "amount"
 val funSpec = FunSpec.builder("printTotal")
-    .returns(String::class)
-    .addStatement("return %P", stringWithADollar)
-    .build()
+  .returns(String::class)
+  .addStatement("return %P", stringWithADollar)
+  .build()
 ```
 
 produces:
@@ -214,14 +223,16 @@ importable types or members inside the string template:
 
 ```kotlin
 val file = FileSpec.builder("com.example", "Digits")
-    .addFunction(FunSpec.builder("print")
-        .addParameter("digits", IntArray::class)
-        .addStatement("println(%P)", buildCodeBlock {
-          val contentToString = MemberName("kotlin.collections", "contentToString")
-          add("These are the digits: \${digits.%M()}", contentToString)
-        })
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("print")
+      .addParameter("digits", IntArray::class)
+      .addStatement("println(%P)", buildCodeBlock {
+        val contentToString = MemberName("kotlin.collections", "contentToString")
+        add("These are the digits: \${digits.%M()}", contentToString)
+      })
+      .build()
+  )
+  .build()
 println(file)
 ```
 
@@ -234,7 +245,7 @@ import kotlin.IntArray
 import kotlin.collections.contentToString
 
 fun print(digits: IntArray) {
-    println("""These are the digits: ${digits.contentToString()}""")
+  println("""These are the digits: ${digits.contentToString()}""")
 }
 ```
 
@@ -245,17 +256,17 @@ statements. Just use **`%T`** to reference **types**:
 
 ```kotlin
 val today = FunSpec.builder("today")
-    .returns(Date::class)
-    .addStatement("return %T()", Date::class)
-    .build()
+  .returns(Date::class)
+  .addStatement("return %T()", Date::class)
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addFunction(today)
-    .build()
+  .addFunction(today)
+  .build()
 
 val kotlinFile = FileSpec.builder("com.example.helloworld", "HelloWorld")
-    .addType(helloWorld)
-    .build()
+  .addType(helloWorld)
+  .build()
 
 kotlinFile.writeTo(System.out)
 ```
@@ -268,7 +279,7 @@ package com.example.helloworld
 import java.util.Date
 
 class HelloWorld {
-    fun today(): Date = Date()
+  fun today(): Date = Date()
 }
 ```
 
@@ -280,9 +291,9 @@ references a class that doesn't exist (yet):
 val hoverboard = ClassName("com.mattel", "Hoverboard")
 
 val tomorrow = FunSpec.builder("tomorrow")
-    .returns(hoverboard)
-    .addStatement("return %T()", hoverboard)
-    .build()
+  .returns(hoverboard)
+  .addStatement("return %T()", hoverboard)
+  .build()
 ```
 
 And that not-yet-existent class is imported as well:
@@ -293,7 +304,7 @@ package com.example.helloworld
 import com.mattel.Hoverboard
 
 class HelloWorld {
-    fun tomorrow(): Hoverboard = Hoverboard()
+  fun tomorrow(): Hoverboard = Hoverboard()
 }
 ```
 
@@ -316,18 +327,18 @@ val array = ClassName("kotlin", "Array")
 val producerArrayOfThings = array.parameterizedBy(WildcardTypeName.producerOf(thing))
 
 val beyond = FunSpec.builder("beyond")
-    .returns(listOfHoverboards)
-    .addStatement("val result = %T()", arrayListOfHoverboards)
-    .addStatement("result += %T()", hoverboard)
-    .addStatement("result += %T()", hoverboard)
-    .addStatement("result += %T()", hoverboard)
-    .addStatement("return result")
-    .build()
+  .returns(listOfHoverboards)
+  .addStatement("val result = %T()", arrayListOfHoverboards)
+  .addStatement("result += %T()", hoverboard)
+  .addStatement("result += %T()", hoverboard)
+  .addStatement("result += %T()", hoverboard)
+  .addStatement("return result")
+  .build()
 
 val printThings = FunSpec.builder("printThings")
-    .addParameter("things", producerArrayOfThings)
-    .addStatement("println(things)")
-    .build()
+  .addParameter("things", producerArrayOfThings)
+  .addStatement("println(things)")
+  .build()
 ```
 
 KotlinPoet will decompose each type and import its components where possible.
@@ -342,17 +353,17 @@ import kotlin.collections.ArrayList
 import kotlin.collections.List
 
 class HelloWorld {
-    fun beyond(): List<Hoverboard> {
-        val result = ArrayList<Hoverboard>()
-        result += Hoverboard()
-        result += Hoverboard()
-        result += Hoverboard()
-        return result
-    }
+  fun beyond(): List<Hoverboard> {
+    val result = ArrayList<Hoverboard>()
+    result += Hoverboard()
+    result += Hoverboard()
+    result += Hoverboard()
+    return result
+  }
 
-    fun printThings(things: Array<out Thing>) {
-        println(things)
-    }
+  fun printThings(things: Array<out Thing>) {
+    println(things)
+  }
 }
 ```
 
@@ -363,24 +374,24 @@ KotlinPoet supports nullable types. To convert a `TypeName` into its nullable co
 
 ```kotlin
 val java = PropertySpec.builder("java", String::class.asTypeName().copy(nullable = true))
-    .mutable()
-    .addModifiers(KModifier.PRIVATE)
-    .initializer("null")
-    .build()
+  .mutable()
+  .addModifiers(KModifier.PRIVATE)
+  .initializer("null")
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addProperty(java)
-    .addProperty("kotlin", String::class, KModifier.PRIVATE)
-    .build()
+  .addProperty(java)
+  .addProperty("kotlin", String::class, KModifier.PRIVATE)
+  .build()
 ```
 
 generates:
 
 ```kotlin
 class HelloWorld {
-    private var java: String? = null
+  private var java: String? = null
 
-    private val kotlin: String
+  private val kotlin: String
 }
 ```
 
@@ -395,11 +406,13 @@ placeholder, and KotlinPoet will handle imports automatically:
 val createTaco = MemberName("com.squareup.tacos", "createTaco")
 val isVegan = MemberName("com.squareup.tacos", "isVegan")
 val file = FileSpec.builder("com.squareup.example", "TacoTest")
-    .addFunction(FunSpec.builder("main")
-        .addStatement("val taco = %M()", createTaco)
-        .addStatement("println(taco.%M)", isVegan)
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("main")
+      .addStatement("val taco = %M()", createTaco)
+      .addStatement("println(taco.%M)", isVegan)
+      .build()
+  )
+  .build()
 println(file)
 ```
 
@@ -412,8 +425,8 @@ import com.squareup.tacos.createTaco
 import com.squareup.tacos.isVegan
 
 fun main() {
-    val taco = createTaco()
-    println(taco.isVegan)
+  val taco = createTaco()
+  println(taco.isVegan)
 }
 ```
 
@@ -429,15 +442,17 @@ val createCake = MemberName("com.squareup.cakes", "createCake")
 val isTacoVegan = MemberName("com.squareup.tacos", "isVegan")
 val isCakeVegan = MemberName("com.squareup.cakes", "isVegan")
 val file = FileSpec.builder("com.squareup.example", "Test")
-    .addAliasedImport(isTacoVegan, "isTacoVegan")
-    .addAliasedImport(isCakeVegan, "isCakeVegan")
-    .addFunction(FunSpec.builder("main")
-        .addStatement("val taco = %M()", createTaco)
-        .addStatement("val cake = %M()", createCake)
-        .addStatement("println(taco.%M)", isTacoVegan)
-        .addStatement("println(cake.%M)", isCakeVegan)
-        .build())
-    .build()
+  .addAliasedImport(isTacoVegan, "isTacoVegan")
+  .addAliasedImport(isCakeVegan, "isCakeVegan")
+  .addFunction(
+    FunSpec.builder("main")
+      .addStatement("val taco = %M()", createTaco)
+      .addStatement("val cake = %M()", createCake)
+      .addStatement("println(taco.%M)", isTacoVegan)
+      .addStatement("println(cake.%M)", isCakeVegan)
+      .build()
+  )
+  .build()
 println(file)
 ```
 
@@ -452,17 +467,17 @@ import com.squareup.cakes.isVegan as isCakeVegan
 import com.squareup.tacos.isVegan as isTacoVegan
 
 fun main() {
-    val taco = createTaco()
-    val cake = createCake()
-    println(taco.isTacoVegan)
-    println(cake.isCakeVegan)
+  val taco = createTaco()
+  val cake = createCake()
+  println(taco.isTacoVegan)
+  println(cake.isCakeVegan)
 }
 ```
 
 #### MemberName and operators
 
-MemberName also supports operators, you can use `MemberName(String, KOperator)` or `MemberName(ClassName, KOperator)`
-to import and reference operators.
+MemberName also supports operators, you can use `MemberName(String, KOperator)`
+or `MemberName(ClassName, KOperator)` to import and reference operators.
 
 ```kotlin
 val taco = ClassName("com.squareup.tacos", "Taco")
@@ -470,14 +485,16 @@ val meat = ClassName("com.squareup.tacos.ingredient", "Meat")
 val iterator = MemberName("com.squareup.tacos.internal", KOperator.ITERATOR)
 val minusAssign = MemberName("com.squareup.tacos.internal", KOperator.MINUS_ASSIGN)
 val file = FileSpec.builder("com.example", "Test")
-    .addFunction(FunSpec.builder("makeTacoHealthy")
-        .addParameter("taco", taco)
-        .beginControlFlow("for (ingredient %M taco)", iterator)
-        .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
-        .endControlFlow()
-        .addStatement("return taco")
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("makeTacoHealthy")
+      .addParameter("taco", taco)
+      .beginControlFlow("for (ingredient %M taco)", iterator)
+      .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
+      .endControlFlow()
+      .addStatement("return taco")
+      .build()
+  )
+  .build()
 println(file)
 ```
 
@@ -523,19 +540,19 @@ method using `%N`:
 
 ```kotlin
 val hexDigit = FunSpec.builder("hexDigit")
-    .addParameter("i", Int::class)
-    .returns(Char::class)
-    .addStatement("return (if (i < 10) i + '0'.toInt() else i - 10 + 'a'.toInt()).toChar()")
-    .build()
+  .addParameter("i", Int::class)
+  .returns(Char::class)
+  .addStatement("return (if (i < 10) i + '0'.toInt() else i - 10 + 'a'.toInt()).toChar()")
+  .build()
 
 val byteToHex = FunSpec.builder("byteToHex")
-    .addParameter("b", Int::class)
-    .returns(String::class)
-    .addStatement("val result = CharArray(2)")
-    .addStatement("result[0] = %N((b ushr 4) and 0xf)", hexDigit)
-    .addStatement("result[1] = %N(b and 0xf)", hexDigit)
-    .addStatement("return String(result)")
-    .build()
+  .addParameter("b", Int::class)
+  .returns(String::class)
+  .addStatement("val result = CharArray(2)")
+  .addStatement("result[0] = %N((b ushr 4) and 0xf)", hexDigit)
+  .addStatement("result[1] = %N(b and 0xf)", hexDigit)
+  .addStatement("return String(result)")
+  .build()
 ```
 
 Another handy feature that `%N` provides is automatically escaping names that contain illegal
@@ -546,12 +563,14 @@ keyword as the simple name:
 val taco = ClassName("com.squareup.tacos", "Taco")
 val packager = ClassName("com.squareup.tacos", "TacoPackager")
 val file = FileSpec.builder("com.example", "Test")
-    .addFunction(FunSpec.builder("packageTacos")
-        .addParameter("tacos", LIST.parameterizedBy(taco))
-        .addParameter("packager", packager)
-        .addStatement("packager.%N(tacos)", packager.member("package"))
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("packageTacos")
+      .addParameter("tacos", LIST.parameterizedBy(taco))
+      .addParameter("packager", packager)
+      .addStatement("packager.%N(tacos)", packager.member("package"))
+      .build()
+  )
+  .build()
 ```
 
 `%N` will escape the name for you, ensuring that the output will pass compilation:
@@ -578,13 +597,13 @@ works just like `Formatter`'s `%s`:
 ```kotlin
 private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec {
   return FunSpec.builder(name)
-      .returns(Int::class)
-      .addStatement("var result = 0")
-      .beginControlFlow("for (i in %L until %L)", from, to)
-      .addStatement("result = result %L i", op)
-      .endControlFlow()
-      .addStatement("return result")
-      .build()
+    .returns(Int::class)
+    .addStatement("var result = 0")
+    .beginControlFlow("for (i in %L until %L)", from, to)
+    .addStatement("result = result %L i", op)
+    .endControlFlow()
+    .addStatement("return result")
+    .build()
 }
 ```
 
@@ -608,7 +627,7 @@ CodeBlock.builder().add("I ate %L %L", 3, "tacos")
 #### Positional Arguments
 
 Place an integer index (1-based) before the placeholder in the format string to specify which
- argument to use.
+argument to use.
 
 ```kotlin
 CodeBlock.builder().add("I ate %2L %1L", "tacos", 3)
@@ -634,20 +653,20 @@ body. This is only legal if it is enclosed by an abstract class or an interface.
 
 ```kotlin
 val flux = FunSpec.builder("flux")
-    .addModifiers(KModifier.ABSTRACT, KModifier.PROTECTED)
-    .build()
+  .addModifiers(KModifier.ABSTRACT, KModifier.PROTECTED)
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addModifiers(KModifier.ABSTRACT)
-    .addFunction(flux)
-    .build()
+  .addModifiers(KModifier.ABSTRACT)
+  .addFunction(flux)
+  .build()
 ```
 
 Which generates this:
 
 ```kotlin
 abstract class HelloWorld {
-    protected abstract fun flux()
+  protected abstract fun flux()
 }
 ```
 
@@ -662,11 +681,11 @@ Extension functions can be generated by specifying a `receiver`.
 
 ```kotlin
 val square = FunSpec.builder("square")
-    .receiver(Int::class)
-    .returns(Int::class)
-    .addStatement("var s = this * this")
-    .addStatement("return s")
-    .build()
+  .receiver(Int::class)
+  .returns(Int::class)
+  .addStatement("var s = this * this")
+  .addStatement("return s")
+  .build()
 ```
 
 Which outputs:
@@ -685,10 +704,10 @@ each function with a body that starts with `return` as a single-expression funct
 
 ```kotlin
 val abs = FunSpec.builder("abs")
-    .addParameter("x", Int::class)
-    .returns(Int::class)
-    .addStatement("return if (x < 0) -x else x")
-    .build()
+  .addParameter("x", Int::class)
+  .returns(Int::class)
+  .addStatement("return if (x < 0) -x else x")
+  .build()
 ```
 
 Which outputs:
@@ -704,7 +723,7 @@ Function argument `b` has a default value of 0 to avoid overloading this functio
 
 ```kotlin
 fun add(a: Int, b: Int = 0) {
-  print("a + b = ${ a + b }")
+  print("a + b = ${a + b}")
 }
 ```
 
@@ -712,12 +731,14 @@ Use the `defaultValue()` builder function to declare default value for a functio
 
 ```kotlin
 FunSpec.builder("add")
-    .addParameter("a", Int::class)
-    .addParameter(ParameterSpec.builder("b", Int::class)
-        .defaultValue("%L", 0)
-        .build())
-    .addStatement("print(\"a + b = ${ a + b }\")")
-    .build()
+  .addParameter("a", Int::class)
+  .addParameter(
+    ParameterSpec.builder("b", Int::class)
+      .defaultValue("%L", 0)
+      .build()
+  )
+  .addStatement("print(\"a + b = ${a + b}\")")
+  .build()
 ```
 
 #### Spaces wrap by default!
@@ -728,8 +749,8 @@ function for example:
 
 ```kotlin
 val funSpec = FunSpec.builder("foo")
-    .addStatement("return (100..10000).map { number -> number * number }.map { number -> number.toString() }.also { string -> println(string) }")
-    .build()
+  .addStatement("return (100..10000).map { number -> number * number }.map { number -> number.toString() }.also { string -> println(string) }")
+  .build()
 ```
 
 Depending on where it's found in the file, it may end up being printed out like this:
@@ -746,14 +767,15 @@ otherwise use a space. Let's apply this to our example:
 
 ```kotlin
 val funSpec = FunSpec.builder("foo")
-    .addStatement("return (100..10000).map·{ number -> number * number }.map·{ number -> number.toString() }.also·{ string -> println(string) }")
-    .build()
+  .addStatement("return (100..10000).map·{ number -> number * number }.map·{ number -> number.toString() }.also·{ string -> println(string) }")
+  .build()
 ```
 
 This will now produce the following result:
 
 ```kotlin
-fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString()
+fun foo() = (100..10000).map { number -> number * number }.map { number ->
+  number.toString()
 }.also { string -> println(string) }
 ```
 
@@ -766,25 +788,25 @@ replacing other spaces in the code block with `·` symbols to achieve better for
 
 ```kotlin
 val flux = FunSpec.constructorBuilder()
-    .addParameter("greeting", String::class)
-    .addStatement("this.%N = %N", "greeting", "greeting")
-    .build()
+  .addParameter("greeting", String::class)
+  .addStatement("this.%N = %N", "greeting", "greeting")
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addProperty("greeting", String::class, KModifier.PRIVATE)
-    .addFunction(flux)
-    .build()
+  .addProperty("greeting", String::class, KModifier.PRIVATE)
+  .addFunction(flux)
+  .build()
 ```
 
 Which generates this:
 
 ```kotlin
 class HelloWorld {
-    private val greeting: String
+  private val greeting: String
 
-    constructor(greeting: String) {
-        this.greeting = greeting
-    }
+  constructor(greeting: String) {
+    this.greeting = greeting
+  }
 }
 ```
 
@@ -795,19 +817,20 @@ Often times you'll need to generate the primary constructor for a class:
 
 ```kotlin
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .primaryConstructor(flux)
-    .addProperty("greeting", String::class, KModifier.PRIVATE)
-    .build()
+  .primaryConstructor(flux)
+  .addProperty("greeting", String::class, KModifier.PRIVATE)
+  .build()
 ```
 
 This code, however, generates the following:
 
 ```kotlin
 class HelloWorld(greeting: String) {
-    private val greeting: String
-    init {
-        this.greeting = greeting
-    }
+  private val greeting: String
+
+  init {
+    this.greeting = greeting
+  }
 }
 ```
 
@@ -817,16 +840,18 @@ via the constructor parameter:
 
 ```kotlin
 val flux = FunSpec.constructorBuilder()
-    .addParameter("greeting", String::class)
-    .build()
+  .addParameter("greeting", String::class)
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .primaryConstructor(flux)
-    .addProperty(PropertySpec.builder("greeting", String::class)
-        .initializer("greeting")
-        .addModifiers(KModifier.PRIVATE)
-        .build())
-    .build()
+  .primaryConstructor(flux)
+  .addProperty(
+    PropertySpec.builder("greeting", String::class)
+      .initializer("greeting")
+      .addModifiers(KModifier.PRIVATE)
+      .build()
+  )
+  .build()
 ```
 
 Now we're getting the following output:
@@ -844,13 +869,13 @@ Declare parameters on methods and constructors with either `ParameterSpec.builde
 
 ```kotlin
 val android = ParameterSpec.builder("android", String::class)
-    .defaultValue("\"pie\"")
-    .build()
+  .defaultValue("\"pie\"")
+  .build()
 
 val welcomeOverlords = FunSpec.builder("welcomeOverlords")
-    .addParameter(android)
-    .addParameter("robot", String::class)
-    .build()
+  .addParameter(android)
+  .addParameter("robot", String::class)
+  .build()
 ```
 
 The code above generates:
@@ -864,26 +889,27 @@ The extended `Builder` form is necessary when the parameter has annotations (suc
 
 ### Properties
 
-Like parameters, properties can be created either with builders or by using convenient helper methods:
+Like parameters, properties can be created either with builders or by using convenient helper
+methods:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .addModifiers(KModifier.PRIVATE)
-    .build()
+  .addModifiers(KModifier.PRIVATE)
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addProperty(android)
-    .addProperty("robot", String::class, KModifier.PRIVATE)
-    .build()
+  .addProperty(android)
+  .addProperty("robot", String::class, KModifier.PRIVATE)
+  .build()
 ```
 
 Which generates:
 
 ```kotlin
 class HelloWorld {
-    private val android: String
+  private val android: String
 
-    private val robot: String
+  private val robot: String
 }
 ```
 
@@ -893,9 +919,9 @@ blocks above:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .addModifiers(KModifier.PRIVATE)
-    .initializer("%S + %L", "Oreo v.", 8.1)
-    .build()
+  .addModifiers(KModifier.PRIVATE)
+  .initializer("%S + %L", "Oreo v.", 8.1)
+  .build()
 ```
 
 Which generates:
@@ -909,10 +935,10 @@ By default `PropertySpec.Builder` produces `val` properties. Use `mutable()` if 
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .mutable()
-    .addModifiers(KModifier.PRIVATE)
-    .initializer("%S + %L", "Oreo v.", 8.1)
-    .build()
+  .mutable()
+  .addModifiers(KModifier.PRIVATE)
+  .initializer("%S + %L", "Oreo v.", 8.1)
+  .build()
 ```
 
 #### Inline properties
@@ -921,8 +947,8 @@ The way KotlinPoet models inline properties deserves special mention. The follow
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .addModifiers(KModifier.INLINE)
-    .build()
+  .addModifiers(KModifier.INLINE)
+  .build()
 ```
 
 will produce an error:
@@ -937,18 +963,20 @@ the compiler. Let's add a getter to this property:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .getter(FunSpec.getterBuilder()
-        .addModifiers(KModifier.INLINE)
-        .addStatement("return %S", "foo")
-        .build())
-    .build()
+  .getter(
+    FunSpec.getterBuilder()
+      .addModifiers(KModifier.INLINE)
+      .addStatement("return %S", "foo")
+      .build()
+  )
+  .build()
 ```
 
 The result is the following:
 
 ```kotlin
 val android: kotlin.String
-    inline get() = "foo"
+  inline get() = "foo"
 ```
 
 Now, what if we wanted to add a non-inline setter to the property above? We can do so without
@@ -956,23 +984,27 @@ modifying any of the code we wrote previously:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
-    .getter(FunSpec.getterBuilder()
-        .addModifiers(KModifier.INLINE)
-        .addStatement("return %S", "foo")
-        .build())
-    .setter(FunSpec.setterBuilder()
-        .addParameter("value", String::class)
-        .build())
-    .build()
+  .getter(
+    FunSpec.getterBuilder()
+      .addModifiers(KModifier.INLINE)
+      .addStatement("return %S", "foo")
+      .build()
+  )
+  .setter(
+    FunSpec.setterBuilder()
+      .addParameter("value", String::class)
+      .build()
+  )
+  .build()
 ```
 
 We get the expected result:
 
 ```kotlin
 val android: kotlin.String
-    inline get() = "foo"
-    set(value) {
-    }
+  inline get() = "foo"
+  set(value) {
+  }
 ```
 
 Finally, if we go back and add `KModifier.INLINE` to the setter, KotlinPoet can wrap it nicely and
@@ -980,9 +1012,9 @@ produce the following result:
 
 ```kotlin
 inline val android: kotlin.String
-    get() = "foo"
-    set(value) {
-    }
+  get() = "foo"
+  set(value) {
+  }
 ```
 
 Removing the modifier from either the getter or the setter will unwrap the expression back.
@@ -999,11 +1031,13 @@ The modifier is necessary when defining the interface:
 
 ```kotlin
 val helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
-    .addProperty("buzz", String::class)
-    .addFunction(FunSpec.builder("beep")
-        .addModifiers(KModifier.ABSTRACT)
-        .build())
-    .build()
+  .addProperty("buzz", String::class)
+  .addFunction(
+    FunSpec.builder("beep")
+      .addModifiers(KModifier.ABSTRACT)
+      .build()
+  )
+  .build()
 ```
 
 But these modifiers are omitted when the code is generated. These are the default so we don't need
@@ -1011,9 +1045,9 @@ to include them for `kotlinc`'s benefit!
 
 ```kotlin
 interface HelloWorld {
-    val buzz: String
+  val buzz: String
 
-    fun beep()
+  fun beep()
 }
 ```
 
@@ -1022,10 +1056,12 @@ KotlinPoet, use `TypeSpec.funInterfaceBuilder()`.
 
 ```kotlin
 val helloWorld = TypeSpec.funInterfaceBuilder("HelloWorld")
-    .addFunction(FunSpec.builder("beep")
-        .addModifiers(KModifier.ABSTRACT)
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("beep")
+      .addModifiers(KModifier.ABSTRACT)
+      .build()
+  )
+  .build()
 
 // Generates...
 fun interface HelloWorld {
@@ -1039,30 +1075,38 @@ KotlinPoet supports objects:
 
 ```kotlin
 val helloWorld = TypeSpec.objectBuilder("HelloWorld")
-    .addProperty(PropertySpec.builder("buzz", String::class)
-        .initializer("%S", "buzz")
-        .build())
-    .addFunction(FunSpec.builder("beep")
-        .addStatement("println(%S)", "Beep!")
-        .build())
-    .build()
+  .addProperty(
+    PropertySpec.builder("buzz", String::class)
+      .initializer("%S", "buzz")
+      .build()
+  )
+  .addFunction(
+    FunSpec.builder("beep")
+      .addStatement("println(%S)", "Beep!")
+      .build()
+  )
+  .build()
 ```
 
 Similarly, you can create companion objects and add them to classes using `addType()`:
 
 ```kotlin
 val companion = TypeSpec.companionObjectBuilder()
-    .addProperty(PropertySpec.builder("buzz", String::class)
-        .initializer("%S", "buzz")
-        .build())
-    .addFunction(FunSpec.builder("beep")
-        .addStatement("println(%S)", "Beep!")
-        .build())
-    .build()
+  .addProperty(
+    PropertySpec.builder("buzz", String::class)
+      .initializer("%S", "buzz")
+      .build()
+  )
+  .addFunction(
+    FunSpec.builder("beep")
+      .addStatement("println(%S)", "Beep!")
+      .build()
+  )
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addType(companion)
-    .build()
+  .addType(companion)
+  .build()
 ```
 
 You can provide an optional name for a companion object.
@@ -1073,21 +1117,21 @@ Use `enumBuilder` to create the enum type, and `addEnumConstant()` for each valu
 
 ```kotlin
 val helloWorld = TypeSpec.enumBuilder("Roshambo")
-    .addEnumConstant("ROCK")
-    .addEnumConstant("SCISSORS")
-    .addEnumConstant("PAPER")
-    .build()
+  .addEnumConstant("ROCK")
+  .addEnumConstant("SCISSORS")
+  .addEnumConstant("PAPER")
+  .build()
 ```
 
 To generate this:
 
 ```kotlin
 enum class Roshambo {
-    ROCK,
+  ROCK,
 
-    SCISSORS,
+  SCISSORS,
 
-    PAPER
+  PAPER
 }
 ```
 
@@ -1096,40 +1140,52 @@ Here's a comprehensive example:
 
 ```kotlin
 val helloWorld = TypeSpec.enumBuilder("Roshambo")
-    .primaryConstructor(FunSpec.constructorBuilder()
-        .addParameter("handsign", String::class)
-        .build())
-    .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder()
-        .addSuperclassConstructorParameter("%S", "fist")
-        .addFunction(FunSpec.builder("toString")
-            .addModifiers(KModifier.OVERRIDE)
-            .addStatement("return %S", "avalanche!")
-            .returns(String::class)
-            .build())
-        .build())
-    .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder()
-        .addSuperclassConstructorParameter("%S", "peace")
-        .build())
-    .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder()
-        .addSuperclassConstructorParameter("%S", "flat")
-        .build())
-    .addProperty(PropertySpec.builder("handsign", String::class, KModifier.PRIVATE)
-        .initializer("handsign")
-        .build())
-    .build()
+  .primaryConstructor(
+    FunSpec.constructorBuilder()
+      .addParameter("handsign", String::class)
+      .build()
+  )
+  .addEnumConstant(
+    "ROCK", TypeSpec.anonymousClassBuilder()
+      .addSuperclassConstructorParameter("%S", "fist")
+      .addFunction(
+        FunSpec.builder("toString")
+          .addModifiers(KModifier.OVERRIDE)
+          .addStatement("return %S", "avalanche!")
+          .returns(String::class)
+          .build()
+      )
+      .build()
+  )
+  .addEnumConstant(
+    "SCISSORS", TypeSpec.anonymousClassBuilder()
+      .addSuperclassConstructorParameter("%S", "peace")
+      .build()
+  )
+  .addEnumConstant(
+    "PAPER", TypeSpec.anonymousClassBuilder()
+      .addSuperclassConstructorParameter("%S", "flat")
+      .build()
+  )
+  .addProperty(
+    PropertySpec.builder("handsign", String::class, KModifier.PRIVATE)
+      .initializer("handsign")
+      .build()
+  )
+  .build()
 ```
 
 Which generates this:
 
 ```kotlin
 enum class Roshambo(private val handsign: String) {
-    ROCK("fist") {
-        override fun toString(): String = "avalanche!"
-    },
+  ROCK("fist") {
+    override fun toString(): String = "avalanche!"
+  },
 
-    SCISSORS("peace"),
+  SCISSORS("peace"),
 
-    PAPER("flat");
+  PAPER("flat");
 }
 ```
 
@@ -1140,22 +1196,26 @@ used in code blocks. They are values that can be referenced with `%L`:
 
 ```kotlin
 val comparator = TypeSpec.anonymousClassBuilder()
-    .addSuperinterface(Comparator::class.parameterizedBy(String::class))
-    .addFunction(FunSpec.builder("compare")
-        .addModifiers(KModifier.OVERRIDE)
-        .addParameter("a", String::class)
-        .addParameter("b", String::class)
-        .returns(Int::class)
-        .addStatement("return %N.length - %N.length", "a", "b")
-        .build())
-    .build()
+  .addSuperinterface(Comparator::class.parameterizedBy(String::class))
+  .addFunction(
+    FunSpec.builder("compare")
+      .addModifiers(KModifier.OVERRIDE)
+      .addParameter("a", String::class)
+      .addParameter("b", String::class)
+      .returns(Int::class)
+      .addStatement("return %N.length - %N.length", "a", "b")
+      .build()
+  )
+  .build()
 
 val helloWorld = TypeSpec.classBuilder("HelloWorld")
-    .addFunction(FunSpec.builder("sortByLength")
-        .addParameter("strings", List::class.parameterizedBy(String::class))
-        .addStatement("%N.sortedWith(%L)", "strings", comparator)
-        .build())
-    .build()
+  .addFunction(
+    FunSpec.builder("sortByLength")
+      .addParameter("strings", List::class.parameterizedBy(String::class))
+      .addStatement("%N.sortedWith(%L)", "strings", comparator)
+      .build()
+  )
+  .build()
 ```
 
 This generates a method that contains a class that contains a method:
@@ -1179,9 +1239,9 @@ Simple annotations are easy:
 
 ```kotlin
 val test = FunSpec.builder("test string equality")
-    .addAnnotation(Test::class)
-    .addStatement("assertThat(%1S).isEqualTo(%1S)", "foo")
-    .build()
+  .addAnnotation(Test::class)
+  .addStatement("assertThat(%1S).isEqualTo(%1S)", "foo")
+  .build()
 ```
 
 Which generates this function with an `@Test` annotation:
@@ -1189,7 +1249,7 @@ Which generates this function with an `@Test` annotation:
 ```kotlin
 @Test
 fun `test string equality`() {
-    assertThat("foo").isEqualTo("foo")
+  assertThat("foo").isEqualTo("foo")
 }
 ```
 
@@ -1197,22 +1257,24 @@ Use `AnnotationSpec.builder()` to set properties on annotations:
 
 ```kotlin
 val logRecord = FunSpec.builder("recordEvent")
-    .addModifiers(KModifier.ABSTRACT)
-    .addAnnotation(AnnotationSpec.builder(Headers::class)
-        .addMember("accept = %S", "application/json; charset=utf-8")
-        .addMember("userAgent = %S", "Square Cash")
-        .build())
-    .addParameter("logRecord", LogRecord::class)
-    .returns(LogReceipt::class)
-    .build()
+  .addModifiers(KModifier.ABSTRACT)
+  .addAnnotation(
+    AnnotationSpec.builder(Headers::class)
+      .addMember("accept = %S", "application/json; charset=utf-8")
+      .addMember("userAgent = %S", "Square Cash")
+      .build()
+  )
+  .addParameter("logRecord", LogRecord::class)
+  .returns(LogReceipt::class)
+  .build()
 ```
 
 Which generates this annotation with `accept` and `userAgent` properties:
 
 ```kotlin
 @Headers(
-        accept = "application/json; charset=utf-8",
-        userAgent = "Square Cash"
+  accept = "application/json; charset=utf-8",
+  userAgent = "Square Cash"
 )
 abstract fun recordEvent(logRecord: LogRecord): LogReceipt
 ```
@@ -1224,31 +1286,36 @@ annotations:
 val headerList = ClassName("", "HeaderList")
 val header = ClassName("", "Header")
 val logRecord = FunSpec.builder("recordEvent")
-    .addModifiers(KModifier.ABSTRACT)
-    .addAnnotation(AnnotationSpec.builder(headerList)
-        .addMember(
-            "[\n⇥%L,\n%L⇤\n]",
-            AnnotationSpec.builder(header)
-                .addMember("name = %S", "Accept")
-                .addMember("value = %S", "application/json; charset=utf-8")
-                .build(),
-            AnnotationSpec.builder(header)
-                .addMember("name = %S", "User-Agent")
-                .addMember("value = %S", "Square Cash")
-                .build())
-        .build())
-    .addParameter("logRecord", logRecordName)
-    .returns(logReceipt)
-    .build()
+  .addModifiers(KModifier.ABSTRACT)
+  .addAnnotation(
+    AnnotationSpec.builder(headerList)
+      .addMember(
+        "[\n⇥%L,\n%L⇤\n]",
+        AnnotationSpec.builder(header)
+          .addMember("name = %S", "Accept")
+          .addMember("value = %S", "application/json; charset=utf-8")
+          .build(),
+        AnnotationSpec.builder(header)
+          .addMember("name = %S", "User-Agent")
+          .addMember("value = %S", "Square Cash")
+          .build()
+      )
+      .build()
+  )
+  .addParameter("logRecord", logRecordName)
+  .returns(logReceipt)
+  .build()
 ```
 
 Which generates this:
 
 ```kotlin
-@HeaderList([
+@HeaderList(
+  [
     Header(name = "Accept", value = "application/json; charset=utf-8"),
     Header(name = "User-Agent", value = "Square Cash")
-])
+  ]
+)
 abstract fun recordEvent(logRecord: LogRecord): LogReceipt
 ```
 
@@ -1256,15 +1323,19 @@ KotlinPoet supports use-site targets for annotations:
 
 ```kotlin
 val utils = FileSpec.builder("com.example", "Utils")
-    .addAnnotation(AnnotationSpec.builder(JvmName::class)
-        .useSiteTarget(UseSiteTarget.FILE)
-        .build())
-    .addFunction(FunSpec.builder("abs")
-        .receiver(Int::class)
-        .returns(Int::class)
-        .addStatement("return if (this < 0) -this else this")
-        .build())
-    .build()
+  .addAnnotation(
+    AnnotationSpec.builder(JvmName::class)
+      .useSiteTarget(UseSiteTarget.FILE)
+      .build()
+  )
+  .addFunction(
+    FunSpec.builder("abs")
+      .receiver(Int::class)
+      .returns(Int::class)
+      .addStatement("return if (this < 0) -this else this")
+      .build()
+  )
+  .build()
 ```
 
 Will output this:
@@ -1290,19 +1361,25 @@ val k = TypeVariableName("K")
 val t = TypeVariableName("T")
 
 val fileTable = Map::class.asClassName()
-    .parameterizedBy(k, Set::class.parameterizedBy(File::class))
+  .parameterizedBy(k, Set::class.parameterizedBy(File::class))
 
-val predicate = LambdaTypeName.get(parameters = arrayOf(t),
-    returnType = Boolean::class.asClassName())
+val predicate = LambdaTypeName.get(
+  parameters = arrayOf(t),
+  returnType = Boolean::class.asClassName()
+)
 val helloWorld = FileSpec.builder("com.example", "HelloWorld")
-    .addTypeAlias(TypeAliasSpec.builder("Word", String::class).build())
-    .addTypeAlias(TypeAliasSpec.builder("FileTable", fileTable)
-        .addTypeVariable(k)
-        .build())
-    .addTypeAlias(TypeAliasSpec.builder("Predicate", predicate)
-        .addTypeVariable(t)
-        .build())
-    .build()
+  .addTypeAlias(TypeAliasSpec.builder("Word", String::class).build())
+  .addTypeAlias(
+    TypeAliasSpec.builder("FileTable", fileTable)
+      .addTypeVariable(k)
+      .build()
+  )
+  .addTypeAlias(
+    TypeAliasSpec.builder("Predicate", predicate)
+      .addTypeVariable(t)
+      .build()
+  )
+  .build()
 ```
 
 Which generates the following:
@@ -1339,14 +1416,14 @@ val worldFunction: MemberName = helloClass.member("world")
 val byeProperty: MemberName = helloClass.nestedClass("World").member("bye")
 
 val factoriesFun = FunSpec.builder("factories")
-    .addStatement("val hello = %L", helloClass.constructorReference())
-    .addStatement("val world = %L", worldFunction.reference())
-    .addStatement("val bye = %L", byeProperty.reference())
-    .build()
+  .addStatement("val hello = %L", helloClass.constructorReference())
+  .addStatement("val world = %L", worldFunction.reference())
+  .addStatement("val bye = %L", byeProperty.reference())
+  .build()
 
 FileSpec.builder("com.example", "HelloWorld")
-    .addFunction(factoriesFun)
-    .build()
+  .addFunction(factoriesFun)
+  .build()
 ```
 
 would generate:
@@ -1369,9 +1446,19 @@ Top-level classes and members with conflicting names may require aliased imports
 kotlin-reflect
 --------
 
-To generate source code from any [`KType`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-type/), including information that's not accessible to the builtin reflection APIs, KotlinPoet depends on [kotlin-reflect](https://kotlinlang.org/docs/reflection.html#jvm-dependency). `kotlin-reflect` can read the metadata of your classes and access this extra information. KotlinPoet can for an example, read the type parameters and their [variance](https://kotlinlang.org/docs/generics.html#variance) from a generic `KType` and generate appropriate source code.
+To generate source code from
+any [`KType`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-type/), including
+information that's not accessible to the builtin reflection APIs, KotlinPoet depends
+on [kotlin-reflect](https://kotlinlang.org/docs/reflection.html#jvm-dependency). `kotlin-reflect`
+can read the metadata of your classes and access this extra information. KotlinPoet can for an
+example, read the type parameters and
+their [variance](https://kotlinlang.org/docs/generics.html#variance) from a generic `KType` and
+generate appropriate source code.
 
-`kotlin-reflect` is a relatively big dependency though and in some cases it is desirable to remove it from the final executable to save some space and/or simplify the proguard/R8 setup (for example for a Gradle plugin that generates Kotlin code). It is possible to do so and still use most of the KotlinPoet APIs:
+`kotlin-reflect` is a relatively big dependency though and in some cases it is desirable to remove
+it from the final executable to save some space and/or simplify the proguard/R8 setup (for example
+for a Gradle plugin that generates Kotlin code). It is possible to do so and still use most of the
+KotlinPoet APIs:
 
 ```kotlin
 dependencies {
@@ -1381,9 +1468,14 @@ dependencies {
 }
 ```
 
-The main APIs that require `kotlin-reflect` are [`KType.asTypeName()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/as-type-name.html) and [`typeNameOf<T>()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/type-name-of.html). If you're calling one of these without `kotlin-reflect` in the classpath and the type is generic or has annotations you will get a crash.
+The main APIs that require `kotlin-reflect`
+are [`KType.asTypeName()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/as-type-name.html)
+and [`typeNameOf<T>()`](https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/type-name-of.html).
+If you're calling one of these without `kotlin-reflect` in the classpath and the type is generic
+or has annotations you will get a crash.
 
-You can replace it with code that passes type parameters or annotations explicitly and doesn't need `kotlin-reflect`. For example:
+You can replace it with code that passes type parameters or annotations explicitly and doesn't
+need `kotlin-reflect`. For example:
 
 ```kotlin
 // Replace
@@ -1392,7 +1484,8 @@ val typeName = typeNameOf<List<Int?>>()
 
 // With
 // kotlin-reflect not needed
-val typeName = List::class.asClassName().parameterizedBy(Int::class.asClassName().copy(nullable = true))
+val typeName =
+  List::class.asClassName().parameterizedBy(Int::class.asClassName().copy(nullable = true))
 ```
 
 Download
