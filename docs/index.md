@@ -947,6 +947,7 @@ The way KotlinPoet models inline properties deserves special mention. The follow
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
+  .mutable()
   .addModifiers(KModifier.INLINE)
   .build()
 ```
@@ -963,6 +964,7 @@ the compiler. Let's add a getter to this property:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
+  .mutable()
   .getter(
     FunSpec.getterBuilder()
       .addModifiers(KModifier.INLINE)
@@ -975,7 +977,7 @@ val android = PropertySpec.builder("android", String::class)
 The result is the following:
 
 ```kotlin
-val android: kotlin.String
+var android: kotlin.String
   inline get() = "foo"
 ```
 
@@ -984,6 +986,7 @@ modifying any of the code we wrote previously:
 
 ```kotlin
 val android = PropertySpec.builder("android", String::class)
+  .mutable()
   .getter(
     FunSpec.getterBuilder()
       .addModifiers(KModifier.INLINE)
@@ -1001,9 +1004,9 @@ val android = PropertySpec.builder("android", String::class)
 We get the expected result:
 
 ```kotlin
-val android: kotlin.String
+var android: kotlin.String
   inline get() = "foo"
-  set(value) {
+  set(`value`) {
   }
 ```
 
@@ -1011,9 +1014,9 @@ Finally, if we go back and add `KModifier.INLINE` to the setter, KotlinPoet can 
 produce the following result:
 
 ```kotlin
-inline val android: kotlin.String
+inline var android: kotlin.String
   get() = "foo"
-  set(value) {
+  set(`value`) {
   }
 ```
 
