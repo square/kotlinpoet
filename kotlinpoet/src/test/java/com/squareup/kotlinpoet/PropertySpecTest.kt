@@ -69,7 +69,7 @@ class PropertySpecTest {
     }.hasMessageThat().isEqualTo("parameterless setter cannot have code")
   }
 
-  @Test fun inlineSingleAccessor() {
+  @Test fun inlineSingleAccessorVal() {
     val prop = PropertySpec.builder("foo", String::class)
       .getter(
         FunSpec.getterBuilder()
@@ -81,7 +81,26 @@ class PropertySpecTest {
 
     assertThat(prop.toString()).isEqualTo(
       """
-      |val foo: kotlin.String
+      |inline val foo: kotlin.String
+      |  get() = "foo"
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun inlineSingleAccessorVar() {
+    val prop = PropertySpec.builder("foo", String::class)
+      .mutable()
+      .getter(
+        FunSpec.getterBuilder()
+          .addModifiers(KModifier.INLINE)
+          .addStatement("return %S", "foo")
+          .build()
+      )
+      .build()
+
+    assertThat(prop.toString()).isEqualTo(
+      """
+      |var foo: kotlin.String
       |  inline get() = "foo"
       |""".trimMargin()
     )
@@ -255,8 +274,8 @@ class PropertySpecTest {
       .build()
     assertThat(prop.toString()).isEqualTo(
       """
-      |private val <T : kotlin.Any> kotlin.reflect.KClass<T>.someFunction: T
-      |  inline get() = stuff as T
+      |private inline val <T : kotlin.Any> kotlin.reflect.KClass<T>.someFunction: T
+      |  get() = stuff as T
       |""".trimMargin()
     )
   }
@@ -296,8 +315,8 @@ class PropertySpecTest {
       .build()
     assertThat(prop.toString()).isEqualTo(
       """
-      |private val <reified T> kotlin.reflect.KClass<T>.someFunction: T
-      |  inline get() = stuff as T
+      |private inline val <reified T> kotlin.reflect.KClass<T>.someFunction: T
+      |  get() = stuff as T
       |""".trimMargin()
     )
   }

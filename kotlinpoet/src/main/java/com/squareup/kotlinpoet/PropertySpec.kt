@@ -65,7 +65,7 @@ public class PropertySpec private constructor(
     inlineAnnotations: Boolean = inline
   ) {
     val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
-      setter?.modifiers?.contains(KModifier.INLINE) ?: false
+      (!mutable || setter?.modifiers?.contains(KModifier.INLINE) ?: false)
     val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
