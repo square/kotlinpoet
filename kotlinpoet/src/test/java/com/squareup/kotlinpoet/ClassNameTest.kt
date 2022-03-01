@@ -139,6 +139,7 @@ class ClassNameTest {
     // }
   }
 
+  @Suppress("DEPRECATION_ERROR") // Ensure still throws in case called from Java.
   @Test fun fromEmptySimpleName() {
     assertThrows<IllegalArgumentException> {
       ClassName("foo" /* no simple name */)

@@ -40,6 +40,13 @@ public class ClassName internal constructor(
   public constructor(packageName: String, simpleName: String, vararg simpleNames: String) :
     this(listOf(packageName, simpleName, *simpleNames))
 
+  @Deprecated(
+    "Simple names must not be empty. Did you forget an argument?",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("ClassName(packageName, TODO())"),
+  )
+  public constructor(packageName: String) : this(packageName, listOf())
+
   /**
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
