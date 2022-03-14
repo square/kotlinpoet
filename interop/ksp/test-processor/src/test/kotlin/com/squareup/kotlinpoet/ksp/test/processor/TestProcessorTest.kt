@@ -213,14 +213,14 @@ class TestProcessorTest {
           param1: String,
           param2: T,
           param3: F,
-          param4: F?
+          param4: F?,
         ): R {
         }
 
         public suspend fun functionD(
           param1: Function0<String>,
           param2: Function1<String, String>,
-          param3: Function1<String, String>
+          param3: Function1<String, String>,
         ): Unit {
         }
 
@@ -247,7 +247,7 @@ class TestProcessorTest {
           aliasedName: TypeAliasName,
           genericAlias: GenericTypeAlias,
           parameterizedTypeAlias: ParameterizedTypeAlias<String>,
-          nestedArray: Array<Map<String, Any>>?
+          nestedArray: Array<Map<String, Any>>?,
         ): Unit {
         }
       }
@@ -301,7 +301,7 @@ class TestProcessorTest {
         public fun aliases(
           aliasedName: String,
           genericAlias: List<String>,
-          genericMapAlias: Map<Int, String>
+          genericMapAlias: Map<Int, String>,
         ): Unit {
         }
       }

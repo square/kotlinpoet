@@ -63,7 +63,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString()).isEqualTo(
       """
       |public $modifierString class Guacamole(
-      |  public val avacado: kotlin.String
+      |  public val avacado: kotlin.String,
       |)
       |""".trimMargin()
     )
@@ -87,7 +87,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString()).isEqualTo(
       """
       |public $modifierString class Guacamole(
-      |  public val avacado: kotlin.String
+      |  public val avacado: kotlin.String,
       |) {
       |  init {
       |  }
@@ -136,7 +136,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString()).isEqualTo(
       """
       |public $modifierString class Guacamole(
-      |  public val avocado: kotlin.String
+      |  public val avocado: kotlin.String,
       |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
       |""".trimMargin()
     )
@@ -204,7 +204,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString()).isEqualTo(
       """
       |public $modifierString class Guacamole private constructor(
-      |  public val avocado: kotlin.String
+      |  public val avocado: kotlin.String,
       |)
       |""".trimMargin()
     )
@@ -239,7 +239,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString()).isEqualTo(
       """
       |public enum $modifierString class Foo(
-      |  public val x: kotlin.Int
+      |  public val x: kotlin.Int,
       |) {
       |  A(1),
       |  B(2),

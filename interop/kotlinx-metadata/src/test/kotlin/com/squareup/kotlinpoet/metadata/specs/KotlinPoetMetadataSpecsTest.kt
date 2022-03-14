@@ -61,7 +61,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class ConstructorClass(
         public val foo: kotlin.String,
-        vararg bar: kotlin.Int
+        vararg bar: kotlin.Int,
       ) {
         public constructor(bar: kotlin.Int)
       }
@@ -187,7 +187,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Generics<out T, in R, V>(
-        public val genericInput: T
+        public val genericInput: T,
       )
       """.trimIndent()
     )
@@ -204,7 +204,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class TypeAliases(
         public val foo: com.squareup.kotlinpoet.metadata.specs.TypeAliasName,
-        public val bar: com.squareup.kotlinpoet.metadata.specs.GenericTypeAlias
+        public val bar: com.squareup.kotlinpoet.metadata.specs.GenericTypeAlias,
       )
       """.trimIndent()
     )
@@ -230,7 +230,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class PropertyMutability(
         public val foo: kotlin.String,
-        public var mutableFoo: kotlin.String
+        public var mutableFoo: kotlin.String,
       )
       """.trimIndent()
     )
@@ -246,7 +246,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class CollectionMutability(
         public val immutableList: kotlin.collections.List<kotlin.String>,
-        public val mutableList: kotlin.collections.MutableList<kotlin.String>
+        public val mutableList: kotlin.collections.MutableList<kotlin.String>,
       )
       """.trimIndent()
     )
@@ -376,7 +376,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       @kotlin.jvm.JvmInline
       public value class InlineClass(
-        public val `value`: kotlin.String
+        public val `value`: kotlin.String,
       )
       """.trimIndent()
     )
@@ -391,7 +391,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       @kotlin.jvm.JvmInline
       public value class ValueClass(
-        public val `value`: kotlin.String
+        public val `value`: kotlin.String,
       )
       """.trimIndent()
     )
@@ -547,7 +547,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public enum class ComplexEnum(
-        public val `value`: kotlin.String
+        public val `value`: kotlin.String,
       ) {
         FOO {
           public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
@@ -612,7 +612,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public enum class ComplexEnumWithAnnotation(
-        public val `value`: kotlin.String
+        public val `value`: kotlin.String,
       ) {
         FOO {
           public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
@@ -820,7 +820,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public annotation class MyAnnotation(
-        public val `value`: kotlin.String
+        public val `value`: kotlin.String,
       )
       """.trimIndent()
     )
@@ -978,7 +978,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Constants(
-        public val `param`: kotlin.String = throw NotImplementedError("Stub!")
+        public val `param`: kotlin.String = throw NotImplementedError("Stub!"),
       ) {
         public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
@@ -1071,7 +1071,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Constants(
-        public val `param`: kotlin.String = throw NotImplementedError("Stub!")
+        public val `param`: kotlin.String = throw NotImplementedError("Stub!"),
       ) {
         public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
@@ -1284,7 +1284,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
-        public val `param`: kotlin.String
+        public val `param`: kotlin.String,
       ) {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
@@ -1331,7 +1331,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class JvmNameData(
         @get:kotlin.jvm.JvmName(name = "jvmParam")
-        public val `param`: kotlin.String
+        public val `param`: kotlin.String,
       ) {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
@@ -1412,13 +1412,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       public class Overloads @kotlin.jvm.JvmOverloads constructor(
         public val param1: kotlin.String,
         public val optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
-        public val nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
+        public val nullableParam3: kotlin.String? = throw NotImplementedError("Stub!"),
       ) {
         @kotlin.jvm.JvmOverloads
         public fun testFunction(
           param1: kotlin.String,
           optionalParam2: kotlin.String = throw NotImplementedError("Stub!"),
-          nullableParam3: kotlin.String? = throw NotImplementedError("Stub!")
+          nullableParam3: kotlin.String? = throw NotImplementedError("Stub!"),
         ): kotlin.Unit {
         }
       }
@@ -1453,7 +1453,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Fields(
         @property:kotlin.jvm.JvmField
-        public val param1: kotlin.String
+        public val param1: kotlin.String,
       ) {
         @kotlin.jvm.JvmField
         public val fieldProp: kotlin.String = throw NotImplementedError("Stub!")
@@ -1485,7 +1485,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Fields(
         @property:kotlin.jvm.JvmField
-        public val param1: kotlin.String
+        public val param1: kotlin.String,
       ) {
         @kotlin.jvm.JvmField
         public val fieldProp: kotlin.String = throw NotImplementedError("Stub!")
@@ -1530,7 +1530,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
-        public val `param`: kotlin.String
+        public val `param`: kotlin.String,
       ) {
         @field:kotlin.jvm.JvmSynthetic
         public val fieldProperty: kotlin.String? = null
@@ -1595,7 +1595,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Synthetics(
         @get:kotlin.jvm.JvmSynthetic
-        public val `param`: kotlin.String
+        public val `param`: kotlin.String,
       ) {
         @field:kotlin.jvm.JvmSynthetic
         public val fieldProperty: kotlin.String? = null
@@ -1761,7 +1761,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "pn")
         public val packageName: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xi")
-        public val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
+        public val extraInt: kotlin.Int = throw NotImplementedError("Stub!"),
       )
       """.trimIndent()
     )
@@ -1796,7 +1796,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "pn")
         public val packageName: kotlin.String = throw NotImplementedError("Stub!"),
         @get:kotlin.jvm.JvmName(name = "xi")
-        public val extraInt: kotlin.Int = throw NotImplementedError("Stub!")
+        public val extraInt: kotlin.Int = throw NotImplementedError("Stub!"),
       )
       """.trimIndent()
     )
@@ -1859,7 +1859,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
         public val param1: kotlin.String,
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
-        param2: kotlin.String
+        param2: kotlin.String,
       ) {
         public fun function(@com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }
@@ -1883,7 +1883,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
         public val param1: kotlin.String,
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
-        param2: kotlin.String
+        param2: kotlin.String,
       ) {
         public fun function(@com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "woo") param1: kotlin.String): kotlin.Unit {
         }

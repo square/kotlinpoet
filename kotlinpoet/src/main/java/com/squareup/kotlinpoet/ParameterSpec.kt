@@ -233,16 +233,20 @@ internal fun List<ParameterSpec>.emit(
 ) = with(codeWriter) {
   emit("(")
 
-  if (size > 0) {
+  if (isNotEmpty()) {
     val emitNewLines = size > 2 || forceNewLines
     if (emitNewLines) {
       emit("\n")
       indent(1)
     }
-    val delimiter = if (emitNewLines) ",\n" else ", "
     forEachIndexed { index, parameter ->
-      if (index > 0) emit(delimiter)
+      if (index > 0) {
+        emit(if (emitNewLines) "\n" else ", ")
+      }
       emitBlock(parameter)
+      if (emitNewLines) {
+        emit(",")
+      }
     }
     if (emitNewLines) {
       unindent(1)

@@ -228,7 +228,7 @@ class FunSpecTest {
       |public fun foo(
       |  string: kotlin.String,
       |  number: kotlin.Int,
-      |  nodoc: kotlin.Boolean
+      |  nodoc: kotlin.Boolean,
       |): kotlin.Unit {
       |}
       |""".trimMargin()

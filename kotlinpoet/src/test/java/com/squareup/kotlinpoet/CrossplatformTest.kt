@@ -75,7 +75,7 @@ class CrossplatformTest {
       |import kotlin.Unit
       |
       |internal expect class AtomicRef<V>(
-      |  `value`: V
+      |  `value`: V,
       |) {
       |  public val `value`: V
       |
