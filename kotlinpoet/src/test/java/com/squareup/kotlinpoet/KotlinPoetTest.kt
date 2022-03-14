@@ -1052,7 +1052,7 @@ class KotlinPoetTest {
       |public data class Taco(
       |  @WireField(
       |    tag = 1,
-      |    adapter = "CustomStringAdapterWithALongNameThatCauses"
+      |    adapter = "CustomStringAdapterWithALongNameThatCauses",
       |  )
       |  public val name: String,
       |)

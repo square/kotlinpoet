@@ -270,7 +270,7 @@ class JvmAnnotationsTest {
       |
       |@Throws(
       |  IOException::class,
-      |  IllegalArgumentException::class
+      |  IllegalArgumentException::class,
       |)
       |public fun foo(): Unit {
       |}

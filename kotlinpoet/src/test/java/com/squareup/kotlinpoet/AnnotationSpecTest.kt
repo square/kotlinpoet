@@ -114,7 +114,7 @@ class AnnotationSpecTest {
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = arrayOf(Float::class, Double::class)
+        |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
         |""".trimMargin()
@@ -144,7 +144,7 @@ class AnnotationSpecTest {
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = arrayOf(Float::class, Double::class)
+        |  r = arrayOf(Float::class, Double::class),
         |)
         |public class IsAnnotated
         |""".trimMargin()
@@ -190,7 +190,7 @@ class AnnotationSpecTest {
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = arrayOf(Float::class, Double::class)
+        |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
         |""".trimMargin()
@@ -228,7 +228,7 @@ class AnnotationSpecTest {
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
         |  p = 1701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
-        |  r = arrayOf(Float::class, Double::class)
+        |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
         |""".trimMargin()
