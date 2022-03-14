@@ -64,7 +64,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
-        nullableParam3: String? = throw NotImplementedError("Stub!")
+        nullableParam3: String? = throw NotImplementedError("Stub!"),
       ): Unit {
       }
 
@@ -201,7 +201,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
-        nullableParam3: String? = throw NotImplementedError("Stub!")
+        nullableParam3: String? = throw NotImplementedError("Stub!"),
       ): Unit {
       }
 

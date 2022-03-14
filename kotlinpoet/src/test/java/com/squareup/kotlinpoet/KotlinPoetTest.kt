@@ -94,7 +94,7 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |public class Taco(
-        |  cheese: String
+        |  cheese: String,
         |) {
         |  init {
         |    require(cheese.isNotEmpty()) {
@@ -153,7 +153,7 @@ class KotlinPoetTest {
         |public class Taco(
         |  public val cheese: String,
         |  public var cilantro: String,
-        |  lettuce: String
+        |  lettuce: String,
         |) {
         |  public val lettuce: String = lettuce.trim()
         |
@@ -497,7 +497,7 @@ class KotlinPoetTest {
       |public fun ((
       |  name: String,
       |  Int,
-      |  age: Long
+      |  age: Long,
       |) -> Unit).whatever(): Unit = Unit
       |""".trimMargin()
     )
@@ -880,7 +880,7 @@ class KotlinPoetTest {
       |
       |public class Taco(
       |  @JvmField
-      |  public val foo: String
+      |  public val foo: String,
       |)
       |""".trimMargin()
     )
@@ -952,7 +952,7 @@ class KotlinPoetTest {
       |  public val foo: SomeTypeAlias = { arg: kotlin.Any ->
       |    println("arg=${'$'}arg")
       |  }
-      |
+      |  ,
       |)
       |""".trimMargin()
     )
@@ -983,7 +983,7 @@ class KotlinPoetTest {
       |import kotlin.Float
       |
       |public class AlarmInfo(
-      |  public val `when`: Float
+      |  public val `when`: Float,
       |)
       |""".trimMargin()
     )
@@ -1054,7 +1054,7 @@ class KotlinPoetTest {
       |    tag = 1,
       |    adapter = "CustomStringAdapterWithALongNameThatCauses"
       |  )
-      |  public val name: String
+      |  public val name: String,
       |)
       |""".trimMargin()
     )
@@ -1255,7 +1255,7 @@ class KotlinPoetTest {
       |
       |public class SourceWithUnderscores(
       |  public val `_`: Float,
-      |  public val `____`: Float
+      |  public val `____`: Float,
       |)
       |""".trimMargin()
     )

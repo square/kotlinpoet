@@ -318,7 +318,7 @@ class TypeSpecTest {
         |    @Ping one: String,
         |    @Ping two: String,
         |    @Pong("pong") three: String,
-        |    @Ping four: String
+        |    @Ping four: String,
         |  ) {
         |    /* code snippets */
         |  }
@@ -426,7 +426,7 @@ class TypeSpecTest {
         |  public fun fooBar(
         |    @Body things: Things<Thing>,
         |    @QueryMap(encodeValues = false) query: Map<String, String>,
-        |    @Header("Authorization") authorization: String
+        |    @Header("Authorization") authorization: String,
         |  ): Observable<FooBar>
         |}
         |""".trimMargin()
@@ -563,7 +563,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public enum class Roshambo(
-        |  private val handPosition: String
+        |  private val handPosition: String,
         |) {
         |  /**
         |   * Avalanche!
@@ -660,7 +660,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class Variable(
-        |  public vararg val name: String
+        |  public vararg val name: String,
         |)
         |""".trimMargin()
     )
@@ -687,7 +687,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class ObservantTaco(
-        |  contents: String
+        |  contents: String,
         |) {
         |  public val contents: String = contents
         |    get() {
@@ -724,7 +724,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class ObservantTaco(
-        |  contents: String
+        |  contents: String,
         |) {
         |  public var contents: String = contents
         |    set(`value`) {
@@ -929,7 +929,7 @@ class TypeSpecTest {
         |  public fun <T, P : Number> of(
         |    label: T,
         |    x: P,
-        |    y: P
+        |    y: P,
         |  ): Location<T, P> = throw UnsupportedOperationException("TODO")
         |}
         |""".trimMargin()
@@ -1082,7 +1082,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |public enum class Sort(
-        |  `value`: Int
+        |  `value`: Int,
         |) {
         |  `open`(0),
         |  closed(1),
@@ -1264,7 +1264,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |public annotation class MyAnnotation(
-        |  public val test: Int
+        |  public val test: Int,
         |)
         |""".trimMargin()
     )
@@ -1324,7 +1324,7 @@ class TypeSpecTest {
         |
         |public annotation class TacoDelivery(
         |  public val kind: Kind,
-        |  public val quantity: Int = QUANTITY_DEFAULT
+        |  public val quantity: Int = QUANTITY_DEFAULT,
         |) {
         |  public enum class Kind {
         |    SOFT,
@@ -1885,7 +1885,7 @@ class TypeSpecTest {
         |   * No one likes mild tacos.
         |   */
         |  public val mild: Boolean,
-        |  private val nodoc: Int
+        |  private val nodoc: Int,
         |)
         |""".trimMargin()
     )
@@ -1975,7 +1975,7 @@ class TypeSpecTest {
         |  public fun prepare(
         |    workers: Int,
         |    vararg jobs: Runnable,
-        |    start: Boolean
+        |    start: Boolean,
         |  ): Unit {
         |  }
         |}
@@ -3531,7 +3531,7 @@ class TypeSpecTest {
         |
         |public class Taco(
         |  public val a: Int,
-        |  public val b: String
+        |  public val b: String,
         |)
         |""".trimMargin()
     )
@@ -3570,7 +3570,7 @@ class TypeSpecTest {
         |   * KDoc
         |   */
         |  public val a: Int,
-        |  public val b: String
+        |  public val b: String,
         |)
         |""".trimMargin()
     )
@@ -3804,7 +3804,7 @@ class TypeSpecTest {
         |
         |public class Taco(
         |  public val a: Int = 1,
-        |  public val b: String? = null
+        |  public val b: String? = null,
         |)
         |""".trimMargin()
     )
@@ -3856,7 +3856,7 @@ class TypeSpecTest {
         |public class Taco(
         |  public val a: String?,
         |  public val b: String?,
-        |  public val c: String?
+        |  public val c: String?,
         |) {
         |  public constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
@@ -3973,7 +3973,7 @@ class TypeSpecTest {
       |public data class Person(
       |  public override val id: Int,
       |  public override val name: String,
-      |  public override val surname: String
+      |  public override val surname: String,
       |)
       |""".trimMargin()
     )
@@ -4013,7 +4013,7 @@ class TypeSpecTest {
       |public data class Person(
       |  @OrderBy
       |  @Id
-      |  private val id: Int = 1
+      |  private val id: Int = 1,
       |)
       |""".trimMargin()
     )
@@ -4087,7 +4087,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class Guac(
-        |  somethingElse: String
+        |  somethingElse: String,
         |) : Consumer<String> by ({ println(it) })
         |""".trimMargin()
 
@@ -4184,7 +4184,7 @@ class TypeSpecTest {
           |import kotlin.Function
           |
           |public class Taco(
-          |  superString: Function
+          |  superString: Function,
           |) : Function by superString
           |""".trimMargin()
     )
@@ -4237,7 +4237,7 @@ class TypeSpecTest {
           |package com.squareup.tacos
           |
           |public class EntityBuilder(
-          |  argBuilder: Payload<EntityBuilder, Entity> = Payload.create()
+          |  argBuilder: Payload<EntityBuilder, Entity> = Payload.create(),
           |) : TypeBuilder<EntityBuilder, Entity> by argBuilder
           |""".trimMargin()
     )
@@ -4431,7 +4431,7 @@ class TypeSpecTest {
       |
       |public data class Taco(
       |  public val madeFreshDatabaseDate: java.sql.Taco,
-      |  fooNt: Int
+      |  fooNt: Int,
       |) {
       |  public constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
       |}
@@ -4636,7 +4636,7 @@ class TypeSpecTest {
       |  /**
       |   * the third thing
       |   */
-      |  public val third: kotlin.Int
+      |  public val third: kotlin.Int,
       |)
       |""".trimMargin()
     )
@@ -4660,7 +4660,7 @@ class TypeSpecTest {
       |  /**
       |   * the first thing
       |   */
-      |  first: kotlin.Int
+      |  first: kotlin.Int,
       |)
       |""".trimMargin()
     )
@@ -4831,7 +4831,7 @@ class TypeSpecTest {
 
         public class MyClass(
           public val tacos1: Int,
-          tacos2: Int
+          tacos2: Int,
         ) {
           init {
           }
@@ -4875,7 +4875,7 @@ class TypeSpecTest {
         |  /**
         |   * No one likes mild tacos.
         |   */
-        |  public val mild: Boolean
+        |  public val mild: Boolean,
         |)
         |""".trimMargin()
     )
