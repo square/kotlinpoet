@@ -420,7 +420,7 @@ class TypeSpecTest {
         |public interface Service {
         |  @Headers(
         |    "Accept: application/json",
-        |    "User-Agent: foobar"
+        |    "User-Agent: foobar",
         |  )
         |  @POST("/foo/bar")
         |  public fun fooBar(
@@ -505,7 +505,7 @@ class TypeSpecTest {
         |@Something(
         |  SomeType.PROPERTY,
         |  12,
-        |  "goodbye"
+        |  "goodbye",
         |)
         |public class Foo
         |""".trimMargin()
@@ -861,7 +861,7 @@ class TypeSpecTest {
         |
         |  @Throws(
         |    IOException::class,
-        |    SourCreamException::class
+        |    SourCreamException::class,
         |  )
         |  public fun throwTwo(): Unit {
         |  }
@@ -1920,7 +1920,7 @@ class TypeSpecTest {
         |
         |@MealDeal(
         |  price = 500,
-        |  options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)]
+        |  options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)],
         |)
         |public class Menu
         |""".trimMargin()

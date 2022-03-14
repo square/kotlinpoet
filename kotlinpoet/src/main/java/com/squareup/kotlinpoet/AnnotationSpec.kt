@@ -56,6 +56,7 @@ public class AnnotationSpec private constructor(
 
     val whitespace = if (inline) "" else "\n"
     val memberSeparator = if (inline) ", " else ",\n"
+    val memberSuffix = if (!inline && members.size > 1) "," else ""
 
     // Inline:
     //   @Column(name = "updated_at", nullable = false)
@@ -63,7 +64,7 @@ public class AnnotationSpec private constructor(
     // Not inline:
     //   @Column(
     //       name = "updated_at",
-    //       nullable = false
+    //       nullable = false,
     //   )
 
     codeWriter.emit("(")
@@ -71,7 +72,7 @@ public class AnnotationSpec private constructor(
     codeWriter.emitCode(
       codeBlock = members
         .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
-        .joinToCode(separator = memberSeparator),
+        .joinToCode(separator = memberSeparator, suffix = memberSuffix),
       isConstantContext = true
     )
     if (members.size > 1) codeWriter.unindent(1).emit(whitespace)

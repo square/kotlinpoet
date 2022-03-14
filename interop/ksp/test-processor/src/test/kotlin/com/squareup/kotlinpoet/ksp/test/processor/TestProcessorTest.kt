@@ -187,7 +187,7 @@ class TestProcessorTest {
         enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
         anotherAnnotation = AnotherAnnotation(input = "Hello"),
         anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
-        defaultingString = "defaultValue"
+        defaultingString = "defaultValue",
       )
       public class SmokeTestClass<T, R : Any, E : Enum<E>> {
         @field:AnotherAnnotation(input = "siteTargeting")
