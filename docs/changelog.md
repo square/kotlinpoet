@@ -23,7 +23,7 @@ println("hello!")
 ```
 
 * New: Emit trailing commas for multi-line parameters and annotations.
-* New: Add support for `KSAnnotation.toAnnotationSpec()`.
+* New: Add `KSAnnotation.toAnnotationSpec()`.
 * New: Add `Unit` and `CharSequence` conversions in `javapoet-interop`.
 * New: Add support for default imports in `FileSpec`.
   * This is particularly oriented at scripting support, but can also be used in non-script files.
