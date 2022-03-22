@@ -33,7 +33,7 @@ println("hello!")
 * Fix: Add `yield` to the list of reserved keywords.
 * Fix: Enforce only allowed parameter modifiers in `ParameterSpec` (i.e. `crossinline`, `vararg`, and `noinline`).
 * Fix: Fix `CodeBlock`s in class delegation getting `toString()`'d instead of participating in code writing.
-* Fix: Error when attempting to convert KSP error types (i.e. if `KSType.isError` is true).
+* Fix: Error when attempting to convert KSP error types (i.e. if `KSType.isError` is true) to `TypeName`.
 
 ## Version 1.10.2
 
