@@ -1,6 +1,40 @@
 Change Log
 ==========
 
+## Version 1.11.0
+
+_2022-03-24_
+
+Thanks to [@liujingxing][liujingxing] and [@BoD][BoD] for contributing to this release.
+
+* New: Kotlin scripting support in `FileSpec`.
+
+```kotlin
+val spec = FileSpec.scriptBuilder("Taco")
+  .addStatement("println(%S)", "hello world!")
+  .addKotlinDefaultImports()
+  .build()
+```
+
+Generates a `Taco.kts` file with the following contents:
+
+```kotlin
+println("hello!")
+```
+
+* New: Emit trailing commas for multi-line parameters and annotations.
+* New: Add `KSAnnotation.toAnnotationSpec()`.
+* New: Add `Unit` and `CharSequence` conversions in `javapoet-interop`.
+* New: Add support for default imports in `FileSpec`.
+  * This is particularly oriented at scripting support, but can also be used in non-script files.
+* New: Update to Kotlin 1.6.10.
+* Fix: Fail compilation if you only pass one string to `ClassName`.
+* Fix: Inline `val` property if its getter is `inline`.
+* Fix: Add `yield` to the list of reserved keywords.
+* Fix: Enforce only allowed parameter modifiers in `ParameterSpec` (i.e. `crossinline`, `vararg`, and `noinline`).
+* Fix: Fix `CodeBlock`s in class delegation getting `toString()`'d instead of participating in code writing.
+* Fix: Error when attempting to convert KSP error types (i.e. if `KSType.isError` is true) to `TypeName`.
+
 ## Version 1.10.2
 
 _2021-10-22_
@@ -519,3 +553,5 @@ _2017-05-16_
  [anandwana001]: https://github.com/anandwana001
  [evant]: https://github.com/evant
  [glureau]: https://github.com/glureau
+ [liujingxing]: https://github.com/liujingxing
+ [BoD]: https://github.com/BoD
