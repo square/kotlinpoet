@@ -3,7 +3,7 @@ Change Log
 
 ## Version 1.11.0
 
-_2022-03-xx_
+_2022-03-24_
 
 Thanks to [@liujingxing][liujingxing] and [@BoD][BoD] for contributing to this release.
 
