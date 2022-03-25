@@ -19,7 +19,7 @@ val spec = FileSpec.scriptBuilder("Taco")
 Generates a `Taco.kts` file with the following contents:
 
 ```kotlin
-println("hello!")
+println("hello world!")
 ```
 
 * New: Emit trailing commas for multi-line parameters and annotations.
