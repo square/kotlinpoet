@@ -45,6 +45,7 @@ Kotlin has more expressive types in some regards. These cannot be simply express
 are subject to lossy conversions.
 
 Examples include:
+
 - Nullability
   - Nullable types in Kotlin will appear as normal types in JavaPoet.
 - Collection mutability
