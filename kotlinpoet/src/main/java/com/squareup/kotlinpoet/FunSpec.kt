@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ContextReceivers::class)
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
-import com.squareup.kotlinpoet.KModifier.EXPECT
-import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.INLINE
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.*
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
@@ -45,6 +42,8 @@ public class FunSpec private constructor(
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
+  @ContextReceivers
+  public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
   public val delegateConstructor: String? = builder.delegateConstructor
@@ -285,6 +284,7 @@ public class FunSpec private constructor(
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
+    internal val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
@@ -359,7 +359,30 @@ public class FunSpec private constructor(
       typeVariables += typeVariable
     }
 
-    @JvmOverloads public fun receiver(
+    public fun contextReceiver(receiverTypes: Collection<TypeName>): Builder = apply {
+      check(!name.isConstructor) { "$name cannot have receiver type" }
+      contextReceiverTypes += receiverTypes
+    }
+    public fun contextReceiver(vararg receiverType: TypeName): Builder = contextReceiver(receiverType.toList())
+
+    @ContextReceivers
+    @JvmName("contextReceiverByType")
+    public fun contextReceiver(receiverTypes: List<Type>): Builder =
+      contextReceiver(receiverTypes.map { it.asTypeName() })
+    @ContextReceivers
+    public fun contextReceiver(vararg receiverType: Type): Builder =
+      contextReceiver(receiverType.toList())
+
+    @ContextReceivers
+    @JvmName("contextReceiverKClass")
+    public fun contextReceiver(receiverTypes: List<KClass<*>>): Builder =
+      contextReceiver(receiverTypes.map { it.asTypeName() })
+    @ContextReceivers
+    public fun contextReceiver(vararg receiverType: KClass<*>): Builder =
+      contextReceiver(receiverType.toList())
+
+    @JvmOverloads
+    public fun receiver(
       receiverType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = apply {
@@ -368,7 +391,8 @@ public class FunSpec private constructor(
       this.receiverKdoc = kdoc
     }
 
-    @JvmOverloads public fun receiver(
+    @JvmOverloads
+    public fun receiver(
       receiverType: Type,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
@@ -379,7 +403,8 @@ public class FunSpec private constructor(
       vararg args: Any
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads public fun receiver(
+    @JvmOverloads
+    public fun receiver(
       receiverType: KClass<*>,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
@@ -390,7 +415,8 @@ public class FunSpec private constructor(
       vararg args: Any
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads public fun returns(
+    @JvmOverloads
+    public fun returns(
       returnType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = apply {
@@ -399,13 +425,15 @@ public class FunSpec private constructor(
       this.returnKdoc = kdoc
     }
 
-    @JvmOverloads public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
+    @JvmOverloads
+    public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
       returns(returnType.asTypeName(), kdoc)
 
     public fun returns(returnType: Type, kdoc: String, vararg args: Any): Builder =
       returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
-    @JvmOverloads public fun returns(
+    @JvmOverloads
+    public fun returns(
       returnType: KClass<*>,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = returns(returnType.asTypeName(), kdoc)
@@ -547,13 +575,17 @@ public class FunSpec private constructor(
     private val THROW_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("throw ")
     private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw·")
 
-    @JvmStatic public fun builder(name: String): Builder = Builder(name)
+    @JvmStatic
+    public fun builder(name: String): Builder = Builder(name)
 
-    @JvmStatic public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
+    @JvmStatic
+    public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
 
-    @JvmStatic public fun getterBuilder(): Builder = Builder(GETTER)
+    @JvmStatic
+    public fun getterBuilder(): Builder = Builder(GETTER)
 
-    @JvmStatic public fun setterBuilder(): Builder = Builder(SETTER)
+    @JvmStatic
+    public fun setterBuilder(): Builder = Builder(SETTER)
 
     @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
