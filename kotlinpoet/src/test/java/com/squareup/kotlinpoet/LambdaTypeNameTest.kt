@@ -51,6 +51,18 @@ class LambdaTypeNameTest {
     )
   }
 
+  @Test fun contextReceiver() {
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(STRING),
+      listOf(),
+      Unit::class.asTypeName()
+    )
+    assertThat(typeName.toString()).isEqualTo(
+      "context(kotlin.String) kotlin.Int.() -> kotlin.Unit"
+    )
+  }
+
   @Test fun paramsWithAnnotationsForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(

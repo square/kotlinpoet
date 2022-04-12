@@ -88,6 +88,10 @@ public class FunSpec private constructor(
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
     codeWriter.emitAnnotations(annotations, false)
+    if (contextReceiverTypes.isNotEmpty()) {
+      val receivers = contextReceiverTypes.joinToString(", ") { "%T" }
+      codeWriter.emitCode("context($receivers)·", *contextReceiverTypes.toTypedArray())
+    }
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {

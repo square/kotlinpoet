@@ -429,6 +429,20 @@ class FunSpecTest {
     )
   }
 
+  @Test fun functionWithContextReceiver() {
+    val stringType = STRING
+    val funSpec = FunSpec.builder("foo")
+      .contextReceiver(stringType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String) public fun foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionParamSingleLambdaParam() {
     val unitType = UNIT
     val booleanType = BOOLEAN
