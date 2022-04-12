@@ -381,7 +381,7 @@ public class FunSpec private constructor(
     public fun contextReceiver(vararg receiverType: KClass<*>): Builder =
       contextReceiver(receiverType.map { it.asTypeName() })
 
-    public fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = apply {
