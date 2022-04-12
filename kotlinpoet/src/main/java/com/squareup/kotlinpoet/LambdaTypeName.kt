@@ -17,10 +17,10 @@ package com.squareup.kotlinpoet
 
 import kotlin.reflect.KClass
 
-@OptIn(DelicateKotlinPoetApi::class)
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class LambdaTypeName private constructor(
   public val receiver: TypeName? = null,
-  @property:DelicateKotlinPoetApi("Context receivers are currently a preview feature")
+  @property:ExperimentalKotlinPoetApi
   public val contextReceivers: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
@@ -88,11 +88,11 @@ public class LambdaTypeName private constructor(
 
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature") @JvmStatic public fun get(
+    @ExperimentalKotlinPoetApi @JvmStatic public fun get(
       receiver: TypeName? = null,
-      contextReceivers: List<TypeName> = emptyList(),
       parameters: List<ParameterSpec> = emptyList(),
-      returnType: TypeName
+      returnType: TypeName,
+      contextReceivers: List<TypeName> = emptyList()
     ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */

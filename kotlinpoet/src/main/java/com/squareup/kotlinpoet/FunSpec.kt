@@ -32,7 +32,7 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated function declaration. */
-@OptIn(DelicateKotlinPoetApi::class)
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
@@ -47,7 +47,7 @@ public class FunSpec private constructor(
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
 
-  @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
+  @ExperimentalKotlinPoetApi
   public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
@@ -368,22 +368,14 @@ public class FunSpec private constructor(
       typeVariables += typeVariable
     }
 
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
+    @ExperimentalKotlinPoetApi
     public fun contextReceiver(receiverTypes: Collection<TypeName>): Builder = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       contextReceiverTypes += receiverTypes
     }
 
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
+    @ExperimentalKotlinPoetApi
     public fun contextReceiver(vararg receiverType: TypeName): Builder = contextReceiver(receiverType.toList())
-
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
-    public fun contextReceiver(vararg receiverType: Type): Builder =
-      contextReceiver(receiverType.map { it.asTypeName() })
-
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
-    public fun contextReceiver(vararg receiverType: KClass<*>): Builder =
-      contextReceiver(receiverType.map { it.asTypeName() })
 
     @JvmOverloads public fun receiver(
       receiverType: TypeName,
