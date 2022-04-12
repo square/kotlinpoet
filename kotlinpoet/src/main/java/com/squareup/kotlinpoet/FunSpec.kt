@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.*
+import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.EXPECT
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
+import com.squareup.kotlinpoet.KModifier.INLINE
+import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
@@ -386,8 +390,7 @@ public class FunSpec private constructor(
       this.receiverKdoc = kdoc
     }
 
-    @JvmOverloads
-    public fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: Type,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
@@ -398,8 +401,7 @@ public class FunSpec private constructor(
       vararg args: Any
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads
-    public fun receiver(
+    @JvmOverloads public fun receiver(
       receiverType: KClass<*>,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
@@ -410,8 +412,7 @@ public class FunSpec private constructor(
       vararg args: Any
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
-    @JvmOverloads
-    public fun returns(
+    @JvmOverloads public fun returns(
       returnType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = apply {
@@ -420,15 +421,13 @@ public class FunSpec private constructor(
       this.returnKdoc = kdoc
     }
 
-    @JvmOverloads
-    public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
+    @JvmOverloads public fun returns(returnType: Type, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
       returns(returnType.asTypeName(), kdoc)
 
     public fun returns(returnType: Type, kdoc: String, vararg args: Any): Builder =
       returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
-    @JvmOverloads
-    public fun returns(
+    @JvmOverloads public fun returns(
       returnType: KClass<*>,
       kdoc: CodeBlock = CodeBlock.EMPTY
     ): Builder = returns(returnType.asTypeName(), kdoc)
@@ -570,17 +569,13 @@ public class FunSpec private constructor(
     private val THROW_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("throw ")
     private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw·")
 
-    @JvmStatic
-    public fun builder(name: String): Builder = Builder(name)
+    @JvmStatic public fun builder(name: String): Builder = Builder(name)
 
-    @JvmStatic
-    public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
+    @JvmStatic public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
 
-    @JvmStatic
-    public fun getterBuilder(): Builder = Builder(GETTER)
+    @JvmStatic public fun getterBuilder(): Builder = Builder(GETTER)
 
-    @JvmStatic
-    public fun setterBuilder(): Builder = Builder(SETTER)
+    @JvmStatic public fun setterBuilder(): Builder = Builder(SETTER)
 
     @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
