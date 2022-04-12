@@ -17,11 +17,11 @@ package com.squareup.kotlinpoet
 
 import kotlin.reflect.KClass
 
-@OptIn(ContextReceivers::class)
+@OptIn(DelicateKotlinPoetApi::class)
 public class LambdaTypeName private constructor(
   public val receiver: TypeName? = null,
-  @property:ContextReceivers
-  public val contextReceivers: List<TypeName>? = emptyList(),
+  @property:DelicateKotlinPoetApi("Context receivers are currently a preview feature")
+  public val contextReceivers: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
   nullable: Boolean = false,
@@ -84,7 +84,7 @@ public class LambdaTypeName private constructor(
 
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @ContextReceivers @JvmStatic public fun get(
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature") @JvmStatic public fun get(
       receiver: TypeName? = null,
       contextReceivers: List<TypeName> = emptyList(),
       parameters: List<ParameterSpec> = emptyList(),

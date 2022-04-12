@@ -42,7 +42,7 @@ public class FunSpec private constructor(
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
-  @ContextReceivers
+  @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
   public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
@@ -365,23 +365,22 @@ public class FunSpec private constructor(
     }
     public fun contextReceiver(vararg receiverType: TypeName): Builder = contextReceiver(receiverType.toList())
 
-    @ContextReceivers
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     @JvmName("contextReceiverByType")
     public fun contextReceiver(receiverTypes: List<Type>): Builder =
       contextReceiver(receiverTypes.map { it.asTypeName() })
-    @ContextReceivers
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(vararg receiverType: Type): Builder =
       contextReceiver(receiverType.toList())
 
-    @ContextReceivers
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     @JvmName("contextReceiverKClass")
     public fun contextReceiver(receiverTypes: List<KClass<*>>): Builder =
       contextReceiver(receiverTypes.map { it.asTypeName() })
-    @ContextReceivers
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(vararg receiverType: KClass<*>): Builder =
       contextReceiver(receiverType.toList())
 
-    @JvmOverloads
     public fun receiver(
       receiverType: TypeName,
       kdoc: CodeBlock = CodeBlock.EMPTY
