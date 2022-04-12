@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:OptIn(ContextReceivers::class)
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.KModifier.*
@@ -29,6 +28,7 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated function declaration. */
+@OptIn(DelicateKotlinPoetApi::class)
 public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
@@ -42,6 +42,7 @@ public class FunSpec private constructor(
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
+
   @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
   public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
@@ -359,27 +360,22 @@ public class FunSpec private constructor(
       typeVariables += typeVariable
     }
 
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(receiverTypes: Collection<TypeName>): Builder = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       contextReceiverTypes += receiverTypes
     }
+
+    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(vararg receiverType: TypeName): Builder = contextReceiver(receiverType.toList())
 
     @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
-    @JvmName("contextReceiverByType")
-    public fun contextReceiver(receiverTypes: List<Type>): Builder =
-      contextReceiver(receiverTypes.map { it.asTypeName() })
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(vararg receiverType: Type): Builder =
-      contextReceiver(receiverType.toList())
+      contextReceiver(receiverType.map { it.asTypeName() })
 
     @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
-    @JvmName("contextReceiverKClass")
-    public fun contextReceiver(receiverTypes: List<KClass<*>>): Builder =
-      contextReceiver(receiverTypes.map { it.asTypeName() })
-    @DelicateKotlinPoetApi("Context receivers are currently a preview feature")
     public fun contextReceiver(vararg receiverType: KClass<*>): Builder =
-      contextReceiver(receiverType.toList())
+      contextReceiver(receiverType.map { it.asTypeName() })
 
     public fun receiver(
       receiverType: TypeName,
