@@ -90,7 +90,7 @@ public class FunSpec private constructor(
     codeWriter.emitAnnotations(annotations, false)
     if (contextReceiverTypes.isNotEmpty()) {
       val receivers = contextReceiverTypes.joinToString(", ") { "%T" }
-      codeWriter.emitCode("context($receivers)·", *contextReceiverTypes.toTypedArray())
+      codeWriter.emitCode("context($receivers)\n", *contextReceiverTypes.toTypedArray())
     }
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 

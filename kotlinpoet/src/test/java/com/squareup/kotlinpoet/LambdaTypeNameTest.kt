@@ -20,6 +20,7 @@ import com.squareup.kotlinpoet.KModifier.VARARG
 import javax.annotation.Nullable
 import kotlin.test.Test
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 class LambdaTypeNameTest {
 
   @Retention(AnnotationRetention.RUNTIME)
@@ -54,12 +55,52 @@ class LambdaTypeNameTest {
   @Test fun contextReceiver() {
     val typeName = LambdaTypeName.get(
       Int::class.asTypeName(),
-      listOf(STRING),
       listOf(),
-      Unit::class.asTypeName()
+      Unit::class.asTypeName(),
+      listOf(STRING)
     )
     assertThat(typeName.toString()).isEqualTo(
       "context(kotlin.String) kotlin.Int.() -> kotlin.Unit"
+    )
+  }
+
+  @Test fun functionWithMultipleContextReceiver() {
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(),
+      Unit::class.asTypeName(),
+      listOf(STRING, BOOLEAN)
+    )
+    assertThat(typeName.toString()).isEqualTo(
+      "context(kotlin.String, kotlin.Boolean) kotlin.Int.() -> kotlin.Unit"
+    )
+  }
+
+  @Test fun functionWithGenericContextReceiver() {
+    val genericType = TypeVariableName("T")
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(),
+      Unit::class.asTypeName(),
+      listOf(genericType)
+    )
+
+    assertThat(typeName.toString()).isEqualTo(
+      "context(T) kotlin.Int.() -> kotlin.Unit"
+    )
+  }
+
+  @Test fun functionWithAnnotatedContextReceiver() {
+    val annotatedType = STRING.copy(annotations = listOf(AnnotationSpec.get(FunSpecTest.TestAnnotation())))
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(),
+      Unit::class.asTypeName(),
+      listOf(annotatedType)
+    )
+
+    assertThat(typeName.toString()).isEqualTo(
+      "context(@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation kotlin.String) kotlin.Int.() -> kotlin.Unit"
     )
   }
 
