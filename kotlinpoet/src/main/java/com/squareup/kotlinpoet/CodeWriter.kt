@@ -403,7 +403,7 @@ internal class CodeWriter constructor(
     while (c != null) {
       val alias = memberImports[c.canonicalName]?.alias
       val simpleName = alias ?: c.simpleName
-      val resolved = resolve(simpleName)
+      val resolved = resolveClass(simpleName) ?: resolveEnumConstant(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
@@ -509,7 +509,7 @@ internal class CodeWriter constructor(
    * imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
-  private fun resolve(simpleName: String): ClassName? {
+  private fun resolveClass(simpleName: String): ClassName? {
     // Match a child of the current (potentially nested) class.
     for (i in typeSpecStack.indices.reversed()) {
       val typeSpec = typeSpecStack[i]
@@ -528,6 +528,20 @@ internal class CodeWriter constructor(
     if (importedType != null) return importedType
 
     // No match.
+    return null
+  }
+
+  /**
+   * Returns the qualified name of the `simpleName` enum constant if it's in the current scope
+   */
+  private fun resolveEnumConstant(simpleName: String): String? {
+    if (typeSpecStack.size > 0) {
+      val typeSpec = typeSpecStack[0]
+      if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
+        return "$packageName.${typeSpec.name}.$simpleName"
+      }
+    }
+
     return null
   }
 

@@ -5056,6 +5056,36 @@ class TypeSpecTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1234
+  @Test fun `enum constants are resolved`() {
+    val file = FileSpec.builder("com.example", "test")
+      .addType(
+        TypeSpec.enumBuilder("Foo")
+          .addProperty(
+            PropertySpec.builder("rawValue", String::class)
+              .initializer("%S", "")
+              .build()
+          )
+          .addEnumConstant("String")
+          .build()
+      )
+      .build()
+
+    assertThat(file.toString()).isEqualTo(
+      """
+    package com.example
+
+    public enum class Foo {
+      String,
+      ;
+
+      public val rawValue: kotlin.String = ""
+    }
+
+      """.trimIndent()
+    )
+  }
+
   companion object {
     private const val donutsPackage = "com.squareup.donuts"
   }
