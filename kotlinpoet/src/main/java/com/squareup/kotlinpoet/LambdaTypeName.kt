@@ -57,10 +57,8 @@ public class LambdaTypeName private constructor(
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
-    if (contextReceivers.isNotEmpty()) {
-      val receivers = contextReceivers.joinToString(", ") { "%T" }
-      out.emitCode("context($receivers)·", *contextReceivers.toTypedArray())
-    }
+    out.emitContextReceivers(contextReceivers)
+    out.emit(" ")
     if (isNullable) {
       out.emit("(")
     }
