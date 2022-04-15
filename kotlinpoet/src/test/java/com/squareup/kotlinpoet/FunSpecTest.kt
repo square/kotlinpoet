@@ -447,7 +447,7 @@ class FunSpecTest {
     )
   }
 
-  @Test fun functionWithMultipleContextReceiver() {
+  @Test fun functionWithMultipleContextReceivers() {
     val stringType = STRING
     val intType = INT
     val booleanType = BOOLEAN

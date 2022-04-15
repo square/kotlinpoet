@@ -64,7 +64,7 @@ class LambdaTypeNameTest {
     )
   }
 
-  @Test fun functionWithMultipleContextReceiver() {
+  @Test fun functionWithMultipleContextReceivers() {
     val typeName = LambdaTypeName.get(
       Int::class.asTypeName(),
       listOf(),
