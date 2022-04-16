@@ -373,7 +373,7 @@ public class FunSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
-    public fun contextReceivers(vararg receiverType: TypeName): Builder = contextReceiver(receiverType.toList())
+    public fun contextReceivers(vararg receiverType: TypeName): Builder = contextReceivers(receiverType.toList())
 
     @JvmOverloads public fun receiver(
       receiverType: TypeName,
