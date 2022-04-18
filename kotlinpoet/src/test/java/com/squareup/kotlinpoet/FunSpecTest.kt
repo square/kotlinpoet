@@ -435,7 +435,7 @@ class FunSpecTest {
   @Test fun functionWithContextReceiver() {
     val stringType = STRING
     val funSpec = FunSpec.builder("foo")
-      .contextReceiver(stringType)
+      .contextReceivers(stringType)
       .build()
 
     assertThat(funSpec.toString()).isEqualTo(
@@ -452,7 +452,7 @@ class FunSpecTest {
     val intType = INT
     val booleanType = BOOLEAN
     val funSpec = FunSpec.builder("foo")
-      .contextReceiver(stringType, intType, booleanType)
+      .contextReceivers(stringType, intType, booleanType)
       .build()
 
     assertThat(funSpec.toString()).isEqualTo(
@@ -468,7 +468,7 @@ class FunSpecTest {
     val genericType = TypeVariableName("T")
     val funSpec = FunSpec.builder("foo")
       .addTypeVariable(genericType)
-      .contextReceiver(genericType)
+      .contextReceivers(genericType)
       .build()
 
     assertThat(funSpec.toString()).isEqualTo(
@@ -483,7 +483,7 @@ class FunSpecTest {
   @Test fun functionWithAnnotatedContextReceiver() {
     val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
     val funSpec = FunSpec.builder("foo")
-      .contextReceiver(genericType)
+      .contextReceivers(genericType)
       .build()
 
     assertThat(funSpec.toString()).isEqualTo(
@@ -498,7 +498,7 @@ class FunSpecTest {
   @Test fun constructorWithContextReceiver() {
     assertThrows<IllegalStateException> {
       FunSpec.constructorBuilder()
-        .contextReceiver(STRING)
+        .contextReceivers(STRING)
     }.hasMessageThat().isEqualTo("constructor(): constructors cannot have context receivers")
   }
 
