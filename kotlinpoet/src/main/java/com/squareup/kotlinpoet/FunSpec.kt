@@ -88,8 +88,7 @@ public class FunSpec private constructor(
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
     codeWriter.emitAnnotations(annotations, false)
-    codeWriter.emitContextReceivers(contextReceiverTypes)
-    codeWriter.emit("\n")
+    codeWriter.emitContextReceivers(contextReceiverTypes, "\n")
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {

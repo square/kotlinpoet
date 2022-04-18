@@ -170,12 +170,13 @@ internal class CodeWriter constructor(
   /**
    * Emits the `context` block for [contextReceivers].
    */
-  fun emitContextReceivers(contextReceivers: List<TypeName>) {
+  fun emitContextReceivers(contextReceivers: List<TypeName>, suffix: String = "") {
     if (contextReceivers.isNotEmpty()) {
       val receivers = contextReceivers
         .map { CodeBlock.of("%T", it) }
         .joinToCode(prefix = "context(", suffix = ")")
       emitCode(receivers)
+      emit(suffix)
     }
   }
 

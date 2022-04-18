@@ -57,8 +57,7 @@ public class LambdaTypeName private constructor(
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
-    out.emitContextReceivers(contextReceivers)
-    out.emit("·")
+    out.emitContextReceivers(contextReceivers, "·")
     if (isNullable) {
       out.emit("(")
     }
