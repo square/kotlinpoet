@@ -17,8 +17,11 @@ package com.squareup.kotlinpoet
 
 import kotlin.reflect.KClass
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class LambdaTypeName private constructor(
   public val receiver: TypeName? = null,
+  @property:ExperimentalKotlinPoetApi
+  public val contextReceivers: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
   nullable: Boolean = false,
@@ -50,10 +53,11 @@ public class LambdaTypeName private constructor(
     suspending: Boolean = this.isSuspending,
     tags: Map<KClass<*>, Any> = this.tags.toMap()
   ): LambdaTypeName {
-    return LambdaTypeName(receiver, parameters, returnType, nullable, suspending, annotations, tags)
+    return LambdaTypeName(receiver, contextReceivers, parameters, returnType, nullable, suspending, annotations, tags)
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
+    out.emitContextReceivers(contextReceivers, suffix = "·")
     if (isNullable) {
       out.emit("(")
     }
@@ -81,11 +85,19 @@ public class LambdaTypeName private constructor(
 
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @ExperimentalKotlinPoetApi @JvmStatic public fun get(
+      receiver: TypeName? = null,
+      parameters: List<ParameterSpec> = emptyList(),
+      returnType: TypeName,
+      contextReceivers: List<TypeName> = emptyList()
+    ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, parameters, returnType)
+
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName
-    ): LambdaTypeName = LambdaTypeName(receiver, parameters, returnType)
+    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
@@ -95,6 +107,7 @@ public class LambdaTypeName private constructor(
     ): LambdaTypeName {
       return LambdaTypeName(
         receiver,
+        emptyList(),
         parameters.toList().map { ParameterSpec.unnamed(it) },
         returnType
       )
@@ -105,6 +118,6 @@ public class LambdaTypeName private constructor(
       receiver: TypeName? = null,
       vararg parameters: ParameterSpec = emptyArray(),
       returnType: TypeName
-    ): LambdaTypeName = LambdaTypeName(receiver, parameters.toList(), returnType)
+    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters.toList(), returnType)
   }
 }

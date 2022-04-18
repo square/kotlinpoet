@@ -168,6 +168,19 @@ internal class CodeWriter constructor(
   }
 
   /**
+   * Emits the `context` block for [contextReceivers].
+   */
+  fun emitContextReceivers(contextReceivers: List<TypeName>, suffix: String = "") {
+    if (contextReceivers.isNotEmpty()) {
+      val receivers = contextReceivers
+        .map { CodeBlock.of("%T", it) }
+        .joinToCode(prefix = "context(", suffix = ")")
+      emitCode(receivers)
+      emit(suffix)
+    }
+  }
+
+  /**
    * Emit type variables with their bounds. If a type variable has more than a single bound - call
    * [emitWhereBlock] with same input to produce an additional `where` block.
    *

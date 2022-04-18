@@ -32,6 +32,7 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated function declaration. */
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
@@ -45,6 +46,9 @@ public class FunSpec private constructor(
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
+
+  @ExperimentalKotlinPoetApi
+  public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
   public val delegateConstructor: String? = builder.delegateConstructor
@@ -84,6 +88,7 @@ public class FunSpec private constructor(
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
     codeWriter.emitAnnotations(annotations, false)
+    codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {
@@ -285,6 +290,7 @@ public class FunSpec private constructor(
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
+    internal val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
@@ -358,6 +364,15 @@ public class FunSpec private constructor(
     public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
+
+    @ExperimentalKotlinPoetApi
+    public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
+      check(!name.isConstructor) { "constructors cannot have context receivers" }
+      contextReceiverTypes += receiverTypes
+    }
+
+    @ExperimentalKotlinPoetApi
+    public fun contextReceivers(vararg receiverType: TypeName): Builder = contextReceivers(receiverType.toList())
 
     @JvmOverloads public fun receiver(
       receiverType: TypeName,

@@ -33,6 +33,7 @@ import javax.lang.model.util.Types
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 class FunSpecTest {
   @Rule @JvmField val compilation = CompilationRule()
 
@@ -68,6 +69,8 @@ class FunSpecTest {
   }
 
   internal interface ExtendsOthers : Callable<Int>, Comparable<Long>
+
+  annotation class TestAnnotation
 
   abstract class InvalidOverrideMethods {
     fun finalMethod() {
@@ -427,6 +430,76 @@ class FunSpecTest {
       |}
       |""".trimMargin()
     )
+  }
+
+  @Test fun functionWithContextReceiver() {
+    val stringType = STRING
+    val funSpec = FunSpec.builder("foo")
+      .contextReceivers(stringType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |public fun foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun functionWithMultipleContextReceivers() {
+    val stringType = STRING
+    val intType = INT
+    val booleanType = BOOLEAN
+    val funSpec = FunSpec.builder("foo")
+      .contextReceivers(stringType, intType, booleanType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String, kotlin.Int, kotlin.Boolean)
+      |public fun foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun functionWithGenericContextReceiver() {
+    val genericType = TypeVariableName("T")
+    val funSpec = FunSpec.builder("foo")
+      .addTypeVariable(genericType)
+      .contextReceivers(genericType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(T)
+      |public fun <T> foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun functionWithAnnotatedContextReceiver() {
+    val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
+    val funSpec = FunSpec.builder("foo")
+      .contextReceivers(genericType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation kotlin.String)
+      |public fun foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun constructorWithContextReceiver() {
+    assertThrows<IllegalStateException> {
+      FunSpec.constructorBuilder()
+        .contextReceivers(STRING)
+    }.hasMessageThat().isEqualTo("constructors cannot have context receivers")
   }
 
   @Test fun functionParamSingleLambdaParam() {
