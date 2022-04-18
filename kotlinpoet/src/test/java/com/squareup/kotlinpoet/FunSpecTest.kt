@@ -499,7 +499,7 @@ class FunSpecTest {
     assertThrows<IllegalStateException> {
       FunSpec.constructorBuilder()
         .contextReceivers(STRING)
-    }.hasMessageThat().isEqualTo("constructor(): constructors cannot have context receivers")
+    }.hasMessageThat().isEqualTo("constructors cannot have context receivers")
   }
 
   @Test fun functionParamSingleLambdaParam() {

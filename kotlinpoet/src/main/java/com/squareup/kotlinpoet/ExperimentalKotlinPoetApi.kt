@@ -21,8 +21,7 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.annotation.AnnotationTarget.TYPEALIAS
 
 /**
- * Indicates that a given API is an experimental part of KotlinPoet and is
- * subject to API changes.
+ * Indicates that a given API is experimental and subject to change.
  */
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
