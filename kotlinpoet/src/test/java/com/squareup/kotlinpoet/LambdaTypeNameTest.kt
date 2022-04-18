@@ -42,7 +42,7 @@ class LambdaTypeNameTest {
     val annotation = IsAnnotated::class.java.getAnnotation(HasSomeAnnotation::class.java)
     val typeName = LambdaTypeName.get(
       receiver = Int::class.asClassName().copy(
-              annotations = listOf(AnnotationSpec.get(annotation, includeDefaultValues = true))
+        annotations = listOf(AnnotationSpec.get(annotation, includeDefaultValues = true))
       ),
       parameters = listOf(),
       returnType = Unit::class.asTypeName()
