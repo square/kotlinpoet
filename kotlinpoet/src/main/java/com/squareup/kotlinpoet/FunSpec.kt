@@ -367,7 +367,7 @@ public class FunSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
-    public fun contextReceivers(receiverTypes: Collection<TypeName>): Builder = apply {
+    public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(!name.isConstructor) { "$name: constructors cannot have context receivers" }
       contextReceiverTypes += receiverTypes
     }
