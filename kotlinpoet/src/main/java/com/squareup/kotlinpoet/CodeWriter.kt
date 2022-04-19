@@ -525,8 +525,8 @@ internal class CodeWriter constructor(
         return ClassName(packageName, simpleName)
       }
       if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
-        // Match a top level enum value
-        // Enum values are not proper classes but can still be modeled using ClassName
+        // Match a top level enum value.
+        // Enum values are not proper classes but can still be modeled using ClassName.
         return ClassName(packageName, typeSpec.name!!).nestedClass(simpleName)
       }
     }
