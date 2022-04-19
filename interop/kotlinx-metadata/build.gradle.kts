@@ -22,7 +22,10 @@ tasks.jar {
 
 tasks.compileTestKotlin {
   kotlinOptions {
-    freeCompilerArgs = listOf("-Xjvm-default=all")
+    freeCompilerArgs = listOf(
+      "-Xjvm-default=all",
+      "-opt-in=com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview",
+    )
   }
 }
 
