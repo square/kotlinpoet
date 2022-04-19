@@ -403,7 +403,7 @@ internal class CodeWriter constructor(
     while (c != null) {
       val alias = memberImports[c.canonicalName]?.alias
       val simpleName = alias ?: c.simpleName
-      val resolved = resove(simpleName)
+      val resolved = resolve(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
@@ -509,7 +509,7 @@ internal class CodeWriter constructor(
    * imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
-  private fun resove(simpleName: String): ClassName? {
+  private fun resolve(simpleName: String): ClassName? {
     // Match a child of the current (potentially nested) class.
     for (i in typeSpecStack.indices.reversed()) {
       val typeSpec = typeSpecStack[i]
