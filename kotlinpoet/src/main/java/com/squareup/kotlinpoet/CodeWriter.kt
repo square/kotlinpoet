@@ -518,13 +518,15 @@ internal class CodeWriter constructor(
       }
     }
 
-    // Match the top-level class.
     if (typeSpecStack.size > 0) {
       val typeSpec = typeSpecStack[0]
       if (typeSpec.name == simpleName) {
+        // Match the top-level class.
         return ClassName(packageName, simpleName)
       }
       if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
+        // Match a top level enum value
+        // Enum values are not proper classes but can still be modeled using ClassName
         return ClassName(packageName, typeSpec.name!!).nestedClass(simpleName)
       }
     }
