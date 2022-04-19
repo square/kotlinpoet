@@ -403,7 +403,7 @@ internal class CodeWriter constructor(
     while (c != null) {
       val alias = memberImports[c.canonicalName]?.alias
       val simpleName = alias ?: c.simpleName
-      val resolved = resolveClass(simpleName) ?: resolveEnumConstant(simpleName)
+      val resolved = resove(simpleName)
       nameResolved = resolved != null
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
@@ -505,11 +505,11 @@ internal class CodeWriter constructor(
   }
 
   /**
-   * Returns the class referenced by `simpleName`, using the current nesting context and
+   * Returns the class or enum value referenced by `simpleName`, using the current nesting context and
    * imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
-  private fun resolveClass(simpleName: String): ClassName? {
+  private fun resove(simpleName: String): ClassName? {
     // Match a child of the current (potentially nested) class.
     for (i in typeSpecStack.indices.reversed()) {
       val typeSpec = typeSpecStack[i]
@@ -519,8 +519,14 @@ internal class CodeWriter constructor(
     }
 
     // Match the top-level class.
-    if (typeSpecStack.size > 0 && typeSpecStack[0].name == simpleName) {
-      return ClassName(packageName, simpleName)
+    if (typeSpecStack.size > 0) {
+      val typeSpec = typeSpecStack[0]
+      if (typeSpec.name == simpleName) {
+        return ClassName(packageName, simpleName)
+      }
+      if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
+        return ClassName(packageName, typeSpec.name!!).nestedClass(simpleName)
+      }
     }
 
     // Match an imported type.
@@ -528,20 +534,6 @@ internal class CodeWriter constructor(
     if (importedType != null) return importedType
 
     // No match.
-    return null
-  }
-
-  /**
-   * Returns the qualified name of the `simpleName` enum constant if it's in the current scope
-   */
-  private fun resolveEnumConstant(simpleName: String): String? {
-    if (typeSpecStack.size > 0) {
-      val typeSpec = typeSpecStack[0]
-      if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
-        return "$packageName.${typeSpec.name}.$simpleName"
-      }
-    }
-
     return null
   }
 
