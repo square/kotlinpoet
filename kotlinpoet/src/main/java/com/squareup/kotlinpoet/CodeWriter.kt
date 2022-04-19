@@ -518,7 +518,7 @@ internal class CodeWriter constructor(
   }
 
   /**
-   * Returns the class referenced by `simpleName`, using the current nesting context and
+   * Returns the class or enum value referenced by `simpleName`, using the current nesting context and
    * imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
@@ -531,9 +531,17 @@ internal class CodeWriter constructor(
       }
     }
 
-    // Match the top-level class.
-    if (typeSpecStack.size > 0 && typeSpecStack[0].name == simpleName) {
-      return ClassName(packageName, simpleName)
+    if (typeSpecStack.size > 0) {
+      val typeSpec = typeSpecStack[0]
+      if (typeSpec.name == simpleName) {
+        // Match the top-level class.
+        return ClassName(packageName, simpleName)
+      }
+      if (typeSpec.isEnum && typeSpec.enumConstants.keys.contains(simpleName)) {
+        // Match a top level enum value.
+        // Enum values are not proper classes but can still be modeled using ClassName.
+        return ClassName(packageName, typeSpec.name!!).nestedClass(simpleName)
+      }
     }
 
     // Match an imported type.
