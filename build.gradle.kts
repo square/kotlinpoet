@@ -40,7 +40,7 @@ allprojects {
 subprojects {
   tasks.withType<KotlinCompile> {
     kotlinOptions {
-      freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+      freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.

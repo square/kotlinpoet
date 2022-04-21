@@ -22,7 +22,7 @@ tasks.jar {
 
 tasks.compileTestKotlin {
   kotlinOptions {
-    freeCompilerArgs = listOf("-Xopt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
+    freeCompilerArgs = listOf("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
 }
 

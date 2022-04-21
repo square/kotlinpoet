@@ -75,9 +75,17 @@ internal fun KSType.toTypeName(
       } else {
         decl.typeParameters.toTypeParameterResolver(typeParamResolver)
       }
-      val mappedArgs = arguments.map { it.toTypeName(typeParamResolver) }
 
-      val abbreviatedType = decl.type.resolve()
+      val resolvedType = decl.type.resolve()
+      val mappedArgs = mapTypeAliasArgsToAbbreviatedTypeArgs(
+        typeParamResolver = typeParamResolver,
+        typeAliasTypeParams = decl.typeParameters,
+        typeAliasTypeArgs = arguments,
+        abbreviatedTypeParams = resolvedType.declaration.typeParameters,
+        abbreviatedTypeArgs = resolvedType.arguments,
+      )
+
+      val abbreviatedType = resolvedType
         .toTypeName(extraResolver)
         .copy(nullable = isMarkedNullable)
         .rawType()
@@ -93,6 +101,30 @@ internal fun KSType.toTypeName(
   }
 
   return type.copy(nullable = isMarkedNullable)
+}
+
+@KotlinPoetKspPreview
+private fun mapTypeAliasArgsToAbbreviatedTypeArgs(
+  typeParamResolver: TypeParameterResolver,
+  typeAliasTypeParams: List<KSTypeParameter>,
+  typeAliasTypeArgs: List<KSTypeArgument>,
+  abbreviatedTypeParams: List<KSTypeParameter>,
+  abbreviatedTypeArgs: List<KSTypeArgument>,
+): List<TypeName> {
+  val orderedAbbreviatedTypeArgs = if (typeAliasTypeParams.size < 2) {
+    // egor: If there's only one type parameter, KSP might use different names for it in typealias vs abbreviated type
+    // (not sure why), so we'll return early - order doesn't matter when there are less than 2 parameters.
+    abbreviatedTypeArgs
+  } else {
+    abbreviatedTypeParams
+      .map { abbreviatedTypeParam ->
+        typeAliasTypeParams.indexOfFirst { typeAliasTypeParam ->
+          abbreviatedTypeParam.name.asString() == typeAliasTypeParam.name.asString()
+        }
+      }
+      .map(typeAliasTypeArgs::get)
+  }
+  return orderedAbbreviatedTypeArgs.map { it.toTypeName(typeParamResolver) }
 }
 
 /**
