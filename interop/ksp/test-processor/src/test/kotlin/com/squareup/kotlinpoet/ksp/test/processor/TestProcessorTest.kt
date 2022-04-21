@@ -300,8 +300,8 @@ class TestProcessorTest {
       public class Example {
         public fun aliases(
           aliasedName: String,
-          genericAlias: List,
-          genericMapAlias: Map<String, Int>,
+          genericAlias: List<String>,
+          genericMapAlias: Map<Int, String>,
         ): Unit {
         }
       }
