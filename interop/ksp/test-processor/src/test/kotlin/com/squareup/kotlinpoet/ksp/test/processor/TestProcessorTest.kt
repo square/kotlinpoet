@@ -269,6 +269,7 @@ class TestProcessorTest {
            typealias TypeAliasName = String
            typealias GenericTypeAlias = List<String>
            typealias GenericMapTypeAlias<V, K> = Map<K, V>
+           typealias T1Unused<T1, T2> = Map<T2, String>
 
            @ExampleAnnotation
            class Example {
@@ -276,6 +277,7 @@ class TestProcessorTest {
                aliasedName: TypeAliasName,
                genericAlias: GenericTypeAlias,
                genericMapAlias: GenericMapTypeAlias<String, Int>,
+               t1Unused: T1Unused<String, Int>,
              ) {
              }
            }
@@ -302,6 +304,7 @@ class TestProcessorTest {
           aliasedName: String,
           genericAlias: List<String>,
           genericMapAlias: Map<Int, String>,
+          t1Unused: Map<Int, String>,
         ): Unit {
         }
       }
