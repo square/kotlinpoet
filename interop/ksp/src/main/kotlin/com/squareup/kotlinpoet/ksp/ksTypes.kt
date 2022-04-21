@@ -70,25 +70,34 @@ internal fun KSType.toTypeName(
     }
     is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
     is KSTypeAlias -> {
-      val extraResolver = if (decl.typeParameters.isEmpty()) {
-        typeParamResolver
-      } else {
-        decl.typeParameters.toTypeParameterResolver(typeParamResolver)
-      }
+      var typeAlias: KSTypeAlias = decl
+      var arguments = arguments
 
-      val resolvedType = decl.type.resolve()
-      val mappedArgs = mapTypeArgumentsFromTypeAliasToAbbreviatedType(
-        typeParamResolver = typeParamResolver,
-        typeAlias = decl,
-        typeAliasTypeArguments = arguments,
-        abbreviatedType = resolvedType,
-      )
+      var resolvedType: KSType
+      var mappedArgs: List<KSTypeArgument>
+      var extraResolver: TypeParameterResolver
+      while (true) {
+        resolvedType = typeAlias.type.resolve()
+        mappedArgs = mapTypeArgumentsFromTypeAliasToAbbreviatedType(
+          typeAlias = typeAlias,
+          typeAliasTypeArguments = arguments,
+          abbreviatedType = resolvedType,
+        )
+        extraResolver = if (typeAlias.typeParameters.isEmpty()) {
+          typeParamResolver
+        } else {
+          typeAlias.typeParameters.toTypeParameterResolver(typeParamResolver)
+        }
+
+        typeAlias = resolvedType.declaration as? KSTypeAlias ?: break
+        arguments = mappedArgs
+      }
 
       val abbreviatedType = resolvedType
         .toTypeName(extraResolver)
         .copy(nullable = isMarkedNullable)
         .rawType()
-        .withTypeArguments(mappedArgs)
+        .withTypeArguments(mappedArgs.map { it.toTypeName(typeParamResolver) })
 
       val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
 
@@ -104,11 +113,10 @@ internal fun KSType.toTypeName(
 
 @KotlinPoetKspPreview
 private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
-  typeParamResolver: TypeParameterResolver,
   typeAlias: KSTypeAlias,
   typeAliasTypeArguments: List<KSTypeArgument>,
   abbreviatedType: KSType,
-): List<TypeName> {
+): List<KSTypeArgument> {
   return abbreviatedType.arguments
     .map { typeArgument ->
       // Check if type argument is a reference to a typealias type parameter, and not an actual type.
@@ -121,7 +129,6 @@ private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
         typeArgument
       }
     }
-    .map { it.toTypeName(typeParamResolver) }
 }
 
 /**
