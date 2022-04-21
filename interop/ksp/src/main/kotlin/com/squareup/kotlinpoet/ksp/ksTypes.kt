@@ -77,12 +77,11 @@ internal fun KSType.toTypeName(
       }
 
       val resolvedType = decl.type.resolve()
-      val mappedArgs = mapTypeAliasArgsToAbbreviatedTypeArgs(
+      val mappedArgs = mapTypeArgumentsFromTypeAliasToAbbreviatedType(
         typeParamResolver = typeParamResolver,
-        typeAliasTypeParams = decl.typeParameters,
-        typeAliasTypeArgs = arguments,
-        abbreviatedTypeParams = resolvedType.declaration.typeParameters,
-        abbreviatedTypeArgs = resolvedType.arguments,
+        typeAlias = decl,
+        typeAliasTypeArguments = arguments,
+        abbreviatedType = resolvedType,
       )
 
       val abbreviatedType = resolvedType
@@ -104,27 +103,25 @@ internal fun KSType.toTypeName(
 }
 
 @KotlinPoetKspPreview
-private fun mapTypeAliasArgsToAbbreviatedTypeArgs(
+private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
   typeParamResolver: TypeParameterResolver,
-  typeAliasTypeParams: List<KSTypeParameter>,
-  typeAliasTypeArgs: List<KSTypeArgument>,
-  abbreviatedTypeParams: List<KSTypeParameter>,
-  abbreviatedTypeArgs: List<KSTypeArgument>,
+  typeAlias: KSTypeAlias,
+  typeAliasTypeArguments: List<KSTypeArgument>,
+  abbreviatedType: KSType,
 ): List<TypeName> {
-  val orderedAbbreviatedTypeArgs = if (typeAliasTypeParams.size < 2) {
-    // egor: If there's only one type parameter, KSP might use different names for it in typealias vs abbreviated type
-    // (not sure why), so we'll return early - order doesn't matter when there are less than 2 parameters.
-    abbreviatedTypeArgs
-  } else {
-    abbreviatedTypeParams
-      .map { abbreviatedTypeParam ->
-        typeAliasTypeParams.indexOfFirst { typeAliasTypeParam ->
-          abbreviatedTypeParam.name.asString() == typeAliasTypeParam.name.asString()
-        }
+  return abbreviatedType.arguments
+    .map { typeArgument ->
+      // Check if type argument is a reference to a typealias type parameter, and not an actual type.
+      val typeAliasTypeParameterIndex = typeAlias.typeParameters.indexOfFirst { typeAliasTypeParameter ->
+        typeAliasTypeParameter.name.asString() == typeArgument.type.toString()
       }
-      .map(typeAliasTypeArgs::get)
-  }
-  return orderedAbbreviatedTypeArgs.map { it.toTypeName(typeParamResolver) }
+      if (typeAliasTypeParameterIndex >= 0) {
+        typeAliasTypeArguments[typeAliasTypeParameterIndex]
+      } else {
+        typeArgument
+      }
+    }
+    .map { it.toTypeName(typeParamResolver) }
 }
 
 /**
