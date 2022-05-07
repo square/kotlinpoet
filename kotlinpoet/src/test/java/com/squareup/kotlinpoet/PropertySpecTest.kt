@@ -19,11 +19,15 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
+import java.lang.IllegalStateException
 import java.util.function.Function
 import kotlin.reflect.KClass
 import kotlin.test.Test
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 class PropertySpecTest {
+  annotation class TestAnnotation
+
   @Test fun nullable() {
     val type = String::class.asClassName().copy(nullable = true)
     val a = PropertySpec.builder("foo", type).build()
@@ -557,6 +561,69 @@ class PropertySpecTest {
           }
 
       """.trimIndent()
+    )
+  }
+
+  @Test fun varWithcontextReceiver() {
+    assertThrows<IllegalStateException> {
+      PropertySpec.builder("foo", STRING)
+        .mutable()
+        .contextReceivers(INT)
+        .build()
+    }.hasMessageThat().isEqualTo("mutable properties cannot have context receivers")
+  }
+
+  @Test fun valWithoutGetterWithcontextReceiver() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("foo", STRING)
+        .mutable(false)
+        .contextReceivers(INT)
+        .build()
+    }.hasMessageThat()
+      .isEqualTo("immutable properties with context receivers require a ${FunSpec.GETTER}")
+  }
+
+  @Test fun valWithContextReceiver() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .contextReceivers(STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return length")
+          .build()
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |val foo: kotlin.Int
+      |  get() = length
+      |
+      """.trimMargin()
+    )
+  }
+
+  @Test fun annotatedValWithContextReceiver() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .addAnnotation(AnnotationSpec.get(TestAnnotation()))
+      .contextReceivers(STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return length")
+          .build()
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |@com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation
+      |val foo: kotlin.Int
+      |  get() = length
+      |
+      """.trimMargin()
     )
   }
 }
