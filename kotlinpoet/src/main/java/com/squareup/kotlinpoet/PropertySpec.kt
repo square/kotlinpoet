@@ -60,7 +60,7 @@ public class PropertySpec private constructor(
     }
     if (contextReceiverTypes.isNotEmpty()) {
       check(!mutable) { "mutable properties cannot have context receivers" }
-      require(getter != null){ "immutable properties with context receivers require a $GETTER" }
+      require(getter != null) { "immutable properties with context receivers require a $GETTER" }
     }
   }
 
