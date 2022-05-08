@@ -4898,6 +4898,43 @@ class TypeSpecTest {
     )
   }
 
+  // https://youtrack.jetbrains.com/issue/KT-52315
+  @Test fun escapeEnumConstantNamesWithConstructors() {
+    val primaryConstructor = FunSpec.constructorBuilder()
+      .addParameter("int", Int::class)
+      .build()
+    val enum = TypeSpec
+      .enumBuilder("MyEnum")
+      .primaryConstructor(primaryConstructor)
+      .addEnumConstant(
+        "header",
+        TypeSpec.anonymousClassBuilder()
+          .addSuperclassConstructorParameter("%L", 1)
+          .build()
+      )
+      .addEnumConstant(
+        "impl",
+        TypeSpec.anonymousClassBuilder()
+          .addSuperclassConstructorParameter("%L", 2)
+          .build()
+      )
+      .build()
+    assertThat(toString(enum)).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Int
+      |
+      |public enum class MyEnum(
+      |  int: Int,
+      |) {
+      |  `header`(1),
+      |  `impl`(2),
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun escapeClassNames() {
     val type = TypeSpec.classBuilder("fun").build()
     assertThat(type.toString()).isEqualTo(
