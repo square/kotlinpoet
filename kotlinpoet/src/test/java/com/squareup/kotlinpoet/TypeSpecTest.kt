@@ -4899,7 +4899,7 @@ class TypeSpecTest {
   }
 
   // https://youtrack.jetbrains.com/issue/KT-52315
-  @Test fun escapeEnumConstantNamesWithConstructors() {
+  @Test fun escapeHeaderAndImplAsEnumConstantNames() {
     val primaryConstructor = FunSpec.constructorBuilder()
       .addParameter("int", Int::class)
       .build()
