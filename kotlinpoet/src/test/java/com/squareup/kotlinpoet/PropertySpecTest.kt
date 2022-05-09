@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
+import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
@@ -23,7 +25,10 @@ import java.util.function.Function
 import kotlin.reflect.KClass
 import kotlin.test.Test
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 class PropertySpecTest {
+  annotation class TestAnnotation
+
   @Test fun nullable() {
     val type = String::class.asClassName().copy(nullable = true)
     val a = PropertySpec.builder("foo", type).build()
@@ -557,6 +562,122 @@ class PropertySpecTest {
           }
 
       """.trimIndent()
+    )
+  }
+
+  @Test fun varWithContextReceiverWithoutCustomAccessors() {
+    val mutablePropertySpecBuilder = {
+      PropertySpec.builder("foo", STRING)
+        .mutable()
+        .contextReceivers(INT)
+    }
+
+    assertThrows<IllegalArgumentException> {
+      mutablePropertySpecBuilder()
+        .getter(
+          FunSpec.getterBuilder()
+            .build()
+        )
+        .build()
+    }.hasMessageThat()
+      .isEqualTo("mutable properties with context receivers require a $SETTER")
+
+    assertThrows<IllegalArgumentException> {
+      mutablePropertySpecBuilder()
+        .setter(
+          FunSpec.setterBuilder()
+            .build()
+        )
+        .build()
+    }.hasMessageThat()
+      .isEqualTo("properties with context receivers require a $GETTER")
+  }
+
+  @Test fun valWithContextReceiverWithoutGetter() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("foo", STRING)
+        .mutable(false)
+        .contextReceivers(INT)
+        .build()
+    }.hasMessageThat()
+      .isEqualTo("properties with context receivers require a $GETTER")
+  }
+
+  @Test fun varWithContextReceiver() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable()
+      .contextReceivers(STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return \"\"")
+          .build()
+      )
+      .setter(
+        FunSpec.setterBuilder()
+          .addParameter(
+            ParameterSpec.builder("value", STRING)
+              .build()
+          )
+          .addStatement("")
+          .build()
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |var foo: kotlin.Int
+      |  get() = ""
+      |  set(`value`) {
+      |
+      |  }
+      |
+      """.trimMargin()
+    )
+  }
+
+  @Test fun valWithContextReceiver() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .contextReceivers(STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return length")
+          .build()
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |val foo: kotlin.Int
+      |  get() = length
+      |
+      """.trimMargin()
+    )
+  }
+
+  @OptIn(DelicateKotlinPoetApi::class)
+  @Test fun annotatedValWithContextReceiver() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .addAnnotation(AnnotationSpec.get(TestAnnotation()))
+      .contextReceivers(STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return length")
+          .build()
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |@com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation
+      |val foo: kotlin.Int
+      |  get() = length
+      |
+      """.trimMargin()
     )
   }
 }

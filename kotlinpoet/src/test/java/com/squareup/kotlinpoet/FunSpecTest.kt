@@ -18,6 +18,8 @@ package com.squareup.kotlinpoet
 import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
+import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.junit.Rule
 import java.io.Closeable
@@ -480,6 +482,22 @@ class FunSpecTest {
     )
   }
 
+  @Test fun annotatedFunctionWithContextReceiver() {
+    val funSpec = FunSpec.builder("foo")
+      .addAnnotation(AnnotationSpec.get(TestAnnotation()))
+      .contextReceivers(STRING)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation
+      |public fun foo(): kotlin.Unit {
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionWithAnnotatedContextReceiver() {
     val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
     val funSpec = FunSpec.builder("foo")
@@ -500,6 +518,18 @@ class FunSpecTest {
       FunSpec.constructorBuilder()
         .contextReceivers(STRING)
     }.hasMessageThat().isEqualTo("constructors cannot have context receivers")
+  }
+
+  @Test fun accessorWithContextReceiver() {
+    assertThrows<IllegalStateException> {
+      FunSpec.getterBuilder()
+        .contextReceivers(STRING)
+    }.hasMessageThat().isEqualTo("$GETTER cannot have context receivers")
+
+    assertThrows<IllegalStateException> {
+      FunSpec.setterBuilder()
+        .contextReceivers(STRING)
+    }.hasMessageThat().isEqualTo("$SETTER cannot have context receivers")
   }
 
   @Test fun functionParamSingleLambdaParam() {

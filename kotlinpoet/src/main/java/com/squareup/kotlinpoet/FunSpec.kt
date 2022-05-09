@@ -87,8 +87,8 @@ public class FunSpec private constructor(
     } else {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
-    codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
+    codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {
@@ -368,6 +368,7 @@ public class FunSpec private constructor(
     @ExperimentalKotlinPoetApi
     public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(!name.isConstructor) { "constructors cannot have context receivers" }
+      check(!name.isAccessor) { "$name cannot have context receivers" }
       contextReceiverTypes += receiverTypes
     }
 

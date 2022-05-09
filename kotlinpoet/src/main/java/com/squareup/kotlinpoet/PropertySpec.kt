@@ -24,6 +24,7 @@ import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated property declaration. */
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class PropertySpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
@@ -42,6 +43,9 @@ public class PropertySpec private constructor(
   public val setter: FunSpec? = builder.setter
   public val receiverType: TypeName? = builder.receiverType
 
+  @ExperimentalKotlinPoetApi
+  public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
+
   init {
     require(
       typeVariables.none { it.isReified } ||
@@ -53,6 +57,12 @@ public class PropertySpec private constructor(
     }
     require(mutable || setter == null) {
       "only a mutable property can have a setter"
+    }
+    if (contextReceiverTypes.isNotEmpty()) {
+      requireNotNull(getter) { "properties with context receivers require a $GETTER" }
+      if (mutable) {
+        requireNotNull(setter) { "mutable properties with context receivers require a $SETTER" }
+      }
     }
   }
 
@@ -70,6 +80,7 @@ public class PropertySpec private constructor(
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
+    codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
     codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emitCode(if (mutable) "var·" else "val·")
@@ -174,6 +185,7 @@ public class PropertySpec private constructor(
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
+    internal val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     public val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
@@ -269,6 +281,15 @@ public class PropertySpec private constructor(
     public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
+
+    @ExperimentalKotlinPoetApi
+    public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
+      contextReceiverTypes += receiverTypes
+    }
+
+    @ExperimentalKotlinPoetApi
+    public fun contextReceivers(vararg receiverType: TypeName): Builder =
+      contextReceivers(receiverType.toList())
 
     public fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {
