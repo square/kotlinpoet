@@ -590,7 +590,7 @@ class PropertySpecTest {
         )
         .build()
     }.hasMessageThat()
-      .isEqualTo("mutable properties with context receivers require a $GETTER")
+      .isEqualTo("properties with context receivers require a $GETTER")
   }
 
   @Test fun valWithContextReceiverWithoutGetter() {
@@ -600,7 +600,7 @@ class PropertySpecTest {
         .contextReceivers(INT)
         .build()
     }.hasMessageThat()
-      .isEqualTo("immutable properties with context receivers require a $GETTER")
+      .isEqualTo("properties with context receivers require a $GETTER")
   }
 
   @Test fun varWithContextReceiver() {
