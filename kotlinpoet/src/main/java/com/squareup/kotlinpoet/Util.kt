@@ -248,6 +248,10 @@ private val KEYWORDS = setOf(
   "value",
   "vararg",
 
+  // These aren't keywords anymore but still break some code if unescaped. https://youtrack.jetbrains.com/issue/KT-52315
+  "header",
+  "impl",
+
   // Other reserved keywords
   "yield",
 )

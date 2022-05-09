@@ -115,12 +115,7 @@ public class TypeSpec private constructor(
       if (enumName != null) {
         codeWriter.emitKdoc(kdocWithConstructorParameters())
         codeWriter.emitAnnotations(annotationSpecs, false)
-        // These aren't keywords anymore but still break if unquoted. https://youtrack.jetbrains.com/issue/KT-52315
-        if ((enumName == "header" || enumName == "impl") && superclassConstructorParametersBlock.isNotEmpty()) {
-          codeWriter.emitCode("`$enumName`")
-        } else {
-          codeWriter.emitCode("%N", enumName)
-        }
+        codeWriter.emitCode("%N", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
           codeWriter.emit("(")
           codeWriter.emitCode(superclassConstructorParametersBlock)
