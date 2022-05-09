@@ -59,11 +59,10 @@ public class PropertySpec private constructor(
       "only a mutable property can have a setter"
     }
     if (contextReceiverTypes.isNotEmpty()) {
+      requireNotNull(getter) { "properties with context receivers require a $GETTER" }
       if (mutable) {
-        requireNotNull(getter) { "mutable properties with context receivers require a $GETTER" }
         requireNotNull(setter) { "mutable properties with context receivers require a $SETTER" }
       }
-      requireNotNull(getter) { "immutable properties with context receivers require a $GETTER" }
     }
   }
 
