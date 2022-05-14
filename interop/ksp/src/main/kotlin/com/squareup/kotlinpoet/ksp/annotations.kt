@@ -41,7 +41,7 @@ public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
   for (argument in arguments) {
     val member = CodeBlock.builder()
     val name = argument.name!!.getShortName()
-    member.add("%L = ", name)
+    member.add("%N = ", name)
     addValueToBlock(argument.value!!, member)
     builder.addMember(member.build())
   }
