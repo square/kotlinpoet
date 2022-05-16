@@ -3938,7 +3938,7 @@ class TypeSpecTest {
 
   @Test fun classHeaderFormatting() {
     val typeSpec = TypeSpec.classBuilder("Person")
-      .addModifiers(KModifier.DATA)
+      .addModifiers(DATA)
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("id", Int::class)
@@ -3987,7 +3987,7 @@ class TypeSpecTest {
       .build()
 
     val typeSpec = TypeSpec.classBuilder("Person")
-      .addModifiers(KModifier.DATA)
+      .addModifiers(DATA)
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter(idParameterSpec)
@@ -4402,7 +4402,7 @@ class TypeSpecTest {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
       .addType(
         TypeSpec.classBuilder("Taco")
-          .addModifiers(KModifier.DATA)
+          .addModifiers(DATA)
           .addProperty(
             PropertySpec.builder("madeFreshDatabaseDate", sqlTaco)
               .initializer("madeFreshDatabaseDate")
@@ -5118,6 +5118,32 @@ class TypeSpecTest {
 
       public val rawValue: kotlin.String = ""
     }
+
+      """.trimIndent()
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1035
+  @Test fun dataClassWithKeywordProperty() {
+    val parameter = ParameterSpec.builder("data", STRING).build()
+    val typeSpec = TypeSpec.classBuilder("Example")
+      .addModifiers(DATA)
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter(parameter)
+          .build()
+      )
+      .addProperty(
+        PropertySpec.builder(parameter.name, STRING)
+          .initializer("%N", parameter)
+          .build()
+      )
+      .build()
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      public data class Example(
+        public val `data`: kotlin.String,
+      )
 
       """.trimIndent()
     )
