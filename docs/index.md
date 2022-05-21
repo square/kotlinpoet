@@ -1188,7 +1188,8 @@ enum class Roshambo(private val handsign: String) {
 
   SCISSORS("peace"),
 
-  PAPER("flat");
+  PAPER("flat"),
+  ;
 }
 ```
 
