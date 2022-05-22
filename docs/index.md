@@ -1533,6 +1533,6 @@ License
 
  [dl]: https://search.maven.org/remote_content?g=com.squareup&a=kotlinpoet&v=LATEST
  [snap]: https://s01.oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
- [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/com.squareup.kotlinpoet/
+ [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/
  [javapoet]: https://github.com/square/javapoet/
  [formatter]: https://developer.android.com/reference/java/util/Formatter.html
