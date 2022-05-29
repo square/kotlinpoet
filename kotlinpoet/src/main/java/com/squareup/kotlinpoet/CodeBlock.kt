@@ -270,7 +270,11 @@ public class CodeBlock private constructor(
         if (format[p] != '%') {
           var nextP = format.nextPotentialPlaceholderPosition(startIndex = p + 1)
           if (nextP == -1) nextP = format.length
-          formatParts += format.substring(p, nextP)
+          var formatPart = format.substring(p, nextP)
+          if (formatPart.startsWith(RETURN_WITH_SPACE)) {
+            formatPart = formatPart.replaceRange(RETURN_WITH_SPACE.indices, RETURN_WITH_NBSP)
+          }
+          formatParts += formatPart
           p = nextP
           continue
         }
@@ -458,6 +462,8 @@ public class CodeBlock private constructor(
     private const val TYPE_NAME = 2
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
+    internal const val RETURN_WITH_SPACE = "return "
+    internal const val RETURN_WITH_NBSP = "return·"
 
     @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
       Builder().add(format, *args).build()

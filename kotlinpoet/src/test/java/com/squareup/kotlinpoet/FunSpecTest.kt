@@ -206,6 +206,31 @@ class FunSpecTest {
     )
   }
 
+  @Test fun returnLongExpression(){
+    val funSpec = FunSpec.builder("foo")
+      .returns(String::class)
+      .addStatement("val placeholder = 1")
+      .addStatement("return \"Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong\"")
+      .build()
+    val sb = StringBuilder()
+    CodeWriter(sb).use {
+      funSpec.emit(
+        codeWriter = it,
+        enclosingName = null,
+        implicitModifiers = setOf(KModifier.PUBLIC),
+        includeKdocTags = false
+      )
+    }
+    assertThat(sb.toString()).isEqualTo(
+      """
+      |public fun foo(): kotlin.String {
+      |  val placeholder = 1
+      |  return "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
       .addParameter(

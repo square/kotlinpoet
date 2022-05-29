@@ -558,8 +558,8 @@ public class FunSpec private constructor(
     internal val String.isConstructor get() = this == CONSTRUCTOR
     internal val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
-    private val RETURN_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("return ")
-    private val RETURN_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("return·")
+    private val RETURN_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of(CodeBlock.RETURN_WITH_SPACE)
+    private val RETURN_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of(CodeBlock.RETURN_WITH_NBSP)
     private val THROW_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("throw ")
     private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw·")
 
