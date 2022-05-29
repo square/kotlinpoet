@@ -206,7 +206,7 @@ class FunSpecTest {
     )
   }
 
-  @Test fun returnLongExpression(){
+  @Test fun returnLongExpression() {
     val funSpec = FunSpec.builder("foo")
       .returns(String::class)
       .addStatement("val placeholder = 1")
