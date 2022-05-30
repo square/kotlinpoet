@@ -247,11 +247,18 @@ public class FunSpec private constructor(
 
   private fun CodeBlock.returnsWithoutLinebreak(): CodeBlock {
     val originCodeBlockBuilder = toBuilder()
-    originCodeBlockBuilder.formatParts.replaceAll { formatPart ->
-      val startReturnIndex = formatPart.indexOf(CodeBlock.RETURN_WITH_SPACE)
-      if (startReturnIndex == -1) return@replaceAll formatPart
-      var endIndex = startReturnIndex + CodeBlock.RETURN_WITH_SPACE.length - 1
-      while (formatPart[endIndex] == ' ') endIndex++
+    val returnWithSpace = CodeBlock.RETURN_WITH_SPACE
+    originCodeBlockBuilder.formatParts.clear()
+    formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
+      if (formatPart.isEmpty()) return@mapTo formatPart
+      var startReturnIndex = 0
+      while (formatPart[startReturnIndex] == ' ') startReturnIndex++
+      var endIndex = startReturnIndex + returnWithSpace.length
+      if (endIndex > formatPart.length) return@mapTo formatPart
+      if (formatPart.substring(startReturnIndex, endIndex) != returnWithSpace) {
+        return@mapTo formatPart
+      }
+      while (endIndex < formatPart.length && formatPart[endIndex] == ' ') endIndex++
       CodeBlock.RETURN_WITH_NBSP + formatPart.substring(endIndex, formatPart.length)
     }
     return originCodeBlockBuilder.build()
