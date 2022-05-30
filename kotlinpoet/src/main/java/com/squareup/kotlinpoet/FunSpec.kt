@@ -252,7 +252,7 @@ public class FunSpec private constructor(
     formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
       if (formatPart.isEmpty()) return@mapTo formatPart
       var startReturnIndex = 0
-      while (formatPart[startReturnIndex] == ' ') startReturnIndex++
+      while (startReturnIndex < formatPart.length && formatPart[startReturnIndex] == ' ') startReturnIndex++
       var endIndex = startReturnIndex + returnWithSpace.length
       if (endIndex > formatPart.length) return@mapTo formatPart
       if (formatPart.substring(startReturnIndex, endIndex) != returnWithSpace) {
