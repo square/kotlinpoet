@@ -206,10 +206,38 @@ class FunSpecTest {
     )
   }
 
-  @Test fun returnLongExpression() {
+  @Test fun returnsLongExpression() {
     val funSpec = FunSpec.builder("foo")
       .returns(String::class)
       .addStatement("val placeholder = 1")
+      .addStatement("return     \"Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong\"")
+      .build()
+    val sb = StringBuilder()
+    CodeWriter(sb).use {
+      funSpec.emit(
+        codeWriter = it,
+        enclosingName = null,
+        implicitModifiers = setOf(KModifier.PUBLIC),
+        includeKdocTags = false
+      )
+    }
+    assertThat(sb.toString()).isEqualTo(
+      """
+      |public fun foo(): kotlin.String {
+      |  val placeholder = 1
+      |  return "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"
+      |}
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun returnsLongExpressions() {
+    val funSpec = FunSpec.builder("foo")
+      .returns(String::class)
+      .addStatement("val placeholder = 1")
+      .beginControlFlow("if (placeholder == 0)")
+      .addStatement("  return     \"LooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongExpressionInControlFlow\"")
+      .endControlFlow()
       .addStatement("return \"Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong\"")
       .build()
     val sb = StringBuilder()
@@ -225,6 +253,9 @@ class FunSpecTest {
       """
       |public fun foo(): kotlin.String {
       |  val placeholder = 1
+      |  if (placeholder == 0) {
+      |    return "LooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongExpressionInControlFlow"
+      |  }
       |  return "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"
       |}
       |""".trimMargin()

@@ -270,11 +270,7 @@ public class CodeBlock private constructor(
         if (format[p] != '%') {
           var nextP = format.nextPotentialPlaceholderPosition(startIndex = p + 1)
           if (nextP == -1) nextP = format.length
-          var formatPart = format.substring(p, nextP)
-          if (formatPart.startsWith(RETURN_WITH_SPACE)) {
-            formatPart = formatPart.replaceRange(RETURN_WITH_SPACE.indices, RETURN_WITH_NBSP)
-          }
-          formatParts += formatPart
+          formatParts += format.substring(p, nextP)
           p = nextP
           continue
         }

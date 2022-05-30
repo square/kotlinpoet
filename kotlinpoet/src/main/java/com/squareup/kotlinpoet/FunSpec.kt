@@ -114,7 +114,7 @@ public class FunSpec private constructor(
     } else if (!isEmptySetter) {
       codeWriter.emitCode("·{\n")
       codeWriter.indent()
-      codeWriter.emitCode(body, ensureTrailingNewline = true)
+      codeWriter.emitCode(body.returnsWithoutLinebreak(), ensureTrailingNewline = true)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     } else {
@@ -243,6 +243,18 @@ public class FunSpec private constructor(
       return codeBlock
     }
     return null
+  }
+
+  private fun CodeBlock.returnsWithoutLinebreak(): CodeBlock {
+    val originCodeBlockBuilder = toBuilder()
+    originCodeBlockBuilder.formatParts.replaceAll { formatPart ->
+      val startReturnIndex = formatPart.indexOf(CodeBlock.RETURN_WITH_SPACE)
+      if (startReturnIndex == -1) return@replaceAll formatPart
+      var endIndex = startReturnIndex + CodeBlock.RETURN_WITH_SPACE.length - 1
+      while (formatPart[endIndex] == ' ') endIndex++
+      CodeBlock.RETURN_WITH_NBSP + formatPart.substring(endIndex, formatPart.length)
+    }
+    return originCodeBlockBuilder.build()
   }
 
   override fun equals(other: Any?): Boolean {
