@@ -210,7 +210,7 @@ class FunSpecTest {
     val funSpec = FunSpec.builder("foo")
       .returns(String::class)
       .addStatement("val placeholder = 1")
-      .addStatement("return \"Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong\"")
+      .addStatement("return %S", "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong")
       .build()
     val sb = StringBuilder()
     // The FunSpec#toString columnLimit is Integer.MAX_VALUE, 
