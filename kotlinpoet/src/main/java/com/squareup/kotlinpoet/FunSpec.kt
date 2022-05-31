@@ -247,19 +247,13 @@ public class FunSpec private constructor(
 
   private fun CodeBlock.returnsWithoutLinebreak(): CodeBlock {
     val originCodeBlockBuilder = toBuilder()
-    val returnWithSpace = CodeBlock.RETURN_WITH_SPACE
+    val returnWithSpace = "return "
+    val returnWithNbsp = "return·"
     originCodeBlockBuilder.formatParts.clear()
     formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
-      if (formatPart.isEmpty()) return@mapTo formatPart
-      var startReturnIndex = 0
-      while (startReturnIndex < formatPart.length && formatPart[startReturnIndex] == ' ') startReturnIndex++
-      var endIndex = startReturnIndex + returnWithSpace.length
-      if (endIndex > formatPart.length) return@mapTo formatPart
-      if (formatPart.substring(startReturnIndex, endIndex) != returnWithSpace) {
-        return@mapTo formatPart
-      }
-      while (endIndex < formatPart.length && formatPart[endIndex] == ' ') endIndex++
-      CodeBlock.RETURN_WITH_NBSP + formatPart.substring(endIndex, formatPart.length)
+      if (formatPart.startsWith(returnWithSpace)) {
+        formatPart.replaceFirst(returnWithSpace, returnWithNbsp)
+      } else formatPart
     }
     return originCodeBlockBuilder.build()
   }
@@ -577,8 +571,8 @@ public class FunSpec private constructor(
     internal val String.isConstructor get() = this == CONSTRUCTOR
     internal val String.isAccessor get() = this.isOneOf(GETTER, SETTER)
 
-    private val RETURN_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of(CodeBlock.RETURN_WITH_SPACE)
-    private val RETURN_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of(CodeBlock.RETURN_WITH_NBSP)
+    private val RETURN_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("return ")
+    private val RETURN_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("return·")
     private val THROW_EXPRESSION_BODY_PREFIX_SPACE = CodeBlock.of("throw ")
     private val THROW_EXPRESSION_BODY_PREFIX_NBSP = CodeBlock.of("throw·")
 

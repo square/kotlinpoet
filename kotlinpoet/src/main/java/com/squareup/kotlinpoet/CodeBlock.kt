@@ -458,8 +458,6 @@ public class CodeBlock private constructor(
     private const val TYPE_NAME = 2
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
-    internal const val RETURN_WITH_SPACE = "return "
-    internal const val RETURN_WITH_NBSP = "return·"
 
     @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
       Builder().add(format, *args).build()
