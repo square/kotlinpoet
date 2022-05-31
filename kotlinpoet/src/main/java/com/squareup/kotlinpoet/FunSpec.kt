@@ -253,7 +253,9 @@ public class FunSpec private constructor(
     formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
       if (formatPart.startsWith(returnWithSpace)) {
         formatPart.replaceFirst(returnWithSpace, returnWithNbsp)
-      } else formatPart
+      } else {
+        formatPart
+      }
     }
     return originCodeBlockBuilder.build()
   }
