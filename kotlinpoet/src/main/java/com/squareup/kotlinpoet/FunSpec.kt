@@ -247,8 +247,8 @@ public class FunSpec private constructor(
 
   private fun CodeBlock.returnsWithoutLinebreak(): CodeBlock {
     val originCodeBlockBuilder = toBuilder()
-    val returnWithSpace = "return "
-    val returnWithNbsp = "return·"
+    val returnWithSpace = RETURN_EXPRESSION_BODY_PREFIX_SPACE
+    val returnWithNbsp = RETURN_EXPRESSION_BODY_PREFIX_NBSP
     originCodeBlockBuilder.formatParts.clear()
     formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
       if (formatPart.startsWith(returnWithSpace)) {
