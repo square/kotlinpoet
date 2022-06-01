@@ -206,6 +206,33 @@ class FunSpecTest {
     )
   }
 
+  @Test fun returnsLongExpression() {
+    val funSpec = FunSpec.builder("foo")
+      .returns(String::class)
+      .addStatement("val placeholder = 1")
+      .addStatement("return %S", "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong")
+      .build()
+    val sb = StringBuilder()
+    // The FunSpec#toString columnLimit is Integer.MAX_VALUE,
+    // It will not cause problems with returns long expressions.
+    CodeWriter(sb).use {
+      funSpec.emit(
+        codeWriter = it,
+        enclosingName = null,
+        implicitModifiers = setOf(KModifier.PUBLIC),
+        includeKdocTags = false
+      )
+    }
+    assertThat(sb.toString()).isEqualTo(
+      """
+      |public fun foo(): kotlin.String {
+      |  val placeholder = 1
+      |  return "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"
+      |}
+      |""".trimMargin()
+    )
+  }
+
   @Test fun functionParamWithKdoc() {
     val funSpec = FunSpec.builder("foo")
       .addParameter(
