@@ -246,18 +246,17 @@ public class FunSpec private constructor(
   }
 
   private fun CodeBlock.returnsWithoutLinebreak(): CodeBlock {
-    val originCodeBlockBuilder = toBuilder()
-    val returnWithSpace = RETURN_EXPRESSION_BODY_PREFIX_SPACE
-    val returnWithNbsp = RETURN_EXPRESSION_BODY_PREFIX_NBSP
-    originCodeBlockBuilder.formatParts.clear()
-    formatParts.mapTo(originCodeBlockBuilder.formatParts) { formatPart ->
+    val returnWithSpace = RETURN_EXPRESSION_BODY_PREFIX_SPACE.formatParts[0]
+    val returnWithNbsp = RETURN_EXPRESSION_BODY_PREFIX_NBSP.formatParts[0]
+    var originCodeBlockBuilder: CodeBlock.Builder? = null
+    for ((i, formatPart) in formatParts.withIndex()) {
       if (formatPart.startsWith(returnWithSpace)) {
-        formatPart.replaceFirst(returnWithSpace, returnWithNbsp)
-      } else {
-        formatPart
+        val builder = originCodeBlockBuilder ?: toBuilder()
+        originCodeBlockBuilder = builder
+        builder.formatParts[i] = formatPart.replaceFirst(returnWithSpace, returnWithNbsp)
       }
     }
-    return originCodeBlockBuilder.build()
+    return originCodeBlockBuilder?.build() ?: this
   }
 
   override fun equals(other: Any?): Boolean {
