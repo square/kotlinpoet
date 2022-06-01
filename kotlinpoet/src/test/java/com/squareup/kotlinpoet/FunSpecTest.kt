@@ -213,7 +213,7 @@ class FunSpecTest {
       .addStatement("return %S", "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong")
       .build()
     val sb = StringBuilder()
-    // The FunSpec#toString columnLimit is Integer.MAX_VALUE, 
+    // The FunSpec#toString columnLimit is Integer.MAX_VALUE,
     // It will not cause problems with returns long expressions.
     CodeWriter(sb).use {
       funSpec.emit(
