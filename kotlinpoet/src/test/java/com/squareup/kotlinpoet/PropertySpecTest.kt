@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
@@ -72,6 +73,43 @@ class PropertySpecTest {
         )
         .build()
     }.hasMessageThat().isEqualTo("parameterless setter cannot have code")
+  }
+
+  @Test fun externalGetterAndSetter() {
+    val prop = PropertySpec.builder("foo", String::class)
+      .mutable()
+      .getter(
+        FunSpec.getterBuilder()
+          .addModifiers(EXTERNAL)
+          .build()
+      )
+      .setter(
+        FunSpec.setterBuilder()
+          .addModifiers(EXTERNAL)
+          .build()
+      )
+      .build()
+
+    assertThat(prop.toString()).isEqualTo(
+      """
+      |var foo: kotlin.String
+      |  external get
+      |  external set
+      |""".trimMargin()
+    )
+  }
+
+  @Test fun externalGetterCannotHaveBody() {
+    assertThrows<IllegalArgumentException> {
+      PropertySpec.builder("foo", String::class)
+        .getter(
+          FunSpec.getterBuilder()
+            .addModifiers(EXTERNAL)
+            .addStatement("return %S", "foo")
+            .build()
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("external getter cannot have code")
   }
 
   @Test fun inlineSingleAccessorVal() {

@@ -55,13 +55,18 @@ public class FunSpec private constructor(
   public val delegateConstructorArguments: List<CodeBlock> =
     builder.delegateConstructorArguments.toImmutableList()
   public val body: CodeBlock = builder.body.build()
+  private val isExternalGetter = name == GETTER && builder.modifiers.contains(EXTERNAL)
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
   init {
     require(body.isEmpty() || !builder.modifiers.containsAnyOf(ABSTRACT, EXPECT)) {
       "abstract or expect function ${builder.name} cannot have code"
     }
-    if (name == SETTER) {
+    if (name == GETTER) {
+      require(!isExternalGetter || body.isEmpty()) {
+        "external getter cannot have code"
+      }
+    } else if (name == SETTER) {
       require(parameters.size <= 1) {
         "$name can have at most one parameter"
       }
@@ -155,7 +160,7 @@ public class FunSpec private constructor(
       codeWriter.emitCode("%N", this)
     }
 
-    if (!isEmptySetter) {
+    if (!isEmptySetter && !isExternalGetter) {
       parameters.emit(codeWriter) { param ->
         param.emit(codeWriter, includeType = name != SETTER)
       }
