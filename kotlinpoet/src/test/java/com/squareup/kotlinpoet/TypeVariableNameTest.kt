@@ -35,7 +35,8 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun <T> foo(): T? = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -49,7 +50,8 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun <T, U> foo(): T? = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -62,7 +64,8 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun <T : java.io.Serializable> foo(): T? = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -76,7 +79,8 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun <T : java.io.Serializable, U : java.lang.Runnable> foo(): T? = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -89,7 +93,8 @@ class TypeVariableNameTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun <T> foo(): T? where T : java.io.Serializable, T : java.lang.Runnable = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -128,7 +133,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<T : kotlin.Number>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -139,7 +145,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<in E : kotlin.Number>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -150,7 +157,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<out E : kotlin.Number>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -171,7 +179,8 @@ class TypeVariableNameTest {
       |public inline fun <reified T> printMembers(): kotlin.Unit {
       |  println(T::class.members)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -182,7 +191,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<E : kotlin.Any>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -193,7 +203,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<E>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -206,7 +217,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<E>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -219,7 +231,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<E>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -232,7 +245,8 @@ class TypeVariableNameTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       |public class Taco<T>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 

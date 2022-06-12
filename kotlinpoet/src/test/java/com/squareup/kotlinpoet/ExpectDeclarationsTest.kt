@@ -27,7 +27,8 @@ class ExpectDeclarationsTest {
     assertThat(methodSpec.toString()).isEqualTo(
       """
       |public expect fun function(): kotlin.Unit
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -43,7 +44,8 @@ class ExpectDeclarationsTest {
         |public expect class Test {
         |  public fun function(): kotlin.Unit
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -55,7 +57,8 @@ class ExpectDeclarationsTest {
     assertThat(propertySpec.toString()).isEqualTo(
       """
       |expect val prop: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -71,7 +74,8 @@ class ExpectDeclarationsTest {
         |public expect class Test {
         |  public val prop: kotlin.String
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 }

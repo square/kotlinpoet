@@ -26,7 +26,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public class Test : testpackage.TestSuper()
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -37,7 +38,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public object Test : testpackage.TestSuper()
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -49,7 +51,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public external class Test : testpackage.TestSuper
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -61,7 +64,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public expect class Test : testpackage.TestSuper
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -73,7 +77,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public expect object Test : testpackage.TestSuper
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -85,7 +90,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public external object Test : testpackage.TestSuper
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -97,7 +103,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public class Test : testpackage.TestSuper(anything)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -109,7 +116,8 @@ class DelegatedConstructorCallTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public object Test : testpackage.TestSuper(anything)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -128,7 +136,8 @@ class DelegatedConstructorCallTest {
         |public class Test() {
         |  public constructor(foo: kotlin.String) : this()
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 

@@ -201,7 +201,8 @@ class CodeBlockTest {
       |Current code block:
       |- Format parts: [«, print(, «, %L, », ), \n, »]
       |- Arguments: [1 + 1]
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -219,7 +220,8 @@ class CodeBlockTest {
       |Current code block:
       |- Format parts: [«, print(, %L, », ), \n, »]
       |- Arguments: [1 + 1]
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -460,7 +462,8 @@ class CodeBlockTest {
       |list.forEach { element ->
       |  println(element)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -475,7 +478,8 @@ class CodeBlockTest {
       |listOf("${'$'}{1.toString()}").forEach { element ->
       |  println(element)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -494,7 +498,8 @@ class CodeBlockTest {
       |} else {
       |  println("bar")
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -521,7 +526,8 @@ class CodeBlockTest {
       |      "Long string that would wrap the line 2 ") {
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -537,7 +543,8 @@ class CodeBlockTest {
       |Modeling a kdoc
       |
       |Statement with no args
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -585,7 +592,8 @@ class CodeBlockTest {
       |    "London",
       |  )
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

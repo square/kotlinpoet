@@ -320,7 +320,8 @@ internal class CodeWriter constructor(
             |Current code block:
             |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
             |- Arguments: ${codeBlock.args}
-            |""".trimMargin()
+            |
+            """.trimMargin()
           }
           statementLine = 0
         }
@@ -333,7 +334,8 @@ internal class CodeWriter constructor(
             |Current code block:
             |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
             |- Arguments: ${codeBlock.args}
-            |""".trimMargin()
+            |
+            """.trimMargin()
           }
           if (statementLine > 0) {
             unindent(2) // End a multi-line statement. Decrease the indentation level.

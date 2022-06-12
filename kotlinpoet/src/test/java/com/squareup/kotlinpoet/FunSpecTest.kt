@@ -96,7 +96,8 @@ class FunSpecTest {
         |@kotlin.jvm.Throws(java.io.IOException::class, java.lang.SecurityException::class)
         |protected override fun <T> everything(arg0: java.lang.String, arg1: java.util.List<out T>): java.lang.Runnable where T : java.lang.Runnable, T : java.io.Closeable {
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -108,7 +109,8 @@ class FunSpecTest {
       """
         |public override fun toString(): java.lang.String {
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -123,7 +125,8 @@ class FunSpecTest {
         |@kotlin.jvm.Throws(java.lang.Exception::class)
         |public override fun call(): java.lang.Integer {
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
     exec = findFirst(methods, "compareTo")
     funSpec = FunSpec.overriding(exec, classType, types).build()
@@ -131,7 +134,8 @@ class FunSpecTest {
       """
         |public override fun compareTo(arg0: java.lang.Long): kotlin.Int {
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -164,7 +168,8 @@ class FunSpecTest {
       """
       |public fun foo(string: kotlin.String?): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -176,7 +181,8 @@ class FunSpecTest {
       """
       |public fun foo(): kotlin.String? {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -189,7 +195,8 @@ class FunSpecTest {
       """
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -202,7 +209,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun foo(): kotlin.Unit = bar()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -229,7 +237,8 @@ class FunSpecTest {
       |  val placeholder = 1
       |  return "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -263,7 +272,8 @@ class FunSpecTest {
       |  nodoc: kotlin.Boolean,
       |): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -285,7 +295,8 @@ class FunSpecTest {
       | */
       |public fun foo(string: kotlin.String): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -317,7 +328,8 @@ class FunSpecTest {
       | * @return the foo.
       | */
       |public fun foo(string: kotlin.String, nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -336,7 +348,8 @@ class FunSpecTest {
       | * @return the modified foo.
       | */
       |public fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -348,7 +361,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun foo(): kotlin.Nothing = throw java.lang.AssertionError()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -365,7 +379,8 @@ class FunSpecTest {
       |public fun foo(): kotlin.Unit {
       |  throwOrDoSomethingElse()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -377,7 +392,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun foo() = 1
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -390,7 +406,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public fun foo(): kotlin.Nothing = throw java.lang.AssertionError()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -409,7 +426,8 @@ class FunSpecTest {
       | * @return the foo.
       | */
       |public fun foo(nodoc: kotlin.Boolean): kotlin.String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -424,7 +442,8 @@ class FunSpecTest {
       """
       |public fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -441,7 +460,8 @@ class FunSpecTest {
       | */
       |public fun foo(f: () -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -457,7 +477,8 @@ class FunSpecTest {
       """
       |public fun foo(f: kotlin.Int.() -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -472,7 +493,8 @@ class FunSpecTest {
       |context(kotlin.String)
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -489,7 +511,8 @@ class FunSpecTest {
       |context(kotlin.String, kotlin.Int, kotlin.Boolean)
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -505,7 +528,8 @@ class FunSpecTest {
       |context(T)
       |public fun <T> foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -521,7 +545,8 @@ class FunSpecTest {
       |@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -536,7 +561,8 @@ class FunSpecTest {
       |context(@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation kotlin.String)
       |public fun foo(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -580,7 +606,8 @@ class FunSpecTest {
       """
       |public fun foo(f: (kotlin.Boolean) -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -598,7 +625,8 @@ class FunSpecTest {
       """
       |public fun foo(f: (kotlin.Boolean, kotlin.String) -> kotlin.Unit): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -618,7 +646,8 @@ class FunSpecTest {
       """
       |public fun foo(f: ((kotlin.Boolean, kotlin.String) -> kotlin.Unit)?): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -638,7 +667,8 @@ class FunSpecTest {
       """
       |public fun foo(f: ((kotlin.Boolean, kotlin.String?) -> kotlin.Unit)?): kotlin.String {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -651,7 +681,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public constructor(list: kotlin.collections.List<kotlin.Int>) : this(list[0], list[1])
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -664,7 +695,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -677,7 +709,8 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
       |public constructor(a: kotlin.Int) : this()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -693,7 +726,8 @@ class FunSpecTest {
       |public constructor(a: kotlin.Int) : this(a) {
       |  println()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -712,7 +746,8 @@ class FunSpecTest {
     assertThat(constructorSpec.toString()).isEqualTo(
       """
       |public constructor(a: kotlin.Int)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -749,7 +784,8 @@ class FunSpecTest {
       """
       |public fun `if`(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -761,7 +797,8 @@ class FunSpecTest {
       """
       |public fun `with-hyphen`(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -806,7 +843,8 @@ class FunSpecTest {
       | * @receiver the string to transform.
       | */
       |public fun kotlin.String.toBar(): kotlin.String = "bar"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -826,7 +864,8 @@ class FunSpecTest {
       | * @receiver the string to transform.
       | */
       |public fun kotlin.String.toBar(): kotlin.String = "bar"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -853,7 +892,8 @@ class FunSpecTest {
       | * @return The char at the given [position].
       | */
       |public fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -878,7 +918,8 @@ class FunSpecTest {
     assertThat(updatedFunSpec.toString()).isEqualTo(
       """
       |public constructor(values: kotlin.collections.List<kotlin.String>) : super(values.toImmutableList())
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -940,7 +981,8 @@ class FunSpecTest {
       |@kotlin.jvm.JvmStatic
       |internal fun staticMethod(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -952,7 +994,8 @@ class FunSpecTest {
       """
       |internal final fun finalMethod(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -965,7 +1008,8 @@ class FunSpecTest {
       |@kotlin.jvm.Synchronized
       |internal fun synchronizedMethod(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -979,7 +1023,8 @@ class FunSpecTest {
       |public fun function(): kotlin.Unit {
       |  codeWithNoNewline()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -994,7 +1039,8 @@ class FunSpecTest {
       |public fun function(): kotlin.Unit {
       |  codeWithNoNewline()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1007,7 +1053,8 @@ class FunSpecTest {
     assertThat(methodSpec.toString()).isEqualTo(
       """
       |public fun function() = codeWithNoNewline()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1019,7 +1066,8 @@ class FunSpecTest {
     assertThat(methodSpec.toString()).isEqualTo(
       """
       |public fun function() = codeWithNoNewline()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1035,7 +1083,8 @@ class FunSpecTest {
       | */
       |public fun function(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1052,7 +1101,8 @@ class FunSpecTest {
       | */
       |public fun function(): kotlin.Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1074,7 +1124,8 @@ class FunSpecTest {
       |
       |public fun (@Annotation () -> Unit).foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1096,7 +1147,8 @@ class FunSpecTest {
       |
       |public fun foo(): @Annotation () -> Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

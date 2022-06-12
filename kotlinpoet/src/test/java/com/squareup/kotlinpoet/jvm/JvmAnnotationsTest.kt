@@ -57,7 +57,8 @@ class JvmAnnotationsTest {
       |  @JvmField
       |  public val foo: String = "foo"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -90,7 +91,8 @@ class JvmAnnotationsTest {
       |  @JvmField
       |  public val foo: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -124,7 +126,8 @@ class JvmAnnotationsTest {
       |    public val foo: String = "foo"
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -159,7 +162,8 @@ class JvmAnnotationsTest {
       |    public fun foo(): String = "foo"
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -198,7 +202,8 @@ class JvmAnnotationsTest {
       |      get() = "foo"
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -240,7 +245,8 @@ class JvmAnnotationsTest {
       |      }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -274,7 +280,8 @@ class JvmAnnotationsTest {
       |)
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -296,7 +303,8 @@ class JvmAnnotationsTest {
       |@Throws(IllegalTacoException::class)
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -324,7 +332,8 @@ class JvmAnnotationsTest {
       |public class Taco @Throws(IOException::class) constructor(
       |  foo: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -352,7 +361,8 @@ class JvmAnnotationsTest {
       |public val foo: String
       |  @Throws(IOException::class)
       |  get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -384,7 +394,8 @@ class JvmAnnotationsTest {
       |  set(`value`) {
       |    print("foo")
       |  }
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -414,7 +425,8 @@ class JvmAnnotationsTest {
       |@JvmOverloads
       |public fun foo(bar: Int, baz: String = "baz"): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -448,7 +460,8 @@ class JvmAnnotationsTest {
       |  bar: Int,
       |  baz: String = "baz",
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -485,7 +498,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmName
       |
       |public val foo: String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -507,7 +521,8 @@ class JvmAnnotationsTest {
       |@JvmName("getFoo")
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -534,7 +549,8 @@ class JvmAnnotationsTest {
       |public val foo: String
       |  @JvmName("foo")
       |  get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -564,7 +580,8 @@ class JvmAnnotationsTest {
       |  @JvmName("foo")
       |  set(`value`) {
       |  }
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -594,7 +611,8 @@ class JvmAnnotationsTest {
       |import kotlin.jvm.JvmMultifileClass
       |
       |public val foo: String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -614,7 +632,8 @@ class JvmAnnotationsTest {
       |
       |@JvmSuppressWildcards
       |public class Taco
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -636,7 +655,8 @@ class JvmAnnotationsTest {
       |@JvmSuppressWildcards(suppress = false)
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -679,7 +699,8 @@ class JvmAnnotationsTest {
       |
       |@JvmSuppressWildcards(suppress = false)
       |public val foo: String = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -706,7 +727,8 @@ class JvmAnnotationsTest {
       |
       |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -733,7 +755,8 @@ class JvmAnnotationsTest {
       |
       |public fun foo(a: List<@JvmWildcard Int>): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -754,7 +777,8 @@ class JvmAnnotationsTest {
       |
       |@Synchronized
       |public fun foo() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -781,7 +805,8 @@ class JvmAnnotationsTest {
       |public val foo: String
       |  @Synchronized
       |  get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -811,7 +836,8 @@ class JvmAnnotationsTest {
       |  @Synchronized
       |  set(`value`) {
       |  }
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -846,7 +872,8 @@ class JvmAnnotationsTest {
       |  @Transient
       |  public val foo: String = "foo"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -879,7 +906,8 @@ class JvmAnnotationsTest {
       |  @Transient
       |  public val foo: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -907,7 +935,8 @@ class JvmAnnotationsTest {
       |  @Volatile
       |  public val foo: String = "foo"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -940,7 +969,8 @@ class JvmAnnotationsTest {
       |  @Volatile
       |  public val foo: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -962,7 +992,8 @@ class JvmAnnotationsTest {
       |@Strictfp
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -989,7 +1020,8 @@ class JvmAnnotationsTest {
       |public class Taco @Strictfp constructor(
       |  foo: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1016,7 +1048,8 @@ class JvmAnnotationsTest {
       |public val foo: String
       |  @Strictfp
       |  get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1047,7 +1080,8 @@ class JvmAnnotationsTest {
       |  set(`value`) {
       |    print("foo")
       |  }
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1075,7 +1109,8 @@ class JvmAnnotationsTest {
       |  @JvmDefault
       |  public val foo: String = "foo"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1104,7 +1139,8 @@ class JvmAnnotationsTest {
       |  @JvmDefault
       |  public fun foo(): String = "foo"
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1137,7 +1173,8 @@ class JvmAnnotationsTest {
       |public value class Taco(
       |  public val `value`: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1171,7 +1208,8 @@ class JvmAnnotationsTest {
       |public data class Taco(
       |  public val `value`: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

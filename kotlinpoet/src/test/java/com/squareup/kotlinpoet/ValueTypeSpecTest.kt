@@ -65,7 +65,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |public $modifierString class Guacamole(
       |  public val avacado: kotlin.String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -92,7 +93,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  init {
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -138,7 +140,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |public $modifierString class Guacamole(
       |  public val avocado: kotlin.String,
       |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -206,7 +209,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |public $modifierString class Guacamole private constructor(
       |  public val avocado: kotlin.String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -245,7 +249,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  B(2),
       |  ;
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

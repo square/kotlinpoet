@@ -89,7 +89,8 @@ class CrossplatformTest {
       |}
       |
       |public actual typealias AtomicRef<V> = AtomicReference<V>
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -118,7 +119,8 @@ class CrossplatformTest {
       |
       |  public constructor(message: String)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -139,7 +141,8 @@ class CrossplatformTest {
       |public expect val bar: String
       |
       |public actual val bar: String = "Hello"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -166,7 +169,8 @@ class CrossplatformTest {
       |public expect fun f1(): Int
       |
       |public actual fun f1() = 1
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 

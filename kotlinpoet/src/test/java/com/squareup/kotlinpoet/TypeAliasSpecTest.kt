@@ -32,7 +32,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |public typealias Word = kotlin.String
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -46,7 +47,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |public typealias Word<V> = kotlin.collections.List<V>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -59,7 +61,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |public typealias Word = kotlin.String
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -72,7 +75,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |internal typealias Word = kotlin.String
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -85,7 +89,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |private typealias Word = kotlin.String
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -100,7 +105,8 @@ class TypeAliasSpecTest {
     assertThat(typeAliasSpec.toString()).isEqualTo(
       """
         |public actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -116,7 +122,8 @@ class TypeAliasSpecTest {
       | * Word is just a type alias for [String](kotlin.String).
       | */
       |public typealias Word = kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -134,7 +141,8 @@ class TypeAliasSpecTest {
       """
       |@com.squareup.kotlinpoet.TypeAliasAnnotation(value = "words!")
       |public typealias Word = kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -150,7 +158,8 @@ class TypeAliasSpecTest {
       | * Word is just a type alias for [String](kotlin.String).
       | */
       |public typealias Word = kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -219,7 +228,8 @@ class TypeAliasSpecTest {
     assertThat(typeAlias.toString()).isEqualTo(
       """
       |public typealias `fun` = kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -230,7 +240,8 @@ class TypeAliasSpecTest {
     assertThat(spec.toString()).isEqualTo(
       """
       |public typealias lambda = @Annotation () -> kotlin.Unit
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

@@ -83,7 +83,8 @@ class TypeSpecTest {
         |public class Taco {
         |  public final override fun toString(): String = "taco"
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
     assertEquals(1906837485, taco.hashCode().toLong()) // Update expected number if source changes.
   }
@@ -114,7 +115,8 @@ class TypeSpecTest {
         |
         |  public val inString: List<in String>
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -177,7 +179,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -205,7 +208,8 @@ class TypeSpecTest {
         |  public val names: ArrayList<String> = object : ArrayList<String>(4) {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -243,7 +247,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -266,7 +271,8 @@ class TypeSpecTest {
         |  public val NAME: Any = object {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -323,7 +329,8 @@ class TypeSpecTest {
         |    /* code snippets */
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -351,7 +358,8 @@ class TypeSpecTest {
         |public class EthicalTaco {
         |  public val meat: @FreeRange String
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -429,7 +437,8 @@ class TypeSpecTest {
         |    @Header("Authorization") authorization: String,
         |  ): Observable<FooBar>
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -455,7 +464,8 @@ class TypeSpecTest {
         |  @JsonAdapter(Foo::class)
         |  private val thing: String
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -482,7 +492,8 @@ class TypeSpecTest {
         |  @field:JsonAdapter(Foo::class)
         |  private val thing: String
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -508,7 +519,8 @@ class TypeSpecTest {
         |  "goodbye",
         |)
         |public class Foo
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -579,7 +591,8 @@ class TypeSpecTest {
         |    this("fist")
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -618,7 +631,8 @@ class TypeSpecTest {
         |
         |  public abstract fun fold(): Unit
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -640,7 +654,8 @@ class TypeSpecTest {
         |
         |  public abstract fun fold(): Unit
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -662,7 +677,8 @@ class TypeSpecTest {
         |public class Variable(
         |  public vararg val name: String,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -695,7 +711,8 @@ class TypeSpecTest {
         |      return field
         |    }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -732,7 +749,8 @@ class TypeSpecTest {
         |      field = value
         |    }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -757,7 +775,8 @@ class TypeSpecTest {
         |  ;
         |  public companion object
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -787,7 +806,8 @@ class TypeSpecTest {
         |    public override fun toString(): String = "west side"
         |  },
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -816,7 +836,8 @@ class TypeSpecTest {
         |  PAPER,
         |  SCISSORS,
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -872,7 +893,8 @@ class TypeSpecTest {
         |  @Throws(IOException::class)
         |  public external fun nativeThrow(): Unit
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -932,7 +954,8 @@ class TypeSpecTest {
         |    y: P,
         |  ): Location<T, P> = throw UnsupportedOperationException("TODO")
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -962,7 +985,8 @@ class TypeSpecTest {
         |
         |  public val y: @A Q
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -984,7 +1008,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |
         |public abstract class Taco : AbstractSet<Food>(), Serializable, Comparable<Taco>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1004,7 +1029,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |
         |public class Taco : org.fish.taco.Taco(), Comparable<Taco>, com.taco.bell.Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1030,7 +1056,8 @@ class TypeSpecTest {
         |public class Outer : Callable<Outer.Inner>() {
         |  public inner class Inner
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1052,7 +1079,8 @@ class TypeSpecTest {
         |  LEAN_GROUND_BEEF,
         |  SHREDDED_CHEESE,
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1087,7 +1115,8 @@ class TypeSpecTest {
         |  `open`(0),
         |  closed(1),
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1105,7 +1134,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |
         |public interface Taco : Serializable, Comparable<Taco>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1132,7 +1162,8 @@ class TypeSpecTest {
         |  public fun notSam(): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1235,7 +1266,8 @@ class TypeSpecTest {
         |    FIRE,
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1266,7 +1298,8 @@ class TypeSpecTest {
         |public annotation class MyAnnotation(
         |  public val test: Int,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1335,7 +1368,8 @@ class TypeSpecTest {
         |    public const val QUANTITY_DEFAULT: Int = 10000
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1365,7 +1399,8 @@ class TypeSpecTest {
         |annotation class Bar() {
         |  fun value(): Deprecated default @Deprecated
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1383,7 +1418,8 @@ class TypeSpecTest {
         |public interface Taco {
         |  public val v: Int
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1400,7 +1436,8 @@ class TypeSpecTest {
       |public expect class ClassA {
       |  public fun test(): kotlin.Unit
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1423,7 +1460,8 @@ class TypeSpecTest {
       |    public fun test(): kotlin.Unit
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1446,7 +1484,8 @@ class TypeSpecTest {
       |    public fun test(): kotlin.Unit
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1475,7 +1514,8 @@ class TypeSpecTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1510,7 +1550,8 @@ class TypeSpecTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1539,7 +1580,8 @@ class TypeSpecTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1574,7 +1616,8 @@ class TypeSpecTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1608,7 +1651,8 @@ class TypeSpecTest {
         |  private fun aPrivateMethod(): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1682,7 +1726,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1706,7 +1751,8 @@ class TypeSpecTest {
         |
         |  public val externalOther: com.squareup.donuts.Other
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1731,7 +1777,8 @@ class TypeSpecTest {
         |public class Taco {
         |  public fun <T> getComparator(): T where T : Comparator, T : Serializable = null
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1748,7 +1795,8 @@ class TypeSpecTest {
         |public class Taco {
         |  public val ints: IntArray
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1803,7 +1851,8 @@ class TypeSpecTest {
         |  public fun refold(locale: Locale): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1823,7 +1872,8 @@ class TypeSpecTest {
                     |Taco temperature. Can be as cold as the famous ice tacos from
                     |the Andes, or hot with lava-like cheese from the depths of
                     |the Ninth Circle.
-                    |""".trimMargin()
+                    |
+                  """.trimMargin()
                 )
               )
               .build()
@@ -1887,7 +1937,8 @@ class TypeSpecTest {
         |  public val mild: Boolean,
         |  private val nodoc: Int,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1923,7 +1974,8 @@ class TypeSpecTest {
         |  options = [Option("taco", Beef::class), Option("quesadilla", Chicken::class)],
         |)
         |public class Menu
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1948,7 +2000,8 @@ class TypeSpecTest {
         |  public fun prepare(workers: Int, vararg jobs: Runnable): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -1979,7 +2032,8 @@ class TypeSpecTest {
         |  ): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2055,7 +2109,8 @@ class TypeSpecTest {
         |    return size
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2087,7 +2142,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2119,7 +2175,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2145,7 +2202,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2178,7 +2236,8 @@ class TypeSpecTest {
         |    SALSA,
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2239,7 +2298,8 @@ class TypeSpecTest {
         |
         |  public class Y
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2261,7 +2321,8 @@ class TypeSpecTest {
         |public class Taco {
         |  public external fun nativeInt(): Int
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2282,7 +2343,8 @@ class TypeSpecTest {
         |public class Taco {
         |  public val NULL: String = null
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2364,7 +2426,8 @@ class TypeSpecTest {
         |object : java.lang.Runnable {
         |  public override fun run(): kotlin.Unit {
         |  }
-        |}""".trimMargin()
+        |}
+      """.trimMargin()
     )
   }
 
@@ -2374,7 +2437,8 @@ class TypeSpecTest {
     assertThat(type.toString()).isEqualTo(
       """
         |public interface Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2384,7 +2448,8 @@ class TypeSpecTest {
     assertThat(type.toString()).isEqualTo(
       """
         |public annotation class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2422,7 +2487,8 @@ class TypeSpecTest {
         |    return result
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2494,7 +2560,8 @@ class TypeSpecTest {
         |        })
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2520,7 +2587,8 @@ class TypeSpecTest {
         |      |cheese
         |      |${"\"\"\""}.trimMargin()
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2545,7 +2613,8 @@ class TypeSpecTest {
         |@SuppressWarnings("unchecked")
         |@Deprecated
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2570,7 +2639,8 @@ class TypeSpecTest {
         |
         |  private val price: BigDecimal
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2606,7 +2676,8 @@ class TypeSpecTest {
         |   */
         |  public fun getRandomQuantity(): Int = 4
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2627,7 +2698,8 @@ class TypeSpecTest {
         |import java.util.EventListener
         |
         |public class Taco : Serializable, EventListener
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2647,7 +2719,8 @@ class TypeSpecTest {
         |import kotlin.Number
         |
         |public class Location<T, P : Number>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2669,7 +2742,8 @@ class TypeSpecTest {
         |
         |  public class Sauce
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2702,7 +2776,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2736,7 +2811,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2768,7 +2844,8 @@ class TypeSpecTest {
         |    else -> throw IllegalToppingException(topping)
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -2957,7 +3034,8 @@ class TypeSpecTest {
         |
         |  public override fun toString(): String = FOO
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3002,7 +3080,8 @@ class TypeSpecTest {
         |
         |  public override fun toString(): String = FOO
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3055,7 +3134,8 @@ class TypeSpecTest {
         |
         |  public override fun toString(): String = FOO
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3248,7 +3328,8 @@ class TypeSpecTest {
         |  public fun test(): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3279,7 +3360,8 @@ class TypeSpecTest {
         |  public fun test(): Unit {
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3317,7 +3399,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3356,7 +3439,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3381,7 +3465,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3411,7 +3496,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3447,7 +3533,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3498,7 +3585,8 @@ class TypeSpecTest {
         |    }
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3533,7 +3621,8 @@ class TypeSpecTest {
         |  public val a: Int,
         |  public val b: String,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3572,7 +3661,8 @@ class TypeSpecTest {
         |  public val a: Int,
         |  public val b: String,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3594,7 +3684,7 @@ class TypeSpecTest {
     |
     |public class Taco @Inject constructor()
     |
-    """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -3613,7 +3703,7 @@ class TypeSpecTest {
     |
     |public class Taco internal constructor()
     |
-    """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -3636,7 +3726,7 @@ class TypeSpecTest {
     |
     |public class Taco @Inject internal constructor()
     |
-    """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -3662,7 +3752,7 @@ class TypeSpecTest {
     |
     |public class Taco @Inject @Named internal constructor()
     |
-    """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -3692,7 +3782,8 @@ class TypeSpecTest {
         |
         |  public val nullTaco: String? = null
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3708,7 +3799,8 @@ class TypeSpecTest {
         |package com.squareup.tacos
         |
         |public class Foo : Bar("foo", 42)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3734,7 +3826,8 @@ class TypeSpecTest {
       |public class IoException : Exception {
       |  public constructor()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -3750,7 +3843,8 @@ class TypeSpecTest {
       |import java.lang.Exception
       |
       |public class IoException : Exception()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -3806,7 +3900,8 @@ class TypeSpecTest {
         |  public val a: Int = 1,
         |  public val b: String? = null,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3860,7 +3955,8 @@ class TypeSpecTest {
         |) {
         |  public constructor(map: Map<String, String>) : this(map["a"], map["b"], map["c"])
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -3975,7 +4071,8 @@ class TypeSpecTest {
       |  public override val name: String,
       |  public override val surname: String,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4015,7 +4112,8 @@ class TypeSpecTest {
       |  @Id
       |  private val id: Int = 1,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4063,7 +4161,8 @@ class TypeSpecTest {
         |    lateinit var taco3: String
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -4089,7 +4188,8 @@ class TypeSpecTest {
         |public class Guac(
         |  somethingElse: String,
         |) : Consumer<String> by ({ println(it) })
-        |""".trimMargin()
+        |
+    """.trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
   }
@@ -4109,7 +4209,8 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public object Guac : Consumer<String> by ({ println(it) })
-        |""".trimMargin()
+        |
+    """.trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
   }
@@ -4141,7 +4242,8 @@ class TypeSpecTest {
         |
         |public class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?:
         |    0 }), Runnable by Runnable ({ Logger.debug("Hello world") })
-        |""".trimMargin()
+        |
+    """.trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
   }
@@ -4186,7 +4288,8 @@ class TypeSpecTest {
           |public class Taco(
           |  superString: Function,
           |) : Function by superString
-          |""".trimMargin()
+          |
+      """.trimMargin()
     )
   }
 
@@ -4239,7 +4342,8 @@ class TypeSpecTest {
           |public class EntityBuilder(
           |  argBuilder: Payload<EntityBuilder, Entity> = Payload.create(),
           |) : TypeBuilder<EntityBuilder, Entity> by argBuilder
-          |""".trimMargin()
+          |
+      """.trimMargin()
     )
   }
 
@@ -4258,7 +4362,8 @@ class TypeSpecTest {
       |public external class Foo {
       |  public fun bar(): Unit
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4281,7 +4386,8 @@ class TypeSpecTest {
       |
       |  public fun bar(): Unit
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4304,7 +4410,8 @@ class TypeSpecTest {
       |
       |  public fun bar(): Unit
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4350,7 +4457,8 @@ class TypeSpecTest {
       |    public fun qux(): Unit
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4435,7 +4543,8 @@ class TypeSpecTest {
       |) {
       |  public constructor(anotherTaco: Taco) : this(java.sql.Taco.defaultInstance(), 0)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4540,7 +4649,8 @@ class TypeSpecTest {
     assertThat(spec.toString()).isEqualTo(
       """
       |public enum class Topping
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4555,7 +4665,8 @@ class TypeSpecTest {
     | * blah blah
     | */
     |public class Foo
-    |""".trimMargin()
+    |
+      """.trimMargin()
     )
   }
 
@@ -4575,7 +4686,8 @@ class TypeSpecTest {
     |   */
     |  public val bar: kotlin.String
     |}
-    |""".trimMargin()
+    |
+      """.trimMargin()
     )
   }
 
@@ -4638,7 +4750,8 @@ class TypeSpecTest {
       |   */
       |  public val third: kotlin.Int,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4662,7 +4775,8 @@ class TypeSpecTest {
       |   */
       |  first: kotlin.Int,
       |)
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4692,7 +4806,8 @@ class TypeSpecTest {
         |    return 42
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -4722,7 +4837,8 @@ class TypeSpecTest {
       |  `test test`,
       |  `0constants`,
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4877,7 +4993,8 @@ class TypeSpecTest {
         |   */
         |  public val mild: Boolean,
         |)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -4894,7 +5011,8 @@ class TypeSpecTest {
       |public enum class MyEnum {
       |  `object`,
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4931,7 +5049,8 @@ class TypeSpecTest {
       |  `header`(1),
       |  `impl`(2),
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4940,7 +5059,8 @@ class TypeSpecTest {
     assertThat(type.toString()).isEqualTo(
       """
       |public class `fun`
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -4955,7 +5075,8 @@ class TypeSpecTest {
       |public fun printTaco(taco: com.squareup.tacos.Taco.`object`): kotlin.Unit {
       |  print(taco)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 

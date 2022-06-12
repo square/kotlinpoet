@@ -33,7 +33,8 @@ class LineWrappingTest {
         |
         |public fun wrapMe() = 10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 *
         |    60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -51,7 +52,8 @@ class LineWrappingTest {
         |
         |public fun wrapMe() =
         |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -69,7 +71,8 @@ class LineWrappingTest {
         |
         |public fun wrapMe() =
         |    10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -82,7 +85,8 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |public fun wrapMe() = "a·b"
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -105,7 +109,8 @@ class LineWrappingTest {
         |  val c =  512
         |  val d = 4096
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -130,7 +135,8 @@ class LineWrappingTest {
         |  val dddddd =
         |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -193,7 +199,8 @@ class LineWrappingTest {
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
         |  }
         |}
-        |""".trimMargin()
+        |
+        """.trimMargin()
       )
   }
 

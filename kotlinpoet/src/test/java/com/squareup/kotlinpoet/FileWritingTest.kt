@@ -267,7 +267,8 @@ class FileWritingTest {
         |${"\t\t"}System.out.println("Hello World!");
         |${"\t"}}
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -289,7 +290,8 @@ class FileWritingTest {
         |package foo
         |
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 

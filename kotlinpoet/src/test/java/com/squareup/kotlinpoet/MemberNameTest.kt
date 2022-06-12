@@ -45,7 +45,8 @@ class MemberNameTest {
       |  val randomTaco = randomTaco()
       |  val bestTaco = bestTacoEver
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -69,7 +70,8 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -91,7 +93,8 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -117,7 +120,8 @@ class MemberNameTest {
       |public fun makeTastyTacos(): Unit {
       |  createTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -143,7 +147,8 @@ class MemberNameTest {
       |  createTaco()
       |  com.twitter.tacos.createTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -172,7 +177,8 @@ class MemberNameTest {
       |  createTaco()
       |  TwitterTacos.Companion.createTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -198,7 +204,8 @@ class MemberNameTest {
       |  val tacos = SquareTacos()
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -234,7 +241,8 @@ class MemberNameTest {
       |  public fun error(): Unit {
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -277,7 +285,8 @@ class MemberNameTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -320,7 +329,8 @@ class MemberNameTest {
       |    }
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -349,7 +359,8 @@ class MemberNameTest {
       |  createSquareTaco()
       |  createTwitterTaco()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -381,7 +392,8 @@ class MemberNameTest {
       |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
       |  }
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -410,7 +422,8 @@ class MemberNameTest {
       |  `when`()
       |  TwitterTacos.Companion.`when`()
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -437,7 +450,8 @@ class MemberNameTest {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -460,7 +474,8 @@ class MemberNameTest {
       |public fun main(): Unit {
       |  println(`produce tacos`())
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -504,7 +519,8 @@ class MemberNameTest {
       |public fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
       |  packager.`package`(tacos)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -540,7 +556,8 @@ class MemberNameTest {
       |  }
       |  return taco
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
