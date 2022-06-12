@@ -34,25 +34,20 @@ import java.nio.charset.StandardCharsets
  *
  * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
  */
-@KotlinPoetKspPreview
 public interface OriginatingKSFiles {
   public val files: List<KSFile>
 }
 
 /** Returns this spec's originating [KSFiles][KSFile] for use with incremental processing. */
-@KotlinPoetKspPreview
 public fun TypeSpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 
 /** Returns this spec's originating [KSFiles][KSFile] for use with incremental processing. */
-@KotlinPoetKspPreview
 public fun FunSpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 
 /** Returns this spec's originating [KSFiles][KSFile] for use with incremental processing. */
-@KotlinPoetKspPreview
 public fun PropertySpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 
 /** Returns this spec's originating [KSFiles][KSFile] for use with incremental processing. */
-@KotlinPoetKspPreview
 public fun TypeAliasSpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 
 /**
@@ -60,7 +55,6 @@ public fun TypeAliasSpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
  * [TypeSpecs][TypeSpec], [PropertySpecs][PropertySpec], [FunSpecs][FunSpec], or
  * [TypeAliasSpecs][TypeAliasSpec] contained in this spec.
  */
-@KotlinPoetKspPreview
 public fun FileSpec.originatingKSFiles(): List<KSFile> {
   return members
     .flatMap {
@@ -76,25 +70,21 @@ public fun FileSpec.originatingKSFiles(): List<KSFile> {
 }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
-@KotlinPoetKspPreview
 public fun TypeAliasSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeAliasSpec.Builder = apply {
   getOrCreateKSFilesTag().add(ksFile)
 }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
-@KotlinPoetKspPreview
 public fun PropertySpec.Builder.addOriginatingKSFile(ksFile: KSFile): PropertySpec.Builder = apply {
   getOrCreateKSFilesTag().add(ksFile)
 }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
-@KotlinPoetKspPreview
 public fun FunSpec.Builder.addOriginatingKSFile(ksFile: KSFile): FunSpec.Builder = apply {
   getOrCreateKSFilesTag().add(ksFile)
 }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
-@KotlinPoetKspPreview
 public fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Builder = apply {
   getOrCreateKSFilesTag().add(ksFile)
 }
@@ -112,7 +102,6 @@ public fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Build
  * @param codeGenerator the [CodeGenerator] to write to.
  * @param aggregating flag indicating if this is an aggregating symbol processor.
  */
-@KotlinPoetKspPreview
 public fun FileSpec.writeTo(
   codeGenerator: CodeGenerator,
   aggregating: Boolean,
@@ -132,7 +121,6 @@ public fun FileSpec.writeTo(
  * @param codeGenerator the [CodeGenerator] to write to.
  * @param dependencies the [Dependencies] to create a new file with.
  */
-@KotlinPoetKspPreview
 public fun FileSpec.writeTo(
   codeGenerator: CodeGenerator,
   dependencies: Dependencies
@@ -157,7 +145,6 @@ public fun FileSpec.writeTo(
  * @see FileSpec.writeTo
  * @param aggregating flag indicating if this is an aggregating symbol processor.
  */
-@KotlinPoetKspPreview
 public fun FileSpec.kspDependencies(
   aggregating: Boolean,
   originatingKSFiles: Iterable<KSFile> = originatingKSFiles()
@@ -166,19 +153,16 @@ public fun FileSpec.kspDependencies(
 /**
  * A mutable [OriginatingKSFiles] instance for use with KotlinPoet Builders via [Taggable.Builder].
  */
-@OptIn(KotlinPoetKspPreview::class)
 private interface MutableOriginatingKSFiles : OriginatingKSFiles {
   override val files: MutableList<KSFile>
 }
 
 private data class MutableOriginatingKSFilesImpl(override val files: MutableList<KSFile> = mutableListOf()) : MutableOriginatingKSFiles
 
-@OptIn(KotlinPoetKspPreview::class)
 private fun Taggable.getKSFilesTag(): List<KSFile> {
   return tag<OriginatingKSFiles>()?.files.orEmpty()
 }
 
-@OptIn(KotlinPoetKspPreview::class)
 private fun Taggable.Builder<*>.getOrCreateKSFilesTag(): MutableList<KSFile> {
   val holder = tags.getOrPut(
     OriginatingKSFiles::class, ::MutableOriginatingKSFilesImpl

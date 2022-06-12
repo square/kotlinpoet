@@ -34,7 +34,6 @@ import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.tags.TypeAliasTag
 
 /** Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration]. */
-@KotlinPoetKspPreview
 public fun KSType.toClassName(): ClassName {
   val decl = declaration
   check(decl is KSClassDeclaration) {
@@ -51,12 +50,10 @@ public fun KSType.toClassName(): ClassName {
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
  */
-@KotlinPoetKspPreview
 public fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName = toTypeName(typeParamResolver, emptyList())
 
-@KotlinPoetKspPreview
 internal fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver,
   typeArguments: List<KSTypeArgument>,
@@ -111,7 +108,6 @@ internal fun KSType.toTypeName(
   return type.copy(nullable = isMarkedNullable)
 }
 
-@KotlinPoetKspPreview
 private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
   typeAlias: KSTypeAlias,
   typeAliasTypeArguments: List<KSTypeArgument>,
@@ -139,7 +135,6 @@ private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
  */
-@KotlinPoetKspPreview
 public fun KSTypeParameter.toTypeVariableName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeVariableName {
@@ -161,7 +156,6 @@ public fun KSTypeParameter.toTypeVariableName(
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
  */
-@KotlinPoetKspPreview
 public fun KSTypeArgument.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
@@ -182,7 +176,6 @@ public fun KSTypeArgument.toTypeName(
  *                          declarations can be anything with generics that child nodes declare as
  *                          defined by [KSType.arguments].
  */
-@KotlinPoetKspPreview
 public fun KSTypeReference.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {

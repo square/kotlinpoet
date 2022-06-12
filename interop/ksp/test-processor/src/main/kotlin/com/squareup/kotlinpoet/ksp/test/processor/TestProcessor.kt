@@ -29,7 +29,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.kspDependencies
 import com.squareup.kotlinpoet.ksp.originatingKSFiles
@@ -44,7 +43,6 @@ import com.squareup.kotlinpoet.ksp.writeTo
  * A simple processor that generates a skeleton API of classes annotated with [ExampleAnnotation]
  * for test and verification purposes.
  */
-@OptIn(KotlinPoetKspPreview::class)
 class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
 
   private val unwrapTypeAliases = env.options["unwrapTypeAliases"]?.toBooleanStrictOrNull() ?: false

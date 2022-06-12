@@ -5,9 +5,6 @@ KSP Extensions for KotlinPoet
 [Kotlin Symbol Processing][ksp] (KSP) types to KotlinPoet types and
 writing to KSP `CodeGenerator`.
 
-Note that this API is currently in preview and subject to API changes. Usage of it requires opting
-in to the `@KotlinPoetKspPreview` annotation.
-
 ```kotlin
 dependencies {
   implementation("com.squareup:kotlinpoet-ksp:<version>")

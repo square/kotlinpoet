@@ -18,13 +18,6 @@ plugins {
   id("com.google.devtools.ksp")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-  kotlinOptions {
-    @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += listOf("-opt-in=com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview")
-  }
-}
-
 dependencies {
   implementation(project(":kotlinpoet"))
   implementation(project(":interop:ksp"))
