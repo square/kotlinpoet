@@ -1,0 +1,64 @@
+public final class com/squareup/kotlinpoet/ksp/AnnotationsKt {
+	public static final fun toAnnotationSpec (Lcom/google/devtools/ksp/symbol/KSAnnotation;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+}
+
+public final class com/squareup/kotlinpoet/ksp/KsClassDeclarationsKt {
+	public static final fun toClassName (Lcom/google/devtools/ksp/symbol/KSClassDeclaration;)Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class com/squareup/kotlinpoet/ksp/KsTypesKt {
+	public static final fun toClassName (Lcom/google/devtools/ksp/symbol/KSType;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSType;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSTypeArgument;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSTypeReference;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun toTypeName$default (Lcom/google/devtools/ksp/symbol/KSType;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun toTypeName$default (Lcom/google/devtools/ksp/symbol/KSTypeArgument;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun toTypeName$default (Lcom/google/devtools/ksp/symbol/KSTypeReference;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun toTypeVariableName (Lcom/google/devtools/ksp/symbol/KSTypeParameter;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun toTypeVariableName$default (Lcom/google/devtools/ksp/symbol/KSTypeParameter;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+}
+
+public final class com/squareup/kotlinpoet/ksp/ModifiersKt {
+	public static final fun toKModifier (Lcom/google/devtools/ksp/symbol/Modifier;)Lcom/squareup/kotlinpoet/KModifier;
+}
+
+public abstract interface class com/squareup/kotlinpoet/ksp/OriginatingKSFiles {
+	public abstract fun getFiles ()Ljava/util/List;
+}
+
+public final class com/squareup/kotlinpoet/ksp/OriginatingKSFilesKt {
+	public static final fun addOriginatingKSFile (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lcom/google/devtools/ksp/symbol/KSFile;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun addOriginatingKSFile (Lcom/squareup/kotlinpoet/PropertySpec$Builder;Lcom/google/devtools/ksp/symbol/KSFile;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun addOriginatingKSFile (Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;Lcom/google/devtools/ksp/symbol/KSFile;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public static final fun addOriginatingKSFile (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Lcom/google/devtools/ksp/symbol/KSFile;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun kspDependencies (Lcom/squareup/kotlinpoet/FileSpec;ZLjava/lang/Iterable;)Lcom/google/devtools/ksp/processing/Dependencies;
+	public static synthetic fun kspDependencies$default (Lcom/squareup/kotlinpoet/FileSpec;ZLjava/lang/Iterable;ILjava/lang/Object;)Lcom/google/devtools/ksp/processing/Dependencies;
+	public static final fun originatingKSFiles (Lcom/squareup/kotlinpoet/FileSpec;)Ljava/util/List;
+	public static final fun originatingKSFiles (Lcom/squareup/kotlinpoet/FunSpec;)Ljava/util/List;
+	public static final fun originatingKSFiles (Lcom/squareup/kotlinpoet/PropertySpec;)Ljava/util/List;
+	public static final fun originatingKSFiles (Lcom/squareup/kotlinpoet/TypeAliasSpec;)Ljava/util/List;
+	public static final fun originatingKSFiles (Lcom/squareup/kotlinpoet/TypeSpec;)Ljava/util/List;
+	public static final fun writeTo (Lcom/squareup/kotlinpoet/FileSpec;Lcom/google/devtools/ksp/processing/CodeGenerator;Lcom/google/devtools/ksp/processing/Dependencies;)V
+	public static final fun writeTo (Lcom/squareup/kotlinpoet/FileSpec;Lcom/google/devtools/ksp/processing/CodeGenerator;ZLjava/lang/Iterable;)V
+	public static synthetic fun writeTo$default (Lcom/squareup/kotlinpoet/FileSpec;Lcom/google/devtools/ksp/processing/CodeGenerator;ZLjava/lang/Iterable;ILjava/lang/Object;)V
+}
+
+public abstract interface class com/squareup/kotlinpoet/ksp/TypeParameterResolver {
+	public static final field Companion Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver$Companion;
+	public abstract fun get (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public abstract fun getParametersMap ()Ljava/util/Map;
+}
+
+public final class com/squareup/kotlinpoet/ksp/TypeParameterResolver$Companion {
+	public final fun getEMPTY ()Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;
+}
+
+public final class com/squareup/kotlinpoet/ksp/TypeParameterResolverKt {
+	public static final fun toTypeParameterResolver (Ljava/util/List;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;Ljava/lang/String;)Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;
+	public static synthetic fun toTypeParameterResolver$default (Ljava/util/List;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;
+}
+
+public final class com/squareup/kotlinpoet/ksp/VisibilitiesKt {
+	public static final fun toKModifier (Lcom/google/devtools/ksp/symbol/Visibility;)Lcom/squareup/kotlinpoet/KModifier;
+}
+

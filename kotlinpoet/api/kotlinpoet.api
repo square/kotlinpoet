@@ -1,0 +1,1143 @@
+public final class com/squareup/kotlinpoet/AnnotationSpec : com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/AnnotationSpec$Companion;
+	public static final fun builder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public static final fun builder (Lcom/squareup/kotlinpoet/ParameterizedTypeName;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public static final fun builder (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public static final fun builder (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun get (Ljava/lang/annotation/Annotation;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public static final fun get (Ljava/lang/annotation/Annotation;Z)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public static final fun get (Ljavax/lang/model/element/AnnotationMirror;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public final fun getClassName ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun getMembers ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeName ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getUseSiteTarget ()Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public fun hashCode ()I
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/AnnotationSpec$Builder : com/squareup/kotlinpoet/Taggable$Builder {
+	public static final field Companion Lcom/squareup/kotlinpoet/AnnotationSpec$Builder$Companion;
+	public final fun addMember (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun addMember (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public final fun getMembers ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public final fun useSiteTarget (Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/AnnotationSpec$Builder$Companion {
+}
+
+public final class com/squareup/kotlinpoet/AnnotationSpec$Companion {
+	public final fun builder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun builder (Lcom/squareup/kotlinpoet/ParameterizedTypeName;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun builder (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun builder (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/AnnotationSpec$Builder;
+	public final fun get (Ljava/lang/annotation/Annotation;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public final fun get (Ljava/lang/annotation/Annotation;Z)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public final fun get (Ljavax/lang/model/element/AnnotationMirror;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/AnnotationSpec$Companion;Ljava/lang/annotation/Annotation;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+}
+
+public final class com/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget : java/lang/Enum {
+	public static final field DELEGATE Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field FIELD Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field FILE Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field GET Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field PARAM Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field PROPERTY Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field RECEIVER Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field SET Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static final field SETPARAM Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static fun values ()[Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+}
+
+public final class com/squareup/kotlinpoet/ClassName : com/squareup/kotlinpoet/TypeName, java/lang/Comparable {
+	public static final field Companion Lcom/squareup/kotlinpoet/ClassName$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;[Ljava/lang/String;)V
+	public static final fun bestGuess (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
+	public fun compareTo (Lcom/squareup/kotlinpoet/ClassName;)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun constructorReference ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/ClassName;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public final fun enclosingClassName ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun getCanonicalName ()Ljava/lang/String;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getSimpleName ()Ljava/lang/String;
+	public final fun getSimpleNames ()Ljava/util/List;
+	public final fun nestedClass (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
+	public final fun peerClass (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
+	public final fun reflectionName ()Ljava/lang/String;
+	public final fun topLevelClassName ()Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class com/squareup/kotlinpoet/ClassName$Companion {
+	public final fun bestGuess (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class com/squareup/kotlinpoet/ClassNames {
+	public static final fun get (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun get (Ljavax/lang/model/element/TypeElement;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun get (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class com/squareup/kotlinpoet/CodeBlock {
+	public static final field Companion Lcom/squareup/kotlinpoet/CodeBlock$Companion;
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun builder ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun isEmpty ()Z
+	public final fun isNotEmpty ()Z
+	public static final fun of (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/CodeBlock$Builder {
+	public fun <init> ()V
+	public final fun add (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun add (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun addNamed (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun clear ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun endControlFlow ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun indent ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun isEmpty ()Z
+	public final fun isNotEmpty ()Z
+	public final fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun unindent ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+}
+
+public final class com/squareup/kotlinpoet/CodeBlock$Companion {
+	public final fun builder ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun of (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock;
+}
+
+public final class com/squareup/kotlinpoet/CodeBlocks {
+	public static final fun buildCodeBlock (Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun joinToCode (Ljava/util/Collection;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static synthetic fun joinToCode$default (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun withIndent (Lcom/squareup/kotlinpoet/CodeBlock$Builder;Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+}
+
+public abstract interface annotation class com/squareup/kotlinpoet/DelicateKotlinPoetApi : java/lang/annotation/Annotation {
+	public abstract fun message ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/Dynamic : com/squareup/kotlinpoet/TypeName {
+	public static final field INSTANCE Lcom/squareup/kotlinpoet/Dynamic;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Ljava/lang/Void;
+}
+
+public abstract interface annotation class com/squareup/kotlinpoet/ExperimentalKotlinPoetApi : java/lang/annotation/Annotation {
+}
+
+public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/FileSpec$Companion;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getBody ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getComment ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getDefaultImports ()Ljava/util/Set;
+	public final fun getMembers ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPackageName ()Ljava/lang/String;
+	public fun getTags ()Ljava/util/Map;
+	public fun hashCode ()I
+	public final fun isScript ()Z
+	public static final fun scriptBuilder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/FileSpec;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun toJavaFileObject ()Ljavax/tools/JavaFileObject;
+	public fun toString ()Ljava/lang/String;
+	public final fun writeTo (Ljava/io/File;)V
+	public final fun writeTo (Ljava/lang/Appendable;)V
+	public final fun writeTo (Ljava/nio/file/Path;)V
+	public final fun writeTo (Ljavax/annotation/processing/Filer;)V
+}
+
+public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/MemberName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAliasedImport (Ljava/lang/Class;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAliasedImport (Lkotlin/reflect/KClass;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addBodyComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addDefaultPackageImport (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addFileComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addFunction (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lcom/squareup/kotlinpoet/ClassName;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lcom/squareup/kotlinpoet/Import;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Ljava/lang/Class;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Ljava/lang/Class;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Ljava/lang/Enum;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Ljava/lang/String;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lkotlin/reflect/KClass;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addKotlinDefaultImports (ZZ)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static synthetic fun addKotlinDefaultImports$default (Lcom/squareup/kotlinpoet/FileSpec$Builder;ZZILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addProperty (Lcom/squareup/kotlinpoet/PropertySpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addTypeAlias (Lcom/squareup/kotlinpoet/TypeAliasSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/FileSpec;
+	public final fun clearBody ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun clearComment ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun clearImports ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun endControlFlow ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getDefaultImports ()Ljava/util/Set;
+	public final fun getImports ()Ljava/util/List;
+	public final fun getMembers ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPackageName ()Ljava/lang/String;
+	public fun getTags ()Ljava/util/Map;
+	public final fun indent (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun isScript ()Z
+	public final fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/FileSpec$Companion {
+	public final fun builder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec;
+	public final fun scriptBuilder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static synthetic fun scriptBuilder$default (Lcom/squareup/kotlinpoet/FileSpec$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/FunSpec : com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/FunSpec$Companion;
+	public static final fun builder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun constructorBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getBody ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getContextReceiverTypes ()Ljava/util/List;
+	public final fun getDelegateConstructor ()Ljava/lang/String;
+	public final fun getDelegateConstructorArguments ()Ljava/util/List;
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getModifiers ()Ljava/util/Set;
+	public final fun getName ()Ljava/lang/String;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getReceiverKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getReceiverType ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getReturnKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getReturnType ()Lcom/squareup/kotlinpoet/TypeName;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public static final fun getterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun hashCode ()I
+	public final fun isAccessor ()Z
+	public final fun isConstructor ()Z
+	public static final fun overriding (Ljavax/lang/model/element/ExecutableElement;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun overriding (Ljavax/lang/model/element/ExecutableElement;Ljavax/lang/model/type/DeclaredType;Ljavax/lang/model/util/Types;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun setterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/FunSpec;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlinpoet/OriginatingElementsHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addAnnotations (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addModifiers ([Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public synthetic fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;
+	public final fun addParameter (Lcom/squareup/kotlinpoet/ParameterSpec;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameter (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/FunSpec;
+	public final fun callSuperConstructor (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callSuperConstructor (Ljava/util/List;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callSuperConstructor ([Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callSuperConstructor ([Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun callSuperConstructor$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callThisConstructor (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callThisConstructor (Ljava/util/List;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callThisConstructor ([Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun callThisConstructor ([Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun callThisConstructor$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun clearBody ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun endControlFlow ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getModifiers ()Ljava/util/List;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public final fun getParameters ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public final fun jvmModifiers (Ljava/lang/Iterable;)V
+	public final fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Ljava/lang/reflect/Type;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun receiver (Lkotlin/reflect/KClass;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun receiver$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun receiver$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun receiver$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Ljava/lang/reflect/Type;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun returns (Lkotlin/reflect/KClass;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun returns$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun returns$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun returns$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/FunSpec$Companion {
+	public final fun builder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun constructorBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun getterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun overriding (Ljavax/lang/model/element/ExecutableElement;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun overriding (Ljavax/lang/model/element/ExecutableElement;Ljavax/lang/model/type/DeclaredType;Ljavax/lang/model/util/Types;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun setterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/Import : java/lang/Comparable {
+	public fun compareTo (Lcom/squareup/kotlinpoet/Import;)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/Import;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/Import;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/Import;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlias ()Ljava/lang/String;
+	public final fun getQualifiedName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/KModifier : java/lang/Enum {
+	public static final field ABSTRACT Lcom/squareup/kotlinpoet/KModifier;
+	public static final field ACTUAL Lcom/squareup/kotlinpoet/KModifier;
+	public static final field ANNOTATION Lcom/squareup/kotlinpoet/KModifier;
+	public static final field COMPANION Lcom/squareup/kotlinpoet/KModifier;
+	public static final field CONST Lcom/squareup/kotlinpoet/KModifier;
+	public static final field CROSSINLINE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field DATA Lcom/squareup/kotlinpoet/KModifier;
+	public static final field ENUM Lcom/squareup/kotlinpoet/KModifier;
+	public static final field EXPECT Lcom/squareup/kotlinpoet/KModifier;
+	public static final field EXTERNAL Lcom/squareup/kotlinpoet/KModifier;
+	public static final field FINAL Lcom/squareup/kotlinpoet/KModifier;
+	public static final field FUN Lcom/squareup/kotlinpoet/KModifier;
+	public static final field IN Lcom/squareup/kotlinpoet/KModifier;
+	public static final field INFIX Lcom/squareup/kotlinpoet/KModifier;
+	public static final field INLINE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field INNER Lcom/squareup/kotlinpoet/KModifier;
+	public static final field INTERNAL Lcom/squareup/kotlinpoet/KModifier;
+	public static final field LATEINIT Lcom/squareup/kotlinpoet/KModifier;
+	public static final field NOINLINE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field OPEN Lcom/squareup/kotlinpoet/KModifier;
+	public static final field OPERATOR Lcom/squareup/kotlinpoet/KModifier;
+	public static final field OUT Lcom/squareup/kotlinpoet/KModifier;
+	public static final field OVERRIDE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field PRIVATE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field PROTECTED Lcom/squareup/kotlinpoet/KModifier;
+	public static final field PUBLIC Lcom/squareup/kotlinpoet/KModifier;
+	public static final field REIFIED Lcom/squareup/kotlinpoet/KModifier;
+	public static final field SEALED Lcom/squareup/kotlinpoet/KModifier;
+	public static final field SUSPEND Lcom/squareup/kotlinpoet/KModifier;
+	public static final field TAILREC Lcom/squareup/kotlinpoet/KModifier;
+	public static final field VALUE Lcom/squareup/kotlinpoet/KModifier;
+	public static final field VARARG Lcom/squareup/kotlinpoet/KModifier;
+	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/KModifier;
+	public static fun values ()[Lcom/squareup/kotlinpoet/KModifier;
+}
+
+public final class com/squareup/kotlinpoet/KOperator : java/lang/Enum {
+	public static final field CONTAINS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field DEC Lcom/squareup/kotlinpoet/KOperator;
+	public static final field DIV Lcom/squareup/kotlinpoet/KOperator;
+	public static final field DIV_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
+	public static final field EQUALS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field GE Lcom/squareup/kotlinpoet/KOperator;
+	public static final field GT Lcom/squareup/kotlinpoet/KOperator;
+	public static final field INC Lcom/squareup/kotlinpoet/KOperator;
+	public static final field ITERATOR Lcom/squareup/kotlinpoet/KOperator;
+	public static final field LE Lcom/squareup/kotlinpoet/KOperator;
+	public static final field LT Lcom/squareup/kotlinpoet/KOperator;
+	public static final field MINUS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field MINUS_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
+	public static final field NOT Lcom/squareup/kotlinpoet/KOperator;
+	public static final field NOT_CONTAINS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field NOT_EQUALS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field PLUS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field PLUS_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
+	public static final field RANGE_TO Lcom/squareup/kotlinpoet/KOperator;
+	public static final field REM Lcom/squareup/kotlinpoet/KOperator;
+	public static final field REM_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
+	public static final field TIMES Lcom/squareup/kotlinpoet/KOperator;
+	public static final field TIMES_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
+	public static final field UNARY_MINUS Lcom/squareup/kotlinpoet/KOperator;
+	public static final field UNARY_PLUS Lcom/squareup/kotlinpoet/KOperator;
+	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/KOperator;
+	public static fun values ()[Lcom/squareup/kotlinpoet/KOperator;
+}
+
+public final class com/squareup/kotlinpoet/LambdaTypeName : com/squareup/kotlinpoet/TypeName {
+	public static final field Companion Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public final fun copy (ZLjava/util/List;ZLjava/util/Map;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/LambdaTypeName;ZLjava/util/List;ZLjava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public final fun getContextReceivers ()Ljava/util/List;
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getReceiver ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getReturnType ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun isSuspending ()Z
+}
+
+public final class com/squareup/kotlinpoet/LambdaTypeName$Companion {
+	public final fun get (Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+}
+
+public final class com/squareup/kotlinpoet/MemberName {
+	public static final field Companion Lcom/squareup/kotlinpoet/MemberName$Companion;
+	public fun <init> (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/KOperator;)V
+	public fun <init> (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)V
+	public fun <init> (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;Z)V
+	public fun <init> (Ljava/lang/String;Lcom/squareup/kotlinpoet/KOperator;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Z)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lcom/squareup/kotlinpoet/KOperator;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;Lcom/squareup/kotlinpoet/KOperator;Z)Lcom/squareup/kotlinpoet/MemberName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/MemberName;Ljava/lang/String;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;Lcom/squareup/kotlinpoet/KOperator;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/MemberName;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun get (Ljava/lang/Class;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+	public static final fun get (Lkotlin/reflect/KClass;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+	public final fun getCanonicalName ()Ljava/lang/String;
+	public final fun getEnclosingClassName ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun getOperator ()Lcom/squareup/kotlinpoet/KOperator;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getSimpleName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isExtension ()Z
+	public static final synthetic fun member (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+	public final fun reference ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/MemberName$Companion {
+	public final fun get (Ljava/lang/Class;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+	public final fun get (Lkotlin/reflect/KClass;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+	public final synthetic fun member (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/MemberName;
+}
+
+public final class com/squareup/kotlinpoet/NameAllocator {
+	public fun <init> ()V
+	public final fun copy ()Lcom/squareup/kotlinpoet/NameAllocator;
+	public final fun get (Ljava/lang/Object;)Ljava/lang/String;
+	public final fun newName (Ljava/lang/String;)Ljava/lang/String;
+	public final fun newName (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun newName$default (Lcom/squareup/kotlinpoet/NameAllocator;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract interface class com/squareup/kotlinpoet/OriginatingElementsHolder {
+	public abstract fun getOriginatingElements ()Ljava/util/List;
+}
+
+public abstract interface class com/squareup/kotlinpoet/OriginatingElementsHolder$Builder {
+	public abstract fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;
+	public abstract fun getOriginatingElements ()Ljava/util/List;
+}
+
+public final class com/squareup/kotlinpoet/OriginatingElementsHolder$Builder$DefaultImpls {
+	public static fun addOriginatingElement (Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;
+}
+
+public final class com/squareup/kotlinpoet/ParameterSpec : com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/ParameterSpec$Companion;
+	public fun <init> (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)V
+	public fun <init> (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)V
+	public static final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun get (Ljavax/lang/model/element/VariableElement;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getDefaultValue ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getModifiers ()Ljava/util/Set;
+	public final fun getName ()Ljava/lang/String;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getType ()Lcom/squareup/kotlinpoet/TypeName;
+	public fun hashCode ()I
+	public static final fun parametersOf (Ljavax/lang/model/element/ExecutableElement;)Ljava/util/List;
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/ParameterSpec;Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public fun toString ()Ljava/lang/String;
+	public static final fun unnamed (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public static final fun unnamed (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public static final fun unnamed (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterSpec;
+}
+
+public final class com/squareup/kotlinpoet/ParameterSpec$Builder : com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addAnnotations (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun addModifiers ([Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/ParameterSpec;
+	public final fun defaultValue (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun defaultValue (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun getModifiers ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public final fun jvmModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/ParameterSpec$Companion {
+	public final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/ParameterSpec$Builder;
+	public final fun get (Ljavax/lang/model/element/VariableElement;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public final fun parametersOf (Ljavax/lang/model/element/ExecutableElement;)Ljava/util/List;
+	public final fun unnamed (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public final fun unnamed (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/ParameterSpec;
+	public final fun unnamed (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterSpec;
+}
+
+public final class com/squareup/kotlinpoet/ParameterizedTypeName : com/squareup/kotlinpoet/TypeName {
+	public static final field Companion Lcom/squareup/kotlinpoet/ParameterizedTypeName$Companion;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public final fun copy (ZLjava/util/List;Ljava/util/Map;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/ParameterizedTypeName;ZLjava/util/List;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Ljava/lang/Class;Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Ljava/lang/Class;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Ljava/lang/Class;[Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun get (Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun getRawType ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun getTypeArguments ()Ljava/util/List;
+	public final fun nestedClass (Ljava/lang/String;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun plusParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun plusParameter (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun plusParameter (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+}
+
+public final class com/squareup/kotlinpoet/ParameterizedTypeName$Companion {
+	public final fun get (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Lcom/squareup/kotlinpoet/ClassName;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Lcom/squareup/kotlinpoet/ClassName;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Ljava/lang/Class;Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Ljava/lang/Class;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Ljava/lang/Class;[Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public final fun get (Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+}
+
+public final class com/squareup/kotlinpoet/ParameterizedTypeNames {
+	public static final fun asTypeName (Lkotlin/reflect/KType;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun get (Ljava/lang/reflect/ParameterizedType;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+}
+
+public final class com/squareup/kotlinpoet/PropertySpec : com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/PropertySpec$Companion;
+	public static final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getContextReceiverTypes ()Ljava/util/List;
+	public final fun getDelegated ()Z
+	public final fun getGetter ()Lcom/squareup/kotlinpoet/FunSpec;
+	public final fun getInitializer ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getModifiers ()Ljava/util/Set;
+	public final fun getMutable ()Z
+	public final fun getName ()Ljava/lang/String;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public final fun getReceiverType ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getSetter ()Lcom/squareup/kotlinpoet/FunSpec;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getType ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/PropertySpec;Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/PropertySpec$Builder : com/squareup/kotlinpoet/OriginatingElementsHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addAnnotations (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addModifiers ([Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public synthetic fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;
+	public fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/PropertySpec;
+	public final fun delegate (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun delegate (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getModifiers ()Ljava/util/List;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public final fun getter (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun initializer (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun initializer (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun mutable (Z)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static synthetic fun mutable$default (Lcom/squareup/kotlinpoet/PropertySpec$Builder;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun receiver (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun receiver (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun receiver (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun setter (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/PropertySpec$Companion {
+	public final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+}
+
+public abstract interface class com/squareup/kotlinpoet/Taggable {
+	public abstract fun getTags ()Ljava/util/Map;
+	public abstract fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public abstract fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public abstract interface class com/squareup/kotlinpoet/Taggable$Builder {
+	public abstract fun getTags ()Ljava/util/Map;
+	public abstract fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public abstract fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/Taggable$Builder$DefaultImpls {
+	public static fun tag (Lcom/squareup/kotlinpoet/Taggable$Builder;Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public static fun tag (Lcom/squareup/kotlinpoet/Taggable$Builder;Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+}
+
+public final class com/squareup/kotlinpoet/Taggable$DefaultImpls {
+	public static fun getTags (Lcom/squareup/kotlinpoet/Taggable;)Ljava/util/Map;
+	public static fun tag (Lcom/squareup/kotlinpoet/Taggable;Ljava/lang/Class;)Ljava/lang/Object;
+}
+
+public final class com/squareup/kotlinpoet/TypeAliasSpec : com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/TypeAliasSpec$Companion;
+	public static final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public static final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getModifiers ()Ljava/util/Set;
+	public final fun getName ()Ljava/lang/String;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getType ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun toBuilder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/TypeAliasSpec;Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/TypeAliasSpec$Builder : com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addAnnotations (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addModifiers ([Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/TypeAliasSpec;
+	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getModifiers ()Ljava/util/Set;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeVariables ()Ljava/util/Set;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/TypeAliasSpec$Companion {
+	public final fun builder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun builder (Ljava/lang/String;Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+	public final fun builder (Ljava/lang/String;Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeAliasSpec$Builder;
+}
+
+public abstract class com/squareup/kotlinpoet/TypeName : com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/TypeName$Companion;
+	public synthetic fun <init> (ZLjava/util/List;Lcom/squareup/kotlinpoet/TagMap;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
+	public abstract fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeName;ZLjava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeName;ZLjava/util/List;Ljava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnnotations ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+	public fun hashCode ()I
+	public final fun isAnnotated ()Z
+	public final fun isNullable ()Z
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/TypeName$Companion {
+}
+
+public final class com/squareup/kotlinpoet/TypeNames {
+	public static final field ANNOTATION Lcom/squareup/kotlinpoet/ClassName;
+	public static final field ANY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field BOOLEAN Lcom/squareup/kotlinpoet/ClassName;
+	public static final field BOOLEAN_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field BYTE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field BYTE_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field CHAR Lcom/squareup/kotlinpoet/ClassName;
+	public static final field CHAR_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field CHAR_SEQUENCE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field COLLECTION Lcom/squareup/kotlinpoet/ClassName;
+	public static final field COMPARABLE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field DOUBLE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field DOUBLE_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field DYNAMIC Lcom/squareup/kotlinpoet/Dynamic;
+	public static final field ENUM Lcom/squareup/kotlinpoet/ClassName;
+	public static final field FLOAT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field FLOAT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field INT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field INT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field ITERABLE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field LIST Lcom/squareup/kotlinpoet/ClassName;
+	public static final field LONG Lcom/squareup/kotlinpoet/ClassName;
+	public static final field LONG_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MAP Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MAP_ENTRY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_COLLECTION Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_ITERABLE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_LIST Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_MAP Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_MAP_ENTRY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field MUTABLE_SET Lcom/squareup/kotlinpoet/ClassName;
+	public static final field NOTHING Lcom/squareup/kotlinpoet/ClassName;
+	public static final field NUMBER Lcom/squareup/kotlinpoet/ClassName;
+	public static final field SET Lcom/squareup/kotlinpoet/ClassName;
+	public static final field SHORT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field SHORT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field STAR Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public static final field STRING Lcom/squareup/kotlinpoet/ClassName;
+	public static final field THROWABLE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field UNIT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_BYTE Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_BYTE_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_INT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_INT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_LONG Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_LONG_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_SHORT Lcom/squareup/kotlinpoet/ClassName;
+	public static final field U_SHORT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun get (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun get (Ljavax/lang/model/type/TypeMirror;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun get (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable {
+	public static final field Companion Lcom/squareup/kotlinpoet/TypeSpec$Companion;
+	public static final fun annotationBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun annotationBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun anonymousClassBuilder ()Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun classBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun classBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun companionObjectBuilder ()Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun companionObjectBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun enumBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun enumBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun expectClassBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun expectClassBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun funInterfaceBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun funInterfaceBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun getAnnotationSpecs ()Ljava/util/List;
+	public final fun getEnumConstants ()Ljava/util/Map;
+	public final fun getFunSpecs ()Ljava/util/List;
+	public final fun getInitializerBlock ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getInitializerIndex ()I
+	public final fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public final fun getKind ()Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public final fun getModifiers ()Ljava/util/Set;
+	public final fun getName ()Ljava/lang/String;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public final fun getPrimaryConstructor ()Lcom/squareup/kotlinpoet/FunSpec;
+	public final fun getPropertySpecs ()Ljava/util/List;
+	public final fun getSuperclass ()Lcom/squareup/kotlinpoet/TypeName;
+	public final fun getSuperclassConstructorParameters ()Ljava/util/List;
+	public final fun getSuperinterfaces ()Ljava/util/Map;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeSpecs ()Ljava/util/List;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public fun hashCode ()I
+	public static final fun interfaceBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun interfaceBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun isAnnotation ()Z
+	public final fun isAnonymousClass ()Z
+	public final fun isCompanion ()Z
+	public final fun isEnum ()Z
+	public final fun isFunctionalInterface ()Z
+	public static final fun objectBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun objectBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public fun tag (Ljava/lang/Class;)Ljava/lang/Object;
+	public fun tag (Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public final fun toBuilder ()Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun toBuilder (Lcom/squareup/kotlinpoet/TypeSpec$Kind;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun toBuilder (Lcom/squareup/kotlinpoet/TypeSpec$Kind;Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/TypeSpec;Lcom/squareup/kotlinpoet/TypeSpec$Kind;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public fun toString ()Ljava/lang/String;
+	public static final fun valueClassBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotlinpoet/OriginatingElementsHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addAnnotation (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addAnnotation (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addAnnotations (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addEnumConstant (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addEnumConstant (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun addEnumConstant$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addFunction (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addFunctions (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addInitializerBlock (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addModifiers ([Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public synthetic fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/OriginatingElementsHolder$Builder;
+	public fun addOriginatingElement (Ljavax/lang/model/element/Element;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperties (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Lcom/squareup/kotlinpoet/PropertySpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Ljava/lang/reflect/Type;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Ljava/lang/reflect/Type;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addProperty (Ljava/lang/String;Lkotlin/reflect/KClass;[Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperclassConstructorParameter (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperclassConstructorParameter (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterface (Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterface (Lcom/squareup/kotlinpoet/TypeName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterface (Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterface (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterface (Lkotlin/reflect/KClass;Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun addSuperinterface$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun addSuperinterface$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun addSuperinterface$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addSuperinterfaces (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/TypeSpec;
+	public final fun getAnnotationSpecs ()Ljava/util/List;
+	public final fun getEnumConstants ()Ljava/util/Map;
+	public final fun getFunSpecs ()Ljava/util/List;
+	public final fun getInitializerIndex ()I
+	public final fun getModifiers ()Ljava/util/Set;
+	public fun getOriginatingElements ()Ljava/util/List;
+	public final fun getPropertySpecs ()Ljava/util/List;
+	public final fun getSuperclassConstructorParameters ()Ljava/util/List;
+	public final fun getSuperinterfaces ()Ljava/util/Map;
+	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeSpecs ()Ljava/util/List;
+	public final fun getTypeVariables ()Ljava/util/List;
+	public final fun primaryConstructor (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun setInitializerIndex (I)V
+	public final fun superclass (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun superclass (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun superclass (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public synthetic fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Ljava/lang/Class;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public synthetic fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Taggable$Builder;
+	public fun tag (Lkotlin/reflect/KClass;Ljava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/TypeSpec$Companion {
+	public final fun annotationBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun annotationBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun anonymousClassBuilder ()Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun classBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun classBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun companionObjectBuilder ()Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun companionObjectBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun companionObjectBuilder$default (Lcom/squareup/kotlinpoet/TypeSpec$Companion;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun enumBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun enumBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun expectClassBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun expectClassBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun funInterfaceBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun funInterfaceBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun interfaceBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun interfaceBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun objectBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun objectBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public final fun valueClassBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/TypeSpec$Kind : java/lang/Enum {
+	public static final field CLASS Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public static final field INTERFACE Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public static final field OBJECT Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public static fun values ()[Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+}
+
+public final class com/squareup/kotlinpoet/TypeVariableName : com/squareup/kotlinpoet/TypeName {
+	public static final field Companion Lcom/squareup/kotlinpoet/TypeVariableName$Companion;
+	public final fun copy (ZLjava/util/List;Ljava/util/List;ZLjava/util/Map;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeVariableName;ZLjava/util/List;Ljava/util/List;ZLjava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;Ljava/util/List;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;Ljava/util/List;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljava/lang/String;[Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun getBounds ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getVariance ()Lcom/squareup/kotlinpoet/KModifier;
+	public static final fun getWithClasses (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun getWithClasses (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun isReified ()Z
+}
+
+public final class com/squareup/kotlinpoet/TypeVariableName$Companion {
+	public final fun get (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;Ljava/util/List;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;Ljava/util/List;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun get (Ljava/lang/String;[Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;Ljava/util/List;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;[Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;[Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun getWithClasses (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun getWithClasses (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun getWithClasses$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static synthetic fun getWithTypes$default (Lcom/squareup/kotlinpoet/TypeVariableName$Companion;Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+}
+
+public final class com/squareup/kotlinpoet/TypeVariableNames {
+	public static final fun asTypeVariableName (Lkotlin/reflect/KTypeParameter;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljavax/lang/model/element/TypeParameterElement;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun get (Ljavax/lang/model/type/TypeVariable;)Lcom/squareup/kotlinpoet/TypeVariableName;
+}
+
+public final class com/squareup/kotlinpoet/WildcardTypeName : com/squareup/kotlinpoet/TypeName {
+	public static final field Companion Lcom/squareup/kotlinpoet/WildcardTypeName$Companion;
+	public static final fun consumerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public static final fun consumerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public static final fun consumerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun getInTypes ()Ljava/util/List;
+	public final fun getOutTypes ()Ljava/util/List;
+	public static final fun producerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public static final fun producerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public static final fun producerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+}
+
+public final class com/squareup/kotlinpoet/WildcardTypeName$Companion {
+	public final fun consumerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun consumerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun consumerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun producerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun producerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public final fun producerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+}
+
+public final class com/squareup/kotlinpoet/WildcardTypeNames {
+	public static final fun get (Ljava/lang/reflect/WildcardType;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun get (Ljavax/lang/model/type/WildcardType;)Lcom/squareup/kotlinpoet/TypeName;
+}
+
+public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
+	public static final fun jvmDefault (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun jvmDefault (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun jvmField (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun jvmInline (Lcom/squareup/kotlinpoet/TypeSpec$Builder;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun jvmMultifileClass (Lcom/squareup/kotlinpoet/FileSpec$Builder;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static final fun jvmName (Lcom/squareup/kotlinpoet/FileSpec$Builder;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static final fun jvmName (Lcom/squareup/kotlinpoet/FunSpec$Builder;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun jvmOverloads (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun jvmRecord (Lcom/squareup/kotlinpoet/TypeSpec$Builder;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun jvmStatic (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun jvmStatic (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun jvmSuppressWildcards (Lcom/squareup/kotlinpoet/FunSpec$Builder;Z)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun jvmSuppressWildcards (Lcom/squareup/kotlinpoet/PropertySpec$Builder;Z)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun jvmSuppressWildcards (Lcom/squareup/kotlinpoet/TypeName;Z)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun jvmSuppressWildcards (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Z)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static synthetic fun jvmSuppressWildcards$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun jvmSuppressWildcards$default (Lcom/squareup/kotlinpoet/PropertySpec$Builder;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static synthetic fun jvmSuppressWildcards$default (Lcom/squareup/kotlinpoet/TypeName;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
+	public static synthetic fun jvmSuppressWildcards$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public static final fun jvmWildcard (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun strictfp (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun synchronized (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun throws (Lcom/squareup/kotlinpoet/FunSpec$Builder;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun throws (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun throws (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun throws (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final fun transient (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final fun volatile (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/tags/TypeAliasTag {
+	public fun <init> (Lcom/squareup/kotlinpoet/TypeName;)V
+	public final fun getAbbreviatedType ()Lcom/squareup/kotlinpoet/TypeName;
+}
+

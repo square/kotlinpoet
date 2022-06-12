@@ -1,0 +1,22 @@
+public final class com/squareup/kotlinpoet/javapoet/J2kInteropKt {
+	public static final fun toKClassName (Lcom/squareup/javapoet/ClassName;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun toKParameterizedTypeName (Lcom/squareup/javapoet/ParameterizedTypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public static final fun toKTypeName (Lcom/squareup/javapoet/TypeName;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun toKTypeVariableName (Lcom/squareup/javapoet/TypeVariableName;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public static final fun toKWildcardTypeName (Lcom/squareup/javapoet/WildcardTypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+}
+
+public final class com/squareup/kotlinpoet/javapoet/K2jInteropKt {
+	public static final fun toJClassName (Lcom/squareup/kotlinpoet/ClassName;Z)Lcom/squareup/javapoet/TypeName;
+	public static synthetic fun toJClassName$default (Lcom/squareup/kotlinpoet/ClassName;ZILjava/lang/Object;)Lcom/squareup/javapoet/TypeName;
+	public static final fun toJParameterizedOrArrayTypeName (Lcom/squareup/kotlinpoet/ParameterizedTypeName;)Lcom/squareup/javapoet/TypeName;
+	public static final fun toJParameterizedTypeName (Lcom/squareup/kotlinpoet/ParameterizedTypeName;)Lcom/squareup/javapoet/ParameterizedTypeName;
+	public static final fun toJTypeName (Lcom/squareup/kotlinpoet/TypeName;Z)Lcom/squareup/javapoet/TypeName;
+	public static synthetic fun toJTypeName$default (Lcom/squareup/kotlinpoet/TypeName;ZILjava/lang/Object;)Lcom/squareup/javapoet/TypeName;
+	public static final fun toJTypeVariableName (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/javapoet/TypeVariableName;
+	public static final fun toJWildcardTypeName (Lcom/squareup/kotlinpoet/WildcardTypeName;)Lcom/squareup/javapoet/WildcardTypeName;
+}
+
+public abstract interface annotation class com/squareup/kotlinpoet/javapoet/KotlinPoetJavaPoetPreview : java/lang/annotation/Annotation {
+}
+
