@@ -27,7 +27,8 @@ class ExternalDeclarationsTest {
     assertThat(methodSpec.toString()).isEqualTo(
       """
       |public external fun function(): kotlin.Unit
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -40,7 +41,8 @@ class ExternalDeclarationsTest {
     assertThat(methodSpec.toString()).isEqualTo(
       """
       |public external fun function() = kotlin.js.definedExternally
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -55,7 +57,8 @@ class ExternalDeclarationsTest {
       |public external fun function(): kotlin.Unit {
       |  kotlin.js.definedExternally
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -71,7 +74,8 @@ class ExternalDeclarationsTest {
         |public external class Test {
         |  public fun function(): kotlin.Unit
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -88,7 +92,8 @@ class ExternalDeclarationsTest {
         |public external class Test {
         |  public fun function() = kotlin.js.definedExternally
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -108,7 +113,8 @@ class ExternalDeclarationsTest {
         |    kotlin.js.definedExternally
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -120,7 +126,8 @@ class ExternalDeclarationsTest {
     assertThat(propertySpec.toString()).isEqualTo(
       """
       |external val prop: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -133,7 +140,8 @@ class ExternalDeclarationsTest {
     assertThat(propertySpec.toString()).isEqualTo(
       """
       |external val prop: kotlin.String = kotlin.js.definedExternally
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -149,7 +157,8 @@ class ExternalDeclarationsTest {
         |public external class Test {
         |  public val prop: kotlin.String
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -166,7 +175,8 @@ class ExternalDeclarationsTest {
         |public external class Test {
         |  public val prop: kotlin.String = kotlin.js.definedExternally
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 }

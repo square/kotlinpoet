@@ -65,16 +65,13 @@ subprojects {
         }
       }
     }
-    configure<MavenPublishPluginExtension> {
-      sonatypeHost = S01
-    }
   }
 
   apply(plugin = "com.diffplug.spotless")
   configure<SpotlessExtension> {
     kotlin {
       target("**/*.kt")
-      ktlint(libs.versions.ktlint.get()).userData(mapOf("indent_size" to "2"))
+      ktlint(libs.versions.ktlint.get()).editorConfigOverride(mapOf("indent_size" to "2"))
       trimTrailingWhitespace()
       endWithNewline()
 

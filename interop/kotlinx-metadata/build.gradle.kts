@@ -39,4 +39,6 @@ dependencies {
   testImplementation(libs.truth)
   testImplementation(libs.compileTesting)
   testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
+  testImplementation(libs.kotlin.compilerEmbeddable)
 }

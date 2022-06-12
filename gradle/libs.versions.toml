@@ -13,29 +13,31 @@
 # limitations under the License.
 
 [versions]
-kotlin = "1.6.21"
-kct = "1.4.8"
-ksp = "1.6.20-1.0.5"
-ktlint = "0.42.1"
+kotlin = "1.7.0"
+kct = "1.4.9-alpha01"
+ksp = "1.7.0-1.0.6"
+ktlint = "0.45.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-dokka = { id = "org.jetbrains.dokka", version = "1.6.20" }
+dokka = { id = "org.jetbrains.dokka", version = "1.6.21" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-spotless = { id = "com.diffplug.spotless", version = "6.2.1" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.18.0" }
+spotless = { id = "com.diffplug.spotless", version = "6.7.1" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.20.0" }
 
 [libraries]
 autoCommon = { module = "com.google.auto:auto-common", version = "1.1.2" }
-guava = { module = "com.google.guava:guava", version = "30.1.1-jre" }
+guava = { module = "com.google.guava:guava", version = "31.1-jre" }
 javapoet = "com.squareup:javapoet:1.13.0"
 
 autoService = "com.google.auto.service:auto-service-annotations:1.0"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
 
+kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+kotlin-annotationProcessingEmbeddable = { module = "org.jetbrains.kotlin:kotlin-annotation-processing-embeddable", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.4.0" }
+kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.4.2" }
 
 ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }

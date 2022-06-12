@@ -75,7 +75,8 @@ class FileSpecTest {
         |    return if (result.isEmpty()) emptyList() else result
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -121,7 +122,8 @@ class FileSpecTest {
         |
         |  public constructor(vararg states: Thread.State)
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -147,7 +149,8 @@ class FileSpecTest {
         |import kotlin.collections.List
         |
         |public fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -177,7 +180,8 @@ class FileSpecTest {
         |    out.println("hello");
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -199,7 +203,8 @@ class FileSpecTest {
         |    return TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -222,7 +227,8 @@ class FileSpecTest {
         |    return SECONDS.convert(minutes, TimeUnit.MINUTES)
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -247,7 +253,8 @@ class FileSpecTest {
         |    return SECONDS.convert(minutes, MINUTES)
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -279,7 +286,8 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -300,7 +308,8 @@ class FileSpecTest {
         |public class Taco {
         |  public val madeFreshDate: Date
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -321,7 +330,8 @@ class FileSpecTest {
         |public class Taco {
         |  public val madeFreshDate: Date
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -332,7 +342,8 @@ class FileSpecTest {
       """
       |package com.squareup.`taco factory`
       |
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -356,7 +367,8 @@ class FileSpecTest {
         |
         |  public val madeFreshDatabaseDate: java.sql.Date
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -380,7 +392,8 @@ class FileSpecTest {
         |
         |  public val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -403,7 +416,8 @@ class FileSpecTest {
       |public fun main(): Unit {
       |  println(TacoFactory.produceTacos())
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -427,7 +441,8 @@ class FileSpecTest {
       |public fun main(): Unit {
       |  println(`La Taqueria`.produceTacos())
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -456,7 +471,8 @@ class FileSpecTest {
       |public val a: JString = JString("a")
       |
       |public val b: KString = "b"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -480,7 +496,8 @@ class FileSpecTest {
       |public fun sleepForFiveMins(): Unit {
       |  MINS.sleep(5)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -526,7 +543,8 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -572,7 +590,8 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -624,7 +643,8 @@ class FileSpecTest {
         |    public class D
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -650,7 +670,8 @@ class FileSpecTest {
         |public class Taco : Message() {
         |  public class Builder : Message.Builder()
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -679,7 +700,8 @@ class FileSpecTest {
         |  @Component.Builder
         |  public class Builder
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -709,7 +731,8 @@ class FileSpecTest {
         |    System.out.println("Hello World!");
         |  }
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -728,7 +751,8 @@ class FileSpecTest {
         |import Test
         |
         |public class World : Test
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -743,7 +767,8 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -762,7 +787,8 @@ class FileSpecTest {
         |package com.squareup.tacos
         |
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -784,7 +810,8 @@ class FileSpecTest {
         |
         |  public class A
         |}
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -800,7 +827,8 @@ class FileSpecTest {
         |public class A
         |
         |public class B
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -826,7 +854,8 @@ class FileSpecTest {
         |public typealias Int8 = Byte
         |
         |public typealias FileTable = Map<String, Int>
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -850,7 +879,8 @@ class FileSpecTest {
         |import kotlin.jvm.JvmMultifileClass
         |import kotlin.jvm.JvmName
         |
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -872,7 +902,8 @@ class FileSpecTest {
       """
         |package com.squareup.`is`.`fun`.`in`
         |
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -974,7 +1005,8 @@ class FileSpecTest {
             """
                |val inputBigInt = bigInt(input)
                |return inputBigInt.add(5)
-               |""".trimMargin()
+               |
+            """.trimMargin()
           )
           .build()
       )
@@ -991,7 +1023,8 @@ class FileSpecTest {
       |  val inputBigInt = bigInt(input)
       |  return inputBigInt.add(5)
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1010,7 +1043,8 @@ class FileSpecTest {
       |
       |public fun foo(): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1024,7 +1058,8 @@ class FileSpecTest {
       |
       |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass
       |
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1038,7 +1073,8 @@ class FileSpecTest {
       |
       |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass as MyClassAlias
       |
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1054,7 +1090,8 @@ class FileSpecTest {
       |// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       |package com.squareup.tacos
       |
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1096,7 +1133,8 @@ class FileSpecTest {
       |public fun f2(): Unit {
       |  // this is a very very very very very very very very very very long line with a very long lambda type: suspend String.(foo: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>) -> String
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1130,7 +1168,8 @@ class FileSpecTest {
       |public class Yay
       |
       |val yayInstance = Yay()
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -1153,7 +1192,8 @@ class FileSpecTest {
       |val prop2: Map<String, Any>? = null
       |val prop3: @FunctionalInterface Callable<String>? = null
       |val prop4: @FunctionalInterface Function<Int, Int>? = null
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 }

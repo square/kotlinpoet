@@ -57,7 +57,8 @@ class PropertySpecTest {
       """
       |var foo: kotlin.String
       |  private set
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -95,7 +96,8 @@ class PropertySpecTest {
       |var foo: kotlin.String
       |  external get
       |  external set
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -126,7 +128,8 @@ class PropertySpecTest {
       """
       |inline val foo: kotlin.String
       |  get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -145,7 +148,8 @@ class PropertySpecTest {
       """
       |var foo: kotlin.String
       |  inline get() = "foo"
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -172,7 +176,8 @@ class PropertySpecTest {
       |  get() = "foo"
       |  set(`value`) {
       |  }
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -205,7 +210,8 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo(
       """
       |val `object`: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -216,7 +222,8 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo(
       """
       |var `object`: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -228,7 +235,8 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo(
       """
       |external val foo: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -239,7 +247,8 @@ class PropertySpecTest {
     assertThat(prop.toString()).isEqualTo(
       """
       |val `with-hyphen`: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -319,7 +328,8 @@ class PropertySpecTest {
       """
       |private inline val <T : kotlin.Any> kotlin.reflect.KClass<T>.someFunction: T
       |  get() = stuff as T
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -340,7 +350,8 @@ class PropertySpecTest {
       """
       |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.`property`: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
       |  get() = ""
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -360,7 +371,8 @@ class PropertySpecTest {
       """
       |private inline val <reified T> kotlin.reflect.KClass<T>.someFunction: T
       |  get() = stuff as T
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -461,7 +473,8 @@ class PropertySpecTest {
       |  println("arg=${'$'}arg")
       |}
       |
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -491,7 +504,8 @@ class PropertySpecTest {
       | * The topping you want on your pizza
       | */
       |val topping: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -505,7 +519,8 @@ class PropertySpecTest {
       | * The topping you want on your pizza
       | */
       |val topping: kotlin.String
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -527,7 +542,8 @@ class PropertySpecTest {
       |   * Simple multiplier
       |   */
       |  get() = field * 5
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -547,7 +563,8 @@ class PropertySpecTest {
       |import kotlin.String
       |
       |public const val FOO: String = "This is a long string with a newline\nin the middle."
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -564,7 +581,8 @@ class PropertySpecTest {
       |import kotlin.Unit
       |
       |public val foo: @Annotation () -> Unit
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 

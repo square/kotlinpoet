@@ -106,7 +106,8 @@ class ParameterSpecTest {
       |parameter: com.example.SomeTypeAlias = { arg: kotlin.Any ->
       |  println("arg=${'$'}arg")
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 
@@ -128,7 +129,8 @@ class ParameterSpecTest {
       |
       |public fun foo(bar: @Annotation () -> Unit): Unit {
       |}
-      |""".trimMargin()
+      |
+      """.trimMargin()
     )
   }
 

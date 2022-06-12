@@ -117,7 +117,8 @@ class AnnotationSpecTest {
         |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -147,7 +148,8 @@ class AnnotationSpecTest {
         |  r = arrayOf(Float::class, Double::class),
         |)
         |public class IsAnnotated
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -193,7 +195,8 @@ class AnnotationSpecTest {
         |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -231,7 +234,8 @@ class AnnotationSpecTest {
         |  r = arrayOf(Float::class, Double::class),
         |)
         |public class Taco
-        |""".trimMargin()
+        |
+      """.trimMargin()
     )
   }
 
@@ -319,7 +323,7 @@ class AnnotationSpecTest {
       |  @Suppress("Things")
       |  val annotatedString = "AnnotatedString"
       |}
-    """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -362,7 +366,8 @@ class AnnotationSpecTest {
             |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
             |        Boolean::class))
             |public class Result
-            |""".trimMargin()
+            |
+      """.trimMargin()
     )
   }
 
@@ -390,7 +395,7 @@ class AnnotationSpecTest {
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
-        """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -412,7 +417,7 @@ class AnnotationSpecTest {
         |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
         |        Boolean::class))
         |public class Result
-        """.trimMargin()
+      """.trimMargin()
     )
   }
 
@@ -432,7 +437,7 @@ class AnnotationSpecTest {
         |
         |@AnnotationSpecTest.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
-        """.trimMargin()
+      """.trimMargin()
     )
   }
 
