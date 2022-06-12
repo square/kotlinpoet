@@ -31,7 +31,10 @@ dependencies {
   implementation(libs.autoService)
   compileOnly(libs.ksp.api)
   ksp(libs.autoService.ksp)
-  // Always force the latest version of the KSP impl in tests to match what we're building against
+  // Always force the latest version of the KSP/kotlin impl in tests to match what we're building against
+  testImplementation(libs.ksp.api)
+  testImplementation(libs.kotlin.compilerEmbeddable)
+  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
   testImplementation(libs.ksp)
   testImplementation(libs.kotlinCompileTesting)
   testImplementation(libs.kotlinCompileTesting.ksp)

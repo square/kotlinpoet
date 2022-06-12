@@ -47,4 +47,5 @@ dependencies {
   testImplementation(libs.jimfs)
   testImplementation(libs.ecj)
   testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlin.compilerEmbeddable)
 }
