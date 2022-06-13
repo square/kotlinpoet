@@ -26,6 +26,7 @@ plugins {
   alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
+  alias(libs.plugins.kotlinBinaryCompatibilityValidator)
 }
 
 allprojects {
@@ -121,4 +122,12 @@ subprojects {
       dependsOn(jdkTest)
     }
   }
+}
+
+apiValidation {
+  nonPublicMarkers += "com.squareup.kotlinpoet.ExperimentalKotlinPoetApi"
+  ignoredProjects += listOf(
+    "interop", // Empty middle package
+    "test-processor" // Test only
+  )
 }

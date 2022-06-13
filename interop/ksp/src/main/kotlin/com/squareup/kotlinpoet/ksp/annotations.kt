@@ -29,7 +29,6 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /** Returns an [AnnotationSpec] representation of this [KSAnnotation] instance. */
-@KotlinPoetKspPreview
 public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
   val builder = when (val type = annotationType.resolve().unwrapTypeAlias().toTypeName()) {
     is ClassName -> AnnotationSpec.builder(type)
@@ -68,7 +67,6 @@ internal fun KSType.unwrapTypeAlias(): KSType {
   }
 }
 
-@KotlinPoetKspPreview
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder) {
   when (value) {
     is List<*> -> {

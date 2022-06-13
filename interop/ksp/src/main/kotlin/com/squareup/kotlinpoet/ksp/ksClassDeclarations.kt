@@ -19,7 +19,6 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.ClassName
 
 /** Returns the [ClassName] representation of this [KSClassDeclaration]. */
-@KotlinPoetKspPreview
 public fun KSClassDeclaration.toClassName(): ClassName {
   return toClassNameInternal()
 }

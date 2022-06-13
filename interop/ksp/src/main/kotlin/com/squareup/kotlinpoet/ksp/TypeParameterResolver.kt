@@ -30,7 +30,6 @@ import com.squareup.kotlinpoet.TypeVariableName
  *
  * @see toTypeParameterResolver
  */
-@KotlinPoetKspPreview
 public interface TypeParameterResolver {
   public val parametersMap: Map<String, TypeVariableName>
   public operator fun get(index: String): TypeVariableName
@@ -58,7 +57,6 @@ public interface TypeParameterResolver {
  * @param sourceTypeHint an optional hint for error messages. Unresolvable parameter IDs will
  *                       include this hint in the thrown error's message.
  */
-@KotlinPoetKspPreview
 public fun List<KSTypeParameter>.toTypeParameterResolver(
   parent: TypeParameterResolver? = null,
   sourceTypeHint: String = "<unknown>",
