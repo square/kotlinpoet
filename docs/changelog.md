@@ -1,6 +1,28 @@
 Change Log
 ==========
 
+## Version 1.12.0
+
+_2022-06-13_
+
+Thanks to [@WhosNickDoglio][WhosNickDoglio], [@sullis][sullis], [@DRSchlaubi][DRSchlaubi],
+[@martinbonnin][martinbonnin], [@seriouslyhypersonic][seriouslyhypersonic], [@ephemient][ephemient],
+[@dkilmer][dkilmer], [@aksh1618][aksh1618], [@zsqw123][zsqw123], [@roihershberg][roihershberg] for
+contributing to this release.
+
+ * New: Kotlin 1.7.0.
+ * New: Add support for context receivers.
+ * New: Add support for external property getter.
+ * New: `interop-ksp` API promoted to stable.
+ * Fix: Resolve enum constants when emitting types.
+ * Fix: Fix type argument mapping when processing typealiases with KSP.
+ * Fix: Properly unwrap `KSTypeAlias` with an unused type parameter.
+ * Fix: Unwrap nested `KSTypeAlias`-es recursively.
+ * Fix: Add support for context receivers `@PropertySpec` and fix issues with annotations.
+ * Fix: Treat `header` and `impl` as keywords (workaround for KT-52315).
+ * Fix: Use `%N` instead of `%L` for annotation arg names so keywords are handled.
+ * Fix: Improve handling of long `return` expressions.
+
 ## Version 1.11.0
 
 _2022-03-24_
@@ -555,3 +577,12 @@ _2017-05-16_
  [glureau]: https://github.com/glureau
  [liujingxing]: https://github.com/liujingxing
  [BoD]: https://github.com/BoD
+ [WhosNickDoglio]: https://github.com/WhosNickDoglio
+ [sullis]: https://github.com/sullis
+ [DRSchlaubi]: https://github.com/DRSchlaubi
+ [seriouslyhypersonic]: https://github.com/seriouslyhypersonic
+ [ephemient]: https://github.com/ephemient
+ [dkilmer]: https://github.com/dkilmer
+ [aksh1618]: https://github.com/aksh1618
+ [zsqw123]: https://github.com/zsqw123
+ [roihershberg]: https://github.com/roihershberg
