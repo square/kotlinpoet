@@ -1494,20 +1494,22 @@ val typeName =
 Download
 --------
 
+![Maven Central][version-shield]
+
 Download [the latest .jar][dl] or depend via Maven:
 
 ```xml
 <dependency>
   <groupId>com.squareup</groupId>
   <artifactId>kotlinpoet</artifactId>
-  <version>1.11.0</version>
+  <version>[version]</version>
 </dependency>
 ```
 
 or Gradle:
 
 ```groovy
-implementation("com.squareup:kotlinpoet:1.11.0")
+implementation("com.squareup:kotlinpoet:[version]")
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
@@ -1532,6 +1534,7 @@ License
 
 
  [dl]: https://search.maven.org/remote_content?g=com.squareup&a=kotlinpoet&v=LATEST
+ [version-shield]: https://img.shields.io/maven-central/v/com.squareup/kotlinpoet
  [snap]: https://s01.oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
  [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/
  [javapoet]: https://github.com/square/javapoet/
