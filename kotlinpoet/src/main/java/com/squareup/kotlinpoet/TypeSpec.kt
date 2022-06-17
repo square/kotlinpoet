@@ -34,13 +34,15 @@ import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration. */
+@OptIn(ExperimentalKotlinPoetApi::class)
 public class TypeSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElements: OriginatingElementsHolder = builder.originatingElements
     .plus(builder.typeSpecs.flatMap(TypeSpec::originatingElements))
-    .buildOriginatingElements()
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements {
+    .buildOriginatingElements(),
+  private val contextReceivers: ContextReceivers = builder.buildContextReceivers()
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements, ContextReceivable by contextReceivers {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
@@ -91,6 +93,7 @@ public class TypeSpec private constructor(
     builder.primaryConstructor = primaryConstructor
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
+    builder.contextReceiverTypes += contextReceiverTypes
     return builder
   }
 
@@ -153,6 +156,7 @@ public class TypeSpec private constructor(
         codeWriter.emit(" {\n")
       } else {
         codeWriter.emitKdoc(kdocWithConstructorParameters())
+        codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
         codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitModifiers(
           modifiers,
@@ -451,7 +455,7 @@ public class TypeSpec private constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier
-  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -469,6 +473,8 @@ public class TypeSpec private constructor(
 
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+    @ExperimentalKotlinPoetApi
+    override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
     public val superinterfaces: MutableMap<TypeName, CodeBlock?> = mutableMapOf()
     public val enumConstants: MutableMap<String, TypeSpec> = mutableMapOf()
@@ -730,6 +736,12 @@ public class TypeSpec private constructor(
 
     public fun addType(typeSpec: TypeSpec): Builder = apply {
       typeSpecs += typeSpec
+    }
+
+    @ExperimentalKotlinPoetApi
+    override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
+      check(isSimpleClass) { "contextReceivers can only be applied on simple classes" }
+      contextReceiverTypes += receiverTypes
     }
 
     public fun build(): TypeSpec {
