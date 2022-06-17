@@ -27,7 +27,10 @@ public interface Taggable {
   public fun <T : Any> tag(type: Class<T>): T? = tag(type.kotlin)
 
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  public fun <T : Any> tag(type: KClass<T>): T?
+  public fun <T : Any> tag(type: KClass<T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return tags[type] as T?
+  }
 
   /** The builder analogue to [Taggable] types. */
   public interface Builder<out T : Builder<T>> {
@@ -145,13 +148,11 @@ public inline fun <reified T : Any> TypeAliasSpec.Builder.tag(tag: T?): TypeAlia
 public inline fun <reified T : Any> TypeSpec.Builder.tag(tag: T?): TypeSpec.Builder =
   tag(T::class, tag)
 
-internal fun Taggable.Builder<*>.buildTagMap(): TagMap = TagMap(LinkedHashMap(tags)) // Defensive copy
+internal fun Taggable.Builder<*>.buildTagMap(): TagMap = TagMap(tags.toImmutableMap())
 
-internal class TagMap(tags: Map<KClass<*>, Any>) : Taggable {
-  override val tags: Map<KClass<*>, Any> = tags.toImmutableMap()
-
-  override fun <T : Any> tag(type: KClass<T>): T? {
-    @Suppress("UNCHECKED_CAST")
-    return tags[type] as T?
+@JvmInline
+internal value class TagMap private constructor(override val tags: Map<KClass<*>, Any>) : Taggable {
+  companion object {
+    operator fun invoke(tags: Map<KClass<*>, Any>): TagMap = TagMap(tags.toImmutableMap())
   }
 }
