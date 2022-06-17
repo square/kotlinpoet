@@ -34,6 +34,7 @@ public class TypeVariableName private constructor(
   /** Either [KModifier.IN], [KModifier.OUT], or null. */
   public val variance: KModifier? = null,
   public val isReified: Boolean = false,
+  public val isDefinitelyNonNullable: Boolean = false,
   nullable: Boolean = false,
   annotations: List<AnnotationSpec> = emptyList(),
   tags: Map<KClass<*>, Any> = emptyMap()
@@ -44,7 +45,7 @@ public class TypeVariableName private constructor(
     annotations: List<AnnotationSpec>,
     tags: Map<KClass<*>, Any>
   ): TypeVariableName {
-    return copy(nullable, annotations, this.bounds, this.isReified, tags)
+    return copy(nullable, annotations, bounds, isReified, tags)
   }
 
   public fun copy(
@@ -53,10 +54,57 @@ public class TypeVariableName private constructor(
     bounds: List<TypeName> = this.bounds.toList(),
     reified: Boolean = this.isReified,
     tags: Map<KClass<*>, Any> = this.tagMap.tags
+  ): TypeVariableName = copy(
+    nullable = nullable,
+    annotations = annotations,
+    bounds = bounds,
+    reified = reified,
+    tags = tags,
+    isDefinitelyNonNullable = isDefinitelyNonNullable
+  )
+
+  private fun copy(
+    nullable: Boolean = this.isNullable,
+    annotations: List<AnnotationSpec> = this.annotations.toList(),
+    bounds: List<TypeName> = this.bounds.toList(),
+    reified: Boolean = this.isReified,
+    tags: Map<KClass<*>, Any> = this.tagMap.tags,
+    isDefinitelyNonNullable: Boolean = this.isDefinitelyNonNullable,
   ): TypeVariableName {
+    if (isDefinitelyNonNullable) {
+      require(!nullable) {
+        "Cannot make a TypeVariableName nullable if it is already definitely non-nullable"
+      }
+    }
     return TypeVariableName(
-      name, bounds.withoutImplicitBound(), variance, reified, nullable,
-      annotations, tags
+      name = name,
+      bounds = bounds.withoutImplicitBound(),
+      variance = variance,
+      isReified = reified,
+      isDefinitelyNonNullable = isDefinitelyNonNullable,
+      nullable = nullable,
+      annotations = annotations,
+      tags = tags
+    )
+  }
+
+  /**
+   * Returns a new [TypeVariableName] copy of this that will emit as a "definitely non-nullable"
+   * type with the `T & Any` syntax.
+   *
+   * See https://kotlinlang.org/docs/whatsnew17.html#stable-definitely-non-nullable-types.
+   */
+  public fun copy(isDefinitelyNonNullable: Boolean = true): TypeVariableName {
+    if (isDefinitelyNonNullable) {
+      require(!isNullable) {
+        "Cannot make a TypeVariableName non-nullable if it is already definitely non-nullable"
+      }
+      require(bounds.none { it == ANY }) {
+        "Cannot make a TypeVariableName non-nullable if it already has a non-nullable Any bound"
+      }
+    }
+    return copy(
+      isDefinitelyNonNullable = isDefinitelyNonNullable
     )
   }
 
@@ -64,7 +112,14 @@ public class TypeVariableName private constructor(
     return if (size == 1) this else filterNot { it == NULLABLE_ANY }
   }
 
-  override fun emit(out: CodeWriter) = out.emit(name)
+  override fun emit(out: CodeWriter): CodeWriter {
+    if (isDefinitelyNonNullable) {
+      out.emit("$name·&·Any")
+    } else {
+      out.emit(name)
+    }
+    return out
+  }
 
   public companion object {
     internal fun of(

@@ -255,14 +255,14 @@ class TypeVariableNameTest {
 
   @Test
   fun definitelyNonNullableType_simple() {
-    val typeName = TypeVariableName("T").asDefinitelyNonNullableType()
+    val typeName = TypeVariableName("T").copy()
     assertThat(typeName.toString()).isEqualTo("T & Any")
   }
 
   @Test
   fun definitelyNonNullableType_errorWhenNonNullableMadeNullable() {
     assertFailsWith<IllegalArgumentException> {
-      TypeVariableName("T").asDefinitelyNonNullableType()
+      TypeVariableName("T").copy()
         .copy(nullable = true)
     }
   }
@@ -271,7 +271,7 @@ class TypeVariableNameTest {
   fun definitelyNonNullableType_errorWhenNullableMadeNonNullable() {
     assertFailsWith<IllegalArgumentException> {
       (TypeVariableName("T").copy(nullable = true) as TypeVariableName)
-        .asDefinitelyNonNullableType()
+        .copy()
     }
   }
 
@@ -279,7 +279,7 @@ class TypeVariableNameTest {
   fun definitelyNonNullableType_errorWhenNonNullAny() {
     assertFailsWith<IllegalArgumentException> {
       TypeVariableName("T", listOf(ANY))
-        .asDefinitelyNonNullableType()
+        .copy()
     }
   }
 }
