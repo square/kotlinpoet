@@ -51,6 +51,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.fail
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 class TypeSpecTest {
   private val tacosPackage = "com.squareup.tacos"
 
@@ -5268,6 +5269,28 @@ class TypeSpecTest {
 
       """.trimIndent()
     )
+  }
+
+  @Test fun contextReceiver() {
+    val typeSpec = TypeSpec.classBuilder("Example")
+      .contextReceivers(STRING)
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |context(kotlin.String)
+      |public class Example
+      |
+      """.trimMargin()
+    )
+  }
+
+  @Test fun contextReceiver_mustBeClass() {
+    val t = assertFailsWith<IllegalStateException> {
+      TypeSpec.interfaceBuilder("Example")
+        .contextReceivers(STRING)
+    }
+    assertThat(t).hasMessageThat().contains("contextReceivers can only be applied on simple classes")
   }
 
   companion object {

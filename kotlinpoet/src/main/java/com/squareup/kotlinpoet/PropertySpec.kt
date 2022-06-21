@@ -28,8 +28,9 @@ import kotlin.reflect.KClass
 public class PropertySpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
+  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
+  private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder, ContextReceivable by contextReceivers {
   public val mutable: Boolean = builder.mutable
   public val name: String = builder.name
   public val type: TypeName = builder.type
@@ -42,9 +43,6 @@ public class PropertySpec private constructor(
   public val getter: FunSpec? = builder.getter
   public val setter: FunSpec? = builder.setter
   public val receiverType: TypeName? = builder.receiverType
-
-  @ExperimentalKotlinPoetApi
-  public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
 
   init {
     require(
@@ -169,6 +167,7 @@ public class PropertySpec private constructor(
     builder.receiverType = receiverType
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
+    builder.contextReceiverTypes += contextReceiverTypes
     return builder
   }
 
@@ -176,7 +175,8 @@ public class PropertySpec private constructor(
     internal val name: String,
     internal val type: TypeName
   ) : Taggable.Builder<Builder>,
-    OriginatingElementsHolder.Builder<Builder> {
+    OriginatingElementsHolder.Builder<Builder>,
+    ContextReceivable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -185,13 +185,13 @@ public class PropertySpec private constructor(
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
-    internal val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     public val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+    override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     /** True to create a `var` instead of a `val`. */
     public fun mutable(mutable: Boolean = true): Builder = apply {
@@ -281,15 +281,6 @@ public class PropertySpec private constructor(
     public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
-
-    @ExperimentalKotlinPoetApi
-    public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
-      contextReceiverTypes += receiverTypes
-    }
-
-    @ExperimentalKotlinPoetApi
-    public fun contextReceivers(vararg receiverType: TypeName): Builder =
-      contextReceivers(receiverType.toList())
 
     public fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {

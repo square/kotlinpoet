@@ -36,8 +36,9 @@ import kotlin.reflect.KClass
 public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements()
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder {
+  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
+  private val contextReceivers: ContextReceivers = builder.buildContextReceivers()
+) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder, ContextReceivable by contextReceivers {
   public val name: String = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
@@ -47,8 +48,6 @@ public class FunSpec private constructor(
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
 
-  @ExperimentalKotlinPoetApi
-  public val contextReceiverTypes: List<TypeName> = builder.contextReceiverTypes.toImmutableList()
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
   public val delegateConstructor: String? = builder.delegateConstructor
@@ -299,17 +298,17 @@ public class FunSpec private constructor(
     builder.receiverType = receiverType
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
+    builder.contextReceiverTypes += contextReceiverTypes
     return builder
   }
 
   public class Builder internal constructor(
     internal val name: String
-  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
-    internal val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     internal var returnType: TypeName? = null
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
@@ -321,6 +320,7 @@ public class FunSpec private constructor(
     public val parameters: MutableList<ParameterSpec> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+    override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
@@ -385,14 +385,11 @@ public class FunSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
-    public fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
+    override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(!name.isConstructor) { "constructors cannot have context receivers" }
       check(!name.isAccessor) { "$name cannot have context receivers" }
       contextReceiverTypes += receiverTypes
     }
-
-    @ExperimentalKotlinPoetApi
-    public fun contextReceivers(vararg receiverType: TypeName): Builder = contextReceivers(receiverType.toList())
 
     @JvmOverloads public fun receiver(
       receiverType: TypeName,
