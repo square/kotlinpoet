@@ -43,6 +43,7 @@ internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements() =
 internal fun List<Element>.buildOriginatingElements() =
   OriginatingElements(toImmutableList())
 
-internal class OriginatingElements(
+@JvmInline
+internal value class OriginatingElements(
   override val originatingElements: List<Element>
 ) : OriginatingElementsHolder
