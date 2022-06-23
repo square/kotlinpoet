@@ -354,6 +354,43 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun wildcardParameterForRecursiveTypeBound() {
+    // Enum is an example of a recursive type bound - Enum<E: Enum<E>>
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           class EnumWrapper {
+            val enumValue: Enum<*>
+           }
+           """
+      )
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestEnumWrapper.kt")
+      .readText()
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      import kotlin.Enum
+
+      public class EnumWrapper {
+        public val enumValue: Enum<*>
+      }
+
+      """.trimIndent()
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
