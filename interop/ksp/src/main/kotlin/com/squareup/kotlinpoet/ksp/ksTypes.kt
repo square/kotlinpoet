@@ -159,12 +159,12 @@ public fun KSTypeParameter.toTypeVariableName(
 public fun KSTypeArgument.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
-  val typeName = type?.toTypeName(typeParamResolver) ?: return STAR
+  val type = this.type ?: return STAR
   return when (variance) {
-    COVARIANT -> WildcardTypeName.producerOf(typeName)
-    CONTRAVARIANT -> WildcardTypeName.consumerOf(typeName)
+    COVARIANT -> WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
+    CONTRAVARIANT -> WildcardTypeName.consumerOf(type.toTypeName(typeParamResolver))
     Variance.STAR -> STAR
-    INVARIANT -> typeName
+    INVARIANT -> type.toTypeName(typeParamResolver)
   }
 }
 
