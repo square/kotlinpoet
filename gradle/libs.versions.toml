@@ -38,7 +38,7 @@ kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-emb
 kotlin-annotationProcessingEmbeddable = { module = "org.jetbrains.kotlin:kotlin-annotation-processing-embeddable", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.4.2" }
+kotlin-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.5.0" }
 
 ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
