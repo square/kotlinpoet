@@ -16,7 +16,7 @@
 kotlin = "1.7.10"
 kct = "1.4.9"
 ksp = "1.7.10-1.0.6"
-ktlint = "0.45.2"
+ktlint = "0.46.1"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
