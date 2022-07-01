@@ -301,6 +301,7 @@ public final class com/squareup/kotlinpoet/metadata/specs/KmTypesKt {
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/KotlinPoetMetadataSpecs {
+	public static final fun getPackageName (Ljavax/lang/model/element/Element;)Ljava/lang/String;
 	public static final fun toFileSpec (Ljava/lang/Class;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static final fun toFileSpec (Ljavax/lang/model/element/TypeElement;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static final fun toFileSpec (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;

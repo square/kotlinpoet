@@ -24,7 +24,7 @@ dokka = { id = "org.jetbrains.dokka", version = "1.7.0" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version = "6.7.2" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.20.0" }
-kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.10.0" }
+kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.10.1" }
 
 [libraries]
 autoCommon = { module = "com.google.auto:auto-common", version = "1.2.1" }

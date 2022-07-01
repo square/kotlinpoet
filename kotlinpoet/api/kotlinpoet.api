@@ -472,7 +472,6 @@ public final class com/squareup/kotlinpoet/LambdaTypeName : com/squareup/kotlinp
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
-	public final fun getContextReceivers ()Ljava/util/List;
 	public final fun getParameters ()Ljava/util/List;
 	public final fun getReceiver ()Lcom/squareup/kotlinpoet/TypeName;
 	public final fun getReturnType ()Lcom/squareup/kotlinpoet/TypeName;
@@ -484,7 +483,6 @@ public final class com/squareup/kotlinpoet/LambdaTypeName$Companion {
 	public final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
-	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static synthetic fun get$default (Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 }
@@ -990,7 +988,6 @@ public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotli
 	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public synthetic fun contextReceivers ([Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public final fun getAnnotationSpecs ()Ljava/util/List;
-	public fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getEnumConstants ()Ljava/util/Map;
 	public final fun getFunSpecs ()Ljava/util/List;
 	public final fun getInitializerIndex ()I
