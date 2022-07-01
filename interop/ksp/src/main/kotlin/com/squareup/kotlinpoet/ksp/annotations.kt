@@ -91,8 +91,9 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder) {
     }
     is KSName ->
       member.add(
-        "%T.%L", ClassName.bestGuess(value.getQualifier()),
-        value.getShortName()
+        "%T.%L",
+        ClassName.bestGuess(value.getQualifier()),
+        value.getShortName(),
       )
     is KSAnnotation -> member.add("%L", value.toAnnotationSpec())
     else -> member.add(memberForValue(value))

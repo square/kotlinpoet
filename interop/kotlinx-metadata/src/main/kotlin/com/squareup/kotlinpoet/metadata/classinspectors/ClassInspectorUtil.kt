@@ -60,7 +60,7 @@ internal object ClassInspectorUtil {
   private val IMPLICIT_FIELD_ANNOTATIONS = setOf(
     JVM_FIELD,
     JVM_TRANSIENT,
-    JVM_VOLATILE
+    JVM_VOLATILE,
   )
   private val NOT_NULL = NotNull::class.asClassName()
   private val NULLABLE = Nullable::class.asClassName()
@@ -68,7 +68,7 @@ internal object ClassInspectorUtil {
   private val KOTLIN_INTRINSIC_ANNOTATIONS = setOf(
     NOT_NULL,
     NULLABLE,
-    EXTENSION_FUNCTION_TYPE
+    EXTENSION_FUNCTION_TYPE,
   )
 
   val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
@@ -85,16 +85,16 @@ internal object ClassInspectorUtil {
     MUTABLE_LIST,
     MUTABLE_SET,
     MUTABLE_MAP,
-    MUTABLE_MAP_ENTRY
+    MUTABLE_MAP_ENTRY,
   )
 
   private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
     "org.jetbrains.annotations.NotNull",
-    "org.jetbrains.annotations.Nullable"
+    "org.jetbrains.annotations.Nullable",
   )
 
   fun filterOutNullabilityAnnotations(
-    annotations: List<AnnotationSpec>
+    annotations: List<AnnotationSpec>,
   ): List<AnnotationSpec> {
     return annotations.filterNot {
       val typeName = it.typeName
@@ -123,7 +123,7 @@ internal object ClassInspectorUtil {
     isCompanionObject: Boolean,
     hasGetter: Boolean,
     hasSetter: Boolean,
-    hasField: Boolean
+    hasField: Boolean,
   ): Boolean {
     return if (!hasGetter &&
       !hasSetter &&
@@ -142,7 +142,7 @@ internal object ClassInspectorUtil {
    */
   fun createAnnotations(
     siteTarget: UseSiteTarget? = null,
-    body: MutableCollection<AnnotationSpec>.() -> Unit
+    body: MutableCollection<AnnotationSpec>.() -> Unit,
   ): Collection<AnnotationSpec> {
     val result = mutableSetOf<AnnotationSpec>()
       .apply(body)
@@ -173,13 +173,13 @@ internal object ClassInspectorUtil {
    */
   fun createThrowsSpec(
     exceptions: Collection<TypeName>,
-    useSiteTarget: UseSiteTarget? = null
+    useSiteTarget: UseSiteTarget? = null,
   ): AnnotationSpec {
     return AnnotationSpec.builder(Throws::class)
       .addMember(
         "exceptionClasses = %L",
         exceptions.map { CodeBlock.of("%T::class", it) }
-          .joinToCode(prefix = "[", suffix = "]")
+          .joinToCode(prefix = "[", suffix = "]"),
       )
       .useSiteTarget(useSiteTarget)
       .build()
@@ -202,11 +202,11 @@ internal object ClassInspectorUtil {
     // Nested A:  package/of/class/MyClass.NestedClass
     val simpleName = kotlinMetadataName.substringAfterLast(
       '/', // Drop the package name, e.g. "package/of/class/"
-      '.' // Drop any enclosing classes, e.g. "MyClass."
+      '.', // Drop any enclosing classes, e.g. "MyClass."
     )
     val packageName = kotlinMetadataName.substringBeforeLast(
       delimiter = "/",
-      missingDelimiterValue = ""
+      missingDelimiterValue = "",
     )
     val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
       .removeSuffix(".") // Trailing "." if any
@@ -224,7 +224,7 @@ internal object ClassInspectorUtil {
 
     return ClassName(
       packageName = packageName.replace("/", "."),
-      simpleNames = simpleNames
+      simpleNames = simpleNames,
     )
   }
 

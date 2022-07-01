@@ -51,7 +51,7 @@ internal fun TypeVariableName.unwrapTypeAlias(): TypeVariableName {
   return TypeVariableName(
     name = name,
     bounds = bounds.map { it.unwrapTypeAlias() },
-    variance = variance
+    variance = variance,
   )
     .copy(nullable = isNullable, annotations = annotations, tags = tags)
 }

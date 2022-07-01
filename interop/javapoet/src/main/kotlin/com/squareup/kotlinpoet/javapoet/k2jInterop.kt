@@ -103,7 +103,7 @@ public fun KParameterizedTypeName.toJParameterizedOrArrayTypeName(): JTypeName {
     else -> {
       JParameterizedTypeName.get(
         rawType.toJClassName() as JClassName,
-        *typeArguments.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray()
+        *typeArguments.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray(),
       )
     }
   }

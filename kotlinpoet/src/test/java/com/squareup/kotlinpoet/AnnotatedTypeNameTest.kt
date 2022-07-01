@@ -50,7 +50,7 @@ class AnnotatedTypeNameTest {
     val actual = type
       .copy(
         annotations = type.annotations + NEVER_NULL +
-          AnnotationSpec.builder(Override::class).build()
+          AnnotationSpec.builder(Override::class).build(),
       )
       .toString()
     assertEquals(expected, actual)
@@ -98,17 +98,17 @@ class AnnotatedTypeNameTest {
     assertEquals(type, type)
     assertEquals(
       type.copy(annotations = listOf(NEVER_NULL)),
-      type.copy(annotations = listOf(NEVER_NULL))
+      type.copy(annotations = listOf(NEVER_NULL)),
     )
     assertNotEquals(type, type.copy(annotations = listOf(NEVER_NULL)))
     assertEquals(type.hashCode().toLong(), type.hashCode().toLong())
     assertEquals(
       type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
-      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong()
+      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
     )
     assertNotEquals(
       type.hashCode().toLong(),
-      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong()
+      type.copy(annotations = listOf(NEVER_NULL)).hashCode().toLong(),
     )
   }
 
@@ -117,7 +117,8 @@ class AnnotatedTypeNameTest {
   annotation class TypeUseAnnotation
 
   // https://github.com/square/javapoet/issues/431
-  @Ignore @Test fun annotatedNestedType() {
+  @Ignore @Test
+  fun annotatedNestedType() {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName + " Entry"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()
     val type = Map.Entry::class.asTypeName().copy(annotations = listOf(typeUseAnnotation))
@@ -126,7 +127,8 @@ class AnnotatedTypeNameTest {
   }
 
   // https://github.com/square/javapoet/issues/431
-  @Ignore @Test fun annotatedNestedParameterizedType() {
+  @Ignore @Test
+  fun annotatedNestedParameterizedType() {
     val expected = "kotlin.collections.Map.@" + TypeUseAnnotation::class.java.canonicalName +
       " Entry<kotlin.Byte, kotlin.Byte>"
     val typeUseAnnotation = AnnotationSpec.builder(TypeUseAnnotation::class).build()

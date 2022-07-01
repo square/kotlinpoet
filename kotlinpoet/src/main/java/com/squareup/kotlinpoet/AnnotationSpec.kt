@@ -28,11 +28,11 @@ import kotlin.reflect.KClass
 /** A generated annotation on a declaration. */
 public class AnnotationSpec private constructor(
   builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
+  private val tagMap: TagMap = builder.buildTagMap(),
 ) : Taggable by tagMap {
   @Deprecated(
     message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
-    replaceWith = ReplaceWith("typeName")
+    replaceWith = ReplaceWith("typeName"),
   )
   public val className: ClassName
     get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
@@ -73,7 +73,7 @@ public class AnnotationSpec private constructor(
       codeBlock = members
         .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
         .joinToCode(separator = memberSeparator, suffix = memberSuffix),
-      isConstantContext = true
+      isConstantContext = true,
     )
     if (members.size > 1) codeWriter.unindent(1).emit(whitespace)
     codeWriter.emit(")")
@@ -113,7 +113,7 @@ public class AnnotationSpec private constructor(
   }
 
   public class Builder internal constructor(
-    internal val typeName: TypeName
+    internal val typeName: TypeName,
   ) : Taggable.Builder<Builder> {
     internal var useSiteTarget: UseSiteTarget? = null
 
@@ -155,7 +155,7 @@ public class AnnotationSpec private constructor(
    */
   @OptIn(DelicateKotlinPoetApi::class)
   private class Visitor(
-    val builder: CodeBlock.Builder
+    val builder: CodeBlock.Builder,
   ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String) =
@@ -184,13 +184,13 @@ public class AnnotationSpec private constructor(
   public companion object {
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
     @JvmOverloads
     public fun get(
       annotation: Annotation,
-      includeDefaultValues: Boolean = false
+      includeDefaultValues: Boolean = false,
     ): AnnotationSpec {
       try {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -233,7 +233,7 @@ public class AnnotationSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead."
+        " the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
     public fun get(annotation: AnnotationMirror): AnnotationSpec {
@@ -257,7 +257,7 @@ public class AnnotationSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
     public fun builder(type: Class<out Annotation>): Builder =

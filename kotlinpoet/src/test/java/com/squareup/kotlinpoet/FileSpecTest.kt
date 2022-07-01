@@ -76,7 +76,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -89,14 +89,14 @@ class FileSpecTest {
               .addStatement("assert %1T.valueOf(\"BLOCKED\") == %1T.BLOCKED", Thread.State::class)
               .addStatement("%T.gc()", System::class)
               .addStatement("%1T.out.println(%1T.nanoTime())", System::class)
-              .build()
+              .build(),
           )
           .addFunction(
             FunSpec.constructorBuilder()
               .addParameter("states", Thread.State::class.asClassName(), VARARG)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .addImport(Thread.State.BLOCKED)
       .addImport(System::class, "gc", "out", "nanoTime")
@@ -123,7 +123,7 @@ class FileSpecTest {
         |  public constructor(vararg states: Thread.State)
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -134,10 +134,10 @@ class FileSpecTest {
         FunSpec.builder("prepareTacos")
           .returns(
             List::class.asClassName()
-              .parameterizedBy(ClassName("com.squareup.tacos", "Taco"))
+              .parameterizedBy(ClassName("com.squareup.tacos", "Taco")),
           )
           .addCode("return wrap(INGREDIENTS)\n")
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -150,7 +150,7 @@ class FileSpecTest {
         |
         |public fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -163,9 +163,9 @@ class FileSpecTest {
           .addFunction(
             FunSpec.builder("main")
               .addStatement("%T.%L.println(%S)", System::class, "out", "hello")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .addImport(System::class, "out")
       .build()
@@ -181,7 +181,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -204,7 +204,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -228,7 +228,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -254,7 +254,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -287,7 +287,7 @@ class FileSpecTest {
         |
         |public class Taco
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -296,7 +296,7 @@ class FileSpecTest {
       .addType(
         TypeSpec.classBuilder("Taco")
           .addProperty("madeFreshDate", Date::class)
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -309,7 +309,7 @@ class FileSpecTest {
         |  public val madeFreshDate: Date
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -318,7 +318,7 @@ class FileSpecTest {
       .addType(
         TypeSpec.classBuilder("Taco")
           .addProperty("madeFreshDate", ClassName("com.squareup.is.fun.in", "Date"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -331,7 +331,7 @@ class FileSpecTest {
         |  public val madeFreshDate: Date
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -343,7 +343,7 @@ class FileSpecTest {
       |package com.squareup.`taco factory`
       |
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -353,7 +353,7 @@ class FileSpecTest {
         TypeSpec.classBuilder("Taco")
           .addProperty("madeFreshDate", Date::class)
           .addProperty("madeFreshDatabaseDate", ClassName("java.sql", "Date"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -368,7 +368,7 @@ class FileSpecTest {
         |  public val madeFreshDatabaseDate: java.sql.Date
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -378,7 +378,7 @@ class FileSpecTest {
         TypeSpec.classBuilder("Taco")
           .addProperty("madeFreshDate1", ClassName("com.squareup.is.fun.in", "Date"))
           .addProperty("madeFreshDate2", ClassName("com.squareup.do.val.var", "Date"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -393,7 +393,7 @@ class FileSpecTest {
         |  public val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -403,7 +403,7 @@ class FileSpecTest {
       .addFunction(
         FunSpec.builder("main")
           .addStatement("println(%T.produceTacos())", tacoFactory)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -417,7 +417,7 @@ class FileSpecTest {
       |  println(TacoFactory.produceTacos())
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -428,7 +428,7 @@ class FileSpecTest {
       .addFunction(
         FunSpec.builder("main")
           .addStatement("println(%T.produceTacos())", tacoFactory)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -442,7 +442,7 @@ class FileSpecTest {
       |  println(`La Taqueria`.produceTacos())
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -453,12 +453,12 @@ class FileSpecTest {
       .addProperty(
         PropertySpec.builder("a", java.lang.String::class.java)
           .initializer("%T(%S)", java.lang.String::class.java, "a")
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("b", String::class)
           .initializer("%S", "b")
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -472,7 +472,7 @@ class FileSpecTest {
       |
       |public val b: KString = "b"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -483,7 +483,7 @@ class FileSpecTest {
       .addFunction(
         FunSpec.builder("sleepForFiveMins")
           .addStatement("%T.MINUTES.sleep(5)", TimeUnit::class)
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -497,7 +497,7 @@ class FileSpecTest {
       |  MINS.sleep(5)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -511,19 +511,19 @@ class FileSpecTest {
               .addType(
                 TypeSpec.classBuilder("C")
                   .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
           .addType(
             TypeSpec.classBuilder("Twin")
               .addType(
                 TypeSpec.classBuilder("D")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -544,7 +544,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -558,19 +558,19 @@ class FileSpecTest {
                 TypeSpec.classBuilder("C")
                   .addProperty("d", ClassName("com.squareup.tacos", "A", "Twin", "D"))
                   .addType(TypeSpec.classBuilder("Twin").build())
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
           .addType(
             TypeSpec.classBuilder("Twin")
               .addType(
                 TypeSpec.classBuilder("D")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -591,7 +591,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -607,21 +607,21 @@ class FileSpecTest {
                   .addType(
                     TypeSpec.classBuilder("Nested")
                       .addType(TypeSpec.classBuilder("Twin").build())
-                      .build()
+                      .build(),
                   )
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
           .addType(
             TypeSpec.classBuilder("Twin")
               .addType(
                 TypeSpec.classBuilder("D")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -644,7 +644,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -656,9 +656,9 @@ class FileSpecTest {
           .addType(
             TypeSpec.classBuilder("Builder")
               .superclass(ClassName("com.squareup.wire", "Message", "Builder"))
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -671,7 +671,7 @@ class FileSpecTest {
         |  public class Builder : Message.Builder()
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -684,9 +684,9 @@ class FileSpecTest {
           .addType(
             TypeSpec.classBuilder("Builder")
               .addAnnotation(ClassName("dagger", "Component", "Builder"))
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -701,7 +701,7 @@ class FileSpecTest {
         |  public class Builder
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -714,9 +714,9 @@ class FileSpecTest {
               .addModifiers(KModifier.PUBLIC)
               .addParameter("args", ARRAY.parameterizedBy(String::class.asClassName()))
               .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -732,7 +732,7 @@ class FileSpecTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -741,7 +741,7 @@ class FileSpecTest {
       .addType(
         TypeSpec.classBuilder("World")
           .addSuperinterface(ClassName("", "Test"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -752,7 +752,7 @@ class FileSpecTest {
         |
         |public class World : Test
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -768,7 +768,7 @@ class FileSpecTest {
         |
         |public class Taco
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -788,7 +788,7 @@ class FileSpecTest {
         |
         |public class Taco
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -798,7 +798,7 @@ class FileSpecTest {
         TypeSpec.classBuilder("Taco")
           .addProperty("a", ClassName("com.squareup.tacos", "A"))
           .addType(TypeSpec.classBuilder("A").build())
-          .build()
+          .build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -811,7 +811,7 @@ class FileSpecTest {
         |  public class A
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -828,7 +828,7 @@ class FileSpecTest {
         |
         |public class B
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -838,8 +838,8 @@ class FileSpecTest {
       .addTypeAlias(
         TypeAliasSpec.builder(
           "FileTable",
-          Map::class.parameterizedBy(String::class, Int::class)
-        ).build()
+          Map::class.parameterizedBy(String::class, Int::class),
+        ).build(),
       )
       .build()
     assertThat(source.toString()).isEqualTo(
@@ -855,7 +855,7 @@ class FileSpecTest {
         |
         |public typealias FileTable = Map<String, Int>
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -865,7 +865,7 @@ class FileSpecTest {
         AnnotationSpec.builder(JvmName::class)
           .useSiteTarget(FILE)
           .addMember("%S", "TacoUtils")
-          .build()
+          .build(),
       )
       .addAnnotation(JvmMultifileClass::class)
       .build()
@@ -880,7 +880,7 @@ class FileSpecTest {
         |import kotlin.jvm.JvmName
         |
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -903,7 +903,7 @@ class FileSpecTest {
         |package com.squareup.`is`.`fun`.`in`
         |
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -917,7 +917,7 @@ class FileSpecTest {
       .addFunction(
         FunSpec.builder("defaultIngredients")
           .addCode("println(INGREDIENTS)\n")
-          .build()
+          .build(),
       )
       .build()
 
@@ -930,7 +930,7 @@ class FileSpecTest {
         AnnotationSpec.builder(JvmName::class.asClassName())
           .useSiteTarget(FILE)
           .addMember("name = %S", "JvmTaco")
-          .build()
+          .build(),
       )
 
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
@@ -965,7 +965,7 @@ class FileSpecTest {
       import com.foo.Foo2
 
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -1006,9 +1006,9 @@ class FileSpecTest {
                |val inputBigInt = bigInt(input)
                |return inputBigInt.add(5)
                |
-            """.trimMargin()
+            """.trimMargin(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(spec.toString()).isEqualTo(
@@ -1024,7 +1024,7 @@ class FileSpecTest {
       |  return inputBigInt.add(5)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1032,7 +1032,7 @@ class FileSpecTest {
     val spec = FileSpec.builder("com.squareup.taco.enchilada.quesadillas.tamales.burritos.super.burritos.trying.to.get.a.really.large.packagename", "Test")
       .addFunction(
         FunSpec.builder("foo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(spec.toString()).isEqualTo(
@@ -1044,7 +1044,7 @@ class FileSpecTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1059,7 +1059,7 @@ class FileSpecTest {
       |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass
       |
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1074,7 +1074,7 @@ class FileSpecTest {
       |import a.really.veryveryveryveryveryveryvery.long.pkgname.that.will.definitely.cause.a.wrap.duetoitslength.MyClass as MyClassAlias
       |
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1082,7 +1082,7 @@ class FileSpecTest {
     val file = FileSpec.builder("com.squareup.tacos", "Taco")
       .addFileComment(
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
-          "eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          "eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1091,7 +1091,7 @@ class FileSpecTest {
       |package com.squareup.tacos
       |
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1106,12 +1106,12 @@ class FileSpecTest {
       .addFunction(
         FunSpec.builder("f1")
           .addComment("this is a long line with a possibly long parameterized type with annotation: %T", someLongParameterizedTypeName)
-          .build()
+          .build(),
       )
       .addFunction(
         FunSpec.builder("f2")
           .addComment("this is a very very very very very very very very very very long line with a very long lambda type: %T", someLongLambdaTypeName)
-          .build()
+          .build(),
       )
       .build()
 
@@ -1134,7 +1134,7 @@ class FileSpecTest {
       |  // this is a very very very very very very very very very very long line with a very long lambda type: suspend String.(foo: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>) -> String
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1146,7 +1146,7 @@ class FileSpecTest {
       .addCode("\n")
       .addFunction(
         FunSpec.builder("localFun")
-          .build()
+          .build(),
       )
       .addCode("\n")
       .addType(TypeSpec.classBuilder("Yay").build())
@@ -1169,7 +1169,7 @@ class FileSpecTest {
       |
       |val yayInstance = Yay()
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1193,7 +1193,7 @@ class FileSpecTest {
       |val prop3: @FunctionalInterface Callable<String>? = null
       |val prop4: @FunctionalInterface Function<Int, Int>? = null
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

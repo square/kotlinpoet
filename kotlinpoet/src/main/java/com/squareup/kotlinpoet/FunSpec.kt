@@ -37,7 +37,7 @@ public class FunSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
-  private val contextReceivers: ContextReceivers = builder.buildContextReceivers()
+  private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder, ContextReceivable by contextReceivers {
   public val name: String = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
@@ -84,7 +84,7 @@ public class FunSpec private constructor(
     codeWriter: CodeWriter,
     enclosingName: String?,
     implicitModifiers: Set<KModifier>,
-    includeKdocTags: Boolean = false
+    includeKdocTags: Boolean = false,
   ) {
     if (includeKdocTags) {
       codeWriter.emitKdoc(kdocWithTags())
@@ -174,7 +174,7 @@ public class FunSpec private constructor(
     if (delegateConstructor != null) {
       codeWriter.emitCode(
         delegateConstructorArguments
-          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+          .joinToCode(prefix = " : $delegateConstructor(", suffix = ")"),
       )
     }
   }
@@ -277,7 +277,7 @@ public class FunSpec private constructor(
       codeWriter = this,
       enclosingName = "Constructor",
       implicitModifiers = TypeSpec.Kind.CLASS.implicitFunctionModifiers(),
-      includeKdocTags = true
+      includeKdocTags = true,
     )
   }
 
@@ -303,7 +303,7 @@ public class FunSpec private constructor(
   }
 
   public class Builder internal constructor(
-    internal val name: String
+    internal val name: String,
   ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
@@ -393,7 +393,7 @@ public class FunSpec private constructor(
 
     @JvmOverloads public fun receiver(
       receiverType: TypeName,
-      kdoc: CodeBlock = CodeBlock.EMPTY
+      kdoc: CodeBlock = CodeBlock.EMPTY,
     ): Builder = apply {
       check(!name.isConstructor) { "$name cannot have receiver type" }
       this.receiverType = receiverType
@@ -402,29 +402,29 @@ public class FunSpec private constructor(
 
     @JvmOverloads public fun receiver(
       receiverType: Type,
-      kdoc: CodeBlock = CodeBlock.EMPTY
+      kdoc: CodeBlock = CodeBlock.EMPTY,
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
 
     public fun receiver(
       receiverType: Type,
       kdoc: String,
-      vararg args: Any
+      vararg args: Any,
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
     @JvmOverloads public fun receiver(
       receiverType: KClass<*>,
-      kdoc: CodeBlock = CodeBlock.EMPTY
+      kdoc: CodeBlock = CodeBlock.EMPTY,
     ): Builder = receiver(receiverType.asTypeName(), kdoc)
 
     public fun receiver(
       receiverType: KClass<*>,
       kdoc: String,
-      vararg args: Any
+      vararg args: Any,
     ): Builder = receiver(receiverType, CodeBlock.of(kdoc, args))
 
     @JvmOverloads public fun returns(
       returnType: TypeName,
-      kdoc: CodeBlock = CodeBlock.EMPTY
+      kdoc: CodeBlock = CodeBlock.EMPTY,
     ): Builder = apply {
       check(!name.isConstructor && !name.isAccessor) { "$name cannot have a return type" }
       this.returnType = returnType
@@ -439,7 +439,7 @@ public class FunSpec private constructor(
 
     @JvmOverloads public fun returns(
       returnType: KClass<*>,
-      kdoc: CodeBlock = CodeBlock.EMPTY
+      kdoc: CodeBlock = CodeBlock.EMPTY,
     ): Builder = returns(returnType.asTypeName(), kdoc)
 
     public fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any): Builder =
@@ -511,7 +511,7 @@ public class FunSpec private constructor(
     public fun addParameter(
       name: String,
       type: KClass<*>,
-      modifiers: Iterable<KModifier>
+      modifiers: Iterable<KModifier>,
     ): Builder = addParameter(name, type.asTypeName(), modifiers)
 
     public fun addCode(format: String, vararg args: Any?): Builder = apply {
@@ -589,7 +589,7 @@ public class FunSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead."
+        " the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
     public fun overriding(method: ExecutableElement): Builder {
@@ -597,7 +597,7 @@ public class FunSpec private constructor(
       require(
         Modifier.PRIVATE !in modifiers &&
           Modifier.FINAL !in modifiers &&
-          Modifier.STATIC !in modifiers
+          Modifier.STATIC !in modifiers,
       ) {
         "cannot override method with modifiers: $modifiers"
       }
@@ -630,7 +630,7 @@ public class FunSpec private constructor(
         funBuilder.addAnnotation(
           AnnotationSpec.builder(Throws::class)
             .addMember(throwsValueString, *method.thrownTypes.toTypedArray())
-            .build()
+            .build(),
         )
       }
 
@@ -640,13 +640,13 @@ public class FunSpec private constructor(
     @Deprecated(
       message = "Element APIs don't give complete information on Kotlin types. Consider using" +
         " the kotlinpoet-metadata APIs instead.",
-      level = WARNING
+      level = WARNING,
     )
     @JvmStatic
     public fun overriding(
       method: ExecutableElement,
       enclosing: DeclaredType,
-      types: Types
+      types: Types,
     ): Builder {
       val executableType = types.asMemberOf(enclosing, method) as ExecutableType
       val resolvedParameterTypes = executableType.parameterTypes

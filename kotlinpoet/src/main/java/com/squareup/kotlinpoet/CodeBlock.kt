@@ -58,7 +58,7 @@ import kotlin.reflect.KClass
  */
 public class CodeBlock private constructor(
   internal val formatParts: List<String>,
-  internal val args: List<Any?>
+  internal val args: List<Any?>,
 ) {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
@@ -310,7 +310,7 @@ public class CodeBlock private constructor(
         require(index >= 0 && index < args.size) {
           "index ${index + 1} for '${format.substring(
             indexStart - 1,
-            indexEnd + 1
+            indexEnd + 1,
           )}' not in range (received ${args.size} arguments)"
         }
         require(!hasIndexed || !hasRelative) { "cannot mix indexed and positional parameters" }
@@ -346,7 +346,7 @@ public class CodeBlock private constructor(
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
         else -> throw IllegalArgumentException(
-          String.format("invalid format string: '%s'", format)
+          String.format("invalid format string: '%s'", format),
         )
       }
     }
@@ -368,7 +368,7 @@ public class CodeBlock private constructor(
     private fun logDeprecationWarning(o: Any) {
       println(
         "Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
-          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead."
+          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead.",
       )
     }
 
@@ -461,6 +461,7 @@ public class CodeBlock private constructor(
 
     @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
       Builder().add(format, *args).build()
+
     @JvmStatic public fun builder(): Builder = Builder()
 
     internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
@@ -478,7 +479,7 @@ public class CodeBlock private constructor(
 public fun Collection<CodeBlock>.joinToCode(
   separator: CharSequence = ", ",
   prefix: CharSequence = "",
-  suffix: CharSequence = ""
+  suffix: CharSequence = "",
 ): CodeBlock {
   val blocks = toTypedArray()
   val placeholders = Array(blocks.size) { "%L" }

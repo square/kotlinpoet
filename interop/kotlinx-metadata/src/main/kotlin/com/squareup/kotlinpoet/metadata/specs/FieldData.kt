@@ -36,7 +36,7 @@ public data class FieldData(
   private val annotations: List<AnnotationSpec>,
   val isSynthetic: Boolean,
   val jvmModifiers: Set<JvmFieldModifier>,
-  val constant: CodeBlock?
+  val constant: CodeBlock?,
 ) {
 
   /**
@@ -44,7 +44,7 @@ public data class FieldData(
    * and [isSynthetic].
    */
   val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations(
-    FIELD
+    FIELD,
   ) {
     addAll(annotations)
     if (isSynthetic) {
@@ -58,7 +58,7 @@ public data class FieldData(
       annotations = emptyList(),
       isSynthetic = true,
       jvmModifiers = emptySet(),
-      constant = null
+      constant = null,
     )
   }
 }

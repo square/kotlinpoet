@@ -107,6 +107,6 @@ private fun Metadata.asClassHeader(): KotlinClassHeader {
     data2 = data2,
     extraString = extraString,
     packageName = packageName,
-    extraInt = extraInt
+    extraInt = extraInt,
   )
 }

@@ -23,7 +23,7 @@ import java.util.EnumSet
 
 public enum class KModifier(
   internal val keyword: String,
-  private vararg val targets: Target
+  private vararg val targets: Target,
 ) {
   // Modifier order defined here:
   // https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers

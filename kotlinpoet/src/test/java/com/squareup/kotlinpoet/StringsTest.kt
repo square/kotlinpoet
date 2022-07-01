@@ -37,7 +37,7 @@ class StringsTest {
       "public fun getString() = \"\"\"\n" +
         "|Some string\n" +
         "|\${\'\$\'}annoyingUser is annoying.\n" +
-        "\"\"\".trimMargin()\n"
+        "\"\"\".trimMargin()\n",
     )
   }
 
@@ -59,7 +59,7 @@ class StringsTest {
       "public fun getString() = \"\"\"\n" +
         "|Some string\n" +
         "|\$annoyingUser is annoying.\n" +
-        "\"\"\".trimMargin()\n"
+        "\"\"\".trimMargin()\n",
     )
   }
 

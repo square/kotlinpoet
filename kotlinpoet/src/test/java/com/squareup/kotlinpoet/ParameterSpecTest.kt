@@ -77,7 +77,7 @@ class ParameterSpecTest {
       .addAnnotation(
         AnnotationSpec.builder(JvmName::class.asClassName())
           .addMember("name = %S", "jvmWord")
-          .build()
+          .build(),
       )
 
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
@@ -107,7 +107,7 @@ class ParameterSpecTest {
       |  println("arg=${'$'}arg")
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -118,7 +118,7 @@ class ParameterSpecTest {
       .addFunction(
         FunSpec.builder("foo")
           .addParameter("bar", type)
-          .build()
+          .build(),
       )
       .build()
     assertThat(spec.toString()).isEqualTo(
@@ -130,7 +130,7 @@ class ParameterSpecTest {
       |public fun foo(bar: @Annotation () -> Unit): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 

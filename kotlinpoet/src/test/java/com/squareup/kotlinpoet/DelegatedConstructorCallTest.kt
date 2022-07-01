@@ -27,7 +27,7 @@ class DelegatedConstructorCallTest {
       """
         |public class Test : testpackage.TestSuper()
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -39,7 +39,7 @@ class DelegatedConstructorCallTest {
       """
         |public object Test : testpackage.TestSuper()
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -52,7 +52,7 @@ class DelegatedConstructorCallTest {
       """
         |public external class Test : testpackage.TestSuper
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -65,7 +65,7 @@ class DelegatedConstructorCallTest {
       """
         |public expect class Test : testpackage.TestSuper
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -78,7 +78,7 @@ class DelegatedConstructorCallTest {
       """
         |public expect object Test : testpackage.TestSuper
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -91,7 +91,7 @@ class DelegatedConstructorCallTest {
       """
         |public external object Test : testpackage.TestSuper
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -104,7 +104,7 @@ class DelegatedConstructorCallTest {
       """
         |public class Test : testpackage.TestSuper(anything)
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -117,7 +117,7 @@ class DelegatedConstructorCallTest {
       """
         |public object Test : testpackage.TestSuper(anything)
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -137,7 +137,7 @@ class DelegatedConstructorCallTest {
         |  public constructor(foo: kotlin.String) : this()
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 

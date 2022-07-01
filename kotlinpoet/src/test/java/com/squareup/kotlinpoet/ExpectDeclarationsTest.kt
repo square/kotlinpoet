@@ -28,7 +28,7 @@ class ExpectDeclarationsTest {
       """
       |public expect fun function(): kotlin.Unit
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -45,7 +45,7 @@ class ExpectDeclarationsTest {
         |  public fun function(): kotlin.Unit
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -58,7 +58,7 @@ class ExpectDeclarationsTest {
       """
       |expect val prop: kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -75,7 +75,7 @@ class ExpectDeclarationsTest {
         |  public val prop: kotlin.String
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

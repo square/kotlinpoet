@@ -46,6 +46,9 @@ import com.google.devtools.ksp.symbol.Modifier.SUSPEND
 import com.google.devtools.ksp.symbol.Modifier.TAILREC
 import com.google.devtools.ksp.symbol.Modifier.VALUE
 import com.google.devtools.ksp.symbol.Modifier.VARARG
+import com.google.devtools.ksp.symbol.Visibility
+import com.google.devtools.ksp.symbol.Visibility.JAVA_PACKAGE
+import com.google.devtools.ksp.symbol.Visibility.LOCAL
 import com.squareup.kotlinpoet.KModifier
 
 /**
@@ -84,6 +87,20 @@ public fun Modifier.toKModifier(): KModifier? {
     REIFIED -> KModifier.REIFIED
     EXPECT -> KModifier.EXPECT
     ACTUAL -> KModifier.ACTUAL
+    else -> null
+  }
+}
+
+/**
+ * Returns the [KModifier] representation of this visibility or null if this is [JAVA_PACKAGE]
+ * or [LOCAL] (which do not have obvious [KModifier] alternatives).
+ */
+public fun Visibility.toKModifier(): KModifier? {
+  return when (this) {
+    Visibility.PUBLIC -> KModifier.PUBLIC
+    Visibility.PRIVATE -> KModifier.PRIVATE
+    Visibility.PROTECTED -> KModifier.PROTECTED
+    Visibility.INTERNAL -> KModifier.INTERNAL
     else -> null
   }
 }

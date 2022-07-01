@@ -28,7 +28,7 @@ class ExternalDeclarationsTest {
       """
       |public external fun function(): kotlin.Unit
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -42,7 +42,7 @@ class ExternalDeclarationsTest {
       """
       |public external fun function() = kotlin.js.definedExternally
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -58,7 +58,7 @@ class ExternalDeclarationsTest {
       |  kotlin.js.definedExternally
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -75,7 +75,7 @@ class ExternalDeclarationsTest {
         |  public fun function(): kotlin.Unit
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -93,7 +93,7 @@ class ExternalDeclarationsTest {
         |  public fun function() = kotlin.js.definedExternally
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -114,7 +114,7 @@ class ExternalDeclarationsTest {
         |  }
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -127,7 +127,7 @@ class ExternalDeclarationsTest {
       """
       |external val prop: kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -141,7 +141,7 @@ class ExternalDeclarationsTest {
       """
       |external val prop: kotlin.String = kotlin.js.definedExternally
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -158,7 +158,7 @@ class ExternalDeclarationsTest {
         |  public val prop: kotlin.String
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -176,7 +176,7 @@ class ExternalDeclarationsTest {
         |  public val prop: kotlin.String = kotlin.js.definedExternally
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

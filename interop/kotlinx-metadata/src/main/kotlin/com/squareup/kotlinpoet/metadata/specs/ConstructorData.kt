@@ -36,7 +36,7 @@ public data class ConstructorData(
   val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,
   val isSynthetic: Boolean,
   val jvmModifiers: Set<JvmMethodModifier>,
-  val exceptions: List<TypeName>
+  val exceptions: List<TypeName>,
 ) {
 
   /**
@@ -61,7 +61,7 @@ public data class ConstructorData(
       parameterAnnotations = emptyMap(),
       isSynthetic = false,
       jvmModifiers = emptySet(),
-      exceptions = emptyList()
+      exceptions = emptyList(),
     )
   }
 }

@@ -39,7 +39,7 @@ public data class MethodData(
   val isSynthetic: Boolean,
   val jvmModifiers: Set<JvmMethodModifier>,
   val isOverride: Boolean,
-  val exceptions: List<TypeName>
+  val exceptions: List<TypeName>,
 ) {
 
   /**
@@ -53,10 +53,10 @@ public data class MethodData(
    */
   public fun allAnnotations(
     useSiteTarget: UseSiteTarget? = null,
-    containsReifiedTypeParameter: Boolean = false
+    containsReifiedTypeParameter: Boolean = false,
   ): Collection<AnnotationSpec> {
     return ClassInspectorUtil.createAnnotations(
-      useSiteTarget
+      useSiteTarget,
     ) {
       addAll(annotations)
       if (isSynthetic && !containsReifiedTypeParameter) {
@@ -77,7 +77,7 @@ public data class MethodData(
       isSynthetic = true,
       jvmModifiers = emptySet(),
       isOverride = false,
-      exceptions = emptyList()
+      exceptions = emptyList(),
     )
     public val EMPTY: MethodData = MethodData(
       annotations = emptyList(),
@@ -85,7 +85,7 @@ public data class MethodData(
       isSynthetic = false,
       jvmModifiers = emptySet(),
       isOverride = false,
-      exceptions = emptyList()
+      exceptions = emptyList(),
     )
   }
 }

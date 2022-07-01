@@ -43,7 +43,7 @@ public interface ClassInspector {
   public fun containerData(
     declarationContainer: KmDeclarationContainer,
     className: ClassName,
-    parentClassName: ClassName?
+    parentClassName: ClassName?,
   ): ContainerData
 
   /**
@@ -94,7 +94,7 @@ public interface ClassInspector {
 @KotlinPoetMetadataPreview
 public fun ClassInspector.containerData(
   className: ClassName,
-  parentClassName: ClassName?
+  parentClassName: ClassName?,
 ): ContainerData {
   return containerData(declarationContainerFor(className), className, parentClassName)
 }

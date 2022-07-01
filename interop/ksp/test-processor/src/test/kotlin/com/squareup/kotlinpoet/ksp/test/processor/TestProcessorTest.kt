@@ -134,8 +134,8 @@ class TestProcessorTest {
 
              }
            }
-           """
-      )
+           """,
+      ),
     )
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
@@ -252,7 +252,7 @@ class TestProcessorTest {
         }
       }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -284,8 +284,8 @@ class TestProcessorTest {
              ) {
              }
            }
-           """
-      )
+           """,
+      ),
     )
     compilation.kspArgs["unwrapTypeAliases"] = "true"
     val result = compilation.compile()
@@ -313,7 +313,7 @@ class TestProcessorTest {
         }
       }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -332,8 +332,8 @@ class TestProcessorTest {
              var t: T? = null
              var r: R? = null
            }
-           """
-      )
+           """,
+      ),
     )
 
     val result = compilation.compile()
@@ -350,7 +350,7 @@ class TestProcessorTest {
         public var r: R?
       }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -369,8 +369,8 @@ class TestProcessorTest {
            class EnumWrapper {
             val enumValue: Enum<*>
            }
-           """
-      )
+           """,
+      ),
     )
 
     val result = compilation.compile()
@@ -387,7 +387,7 @@ class TestProcessorTest {
         public val enumValue: Enum<*>
       }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 

@@ -136,48 +136,48 @@ import kotlinx.metadata.jvm.signature
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toTypeSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @Suppress("DEPRECATION")
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toFileSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): FileSpec = java.toFileSpec(classInspector)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview
 public fun Class<*>.toFileSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
 @KotlinPoetMetadataPreview
 public fun TypeElement.toFileSpec(
-  classInspector: ClassInspector? = null
+  classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(
   packageName = packageName,
-  typeSpec = toTypeSpec(classInspector)
+  typeSpec = toTypeSpec(classInspector),
 )
 
 /** @return a [TypeSpec] ABI representation of this [KmClass]. */
 @KotlinPoetMetadataPreview
 public fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
-  className: ClassName = createClassName(name)
+  className: ClassName = createClassName(name),
 ): TypeSpec {
   return toTypeSpec(classInspector, className, null)
 }
@@ -186,11 +186,11 @@ public fun KmClass.toTypeSpec(
 @KotlinPoetMetadataPreview
 public fun KmClass.toFileSpec(
   classInspector: ClassInspector?,
-  className: ClassName = createClassName(name)
+  className: ClassName = createClassName(name),
 ): FileSpec {
   return FileSpec.get(
     packageName = className.packageName,
-    typeSpec = toTypeSpec(classInspector, className)
+    typeSpec = toTypeSpec(classInspector, className),
   )
 }
 
@@ -198,7 +198,7 @@ public fun KmClass.toFileSpec(
 @KotlinPoetMetadataPreview
 public fun KmPackage.toFileSpec(
   classInspector: ClassInspector?,
-  className: ClassName
+  className: ClassName,
 ): FileSpec {
   val fileData = classInspector?.containerData(className, null)
   check(fileData is FileData?) {
@@ -212,7 +212,7 @@ public fun KmPackage.toFileSpec(
           addAnnotation(
             AnnotationSpec.builder(ClassInspectorUtil.JVM_NAME)
               .addMember("name = %S", name)
-              .build()
+              .build(),
           )
         }
         val fileAnnotations = createAnnotations(FILE) {
@@ -229,8 +229,8 @@ public fun KmPackage.toFileSpec(
             classInspector = classInspector,
             containerData = fileData,
             methodData = methodData,
-            isInInterface = false
-          )
+            isInInterface = false,
+          ),
         )
       }
       for (property in properties) {
@@ -240,8 +240,8 @@ public fun KmPackage.toFileSpec(
             classInspector = classInspector,
             containerData = fileData,
             propertyData = propertyData,
-            isInInterface = false
-          )
+            isInInterface = false,
+          ),
         )
       }
       for (alias in typeAliases) {
@@ -257,7 +257,7 @@ private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 private fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName,
-  parentClassName: ClassName?
+  parentClassName: ClassName?,
 ): TypeSpec {
   val classTypeParamsResolver = typeParameters.toTypeParameterResolver()
   val jvmInternalName = name.jvmInternalName
@@ -305,7 +305,7 @@ private fun KmClass.toTypeSpec(
       } else {
         TypeSpec.anonymousClassBuilder()
           .addKdoc(
-            "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body."
+            "No ClassInspector was available during metadata parsing, so this entry may not be reflected accurately if it has a class body.",
           )
           .build()
       }
@@ -319,7 +319,7 @@ private fun KmClass.toTypeSpec(
       *flags.modalities
         .filterNot { it == FINAL } // Default
         .filterNot { isInterface && it == ABSTRACT } // Abstract is a default on interfaces
-        .toTypedArray()
+        .toTypedArray(),
     )
     if (isData) {
       builder.addModifiers(DATA)
@@ -355,7 +355,7 @@ private fun KmClass.toTypeSpec(
         .filterNot { it == superClass }
         .map { it.toTypeName(classTypeParamsResolver) }
         .filterNot { it == ANY }
-        .asIterable()
+        .asIterable(),
     )
     val primaryConstructorParams = mutableMapOf<String, ParameterSpec>()
     if (isClass || isAnnotation || isEnum) {
@@ -378,7 +378,7 @@ private fun KmClass.toTypeSpec(
             }
             .map { (kmConstructor, constructorData) ->
               kmConstructor.toFunSpec(classTypeParamsResolver, constructorData)
-            }
+            },
         )
       }
     }
@@ -394,10 +394,10 @@ private fun KmClass.toTypeSpec(
             isConstructorParam = property.name in primaryConstructorParams,
             classInspector = classInspector,
             containerData = classData,
-            propertyData = propertyData
+            propertyData = propertyData,
           )
         }
-        .asIterable()
+        .asIterable(),
     )
     companionObject?.let { objectName ->
       val companionType = if (classInspector != null) {
@@ -407,7 +407,7 @@ private fun KmClass.toTypeSpec(
       } else {
         TypeSpec.companionObjectBuilder(companionObjectName(objectName))
           .addKdoc(
-            "No ClassInspector was available during metadata parsing, so this companion object's API/contents may not be reflected accurately."
+            "No ClassInspector was available during metadata parsing, so this companion object's API/contents may not be reflected accurately.",
           )
           .build()
       }
@@ -433,8 +433,8 @@ private fun KmClass.toTypeSpec(
                   return handler.methodExists(
                     className.nestedClass("DefaultImpls"),
                     signature.copy(
-                      desc = "(L$jvmInternalName;$suffix"
-                    )
+                      desc = "(L$jvmInternalName;$suffix",
+                    ),
                   )
                 }
               }
@@ -456,13 +456,13 @@ private fun KmClass.toTypeSpec(
             if (methodData?.isSynthetic == true) {
               addKdoc(
                 "Note: Since this is a synthetic function, some JVM information " +
-                  "(annotations, modifiers) may be missing."
+                  "(annotations, modifiers) may be missing.",
               )
             }
           }
           .build()
       }
-      .asIterable()
+      .asIterable(),
   )
 
   for (it in nestedClasses) {
@@ -478,7 +478,7 @@ private fun KmClass.toTypeSpec(
     } else {
       TypeSpec.classBuilder(it)
         .addKdoc(
-          "No ClassInspector was available during metadata parsing, so this nested class's API/contents may not be reflected accurately."
+          "No ClassInspector was available during metadata parsing, so this nested class's API/contents may not be reflected accurately.",
         )
         .build()
     }
@@ -497,7 +497,7 @@ private fun companionObjectName(name: String): String? {
 @KotlinPoetMetadataPreview
 private fun KmConstructor.toFunSpec(
   typeParamResolver: TypeParameterResolver,
-  constructorData: ConstructorData?
+  constructorData: ConstructorData?,
 ): FunSpec {
   return FunSpec.constructorBuilder()
     .apply {
@@ -510,9 +510,9 @@ private fun KmConstructor.toFunSpec(
             constructorData?.takeIf { it != ConstructorData.EMPTY }
               ?.parameterAnnotations
               ?.get(index)
-              .orEmpty()
+              .orEmpty(),
           )
-        }
+        },
       )
       if (!isPrimary) {
         // TODO How do we know when to add callSuperConstructor()?
@@ -535,10 +535,10 @@ private fun KmFunction.toFunSpec(
   classInspector: ClassInspector? = null,
   containerData: ContainerData? = null,
   methodData: MethodData? = null,
-  isInInterface: Boolean = containerData?.isInterface ?: false
+  isInInterface: Boolean = containerData?.isInterface ?: false,
 ): FunSpec {
   val typeParamsResolver = typeParameters.toTypeParameterResolver(
-    fallback = classTypeParamsResolver
+    fallback = classTypeParamsResolver,
   )
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
   if (classInspector != null && containerData != null) {
@@ -567,7 +567,7 @@ private fun KmFunction.toFunSpec(
         flags.modalities
           .filterNot { it == FINAL && !isOverride } // Final is the default
           .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
-          .filterNot { it == OPEN && isInInterface } // interface methods are implicitly open
+          .filterNot { it == OPEN && isInInterface }, // interface methods are implicitly open
       )
       if (valueParameters.isNotEmpty()) {
         addParameters(
@@ -575,9 +575,9 @@ private fun KmFunction.toFunSpec(
             param.toParameterSpec(
               typeParamsResolver,
               // This can be empty if the element is synthetic
-              methodData?.parameterAnnotations?.get(index).orEmpty()
+              methodData?.parameterAnnotations?.get(index).orEmpty(),
             )
-          }
+          },
         )
       }
       if (typeParameters.isNotEmpty()) {
@@ -623,7 +623,7 @@ private fun KmFunction.toFunSpec(
 @KotlinPoetMetadataPreview
 private fun KmValueParameter.toParameterSpec(
   typeParamResolver: TypeParameterResolver,
-  annotations: Collection<AnnotationSpec>
+  annotations: Collection<AnnotationSpec>,
 ): ParameterSpec {
   val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
@@ -653,7 +653,7 @@ private fun KmProperty.toPropertySpec(
   classInspector: ClassInspector? = null,
   containerData: ContainerData? = null,
   propertyData: PropertyData? = null,
-  isInInterface: Boolean = containerData?.isInterface ?: false
+  isInInterface: Boolean = containerData?.isInterface ?: false,
 ): PropertySpec {
   val isOverride = propertyData?.isOverride ?: false
   val returnTypeName = returnType.toTypeName(typeParamResolver)
@@ -679,7 +679,7 @@ private fun KmProperty.toPropertySpec(
           }
           getterSignature.jvmNameAnnotation(
             metadataName = expectedMetadataName,
-            useSiteTarget = UseSiteTarget.GET
+            useSiteTarget = UseSiteTarget.GET,
           )?.let { jvmNameAnnotation ->
             mutableAnnotations += jvmNameAnnotation
           }
@@ -700,7 +700,7 @@ private fun KmProperty.toPropertySpec(
           // We skip interface types or open/abstract properties because they can't have @JvmName.
           setterSignature.jvmNameAnnotation(
             metadataName = "set${name.safeCapitalize(Locale.US)}",
-            useSiteTarget = UseSiteTarget.SET
+            useSiteTarget = UseSiteTarget.SET,
           )?.let { jvmNameAnnotation ->
             mutableAnnotations += jvmNameAnnotation
           }
@@ -736,7 +736,7 @@ private fun KmProperty.toPropertySpec(
           .filterNot { it == FINAL && !isOverride } // Final is the default
           .filterNot { it == OPEN && isOverride } // Overrides are implicitly open
           .filterNot { it == OPEN && isInInterface } // Interface properties implicitly open
-          .filterNot { it == ABSTRACT && isInInterface } // Interface properties implicitly abstract
+          .filterNot { it == ABSTRACT && isInInterface }, // Interface properties implicitly abstract
       )
       if (isOverride) {
         addModifiers(KModifier.OVERRIDE)
@@ -758,7 +758,7 @@ private fun KmProperty.toPropertySpec(
           if (returnTypeName.isNullable) {
             delegate(
               "%T.observable(null) { _, _, _ -> }",
-              ClassName("kotlin.properties", "Delegates")
+              ClassName("kotlin.properties", "Delegates"),
             )
           } else {
             delegate("%T.notNull()", ClassName("kotlin.properties", "Delegates")) // Placeholder
@@ -792,8 +792,10 @@ private fun KmProperty.toPropertySpec(
       val modifierSet = modifiers.toSet()
       if (hasGetter && !isDelegated && !flags.isAbstract) {
         propertyAccessor(
-          modifierSet, getterFlags,
-          FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED), isOverride
+          modifierSet,
+          getterFlags,
+          FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED),
+          isOverride,
         )?.let(::getter)
       }
       if (hasSetter && !isDelegated && !flags.isAbstract) {
@@ -809,7 +811,7 @@ private fun propertyAccessor(
   propertyModifiers: Set<KModifier>,
   flags: Flags,
   functionBuilder: Builder,
-  isOverride: Boolean
+  isOverride: Boolean,
 ): FunSpec? {
   val visibility = flags.visibility
   if (visibility == PUBLIC || visibility !in propertyModifiers) {
@@ -864,7 +866,7 @@ private fun KmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
 
 private fun JvmMethodSignature.jvmNameAnnotation(
   metadataName: String,
-  useSiteTarget: UseSiteTarget? = null
+  useSiteTarget: UseSiteTarget? = null,
 ): AnnotationSpec? {
   return if (name == metadataName) {
     null
@@ -878,7 +880,7 @@ private fun JvmMethodSignature.jvmNameAnnotation(
 
 private val JAVA_ANNOTATION_ANNOTATIONS = setOf(
   java.lang.annotation.Retention::class.asClassName(),
-  java.lang.annotation.Target::class.asClassName()
+  java.lang.annotation.Target::class.asClassName(),
 )
 
 @KotlinPoetMetadataPreview
@@ -928,6 +930,7 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 }
 
 private val METADATA = Metadata::class.asClassName()
+
 @Suppress("DEPRECATION")
 private val JVM_DEFAULT = JvmDefault::class.asClassName()
 private val JVM_STATIC = JvmStatic::class.asClassName()

@@ -76,7 +76,7 @@ class CodeBlockTest {
       .addNamed("\"I like \" + %text:S + \". Do you like \" + %text:S + \"?\"", map)
       .build()
     assertThat(block.toString()).isEqualTo(
-      "\"I like \" + \"tacos\" + \". Do you like \" + \"tacos\" + \"?\""
+      "\"I like \" + \"tacos\" + \". Do you like \" + \"tacos\" + \"?\"",
     )
   }
 
@@ -113,7 +113,7 @@ class CodeBlockTest {
       .build()
 
     assertThat(block.toString()).isEqualTo(
-      "java.lang.System.out.println(\"Let's eat some tacos\");"
+      "java.lang.System.out.println(\"Let's eat some tacos\");",
     )
   }
 
@@ -202,7 +202,7 @@ class CodeBlockTest {
       |- Format parts: [«, print(, «, %L, », ), \n, »]
       |- Arguments: [1 + 1]
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -221,7 +221,7 @@ class CodeBlockTest {
       |- Format parts: [«, print(, %L, », ), \n, »]
       |- Arguments: [1 + 1]
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -251,47 +251,47 @@ class CodeBlockTest {
   @Test fun withoutPrefixMatching() {
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of(""))
+        .withoutPrefix(CodeBlock.of("")),
     )
       .isEqualTo(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("ab"))
+        .withoutPrefix(CodeBlock.of("ab")),
     )
       .isEqualTo(CodeBlock.of("cd %S efgh %S ijkl", "x", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd "))
+        .withoutPrefix(CodeBlock.of("abcd ")),
     )
       .isEqualTo(CodeBlock.of("%S efgh %S ijkl", "x", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S", "x"))
+        .withoutPrefix(CodeBlock.of("abcd %S", "x")),
     )
       .isEqualTo(CodeBlock.of(" efgh %S ijkl", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S ef", "x"))
+        .withoutPrefix(CodeBlock.of("abcd %S ef", "x")),
     )
       .isEqualTo(CodeBlock.of("gh %S ijkl", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh ", "x")),
     )
       .isEqualTo(CodeBlock.of("%S ijkl", "y"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S", "x", "y")),
     )
       .isEqualTo(CodeBlock.of(" ijkl"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "y")),
     )
       .isEqualTo(CodeBlock.of("kl"))
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")),
     )
       .isEqualTo(CodeBlock.of(""))
   }
@@ -299,47 +299,47 @@ class CodeBlockTest {
   @Test fun withoutPrefixNoArgs() {
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of(""))
+        .withoutPrefix(CodeBlock.of("")),
     )
       .isEqualTo(CodeBlock.of("abcd %% efgh %% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("ab"))
+        .withoutPrefix(CodeBlock.of("ab")),
     )
       .isEqualTo(CodeBlock.of("cd %% efgh %% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd "))
+        .withoutPrefix(CodeBlock.of("abcd ")),
     )
       .isEqualTo(CodeBlock.of("%% efgh %% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %%"))
+        .withoutPrefix(CodeBlock.of("abcd %%")),
     )
       .isEqualTo(CodeBlock.of(" efgh %% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% ef"))
+        .withoutPrefix(CodeBlock.of("abcd %% ef")),
     )
       .isEqualTo(CodeBlock.of("gh %% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh "))
+        .withoutPrefix(CodeBlock.of("abcd %% efgh ")),
     )
       .isEqualTo(CodeBlock.of("%% ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %%"))
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %%")),
     )
       .isEqualTo(CodeBlock.of(" ijkl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij"))
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ij")),
     )
       .isEqualTo(CodeBlock.of("kl"))
     assertThat(
       CodeBlock.of("abcd %% efgh %% ijkl")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl"))
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %% ijkl")),
     )
       .isEqualTo(CodeBlock.of(""))
   }
@@ -347,12 +347,12 @@ class CodeBlockTest {
   @Test fun withoutPrefixArgMismatch() {
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "x", "z")),
     )
       .isNull()
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ij", "z", "y")),
     )
       .isNull()
   }
@@ -360,12 +360,12 @@ class CodeBlockTest {
   @Test fun withoutPrefixFormatPartMismatch() {
     assertThat(
       CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgx %S ij", "x", "y")),
     )
       .isNull()
     assertThat(
       CodeBlock.of("abcd %S efgh %% ijkl", "x")
-        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x"))
+        .withoutPrefix(CodeBlock.of("abcd %% efgh %S ij", "x")),
     )
       .isNull()
   }
@@ -373,12 +373,12 @@ class CodeBlockTest {
   @Test fun withoutPrefixTooShort() {
     assertThat(
       CodeBlock.of("abcd %S efgh %S", "x", "y")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")),
     )
       .isNull()
     assertThat(
       CodeBlock.of("abcd %S efgh", "x")
-        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y"))
+        .withoutPrefix(CodeBlock.of("abcd %S efgh %S ijkl", "x", "y")),
     )
       .isNull()
   }
@@ -420,7 +420,7 @@ class CodeBlockTest {
 
   @Test fun trimMultipleNoArgPlaceholders() {
     assertThat(
-      CodeBlock.of("«return if (x > %L) %S else %S»", 1, "a", "b").trim()
+      CodeBlock.of("«return if (x > %L) %S else %S»", 1, "a", "b").trim(),
     )
       .isEqualTo(CodeBlock.of("return if (x > %L) %S else %S", 1, "a", "b"))
   }
@@ -463,7 +463,7 @@ class CodeBlockTest {
       |  println(element)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -479,7 +479,7 @@ class CodeBlockTest {
       |  println(element)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -499,7 +499,7 @@ class CodeBlockTest {
       |  println("bar")
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -510,7 +510,7 @@ class CodeBlockTest {
           .beginControlFlow("if (%1S == %1S)", "Very long string that would wrap the line ")
           .nextControlFlow("else if (%1S == %1S)", "Long string that would wrap the line 2 ")
           .endControlFlow()
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -527,7 +527,7 @@ class CodeBlockTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -544,7 +544,7 @@ class CodeBlockTest {
       |
       |Statement with no args
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -593,7 +593,7 @@ class CodeBlockTest {
       |  )
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

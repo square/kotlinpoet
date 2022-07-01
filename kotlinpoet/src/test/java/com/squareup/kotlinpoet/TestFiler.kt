@@ -34,7 +34,7 @@ import javax.tools.SimpleJavaFileObject
 
 internal class TestFiler(
   fileSystem: FileSystem,
-  private val fileSystemRoot: Path
+  private val fileSystemRoot: Path,
 ) : Filer {
 
   internal inner class Source(private val path: Path) :
@@ -54,7 +54,7 @@ internal class TestFiler(
 
   override fun createSourceFile(
     name: CharSequence,
-    vararg originatingElements: Element
+    vararg originatingElements: Element,
   ): JavaFileObject {
     val relative = name.toString().replace(".", separator) + ".kt" // Assumes well-formed.
     val path = fileSystemRoot.resolve(relative)
@@ -69,7 +69,7 @@ internal class TestFiler(
     location: JavaFileManager.Location,
     pkg: CharSequence,
     relativeName: CharSequence,
-    vararg originatingElements: Element
+    vararg originatingElements: Element,
   ): FileObject {
     val relative = pkg.toString().replace(".", separator) + separator + relativeName
     val path = fileSystemRoot.resolve(relative)
@@ -80,7 +80,7 @@ internal class TestFiler(
   override fun getResource(
     location: JavaFileManager.Location,
     pkg: CharSequence,
-    relativeName: CharSequence
+    relativeName: CharSequence,
   ) = throw UnsupportedOperationException("Not implemented.")
 }
 

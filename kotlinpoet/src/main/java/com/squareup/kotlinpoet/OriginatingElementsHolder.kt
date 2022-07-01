@@ -45,5 +45,5 @@ internal fun List<Element>.buildOriginatingElements() =
 
 @JvmInline
 internal value class OriginatingElements(
-  override val originatingElements: List<Element>
+  override val originatingElements: List<Element>,
 ) : OriginatingElementsHolder

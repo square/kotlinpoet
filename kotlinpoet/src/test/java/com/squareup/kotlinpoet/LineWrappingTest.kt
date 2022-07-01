@@ -24,7 +24,7 @@ class LineWrappingTest {
       .addStatement(
         "return %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L",
         10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
-        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000
+        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
       )
       .build()
     assertThat(toString(wrapMe)).isEqualTo(
@@ -34,7 +34,7 @@ class LineWrappingTest {
         |public fun wrapMe() = 10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 *
         |    60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -43,7 +43,7 @@ class LineWrappingTest {
       .addStatement(
         "return %S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S",
         "Aaaa Aaaa", "Bbbb Bbbb", "Cccc Cccc", "Dddd Dddd", "Eeee Eeee", "Ffff Ffff",
-        "Gggg Gggg", "Hhhh Hhhh", "Iiii Iiii", "Jjjj Jjjj", "Kkkk Kkkk", "Llll Llll"
+        "Gggg Gggg", "Hhhh Hhhh", "Iiii Iiii", "Jjjj Jjjj", "Kkkk Kkkk", "Llll Llll",
       )
       .build()
     assertThat(toString(wrapMe)).isEqualTo(
@@ -53,7 +53,7 @@ class LineWrappingTest {
         |public fun wrapMe() =
         |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -62,7 +62,7 @@ class LineWrappingTest {
       .addStatement(
         "return %L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L",
         10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
-        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000
+        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
       )
       .build()
     assertThat(toString(wrapMe)).isEqualTo(
@@ -72,7 +72,7 @@ class LineWrappingTest {
         |public fun wrapMe() =
         |    10000000000 * 20000000000 * 30000000000 * 40000000000 * 50000000000 * 60000000000 * 70000000000 * 80000000000 * 90000000000 * 10000000000 * 20000000000 * 30000000000
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -86,7 +86,7 @@ class LineWrappingTest {
         |
         |public fun wrapMe() = "a·b"
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -110,7 +110,7 @@ class LineWrappingTest {
         |  val d = 4096
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -136,7 +136,7 @@ class LineWrappingTest {
         |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -200,7 +200,7 @@ class LineWrappingTest {
         |  }
         |}
         |
-        """.trimMargin()
+        """.trimMargin(),
       )
   }
 

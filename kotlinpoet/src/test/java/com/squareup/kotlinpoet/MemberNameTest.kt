@@ -46,7 +46,7 @@ class MemberNameTest {
       |  val bestTaco = bestTacoEver
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -57,7 +57,7 @@ class MemberNameTest {
       .addFunction(
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -71,7 +71,7 @@ class MemberNameTest {
       |  createTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -81,7 +81,7 @@ class MemberNameTest {
       .addFunction(
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -94,20 +94,20 @@ class MemberNameTest {
       |  createTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
   @Test fun memberInsideClassInSamePackage() {
     val createTaco = MemberName(
       ClassName("com.squareup.tacos", "Town"),
-      "createTaco"
+      "createTaco",
     )
     val file = FileSpec.builder("com.squareup.tacos", "Tacos")
       .addFunction(
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -121,7 +121,7 @@ class MemberNameTest {
       |  createTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -133,7 +133,7 @@ class MemberNameTest {
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createSquareTaco)
           .addStatement("%M()", createTwitterTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -148,7 +148,7 @@ class MemberNameTest {
       |  com.twitter.tacos.createTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -162,7 +162,7 @@ class MemberNameTest {
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createSquareTaco)
           .addStatement("%M()", createTwitterTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -178,7 +178,7 @@ class MemberNameTest {
       |  TwitterTacos.Companion.createTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -190,7 +190,7 @@ class MemberNameTest {
         FunSpec.builder("makeTastyTacos")
           .addStatement("val tacos = %T()", squareTacosClass)
           .addStatement("%M(tacos)", squareTacosFunction)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -205,7 +205,7 @@ class MemberNameTest {
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -217,14 +217,14 @@ class MemberNameTest {
           .addFunction(
             FunSpec.builder("test")
               .addStatement("%M(%S)", kotlinErrorMember, "errorText")
-              .build()
+              .build(),
           )
           .addFunction(
             FunSpec
               .builder("error")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -242,7 +242,7 @@ class MemberNameTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -254,7 +254,7 @@ class MemberNameTest {
           .addFunction(
             FunSpec
               .builder("error")
-              .build()
+              .build(),
           )
           .addType(
             TypeSpec.classBuilder("TacoTest")
@@ -262,11 +262,11 @@ class MemberNameTest {
               .addFunction(
                 FunSpec.builder("test")
                   .addStatement("%M(%S)", kotlinErrorMember, "errorText")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -286,7 +286,7 @@ class MemberNameTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -298,18 +298,18 @@ class MemberNameTest {
           .addFunction(
             FunSpec
               .builder("error")
-              .build()
+              .build(),
           )
           .addType(
             TypeSpec.classBuilder("TacoTest")
               .addFunction(
                 FunSpec.builder("test")
                   .addStatement("%M(%S)", kotlinErrorMember, "errorText")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -330,7 +330,7 @@ class MemberNameTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -344,7 +344,7 @@ class MemberNameTest {
         FunSpec.builder("makeTastyTacos")
           .addStatement("%M()", createSquareTaco)
           .addStatement("%M()", createTwitterTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -360,7 +360,7 @@ class MemberNameTest {
       |  createTwitterTaco()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -373,9 +373,9 @@ class MemberNameTest {
             FunSpec.builder("setUp")
               .addAnnotation(Before::class)
               .addStatement("%M(tacoService.createTaco()).thenReturn(tastyTaco())", `when`)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -393,7 +393,7 @@ class MemberNameTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -407,7 +407,7 @@ class MemberNameTest {
         FunSpec.builder("whenTastyTacos")
           .addStatement("%M()", whenSquareTaco)
           .addStatement("%M()", whenTwitterTaco)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -423,7 +423,7 @@ class MemberNameTest {
       |  TwitterTacos.Companion.`when`()
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -451,7 +451,7 @@ class MemberNameTest {
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -461,7 +461,7 @@ class MemberNameTest {
       .addFunction(
         FunSpec.builder("main")
           .addStatement("println(%M())", produceTacos)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -475,7 +475,7 @@ class MemberNameTest {
       |  println(`produce tacos`())
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -504,7 +504,7 @@ class MemberNameTest {
           .addParameter("tacos", LIST.parameterizedBy(taco))
           .addParameter("packager", packager)
           .addStatement("packager.%N(tacos)", packager.member("package"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -520,7 +520,7 @@ class MemberNameTest {
       |  packager.`package`(tacos)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -537,7 +537,7 @@ class MemberNameTest {
           .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
           .endControlFlow()
           .addStatement("return taco")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -557,7 +557,7 @@ class MemberNameTest {
       |  return taco
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -579,11 +579,11 @@ class MemberNameTest {
                   addStatement("super.hashCode = result")
                   endControlFlow()
                   addStatement("return result")
-                }
+                },
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     //language=kotlin
@@ -605,7 +605,7 @@ class MemberNameTest {
         }
       }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 }
