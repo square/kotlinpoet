@@ -37,6 +37,11 @@ import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspe
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import com.squareup.kotlinpoet.tag
 import com.squareup.kotlinpoet.tags.TypeAliasTag
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.TYPE
+import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
+import kotlin.properties.Delegates
+import kotlin.test.fail
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.KmFunction
@@ -45,11 +50,6 @@ import kotlinx.metadata.KmTypeParameter
 import kotlinx.metadata.KmValueParameter
 import org.junit.Ignore
 import org.junit.Test
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.TYPE
-import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
-import kotlin.properties.Delegates
-import kotlin.test.fail
 
 class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 

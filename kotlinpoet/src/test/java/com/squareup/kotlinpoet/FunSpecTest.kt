@@ -21,7 +21,6 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.junit.Rule
 import java.io.Closeable
 import java.io.IOException
 import java.util.concurrent.Callable
@@ -34,6 +33,7 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import org.junit.Rule
 
 @OptIn(ExperimentalKotlinPoetApi::class)
 class FunSpecTest {

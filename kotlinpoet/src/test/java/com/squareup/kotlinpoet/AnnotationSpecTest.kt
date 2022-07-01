@@ -20,10 +20,10 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.OVERRIDE
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
-import org.junit.Rule
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
 import kotlin.test.Test
+import org.junit.Rule
 
 class AnnotationSpecTest {
 

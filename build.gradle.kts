@@ -72,7 +72,7 @@ subprojects {
   configure<SpotlessExtension> {
     kotlin {
       target("**/*.kt")
-      ktlint(libs.versions.ktlint.get()).editorConfigOverride(mapOf("indent_size" to "2"))
+      ktlint(libs.versions.ktlint.get()).editorConfigOverride(readEditorConfig())
       trimTrailingWhitespace()
       endWithNewline()
 
@@ -130,4 +130,11 @@ apiValidation {
     "interop", // Empty middle package
     "test-processor" // Test only
   )
+}
+
+fun readEditorConfig(): Map<String, String> {
+  val settingRegex = Regex("^(\\S+)\\s*=\\s*(\\S+)$")
+  return file(".editorconfig").readLines()
+    .mapNotNull { settingRegex.matchEntire(it)?.destructured }
+    .associate { (key, value) -> key to value }
 }

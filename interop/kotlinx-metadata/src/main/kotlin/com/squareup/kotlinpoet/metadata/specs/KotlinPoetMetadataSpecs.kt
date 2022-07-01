@@ -111,6 +111,12 @@ import com.squareup.kotlinpoet.metadata.propertyAccessorFlags
 import com.squareup.kotlinpoet.metadata.specs.JvmMethodModifier.DEFAULT
 import com.squareup.kotlinpoet.metadata.toKmClass
 import com.squareup.kotlinpoet.tag
+import java.util.Locale
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.PackageElement
+import javax.lang.model.element.TypeElement
+import kotlin.reflect.KClass
 import kotlinx.metadata.Flags
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
@@ -126,12 +132,6 @@ import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.jvmInternalName
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
-import java.util.Locale
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.PackageElement
-import javax.lang.model.element.TypeElement
-import kotlin.reflect.KClass
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @KotlinPoetMetadataPreview

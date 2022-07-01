@@ -24,6 +24,9 @@ import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
+import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.reflect.KClass
 import kotlinx.metadata.jvm.KotlinClassMetadata.FileFacade
 import org.junit.Assume
 import org.junit.Rule
@@ -32,9 +35,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.model.Statement
-import java.lang.annotation.Inherited
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.reflect.KClass
 
 /** Base test class that runs all tests with multiple [ClassInspectorTypes][ClassInspectorType]. */
 @RunWith(Parameterized::class)
