@@ -16,11 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStreamWriter
+import java.io.*
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
@@ -49,6 +45,7 @@ public class FileSpec private constructor(
 ) : Taggable by tagMap {
   public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
+  public val useKdocForComment: Boolean = builder.useKdocForComment
   public val packageName: String = builder.packageName
   public val name: String = builder.name
   public val members: List<Any> = builder.members.toList()
@@ -129,7 +126,11 @@ public class FileSpec private constructor(
 
   private fun emit(codeWriter: CodeWriter, collectingImports: Boolean) {
     if (comment.isNotEmpty()) {
-      codeWriter.emitComment(comment)
+      if (useKdocForComment) {
+        codeWriter.emitKdoc(comment)
+      } else {
+        codeWriter.emitComment(comment)
+      }
     }
 
     if (annotations.isNotEmpty()) {
@@ -232,6 +233,7 @@ public class FileSpec private constructor(
     val builder = Builder(packageName, name, isScript)
     builder.annotations.addAll(annotations)
     builder.comment.add(comment)
+    builder.useKdocForComment = useKdocForComment
     builder.members.addAll(this.members)
     builder.indent = indent
     builder.memberImports.addAll(memberImports.values)
@@ -247,6 +249,7 @@ public class FileSpec private constructor(
     public val isScript: Boolean,
   ) : Taggable.Builder<Builder> {
     internal val comment = CodeBlock.builder()
+    internal var useKdocForComment = false
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -288,6 +291,11 @@ public class FileSpec private constructor(
       comment.add(format.replace(' ', '·'), *args)
     }
 
+    public fun addKdocFileComment(format: String, vararg args: Any): Builder = apply {
+      useKdocForComment = true
+      addFileComment(format, *args)
+    }
+
     @Deprecated(
       "Use addFileComment() instead.",
       ReplaceWith("addFileComment(format, args)"),
@@ -296,6 +304,7 @@ public class FileSpec private constructor(
     public fun addComment(format: String, vararg args: Any): Builder = addFileComment(format, *args)
 
     public fun clearComment(): Builder = apply {
+      useKdocForComment = false
       comment.clear()
     }
 

@@ -20,8 +20,7 @@ import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import java.util.Collections
-import java.util.Date
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
@@ -1193,6 +1192,27 @@ class FileSpecTest {
       |val prop3: @FunctionalInterface Callable<String>? = null
       |val prop4: @FunctionalInterface Function<Int, Int>? = null
       |
+      """.trimMargin()
+    )
+  }
+
+  @Test fun kdocFileComment() {
+    val source = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addType(TypeSpec.classBuilder("Taco").build())
+      .addKdocFileComment("\nGENERATED FILE:\n\nDO NOT EDIT!\n")
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+        |/**
+        | *
+        | * GENERATED FILE:
+        | *
+        | * DO NOT EDIT!
+        | */
+        |package com.squareup.tacos
+        |
+        |public class Taco
+        |
       """.trimMargin()
     )
   }
