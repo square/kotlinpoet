@@ -72,7 +72,7 @@ internal fun KSType.toTypeName(
 
       var resolvedType: KSType
       var mappedArgs: List<KSTypeArgument>
-      var extraResolver: TypeParameterResolver
+      var extraResolver: TypeParameterResolver = typeParamResolver
       while (true) {
         resolvedType = typeAlias.type.resolve()
         mappedArgs = mapTypeArgumentsFromTypeAliasToAbbreviatedType(
@@ -81,9 +81,9 @@ internal fun KSType.toTypeName(
           abbreviatedType = resolvedType,
         )
         extraResolver = if (typeAlias.typeParameters.isEmpty()) {
-          typeParamResolver
+          extraResolver
         } else {
-          typeAlias.typeParameters.toTypeParameterResolver(typeParamResolver)
+          typeAlias.typeParameters.toTypeParameterResolver(extraResolver)
         }
 
         typeAlias = resolvedType.declaration as? KSTypeAlias ?: break
@@ -94,7 +94,7 @@ internal fun KSType.toTypeName(
         .toTypeName(extraResolver)
         .copy(nullable = isMarkedNullable)
         .rawType()
-        .withTypeArguments(mappedArgs.map { it.toTypeName(typeParamResolver) })
+        .withTypeArguments(mappedArgs.map { it.toTypeName(extraResolver) })
 
       val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
 
