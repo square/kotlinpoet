@@ -15,9 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.CROSSINLINE
-import com.squareup.kotlinpoet.KModifier.NOINLINE
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.*
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -228,13 +226,13 @@ private val ALLOWED_PARAMETER_MODIFIERS = setOf(VARARG, NOINLINE, CROSSINLINE)
 
 internal fun List<ParameterSpec>.emit(
   codeWriter: CodeWriter,
-  forceNewLines: Boolean = false,
+  minimumSizeForNewLine: Int = 3,
   emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) }
 ) = with(codeWriter) {
   emit("(")
 
   if (isNotEmpty()) {
-    val emitNewLines = size > 2 || forceNewLines
+    val emitNewLines = size >= minimumSizeForNewLine
     if (emitNewLines) {
       emit("\n")
       indent(1)

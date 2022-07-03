@@ -15,20 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
+import com.squareup.kotlinpoet.KModifier.*
 import com.squareup.kotlinpoet.KModifier.ANNOTATION
-import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.KModifier.ENUM
-import com.squareup.kotlinpoet.KModifier.EXPECT
-import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.FUN
-import com.squareup.kotlinpoet.KModifier.INLINE
-import com.squareup.kotlinpoet.KModifier.INTERNAL
-import com.squareup.kotlinpoet.KModifier.PRIVATE
-import com.squareup.kotlinpoet.KModifier.PROTECTED
-import com.squareup.kotlinpoet.KModifier.PUBLIC
-import com.squareup.kotlinpoet.KModifier.SEALED
-import com.squareup.kotlinpoet.KModifier.VALUE
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
@@ -187,7 +176,7 @@ public class TypeSpec private constructor(
             codeWriter.emit("constructor")
           }
 
-          it.parameters.emit(codeWriter, forceNewLines = true) { param ->
+          it.parameters.emit(codeWriter, minimumSizeForNewLine = -1) { param ->
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(

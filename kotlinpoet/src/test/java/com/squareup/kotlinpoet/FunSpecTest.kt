@@ -21,7 +21,6 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.junit.Rule
 import java.io.Closeable
 import java.io.IOException
 import java.util.concurrent.Callable
@@ -34,6 +33,7 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import org.junit.Rule
 
 @OptIn(ExperimentalKotlinPoetApi::class)
 class FunSpecTest {
@@ -1146,6 +1146,21 @@ class FunSpecTest {
       |import kotlin.Unit
       |
       |public fun foo(): @Annotation () -> Unit {
+      |}
+      |
+      """.trimMargin()
+    )
+  }
+
+  @Test fun increaseMinimumParametersSizeForNewLine() {
+    val funSpec = FunSpec.builder("foo")
+      .minimumParametersForNewLine(11)
+      .addParameters((1..10).map { ParameterSpec.builder("param$it", STRING).build() }.toList())
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun foo(param1: kotlin.String, param2: kotlin.String, param3: kotlin.String, param4: kotlin.String, param5: kotlin.String, param6: kotlin.String, param7: kotlin.String, param8: kotlin.String, param9: kotlin.String, param10: kotlin.String): kotlin.Unit {
       |}
       |
       """.trimMargin()

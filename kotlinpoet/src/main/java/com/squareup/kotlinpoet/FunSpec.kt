@@ -15,11 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.KModifier.ABSTRACT
-import com.squareup.kotlinpoet.KModifier.EXPECT
-import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.INLINE
-import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.KModifier.*
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
@@ -47,6 +43,7 @@ public class FunSpec private constructor(
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
+  public val minimumParametersForNewLine: Int = builder.minimumParametersForNewLine
 
   public val returnType: TypeName? = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
@@ -160,7 +157,7 @@ public class FunSpec private constructor(
     }
 
     if (!isEmptySetter && !isExternalGetter) {
-      parameters.emit(codeWriter) { param ->
+      parameters.emit(codeWriter, minimumSizeForNewLine = minimumParametersForNewLine) { param ->
         param.emit(codeWriter, includeType = name != SETTER)
       }
     }
@@ -313,6 +310,7 @@ public class FunSpec private constructor(
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
+    internal var minimumParametersForNewLine: Int = 3
 
     public val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
@@ -444,6 +442,10 @@ public class FunSpec private constructor(
 
     public fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any): Builder =
       returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+
+    public fun minimumParametersForNewLine(value: Int): Builder = apply {
+      this.minimumParametersForNewLine = value
+    }
 
     public fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder = apply {
       for (parameterSpec in parameterSpecs) {
