@@ -391,6 +391,53 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun transitiveAliases() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           typealias Alias23 = (Any) -> Any
+           typealias Alias77<Q> = List<Q>
+           typealias Alias73<Q> = Map<String, Q>
+           typealias Alias55<Q> = Alias73<Q>
+           typealias Alias99<Q> = Alias55<Q>
+           typealias Alias43<Q> = Alias77<Q>
+           typealias Alias47<Q> = Alias43<Q>
+           typealias Alias41<Z, Q> = (Alias43<Z>) -> Alias47<Q>
+
+           @ExampleAnnotation
+           interface TransitiveAliases {
+              fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T)
+           }
+           """
+      )
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestTransitiveAliases.kt")
+      .readText()
+    assertThat(generatedFileText).isEqualTo(
+      """
+    package test
+
+    import kotlin.Int
+    import kotlin.Unit
+
+    public class TransitiveAliases {
+      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T): Unit {
+      }
+    }
+
+      """.trimIndent()
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
