@@ -19,6 +19,7 @@ import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.TypeVariableName.Companion.NULLABLE_ANY_LIST
 import java.io.Serializable
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class TypeVariableNameTest {
   @Test fun nullableAnyIsImplicitBound() {
@@ -251,4 +252,34 @@ class TypeVariableNameTest {
   }
 
   class GenericClass<T>
+
+  @Test
+  fun definitelyNonNullableType_simple() {
+    val typeName = TypeVariableName("T").copy()
+    assertThat(typeName.toString()).isEqualTo("T & Any")
+  }
+
+  @Test
+  fun definitelyNonNullableType_errorWhenNonNullableMadeNullable() {
+    assertFailsWith<IllegalArgumentException> {
+      TypeVariableName("T").copy()
+        .copy(nullable = true)
+    }
+  }
+
+  @Test
+  fun definitelyNonNullableType_errorWhenNullableMadeNonNullable() {
+    assertFailsWith<IllegalArgumentException> {
+      (TypeVariableName("T").copy(nullable = true) as TypeVariableName)
+        .copy()
+    }
+  }
+
+  @Test
+  fun definitelyNonNullableType_errorWhenNonNullAny() {
+    assertFailsWith<IllegalArgumentException> {
+      TypeVariableName("T", listOf(ANY))
+        .copy()
+    }
+  }
 }
