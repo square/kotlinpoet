@@ -438,6 +438,50 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun aliasAsTypeArgument() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           typealias Alias997 = Map<String, Int>
+
+           @ExampleAnnotation
+           interface AliasAsTypeArgument {
+              fun bar(arg1: List<Alias997>)
+           }
+           """
+      )
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestAliasAsTypeArgument.kt")
+      .readText()
+    println(generatedFileText)
+    //TODO fails because it generates Alias997<String, Int>
+    assertThat(generatedFileText).isEqualTo(
+      """
+    package test
+
+    import kotlin.Int
+    import kotlin.String
+    import kotlin.Unit
+    import kotlin.collections.List
+
+    public class AliasAsTypeArgument {
+      public fun bar(arg1: List<Alias997>): Unit {
+      }
+    }
+
+      """.trimIndent()
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
