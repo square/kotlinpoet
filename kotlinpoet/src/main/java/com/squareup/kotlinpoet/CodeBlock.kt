@@ -374,6 +374,8 @@ public class CodeBlock private constructor(
 
     private fun argToType(o: Any?) = when (o) {
       is TypeName -> o
+      is Type -> o.asTypeName()
+      is KClass<*> -> o.asTypeName()
       is TypeMirror -> {
         logDeprecationWarning(o)
         o.asTypeName()
@@ -382,8 +384,6 @@ public class CodeBlock private constructor(
         logDeprecationWarning(o)
         o.asType().asTypeName()
       }
-      is Type -> o.asTypeName()
-      is KClass<*> -> o.asTypeName()
       else -> throw IllegalArgumentException("expected type but was $o")
     }
 
