@@ -53,6 +53,14 @@ import com.squareup.kotlinpoet.metadata.specs.KM_PROPERTY_COMPARATOR
 import com.squareup.kotlinpoet.metadata.specs.MethodData
 import com.squareup.kotlinpoet.metadata.specs.PropertyData
 import com.squareup.kotlinpoet.metadata.toKmClass
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.lang.reflect.Parameter
+import java.util.TreeMap
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.KmPackage
@@ -64,14 +72,6 @@ import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
-import java.lang.reflect.Constructor
-import java.lang.reflect.Field
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
-import java.lang.reflect.Parameter
-import java.util.TreeMap
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.LazyThreadSafetyMode.NONE
 
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(

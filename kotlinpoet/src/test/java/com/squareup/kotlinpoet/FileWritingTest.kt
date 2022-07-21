@@ -18,13 +18,13 @@ package com.squareup.kotlinpoet
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
 import com.google.common.truth.Truth.assertThat
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.util.Date
 import kotlin.test.Test
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 class FileWritingTest {
   // Used for testing java.io File behavior.

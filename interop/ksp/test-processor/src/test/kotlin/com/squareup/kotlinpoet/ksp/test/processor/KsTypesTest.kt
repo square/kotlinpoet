@@ -22,8 +22,8 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.Nullability
 import com.squareup.kotlinpoet.ksp.toTypeName
-import org.junit.Test
 import kotlin.test.assertFailsWith
+import org.junit.Test
 
 class KsTypesTest {
   // Regression test for https://github.com/square/kotlinpoet/issues/1178

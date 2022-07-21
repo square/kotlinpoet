@@ -15,8 +15,6 @@
  */
 package com.squareup.kotlinpoet.metadata.classinspectors
 
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.NestingKind
@@ -43,6 +41,8 @@ import javax.lang.model.type.TypeVariable
 import javax.lang.model.type.WildcardType
 import javax.lang.model.util.AbstractTypeVisitor6
 import javax.lang.model.util.Types
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 
 /*
  * Adapted from

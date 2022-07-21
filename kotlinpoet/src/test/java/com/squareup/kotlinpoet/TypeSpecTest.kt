@@ -28,7 +28,6 @@ import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.throws
-import org.junit.Rule
 import java.io.IOException
 import java.io.Serializable
 import java.lang.Deprecated
@@ -50,6 +49,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.fail
+import org.junit.Rule
 
 @OptIn(ExperimentalKotlinPoetApi::class)
 class TypeSpecTest {

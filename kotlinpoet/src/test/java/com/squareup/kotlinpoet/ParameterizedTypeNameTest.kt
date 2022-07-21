@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
-import org.junit.Test
 import java.io.Closeable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -26,6 +25,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
+import org.junit.Test
 
 class ParameterizedTypeNameTest {
   @Test fun classNamePlusParameter() {
