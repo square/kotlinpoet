@@ -75,7 +75,7 @@ import kotlinx.metadata.jvm.syntheticMethodForAnnotations
 
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
-  private val classLoader: ClassLoader?
+  private val classLoader: ClassLoader?,
 ) : ClassInspector {
 
   private val classCache = ConcurrentHashMap<ClassName, Optional<Class<*>>>()
@@ -134,7 +134,7 @@ public class ReflectiveClassInspector private constructor(
   }
 
   private fun Class<*>.lookupMethod(
-    methodSignature: JvmMethodSignature
+    methodSignature: JvmMethodSignature,
   ): Method? {
     val signatureString = methodSignature.asString()
     return methodCache.getOrPut(this to signatureString) {
@@ -146,7 +146,7 @@ public class ReflectiveClassInspector private constructor(
   }
 
   private fun Class<*>.lookupConstructor(
-    constructorSignature: JvmMethodSignature
+    constructorSignature: JvmMethodSignature,
   ): Constructor<*>? {
     val signatureString = constructorSignature.asString()
     return constructorCache.getOrPut(this to signatureString) {
@@ -173,13 +173,13 @@ public class ReflectiveClassInspector private constructor(
 
   private fun Field.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) },
     )
   }
 
   private fun Constructor<*>.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) }
+      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) },
     )
   }
 
@@ -207,13 +207,13 @@ public class ReflectiveClassInspector private constructor(
 
   private fun Method.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) }
+      declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) },
     )
   }
 
   private fun Parameter.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
-      declaredAnnotations.map { AnnotationSpec.get(it, includeDefaultValues = true) }
+      declaredAnnotations.map { AnnotationSpec.get(it, includeDefaultValues = true) },
     )
   }
 
@@ -249,7 +249,7 @@ public class ReflectiveClassInspector private constructor(
       } else {
         enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toKmClass()
       },
-      annotations = clazz.getField(enumEntry.name).annotationSpecs()
+      annotations = clazz.getField(enumEntry.name).annotationSpecs(),
     )
   }
 
@@ -288,7 +288,7 @@ public class ReflectiveClassInspector private constructor(
   override fun containerData(
     declarationContainer: KmDeclarationContainer,
     className: ClassName,
-    parentClassName: ClassName?
+    parentClassName: ClassName?,
   ): ContainerData {
     val targetClass = lookupClass(className) ?: error("No class found for: $className.")
     val isCompanionObject: Boolean = when (declarationContainer) {
@@ -322,7 +322,7 @@ public class ReflectiveClassInspector private constructor(
           isCompanionObject = isCompanionObject,
           hasGetter = property.getterSignature != null,
           hasSetter = property.setterSignature != null,
-          hasField = property.fieldSignature != null
+          hasField = property.fieldSignature != null,
         )
 
         val fieldData = property.fieldSignature?.let { fieldSignature ->
@@ -378,7 +378,7 @@ public class ReflectiveClassInspector private constructor(
               // JvmField companion objects don't need JvmStatic, it's implicit
               isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
             },
-            constant = constant
+            constant = constant,
           )
         }
 
@@ -389,7 +389,7 @@ public class ReflectiveClassInspector private constructor(
             signature = getterSignature,
             hasAnnotations = property.getterFlags.hasAnnotations,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
-              ?.lookupMethod(getterSignature) ?: method
+              ?.lookupMethod(getterSignature) ?: method,
           )
             ?: error("No getter method $getterSignature found in $classIfCompanion.")
         }
@@ -402,7 +402,7 @@ public class ReflectiveClassInspector private constructor(
             hasAnnotations = property.setterFlags.hasAnnotations,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
               ?.lookupMethod(setterSignature) ?: method,
-            knownIsOverride = getterData?.isOverride
+            knownIsOverride = getterData?.isOverride,
           )
             ?: error("No setter method $setterSignature found in $classIfCompanion.")
         }
@@ -423,7 +423,7 @@ public class ReflectiveClassInspector private constructor(
           fieldData = fieldData,
           getterData = getterData,
           setterData = setterData,
-          isJvmField = isJvmField
+          isJvmField = isJvmField,
         )
       }
 
@@ -437,7 +437,7 @@ public class ReflectiveClassInspector private constructor(
             signature = signature,
             hasAnnotations = kmFunction.flags.hasAnnotations,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
-              ?: method
+              ?: method,
           )
             ?: error("No method $signature found in $targetClass.")
         } else {
@@ -478,7 +478,7 @@ public class ReflectiveClassInspector private constructor(
                 parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
                 isSynthetic = constructor.isSynthetic,
                 jvmModifiers = constructor.jvmModifiers(),
-                exceptions = constructor.exceptionTypeNames()
+                exceptions = constructor.exceptionTypeNames(),
               )
             } else {
               ConstructorData.EMPTY
@@ -490,7 +490,7 @@ public class ReflectiveClassInspector private constructor(
           annotations = classAnnotations,
           properties = propertyData,
           constructors = constructorData,
-          methods = methodData
+          methods = methodData,
         )
       }
       is KmPackage -> {
@@ -507,7 +507,7 @@ public class ReflectiveClassInspector private constructor(
           annotations = fileAnnotations,
           properties = propertyData,
           methods = methodData,
-          className = className
+          className = className,
         )
       }
       else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
@@ -525,7 +525,7 @@ public class ReflectiveClassInspector private constructor(
     signature: JvmMethodSignature,
     hasAnnotations: Boolean,
     jvmInformationMethod: Method = this,
-    knownIsOverride: Boolean? = null
+    knownIsOverride: Boolean? = null,
   ): MethodData {
     return MethodData(
       annotations = if (hasAnnotations) annotationSpecs() else emptyList(),
@@ -533,7 +533,7 @@ public class ReflectiveClassInspector private constructor(
       isSynthetic = isSynthetic,
       jvmModifiers = jvmInformationMethod.jvmModifiers(),
       isOverride = knownIsOverride ?: signature.isOverriddenIn(clazz),
-      exceptions = exceptionTypeNames()
+      exceptions = exceptionTypeNames(),
     )
   }
 
@@ -568,7 +568,7 @@ public class ReflectiveClassInspector private constructor(
       get() = parameterTypes.joinToString(
         separator = "",
         prefix = "(",
-        postfix = ")${returnType.descriptor}"
+        postfix = ")${returnType.descriptor}",
       ) { it.descriptor }
 
     /**

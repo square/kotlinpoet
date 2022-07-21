@@ -119,8 +119,8 @@ class ParameterizedTypeNameTest {
         "Entry",
         listOf(
           java.lang.String::class.java.asClassName(),
-          java.lang.Integer::class.java.asClassName()
-        )
+          java.lang.Integer::class.java.asClassName(),
+        ),
       )
       .copy(typeArguments = listOf(STAR, STAR))
     assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>.Entry<*, *>")

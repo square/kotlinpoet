@@ -50,5 +50,5 @@ internal fun ContextReceivable.Builder<*>.buildContextReceivers() =
 @JvmInline
 @ExperimentalKotlinPoetApi
 internal value class ContextReceivers(
-  override val contextReceiverTypes: List<TypeName>
+  override val contextReceiverTypes: List<TypeName>,
 ) : ContextReceivable

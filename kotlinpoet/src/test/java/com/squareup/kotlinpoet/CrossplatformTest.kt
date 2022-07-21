@@ -31,31 +31,31 @@ class CrossplatformTest {
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("value", expectTypeParam)
-          .build()
+          .build(),
       )
       .addProperty(PropertySpec.builder("value", expectTypeParam).build())
       .addFunction(
         FunSpec.builder("get")
           .returns(expectTypeParam)
-          .build()
+          .build(),
       )
       .addFunction(
         FunSpec.builder("set")
           .addParameter("value", expectTypeParam)
-          .build()
+          .build(),
       )
       .addFunction(
         FunSpec.builder("getAndSet")
           .addParameter("value", expectTypeParam)
           .returns(expectTypeParam)
-          .build()
+          .build(),
       )
       .addFunction(
         FunSpec.builder("compareAndSet")
           .addParameter("expect", expectTypeParam)
           .addParameter("update", expectTypeParam)
           .returns(Boolean::class)
-          .build()
+          .build(),
       )
       .build()
     val actualName = AtomicReference::class.asTypeName().parameterizedBy(expectTypeParam)
@@ -90,7 +90,7 @@ class CrossplatformTest {
       |
       |public actual typealias AtomicRef<V> = AtomicReference<V>
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -102,7 +102,7 @@ class CrossplatformTest {
       .addFunction(
         FunSpec.constructorBuilder()
           .addParameter("message", String::class)
-          .build()
+          .build(),
       )
       .build()
     val fileSpec = FileSpec.builder("", "Test")
@@ -120,7 +120,7 @@ class CrossplatformTest {
       |  public constructor(message: String)
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -130,7 +130,7 @@ class CrossplatformTest {
       .addProperty(
         PropertySpec.builder("bar", String::class, KModifier.ACTUAL)
           .initializer(CodeBlock.of("%S", "Hello"))
-          .build()
+          .build(),
       )
       .build()
 
@@ -142,7 +142,7 @@ class CrossplatformTest {
       |
       |public actual val bar: String = "Hello"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -152,13 +152,13 @@ class CrossplatformTest {
         FunSpec.builder("f1")
           .addModifiers(KModifier.EXPECT)
           .returns(Int::class)
-          .build()
+          .build(),
       )
       .addFunction(
         FunSpec.builder("f1")
           .addModifiers(KModifier.ACTUAL)
           .addStatement("return 1")
-          .build()
+          .build(),
       )
       .build()
 
@@ -170,7 +170,7 @@ class CrossplatformTest {
       |
       |public actual fun f1() = 1
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -187,7 +187,7 @@ class CrossplatformTest {
         .addFunction(
           FunSpec.builder("print")
             .addStatement("println()")
-            .build()
+            .build(),
         )
         .build()
     }.hasMessageThat().isEqualTo("functions in expect classes can't have bodies")
@@ -199,7 +199,7 @@ class CrossplatformTest {
         .addProperty(
           PropertySpec.builder("a", Boolean::class)
             .initializer("true")
-            .build()
+            .build(),
         )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have initializers")
   }
@@ -212,9 +212,9 @@ class CrossplatformTest {
             .getter(
               FunSpec.getterBuilder()
                 .addStatement("return true")
-                .build()
+                .build(),
             )
-            .build()
+            .build(),
         )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }
@@ -229,9 +229,9 @@ class CrossplatformTest {
               FunSpec.setterBuilder()
                 .addParameter("value", Boolean::class)
                 .addStatement("field = true")
-                .build()
+                .build(),
             )
-            .build()
+            .build(),
         )
     }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
   }

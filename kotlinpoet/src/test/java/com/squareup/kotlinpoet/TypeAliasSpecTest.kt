@@ -33,7 +33,7 @@ class TypeAliasSpecTest {
       """
         |public typealias Word = kotlin.String
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -48,7 +48,7 @@ class TypeAliasSpecTest {
       """
         |public typealias Word<V> = kotlin.collections.List<V>
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -62,7 +62,7 @@ class TypeAliasSpecTest {
       """
         |public typealias Word = kotlin.String
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -76,7 +76,7 @@ class TypeAliasSpecTest {
       """
         |internal typealias Word = kotlin.String
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -90,7 +90,7 @@ class TypeAliasSpecTest {
       """
         |private typealias Word = kotlin.String
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -106,7 +106,7 @@ class TypeAliasSpecTest {
       """
         |public actual typealias AtomicRef<V> = java.util.concurrent.atomic.AtomicReference<V>
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -123,7 +123,7 @@ class TypeAliasSpecTest {
       | */
       |public typealias Word = kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -133,7 +133,7 @@ class TypeAliasSpecTest {
       .addAnnotation(
         AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
           .addMember("value = %S", "words!")
-          .build()
+          .build(),
       )
       .build()
 
@@ -142,7 +142,7 @@ class TypeAliasSpecTest {
       |@com.squareup.kotlinpoet.TypeAliasAnnotation(value = "words!")
       |public typealias Word = kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -159,7 +159,7 @@ class TypeAliasSpecTest {
       | */
       |public typealias Word = kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -211,7 +211,7 @@ class TypeAliasSpecTest {
       .addAnnotation(
         AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
           .addMember("value = %S", "value1")
-          .build()
+          .build(),
       )
 
     val javaWord = AnnotationSpec.builder(TypeAliasAnnotation::class.asClassName())
@@ -229,7 +229,7 @@ class TypeAliasSpecTest {
       """
       |public typealias `fun` = kotlin.String
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -241,7 +241,7 @@ class TypeAliasSpecTest {
       """
       |public typealias lambda = @Annotation () -> kotlin.Unit
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

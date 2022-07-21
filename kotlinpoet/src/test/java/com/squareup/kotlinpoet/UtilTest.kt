@@ -111,9 +111,9 @@ class UtilTest {
               append("%N(100)")
               arg += "aaa bbb"
             }.toString(),
-            *arg.toTypedArray()
+            *arg.toTypedArray(),
           )
-        }.build()
+        }.build(),
       )
       .build()
       .toString()

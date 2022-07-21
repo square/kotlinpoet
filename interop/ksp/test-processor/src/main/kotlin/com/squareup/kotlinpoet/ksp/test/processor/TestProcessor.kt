@@ -64,7 +64,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         addAnnotations(
           decl.annotations
             .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
-            .map { it.toAnnotationSpec() }.asIterable()
+            .map { it.toAnnotationSpec() }.asIterable(),
         )
       }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
@@ -77,7 +77,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             it
           }
         }
-      }
+      },
     )
 
     // Add properties
@@ -91,7 +91,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             } else {
               it
             }
-          }
+          },
         )
           .addOriginatingKSFile(decl.containingFile!!)
           .mutable(property.isMutable)
@@ -100,10 +100,10 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             addModifiers(property.modifiers.mapNotNull { it.toKModifier() })
             addAnnotations(
               property.annotations
-                .map { it.toAnnotationSpec() }.asIterable()
+                .map { it.toAnnotationSpec() }.asIterable(),
             )
           }
-          .build()
+          .build(),
       )
     }
 
@@ -126,7 +126,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
                   it
                 }
               }
-            }
+            },
           )
           .addParameters(
             function.parameters.map { parameter ->
@@ -140,7 +140,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               parameter.name?.let {
                 ParameterSpec.builder(it.getShortName(), parameterType).build()
               } ?: ParameterSpec.unnamed(parameterType)
-            }
+            },
           )
           .returns(
             function.returnType!!.toTypeName(functionTypeParams).let {
@@ -149,9 +149,9 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               } else {
                 it
               }
-            }
+            },
           )
-          .build()
+          .build(),
       )
     }
 

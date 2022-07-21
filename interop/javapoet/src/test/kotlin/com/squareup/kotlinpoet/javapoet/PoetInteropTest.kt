@@ -136,7 +136,7 @@ class PoetInteropTest {
     val inKType = typeNameOf<GenericType<in String>>()
     val superJType = JParameterizedTypeName.get(
       JClassName.get(GenericType::class.java),
-      JWildcardTypeName.supertypeOf(String::class.java)
+      JWildcardTypeName.supertypeOf(String::class.java),
     )
     assertThat(inKType.toJTypeName()).isEqualTo(superJType)
     assertThat(superJType.toKTypeName()).isEqualTo(inKType)
@@ -144,7 +144,7 @@ class PoetInteropTest {
     val outKType = typeNameOf<GenericType<out String>>()
     val extendsJType = JParameterizedTypeName.get(
       JClassName.get(GenericType::class.java),
-      JWildcardTypeName.subtypeOf(String::class.java)
+      JWildcardTypeName.subtypeOf(String::class.java),
     )
     assertThat(outKType.toJTypeName()).isEqualTo(extendsJType)
     assertThat(extendsJType.toKTypeName()).isEqualTo(outKType)
@@ -152,7 +152,7 @@ class PoetInteropTest {
     val star = typeNameOf<GenericType<*>>()
     val extendsObjectJType = JParameterizedTypeName.get(
       JClassName.get(GenericType::class.java),
-      JWildcardTypeName.subtypeOf(JTypeName.OBJECT)
+      JWildcardTypeName.subtypeOf(JTypeName.OBJECT),
     )
     assertThat(star.toJTypeName()).isEqualTo(extendsObjectJType)
     assertThat(extendsObjectJType.toKTypeName()).isEqualTo(star)
@@ -171,9 +171,9 @@ class PoetInteropTest {
         JParameterizedTypeName.get(
           JClassName.get(Map::class.java),
           JClassName.INT.box(),
-          ArrayTypeName.of(JClassName.INT)
-        )
-      )
+          ArrayTypeName.of(JClassName.INT),
+        ),
+      ),
     )
     assertThat(complexType.toJTypeName()).isEqualTo(jType)
 

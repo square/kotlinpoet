@@ -45,7 +45,7 @@ import kotlin.reflect.KClass
  */
 public class FileSpec private constructor(
   builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
+  private val tagMap: TagMap = builder.buildTagMap(),
 ) : Taggable by tagMap {
   public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
@@ -63,8 +63,10 @@ public class FileSpec private constructor(
   public fun writeTo(out: Appendable) {
     // First pass: emit the entire class, just to collect the types we'll need to import.
     val importsCollector = CodeWriter(
-      NullAppendable, indent, memberImports,
-      columnLimit = Integer.MAX_VALUE
+      NullAppendable,
+      indent,
+      memberImports,
+      columnLimit = Integer.MAX_VALUE,
     )
     emit(importsCollector, collectingImports = true)
     val suggestedTypeImports = importsCollector.suggestedTypeImports()
@@ -73,8 +75,11 @@ public class FileSpec private constructor(
 
     // Second pass: write the code, taking advantage of the imports.
     val codeWriter = CodeWriter(
-      out, indent, memberImports, suggestedTypeImports,
-      suggestedMemberImports
+      out,
+      indent,
+      memberImports,
+      suggestedTypeImports,
+      suggestedMemberImports,
     )
     emit(codeWriter, collectingImports = false)
     codeWriter.close()
@@ -114,7 +119,7 @@ public class FileSpec private constructor(
       StandardLocation.SOURCE_OUTPUT,
       packageName,
       "$name.$extension",
-      *originatingElements.toTypedArray()
+      *originatingElements.toTypedArray(),
     )
     try {
       filerSourceFile.openWriter().use { writer -> writeTo(writer) }
@@ -207,11 +212,11 @@ public class FileSpec private constructor(
 
   public fun toJavaFileObject(): JavaFileObject {
     val uri = URI.create(
-      (
-        if (packageName.isEmpty())
-          name else
-          packageName.replace('.', '/') + '/' + name
-        ) + ".$extension"
+      if (packageName.isEmpty()) {
+        name
+      } else {
+        packageName.replace('.', '/') + '/' + name
+      } + ".$extension",
     )
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
@@ -268,7 +273,7 @@ public class FileSpec private constructor(
         FILE -> annotationSpec
         null -> annotationSpec.toBuilder().useSiteTarget(FILE).build()
         else -> error(
-          "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
+          "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.",
         )
       }
       annotations += spec
@@ -291,7 +296,7 @@ public class FileSpec private constructor(
     @Deprecated(
       "Use addFileComment() instead.",
       ReplaceWith("addFileComment(format, args)"),
-      DeprecationLevel.ERROR
+      DeprecationLevel.ERROR,
     )
     public fun addComment(format: String, vararg args: Any): Builder = addFileComment(format, *args)
 
@@ -335,7 +340,8 @@ public class FileSpec private constructor(
     }
 
     public fun addImport(constant: Enum<*>): Builder = addImport(
-      (constant as java.lang.Enum<*>).declaringClass.asClassName(), constant.name
+      (constant as java.lang.Enum<*>).declaringClass.asClassName(),
+      constant.name,
     )
 
     public fun addImport(`class`: Class<*>, vararg names: String): Builder = apply {
@@ -403,7 +409,7 @@ public class FileSpec private constructor(
     public fun addAliasedImport(
       className: ClassName,
       memberName: String,
-      `as`: String
+      `as`: String,
     ): Builder = apply {
       memberImports += Import("${className.canonicalName}.$memberName", `as`)
     }
@@ -428,7 +434,7 @@ public class FileSpec private constructor(
      */
     public fun addKotlinDefaultImports(
       includeJvm: Boolean = true,
-      includeJs: Boolean = true
+      includeJs: Boolean = true,
     ): Builder = apply {
       defaultImports += KOTLIN_DEFAULT_IMPORTS
       if (includeJvm) {
@@ -519,7 +525,7 @@ public class FileSpec private constructor(
       for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
           error(
-            "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
+            "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.",
           )
         }
       }

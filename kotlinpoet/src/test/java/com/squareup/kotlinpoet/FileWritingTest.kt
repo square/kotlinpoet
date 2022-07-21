@@ -28,7 +28,8 @@ import org.junit.rules.TemporaryFolder
 
 class FileWritingTest {
   // Used for testing java.io File behavior.
-  @JvmField @Rule val tmp = TemporaryFolder()
+  @JvmField @Rule
+  val tmp = TemporaryFolder()
 
   // Used for testing java.nio.file Path behavior.
   private val fs = Jimfs.newFileSystem(Configuration.unix())
@@ -136,7 +137,8 @@ class FileWritingTest {
   }
 
   @Suppress("LocalVariableName")
-  @Test fun filerPassesOriginatingElements() {
+  @Test
+  fun filerPassesOriginatingElements() {
     // TypeSpecs
     val element1_1 = FakeElement()
     val test1 = TypeSpec.classBuilder("Test1")
@@ -203,7 +205,7 @@ class FileWritingTest {
       element3_1,
       element3_2,
       element4_1,
-      element4_2
+      element4_2,
     )
   }
 
@@ -237,7 +239,7 @@ class FileWritingTest {
           .addModifiers(KModifier.PUBLIC)
           .addParameter("args", Array<String>::class.java)
           .addCode("%T.out.println(%S);\n", System::class, "Hello World!")
-          .build()
+          .build(),
       )
       .build()
     FileSpec.builder("foo", "Test")
@@ -268,7 +270,7 @@ class FileWritingTest {
         |${"\t"}}
         |}
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -291,7 +293,7 @@ class FileWritingTest {
         |
         |public class Taco
         |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 

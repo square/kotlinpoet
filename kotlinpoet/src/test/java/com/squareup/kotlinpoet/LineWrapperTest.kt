@@ -28,7 +28,7 @@ class LineWrapperTest {
       """
         |abcde
         |    fghij
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -50,7 +50,7 @@ class LineWrapperTest {
         |ab cd ef
         |  gh ij kl
         |  mn op qr
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -65,7 +65,7 @@ class LineWrapperTest {
       """
         |abcdefghij
         |    klmnop
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -95,7 +95,7 @@ class LineWrapperTest {
       """
         |abcde fghi
         |jklmnopqrstuvwxy
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -110,7 +110,7 @@ class LineWrapperTest {
         |abcde
         |    fghij
         |klmnopqrstuvwxy
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -124,7 +124,7 @@ class LineWrapperTest {
         |abcde fghi
         |klmnopq
         |r stuvwxyz
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -139,7 +139,7 @@ class LineWrapperTest {
         |klmnopq
         |rs
         |    tuvwxyz1
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -153,7 +153,7 @@ class LineWrapperTest {
         |a +
         |    b       +
         |    c
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -167,7 +167,7 @@ class LineWrapperTest {
         |a -
         |    b       -
         |    c
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -181,7 +181,7 @@ class LineWrapperTest {
       """
         |ab cd
         |    efgh ij kl mn
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -195,7 +195,7 @@ class LineWrapperTest {
       """
         |ab cd
         |    efgh ij kl mn
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -207,7 +207,7 @@ class LineWrapperTest {
     assertThat(out.toString()).isEqualTo(
       """
         | -1
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -226,7 +226,7 @@ class LineWrapperTest {
         | * e f g h i j
         | * k l m n
         | */
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

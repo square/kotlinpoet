@@ -90,7 +90,7 @@ class ClassInspectorUtilTest {
       .isEqualTo(
         AnnotationSpec.builder(Throws::class.asClassName())
           .addMember("exceptionClasses = [%T::class]", Exception::class.asClassName())
-          .build()
+          .build(),
       )
   }
 }

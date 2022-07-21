@@ -80,7 +80,7 @@ private val Char.isIsoControl: Boolean
 internal fun stringLiteralWithQuotes(
   value: String,
   escapeDollarSign: Boolean = true,
-  isConstantContext: Boolean = false
+  isConstantContext: Boolean = false,
 ): String {
   if (!isConstantContext && '\n' in value) {
     val result = StringBuilder(value.length + 32)

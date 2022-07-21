@@ -27,7 +27,7 @@ public class LambdaTypeName private constructor(
   nullable: Boolean = false,
   public val isSuspending: Boolean = false,
   annotations: List<AnnotationSpec> = emptyList(),
-  tags: Map<KClass<*>, Any> = emptyMap()
+  tags: Map<KClass<*>, Any> = emptyMap(),
 ) : TypeName(nullable, annotations, TagMap(tags)) {
   public val parameters: List<ParameterSpec> = parameters.toImmutableList()
 
@@ -42,7 +42,7 @@ public class LambdaTypeName private constructor(
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,
-    tags: Map<KClass<*>, Any>
+    tags: Map<KClass<*>, Any>,
   ): LambdaTypeName {
     return copy(nullable, annotations, this.isSuspending, tags)
   }
@@ -51,7 +51,7 @@ public class LambdaTypeName private constructor(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     suspending: Boolean = this.isSuspending,
-    tags: Map<KClass<*>, Any> = this.tags.toMap()
+    tags: Map<KClass<*>, Any> = this.tags.toMap(),
   ): LambdaTypeName {
     return LambdaTypeName(receiver, contextReceivers, parameters, returnType, nullable, suspending, annotations, tags)
   }
@@ -85,31 +85,32 @@ public class LambdaTypeName private constructor(
 
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @ExperimentalKotlinPoetApi @JvmStatic public fun get(
+    @ExperimentalKotlinPoetApi @JvmStatic
+    public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName,
-      contextReceivers: List<TypeName> = emptyList()
+      contextReceivers: List<TypeName> = emptyList(),
     ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
-      returnType: TypeName
+      returnType: TypeName,
     ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
       receiver: TypeName? = null,
       vararg parameters: TypeName = emptyArray(),
-      returnType: TypeName
+      returnType: TypeName,
     ): LambdaTypeName {
       return LambdaTypeName(
         receiver,
         emptyList(),
         parameters.toList().map { ParameterSpec.unnamed(it) },
-        returnType
+        returnType,
       )
     }
 
@@ -117,7 +118,7 @@ public class LambdaTypeName private constructor(
     @JvmStatic public fun get(
       receiver: TypeName? = null,
       vararg parameters: ParameterSpec = emptyArray(),
-      returnType: TypeName
+      returnType: TypeName,
     ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters.toList(), returnType)
   }
 }

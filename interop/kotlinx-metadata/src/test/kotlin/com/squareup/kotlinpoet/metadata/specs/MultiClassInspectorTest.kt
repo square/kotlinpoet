@@ -46,7 +46,7 @@ abstract class MultiClassInspectorTest {
     fun data(): Collection<Array<ClassInspectorType>> {
       return listOf(
         arrayOf(ClassInspectorType.REFLECTIVE),
-        arrayOf(ClassInspectorType.ELEMENTS)
+        arrayOf(ClassInspectorType.ELEMENTS),
       )
     }
   }
@@ -76,7 +76,7 @@ abstract class MultiClassInspectorTest {
   @Inherited
   annotation class IgnoreForHandlerType(
     val reason: String,
-    val handlerType: ClassInspectorType
+    val handlerType: ClassInspectorType,
   )
 
   @JvmField
@@ -93,12 +93,12 @@ abstract class MultiClassInspectorTest {
     object : Statement() {
       override fun evaluate() {
         val annotation = description.getAnnotation(
-          IgnoreForHandlerType::class.java
+          IgnoreForHandlerType::class.java,
         )
         val shouldIgnore = annotation?.handlerType == classInspectorType
         Assume.assumeTrue(
           "Ignoring ${description.methodName}: ${annotation?.reason}",
-          !shouldIgnore
+          !shouldIgnore,
         )
         base.evaluate()
       }

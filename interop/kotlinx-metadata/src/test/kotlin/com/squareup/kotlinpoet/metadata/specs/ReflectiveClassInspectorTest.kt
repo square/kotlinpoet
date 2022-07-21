@@ -65,7 +65,7 @@ class ReflectiveClassInspectorTest {
       """
             package $testPackageName
             data class $testClass(val $testPropertyName: $testPropertyType)
-      """.trimIndent()
+      """.trimIndent(),
     )
 
     val result = KotlinCompilation().apply {

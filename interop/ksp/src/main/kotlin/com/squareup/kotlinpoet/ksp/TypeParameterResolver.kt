@@ -67,7 +67,7 @@ public fun List<KSTypeParameter>.toTypeParameterResolver(
       ?: parent?.get(id)
       ?: throw IllegalStateException(
         "No type argument found for $id! Analyzed $sourceTypeHint with known parameters " +
-          "${parametersMap.keys}"
+          "${parametersMap.keys}",
       )
   }
 

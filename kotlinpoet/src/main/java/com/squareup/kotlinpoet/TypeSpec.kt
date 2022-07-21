@@ -41,7 +41,7 @@ public class TypeSpec private constructor(
   private val delegateOriginatingElements: OriginatingElementsHolder = builder.originatingElements
     .plus(builder.typeSpecs.flatMap(TypeSpec::originatingElements))
     .buildOriginatingElements(),
-  private val contextReceivers: ContextReceivers = builder.buildContextReceivers()
+  private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
 ) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements, ContextReceivable by contextReceivers {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
@@ -101,7 +101,7 @@ public class TypeSpec private constructor(
     codeWriter: CodeWriter,
     enumName: String?,
     implicitModifiers: Set<KModifier> = emptySet(),
-    isNestedExternal: Boolean = false
+    isNestedExternal: Boolean = false,
   ) {
     // Types.
     val areNestedExternal = EXTERNAL in modifiers || isNestedExternal
@@ -129,7 +129,6 @@ public class TypeSpec private constructor(
         }
         codeWriter.emit(" {\n")
       } else if (isAnonymousClass) {
-
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
           if (!areNestedExternal && !modifiers.contains(EXPECT)) {
@@ -141,9 +140,11 @@ public class TypeSpec private constructor(
           listOf()
         }
 
-        val allSuperTypes = supertype + if (superinterfaces.isNotEmpty())
-          superinterfaces.keys.map { CodeBlock.of(" %T", it) } else
+        val allSuperTypes = supertype + if (superinterfaces.isNotEmpty()) {
+          superinterfaces.keys.map { CodeBlock.of(" %T", it) }
+        } else {
           emptyList()
+        }
 
         if (allSuperTypes.isNotEmpty()) {
           codeWriter.emitCode(" :")
@@ -160,7 +161,7 @@ public class TypeSpec private constructor(
         codeWriter.emitAnnotations(annotationSpecs, false)
         codeWriter.emitModifiers(
           modifiers,
-          if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC)
+          if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC),
         )
         codeWriter.emit(kind.declarationKeyword)
         if (name != null) {
@@ -191,8 +192,11 @@ public class TypeSpec private constructor(
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(
-                codeWriter, setOf(PUBLIC), withInitializer = false, inline = true,
-                inlineAnnotations = false
+                codeWriter,
+                setOf(PUBLIC),
+                withInitializer = false,
+                inline = true,
+                inlineAnnotations = false,
               )
               param.emitDefaultValue(codeWriter)
             } else {
@@ -337,8 +341,9 @@ public class TypeSpec private constructor(
       if (property.getter != null || property.setter != null) continue
       val parameter = primaryConstructor.parameter(property.name) ?: continue
       if (parameter.type != property.type) continue
-      if (!isPropertyInitializerConstructorParameter(property, parameter))
+      if (!isPropertyInitializerConstructorParameter(property, parameter)) {
         continue
+      }
 
       result[property.name] = property.fromPrimaryConstructorParameter(parameter)
     }
@@ -350,7 +355,7 @@ public class TypeSpec private constructor(
    */
   private fun isPropertyInitializerConstructorParameter(
     property: PropertySpec,
-    parameter: ParameterSpec
+    parameter: ParameterSpec,
   ): Boolean {
     val parameterName = CodeBlock.of("%N", parameter).toString()
     val initializerCode = property.initializer.toString().escapeIfNecessary(validate = false)
@@ -418,7 +423,7 @@ public class TypeSpec private constructor(
     internal val declarationKeyword: String,
     internal val defaultImplicitPropertyModifiers: Set<KModifier>,
     internal val defaultImplicitFunctionModifiers: Set<KModifier>,
-    internal val defaultImplicitTypeModifiers: Set<KModifier>
+    internal val defaultImplicitTypeModifiers: Set<KModifier>,
   ) {
     CLASS("class", setOf(PUBLIC), setOf(PUBLIC), setOf()),
     OBJECT("object", setOf(PUBLIC), setOf(PUBLIC), setOf()),
@@ -454,7 +459,7 @@ public class TypeSpec private constructor(
   public class Builder internal constructor(
     internal var kind: Kind,
     internal val name: String?,
-    vararg modifiers: KModifier
+    vararg modifiers: KModifier,
   ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
@@ -473,6 +478,7 @@ public class TypeSpec private constructor(
 
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
@@ -506,7 +512,7 @@ public class TypeSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addAnnotation(annotation: Class<*>): Builder =
       addAnnotation(annotation.asClassName())
@@ -576,7 +582,7 @@ public class TypeSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun superclass(superclass: Type): Builder = superclass(superclass.asTypeName())
 
@@ -584,7 +590,7 @@ public class TypeSpec private constructor(
 
     public fun addSuperclassConstructorParameter(
       format: String,
-      vararg args: Any
+      vararg args: Any,
     ): Builder = apply {
       addSuperclassConstructorParameter(CodeBlock.of(format, *args))
     }
@@ -600,7 +606,7 @@ public class TypeSpec private constructor(
 
     public fun addSuperinterface(
       superinterface: TypeName,
-      delegate: CodeBlock = CodeBlock.EMPTY
+      delegate: CodeBlock = CodeBlock.EMPTY,
     ): Builder = apply {
       if (delegate.isEmpty()) {
         this.superinterfaces[superinterface] = null
@@ -621,26 +627,26 @@ public class TypeSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addSuperinterface(
       superinterface: Type,
-      delegate: CodeBlock = CodeBlock.EMPTY
+      delegate: CodeBlock = CodeBlock.EMPTY,
     ): Builder = addSuperinterface(superinterface.asTypeName(), delegate)
 
     public fun addSuperinterface(
       superinterface: KClass<*>,
-      delegate: CodeBlock = CodeBlock.EMPTY
+      delegate: CodeBlock = CodeBlock.EMPTY,
     ): Builder = addSuperinterface(superinterface.asTypeName(), delegate)
 
     public fun addSuperinterface(
       superinterface: KClass<*>,
-      constructorParameterName: String
+      constructorParameterName: String,
     ): Builder = addSuperinterface(superinterface.asTypeName(), constructorParameterName)
 
     public fun addSuperinterface(
       superinterface: TypeName,
-      constructorParameter: String
+      constructorParameter: String,
     ): Builder = apply {
       requireNotNull(primaryConstructor) {
         "delegating to constructor parameter requires not-null constructor"
@@ -654,7 +660,7 @@ public class TypeSpec private constructor(
 
     @JvmOverloads public fun addEnumConstant(
       name: String,
-      typeSpec: TypeSpec = anonymousClassBuilder().build()
+      typeSpec: TypeSpec = anonymousClassBuilder().build(),
     ): Builder = apply {
       require(name != "name" && name != "ordinal") {
         "constant with name \"$name\" conflicts with a supertype member with the same name"
@@ -688,7 +694,7 @@ public class TypeSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
       addProperty(name, type.asTypeName(), *modifiers)
@@ -701,7 +707,7 @@ public class TypeSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
       addProperty(name, type.asTypeName(), modifiers)
@@ -863,7 +869,8 @@ public class TypeSpec private constructor(
     @JvmStatic public fun objectBuilder(className: ClassName): Builder =
       objectBuilder(className.simpleName)
 
-    @JvmStatic @JvmOverloads public fun companionObjectBuilder(name: String? = null): Builder =
+    @JvmStatic @JvmOverloads
+    public fun companionObjectBuilder(name: String? = null): Builder =
       Builder(Kind.OBJECT, name, COMPANION)
 
     @JvmStatic public fun interfaceBuilder(name: String): Builder = Builder(Kind.INTERFACE, name)

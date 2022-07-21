@@ -35,7 +35,7 @@ class TaggableTest(val builder: Taggable.Builder<*>) {
       ParameterSpec.builder("test", String::class.asClassName()),
       PropertySpec.builder("test", String::class.asClassName()),
       TypeAliasSpec.builder("Test", String::class.asClassName()),
-      TypeSpec.classBuilder("Test")
+      TypeSpec.classBuilder("Test"),
     )
   }
 

@@ -25,7 +25,7 @@ import kotlin.reflect.KClass
 /** A generated typealias declaration */
 public class TypeAliasSpec private constructor(
   builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap()
+  private val tagMap: TagMap = builder.buildTagMap(),
 ) : Taggable by tagMap {
   public val name: String = builder.name
   public val type: TypeName = builder.type
@@ -68,7 +68,7 @@ public class TypeAliasSpec private constructor(
 
   public class Builder internal constructor(
     internal val name: String,
-    internal val type: TypeName
+    internal val type: TypeName,
   ) : Taggable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
 
@@ -119,7 +119,7 @@ public class TypeAliasSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addAnnotation(annotation: Class<*>): Builder =
       addAnnotation(annotation.asClassName())
@@ -146,7 +146,7 @@ public class TypeAliasSpec private constructor(
 
     @DelicateKotlinPoetApi(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead."
+        "using the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
     public fun builder(name: String, type: Type): Builder =

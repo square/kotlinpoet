@@ -24,17 +24,17 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 public enum class JvmFieldModifier : JvmModifier {
   STATIC {
     override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      JvmStatic::class.asClassName()
+      JvmStatic::class.asClassName(),
     ).build()
   },
   TRANSIENT {
     override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      Transient::class.asClassName()
+      Transient::class.asClassName(),
     ).build()
   },
   VOLATILE {
     override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      Volatile::class.asClassName()
+      Volatile::class.asClassName(),
     ).build()
   };
 }

@@ -60,7 +60,7 @@ public data class ClassData(
   override val annotations: Collection<AnnotationSpec>,
   override val properties: Map<KmProperty, PropertyData>,
   val constructors: Map<KmConstructor, ConstructorData>,
-  override val methods: Map<KmFunction, MethodData>
+  override val methods: Map<KmFunction, MethodData>,
 ) : ContainerData
 
 /**
@@ -80,7 +80,7 @@ public data class FileData(
   override val methods: Map<KmFunction, MethodData>,
   val className: ClassName,
   val jvmName: String? =
-    if (!className.simpleName.endsWith("Kt")) className.simpleName else null
+    if (!className.simpleName.endsWith("Kt")) className.simpleName else null,
 ) : ContainerData {
 
   /**
@@ -100,5 +100,5 @@ public data class FileData(
 @KotlinPoetMetadataPreview
 public data class EnumEntryData(
   val declarationContainer: KmClass?,
-  val annotations: Collection<AnnotationSpec>
+  val annotations: Collection<AnnotationSpec>,
 )

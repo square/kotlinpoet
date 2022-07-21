@@ -16,12 +16,8 @@
 package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.symbol.Visibility
-import com.google.devtools.ksp.symbol.Visibility.INTERNAL
 import com.google.devtools.ksp.symbol.Visibility.JAVA_PACKAGE
 import com.google.devtools.ksp.symbol.Visibility.LOCAL
-import com.google.devtools.ksp.symbol.Visibility.PRIVATE
-import com.google.devtools.ksp.symbol.Visibility.PROTECTED
-import com.google.devtools.ksp.symbol.Visibility.PUBLIC
 import com.squareup.kotlinpoet.KModifier
 
 /**
@@ -30,10 +26,10 @@ import com.squareup.kotlinpoet.KModifier
  */
 public fun Visibility.toKModifier(): KModifier? {
   return when (this) {
-    PUBLIC -> KModifier.PUBLIC
-    PRIVATE -> KModifier.PRIVATE
-    PROTECTED -> KModifier.PROTECTED
-    INTERNAL -> KModifier.INTERNAL
+    Visibility.PUBLIC -> KModifier.PUBLIC
+    Visibility.PRIVATE -> KModifier.PRIVATE
+    Visibility.PROTECTED -> KModifier.PROTECTED
+    Visibility.INTERNAL -> KModifier.INTERNAL
     else -> null
   }
 }

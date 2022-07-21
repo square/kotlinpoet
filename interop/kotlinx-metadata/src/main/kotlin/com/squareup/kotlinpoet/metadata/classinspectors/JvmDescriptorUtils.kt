@@ -182,10 +182,12 @@ internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>()
   override fun visitTypeVariable(t: TypeVariable, types: Types): String = t.descriptor(types)
 
   override fun visitNull(t: NullType, types: Types): String = visitUnknown(
-    t, types
+    t,
+    types,
   )
   override fun visitError(t: ErrorType, types: Types): String = visitUnknown(
-    t, types
+    t,
+    types,
   )
 
   override fun visitUnknown(t: TypeMirror, types: Types): String = error("Unsupported type $t")

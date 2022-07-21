@@ -32,7 +32,7 @@ public class ParameterizedTypeName internal constructor(
   typeArguments: List<TypeName>,
   nullable: Boolean = false,
   annotations: List<AnnotationSpec> = emptyList(),
-  tags: Map<KClass<*>, Any> = emptyMap()
+  tags: Map<KClass<*>, Any> = emptyMap(),
 ) : TypeName(nullable, annotations, TagMap(tags)) {
   public val typeArguments: List<TypeName> = typeArguments.toImmutableList()
 
@@ -45,7 +45,7 @@ public class ParameterizedTypeName internal constructor(
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,
-    tags: Map<KClass<*>, Any>
+    tags: Map<KClass<*>, Any>,
   ): ParameterizedTypeName {
     return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations, tags)
   }
@@ -54,15 +54,18 @@ public class ParameterizedTypeName internal constructor(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations,
     tags: Map<KClass<*>, Any> = this.tags,
-    typeArguments: List<TypeName> = this.typeArguments
+    typeArguments: List<TypeName> = this.typeArguments,
   ): ParameterizedTypeName {
     return ParameterizedTypeName(enclosingType, rawType, typeArguments, nullable, annotations, tags)
   }
 
   public fun plusParameter(typeArgument: TypeName): ParameterizedTypeName =
     ParameterizedTypeName(
-      enclosingType, rawType, typeArguments + typeArgument, isNullable,
-      annotations
+      enclosingType,
+      rawType,
+      typeArguments + typeArgument,
+      isNullable,
+      annotations,
     )
 
   public fun plusParameter(typeArgument: KClass<*>): ParameterizedTypeName =
@@ -102,77 +105,99 @@ public class ParameterizedTypeName internal constructor(
 
   public companion object {
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun ClassName.parameterizedBy(
-      vararg typeArguments: TypeName
+    @JvmStatic
+    @JvmName("get")
+    public fun ClassName.parameterizedBy(
+      vararg typeArguments: TypeName,
     ): ParameterizedTypeName = ParameterizedTypeName(null, this, typeArguments.toList())
 
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun KClass<*>.parameterizedBy(
-      vararg typeArguments: KClass<*>
+    @JvmStatic
+    @JvmName("get")
+    public fun KClass<*>.parameterizedBy(
+      vararg typeArguments: KClass<*>,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun Class<*>.parameterizedBy(
-      vararg typeArguments: Type
+    @JvmStatic
+    @JvmName("get")
+    public fun Class<*>.parameterizedBy(
+      vararg typeArguments: Type,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun ClassName.parameterizedBy(
-      typeArguments: List<TypeName>
+    @JvmStatic
+    @JvmName("get")
+    public fun ClassName.parameterizedBy(
+      typeArguments: List<TypeName>,
     ): ParameterizedTypeName = ParameterizedTypeName(null, this, typeArguments)
 
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun KClass<*>.parameterizedBy(
-      typeArguments: Iterable<KClass<*>>
+    @JvmStatic
+    @JvmName("get")
+    public fun KClass<*>.parameterizedBy(
+      typeArguments: Iterable<KClass<*>>,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
-    @JvmStatic @JvmName("get") public fun Class<*>.parameterizedBy(
-      typeArguments: Iterable<Type>
+    @JvmStatic
+    @JvmName("get")
+    public fun Class<*>.parameterizedBy(
+      typeArguments: Iterable<Type>,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
     /** Returns a parameterized type, applying `typeArgument` to `this`. */
-    @JvmStatic @JvmName("get") public fun ClassName.plusParameter(
-      typeArgument: TypeName
+    @JvmStatic
+    @JvmName("get")
+    public fun ClassName.plusParameter(
+      typeArgument: TypeName,
     ): ParameterizedTypeName = parameterizedBy(typeArgument)
 
     /** Returns a parameterized type, applying `typeArgument` to `this`. */
-    @JvmStatic @JvmName("get") public fun KClass<*>.plusParameter(
-      typeArgument: KClass<*>
+    @JvmStatic
+    @JvmName("get")
+    public fun KClass<*>.plusParameter(
+      typeArgument: KClass<*>,
     ): ParameterizedTypeName = parameterizedBy(typeArgument)
 
     /** Returns a parameterized type, applying `typeArgument` to `this`. */
-    @JvmStatic @JvmName("get") public fun Class<*>.plusParameter(
-      typeArgument: Class<*>
+    @JvmStatic
+    @JvmName("get")
+    public fun Class<*>.plusParameter(
+      typeArgument: Class<*>,
     ): ParameterizedTypeName = parameterizedBy(typeArgument)
 
     /** Returns a parameterized type equivalent to `type`. */
     internal fun get(
       type: ParameterizedType,
-      map: MutableMap<Type, TypeVariableName>
+      map: MutableMap<Type, TypeVariableName>,
     ): ParameterizedTypeName {
       val rawType = (type.rawType as Class<*>).asClassName()
       val ownerType = if (type.ownerType is ParameterizedType &&
         !Modifier.isStatic((type.rawType as Class<*>).modifiers)
-      )
-        type.ownerType as ParameterizedType else
+      ) {
+        type.ownerType as ParameterizedType
+      } else {
         null
+      }
 
       val typeArguments = type.actualTypeArguments.map { get(it, map = map) }
-      return if (ownerType != null)
-        get(ownerType, map = map).nestedClass(rawType.simpleName, typeArguments) else
+      return if (ownerType != null) {
+        get(ownerType, map = map).nestedClass(rawType.simpleName, typeArguments)
+      } else {
         ParameterizedTypeName(null, rawType, typeArguments)
+      }
     }
 
     /** Returns a type name equivalent to type with given list of type arguments. */
     internal fun get(
       type: KClass<*>,
       nullable: Boolean,
-      typeArguments: List<KTypeProjection>
+      typeArguments: List<KTypeProjection>,
     ): TypeName {
       if (typeArguments.isEmpty()) {
         return type.asTypeName().run { if (nullable) copy(nullable = true) else this }
@@ -196,7 +221,7 @@ public class ParameterizedTypeName internal constructor(
           }
         },
         nullable,
-        effectiveType.annotations.map { AnnotationSpec.get(it) }
+        effectiveType.annotations.map { AnnotationSpec.get(it) },
       )
     }
   }
@@ -205,7 +230,7 @@ public class ParameterizedTypeName internal constructor(
 /** Returns a parameterized type equivalent to `type`.  */
 @DelicateKotlinPoetApi(
   message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-    "using the kotlinpoet-metadata APIs instead."
+    "using the kotlinpoet-metadata APIs instead.",
 )
 @JvmName("get")
 public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =

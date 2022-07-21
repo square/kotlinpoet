@@ -41,9 +41,9 @@ class JvmAnnotationsTest {
             PropertySpec.builder("foo", String::class)
               .jvmField()
               .initializer("%S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -58,7 +58,7 @@ class JvmAnnotationsTest {
       |  public val foo: String = "foo"
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -69,15 +69,15 @@ class JvmAnnotationsTest {
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("foo", String::class)
-              .build()
+              .build(),
           )
           .addProperty(
             PropertySpec.builder("foo", String::class)
               .jvmField()
               .initializer("foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -92,7 +92,7 @@ class JvmAnnotationsTest {
       |  public val foo: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -106,11 +106,11 @@ class JvmAnnotationsTest {
                 PropertySpec.builder("foo", String::class)
                   .jvmStatic()
                   .initializer("%S", "foo")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -127,7 +127,7 @@ class JvmAnnotationsTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -142,11 +142,11 @@ class JvmAnnotationsTest {
                   .jvmStatic()
                   .addStatement("return %S", "foo")
                   .returns(String::class)
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -163,7 +163,7 @@ class JvmAnnotationsTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -179,13 +179,13 @@ class JvmAnnotationsTest {
                     FunSpec.getterBuilder()
                       .jvmStatic()
                       .addStatement("return %S", "foo")
-                      .build()
+                      .build(),
                   )
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -203,7 +203,7 @@ class JvmAnnotationsTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -220,14 +220,14 @@ class JvmAnnotationsTest {
                     FunSpec.setterBuilder()
                       .jvmStatic()
                       .addParameter("value", String::class)
-                      .build()
+                      .build(),
                   )
                   .initializer("%S", "foo")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -246,7 +246,7 @@ class JvmAnnotationsTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -262,7 +262,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .throws(IOException::class, IllegalArgumentException::class)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -281,7 +281,7 @@ class JvmAnnotationsTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -290,7 +290,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .throws(ClassName("com.squareup.tacos", "IllegalTacoException"))
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -304,7 +304,7 @@ class JvmAnnotationsTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -316,9 +316,9 @@ class JvmAnnotationsTest {
             FunSpec.constructorBuilder()
               .throws(IOException::class)
               .addParameter("foo", String::class)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -333,7 +333,7 @@ class JvmAnnotationsTest {
       |  foo: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -345,9 +345,9 @@ class JvmAnnotationsTest {
             FunSpec.getterBuilder()
               .throws(IOException::class)
               .addStatement("return %S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -362,7 +362,7 @@ class JvmAnnotationsTest {
       |  @Throws(IOException::class)
       |  get() = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -376,9 +376,9 @@ class JvmAnnotationsTest {
               .throws(IOException::class)
               .addParameter("value", String::class)
               .addStatement("print(%S)", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -395,7 +395,7 @@ class JvmAnnotationsTest {
       |    print("foo")
       |  }
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -408,9 +408,9 @@ class JvmAnnotationsTest {
           .addParameter(
             ParameterSpec.builder("baz", String::class)
               .defaultValue("%S", "baz")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -426,7 +426,7 @@ class JvmAnnotationsTest {
       |public fun foo(bar: Int, baz: String = "baz"): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -441,11 +441,11 @@ class JvmAnnotationsTest {
               .addParameter(
                 ParameterSpec.builder("baz", String::class)
                   .defaultValue("%S", "baz")
-                  .build()
+                  .build(),
               )
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -461,7 +461,7 @@ class JvmAnnotationsTest {
       |  baz: String = "baz",
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -485,7 +485,7 @@ class JvmAnnotationsTest {
       .addProperty(
         PropertySpec.builder("foo", String::class)
           .initializer("%S", "foo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -499,7 +499,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -508,7 +508,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .jvmName("getFoo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -522,7 +522,7 @@ class JvmAnnotationsTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -534,9 +534,9 @@ class JvmAnnotationsTest {
             FunSpec.getterBuilder()
               .jvmName("foo")
               .addStatement("return %S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -550,7 +550,7 @@ class JvmAnnotationsTest {
       |  @JvmName("foo")
       |  get() = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -564,9 +564,9 @@ class JvmAnnotationsTest {
             FunSpec.setterBuilder()
               .jvmName("foo")
               .addParameter("value", String::class)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -581,7 +581,7 @@ class JvmAnnotationsTest {
       |  set(`value`) {
       |  }
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -598,7 +598,7 @@ class JvmAnnotationsTest {
       .addProperty(
         PropertySpec.builder("foo", String::class)
           .initializer("%S", "foo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -612,7 +612,7 @@ class JvmAnnotationsTest {
       |
       |public val foo: String = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -621,7 +621,7 @@ class JvmAnnotationsTest {
       .addType(
         TypeSpec.classBuilder("Taco")
           .jvmSuppressWildcards()
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -633,7 +633,7 @@ class JvmAnnotationsTest {
       |@JvmSuppressWildcards
       |public class Taco
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -642,7 +642,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .jvmSuppressWildcards(suppress = false)
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -656,7 +656,7 @@ class JvmAnnotationsTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -687,7 +687,7 @@ class JvmAnnotationsTest {
         PropertySpec.builder("foo", String::class)
           .jvmSuppressWildcards(suppress = false)
           .initializer("%S", "foo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -700,7 +700,7 @@ class JvmAnnotationsTest {
       |@JvmSuppressWildcards(suppress = false)
       |public val foo: String = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -711,9 +711,9 @@ class JvmAnnotationsTest {
           .addParameter(
             "a",
             List::class.asClassName()
-              .parameterizedBy(Int::class.asTypeName().jvmSuppressWildcards())
+              .parameterizedBy(Int::class.asTypeName().jvmSuppressWildcards()),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -728,7 +728,7 @@ class JvmAnnotationsTest {
       |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -739,9 +739,9 @@ class JvmAnnotationsTest {
           .addParameter(
             "a",
             List::class.asClassName()
-              .parameterizedBy(Int::class.asTypeName().jvmWildcard())
+              .parameterizedBy(Int::class.asTypeName().jvmWildcard()),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -756,7 +756,7 @@ class JvmAnnotationsTest {
       |public fun foo(a: List<@JvmWildcard Int>): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -766,7 +766,7 @@ class JvmAnnotationsTest {
         FunSpec.builder("foo")
           .synchronized()
           .addStatement("return %S", "foo")
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -778,7 +778,7 @@ class JvmAnnotationsTest {
       |@Synchronized
       |public fun foo() = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -790,9 +790,9 @@ class JvmAnnotationsTest {
             FunSpec.getterBuilder()
               .synchronized()
               .addStatement("return %S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -806,7 +806,7 @@ class JvmAnnotationsTest {
       |  @Synchronized
       |  get() = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -820,9 +820,9 @@ class JvmAnnotationsTest {
             FunSpec.setterBuilder()
               .synchronized()
               .addParameter("value", String::class)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -837,7 +837,7 @@ class JvmAnnotationsTest {
       |  set(`value`) {
       |  }
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -856,9 +856,9 @@ class JvmAnnotationsTest {
             PropertySpec.builder("foo", String::class)
               .transient()
               .initializer("%S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -873,7 +873,7 @@ class JvmAnnotationsTest {
       |  public val foo: String = "foo"
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -884,15 +884,15 @@ class JvmAnnotationsTest {
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("foo", String::class)
-              .build()
+              .build(),
           )
           .addProperty(
             PropertySpec.builder("foo", String::class)
               .transient()
               .initializer("foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -907,7 +907,7 @@ class JvmAnnotationsTest {
       |  public val foo: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -919,9 +919,9 @@ class JvmAnnotationsTest {
             PropertySpec.builder("foo", String::class)
               .volatile()
               .initializer("%S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -936,7 +936,7 @@ class JvmAnnotationsTest {
       |  public val foo: String = "foo"
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -947,15 +947,15 @@ class JvmAnnotationsTest {
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("foo", String::class)
-              .build()
+              .build(),
           )
           .addProperty(
             PropertySpec.builder("foo", String::class)
               .volatile()
               .initializer("foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -970,7 +970,7 @@ class JvmAnnotationsTest {
       |  public val foo: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -979,7 +979,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .strictfp()
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -993,7 +993,7 @@ class JvmAnnotationsTest {
       |public fun foo(): Unit {
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1005,9 +1005,9 @@ class JvmAnnotationsTest {
             FunSpec.constructorBuilder()
               .strictfp()
               .addParameter("foo", String::class)
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1021,7 +1021,7 @@ class JvmAnnotationsTest {
       |  foo: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1033,9 +1033,9 @@ class JvmAnnotationsTest {
             FunSpec.getterBuilder()
               .strictfp()
               .addStatement("return %S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1049,7 +1049,7 @@ class JvmAnnotationsTest {
       |  @Strictfp
       |  get() = "foo"
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1063,9 +1063,9 @@ class JvmAnnotationsTest {
               .strictfp()
               .addParameter("value", String::class)
               .addStatement("print(%S)", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1081,7 +1081,7 @@ class JvmAnnotationsTest {
       |    print("foo")
       |  }
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1093,9 +1093,9 @@ class JvmAnnotationsTest {
             PropertySpec.builder("foo", String::class)
               .jvmDefault()
               .initializer("%S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1110,7 +1110,7 @@ class JvmAnnotationsTest {
       |  public val foo: String = "foo"
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1123,9 +1123,9 @@ class JvmAnnotationsTest {
               .jvmDefault()
               .returns(String::class)
               .addStatement("return %S", "foo")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1140,7 +1140,7 @@ class JvmAnnotationsTest {
       |  public fun foo(): String = "foo"
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1152,14 +1152,14 @@ class JvmAnnotationsTest {
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("value", STRING)
-              .build()
+              .build(),
           )
           .addProperty(
             PropertySpec.builder("value", STRING)
               .initializer("value")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1174,7 +1174,7 @@ class JvmAnnotationsTest {
       |  public val `value`: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -1187,14 +1187,14 @@ class JvmAnnotationsTest {
           .primaryConstructor(
             FunSpec.constructorBuilder()
               .addParameter("value", STRING)
-              .build()
+              .build(),
           )
           .addProperty(
             PropertySpec.builder("value", STRING)
               .initializer("value")
-              .build()
+              .build(),
           )
-          .build()
+          .build(),
       )
       .build()
     assertThat(file.toString()).isEqualTo(
@@ -1209,7 +1209,7 @@ class JvmAnnotationsTest {
       |  public val `value`: String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

@@ -105,7 +105,7 @@ public fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Build
 public fun FileSpec.writeTo(
   codeGenerator: CodeGenerator,
   aggregating: Boolean,
-  originatingKSFiles: Iterable<KSFile> = originatingKSFiles()
+  originatingKSFiles: Iterable<KSFile> = originatingKSFiles(),
 ) {
   val dependencies = kspDependencies(aggregating, originatingKSFiles)
   writeTo(codeGenerator, dependencies)
@@ -123,7 +123,7 @@ public fun FileSpec.writeTo(
  */
 public fun FileSpec.writeTo(
   codeGenerator: CodeGenerator,
-  dependencies: Dependencies
+  dependencies: Dependencies,
 ) {
   val file = codeGenerator.createNewFile(dependencies, packageName, name)
   // Don't use writeTo(file) because that tries to handle directories under the hood
@@ -147,7 +147,7 @@ public fun FileSpec.writeTo(
  */
 public fun FileSpec.kspDependencies(
   aggregating: Boolean,
-  originatingKSFiles: Iterable<KSFile> = originatingKSFiles()
+  originatingKSFiles: Iterable<KSFile> = originatingKSFiles(),
 ): Dependencies = Dependencies(aggregating, *originatingKSFiles.toList().toTypedArray())
 
 /**
@@ -165,7 +165,8 @@ private fun Taggable.getKSFilesTag(): List<KSFile> {
 
 private fun Taggable.Builder<*>.getOrCreateKSFilesTag(): MutableList<KSFile> {
   val holder = tags.getOrPut(
-    OriginatingKSFiles::class, ::MutableOriginatingKSFilesImpl
+    OriginatingKSFiles::class,
+    ::MutableOriginatingKSFilesImpl,
   ) as MutableOriginatingKSFiles
   return holder.files
 }

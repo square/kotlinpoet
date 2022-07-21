@@ -36,13 +36,13 @@ public class TypeVariableName private constructor(
   public val isReified: Boolean = false,
   nullable: Boolean = false,
   annotations: List<AnnotationSpec> = emptyList(),
-  tags: Map<KClass<*>, Any> = emptyMap()
+  tags: Map<KClass<*>, Any> = emptyMap(),
 ) : TypeName(nullable, annotations, TagMap(tags)) {
 
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,
-    tags: Map<KClass<*>, Any>
+    tags: Map<KClass<*>, Any>,
   ): TypeVariableName {
     return copy(nullable, annotations, this.bounds, this.isReified, tags)
   }
@@ -52,11 +52,16 @@ public class TypeVariableName private constructor(
     annotations: List<AnnotationSpec> = this.annotations.toList(),
     bounds: List<TypeName> = this.bounds.toList(),
     reified: Boolean = this.isReified,
-    tags: Map<KClass<*>, Any> = this.tagMap.tags
+    tags: Map<KClass<*>, Any> = this.tagMap.tags,
   ): TypeVariableName {
     return TypeVariableName(
-      name, bounds.withoutImplicitBound(), variance, reified, nullable,
-      annotations, tags
+      name,
+      bounds.withoutImplicitBound(),
+      variance,
+      reified,
+      nullable,
+      annotations,
+      tags,
     )
   }
 
@@ -70,7 +75,7 @@ public class TypeVariableName private constructor(
     internal fun of(
       name: String,
       bounds: List<TypeName>,
-      variance: KModifier?
+      variance: KModifier?,
     ): TypeVariableName {
       require(variance == null || variance.isOneOf(KModifier.IN, KModifier.OUT)) {
         "$variance is an invalid variance modifier, the only allowed values are in and out!"
@@ -83,81 +88,95 @@ public class TypeVariableName private constructor(
     }
 
     /** Returns type variable named `name` with `variance` and without bounds. */
-    @JvmStatic @JvmName("get") @JvmOverloads
+    @JvmStatic
+    @JvmName("get")
+    @JvmOverloads
     public operator fun invoke(name: String, variance: KModifier? = null): TypeVariableName =
       of(name = name, bounds = NULLABLE_ANY_LIST, variance = variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("get") @JvmOverloads
+    @JvmStatic
+    @JvmName("get")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       vararg bounds: TypeName,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName =
       of(
         name = name,
         bounds = bounds.toList().ifEmpty(::NULLABLE_ANY_LIST),
-        variance = variance
+        variance = variance,
       )
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("get") @JvmOverloads
+    @JvmStatic
+    @JvmName("get")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       vararg bounds: KClass<*>,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName =
       of(
         name = name,
         bounds = bounds.map(KClass<*>::asTypeName).ifEmpty(::NULLABLE_ANY_LIST),
-        variance = variance
+        variance = variance,
       )
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("get") @JvmOverloads
+    @JvmStatic
+    @JvmName("get")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       vararg bounds: Type,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName =
       of(
         name = name,
         bounds = bounds.map(Type::asTypeName).ifEmpty(::NULLABLE_ANY_LIST),
-        variance = variance
+        variance = variance,
       )
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("get") @JvmOverloads
+    @JvmStatic
+    @JvmName("get")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       bounds: List<TypeName>,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName = of(name, bounds.ifEmpty(::NULLABLE_ANY_LIST), variance)
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("getWithClasses") @JvmOverloads
+    @JvmStatic
+    @JvmName("getWithClasses")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       bounds: Iterable<KClass<*>>,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName =
       of(
         name,
         bounds.map { it.asTypeName() }.ifEmpty(::NULLABLE_ANY_LIST),
-        variance
+        variance,
       )
 
     /** Returns type variable named `name` with `variance` and `bounds`. */
-    @JvmStatic @JvmName("getWithTypes") @JvmOverloads
+    @JvmStatic
+    @JvmName("getWithTypes")
+    @JvmOverloads
     public operator fun invoke(
       name: String,
       bounds: Iterable<Type>,
-      variance: KModifier? = null
+      variance: KModifier? = null,
     ): TypeVariableName =
       of(
         name,
         bounds.map { it.asTypeName() }.ifEmpty(::NULLABLE_ANY_LIST),
-        variance
+        variance,
       )
 
     /**
@@ -170,7 +189,7 @@ public class TypeVariableName private constructor(
      */
     internal fun get(
       mirror: javax.lang.model.type.TypeVariable,
-      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>
+      typeVariables: MutableMap<TypeParameterElement, TypeVariableName>,
     ): TypeVariableName {
       val element = mirror.asElement() as TypeParameterElement
       var typeVariableName: TypeVariableName? = typeVariables[element]
@@ -196,7 +215,7 @@ public class TypeVariableName private constructor(
     /** Returns type variable equivalent to `type`.  */
     internal fun get(
       type: java.lang.reflect.TypeVariable<*>,
-      map: MutableMap<Type, TypeVariableName> = mutableMapOf()
+      map: MutableMap<Type, TypeVariableName> = mutableMapOf(),
     ): TypeVariableName {
       var result: TypeVariableName? = map[type]
       if (result == null) {
@@ -224,7 +243,7 @@ public class TypeVariableName private constructor(
 /** Returns type variable equivalent to `mirror`. */
 @DelicateKotlinPoetApi(
   message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead."
+    " the kotlinpoet-metadata APIs instead.",
 )
 @JvmName("get")
 public fun TypeVariable.asTypeVariableName(): TypeVariableName =
@@ -233,7 +252,7 @@ public fun TypeVariable.asTypeVariableName(): TypeVariableName =
 /** Returns type variable equivalent to `element`. */
 @DelicateKotlinPoetApi(
   message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead."
+    " the kotlinpoet-metadata APIs instead.",
 )
 @JvmName("get")
 public fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
@@ -252,6 +271,6 @@ public fun KTypeParameter.asTypeVariableName(): TypeVariableName {
       KVariance.INVARIANT -> null
       KVariance.IN -> KModifier.IN
       KVariance.OUT -> KModifier.OUT
-    }
+    },
   )
 }

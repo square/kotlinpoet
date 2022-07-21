@@ -73,7 +73,7 @@ internal fun KmVariance.toKModifier(): KModifier? {
 
 @KotlinPoetMetadataPreview
 internal fun KmTypeProjection.toTypeName(
-  typeParamResolver: TypeParameterResolver
+  typeParamResolver: TypeParameterResolver,
 ): TypeName {
   val typename = type?.toTypeName(typeParamResolver) ?: STAR
   return when (variance) {
@@ -91,7 +91,7 @@ internal fun KmTypeProjection.toTypeName(
  */
 @KotlinPoetMetadataPreview
 internal fun KmType.toTypeName(
-  typeParamResolver: TypeParameterResolver
+  typeParamResolver: TypeParameterResolver,
 ): TypeName {
   val argumentList = arguments.map { it.toTypeName(typeParamResolver) }
   val type: TypeName = when (val valClassifier = classifier) {
@@ -125,13 +125,13 @@ internal fun KmType.toTypeName(
               LambdaTypeName.get(
                 receiver = parameters[0],
                 parameters = parameters.drop(1).toTypedArray(),
-                returnType = returnType
+                returnType = returnType,
               )
             } else {
               LambdaTypeName.get(
                 receiver = null,
                 parameters = parameters,
-                returnType = returnType
+                returnType = returnType,
               )
             }
             lambdaType.copy(suspending = isSuspend)
@@ -159,20 +159,20 @@ internal fun KmType.toTypeName(
     // type in tags for reference.
     val abbreviatedTypeName = it.toTypeName(typeParamResolver)
     abbreviatedTypeName.copy(
-      tags = mapOf(TypeAliasTag::class to TypeAliasTag(finalType))
+      tags = mapOf(TypeAliasTag::class to TypeAliasTag(finalType)),
     )
   } ?: finalType
 }
 
 @KotlinPoetMetadataPreview
 internal fun KmTypeParameter.toTypeVariableName(
-  typeParamResolver: TypeParameterResolver
+  typeParamResolver: TypeParameterResolver,
 ): TypeVariableName {
   val finalVariance = variance.toKModifier()
   val typeVariableName = TypeVariableName(
     name = name,
     bounds = upperBounds.map { it.toTypeName(typeParamResolver) },
-    variance = finalVariance
+    variance = finalVariance,
   )
   val annotations = ClassInspectorUtil.createAnnotations {
     for (annotation in annotations) {
@@ -182,13 +182,13 @@ internal fun KmTypeParameter.toTypeVariableName(
   return typeVariableName.copy(
     reified = isReified,
     tags = mapOf(KmTypeParameter::class to this),
-    annotations = annotations
+    annotations = annotations,
   )
 }
 
 @KotlinPoetMetadataPreview
 private fun KmFlexibleTypeUpperBound.toTypeName(
-  typeParamResolver: TypeParameterResolver
+  typeParamResolver: TypeParameterResolver,
 ): TypeName {
   // TODO tag typeFlexibilityId somehow?
   return WildcardTypeName.producerOf(type.toTypeName(typeParamResolver))
@@ -209,7 +209,7 @@ internal interface TypeParameterResolver {
 
 @KotlinPoetMetadataPreview
 internal fun List<KmTypeParameter>.toTypeParameterResolver(
-  fallback: TypeParameterResolver? = null
+  fallback: TypeParameterResolver? = null,
 ): TypeParameterResolver {
   val parametersMap = LinkedHashMap<Int, TypeVariableName>()
   val typeParamResolver = { id: Int ->

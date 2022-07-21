@@ -38,7 +38,7 @@ fun synchronizedFun() {
 fun jvmOverloads(
   param1: String,
   optionalParam2: String = "",
-  nullableParam3: String? = null
+  nullableParam3: String? = null,
 ) {
 }
 

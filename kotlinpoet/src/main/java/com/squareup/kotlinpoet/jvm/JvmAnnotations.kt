@@ -34,13 +34,13 @@ public fun FileSpec.Builder.jvmName(name: String): FileSpec.Builder = addAnnotat
   AnnotationSpec.builder(JvmName::class)
     .useSiteTarget(FILE)
     .addMember("%S", name)
-    .build()
+    .build(),
 )
 
 public fun FileSpec.Builder.jvmMultifileClass(): FileSpec.Builder = addAnnotation(
   AnnotationSpec.builder(JvmMultifileClass::class)
     .useSiteTarget(FILE)
-    .build()
+    .build(),
 )
 
 public fun TypeSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): TypeSpec.Builder =
@@ -72,7 +72,7 @@ public fun FunSpec.Builder.jvmName(name: String): FunSpec.Builder = apply {
   addAnnotation(
     AnnotationSpec.builder(JvmName::class)
       .addMember("%S", name)
-      .build()
+      .build(),
   )
 }
 
@@ -89,7 +89,7 @@ public fun FunSpec.Builder.throws(exceptionClasses: Iterable<TypeName>): FunSpec
   addAnnotation(
     AnnotationSpec.builder(Throws::class)
       .apply { exceptionClasses.forEach { addMember("%T::class", it) } }
-      .build()
+      .build(),
   )
 
 public fun FunSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): FunSpec.Builder = apply {
@@ -112,7 +112,7 @@ public fun PropertySpec.Builder.jvmField(): PropertySpec.Builder = addAnnotation
 public fun PropertySpec.Builder.jvmStatic(): PropertySpec.Builder = addAnnotation(JvmStatic::class)
 
 public fun PropertySpec.Builder.jvmSuppressWildcards(
-  suppress: Boolean = true
+  suppress: Boolean = true,
 ): PropertySpec.Builder = addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
 
 public fun PropertySpec.Builder.transient(): PropertySpec.Builder = addAnnotation(Transient::class)

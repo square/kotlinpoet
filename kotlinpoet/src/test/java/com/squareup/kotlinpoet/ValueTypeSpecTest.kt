@@ -31,7 +31,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     fun data(): Collection<Array<Any>> {
       return listOf(
         arrayOf(true),
-        arrayOf(false)
+        arrayOf(false),
       )
     }
   }
@@ -51,12 +51,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("avacado", String::class)
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("avacado", String::class)
           .initializer("avacado")
-          .build()
+          .build(),
       )
       .build()
 
@@ -66,7 +66,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  public val avacado: kotlin.String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -75,12 +75,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("avacado", String::class)
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("avacado", String::class)
           .initializer("avacado")
-          .build()
+          .build(),
       )
       .addInitializerBlock(CodeBlock.EMPTY)
       .build()
@@ -94,7 +94,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -106,12 +106,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         .primaryConstructor(
           FunSpec.constructorBuilder()
             .addParameter("avocado", String::class)
-            .build()
+            .build(),
         )
         .addProperty(
           PropertySpec.builder("avocado", String::class)
             .initializer("avocado")
-            .build()
+            .build(),
         )
         .superclass(InlineSuperClass::class)
         .build()
@@ -125,12 +125,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("avocado", String::class)
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("avocado", String::class)
           .initializer("avocado")
-          .build()
+          .build(),
       )
       .addSuperinterface(InlineSuperInterface::class)
       .build()
@@ -141,7 +141,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  public val avocado: kotlin.String,
       |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -151,7 +151,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         .primaryConstructor(
           FunSpec.constructorBuilder()
             .addParameter("avocado", String::class)
-            .build()
+            .build(),
         )
         .addProperty("garlic", String::class)
         .build()
@@ -164,7 +164,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         .primaryConstructor(
           FunSpec.constructorBuilder()
             .addParameter("avocado", String::class)
-            .build()
+            .build(),
         )
         .build()
     }.hasMessageThat().isEqualTo("value/inline classes must have at least 1 property")
@@ -176,13 +176,13 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         .primaryConstructor(
           FunSpec.constructorBuilder()
             .addParameter("avocado", String::class)
-            .build()
+            .build(),
         )
         .addProperty(
           PropertySpec.builder("avocado", String::class)
             .initializer("avocado")
             .mutable()
-            .build()
+            .build(),
         )
         .build()
     }.hasMessageThat().isEqualTo("value/inline classes must have a single read-only (val) property parameter.")
@@ -195,12 +195,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         FunSpec.constructorBuilder()
           .addParameter("avocado", String::class)
           .addModifiers(PRIVATE)
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("avocado", String::class)
           .initializer("avocado")
-          .build()
+          .build(),
       )
       .build()
 
@@ -210,7 +210,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  public val avocado: kotlin.String,
       |)
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -220,24 +220,24 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("x", Int::class)
-          .build()
+          .build(),
       )
       .addEnumConstant(
         "A",
         TypeSpec.anonymousClassBuilder()
           .addSuperclassConstructorParameter("%L", 1)
-          .build()
+          .build(),
       )
       .addEnumConstant(
         "B",
         TypeSpec.anonymousClassBuilder()
           .addSuperclassConstructorParameter("%L", 2)
-          .build()
+          .build(),
       )
       .addProperty(
         PropertySpec.builder("x", Int::class)
           .initializer("x")
-          .build()
+          .build(),
       )
       .build()
     assertThat(guacamole.toString()).isEqualTo(
@@ -250,7 +250,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  ;
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

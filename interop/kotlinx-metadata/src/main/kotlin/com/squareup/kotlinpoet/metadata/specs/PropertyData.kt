@@ -37,7 +37,7 @@ public data class PropertyData(
   val fieldData: FieldData?,
   val getterData: MethodData?,
   val setterData: MethodData?,
-  val isJvmField: Boolean
+  val isJvmField: Boolean,
 ) {
   /** Indicates if this property overrides another from a supertype. */
   val isOverride: Boolean = (getterData?.isOverride ?: false) || (setterData?.isOverride ?: false)
@@ -79,7 +79,7 @@ public data class PropertyData(
     addAll(getterAnnotations.values)
     addAll(
       setterData?.allAnnotations(SET).orEmpty()
-        .filterNot { it.typeName in higherScopedAnnotations }
+        .filterNot { it.typeName in higherScopedAnnotations },
     )
     if (isJvmField) {
       add(ClassInspectorUtil.JVM_FIELD_SPEC)

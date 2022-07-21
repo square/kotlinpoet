@@ -42,7 +42,7 @@ internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): Strin
 
 internal fun buildCodeString(
   codeWriter: CodeWriter,
-  builderAction: CodeWriter.() -> Unit
+  builderAction: CodeWriter.() -> Unit,
 ): String {
   val stringBuilder = StringBuilder()
   codeWriter.emitInto(stringBuilder, builderAction)
@@ -59,7 +59,7 @@ internal class CodeWriter constructor(
   private val memberImports: Map<String, Import> = emptyMap(),
   val importedTypes: Map<String, ClassName> = emptyMap(),
   val importedMembers: Map<String, MemberName> = emptyMap(),
-  columnLimit: Int = 100
+  columnLimit: Int = 100,
 ) : Closeable {
   private var out = LineWrapper(out, indent, columnLimit)
   private var indentLevel = 0
@@ -154,7 +154,7 @@ internal class CodeWriter constructor(
    */
   fun emitModifiers(
     modifiers: Set<KModifier>,
-    implicitModifiers: Set<KModifier> = emptySet()
+    implicitModifiers: Set<KModifier> = emptySet(),
   ) {
     if (shouldEmitPublicModifier(modifiers, implicitModifiers)) {
       emit(KModifier.PUBLIC.keyword)
@@ -232,7 +232,7 @@ internal class CodeWriter constructor(
   fun emitCode(
     codeBlock: CodeBlock,
     isConstantContext: Boolean = false,
-    ensureTrailingNewline: Boolean = false
+    ensureTrailingNewline: Boolean = false,
   ) = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
@@ -250,7 +250,7 @@ internal class CodeWriter constructor(
             stringLiteralWithQuotes(
               string,
               escapeDollarSign = true,
-              isConstantContext = isConstantContext
+              isConstantContext = isConstantContext,
             )
           } else {
             "null"
@@ -271,7 +271,7 @@ internal class CodeWriter constructor(
             stringLiteralWithQuotes(
               string,
               escapeDollarSign = false,
-              isConstantContext = isConstantContext
+              isConstantContext = isConstantContext,
             )
           } else {
             "null"
@@ -397,7 +397,7 @@ internal class CodeWriter constructor(
         codeWriter = this,
         enclosingName = null,
         implicitModifiers = setOf(KModifier.PUBLIC),
-        includeKdocTags = true
+        includeKdocTags = true,
       )
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
@@ -428,7 +428,7 @@ internal class CodeWriter constructor(
         referencedNames.add(className.topLevelClassName().simpleName)
         return className.simpleNames.subList(
           suffixOffset,
-          className.simpleNames.size
+          className.simpleNames.size,
         ).joinToString(".")
       }
       c = c.enclosingClassName()
@@ -487,10 +487,12 @@ internal class CodeWriter constructor(
   // TODO(luqasn): also honor superclass members when resolving names.
   private fun isMethodNameUsedInCurrentContext(simpleName: String): Boolean {
     for (it in typeSpecStack.reversed()) {
-      if (it.funSpecs.any { it.name == simpleName })
+      if (it.funSpecs.any { it.name == simpleName }) {
         return true
-      if (!it.modifiers.contains(KModifier.INNER))
+      }
+      if (!it.modifiers.contains(KModifier.INNER)) {
         break
+      }
     }
     return false
   }
@@ -606,7 +608,7 @@ internal class CodeWriter constructor(
         out.append(
           line,
           indentLevel = if (kdoc) indentLevel else indentLevel + 2,
-          linePrefix = if (kdoc) " * " else ""
+          linePrefix = if (kdoc) " * " else "",
         )
       }
       trailingNewline = false
@@ -628,7 +630,7 @@ internal class CodeWriter constructor(
    */
   private fun shouldEmitPublicModifier(
     modifiers: Set<KModifier>,
-    implicitModifiers: Set<KModifier>
+    implicitModifiers: Set<KModifier>,
   ): Boolean {
     if (modifiers.contains(KModifier.PUBLIC)) {
       return true
