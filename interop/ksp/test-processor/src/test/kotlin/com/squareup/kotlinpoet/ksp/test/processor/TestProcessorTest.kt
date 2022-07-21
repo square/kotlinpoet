@@ -414,8 +414,8 @@ class TestProcessorTest {
            interface TransitiveAliases {
               fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T)
            }
-           """
-      )
+           """,
+      ),
     )
 
     val result = compilation.compile()
@@ -434,7 +434,7 @@ class TestProcessorTest {
       }
     }
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
