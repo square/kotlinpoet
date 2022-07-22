@@ -25,6 +25,33 @@ jobs:
       - name: Test
         run: ./gradlew build
 
+  build-docs:
+    runs-on: ubuntu-latest
+    if: github.repository == 'square/kotlinpoet' && github.ref != 'refs/heads/master'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 18
+
+      - name: Prep docs
+        run: ./gradlew dokkaHtml
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Build mkdocs
+        run: |
+          pip3 install -r .github/workflows/mkdocs-requirements.txt
+          mkdocs build
+
   publish:
     runs-on: ubuntu-latest
     if: github.repository == 'square/kotlinpoet' && github.ref == 'refs/heads/master'
