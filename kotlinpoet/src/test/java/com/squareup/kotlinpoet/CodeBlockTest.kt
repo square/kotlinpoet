@@ -596,4 +596,12 @@ class CodeBlockTest {
       """.trimMargin(),
     )
   }
+
+  // https://github.com/square/kotlinpoet/issues/1236
+  @Test fun dontEscapeBackslashesInRawStrings() {
+    // println("ESCAPE '\\'") -> ESCAPE '\'
+    assertThat(CodeBlock.of("%S", "ESCAPE '\\'").toString()).isEqualTo("\"ESCAPE '\\\\'\"")
+    // println("""ESCAPE '\'""") -> ESCAPE '\'
+    assertThat(CodeBlock.of("%P", """ESCAPE '\'""").toString()).isEqualTo("\"\"\"ESCAPE '\\'\"\"\"")
+  }
 }

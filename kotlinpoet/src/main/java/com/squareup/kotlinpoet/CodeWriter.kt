@@ -249,7 +249,7 @@ internal class CodeWriter constructor(
           val literal = if (string != null) {
             stringLiteralWithQuotes(
               string,
-              escapeDollarSign = true,
+              isInsideRawString = false,
               isConstantContext = isConstantContext,
             )
           } else {
@@ -270,7 +270,7 @@ internal class CodeWriter constructor(
           val literal = if (string != null) {
             stringLiteralWithQuotes(
               string,
-              escapeDollarSign = false,
+              isInsideRawString = true,
               isConstantContext = isConstantContext,
             )
           } else {
