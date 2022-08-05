@@ -344,19 +344,16 @@ public class FileSpec private constructor(
       constant.name,
     )
 
-    public fun addImport(`class`: Class<*>, vararg names: String): Builder = apply {
-      require(names.isNotEmpty()) { "names array is empty" }
-      addImport(`class`.asClassName(), names.toList())
+    public fun addImport(`class`: Class<*>, name: String, vararg names: String): Builder = apply {
+      addImport(`class`.asClassName(), listOf(name, *names))
     }
 
-    public fun addImport(`class`: KClass<*>, vararg names: String): Builder = apply {
-      require(names.isNotEmpty()) { "names array is empty" }
-      addImport(`class`.asClassName(), names.toList())
+    public fun addImport(`class`: KClass<*>, name: String, vararg names: String): Builder = apply {
+      addImport(`class`.asClassName(), listOf(name, *names))
     }
 
-    public fun addImport(className: ClassName, vararg names: String): Builder = apply {
-      require(names.isNotEmpty()) { "names array is empty" }
-      addImport(className, names.toList())
+    public fun addImport(className: ClassName, name: String, vararg names: String): Builder = apply {
+      addImport(className, listOf(name, *names))
     }
 
     public fun addImport(`class`: Class<*>, names: Iterable<String>): Builder =
@@ -372,9 +369,9 @@ public class FileSpec private constructor(
       }
     }
 
-    public fun addImport(packageName: String, vararg names: String): Builder = apply {
+    public fun addImport(packageName: String, name: String, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
-      addImport(packageName, names.toList())
+      addImport(packageName, listOf(name, *names))
     }
 
     public fun addImport(packageName: String, names: Iterable<String>): Builder = apply {
