@@ -71,7 +71,18 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder) {
   when (value) {
     is List<*> -> {
       // Array type
-      member.add("arrayOf(⇥⇥")
+      val arrayType = when (value.firstOrNull()) {
+        is Boolean -> "booleanArrayOf"
+        is Byte -> "byteArrayOf"
+        is Char -> "charArrayOf"
+        is Short -> "shortArrayOf"
+        is Int -> "intArrayOf"
+        is Long -> "longArrayOf"
+        is Float -> "floatArrayOf"
+        is Double -> "doubleArrayOf"
+        else -> "arrayOf"
+      }
+      member.add("$arrayType(⇥⇥")
       value.forEachIndexed { index, innerValue ->
         if (index > 0) member.add(", ")
         addValueToBlock(innerValue!!, member)
