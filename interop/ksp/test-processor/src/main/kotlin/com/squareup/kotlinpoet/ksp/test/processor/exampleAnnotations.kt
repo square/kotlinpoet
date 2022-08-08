@@ -24,6 +24,8 @@ annotation class ComprehensiveAnnotation<T : CharSequence>(
   val booleanArray: BooleanArray,
   val byte: Byte,
   val byteArray: ByteArray,
+  val char: Char,
+  val charArray: CharArray,
   val short: Short,
   val shortArray: ShortArray,
   val int: Int,

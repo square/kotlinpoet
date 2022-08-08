@@ -111,7 +111,7 @@ internal fun memberForValue(value: Any) = when (value) {
   is String -> CodeBlock.of("%S", value)
   is Float -> CodeBlock.of("%Lf", value)
   is Double -> CodeBlock.of("%L", value)
-  is Char -> CodeBlock.of("$value.toChar()")
+  is Char -> CodeBlock.of("'%L'", value)
   is Byte -> CodeBlock.of("$value.toByte()")
   is Short -> CodeBlock.of("$value.toShort()")
   // Int or Boolean
