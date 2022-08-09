@@ -674,6 +674,69 @@ class FunSpecTest {
     )
   }
 
+  @Test fun setterWithPublicModifier() {
+    val funSpec = FunSpec.setterBuilder()
+      .addParameter("value", String::class.asClassName())
+      .addStatement("this.value = this.value")
+      .addModifiers(KModifier.PUBLIC)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public set(`value`) {
+      |  this.value = this.value
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun getterWithPublicModifier() {
+    val funSpec = FunSpec.getterBuilder()
+      .addStatement("return value")
+      .addModifiers(KModifier.PUBLIC)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public get() = value
+      |
+      """.trimMargin(),
+    )
+  }
+
+  // This does not produce correct Kotlin, but it does at least verify that we do not drop the
+  // explicitly specified public modifier.
+  @Test fun methodWithMultipleVisibilityModifiers() {
+    val funSpec =
+      FunSpec.builder("myMethod")
+        .addModifiers(KModifier.PUBLIC, KModifier.INTERNAL, KModifier.PRIVATE)
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public private internal fun myMethod(): kotlin.Unit {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun methodWithRepeatedVisibilityModifier() {
+    val funSpec =
+      FunSpec.builder("myMethod")
+        .addModifiers(KModifier.PUBLIC, KModifier.PUBLIC, KModifier.PUBLIC)
+        .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun myMethod(): kotlin.Unit {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
       .addParameter("list", List::class.parameterizedBy(Int::class))
