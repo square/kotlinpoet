@@ -638,6 +638,58 @@ class TypeSpecTest {
     )
   }
 
+  @Test fun enumsMayHavePrivateConstructorVals() {
+    val enum = TypeSpec.enumBuilder("MyEnum")
+      .primaryConstructor(
+        FunSpec.constructorBuilder().addParameter("number", Int::class).build(),
+      )
+      .addProperty(
+        PropertySpec.builder("number", Int::class)
+          .addModifiers(PRIVATE)
+          .initializer("number")
+          .build(),
+      )
+      .build()
+    assertThat(toString(enum)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |public enum class MyEnum(
+        |  private val number: Int,
+        |)
+        |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun classesMayHavePrivateConstructorPropertiesInTheirPrimaryConstructors() {
+    val myClass = TypeSpec.classBuilder("MyClass")
+      .primaryConstructor(
+        FunSpec.constructorBuilder().addParameter("number", Int::class).build(),
+      )
+      .addProperty(
+        PropertySpec.builder("number", Int::class)
+          .initializer("number")
+          .addModifiers(PRIVATE)
+          .build(),
+      )
+      .build()
+    assertThat(toString(myClass)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.Int
+        |
+        |public class MyClass(
+        |  private val number: Int,
+        |)
+        |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun sealedClassesMayDefineAbstractMembers() {
     val sealedClass = TypeSpec.classBuilder("Sealed")
       .addModifiers(KModifier.SEALED)
