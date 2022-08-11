@@ -20,6 +20,7 @@ import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
 import java.util.function.Function
@@ -112,6 +113,34 @@ class PropertySpecTest {
         )
         .build()
     }.hasMessageThat().isEqualTo("external getter cannot have code")
+  }
+
+  @Test fun publicGetterAndSetter() {
+    val prop = PropertySpec.builder("foo", String::class)
+      .mutable()
+      .getter(
+        FunSpec.getterBuilder()
+          .addModifiers(PUBLIC)
+          .addStatement("return %S", "_foo")
+          .build(),
+      )
+      .setter(
+        FunSpec.setterBuilder()
+          .addModifiers(PUBLIC)
+          .addParameter("value", String::class)
+          .build(),
+      )
+      .build()
+
+    assertThat(prop.toString()).isEqualTo(
+      """
+      |var foo: kotlin.String
+      |  public get() = "_foo"
+      |  public set(`value`) {
+      |  }
+      |
+      """.trimMargin(),
+    )
   }
 
   @Test fun inlineSingleAccessorVal() {

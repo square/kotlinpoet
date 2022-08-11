@@ -160,8 +160,12 @@ internal class CodeWriter constructor(
       emit(KModifier.PUBLIC.keyword)
       emit(" ")
     }
-    for (modifier in modifiers.toEnumSet()) {
-      if (modifier in implicitModifiers) continue
+    val uniqueNonPublicExplicitOnlyModifiers =
+      modifiers
+        .filterNot { it == KModifier.PUBLIC }
+        .filterNot { implicitModifiers.contains(it) }
+        .toEnumSet()
+    for (modifier in uniqueNonPublicExplicitOnlyModifiers) {
       emit(modifier.keyword)
       emit(" ")
     }
@@ -624,9 +628,11 @@ internal class CodeWriter constructor(
   /**
    * Returns whether a [KModifier.PUBLIC] should be emitted.
    *
-   * This will return true when [KModifier.PUBLIC] is one of the [implicitModifiers] and
-   * there are no other opposing modifiers (like [KModifier.PROTECTED] etc.) supplied by the
-   * consumer.
+   * If [modifiers] contains [KModifier.PUBLIC], this method always returns `true`.
+   *
+   * Otherwise, this will return `true` when [KModifier.PUBLIC] is one of the [implicitModifiers]
+   * and there are no other opposing modifiers (like [KModifier.PROTECTED] etc.) supplied by the
+   * consumer in [modifiers].
    */
   private fun shouldEmitPublicModifier(
     modifiers: Set<KModifier>,
@@ -640,10 +646,10 @@ internal class CodeWriter constructor(
       return false
     }
 
-    val containsOtherVisibility =
+    val hasOtherConsumerSpecifiedVisibility =
       modifiers.containsAnyOf(KModifier.PRIVATE, KModifier.INTERNAL, KModifier.PROTECTED)
 
-    return !containsOtherVisibility
+    return !hasOtherConsumerSpecifiedVisibility
   }
 
   /**
