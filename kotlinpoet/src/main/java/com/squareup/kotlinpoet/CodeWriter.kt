@@ -57,8 +57,8 @@ internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = DEFAULT_INDENT,
   private val memberImports: Map<String, Import> = emptyMap(),
-  val importedTypes: Map<String, ClassName> = emptyMap(),
-  val importedMembers: Map<String, MemberName> = emptyMap(),
+  private val importedTypes: Map<String, ClassName> = emptyMap(),
+  private val importedMembers: Map<String, MemberName> = emptyMap(),
   columnLimit: Int = 100,
 ) : Closeable {
   private var out = LineWrapper(out, indent, columnLimit)
@@ -73,6 +73,15 @@ internal class CodeWriter constructor(
   private val importableMembers = mutableMapOf<String, MemberName>()
   private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
+
+  /**
+   * Imports generated during the import collection step. Excludes types and members that were
+   * explicitly passed in as [memberImports].
+   */
+  val generatedImports: List<Import> = importedTypes.values.map { it.canonicalName }
+    .plus(importedMembers.values.map { it.canonicalName })
+    .filterNot { it in memberImports }
+    .map(::Import)
 
   /**
    * When emitting a statement, this is the line of the statement currently being written. The first

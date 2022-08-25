@@ -137,9 +137,6 @@ public class FileSpec private constructor(
       codeWriter.emit("\n")
     }
 
-    val importedTypeNames = codeWriter.importedTypes.values.map { it.canonicalName }
-    val importedMemberNames = codeWriter.importedMembers.values.map { it.canonicalName }
-
     // If we don't have default imports or are collecting them, we don't need to filter
     var isDefaultImport: (String) -> Boolean = { false }
     if (!collectingImports && defaultImports.isNotEmpty()) {
@@ -150,10 +147,9 @@ public class FileSpec private constructor(
     }
     // Aliased imports should always appear at the bottom of the imports list.
     val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
-    val imports = (importedTypeNames + importedMemberNames)
+    val imports = codeWriter.generatedImports
       .asSequence()
-      .filterNot { it in memberImports.keys }
-      .map { it.escapeSegmentsIfNecessary() }
+      .map { it.toString() }
       .plus(nonAliasedImports.asSequence().map { it.toString() })
       .filterNot(isDefaultImport)
       .toSortedSet()
