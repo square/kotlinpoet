@@ -1296,4 +1296,80 @@ class KotlinPoetTest {
       """.trimMargin(),
     )
   }
+
+  @Test fun generatedImportAliases() {
+    val squareTaco = ClassName("com.squareup.tacos", "Taco")
+    val blockTaco = ClassName("xyz.block.tacos", "Taco")
+    val kotlinIsNullOrEmpty = MemberName("kotlin.text", "isNullOrEmpty")
+    val cashIsNullOrEmpty = MemberName("com.squareup.cash.util", "isNullOrEmpty")
+    val file = FileSpec.builder("com.example", "Test")
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("val squareTaco = %L", squareTaco.constructorReference())
+          .addStatement("val blockTaco = %L", blockTaco.constructorReference())
+          .addStatement("val isSquareTacoNull = %S.%M()", "Taco", kotlinIsNullOrEmpty)
+          .addStatement("val isBlockTacoNull = %S.%M()", "Taco", cashIsNullOrEmpty)
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import kotlin.Unit
+      |import com.squareup.cash.util.isNullOrEmpty as utilIsNullOrEmpty
+      |import com.squareup.tacos.Taco as SquareupTacosTaco
+      |import kotlin.text.isNullOrEmpty as textIsNullOrEmpty
+      |import xyz.block.tacos.Taco as BlockTacosTaco
+      |
+      |public fun main(): Unit {
+      |  val squareTaco = ::SquareupTacosTaco
+      |  val blockTaco = ::BlockTacosTaco
+      |  val isSquareTacoNull = "Taco".textIsNullOrEmpty()
+      |  val isBlockTacoNull = "Taco".utilIsNullOrEmpty()
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun memberImportsOverGeneratedImportAliases() {
+    val squareTaco = ClassName("com.squareup.tacos", "Taco")
+    val blockTaco = ClassName("xyz.block.tacos", "Taco")
+    val kotlinIsNullOrEmpty = MemberName("kotlin.text", "isNullOrEmpty")
+    val cashIsNullOrEmpty = MemberName("com.squareup.cash.util", "isNullOrEmpty")
+    val file = FileSpec.builder("com.example", "Test")
+      .addAliasedImport(squareTaco, "SquareTaco")
+      .addAliasedImport(blockTaco, "BlockTaco")
+      .addAliasedImport(kotlinIsNullOrEmpty, "kotlinIsNullOrEmpty")
+      .addAliasedImport(cashIsNullOrEmpty, "cashIsNullOrEmpty")
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("val squareTaco = %L", squareTaco.constructorReference())
+          .addStatement("val blockTaco = %L", blockTaco.constructorReference())
+          .addStatement("val isSquareTacoNull = %S.%M()", "Taco", kotlinIsNullOrEmpty)
+          .addStatement("val isBlockTacoNull = %S.%M()", "Taco", cashIsNullOrEmpty)
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import kotlin.Unit
+      |import com.squareup.cash.util.isNullOrEmpty as cashIsNullOrEmpty
+      |import com.squareup.tacos.Taco as SquareTaco
+      |import kotlin.text.isNullOrEmpty as kotlinIsNullOrEmpty
+      |import xyz.block.tacos.Taco as BlockTaco
+      |
+      |public fun main(): Unit {
+      |  val squareTaco = ::SquareTaco
+      |  val blockTaco = ::BlockTaco
+      |  val isSquareTacoNull = "Taco".kotlinIsNullOrEmpty()
+      |  val isBlockTacoNull = "Taco".cashIsNullOrEmpty()
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
 }

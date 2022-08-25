@@ -140,12 +140,13 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import com.squareup.tacos.createTaco
       |import kotlin.Unit
+      |import com.squareup.tacos.createTaco as squareupTacosCreateTaco
+      |import com.twitter.tacos.createTaco as twitterTacosCreateTaco
       |
       |public fun makeTastyTacos(): Unit {
-      |  createTaco()
-      |  com.twitter.tacos.createTaco()
+      |  squareupTacosCreateTaco()
+      |  twitterTacosCreateTaco()
       |}
       |
       """.trimMargin(),
@@ -169,13 +170,13 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import com.squareup.tacos.SquareTacos.Companion.createTaco
-      |import com.twitter.tacos.TwitterTacos
       |import kotlin.Unit
+      |import com.squareup.tacos.SquareTacos.Companion.createTaco as squareupTacosCreateTaco
+      |import com.twitter.tacos.TwitterTacos.Companion.createTaco as twitterTacosCreateTaco
       |
       |public fun makeTastyTacos(): Unit {
-      |  createTaco()
-      |  TwitterTacos.Companion.createTaco()
+      |  squareupTacosCreateTaco()
+      |  twitterTacosCreateTaco()
       |}
       |
       """.trimMargin(),
@@ -414,13 +415,13 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import com.squareup.tacos.SquareTacos.Companion.`when`
-      |import com.twitter.tacos.TwitterTacos
       |import kotlin.Unit
+      |import com.squareup.tacos.SquareTacos.Companion.`when` as squareupTacosWhen
+      |import com.twitter.tacos.TwitterTacos.Companion.`when` as twitterTacosWhen
       |
       |public fun whenTastyTacos(): Unit {
-      |  `when`()
-      |  TwitterTacos.Companion.`when`()
+      |  squareupTacosWhen()
+      |  twitterTacosWhen()
       |}
       |
       """.trimMargin(),

@@ -360,12 +360,13 @@ class FileSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import java.util.Date
+        |import java.sql.Date as SqlDate
+        |import java.util.Date as UtilDate
         |
         |public class Taco {
-        |  public val madeFreshDate: Date
+        |  public val madeFreshDate: UtilDate
         |
-        |  public val madeFreshDatabaseDate: java.sql.Date
+        |  public val madeFreshDatabaseDate: SqlDate
         |}
         |
       """.trimMargin(),
@@ -385,12 +386,13 @@ class FileSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import com.squareup.`is`.`fun`.`in`.Date
+        |import com.squareup.`do`.`val`.`var`.Date as VarDate
+        |import com.squareup.`is`.`fun`.`in`.Date as InDate
         |
         |public class Taco {
-        |  public val madeFreshDate1: Date
+        |  public val madeFreshDate1: InDate
         |
-        |  public val madeFreshDate2: com.squareup.`do`.`val`.`var`.Date
+        |  public val madeFreshDate2: VarDate
         |}
         |
       """.trimMargin(),

@@ -146,11 +146,9 @@ public class FileSpec private constructor(
       }
     }
     // Aliased imports should always appear at the bottom of the imports list.
-    val (aliasedImports, nonAliasedImports) = memberImports.values.partition { it.alias != null }
-    val imports = codeWriter.generatedImports
-      .asSequence()
-      .map { it.toString() }
-      .plus(nonAliasedImports.asSequence().map { it.toString() })
+    val (aliasedImports, nonAliasedImports) = codeWriter.imports.values
+      .partition { it.alias != null }
+    val imports = nonAliasedImports.asSequence().map { it.toString() }
       .filterNot(isDefaultImport)
       .toSortedSet()
       .plus(aliasedImports.map { it.toString() }.toSortedSet())
