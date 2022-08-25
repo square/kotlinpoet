@@ -656,7 +656,7 @@ internal class CodeWriter constructor(
    * Returns the types that should have been imported for this code. If there were any simple name
    * collisions, that type's first use is imported.
    */
-  fun suggestedTypeImports(): Map<String, ClassName> {
+  private fun suggestedTypeImports(): Map<String, ClassName> {
     return importableTypes.filterKeys { it !in referencedNames }
   }
 
@@ -664,7 +664,7 @@ internal class CodeWriter constructor(
    * Returns the members that should have been imported for this code. If there were any simple name
    * collisions, that member's first use is imported.
    */
-  fun suggestedMemberImports(): Map<String, MemberName> {
+  private fun suggestedMemberImports(): Map<String, MemberName> {
     return importableMembers.filterKeys { it !in referencedNames }
   }
 
@@ -684,5 +684,38 @@ internal class CodeWriter constructor(
 
   override fun close() {
     out.close()
+  }
+
+  companion object {
+    /**
+     * Makes a pass to collect imports by executing [emitStep], and returns an instance of
+     * [CodeWriter] pre-initialized with collected imports.
+     */
+    fun withCollectedImports(
+      out: Appendable,
+      indent: String,
+      memberImports: Map<String, Import>,
+      emitStep: (importsCollector: CodeWriter) -> Unit,
+    ): CodeWriter {
+      // First pass: emit the entire class, just to collect the types we'll need to import.
+      val importsCollector = CodeWriter(
+        NullAppendable,
+        indent,
+        memberImports,
+        columnLimit = Integer.MAX_VALUE,
+      )
+      emitStep(importsCollector)
+      val suggestedTypeImports = importsCollector.suggestedTypeImports()
+      val suggestedMemberImports = importsCollector.suggestedMemberImports()
+      importsCollector.close()
+
+      return CodeWriter(
+        out,
+        indent,
+        memberImports,
+        suggestedTypeImports,
+        suggestedMemberImports,
+      )
+    }
   }
 }
