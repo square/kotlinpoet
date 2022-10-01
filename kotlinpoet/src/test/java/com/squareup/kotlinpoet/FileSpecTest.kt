@@ -1198,4 +1198,23 @@ class FileSpecTest {
       """.trimMargin(),
     )
   }
+
+  class WackyKey
+  class OhNoThisDoesNotCompile
+
+  @OptIn(ExperimentalStdlibApi::class)
+  @Test fun longCommentWithTypes() {
+    val someLongParameterizedTypeName = typeNameOf<List<Map<String, Collection<Map<WackyKey, OhNoThisDoesNotCompile>>>>>()
+    val file = FileSpec.builder("com.squareup.tacos", "Taco")
+      .addComment("this is a long line with a possibly long type: %T", someLongParameterizedTypeName)
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |// this is a long line with a possibly long type: List<Map<String, Collection<Map<WackyKey, OhNoThisDoesNotCompile>>>>
+      |package com.squareup.tacos
+      |
+      |""".trimMargin()
+    )
+  }
+
 }
