@@ -20,7 +20,7 @@ ktlint = "0.46.1"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-dokka = { id = "org.jetbrains.dokka", version = "1.7.10" }
+dokka = { id = "org.jetbrains.dokka", version = "1.7.20" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version = "6.11.0" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.22.0" }
