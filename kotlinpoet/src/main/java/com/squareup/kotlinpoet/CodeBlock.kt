@@ -18,6 +18,8 @@
 package com.squareup.kotlinpoet
 
 import java.lang.reflect.Type
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
@@ -361,9 +363,23 @@ public class CodeBlock private constructor(
       else -> throw IllegalArgumentException("expected name but was $o")
     }
 
-    private fun argToLiteral(o: Any?) = o
+    private fun argToLiteral(o: Any?) = if (o is Number) formatNumericValue(o) else o
 
-    private fun argToString(o: Any?) = o?.toString()
+    private fun argToString(o: Any?) = if (o is Number) formatNumericValue(o) else o?.toString()
+
+    private fun formatNumericValue(o: Number): Any? {
+      val format = DecimalFormatSymbols().apply {
+        decimalSeparator = '.'
+        groupingSeparator = '_'
+      }
+
+      val formattedValue = DecimalFormat("###,###.####", format).format(o)
+      return when (o) {
+        is Long -> "${formattedValue}L"
+        is Float -> "${formattedValue}f"
+        else -> formattedValue
+      }
+    }
 
     private fun logDeprecationWarning(o: Any) {
       println(

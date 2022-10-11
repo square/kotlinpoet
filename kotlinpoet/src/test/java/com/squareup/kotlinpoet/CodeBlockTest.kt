@@ -604,4 +604,23 @@ class CodeBlockTest {
     // println("""ESCAPE '\'""") -> ESCAPE '\'
     assertThat(CodeBlock.of("%P", """ESCAPE '\'""").toString()).isEqualTo("\"\"\"ESCAPE '\\'\"\"\"")
   }
+
+  // https://github.com/square/kotlinpoet/issues/1381
+  @Test fun useUnderscoresOnLargeDecimalLiterals() {
+    assertThat(CodeBlock.of("%L", 10000).toString()).isEqualTo("10_000")
+    assertThat(CodeBlock.of("%L", 100000L).toString()).isEqualTo("100_000L")
+    assertThat(CodeBlock.of("%L", Int.MIN_VALUE).toString()).isEqualTo("-2_147_483_648")
+    assertThat(CodeBlock.of("%L", Int.MAX_VALUE).toString()).isEqualTo("2_147_483_647")
+    assertThat(CodeBlock.of("%L", Long.MIN_VALUE).toString()).isEqualTo("-9_223_372_036_854_775_808L")
+    assertThat(CodeBlock.of("%L", 10000.123).toString()).isEqualTo("10_000.123")
+    assertThat(CodeBlock.of("%L", 10000.123f).toString()).isEqualTo("10_000.123f")
+
+    assertThat(CodeBlock.of("%S", 10000).toString()).isEqualTo("\"10_000\"")
+    assertThat(CodeBlock.of("%S", 100000L).toString()).isEqualTo("\"100_000L\"")
+    assertThat(CodeBlock.of("%S", Int.MIN_VALUE).toString()).isEqualTo("\"-2_147_483_648\"")
+    assertThat(CodeBlock.of("%S", Int.MAX_VALUE).toString()).isEqualTo("\"2_147_483_647\"")
+    assertThat(CodeBlock.of("%S", Long.MIN_VALUE).toString()).isEqualTo("\"-9_223_372_036_854_775_808L\"")
+    assertThat(CodeBlock.of("%S", 10000.123).toString()).isEqualTo("\"10_000.123\"")
+    assertThat(CodeBlock.of("%S", 10000.123f).toString()).isEqualTo("\"10_000.123f\"")
+  }
 }
