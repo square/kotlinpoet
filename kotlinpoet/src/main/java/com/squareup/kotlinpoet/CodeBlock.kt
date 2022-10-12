@@ -365,7 +365,7 @@ public class CodeBlock private constructor(
 
     private fun argToLiteral(o: Any?) = if (o is Number) formatNumericValue(o) else o
 
-    private fun argToString(o: Any?) = if (o is Number) formatNumericValue(o) else o?.toString()
+    private fun argToString(o: Any?) = o?.toString()
 
     private fun formatNumericValue(o: Number): Any? {
       val format = DecimalFormatSymbols().apply {
