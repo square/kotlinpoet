@@ -373,12 +373,14 @@ public class CodeBlock private constructor(
         groupingSeparator = '_'
       }
 
-      val formattedValue = DecimalFormat("###,###.####", format).format(o)
-      return when (o) {
-        is Long -> "${formattedValue}L"
-        is Float -> "${formattedValue}f"
-        else -> formattedValue
+      val precision = if (o is Float || o is Double) o.toString().split(".").last().length else 0
+
+      val pattern = when (o) {
+        is Float, is Double -> "###,##0.0" + "#".repeat(precision - 1)
+        else -> "###,##0"
       }
+
+      return DecimalFormat(pattern, format).format(o)
     }
 
     private fun logDeprecationWarning(o: Any) {

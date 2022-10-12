@@ -1024,9 +1024,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
           public const val CONST_STRING_PROP: kotlin.String = "prop"
 
-          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
 
-          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_BINARY_PROP: kotlin.Int = throw NotImplementedError("Stub!")
@@ -1117,9 +1117,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
           public const val CONST_STRING_PROP: kotlin.String = "prop"
 
-          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
 
-          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_BINARY_PROP: kotlin.Int = 11
@@ -1146,10 +1146,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           public val STATIC_CONST_STRING_PROP: kotlin.String = "prop"
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4293713502L
+          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1000000
+          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
         }
       }
       """.trimIndent(),

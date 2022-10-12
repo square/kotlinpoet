@@ -1419,7 +1419,7 @@ class TypeSpecTest {
         |  }
         |
         |  public companion object {
-        |    public const val QUANTITY_DEFAULT: Int = 10000
+        |    public const val QUANTITY_DEFAULT: Int = 10_000
         |  }
         |}
         |

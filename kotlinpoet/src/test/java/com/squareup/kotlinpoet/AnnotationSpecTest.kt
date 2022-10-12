@@ -113,7 +113,7 @@ class AnnotationSpecTest {
         |  l = Override::class,
         |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |  p = 1701,
+        |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
         |)
@@ -144,7 +144,7 @@ class AnnotationSpecTest {
         |  l = Override::class,
         |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |  p = 1701,
+        |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
         |)
@@ -191,7 +191,7 @@ class AnnotationSpecTest {
         |  l = Override::class,
         |  m = arrayOf(9, 8, 1),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |  p = 1701,
+        |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
         |)
@@ -230,7 +230,7 @@ class AnnotationSpecTest {
         |  m = arrayOf(9, 8, 1),
         |  n = arrayOf(AnnotationSpecTest.Breakfast.WAFFLES, AnnotationSpecTest.Breakfast.PANCAKES),
         |  o = AnnotationSpecTest.Breakfast.PANCAKES,
-        |  p = 1701,
+        |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
         |)
