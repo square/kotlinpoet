@@ -95,9 +95,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       public const val CONST_STRING_PROP: String = "prop"
 
-      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
 
-      public const val CONST_UNDERSCORES_PROP: Int = 1000000
+      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
 
       public val DOUBLE_PROP: Double = 1.0
 
@@ -111,9 +111,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       public val STRING_PROP: String = "prop"
 
-      public val UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public val UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
 
-      public val UNDERSCORES_PROP: Int = 1000000
+      public val UNDERSCORES_PROP: Int = 1_000_000
 
       public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
@@ -232,9 +232,9 @@ class FacadeFileTest : MultiClassInspectorTest() {
 
       public const val CONST_STRING_PROP: String = "prop"
 
-      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4293713502L
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
 
-      public const val CONST_UNDERSCORES_PROP: Int = 1000000
+      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
 
       public val DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
 
