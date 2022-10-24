@@ -520,6 +520,13 @@ public class FileSpec private constructor(
       return builder(packageName, fileName).addType(typeSpec).build()
     }
 
+    @JvmStatic public fun builder(className: ClassName): Builder {
+      require(className.simpleNames.size == 1) {
+        "nested types can't be used to name a file: ${className.simpleNames.joinToString(".")}"
+      }
+      return builder(className.packageName, className.simpleName)
+    }
+
     @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
       Builder(packageName, fileName, isScript = false)
 
