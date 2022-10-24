@@ -1198,4 +1198,18 @@ class FileSpecTest {
       """.trimMargin(),
     )
   }
+
+  @Test fun classNameFactory() {
+    val className = ClassName("com.example", "Example")
+    val spec = FileSpec.builder(className).build()
+    assertThat(spec.packageName).isEqualTo(className.packageName)
+    assertThat(spec.name).isEqualTo(className.simpleName)
+  }
+
+  @Test fun classNameFactoryIllegalArgumentExceptionOnNestedType() {
+    val className = ClassName("com.example", "Example", "Nested")
+    assertThrows<IllegalArgumentException> {
+      FileSpec.builder(className)
+    }
+  }
 }
