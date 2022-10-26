@@ -5358,6 +5358,39 @@ class TypeSpecTest {
     assertThat(t).hasMessageThat().contains("contextReceivers can only be applied on simple classes")
   }
 
+  // https://github.com/square/kotlinpoet/issues/1301
+  @Test fun `function omits non-private modifiers on private type`() {
+    val taco = TypeSpec.classBuilder("Taco")
+      .addModifiers(PRIVATE)
+      .addFunctions(
+        listOf(
+          FunSpec.builder("f1").addModifiers(PUBLIC).build(),
+          FunSpec.builder("f2").addModifiers(INTERNAL).build(),
+          FunSpec.builder("f3").addModifiers(PRIVATE).build(),
+        )
+      )
+      .build()
+    assertThat(toString(taco)).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import kotlin.Unit
+      |
+      |private class Taco {
+      |  fun f1(): Unit {
+      |  }
+      |
+      |  fun f2(): Unit {
+      |  }
+      |
+      |  private fun f3(): Unit {
+      |  }
+      |}
+      |
+      """.trimMargin()
+    )
+  }
+
   companion object {
     private const val donutsPackage = "com.squareup.donuts"
   }
