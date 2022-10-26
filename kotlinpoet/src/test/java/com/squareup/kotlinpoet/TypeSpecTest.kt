@@ -5367,7 +5367,7 @@ class TypeSpecTest {
           FunSpec.builder("f1").addModifiers(PUBLIC).build(),
           FunSpec.builder("f2").addModifiers(INTERNAL).build(),
           FunSpec.builder("f3").addModifiers(PRIVATE).build(),
-        )
+        ),
       )
       .build()
     assertThat(toString(taco)).isEqualTo(
@@ -5387,7 +5387,7 @@ class TypeSpecTest {
       |  }
       |}
       |
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
