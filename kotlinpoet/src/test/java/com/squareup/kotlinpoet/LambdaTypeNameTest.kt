@@ -64,6 +64,30 @@ class LambdaTypeNameTest {
     )
   }
 
+  @Test fun nullableFunctionWithContextReceiver() {
+    val typeName = LambdaTypeName.get(
+      receiver = Int::class.asTypeName(),
+      parameters = listOf(),
+      returnType = Unit::class.asTypeName(),
+      contextReceivers = listOf(STRING),
+    ).copy(nullable = true)
+    assertThat(typeName.toString()).isEqualTo(
+      "(context(kotlin.String) kotlin.Int.() -> kotlin.Unit)?",
+    )
+  }
+
+  @Test fun suspendingFunctionWithContextReceiver() {
+    val typeName = LambdaTypeName.get(
+      receiver = Int::class.asTypeName(),
+      parameters = listOf(),
+      returnType = Unit::class.asTypeName(),
+      contextReceivers = listOf(STRING),
+    ).copy(suspending = true)
+    assertThat(typeName.toString()).isEqualTo(
+      "suspend context(kotlin.String) kotlin.Int.() -> kotlin.Unit",
+    )
+  }
+
   @Test fun functionWithMultipleContextReceivers() {
     val typeName = LambdaTypeName.get(
       Int::class.asTypeName(),
