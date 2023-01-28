@@ -502,7 +502,6 @@ class PropertySpecTest {
       |  println("arg=${'$'}arg")
       |}
       |
-      |
       """.trimMargin(),
     )
   }

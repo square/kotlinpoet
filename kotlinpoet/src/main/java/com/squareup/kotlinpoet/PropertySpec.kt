@@ -107,7 +107,12 @@ public class PropertySpec private constructor(
       )
     }
     codeWriter.emitWhereBlock(typeVariables)
-    if (!inline) codeWriter.emit("\n")
+    if (!inline) {
+      val newlineAlready = withInitializer && initializer?.hasStatements() == true
+      if (!newlineAlready) {
+        codeWriter.emit("\n")
+      }
+    }
     val implicitAccessorModifiers = EnumSet.noneOf(KModifier::class.java)
     for (modifier in implicitModifiers) {
       // Omit visibility modifiers, accessor visibility will default to the property's visibility.
