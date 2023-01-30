@@ -138,18 +138,22 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) this else with(toBuilder()) {
-  val lastFormatPart = trim().formatParts.last()
-  if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-    val lastArg = args.last()
-    if (lastArg is String) {
-      args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
+internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) {
+  this
+} else {
+  with(toBuilder()) {
+    val lastFormatPart = trim().formatParts.last()
+    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
+      val lastArg = args.last()
+      if (lastArg is String) {
+        args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
+      }
+    } else {
+      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+      formatParts += "\n"
     }
-  } else {
-    formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-    formatParts += "\n"
+    return@with build()
   }
-  return@with build()
 }
 
 private val IDENTIFIER_REGEX =
@@ -291,9 +295,9 @@ private fun String.escapeIfAllCharactersAreUnderscore() = if (allCharactersAreUn
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if ((
-    !Character.isJavaIdentifierStart(first()) ||
-      drop(1).any { !Character.isJavaIdentifierPart(it) }
-    ) &&
+      !Character.isJavaIdentifierStart(first()) ||
+        drop(1).any { !Character.isJavaIdentifierPart(it) }
+      ) &&
     !alreadyEscaped()
   ) {
     "`$this`".replace(' ', '·')

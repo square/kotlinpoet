@@ -36,5 +36,5 @@ public enum class JvmFieldModifier : JvmModifier {
     override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
       Volatile::class.asClassName(),
     ).build()
-  };
+  },
 }

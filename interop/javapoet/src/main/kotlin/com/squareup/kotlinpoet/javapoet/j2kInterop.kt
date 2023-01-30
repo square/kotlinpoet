@@ -90,9 +90,11 @@ public fun JTypeVariableName.toKTypeVariableName(): KTypeVariableName {
 public fun JWildcardTypeName.toKWildcardTypeName(): KWildcardTypeName {
   return if (lowerBounds.size == 1) {
     KWildcardTypeName.consumerOf(lowerBounds.first().toKTypeName())
-  } else when (val upperBound = upperBounds[0]) {
-    TypeName.OBJECT -> STAR
-    else -> KWildcardTypeName.producerOf(upperBound.toKTypeName())
+  } else {
+    when (val upperBound = upperBounds[0]) {
+      TypeName.OBJECT -> STAR
+      else -> KWildcardTypeName.producerOf(upperBound.toKTypeName())
+    }
   }
 }
 
@@ -133,12 +135,16 @@ public fun JTypeName.toKTypeName(): KTypeName {
 internal fun JTypeName.unboxIfBoxedPrimitive(): JTypeName {
   return if (isBoxedPrimitive) {
     unbox()
-  } else this
+  } else {
+    this
+  }
 }
 
 @OptIn(KotlinPoetJavaPoetPreview::class)
 internal fun JTypeName.boxIfPrimitive(extraCondition: Boolean = true): JTypeName {
   return if (extraCondition && isPrimitive && !isBoxedPrimitive) {
     box()
-  } else this
+  } else {
+    this
+  }
 }
