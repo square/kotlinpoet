@@ -32,5 +32,5 @@ public enum class JvmMethodModifier : JvmModifier {
       Synchronized::class.asClassName(),
     ).build()
   },
-  DEFAULT
+  DEFAULT,
 }

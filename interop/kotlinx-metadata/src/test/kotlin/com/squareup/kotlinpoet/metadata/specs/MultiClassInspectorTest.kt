@@ -66,7 +66,8 @@ abstract class MultiClassInspectorTest {
       override fun create(testInstance: MultiClassInspectorTest): ClassInspector {
         return ElementsClassInspector.create(testInstance.compilation.elements, testInstance.compilation.types)
       }
-    };
+    },
+    ;
 
     abstract fun create(testInstance: MultiClassInspectorTest): ClassInspector
   }

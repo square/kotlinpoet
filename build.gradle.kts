@@ -70,7 +70,9 @@ subprojects {
   configure<SpotlessExtension> {
     kotlin {
       target("**/*.kt")
-      ktlint(libs.versions.ktlint.get()).editorConfigOverride(readEditorConfig())
+      ktlint(libs.versions.ktlint.get()).editorConfigOverride(
+        mapOf("ktlint_standard_filename" to "disabled"),
+      )
       trimTrailingWhitespace()
       endWithNewline()
 
@@ -131,11 +133,4 @@ apiValidation {
     "interop", // Empty middle package
     "test-processor" // Test only
   )
-}
-
-fun readEditorConfig(): Map<String, String> {
-  val settingRegex = Regex("^(\\S+)\\s*=\\s*(\\S+)$")
-  return file(".editorconfig").readLines()
-    .mapNotNull { settingRegex.matchEntire(it)?.destructured }
-    .associate { (key, value) -> key to value }
 }

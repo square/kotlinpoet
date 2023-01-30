@@ -365,7 +365,9 @@ private fun KmClass.toTypeSpec(
             val finalSpec = if (isEnum && spec.annotations.isEmpty()) {
               // Metadata specifies the constructor as private, but that's implicit so we can omit it
               spec.toBuilder().apply { modifiers.remove(PRIVATE) }.build()
-            } else spec
+            } else {
+              spec
+            }
             builder.primaryConstructor(finalSpec)
             primaryConstructorParams.putAll(spec.parameters.associateBy { it.name })
           }

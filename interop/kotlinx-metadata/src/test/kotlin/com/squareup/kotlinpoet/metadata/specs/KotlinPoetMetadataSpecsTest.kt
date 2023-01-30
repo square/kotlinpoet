@@ -25,6 +25,7 @@
   "UNUSED_PARAMETER",
   "unused",
 )
+
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.common.truth.Truth.assertThat
@@ -579,7 +580,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       override fun toString(): String {
         return "baz1"
       }
-    }
+    },
   }
 
   @Test
@@ -647,7 +648,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       override fun toString(): String {
         return "baz1"
       }
-    }
+    },
   }
 
   @Test
@@ -1917,7 +1918,8 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   annotation class CustomAnnotation(val name: String)
 
   class ParameterAnnotations(
-    @property:CustomAnnotation("\$a") @param:CustomAnnotation("b")
+    @property:CustomAnnotation("\$a")
+    @param:CustomAnnotation("b")
     val param1: String,
     @CustomAnnotation("2") param2: String,
   ) {
