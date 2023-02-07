@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import java.util.ArrayDeque
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.NestingKind.MEMBER
@@ -240,8 +241,27 @@ public fun Class<*>.asClassName(): ClassName {
 
 @JvmName("get")
 public fun KClass<*>.asClassName(): ClassName {
-  qualifiedName?.let { return ClassName.bestGuess(it) }
-  throw IllegalArgumentException("$this cannot be represented as a ClassName")
+  var qualifiedName = requireNotNull(qualifiedName) { "$this cannot be represented as a ClassName" }
+  val names = ArrayDeque<String>()
+
+  var target: Class<*>? = java
+  while (target != null) {
+    target = target.enclosingClass
+
+    val dot = qualifiedName.lastIndexOf('.')
+    if (dot == -1) {
+      if (target != null) throw AssertionError(this) // More enclosing classes than dots.
+      names.addFirst(qualifiedName)
+      qualifiedName = ""
+    } else {
+      names.addFirst(qualifiedName.substring(dot + 1))
+      qualifiedName = qualifiedName.substring(0, dot)
+    }
+  }
+
+  names.addFirst(qualifiedName)
+
+  return ClassName(names.toList())
 }
 
 /** Returns the class name for `element`. */
