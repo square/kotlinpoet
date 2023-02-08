@@ -118,6 +118,19 @@ class ClassNameTest {
     assertThat(hi.simpleNames).containsExactly("Sup", "Hi").inOrder()
   }
 
+  @Test fun classNameFromKClassSpecialCases() {
+    assertEquals(ClassName(listOf("kotlin", "Boolean", "Companion")), Boolean.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Byte", "Companion")), Byte.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Char", "Companion")), Char.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Double", "Companion")), Double.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Enum", "Companion")), Enum.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Float", "Companion")), Float.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Int", "Companion")), Int.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Long", "Companion")), Long.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Short", "Companion")), Short.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "String", "Companion")), String.Companion::class.asClassName())
+  }
+
   @Test fun peerClass() {
     assertThat(java.lang.Double::class.asClassName().peerClass("Short"))
       .isEqualTo(java.lang.Short::class.asClassName())
