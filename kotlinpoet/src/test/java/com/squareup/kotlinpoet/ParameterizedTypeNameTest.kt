@@ -174,19 +174,22 @@ class ParameterizedTypeNameTest {
   }
 
   @Test fun equalsAndHashCode() {
-    val parameterizedTypeName = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val parameterizedTypeName1 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val parameterizedTypeName2 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    assertThat(parameterizedTypeName1).isEqualTo(parameterizedTypeName2)
+    assertThat(parameterizedTypeName1.hashCode()).isEqualTo(parameterizedTypeName2.hashCode())
 
-    val nullable = parameterizedTypeName.copy(nullable = true)
-    assertThat(parameterizedTypeName).isNotEqualTo(nullable)
-    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(nullable.hashCode())
+    val nullable = parameterizedTypeName1.copy(nullable = true)
+    assertThat(parameterizedTypeName1).isNotEqualTo(nullable)
+    assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(nullable.hashCode())
 
-    val annotated = parameterizedTypeName.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))
-    assertThat(parameterizedTypeName).isNotEqualTo(annotated)
-    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(annotated.hashCode())
+    val annotated = parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))
+    assertThat(parameterizedTypeName1).isNotEqualTo(annotated)
+    assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(annotated.hashCode())
 
-    val tagged = parameterizedTypeName.copy(tags = mapOf(String::class to ""))
-    assertThat(parameterizedTypeName).isNotEqualTo(tagged)
-    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(tagged)
+    val tagged = parameterizedTypeName1.copy(tags = mapOf(String::class to ""))
+    assertThat(parameterizedTypeName1).isNotEqualTo(tagged)
+    assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(tagged)
   }
 
   @Test fun equalsAndHashCodeDisregardEnclosingType() {
