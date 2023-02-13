@@ -75,7 +75,7 @@ public class ClassName internal constructor(
   private val names = names.toImmutableList()
 
   /** Name for comparison, distinguishing package names like "com.example.Foo" from outer classes like "Foo" */
-  private val comparableNames: String = if (names[0].isEmpty())
+  private val comparableName: String = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(",") else
     names.joinToString(",")
 
@@ -180,8 +180,10 @@ public class ClassName internal constructor(
    * com.example.Robot.Motor
    * com.example.RoboticVacuum
    * ```
+   *
+   * Comparison is consistent with equals()
    */
-  override fun compareTo(other: ClassName): Int = comparableNames.compareTo(other.comparableNames)
+  override fun compareTo(other: ClassName): Int = comparableName.compareTo(other.comparableName)
 
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
