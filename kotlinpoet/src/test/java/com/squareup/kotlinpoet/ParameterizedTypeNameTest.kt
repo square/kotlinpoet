@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import java.io.Closeable
 import kotlin.reflect.KClass
@@ -25,6 +26,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
+import kotlin.reflect.typeOf
 import org.junit.Test
 
 class ParameterizedTypeNameTest {
@@ -153,12 +155,46 @@ class ParameterizedTypeNameTest {
 
   private fun <Param : Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
 
-  @Test fun annotatedLambdaTypeParameter() {
+  @Test
+  fun annotatedLambdaTypeParameter() {
     val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
     val typeName = Map::class.asTypeName()
       .plusParameter(String::class.asTypeName())
       .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
     assertThat(typeName.toString())
       .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
+  }
+
+  private class Enclosing1 {
+    class GenericClass<T>
+  }
+
+  private object Enclosing2 {
+    class Foo
+  }
+
+  @Test fun equalsAndHashCode() {
+    val parameterizedTypeName = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+
+    val nullable = parameterizedTypeName.copy(nullable = true)
+    assertThat(parameterizedTypeName).isNotEqualTo(nullable)
+    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(nullable.hashCode())
+
+    val annotated = parameterizedTypeName.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))
+    assertThat(parameterizedTypeName).isNotEqualTo(annotated)
+    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(annotated.hashCode())
+
+    val tagged = parameterizedTypeName.copy(tags = mapOf(String::class to ""))
+    assertThat(parameterizedTypeName).isNotEqualTo(tagged)
+    assertThat(parameterizedTypeName.hashCode()).isNotEqualTo(tagged)
+  }
+
+  @Test fun equalsAndHashCodeDisregardEnclosingType() {
+    val typeName1 = typeOf<Enclosing1.GenericClass<Enclosing2.Foo>>().asTypeName() // has enclosingType
+    val typeName2 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class) // same string representation but no enclosingType
+
+    assertThat(typeName1).isEqualTo(typeName2)
+    assertThat(typeName1.hashCode()).isEqualTo(typeName2.hashCode())
+    assertThat(typeName1.toString()).isEqualTo(typeName2.toString())
   }
 }

@@ -71,6 +71,30 @@ public class TypeVariableName private constructor(
 
   override fun emit(out: CodeWriter) = out.emit(name)
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as TypeVariableName
+
+    if (name != other.name) return false
+    if (bounds != other.bounds) return false
+    if (variance != other.variance) return false
+    if (isReified != other.isReified) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + name.hashCode()
+    result = 31 * result + bounds.hashCode()
+    result = 31 * result + (variance?.hashCode() ?: 0)
+    result = 31 * result + isReified.hashCode()
+    return result
+  }
+
   public companion object {
     internal fun of(
       name: String,

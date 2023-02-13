@@ -74,6 +74,11 @@ public class ClassName internal constructor(
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`. */
   private val names = names.toImmutableList()
 
+  /** Name for comparison, distinguishing package names like "com.example.Foo" from outer classes like "Foo" */
+  private val comparableNames: String = if (names[0].isEmpty())
+    names.subList(1, names.size).joinToString(",") else
+    names.joinToString(",")
+
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   public val canonicalName: String = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
@@ -176,10 +181,28 @@ public class ClassName internal constructor(
    * com.example.RoboticVacuum
    * ```
    */
-  override fun compareTo(other: ClassName): Int = canonicalName.compareTo(other.canonicalName)
+  override fun compareTo(other: ClassName): Int = comparableNames.compareTo(other.comparableNames)
 
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as ClassName
+
+    if (names != other.names) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + names.hashCode()
+    return result
+  }
 
   public companion object {
     /**

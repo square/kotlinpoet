@@ -20,6 +20,7 @@ package com.squareup.kotlinpoet
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -102,6 +103,18 @@ public class ParameterizedTypeName internal constructor(
    */
   public fun nestedClass(name: String, typeArguments: List<TypeName>): ParameterizedTypeName =
     ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as ParameterizedTypeName
+
+    return toString() == other.toString()
+  }
+
+  override fun hashCode(): Int = Objects.hash(super.hashCode(), toString())
 
   public companion object {
     /** Returns a parameterized type, applying `typeArguments` to `this`. */

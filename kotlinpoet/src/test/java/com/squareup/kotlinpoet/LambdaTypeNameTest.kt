@@ -192,4 +192,43 @@ class LambdaTypeNameTest {
     assertThat(typeName.toString())
       .isEqualTo("((kotlin.Int) -> kotlin.Int) -> kotlin.Unit")
   }
+
+  @Test fun equalsAndHashCode() {
+    val lambdaTypeName1 = LambdaTypeName.get(
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = Int::class.asTypeName(),
+    )
+
+    val lambdaTypeName2 = LambdaTypeName.get(
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = Int::class.asTypeName(),
+    )
+    assertThat(lambdaTypeName1).isEqualTo(lambdaTypeName2)
+    assertThat(lambdaTypeName1.hashCode()).isEqualTo(lambdaTypeName2.hashCode())
+    assertThat(lambdaTypeName1.toString()).isEqualTo(lambdaTypeName2.toString())
+
+    val differentReceiver = LambdaTypeName.get(
+      parameters = arrayOf(Int::class.asTypeName()),
+      returnType = Int::class.asTypeName(),
+      receiver = Any::class.asTypeName(),
+    )
+    assertThat(lambdaTypeName1).isNotEqualTo(differentReceiver)
+    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(differentReceiver.hashCode())
+
+    val nullable = lambdaTypeName1.copy(nullable = true)
+    assertThat(lambdaTypeName1).isNotEqualTo(nullable)
+    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(nullable.hashCode())
+
+    val annotations = lambdaTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class.asClassName()).build()))
+    assertThat(lambdaTypeName1).isNotEqualTo(annotations)
+    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(annotations.hashCode())
+
+    val suspending = lambdaTypeName1.copy(suspending = true)
+    assertThat(lambdaTypeName1).isNotEqualTo(suspending)
+    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(suspending.hashCode())
+
+    val tagged = lambdaTypeName1.copy(tags = mapOf(String::class to ""))
+    assertThat(lambdaTypeName1).isNotEqualTo(tagged)
+    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(tagged.hashCode())
+  }
 }

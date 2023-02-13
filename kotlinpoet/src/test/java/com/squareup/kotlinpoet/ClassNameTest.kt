@@ -217,7 +217,74 @@ class ClassNameTest {
       ClassName(packageName = "", simpleNames = listOf("Foo", "Bar", ""))
     }.hasMessageThat().isEqualTo(
       "simpleNames must not contain empty items: " +
-        "[Foo, Bar, ]"
+        "[Foo, Bar, ]",
+    )
+  }
+
+  @Test
+  fun equalsAndHashCodeDifferentiatePackagesFromSimpleNames() {
+    val outerFoo = ClassName("com.example.Foo", "Bar")
+    val packageFoo = ClassName("com.example", "Foo", "Bar")
+
+    assertThat(outerFoo).isNotEqualTo(packageFoo)
+    assertThat(outerFoo.hashCode()).isNotEqualTo(packageFoo.hashCode())
+  }
+
+  @Test
+  fun equalsAndHashCodeDifferentiateNullabilityAnnotationsAndTags() {
+    val foo1 = ClassName(names = listOf("com.example", "Foo"))
+
+    val foo2 = ClassName(names = listOf("com.example", "Foo"))
+    assertThat(foo1).isEqualTo(foo2)
+    assertThat(foo1.hashCode()).isEqualTo(foo2.hashCode())
+
+    val annotatedFoo = foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))
+    assertThat(foo1).isNotEqualTo(annotatedFoo)
+    assertThat(foo1.hashCode()).isNotEqualTo(annotatedFoo.hashCode())
+
+    val nullableFoo = foo1.copy(nullable = true)
+    assertThat(foo1).isNotEqualTo(nullableFoo)
+    assertThat(foo1.hashCode()).isNotEqualTo(nullableFoo.hashCode())
+
+    val taggedFoo = foo1.copy(tags = mapOf(String::class to "test"))
+    assertThat(foo1).isNotEqualTo(taggedFoo)
+    assertThat(foo1.hashCode()).isNotEqualTo(taggedFoo.hashCode())
+  }
+
+  @Test
+  fun compareTo() {
+    val robot = ClassName("com.example", "Robot")
+    val robotMotor = ClassName("com.example", "Robot", "Motor")
+    val roboticVacuum = ClassName("com.example", "RoboticVacuum")
+
+    val list = listOf(robot, robotMotor, roboticVacuum)
+
+    assertThat(list.sorted()).isEqualTo(listOf(robot, robotMotor, roboticVacuum))
+  }
+
+  @Test
+  fun compareToDifferentiatesPackagesFromSimpleNames() {
+    val outerFooNestedBar = ClassName("com.example", "Foo", "Bar")
+    val packageFooClassBar = ClassName("com.example.Foo", "Bar")
+    val outerFooNestedBaz = ClassName("com.example", "Foo", "Baz")
+    val packageFooClassBaz = ClassName("com.example.Foo", "Baz")
+    val outerGooNestedBar = ClassName("com.example", "Goo", "Bar")
+    val packageGooClassBar = ClassName("com.example.Goo", "Bar")
+
+    val list = listOf(
+      outerFooNestedBar, packageFooClassBar, outerFooNestedBaz, packageFooClassBaz, outerGooNestedBar,
+      packageGooClassBar,
+    )
+
+    assertThat(list.sorted()).isEqualTo(
+      listOf(
+        outerFooNestedBar,
+        outerFooNestedBaz,
+        outerGooNestedBar,
+        packageFooClassBar,
+        packageFooClassBaz,
+        packageGooClassBar,
+      ),
     )
   }
 }

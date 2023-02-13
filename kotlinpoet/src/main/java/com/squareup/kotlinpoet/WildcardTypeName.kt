@@ -52,6 +52,26 @@ public class WildcardTypeName private constructor(
     }
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as WildcardTypeName
+
+    if (outTypes != other.outTypes) return false
+    if (inTypes != other.inTypes) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + outTypes.hashCode()
+    result = 31 * result + inTypes.hashCode()
+    return result
+  }
+
   public companion object {
     /**
      * Returns a type that represents an unknown type that produces `outType`. For example, if

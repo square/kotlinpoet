@@ -93,15 +93,6 @@ public sealed class TypeName constructor(
 
   public val isAnnotated: Boolean get() = annotations.isNotEmpty()
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other == null) return false
-    if (javaClass != other.javaClass) return false
-    return toString() == other.toString()
-  }
-
-  override fun hashCode(): Int = toString().hashCode()
-
   override fun toString(): String = cachedString
 
   internal abstract fun emit(out: CodeWriter): CodeWriter
@@ -117,6 +108,26 @@ public sealed class TypeName constructor(
     if (isNullable) {
       out.emit("?")
     }
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as TypeName
+
+    if (isNullable != other.isNullable) return false
+    if (tagMap != other.tagMap) return false
+    if (annotations != other.annotations) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = isNullable.hashCode()
+    result = 31 * result + tagMap.hashCode()
+    result = 31 * result + annotations.hashCode()
+    return result
   }
 
   public companion object {

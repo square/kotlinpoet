@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet.javapoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.javapoet.ArrayTypeName
+import com.squareup.javapoet.WildcardTypeName
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
@@ -41,6 +42,8 @@ import com.squareup.kotlinpoet.U_LONG
 import com.squareup.kotlinpoet.U_SHORT
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.typeNameOf
+import javax.lang.model.type.WildcardType
+import javax.lang.model.util.Elements
 import org.junit.Test
 
 @OptIn(KotlinPoetJavaPoetPreview::class)
