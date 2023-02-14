@@ -26,7 +26,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
-import kotlin.reflect.typeOf
 import org.junit.Test
 
 class ParameterizedTypeNameTest {
@@ -190,14 +189,5 @@ class ParameterizedTypeNameTest {
     val tagged = parameterizedTypeName1.copy(tags = mapOf(String::class to ""))
     assertThat(parameterizedTypeName1).isNotEqualTo(tagged)
     assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(tagged)
-  }
-
-  @Test fun equalsAndHashCodeDisregardEnclosingType() {
-    val typeName1 = typeOf<Enclosing1.GenericClass<Enclosing2.Foo>>().asTypeName() // has enclosingType
-    val typeName2 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class) // same string representation but no enclosingType
-
-    assertThat(typeName1).isEqualTo(typeName2)
-    assertThat(typeName1.hashCode()).isEqualTo(typeName2.hashCode())
-    assertThat(typeName1.toString()).isEqualTo(typeName2.toString())
   }
 }

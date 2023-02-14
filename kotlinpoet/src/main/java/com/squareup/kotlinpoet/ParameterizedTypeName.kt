@@ -111,10 +111,20 @@ public class ParameterizedTypeName internal constructor(
 
     other as ParameterizedTypeName
 
-    return toString() == other.toString()
+    if (enclosingType != other.enclosingType) return false
+    if (rawType != other.rawType) return false
+    if (typeArguments != other.typeArguments) return false
+
+    return true
   }
 
-  override fun hashCode(): Int = Objects.hash(super.hashCode(), toString())
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + (enclosingType?.hashCode() ?: 0)
+    result = 31 * result + rawType.hashCode()
+    result = 31 * result + typeArguments.hashCode()
+    return result
+  }
 
   public companion object {
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
