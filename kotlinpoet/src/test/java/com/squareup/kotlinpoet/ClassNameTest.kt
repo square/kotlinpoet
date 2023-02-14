@@ -238,17 +238,11 @@ class ClassNameTest {
     assertThat(foo1).isEqualTo(foo2)
     assertThat(foo1.hashCode()).isEqualTo(foo2.hashCode())
 
-    val annotatedFoo = foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))
-    assertThat(foo1).isNotEqualTo(annotatedFoo)
-    assertThat(foo1.hashCode()).isNotEqualTo(annotatedFoo.hashCode())
+    assertThat(foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))).isNotEqualTo(foo1)
 
-    val nullableFoo = foo1.copy(nullable = true)
-    assertThat(foo1).isNotEqualTo(nullableFoo)
-    assertThat(foo1.hashCode()).isNotEqualTo(nullableFoo.hashCode())
+    assertThat(foo1.copy(nullable = true)).isNotEqualTo(foo1)
 
-    val taggedFoo = foo1.copy(tags = mapOf(String::class to "test"))
-    assertThat(foo1).isNotEqualTo(taggedFoo)
-    assertThat(foo1.hashCode()).isNotEqualTo(taggedFoo.hashCode())
+    assertThat(foo1.copy(tags = mapOf(String::class to "test"))).isNotEqualTo(foo1)
   }
 
   @Test

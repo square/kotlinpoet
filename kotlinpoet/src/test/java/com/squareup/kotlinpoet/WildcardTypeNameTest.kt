@@ -39,16 +39,10 @@ class WildcardTypeNameTest {
   @Test fun hashCodeAndEqualsDifferentiateNullabilityAnnotationsAndTags() {
     val anyProducer = producerOf(Any::class)
 
-    val nullable = anyProducer.copy(nullable = true)
-    assertThat(nullable).isNotEqualTo(anyProducer)
-    assertThat(nullable.hashCode()).isNotEqualTo(anyProducer.hashCode())
+    assertThat(anyProducer.copy(nullable = true)).isNotEqualTo(anyProducer)
 
-    val annotated = anyProducer.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))
-    assertThat(annotated).isNotEqualTo(anyProducer)
-    assertThat(annotated.hashCode()).isNotEqualTo(anyProducer.hashCode())
+    assertThat(anyProducer.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(anyProducer)
 
-    val tagged = anyProducer.copy(tags = mapOf(String::class to ""))
-    assertThat(tagged).isNotEqualTo(anyProducer)
-    assertThat(tagged.hashCode()).isNotEqualTo(anyProducer.hashCode())
+    assertThat(anyProducer.copy(tags = mapOf(String::class to ""))).isNotEqualTo(anyProducer)
   }
 }

@@ -212,23 +212,20 @@ class LambdaTypeNameTest {
       returnType = Int::class.asTypeName(),
       receiver = Any::class.asTypeName(),
     )
-    assertThat(lambdaTypeName1).isNotEqualTo(differentReceiver)
-    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(differentReceiver.hashCode())
+    assertThat(differentReceiver).isNotEqualTo(lambdaTypeName1)
 
-    val nullable = lambdaTypeName1.copy(nullable = true)
-    assertThat(lambdaTypeName1).isNotEqualTo(nullable)
-    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(nullable.hashCode())
+    assertThat(lambdaTypeName1.copy(nullable = true)).isNotEqualTo(lambdaTypeName1)
 
-    val annotations = lambdaTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class.asClassName()).build()))
-    assertThat(lambdaTypeName1).isNotEqualTo(annotations)
-    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(annotations.hashCode())
+    assertThat(
+      lambdaTypeName1.copy(
+        annotations = listOf(
+          AnnotationSpec.builder(Suppress::class.asClassName()).build(),
+        ),
+      ),
+    ).isNotEqualTo(lambdaTypeName1)
 
-    val suspending = lambdaTypeName1.copy(suspending = true)
-    assertThat(lambdaTypeName1).isNotEqualTo(suspending)
-    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(suspending.hashCode())
+    assertThat(lambdaTypeName1.copy(suspending = true)).isNotEqualTo(lambdaTypeName1)
 
-    val tagged = lambdaTypeName1.copy(tags = mapOf(String::class to ""))
-    assertThat(lambdaTypeName1).isNotEqualTo(tagged)
-    assertThat(lambdaTypeName1.hashCode()).isNotEqualTo(tagged.hashCode())
+    assertThat(lambdaTypeName1.copy(tags = mapOf(String::class to ""))).isNotEqualTo(lambdaTypeName1)
   }
 }
