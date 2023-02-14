@@ -75,10 +75,12 @@ public final class com/squareup/kotlinpoet/ClassName : com/squareup/kotlinpoet/T
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/ClassName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun enclosingClassName ()Lcom/squareup/kotlinpoet/ClassName;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanonicalName ()Ljava/lang/String;
 	public final fun getPackageName ()Ljava/lang/String;
 	public final fun getSimpleName ()Ljava/lang/String;
 	public final fun getSimpleNames ()Ljava/util/List;
+	public fun hashCode ()I
 	public final fun nestedClass (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
 	public final fun peerClass (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ClassName;
 	public final fun reflectionName ()Ljava/lang/String;
@@ -471,12 +473,14 @@ public final class com/squareup/kotlinpoet/LambdaTypeName : com/squareup/kotlinp
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun copy (ZLjava/util/List;ZLjava/util/Map;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/LambdaTypeName;ZLjava/util/List;ZLjava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public fun equals (Ljava/lang/Object;)Z
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ParameterSpec;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public final fun getParameters ()Ljava/util/List;
 	public final fun getReceiver ()Lcom/squareup/kotlinpoet/TypeName;
 	public final fun getReturnType ()Lcom/squareup/kotlinpoet/TypeName;
+	public fun hashCode ()I
 	public final fun isSuspending ()Z
 }
 
@@ -622,6 +626,7 @@ public final class com/squareup/kotlinpoet/ParameterizedTypeName : com/squareup/
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun copy (ZLjava/util/List;Ljava/util/Map;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/ParameterizedTypeName;ZLjava/util/List;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public fun equals (Ljava/lang/Object;)Z
 	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public static final fun get (Lcom/squareup/kotlinpoet/ClassName;[Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
@@ -633,6 +638,7 @@ public final class com/squareup/kotlinpoet/ParameterizedTypeName : com/squareup/
 	public static final fun get (Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public final fun getRawType ()Lcom/squareup/kotlinpoet/ClassName;
 	public final fun getTypeArguments ()Ljava/util/List;
+	public fun hashCode ()I
 	public final fun nestedClass (Ljava/lang/String;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public final fun plusParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public final fun plusParameter (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
@@ -1048,6 +1054,7 @@ public final class com/squareup/kotlinpoet/TypeVariableName : com/squareup/kotli
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeVariableName;ZLjava/util/List;Ljava/util/List;ZLjava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public fun equals (Ljava/lang/Object;)Z
 	public static final fun get (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public static final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public static final fun get (Ljava/lang/String;Ljava/util/List;)Lcom/squareup/kotlinpoet/TypeVariableName;
@@ -1065,6 +1072,7 @@ public final class com/squareup/kotlinpoet/TypeVariableName : com/squareup/kotli
 	public static final fun getWithClasses (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public static final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public static final fun getWithTypes (Ljava/lang/String;Ljava/lang/Iterable;Lcom/squareup/kotlinpoet/KModifier;)Lcom/squareup/kotlinpoet/TypeVariableName;
+	public fun hashCode ()I
 	public final fun isReified ()Z
 }
 
@@ -1105,8 +1113,10 @@ public final class com/squareup/kotlinpoet/WildcardTypeName : com/squareup/kotli
 	public static final fun consumerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getInTypes ()Ljava/util/List;
 	public final fun getOutTypes ()Ljava/util/List;
+	public fun hashCode ()I
 	public static final fun producerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public static final fun producerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public static final fun producerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
