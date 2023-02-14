@@ -188,6 +188,6 @@ class ParameterizedTypeNameTest {
 
     val tagged = parameterizedTypeName1.copy(tags = mapOf(String::class to ""))
     assertThat(parameterizedTypeName1).isNotEqualTo(tagged)
-    assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(tagged)
+    assertThat(parameterizedTypeName1.hashCode()).isNotEqualTo(tagged.hashCode())
   }
 }
