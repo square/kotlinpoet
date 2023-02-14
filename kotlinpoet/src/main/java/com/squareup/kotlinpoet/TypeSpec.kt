@@ -340,7 +340,8 @@ public class TypeSpec private constructor(
       val property = propertySpecs[propertyIndex]
       if (property.getter != null || property.setter != null) continue
       val parameter = primaryConstructor.parameter(property.name) ?: continue
-      if (parameter.type != property.type) continue
+      // compare TypeName using `toString()` to account for type aliases
+      if (parameter.type.toString() != property.type.toString()) continue
       if (!isPropertyInitializerConstructorParameter(property, parameter)) {
         continue
       }
