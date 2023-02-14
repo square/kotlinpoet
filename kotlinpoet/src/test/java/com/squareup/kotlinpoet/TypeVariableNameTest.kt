@@ -261,21 +261,18 @@ class TypeVariableNameTest {
     assertThat(typeVariableName1.hashCode()).isEqualTo(typeVariableName2.hashCode())
     assertThat(typeVariableName1.toString()).isEqualTo(typeVariableName2.toString())
 
-    val nullable = typeVariableName1.copy(nullable = true)
-    assertThat(nullable).isNotEqualTo(typeVariableName1)
+    assertThat(typeVariableName1.copy(nullable = true)).isNotEqualTo(typeVariableName1)
 
-    val annotated = typeVariableName1.copy(
-      annotations = listOf(AnnotationSpec.builder(Suppress::class.asTypeName()).build()),
-    )
-    assertThat(annotated).isNotEqualTo(typeVariableName1)
+    assertThat(
+      typeVariableName1.copy(
+        annotations = listOf(AnnotationSpec.builder(Suppress::class.asTypeName()).build()),
+      ),
+    ).isNotEqualTo(typeVariableName1)
 
-    val bounded = typeVariableName1.copy(bounds = listOf(Runnable::class.asTypeName()))
-    assertThat(bounded).isNotEqualTo(typeVariableName1)
+    assertThat(typeVariableName1.copy(bounds = listOf(Runnable::class.asTypeName()))).isNotEqualTo(typeVariableName1)
 
-    val tagged = typeVariableName1.copy(tags = mapOf(String::class to "test"))
-    assertThat(tagged).isNotEqualTo(typeVariableName1)
+    assertThat(typeVariableName1.copy(tags = mapOf(String::class to "test"))).isNotEqualTo(typeVariableName1)
 
-    val reified = typeVariableName1.copy(reified = true)
-    assertThat(reified).isNotEqualTo(typeVariableName1)
+    assertThat(typeVariableName1.copy(reified = true)).isNotEqualTo(typeVariableName1)
   }
 }
