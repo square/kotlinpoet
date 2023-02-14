@@ -178,13 +178,10 @@ class ParameterizedTypeNameTest {
     assertThat(parameterizedTypeName1).isEqualTo(parameterizedTypeName2)
     assertThat(parameterizedTypeName1.hashCode()).isEqualTo(parameterizedTypeName2.hashCode())
 
-    val nullable = parameterizedTypeName1.copy(nullable = true)
-    assertThat(nullable).isNotEqualTo(parameterizedTypeName1)
+    assertThat(parameterizedTypeName1.copy(nullable = true)).isNotEqualTo(parameterizedTypeName1)
 
-    val annotated = parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))
-    assertThat(annotated).isNotEqualTo(parameterizedTypeName1)
+    assertThat(parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(parameterizedTypeName1)
 
-    val tagged = parameterizedTypeName1.copy(tags = mapOf(String::class to ""))
-    assertThat(tagged).isNotEqualTo(parameterizedTypeName1)
+    assertThat(parameterizedTypeName1.copy(tags = mapOf(String::class to ""))).isNotEqualTo(parameterizedTypeName1)
   }
 }
