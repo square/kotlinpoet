@@ -195,22 +195,22 @@ class LambdaTypeNameTest {
 
   @Test fun equalsAndHashCode() {
     val lambdaTypeName1 = LambdaTypeName.get(
-      parameters = arrayOf(Int::class.asTypeName()),
-      returnType = Int::class.asTypeName(),
+      parameters = arrayOf(INT),
+      returnType = INT,
     )
 
     val lambdaTypeName2 = LambdaTypeName.get(
-      parameters = arrayOf(Int::class.asTypeName()),
-      returnType = Int::class.asTypeName(),
+      parameters = arrayOf(INT),
+      returnType = INT,
     )
     assertThat(lambdaTypeName1).isEqualTo(lambdaTypeName2)
     assertThat(lambdaTypeName1.hashCode()).isEqualTo(lambdaTypeName2.hashCode())
     assertThat(lambdaTypeName1.toString()).isEqualTo(lambdaTypeName2.toString())
 
     val differentReceiver = LambdaTypeName.get(
-      parameters = arrayOf(Int::class.asTypeName()),
-      returnType = Int::class.asTypeName(),
-      receiver = Any::class.asTypeName(),
+      parameters = arrayOf(INT),
+      returnType = INT,
+      receiver = ANY,
     )
     assertThat(differentReceiver).isNotEqualTo(lambdaTypeName1)
 
