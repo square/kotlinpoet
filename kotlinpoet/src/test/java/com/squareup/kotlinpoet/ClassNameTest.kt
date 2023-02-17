@@ -221,8 +221,7 @@ class ClassNameTest {
     )
   }
 
-  @Test
-  fun equalsAndHashCodeDifferentiatePackagesFromSimpleNames() {
+  @Test fun equalsAndHashCodeDifferentiatePackagesFromSimpleNames() {
     val outerFoo = ClassName("com.example.Foo", "Bar")
     val packageFoo = ClassName("com.example", "Foo", "Bar")
 
@@ -230,8 +229,7 @@ class ClassNameTest {
     assertThat(outerFoo.hashCode()).isNotEqualTo(packageFoo.hashCode())
   }
 
-  @Test
-  fun equalsAndHashCodeDifferentiateNullabilityAnnotationsAndTags() {
+  @Test fun equalsAndHashCodeDifferentiateNullabilityAnnotationsAndTags() {
     val foo1 = ClassName(names = listOf("com.example", "Foo"))
 
     val foo2 = ClassName(names = listOf("com.example", "Foo"))
@@ -245,8 +243,7 @@ class ClassNameTest {
     assertThat(foo1.copy(tags = mapOf(String::class to "test"))).isNotEqualTo(foo1)
   }
 
-  @Test
-  fun compareTo() {
+  @Test fun compareTo() {
     val robot = ClassName("com.example", "Robot")
     val robotMotor = ClassName("com.example", "Robot", "Motor")
     val roboticVacuum = ClassName("com.example", "RoboticVacuum")
@@ -256,8 +253,7 @@ class ClassNameTest {
     assertThat(list.sorted()).isEqualTo(listOf(robot, robotMotor, roboticVacuum))
   }
 
-  @Test
-  fun compareToDifferentiatesPackagesFromSimpleNames() {
+  @Test fun compareToDifferentiatesPackagesFromSimpleNames() {
     val outerFooNestedBar = ClassName("com.example", "Foo", "Bar")
     val packageFooClassBar = ClassName("com.example.Foo", "Bar")
     val outerFooNestedBaz = ClassName("com.example", "Foo", "Baz")

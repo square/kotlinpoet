@@ -154,8 +154,7 @@ class ParameterizedTypeNameTest {
 
   private fun <Param : Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
 
-  @Test
-  fun annotatedLambdaTypeParameter() {
+  @Test fun annotatedLambdaTypeParameter() {
     val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
     val typeName = Map::class.asTypeName()
       .plusParameter(String::class.asTypeName())

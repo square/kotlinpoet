@@ -252,8 +252,7 @@ class TypeVariableNameTest {
 
   class GenericClass<T>
 
-  @Test
-  fun equalsAndHashCode() {
+  @Test fun equalsAndHashCode() {
     val typeVariableName1 = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
 
     val typeVariableName2 = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
