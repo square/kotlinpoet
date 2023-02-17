@@ -281,4 +281,85 @@ class ClassNameTest {
       ),
     )
   }
+
+  @Test fun compareToDifferentiatesNullabilityAnnotationsAndTags() {
+    val plain = ClassName(
+      listOf("com.example", "Foo")
+    )
+    val nullable = ClassName(
+      listOf("com.example", "Foo"),
+      nullable = true,
+    )
+    val annotated = ClassName(
+      listOf("com.example", "Foo"),
+      nullable = true,
+      annotations = listOf(
+        AnnotationSpec.Builder(Suppress::class.asClassName()).build(),
+      ),
+    )
+    val tagged = ClassName(
+      listOf("com.example", "Foo"),
+      nullable = true,
+      annotations = listOf(
+        AnnotationSpec.Builder(Suppress::class.asClassName()).build(),
+      ),
+      tags = mapOf(String::class to "test"),
+    )
+
+    val list = listOf(plain, nullable, annotated, tagged)
+
+    assertThat(list.sorted()).isEqualTo(
+      listOf(plain, nullable, annotated, tagged),
+    )
+  }
+
+  @Test fun compareToDifferentiatesByAnnotation() {
+    val noAnnotations = ClassName(listOf("com.example", "Foo"))
+
+    val oneAnnotation = ClassName(
+      listOf("com.example", "Foo"),
+      annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()),
+    )
+    val twoAnnotations = ClassName(
+      listOf("com.example", "Foo"),
+      annotations = listOf(
+        AnnotationSpec.Builder(Suppress::class.asClassName()).build(),
+        AnnotationSpec.Builder(Test::class.asClassName()).build(),
+      ),
+    )
+    val secondAnnotationOnly = ClassName(
+      listOf("com.example", "Foo"),
+      annotations = listOf(
+        AnnotationSpec.Builder(Test::class.asClassName()).build(),
+      ),
+    )
+
+    val list = listOf(noAnnotations, oneAnnotation, twoAnnotations, secondAnnotationOnly)
+
+    assertThat(list.sorted()).isEqualTo(
+      listOf(noAnnotations, oneAnnotation, twoAnnotations, secondAnnotationOnly),
+    )
+  }
+
+  @Test fun compareToDifferentiatesByTag() {
+    val noTags = ClassName(listOf("com.example", "Foo"))
+
+    val oneTag = ClassName(
+      listOf("com.example", "Foo"),
+      tags = mapOf(String::class to "test"),
+    )
+    val twoTags = ClassName(
+      listOf("com.example", "Foo"),
+      tags = mapOf(String::class to "test", UInt::class to 1),
+    )
+    val secondTagOnly = ClassName(
+      listOf("com.example", "Foo"),
+      tags = mapOf(UInt::class to 1),
+    )
+
+    val list = listOf(noTags, oneTag, twoTags, secondTagOnly)
+    assertThat(list.sorted()).isEqualTo(
+      listOf(noTags, oneTag, twoTags, secondTagOnly),
+    )
+  }
 }

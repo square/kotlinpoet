@@ -74,10 +74,14 @@ public class ClassName internal constructor(
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`. */
   private val names = names.toImmutableList()
 
-  /** Name for comparison, distinguishing package names like "com.example.Foo" from outer classes like "Foo" */
-  private val comparableName: String = if (names[0].isEmpty())
-    names.subList(1, names.size).joinToString(",") else
-    names.joinToString(",")
+  /** String representation of the names used when comparing to other ClassName */
+  private val comparableNames = names.joinToString()
+
+  /** String representation of the annotations used when comparing to other ClassName */
+  private val comparableAnnotations by lazy { annotations.joinToString() }
+
+  /** String representation of the tags used when comparing to other ClassName */
+  private val comparableTags by lazy { tagMap.tags.toSortedMap(compareBy { it.qualifiedName }).entries.joinToString() }
 
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   public val canonicalName: String = if (names[0].isEmpty())
@@ -181,9 +185,9 @@ public class ClassName internal constructor(
    * com.example.RoboticVacuum
    * ```
    *
-   * Comparison is consistent with equals()
+   * Comparison is best-effort consistent with equals()
    */
-  override fun compareTo(other: ClassName): Int = comparableName.compareTo(other.comparableName)
+  override fun compareTo(other: ClassName): Int = COMPARATOR.compare(this, other)
 
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
@@ -237,6 +241,11 @@ public class ClassName internal constructor(
       require(names.size >= 2) { "couldn't make a guess for $classNameString" }
       return ClassName(names)
     }
+
+    private val COMPARATOR: Comparator<ClassName> = compareBy<ClassName> { it.comparableNames }
+      .thenBy { it.isNullable }
+      .thenBy { it.comparableAnnotations }
+      .thenBy { it.comparableTags }
   }
 }
 
