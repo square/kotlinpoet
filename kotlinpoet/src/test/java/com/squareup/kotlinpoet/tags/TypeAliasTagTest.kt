@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Square, Inc.
+ * Copyright (C) 2023 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,18 @@
  */
 package com.squareup.kotlinpoet.tags
 
-import com.squareup.kotlinpoet.TypeName
+import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ClassName
+import org.junit.Test
 
-/**
- * This tag indicates that this [TypeName] represents a `typealias` type.
- *
- * @property [abbreviatedType] the underlying type for this alias.
- */
-public class TypeAliasTag(public val abbreviatedType: TypeName) {
+class TypeAliasTagTest {
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
+  @Test fun equalsAndHashCode() {
+    val foo = TypeAliasTag(ClassName("com.example", "Foo"))
 
-    other as TypeAliasTag
+    assertThat(foo).isEqualTo(TypeAliasTag(ClassName("com.example", "Foo")))
+    assertThat(foo.hashCode()).isEqualTo(ClassName("com.example", "Foo").hashCode())
 
-    if (abbreviatedType != other.abbreviatedType) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    return abbreviatedType.hashCode()
+    assertThat(foo).isNotEqualTo(ClassName("com.example", "Bar"))
   }
 }
