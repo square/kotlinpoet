@@ -99,26 +99,30 @@ subprojects {
     }
   }
 
-  // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
-  // Create a test task for each supported JDK.
-  for (majorVersion in 8..19) {
-    val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
-      val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
-      javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(majorVersion))
-        vendor.set(JvmVendorSpec.AZUL)
-      })
+  // Only enable the extra toolchain tests on CI. Otherwise local development is broken on Apple Silicon macs
+  // because there are no matching toolchains for several older JDK versions.
+  if ("CI" in System.getenv()) {
+    // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
+    // Create a test task for each supported JDK.
+    for (majorVersion in 8..19) {
+      val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
+        val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
+        javaLauncher.set(javaToolchains.launcherFor {
+          languageVersion.set(JavaLanguageVersion.of(majorVersion))
+          vendor.set(JvmVendorSpec.AZUL)
+        })
 
-      description = "Runs the test suite on JDK $majorVersion"
-      group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Runs the test suite on JDK $majorVersion"
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-      // Copy inputs from normal Test task.
-      val testTask = tasks.getByName<Test>("test")
-      classpath = testTask.classpath
-      testClassesDirs = testTask.testClassesDirs
-    }
-    tasks.named("check").configure {
-      dependsOn(jdkTest)
+        // Copy inputs from normal Test task.
+        val testTask = tasks.getByName<Test>("test")
+        classpath = testTask.classpath
+        testClassesDirs = testTask.testClassesDirs
+      }
+      tasks.named("check").configure {
+        dependsOn(jdkTest)
+      }
     }
   }
 }
