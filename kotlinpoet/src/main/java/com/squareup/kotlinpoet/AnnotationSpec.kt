@@ -22,7 +22,6 @@ import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleAnnotationValueVisitor7
 import javax.lang.model.util.SimpleAnnotationValueVisitor8
 import kotlin.reflect.KClass
 

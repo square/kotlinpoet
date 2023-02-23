@@ -33,7 +33,6 @@ import javax.lang.model.type.NoType
 import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleTypeVisitor7
 import javax.lang.model.util.SimpleTypeVisitor8
 import kotlin.reflect.KClass
 import kotlin.reflect.typeOf
