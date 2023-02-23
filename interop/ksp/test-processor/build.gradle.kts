@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("com.google.devtools.ksp")
 }
 
-tasks.withType<KotlinCompile>()
-  .matching { it.name == "compileTestKotlin" }
-  .configureEach {
-    compilerOptions {
-      freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
-    }
+tasks.compileTestKotlin {
+  compilerOptions {
+    freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
   }
+}
 
 dependencies {
   implementation(project(":kotlinpoet"))
