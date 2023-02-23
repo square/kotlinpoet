@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.DelicateKotlinPoetApi
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
@@ -167,8 +168,8 @@ public class ElementsClassInspector private constructor(
     }
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
-    @Suppress("DEPRECATION")
     return filterOutNullabilityAnnotations(
       annotationMirrors.map { AnnotationSpec.get(it) },
     )
@@ -185,15 +186,15 @@ public class ElementsClassInspector private constructor(
     }
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
-    @Suppress("DEPRECATION")
     return filterOutNullabilityAnnotations(
       annotationMirrors.map { AnnotationSpec.get(it) },
     )
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun ExecutableElement.exceptionTypeNames(): List<TypeName> {
-    @Suppress("DEPRECATION")
     return thrownTypes.map { it.asTypeName() }
   }
 
@@ -303,6 +304,7 @@ public class ElementsClassInspector private constructor(
     }
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   override fun containerData(
     declarationContainer: KmDeclarationContainer,
     className: ClassName,
@@ -507,7 +509,6 @@ public class ElementsClassInspector private constructor(
           className = className,
           annotations = if (declarationContainer.flags.hasAnnotations) {
             ClassInspectorUtil.createAnnotations {
-              @Suppress("DEPRECATION")
               addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
             }
           } else {
