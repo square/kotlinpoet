@@ -15,6 +15,7 @@
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -39,6 +40,7 @@ allprojects {
 subprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_1_8)
       freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
     }
   }
