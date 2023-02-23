@@ -22,6 +22,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.DelicateKotlinPoetApi
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.FunSpec.Builder
@@ -140,13 +141,14 @@ public fun KClass<*>.toTypeSpec(
 ): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
+@OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
   classInspector: ClassInspector? = null,
 ): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
-@Suppress("DEPRECATION")
+@OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
   classInspector: ClassInspector? = null,
@@ -627,7 +629,7 @@ private fun KmValueParameter.toParameterSpec(
   typeParamResolver: TypeParameterResolver,
   annotations: Collection<AnnotationSpec>,
 ): ParameterSpec {
-  val paramType = varargElementType ?: type ?: throw IllegalStateException("No argument type!")
+  val paramType = varargElementType ?: type
   return ParameterSpec.builder(name, paramType.toTypeName(typeParamResolver))
     .apply {
       addAnnotations(annotations)
@@ -825,7 +827,7 @@ private fun propertyAccessor(
     .filterNot { it == FINAL && !isOverride }
     .filterNot { it == OPEN && isOverride }
   val propertyAccessorFlags = flags.propertyAccessorFlags
-  return if (visibility != PUBLIC || modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
+  return if (modalities.isNotEmpty() || propertyAccessorFlags.isNotEmpty()) {
     functionBuilder
       .apply {
         addModifiers(visibility)
