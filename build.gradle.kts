@@ -100,7 +100,7 @@ subprojects {
 
   // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
   // Create a test task for each supported JDK.
-  for (majorVersion in 8..18) {
+  for (majorVersion in 8..19) {
     val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
       val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
       javaLauncher.set(javaToolchains.launcherFor {
