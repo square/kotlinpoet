@@ -41,7 +41,6 @@ subprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_1_8)
-      freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
