@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 tasks.jar {
   manifest {
@@ -23,6 +24,12 @@ tasks.jar {
 tasks.compileTestKotlin {
   compilerOptions {
     freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
+  }
+}
+
+tasks.test {
+  testLogging {
+    exceptionFormat = TestExceptionFormat.FULL
   }
 }
 
