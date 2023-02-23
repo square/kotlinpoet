@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -118,6 +119,10 @@ subprojects {
         val testTask = tasks.getByName<Test>("test")
         classpath = testTask.classpath
         testClassesDirs = testTask.testClassesDirs
+
+        testLogging {
+          exceptionFormat = TestExceptionFormat.FULL
+        }
       }
       tasks.named("check").configure {
         dependsOn(jdkTest)

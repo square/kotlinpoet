@@ -27,12 +27,6 @@ tasks.compileTestKotlin {
   }
 }
 
-tasks.test {
-  testLogging {
-    exceptionFormat = TestExceptionFormat.FULL
-  }
-}
-
 spotless {
   kotlin {
     targetExclude(
