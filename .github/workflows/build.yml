@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 18
+          java-version: 19
 
       - name: Test
         run: ./gradlew build
@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 18
+          java-version: 19
 
       - name: Prep docs
         run: ./gradlew dokkaHtml
@@ -66,7 +66,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 18
+          java-version: 19
 
       - name: Upload Artifacts
         run: ./gradlew publish

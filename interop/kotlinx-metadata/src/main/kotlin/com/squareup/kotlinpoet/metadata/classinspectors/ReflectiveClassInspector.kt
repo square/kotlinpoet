@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.DelicateKotlinPoetApi
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -171,12 +172,14 @@ public class ReflectiveClassInspector private constructor(
     }
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun Field.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
       declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) },
     )
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun Constructor<*>.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
       declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, true) },
@@ -205,12 +208,14 @@ public class ReflectiveClassInspector private constructor(
     return jvmMethodModifiers
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun Method.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
       declaredAnnotations.orEmpty().map { AnnotationSpec.get(it, includeDefaultValues = true) },
     )
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   private fun Parameter.annotationSpecs(): List<AnnotationSpec> {
     return filterOutNullabilityAnnotations(
       declaredAnnotations.map { AnnotationSpec.get(it, includeDefaultValues = true) },
@@ -285,6 +290,7 @@ public class ReflectiveClassInspector private constructor(
     return lookupClass(className)?.lookupMethod(methodSignature) != null
   }
 
+  @OptIn(DelicateKotlinPoetApi::class)
   override fun containerData(
     declarationContainer: KmDeclarationContainer,
     className: ClassName,

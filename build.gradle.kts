@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -38,14 +40,13 @@ allprojects {
 
 subprojects {
   tasks.withType<KotlinCompile> {
-    kotlinOptions {
-      freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_1_8)
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
   tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-    targetCompatibility = JavaVersion.VERSION_1_8.toString()
+    options.release.set(8)
   }
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -98,26 +99,34 @@ subprojects {
     }
   }
 
-  // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
-  // Create a test task for each supported JDK.
-  for (majorVersion in 8..18) {
-    val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
-      val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
-      javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(majorVersion))
-        vendor.set(JvmVendorSpec.AZUL)
-      })
+  // Only enable the extra toolchain tests on CI. Otherwise local development is broken on Apple Silicon macs
+  // because there are no matching toolchains for several older JDK versions.
+  if ("CI" in System.getenv()) {
+    // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
+    // Create a test task for each supported JDK.
+    for (majorVersion in 8..19) {
+      val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
+        val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
+        javaLauncher.set(javaToolchains.launcherFor {
+          languageVersion.set(JavaLanguageVersion.of(majorVersion))
+          vendor.set(JvmVendorSpec.AZUL)
+        })
 
-      description = "Runs the test suite on JDK $majorVersion"
-      group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Runs the test suite on JDK $majorVersion"
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-      // Copy inputs from normal Test task.
-      val testTask = tasks.getByName<Test>("test")
-      classpath = testTask.classpath
-      testClassesDirs = testTask.testClassesDirs
-    }
-    tasks.named("check").configure {
-      dependsOn(jdkTest)
+        // Copy inputs from normal Test task.
+        val testTask = tasks.getByName<Test>("test")
+        classpath = testTask.classpath
+        testClassesDirs = testTask.testClassesDirs
+
+        testLogging {
+          exceptionFormat = TestExceptionFormat.FULL
+        }
+      }
+      tasks.named("check").configure {
+        dependsOn(jdkTest)
+      }
     }
   }
 }

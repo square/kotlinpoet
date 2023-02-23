@@ -21,10 +21,11 @@ tasks.jar {
 }
 
 tasks.compileTestKotlin {
-  kotlinOptions {
-    freeCompilerArgs = listOf(
+  compilerOptions {
+    freeCompilerArgs.addAll(
       "-Xjvm-default=all",
       "-opt-in=com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview",
+      "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
     )
   }
 }

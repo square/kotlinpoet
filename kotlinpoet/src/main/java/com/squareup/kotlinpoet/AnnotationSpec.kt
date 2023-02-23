@@ -22,7 +22,7 @@ import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleAnnotationValueVisitor7
+import javax.lang.model.util.SimpleAnnotationValueVisitor8
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration. */
@@ -156,7 +156,7 @@ public class AnnotationSpec private constructor(
   @OptIn(DelicateKotlinPoetApi::class)
   private class Visitor(
     val builder: CodeBlock.Builder,
-  ) : SimpleAnnotationValueVisitor7<CodeBlock.Builder, String>(builder) {
+  ) : SimpleAnnotationValueVisitor8<CodeBlock.Builder, String>(builder) {
 
     override fun defaultAction(o: Any, name: String) =
       builder.add(Builder.memberForValue(o))
