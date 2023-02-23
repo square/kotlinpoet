@@ -25,6 +25,7 @@ import javax.lang.model.type.ArrayType
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.ErrorType
 import javax.lang.model.type.ExecutableType
+import javax.lang.model.type.IntersectionType
 import javax.lang.model.type.NoType
 import javax.lang.model.type.NullType
 import javax.lang.model.type.PrimitiveType
@@ -38,8 +39,10 @@ import javax.lang.model.type.TypeKind.LONG
 import javax.lang.model.type.TypeKind.SHORT
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
+import javax.lang.model.type.UnionType
 import javax.lang.model.type.WildcardType
 import javax.lang.model.util.AbstractTypeVisitor6
+import javax.lang.model.util.AbstractTypeVisitor8
 import javax.lang.model.util.Types
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
@@ -171,7 +174,7 @@ internal fun VariableElement.jvmFieldSignature(types: Types): String {
  *
  * For reference, see the [JVM specification, section 4.3](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3).
  */
-internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>() {
+internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor8<String, Types>() {
   override fun visitNoType(t: NoType, types: Types): String = t.descriptor
   override fun visitDeclared(t: DeclaredType, types: Types): String = t.descriptor
   override fun visitPrimitive(t: PrimitiveType, types: Types): String = t.descriptor
@@ -181,14 +184,13 @@ internal object JvmDescriptorTypeVisitor : AbstractTypeVisitor6<String, Types>()
   override fun visitExecutable(t: ExecutableType, types: Types): String = t.descriptor(types)
   override fun visitTypeVariable(t: TypeVariable, types: Types): String = t.descriptor(types)
 
-  override fun visitNull(t: NullType, types: Types): String = visitUnknown(
-    t,
-    types,
-  )
-  override fun visitError(t: ErrorType, types: Types): String = visitUnknown(
-    t,
-    types,
-  )
+  override fun visitNull(t: NullType, types: Types): String = visitUnknown(t, types)
+
+  override fun visitError(t: ErrorType, types: Types): String = visitUnknown(t, types)
+
+  override fun visitUnion(t: UnionType, types: Types): String = visitUnknown(t, types)
+
+  override fun visitIntersection(t: IntersectionType, types: Types): String = visitUnknown(t, types)
 
   override fun visitUnknown(t: TypeMirror, types: Types): String = error("Unsupported type $t")
 }
