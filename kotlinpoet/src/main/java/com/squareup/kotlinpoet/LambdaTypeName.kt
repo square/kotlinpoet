@@ -57,7 +57,6 @@ public class LambdaTypeName private constructor(
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
-    out.emitContextReceivers(contextReceivers, suffix = "·")
     if (isNullable) {
       out.emit("(")
     }
@@ -65,6 +64,8 @@ public class LambdaTypeName private constructor(
     if (isSuspending) {
       out.emit("suspend·")
     }
+
+    out.emitContextReceivers(contextReceivers, suffix = "·")
 
     receiver?.let {
       if (it.isAnnotated) {

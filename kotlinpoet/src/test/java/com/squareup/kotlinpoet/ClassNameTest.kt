@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
+import com.squareup.kotlinpoet.Cased.Weird.Sup
 import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -109,6 +110,25 @@ class ClassNameTest {
       .isEqualTo("kotlin.Any")
     assertThat(OuterClass.InnerClass::class.asClassName().toString())
       .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
+
+    // Note: Do NOT rewrite this assertion to something more clever since behaviors
+    //  like TypeName.equals may subvert the correct partitioning of package and names.
+    val hi = Sup.Hi::class.asClassName()
+    assertThat(hi.packageName).isEqualTo("com.squareup.kotlinpoet.Cased.Weird")
+    assertThat(hi.simpleNames).containsExactly("Sup", "Hi").inOrder()
+  }
+
+  @Test fun classNameFromKClassSpecialCases() {
+    assertEquals(ClassName(listOf("kotlin", "Boolean", "Companion")), Boolean.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Byte", "Companion")), Byte.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Char", "Companion")), Char.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Double", "Companion")), Double.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Enum", "Companion")), Enum.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Float", "Companion")), Float.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Int", "Companion")), Int.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Long", "Companion")), Long.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "Short", "Companion")), Short.Companion::class.asClassName())
+    assertEquals(ClassName(listOf("kotlin", "String", "Companion")), String.Companion::class.asClassName())
   }
 
   @Test fun peerClass() {

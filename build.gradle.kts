@@ -70,7 +70,9 @@ subprojects {
   configure<SpotlessExtension> {
     kotlin {
       target("**/*.kt")
-      ktlint(libs.versions.ktlint.get()).editorConfigOverride(readEditorConfig())
+      ktlint(libs.versions.ktlint.get()).editorConfigOverride(
+        mapOf("ktlint_standard_filename" to "disabled"),
+      )
       trimTrailingWhitespace()
       endWithNewline()
 
@@ -99,16 +101,11 @@ subprojects {
   // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
   // Create a test task for each supported JDK.
   for (majorVersion in 8..18) {
-    // Adoptium JDK 9 cannot extract on Linux or Mac OS.
-    if (majorVersion == 9) continue
-    // Started causing build failures in late 2022, e.g.:
-    // https://github.com/square/kotlinpoet/actions/runs/3816320722/jobs/6531532305.
-    if (majorVersion == 10) continue
-
     val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
       val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
       javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(majorVersion))
+        vendor.set(JvmVendorSpec.AZUL)
       })
 
       description = "Runs the test suite on JDK $majorVersion"
@@ -131,11 +128,4 @@ apiValidation {
     "interop", // Empty middle package
     "test-processor" // Test only
   )
-}
-
-fun readEditorConfig(): Map<String, String> {
-  val settingRegex = Regex("^(\\S+)\\s*=\\s*(\\S+)$")
-  return file(".editorconfig").readLines()
-    .mapNotNull { settingRegex.matchEntire(it)?.destructured }
-    .associate { (key, value) -> key to value }
 }

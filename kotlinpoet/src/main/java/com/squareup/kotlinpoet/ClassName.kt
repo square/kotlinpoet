@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import java.util.ArrayDeque
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.NestingKind.MEMBER
@@ -240,8 +241,45 @@ public fun Class<*>.asClassName(): ClassName {
 
 @JvmName("get")
 public fun KClass<*>.asClassName(): ClassName {
-  qualifiedName?.let { return ClassName.bestGuess(it) }
-  throw IllegalArgumentException("$this cannot be represented as a ClassName")
+  var qualifiedName = requireNotNull(qualifiedName) { "$this cannot be represented as a ClassName" }
+
+  // First, check for Kotlin types whose enclosing class name is a type that is mapped to a JVM
+  // class. Thus, the class backing the nested Kotlin type does not have an enclosing class
+  // (i.e., a parent) and the normal algorithm will fail.
+  val names = when (qualifiedName) {
+    "kotlin.Boolean.Companion" -> listOf("kotlin", "Boolean", "Companion")
+    "kotlin.Byte.Companion" -> listOf("kotlin", "Byte", "Companion")
+    "kotlin.Char.Companion" -> listOf("kotlin", "Char", "Companion")
+    "kotlin.Double.Companion" -> listOf("kotlin", "Double", "Companion")
+    "kotlin.Enum.Companion" -> listOf("kotlin", "Enum", "Companion")
+    "kotlin.Float.Companion" -> listOf("kotlin", "Float", "Companion")
+    "kotlin.Int.Companion" -> listOf("kotlin", "Int", "Companion")
+    "kotlin.Long.Companion" -> listOf("kotlin", "Long", "Companion")
+    "kotlin.Short.Companion" -> listOf("kotlin", "Short", "Companion")
+    "kotlin.String.Companion" -> listOf("kotlin", "String", "Companion")
+    else -> {
+      val names = ArrayDeque<String>()
+      var target: Class<*>? = java
+      while (target != null) {
+        target = target.enclosingClass
+
+        val dot = qualifiedName.lastIndexOf('.')
+        if (dot == -1) {
+          if (target != null) throw AssertionError(this) // More enclosing classes than dots.
+          names.addFirst(qualifiedName)
+          qualifiedName = ""
+        } else {
+          names.addFirst(qualifiedName.substring(dot + 1))
+          qualifiedName = qualifiedName.substring(0, dot)
+        }
+      }
+
+      names.addFirst(qualifiedName)
+      names.toList()
+    }
+  }
+
+  return ClassName(names)
 }
 
 /** Returns the class name for `element`. */

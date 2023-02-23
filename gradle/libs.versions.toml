@@ -16,14 +16,14 @@
 kotlin = "1.8.0"
 kct = "1.4.9"
 ksp = "1.8.0-1.0.9"
-ktlint = "0.46.1"
+ktlint = "0.48.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version = "1.7.20" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-spotless = { id = "com.diffplug.spotless", version = "6.13.0" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.23.2" }
+spotless = { id = "com.diffplug.spotless", version = "6.15.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.24.0" }
 kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.12.1" }
 
 [libraries]
