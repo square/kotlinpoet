@@ -180,7 +180,13 @@ class ParameterizedTypeNameTest {
     assertThat(parameterizedTypeName1.copy(nullable = true)).isNotEqualTo(parameterizedTypeName1)
 
     assertThat(parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(parameterizedTypeName1)
+  }
 
-    assertThat(parameterizedTypeName1.copy(tags = mapOf(String::class to ""))).isNotEqualTo(parameterizedTypeName1)
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val parameterizedTypeName = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val tagged = parameterizedTypeName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(parameterizedTypeName).isEqualTo(tagged)
+    assertThat(parameterizedTypeName.hashCode()).isEqualTo(tagged.hashCode())
   }
 }

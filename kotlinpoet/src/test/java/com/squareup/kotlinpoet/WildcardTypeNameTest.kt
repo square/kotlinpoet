@@ -36,13 +36,19 @@ class WildcardTypeNameTest {
     assertThat(stringConsumer1.toString()).isEqualTo(stringConsumer2.toString())
   }
 
-  @Test fun hashCodeAndEqualsDifferentiateNullabilityAnnotationsAndTags() {
+  @Test fun hashCodeAndEqualsDifferentiateNullabilityAndAnnotations() {
     val anyProducer = producerOf(Any::class)
 
     assertThat(anyProducer.copy(nullable = true)).isNotEqualTo(anyProducer)
 
     assertThat(anyProducer.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(anyProducer)
+  }
 
-    assertThat(anyProducer.copy(tags = mapOf(String::class to ""))).isNotEqualTo(anyProducer)
+  @Test fun hashCodeAndEqualsIgnoreTags() {
+    val anyProducer = producerOf(Any::class)
+    val tagged = anyProducer.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(anyProducer).isEqualTo(tagged)
+    assertThat(anyProducer.hashCode()).isEqualTo(tagged.hashCode())
   }
 }

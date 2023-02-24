@@ -1169,8 +1169,6 @@ public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
 
 public final class com/squareup/kotlinpoet/tags/TypeAliasTag {
 	public fun <init> (Lcom/squareup/kotlinpoet/TypeName;)V
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAbbreviatedType ()Lcom/squareup/kotlinpoet/TypeName;
-	public fun hashCode ()I
 }
 

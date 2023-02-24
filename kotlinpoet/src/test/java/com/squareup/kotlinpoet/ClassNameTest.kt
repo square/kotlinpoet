@@ -229,7 +229,7 @@ class ClassNameTest {
     assertThat(outerFoo.hashCode()).isNotEqualTo(packageFoo.hashCode())
   }
 
-  @Test fun equalsAndHashCodeDifferentiateNullabilityAnnotationsAndTags() {
+  @Test fun equalsAndHashCodeDifferentiateNullabilityAndAnnotations() {
     val foo1 = ClassName(names = listOf("com.example", "Foo"))
 
     val foo2 = ClassName(names = listOf("com.example", "Foo"))
@@ -239,8 +239,14 @@ class ClassNameTest {
     assertThat(foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))).isNotEqualTo(foo1)
 
     assertThat(foo1.copy(nullable = true)).isNotEqualTo(foo1)
+  }
 
-    assertThat(foo1.copy(tags = mapOf(String::class to "test"))).isNotEqualTo(foo1)
+  @Test fun equalsAndHashCodeDoNotDifferentiateTags() {
+    val foo = ClassName(names = listOf("com.example", "Foo"))
+    val taggedFoo = foo.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(foo).isEqualTo(taggedFoo)
+    assertThat(foo.hashCode()).isEqualTo(taggedFoo.hashCode())
   }
 
   @Test fun compareTo() {
@@ -278,7 +284,7 @@ class ClassNameTest {
     )
   }
 
-  @Test fun compareToDifferentiatesNullabilityAnnotationsAndTags() {
+  @Test fun compareToDifferentiatesNullabilityAndAnnotations() {
     val plain = ClassName(
       listOf("com.example", "Foo")
     )
@@ -293,19 +299,11 @@ class ClassNameTest {
         AnnotationSpec.Builder(Suppress::class.asClassName()).build(),
       ),
     )
-    val tagged = ClassName(
-      listOf("com.example", "Foo"),
-      nullable = true,
-      annotations = listOf(
-        AnnotationSpec.Builder(Suppress::class.asClassName()).build(),
-      ),
-      tags = mapOf(String::class to "test"),
-    )
 
-    val list = listOf(plain, nullable, annotated, tagged)
+    val list = listOf(plain, nullable, annotated)
 
     assertThat(list.sorted()).isEqualTo(
-      listOf(plain, nullable, annotated, tagged),
+      listOf(plain, nullable, annotated),
     )
   }
 
@@ -337,7 +335,7 @@ class ClassNameTest {
     )
   }
 
-  @Test fun compareToDifferentiatesByTag() {
+  @Test fun compareToDoesNotDifferentiateByTag() {
     val noTags = ClassName(listOf("com.example", "Foo"))
 
     val oneTag = ClassName(
@@ -353,9 +351,8 @@ class ClassNameTest {
       tags = mapOf(UInt::class to 1),
     )
 
-    val list = listOf(noTags, oneTag, twoTags, secondTagOnly)
-    assertThat(list.sorted()).isEqualTo(
-      listOf(noTags, oneTag, twoTags, secondTagOnly),
-    )
+    assertThat(noTags.compareTo(oneTag)).isEqualTo(0)
+    assertThat(oneTag.compareTo(twoTags)).isEqualTo(0)
+    assertThat(twoTags.compareTo(secondTagOnly)).isEqualTo(0)
   }
 }

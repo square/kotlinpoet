@@ -80,9 +80,6 @@ public class ClassName internal constructor(
   /** String representation of the annotations used when comparing to other ClassName */
   private val comparableAnnotations by lazy { annotations.joinToString() }
 
-  /** String representation of the tags used when comparing to other ClassName */
-  private val comparableTags by lazy { tagMap.tags.toSortedMap(compareBy { it.qualifiedName }).entries.joinToString() }
-
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   public val canonicalName: String = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
@@ -185,7 +182,7 @@ public class ClassName internal constructor(
    * com.example.RoboticVacuum
    * ```
    *
-   * Comparison is best-effort consistent with equals()
+   * Comparison is consistent with equals()
    */
   override fun compareTo(other: ClassName): Int = COMPARATOR.compare(this, other)
 
@@ -245,7 +242,6 @@ public class ClassName internal constructor(
     private val COMPARATOR: Comparator<ClassName> = compareBy<ClassName> { it.comparableNames }
       .thenBy { it.isNullable }
       .thenBy { it.comparableAnnotations }
-      .thenBy { it.comparableTags }
   }
 }
 

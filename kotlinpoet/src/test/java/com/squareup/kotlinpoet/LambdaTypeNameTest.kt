@@ -225,7 +225,17 @@ class LambdaTypeNameTest {
     ).isNotEqualTo(lambdaTypeName1)
 
     assertThat(lambdaTypeName1.copy(suspending = true)).isNotEqualTo(lambdaTypeName1)
+  }
 
-    assertThat(lambdaTypeName1.copy(tags = mapOf(String::class to ""))).isNotEqualTo(lambdaTypeName1)
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val lambdaTypeName = LambdaTypeName.get(
+      parameters = arrayOf(INT),
+      returnType = INT,
+    )
+
+    val tagged = lambdaTypeName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(tagged).isEqualTo(lambdaTypeName)
+    assertThat(tagged.hashCode()).isEqualTo(lambdaTypeName.hashCode())
   }
 }

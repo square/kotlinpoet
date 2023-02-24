@@ -270,8 +270,14 @@ class TypeVariableNameTest {
 
     assertThat(typeVariableName1.copy(bounds = listOf(Runnable::class.asTypeName()))).isNotEqualTo(typeVariableName1)
 
-    assertThat(typeVariableName1.copy(tags = mapOf(String::class to "test"))).isNotEqualTo(typeVariableName1)
-
     assertThat(typeVariableName1.copy(reified = true)).isNotEqualTo(typeVariableName1)
+  }
+
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val typeVariableName = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
+    val tagged = typeVariableName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(typeVariableName).isEqualTo(tagged)
+    assertThat(typeVariableName.hashCode()).isEqualTo(tagged.hashCode())
   }
 }

@@ -100,15 +100,14 @@ public sealed class TypeName constructor(
     other as TypeName
 
     if (isNullable != other.isNullable) return false
-    if (tagMap != other.tagMap) return false
     if (annotations != other.annotations) return false
+    // do not check for equality of tags, these are considered side-channel data
 
     return true
   }
 
   override fun hashCode(): Int {
     var result = isNullable.hashCode()
-    result = 31 * result + tagMap.hashCode()
     result = 31 * result + annotations.hashCode()
     return result
   }
