@@ -22,20 +22,4 @@ import com.squareup.kotlinpoet.TypeName
  *
  * @property [abbreviatedType] the underlying type for this alias.
  */
-public class TypeAliasTag(public val abbreviatedType: TypeName) {
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as TypeAliasTag
-
-    if (abbreviatedType != other.abbreviatedType) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    return abbreviatedType.hashCode()
-  }
-}
+public class TypeAliasTag(public val abbreviatedType: TypeName)
