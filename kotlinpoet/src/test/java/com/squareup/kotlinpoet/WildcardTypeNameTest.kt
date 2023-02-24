@@ -22,7 +22,7 @@ import org.junit.Test
 
 class WildcardTypeNameTest {
 
-  @Test fun hashCodeAndEquals() {
+  @Test fun equalsAndHashCode() {
     val anyProducer1 = producerOf(Any::class)
     val anyProducer2 = producerOf(Any::class.asTypeName())
     assertThat(anyProducer1).isEqualTo(anyProducer2)
@@ -36,7 +36,7 @@ class WildcardTypeNameTest {
     assertThat(stringConsumer1.toString()).isEqualTo(stringConsumer2.toString())
   }
 
-  @Test fun hashCodeAndEqualsDifferentiateNullabilityAndAnnotations() {
+  @Test fun equalsAndHashCodeDifferentiateNullabilityAndAnnotations() {
     val anyProducer = producerOf(Any::class)
 
     assertThat(anyProducer.copy(nullable = true)).isNotEqualTo(anyProducer)
@@ -44,7 +44,7 @@ class WildcardTypeNameTest {
     assertThat(anyProducer.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(anyProducer)
   }
 
-  @Test fun hashCodeAndEqualsIgnoreTags() {
+  @Test fun equalsAndHashCodeIgnoreTags() {
     val anyProducer = producerOf(Any::class)
     val tagged = anyProducer.copy(tags = mapOf(String::class to "test"))
 
