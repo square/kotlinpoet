@@ -221,6 +221,13 @@ class ClassNameTest {
     )
   }
 
+  @Test fun equalsAndHashCode() {
+    val foo1 = ClassName(names = listOf("com.example", "Foo"))
+    val foo2 = ClassName(names = listOf("com.example", "Foo"))
+    assertThat(foo1).isEqualTo(foo2)
+    assertThat(foo1.hashCode()).isEqualTo(foo2.hashCode())
+  }
+
   @Test fun equalsDifferentiatesPackagesFromSimpleNames() {
     val outerFoo = ClassName("com.example.Foo", "Bar")
     val packageFoo = ClassName("com.example", "Foo", "Bar")
@@ -229,13 +236,9 @@ class ClassNameTest {
   }
 
   @Test fun equalsDifferentiatesNullabilityAndAnnotations() {
-    val foo1 = ClassName(names = listOf("com.example", "Foo"))
-    val foo2 = ClassName(names = listOf("com.example", "Foo"))
-    assertThat(foo1).isEqualTo(foo2)
-    assertThat(foo1.hashCode()).isEqualTo(foo2.hashCode())
-
-    assertThat(foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))).isNotEqualTo(foo1)
-    assertThat(foo1.copy(nullable = true)).isNotEqualTo(foo1)
+    val foo = ClassName(names = listOf("com.example", "Foo"))
+    assertThat(foo.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))).isNotEqualTo(foo)
+    assertThat(foo.copy(nullable = true)).isNotEqualTo(foo)
   }
 
   @Test fun equalsAndHashCodeIgnoreTags() {
