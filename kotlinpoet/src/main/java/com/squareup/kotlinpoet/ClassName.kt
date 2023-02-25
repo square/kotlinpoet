@@ -75,6 +75,12 @@ public class ClassName internal constructor(
   /** From top to bottom. This will be `["java.util", "Map", "Entry"]` for `Map.Entry`. */
   private val names = names.toImmutableList()
 
+  /** String representation of the names used when comparing to other ClassName */
+  private val comparableNames = names.joinToString()
+
+  /** String representation of the annotations used when comparing to other ClassName */
+  private val comparableAnnotations by lazy { annotations.joinToString() }
+
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   public val canonicalName: String = if (names[0].isEmpty())
     names.subList(1, names.size).joinToString(".") else
@@ -176,8 +182,9 @@ public class ClassName internal constructor(
    * com.example.Robot.Motor
    * com.example.RoboticVacuum
    * ```
+   * Comparison is consistent with equals()
    */
-  override fun compareTo(other: ClassName): Int = canonicalName.compareTo(other.canonicalName)
+  override fun compareTo(other: ClassName): Int = COMPARATOR.compare(this, other)
 
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
@@ -231,6 +238,10 @@ public class ClassName internal constructor(
       require(names.size >= 2) { "couldn't make a guess for $classNameString" }
       return ClassName(names)
     }
+
+    private val COMPARATOR: Comparator<ClassName> = compareBy<ClassName> { it.comparableNames }
+      .thenBy { it.isNullable }
+      .thenBy { it.comparableAnnotations }
   }
 }
 
