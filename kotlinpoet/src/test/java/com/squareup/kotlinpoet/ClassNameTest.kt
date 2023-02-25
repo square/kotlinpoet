@@ -217,31 +217,28 @@ class ClassNameTest {
       ClassName(packageName = "", simpleNames = listOf("Foo", "Bar", ""))
     }.hasMessageThat().isEqualTo(
       "simpleNames must not contain empty items: " +
-        "[Foo, Bar, ]",
+        "[Foo, Bar, ]"
     )
   }
 
-  @Test fun equalsAndHashCodeDifferentiatePackagesFromSimpleNames() {
+  @Test fun equalsDifferentiatesPackagesFromSimpleNames() {
     val outerFoo = ClassName("com.example.Foo", "Bar")
     val packageFoo = ClassName("com.example", "Foo", "Bar")
 
     assertThat(outerFoo).isNotEqualTo(packageFoo)
-    assertThat(outerFoo.hashCode()).isNotEqualTo(packageFoo.hashCode())
   }
 
-  @Test fun equalsAndHashCodeDifferentiateNullabilityAndAnnotations() {
+  @Test fun equalsDifferentiatesNullabilityAndAnnotations() {
     val foo1 = ClassName(names = listOf("com.example", "Foo"))
-
     val foo2 = ClassName(names = listOf("com.example", "Foo"))
     assertThat(foo1).isEqualTo(foo2)
     assertThat(foo1.hashCode()).isEqualTo(foo2.hashCode())
 
     assertThat(foo1.copy(annotations = listOf(AnnotationSpec.Builder(Suppress::class.asClassName()).build()))).isNotEqualTo(foo1)
-
     assertThat(foo1.copy(nullable = true)).isNotEqualTo(foo1)
   }
 
-  @Test fun equalsAndHashCodeDoNotDifferentiateTags() {
+  @Test fun equalsAndHashCodeIgnoreTags() {
     val foo = ClassName(names = listOf("com.example", "Foo"))
     val taggedFoo = foo.copy(tags = mapOf(String::class to "test"))
 

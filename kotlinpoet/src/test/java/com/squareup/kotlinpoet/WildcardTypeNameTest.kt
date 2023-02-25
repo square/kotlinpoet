@@ -36,7 +36,7 @@ class WildcardTypeNameTest {
     assertThat(stringConsumer1.toString()).isEqualTo(stringConsumer2.toString())
   }
 
-  @Test fun equalsAndHashCodeDifferentiateNullabilityAndAnnotations() {
+  @Test fun equalsDifferentiatesNullabilityAndAnnotations() {
     val anyProducer = producerOf(Any::class)
 
     assertThat(anyProducer.copy(nullable = true)).isNotEqualTo(anyProducer)

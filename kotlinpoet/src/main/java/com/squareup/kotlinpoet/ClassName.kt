@@ -175,7 +175,6 @@ public class ClassName internal constructor(
    * com.example.Robot.Motor
    * com.example.RoboticVacuum
    * ```
-   *
    */
   override fun compareTo(other: ClassName): Int = canonicalName.compareTo(other.canonicalName)
 

@@ -198,7 +198,6 @@ class LambdaTypeNameTest {
       parameters = arrayOf(INT),
       returnType = INT,
     )
-
     val lambdaTypeName2 = LambdaTypeName.get(
       parameters = arrayOf(INT),
       returnType = INT,
