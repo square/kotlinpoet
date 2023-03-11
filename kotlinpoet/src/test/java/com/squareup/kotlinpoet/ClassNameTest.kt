@@ -286,23 +286,27 @@ class ClassNameTest {
   }
 
   @Test fun compareToDifferentiatesPackagesFromSimpleNames() {
-    val outerFooNestedBar = ClassName("com.example", "Foo", "Bar")
+    val parentFooNestedBar = ClassName("com.example", "Foo", "Bar")
     val packageFooClassBar = ClassName("com.example.Foo", "Bar")
-    val outerFooNestedBaz = ClassName("com.example", "Foo", "Baz")
+    val parentFooNestedBaz = ClassName("com.example", "Foo", "Baz")
     val packageFooClassBaz = ClassName("com.example.Foo", "Baz")
-    val outerGooNestedBar = ClassName("com.example", "Goo", "Bar")
+    val parentGooNestedBar = ClassName("com.example", "Goo", "Bar")
     val packageGooClassBar = ClassName("com.example.Goo", "Bar")
 
     val list = listOf(
-      outerFooNestedBar, packageFooClassBar, outerFooNestedBaz, packageFooClassBaz, outerGooNestedBar,
+      parentFooNestedBar,
+      packageFooClassBar,
+      parentFooNestedBaz,
+      packageFooClassBaz,
+      parentGooNestedBar,
       packageGooClassBar,
     )
 
     assertThat(list.sorted()).isEqualTo(
       listOf(
-        outerFooNestedBar,
-        outerFooNestedBaz,
-        outerGooNestedBar,
+        parentFooNestedBar,
+        parentFooNestedBaz,
+        parentGooNestedBar,
         packageFooClassBar,
         packageFooClassBaz,
         packageGooClassBar,
@@ -370,7 +374,7 @@ class ClassNameTest {
     )
     val twoTags = ClassName(
       listOf("com.example", "Foo"),
-      tags = mapOf(String::class to "test", UInt::class to 1),
+      tags = mapOf(String::class to "test", Int::class to 1),
     )
 
     assertThat(noTags.compareTo(oneTag)).isEqualTo(0)
