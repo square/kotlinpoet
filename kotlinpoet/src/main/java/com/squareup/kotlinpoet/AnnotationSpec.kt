@@ -38,10 +38,11 @@ public class AnnotationSpec private constructor(
     get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
   public val typeName: TypeName = builder.typeName
   public val members: List<CodeBlock> = builder.members.toImmutableList()
+  public val useAsParameter: Boolean = builder.useAsParameter
   public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
-    if (!asParameter) {
+    if (!asParameter && !useAsParameter) {
       codeWriter.emit("@")
     }
     if (useSiteTarget != null) {
@@ -115,6 +116,7 @@ public class AnnotationSpec private constructor(
   public class Builder internal constructor(
     internal val typeName: TypeName,
   ) : Taggable.Builder<Builder> {
+    internal var useAsParameter: Boolean = false
     internal var useSiteTarget: UseSiteTarget? = null
 
     public val members: MutableList<CodeBlock> = mutableListOf()
@@ -125,6 +127,11 @@ public class AnnotationSpec private constructor(
 
     public fun addMember(codeBlock: CodeBlock): Builder = apply {
       members += codeBlock
+    }
+
+    public fun useAsParameter(): Builder = apply {
+      this.useAsParameter = true
+      useSiteTarget(null)
     }
 
     public fun useSiteTarget(useSiteTarget: UseSiteTarget?): Builder = apply {
