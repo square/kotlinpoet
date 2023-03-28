@@ -442,6 +442,11 @@ public class CodeBlock private constructor(
       add("}\n")
     }
 
+    public fun endControlFlowWithComma(): Builder = apply {
+      unindent()
+      add("},\n")
+    }
+
     public fun addStatement(format: String, vararg args: Any?): Builder = apply {
       add("«")
       add(format, *args)

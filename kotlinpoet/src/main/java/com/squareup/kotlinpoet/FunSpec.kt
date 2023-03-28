@@ -550,6 +550,10 @@ public class FunSpec private constructor(
       body.endControlFlow()
     }
 
+    public fun endControlFlowWithComma(): Builder = apply {
+      body.endControlFlowWithComma()
+    }
+
     public fun addStatement(format: String, vararg args: Any): Builder = apply {
       body.addStatement(format, *args)
     }
