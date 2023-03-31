@@ -40,6 +40,13 @@ public class AnnotationSpec private constructor(
   public val members: List<CodeBlock> = builder.members.toImmutableList()
   public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
+  /** Lazily-initialized toString of this type name.  */
+  private val cachedString by lazy {
+    buildCodeString {
+      emit(this, inline = true, asParameter = false)
+    }
+  }
+
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
       codeWriter.emit("@")
@@ -96,9 +103,7 @@ public class AnnotationSpec private constructor(
 
   override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString(): String = buildCodeString {
-    emit(this, inline = true, asParameter = false)
-  }
+  override fun toString(): String = cachedString
 
   public enum class UseSiteTarget(internal val keyword: String) {
     FILE("file"),

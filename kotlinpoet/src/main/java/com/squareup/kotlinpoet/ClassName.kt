@@ -79,7 +79,7 @@ public class ClassName internal constructor(
   private val comparableNames = names.joinToString()
 
   /** String representation of the annotations used when comparing to other ClassName */
-  private val comparableAnnotations by lazy { annotations.joinToString() }
+  private val comparableAnnotations = annotations.joinToString()
 
   /** Fully qualified name using `.` as a separator, like `kotlin.collections.Map.Entry`. */
   public val canonicalName: String = if (names[0].isEmpty())
