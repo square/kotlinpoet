@@ -139,7 +139,7 @@ class PoetInteropTest {
       JWildcardTypeName.supertypeOf(String::class.java),
     )
     assertThat(inKType.toJTypeName()).isEqualTo(superJType)
-    assertThat(superJType.toKTypeName()).isEqualTo(inKType)
+    assertThat(superJType.toKTypeName().toString()).isEqualTo(inKType.toString())
 
     val outKType = typeNameOf<GenericType<out String>>()
     val extendsJType = JParameterizedTypeName.get(
@@ -147,7 +147,7 @@ class PoetInteropTest {
       JWildcardTypeName.subtypeOf(String::class.java),
     )
     assertThat(outKType.toJTypeName()).isEqualTo(extendsJType)
-    assertThat(extendsJType.toKTypeName()).isEqualTo(outKType)
+    assertThat(extendsJType.toKTypeName().toString()).isEqualTo(outKType.toString())
 
     val star = typeNameOf<GenericType<*>>()
     val extendsObjectJType = JParameterizedTypeName.get(
@@ -155,7 +155,7 @@ class PoetInteropTest {
       JWildcardTypeName.subtypeOf(JTypeName.OBJECT),
     )
     assertThat(star.toJTypeName()).isEqualTo(extendsObjectJType)
-    assertThat(extendsObjectJType.toKTypeName()).isEqualTo(star)
+    assertThat(extendsObjectJType.toKTypeName().toString()).isEqualTo(star.toString())
     assertThat(STAR.toJTypeName()).isEqualTo(JWildcardTypeName.subtypeOf(JTypeName.OBJECT))
     assertThat(JWildcardTypeName.subtypeOf(JTypeName.OBJECT).toKTypeName()).isEqualTo(STAR)
   }

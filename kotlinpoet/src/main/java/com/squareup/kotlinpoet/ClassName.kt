@@ -182,6 +182,24 @@ public class ClassName internal constructor(
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as ClassName
+
+    if (names != other.names) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + names.hashCode()
+    return result
+  }
+
   public companion object {
     /**
      * Returns a new [ClassName] instance for the given fully-qualified class name string. This

@@ -103,6 +103,28 @@ public class ParameterizedTypeName internal constructor(
   public fun nestedClass(name: String, typeArguments: List<TypeName>): ParameterizedTypeName =
     ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as ParameterizedTypeName
+
+    if (enclosingType != other.enclosingType) return false
+    if (rawType != other.rawType) return false
+    if (typeArguments != other.typeArguments) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + (enclosingType?.hashCode() ?: 0)
+    result = 31 * result + rawType.hashCode()
+    result = 31 * result + typeArguments.hashCode()
+    return result
+  }
+
   public companion object {
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
     @JvmStatic

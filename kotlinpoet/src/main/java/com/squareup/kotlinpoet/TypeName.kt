@@ -95,12 +95,22 @@ public sealed class TypeName constructor(
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (other == null) return false
-    if (javaClass != other.javaClass) return false
-    return toString() == other.toString()
+    if (javaClass != other?.javaClass) return false
+
+    other as TypeName
+
+    if (isNullable != other.isNullable) return false
+    if (annotations != other.annotations) return false
+    // do not check for equality of tags, these are considered side-channel data
+
+    return true
   }
 
-  override fun hashCode(): Int = toString().hashCode()
+  override fun hashCode(): Int {
+    var result = isNullable.hashCode()
+    result = 31 * result + annotations.hashCode()
+    return result
+  }
 
   override fun toString(): String = cachedString
 

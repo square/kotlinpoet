@@ -251,4 +251,33 @@ class TypeVariableNameTest {
   }
 
   class GenericClass<T>
+
+  @Test fun equalsAndHashCode() {
+    val typeVariableName1 = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
+
+    val typeVariableName2 = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
+    assertThat(typeVariableName1).isEqualTo(typeVariableName2)
+    assertThat(typeVariableName1.hashCode()).isEqualTo(typeVariableName2.hashCode())
+    assertThat(typeVariableName1.toString()).isEqualTo(typeVariableName2.toString())
+
+    assertThat(typeVariableName1.copy(nullable = true)).isNotEqualTo(typeVariableName1)
+
+    assertThat(
+      typeVariableName1.copy(
+        annotations = listOf(AnnotationSpec.builder(Suppress::class.asTypeName()).build()),
+      ),
+    ).isNotEqualTo(typeVariableName1)
+
+    assertThat(typeVariableName1.copy(bounds = listOf(Runnable::class.asTypeName()))).isNotEqualTo(typeVariableName1)
+
+    assertThat(typeVariableName1.copy(reified = true)).isNotEqualTo(typeVariableName1)
+  }
+
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val typeVariableName = TypeVariableName("E", listOf(Number::class.asTypeName()), KModifier.IN)
+    val tagged = typeVariableName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(typeVariableName).isEqualTo(tagged)
+    assertThat(typeVariableName.hashCode()).isEqualTo(tagged.hashCode())
+  }
 }

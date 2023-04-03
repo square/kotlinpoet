@@ -16,6 +16,7 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import java.io.Closeable
 import kotlin.reflect.KClass
@@ -160,5 +161,32 @@ class ParameterizedTypeNameTest {
       .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
     assertThat(typeName.toString())
       .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
+  }
+
+  private class Enclosing1 {
+    class GenericClass<T>
+  }
+
+  private object Enclosing2 {
+    class Foo
+  }
+
+  @Test fun equalsAndHashCode() {
+    val parameterizedTypeName1 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val parameterizedTypeName2 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    assertThat(parameterizedTypeName1).isEqualTo(parameterizedTypeName2)
+    assertThat(parameterizedTypeName1.hashCode()).isEqualTo(parameterizedTypeName2.hashCode())
+
+    assertThat(parameterizedTypeName1.copy(nullable = true)).isNotEqualTo(parameterizedTypeName1)
+
+    assertThat(parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(parameterizedTypeName1)
+  }
+
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val parameterizedTypeName = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val tagged = parameterizedTypeName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(parameterizedTypeName).isEqualTo(tagged)
+    assertThat(parameterizedTypeName.hashCode()).isEqualTo(tagged.hashCode())
   }
 }

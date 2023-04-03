@@ -84,6 +84,31 @@ public class LambdaTypeName private constructor(
     return out
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+    if (!super.equals(other)) return false
+
+    other as LambdaTypeName
+
+    if (receiver != other.receiver) return false
+    if (contextReceivers != other.contextReceivers) return false
+    if (returnType != other.returnType) return false
+    if (isSuspending != other.isSuspending) return false
+    if (parameters != other.parameters) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + (receiver?.hashCode() ?: 0)
+    result = 31 * result + contextReceivers.hashCode()
+    result = 31 * result + returnType.hashCode()
+    result = 31 * result + isSuspending.hashCode()
+    result = 31 * result + parameters.hashCode()
+    return result
+  }
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @ExperimentalKotlinPoetApi @JvmStatic

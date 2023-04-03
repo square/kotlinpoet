@@ -192,4 +192,49 @@ class LambdaTypeNameTest {
     assertThat(typeName.toString())
       .isEqualTo("((kotlin.Int) -> kotlin.Int) -> kotlin.Unit")
   }
+
+  @Test fun equalsAndHashCode() {
+    val lambdaTypeName1 = LambdaTypeName.get(
+      parameters = arrayOf(INT),
+      returnType = INT,
+    )
+    val lambdaTypeName2 = LambdaTypeName.get(
+      parameters = arrayOf(INT),
+      returnType = INT,
+    )
+    assertThat(lambdaTypeName1).isEqualTo(lambdaTypeName2)
+    assertThat(lambdaTypeName1.hashCode()).isEqualTo(lambdaTypeName2.hashCode())
+    assertThat(lambdaTypeName1.toString()).isEqualTo(lambdaTypeName2.toString())
+
+    val differentReceiver = LambdaTypeName.get(
+      parameters = arrayOf(INT),
+      returnType = INT,
+      receiver = ANY,
+    )
+    assertThat(differentReceiver).isNotEqualTo(lambdaTypeName1)
+
+    assertThat(lambdaTypeName1.copy(nullable = true)).isNotEqualTo(lambdaTypeName1)
+
+    assertThat(
+      lambdaTypeName1.copy(
+        annotations = listOf(
+          AnnotationSpec.builder(Suppress::class.asClassName()).build(),
+        ),
+      ),
+    ).isNotEqualTo(lambdaTypeName1)
+
+    assertThat(lambdaTypeName1.copy(suspending = true)).isNotEqualTo(lambdaTypeName1)
+  }
+
+  @Test fun equalsAndHashCodeIgnoreTags() {
+    val lambdaTypeName = LambdaTypeName.get(
+      parameters = arrayOf(INT),
+      returnType = INT,
+    )
+
+    val tagged = lambdaTypeName.copy(tags = mapOf(String::class to "test"))
+
+    assertThat(tagged).isEqualTo(lambdaTypeName)
+    assertThat(tagged.hashCode()).isEqualTo(lambdaTypeName.hashCode())
+  }
 }
