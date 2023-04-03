@@ -40,7 +40,7 @@ public class AnnotationSpec private constructor(
   public val members: List<CodeBlock> = builder.members.toImmutableList()
   public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
-  /** Lazily-initialized toString of this type name.  */
+  /** Lazily-initialized toString of this AnnotationSpec.  */
   private val cachedString by lazy {
     buildCodeString {
       emit(this, inline = true, asParameter = false)
