@@ -1,6 +1,32 @@
 Change Log
 ==========
 
+## Version 1.13.0
+
+_2023-04-xx_
+
+Thanks to [@popematt][popematt], [@bitPogo][bitPogo], [@mars885][mars885], [@sjudd][sjudd], [@Sironheart][Sironheart],
+[@polarene][polarene], [@DeoTimeTheGithubUser][DeoTimeTheGithubUser], [@drawers][drawers].
+
+ * New: Kotlin 1.8.0.
+ * New: KSP 1.8.0-1.0.9.
+ * New: Support context receivers on TypeSpecs + extract ContextReceivable API (#1269).
+ * New: Optimize `OriginatingElements` and `TagMap` implementations (#1270).
+ * New: Auto-generate import aliases for types and members (#1355).
+ * New: Insert underscores into large decimal literals (#1384).
+ * New: New factory function `FileSpec.builder(ClassName)` (#1397).
+ * Fix: Fix StackOverflowError when calling `KSTypeArgument.toTypeName()` for a wildcard in a recursive type bound (#1272).
+ * Fix: Fix transitive aliases (#1306).
+ * Fix: Fix Aliases as TypeArgument (#1321).
+ * Fix: Don't escape special characters inside raw strings (#1331).
+ * Fix: Fix KSP interop's output of the annotation parameter value of type Char (#1338).
+ * Fix: Fix KSP interop's output for primitive arrays (#1340).
+ * Fix: Avoid emitting public if `shouldEmitPublicModifier` returns false (#1342).
+ * Fix: Fix context receivers being rendered in an incorrect position when on a nullable/suspending `LambdaTypeName` (#1454).
+ * Fix: Do not use `bestGuess` for `KClass.asClassName` (#1469).
+ * Fix: Handle fake nested types with platform mapped parents (#1472).
+ * Fix: Fix `TypeName` equals (#1477).
+
 ## Version 1.12.0
 
 _2022-06-13_
@@ -586,3 +612,11 @@ _2017-05-16_
  [aksh1618]: https://github.com/aksh1618
  [zsqw123]: https://github.com/zsqw123
  [roihershberg]: https://github.com/roihershberg
+ [popematt]: https://github.com/popematt
+ [bitPogo]: https://github.com/bitPogo
+ [mars885]: https://github.com/mars885
+ [sjudd]: https://github.com/sjudd
+ [Sironheart]: https://github.com/Sironheart
+ [polarene]: https://github.com/polarene
+ [DeoTimeTheGithubUser]: https://github.com/DeoTimeTheGithubUser
+ [drawers]: https://github.com/drawers
