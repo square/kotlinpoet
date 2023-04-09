@@ -207,9 +207,11 @@ public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/An
 	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/FileSpec;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun toJavaFileObject ()Ljavax/tools/JavaFileObject;
 	public fun toString ()Ljava/lang/String;
-	public final fun writeTo (Ljava/io/File;)V
+	public final fun writeTo (Ljava/io/File;)Ljava/io/File;
+	public final synthetic fun writeTo (Ljava/io/File;)V
 	public final fun writeTo (Ljava/lang/Appendable;)V
-	public final fun writeTo (Ljava/nio/file/Path;)V
+	public final fun writeTo (Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public final synthetic fun writeTo (Ljava/nio/file/Path;)V
 	public final fun writeTo (Ljavax/annotation/processing/Filer;)V
 }
 

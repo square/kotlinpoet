@@ -30,6 +30,7 @@ import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
 import javax.tools.StandardLocation
+import kotlin.DeprecationLevel.HIDDEN
 import kotlin.reflect.KClass
 
 /**
@@ -71,9 +72,18 @@ public class FileSpec private constructor(
     codeWriter.close()
   }
 
-  /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
+  @Deprecated("", level = HIDDEN)
+  @JvmName("writeTo") // For binary compatibility.
+  public fun oldWriteTo(directory: Path) {
+    writeTo(directory)
+  }
+
+  /**
+   * Writes this to [directory] as UTF-8 using the standard directory structure
+   * and returns the newly output path.
+   */
   @Throws(IOException::class)
-  public fun writeTo(directory: Path) {
+  public fun writeTo(directory: Path): Path {
     require(Files.notExists(directory) || Files.isDirectory(directory)) {
       "path $directory exists but is not a directory."
     }
@@ -88,11 +98,21 @@ public class FileSpec private constructor(
 
     val outputPath = outputDirectory.resolve("$name.$extension")
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
+    return outputPath
   }
 
-  /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
+  @Deprecated("", level = HIDDEN)
+  @JvmName("writeTo") // For binary compatibility.
+  public fun oldWriteTo(directory: File) {
+    writeTo(directory)
+  }
+
+  /**
+   * Writes this to [directory] as UTF-8 using the standard directory structure
+   * and returns the newly output file.
+   */
   @Throws(IOException::class)
-  public fun writeTo(directory: File): Unit = writeTo(directory.toPath())
+  public fun writeTo(directory: File): File = writeTo(directory.toPath()).toFile()
 
   /** Writes this to `filer`.  */
   @Throws(IOException::class)
