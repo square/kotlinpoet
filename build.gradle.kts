@@ -135,6 +135,7 @@ subprojects {
 apiValidation {
   nonPublicMarkers += "com.squareup.kotlinpoet.ExperimentalKotlinPoetApi"
   ignoredProjects += listOf(
+    "interop", // Empty middle package
     "test-processor" // Test only
   )
 }
