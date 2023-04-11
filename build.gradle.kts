@@ -30,7 +30,10 @@ plugins {
 }
 
 allprojects {
-  group = property("GROUP") as String
+  // Note that the group name for publishing is "com.squareup" and is declared in gradle.properties. It's set to a
+  // different value here to disambiguate the Maven coordinates of the :interop:javapoet submodule and the JavaPoet
+  // dependency.
+  group = "com.squareup.kotlinpoet"
   version = property("VERSION_NAME") as String
 
   repositories {
