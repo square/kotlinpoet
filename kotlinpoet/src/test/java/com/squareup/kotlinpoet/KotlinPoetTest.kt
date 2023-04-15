@@ -1333,6 +1333,41 @@ class KotlinPoetTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1518
+  @Test fun generatedImportAliasesSamePackageDifferentContainingClasses() {
+    val strokeCapRound = MemberName(
+      enclosingClassName = ClassName("androidx.compose.ui.graphics", "StrokeCap").nestedClass("Companion"),
+      simpleName = "Round",
+    )
+    val strokeJoinRound = MemberName(
+      enclosingClassName = ClassName("androidx.compose.ui.graphics", "StrokeJoin").nestedClass("Companion"),
+      simpleName = "Round",
+    )
+    val file = FileSpec.builder("com.example", "Test")
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("val strokeCapRound = %M()", strokeCapRound)
+          .addStatement("val strokeJoinRound = %M()", strokeJoinRound)
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import kotlin.Unit
+      |import androidx.compose.ui.graphics.StrokeCap.Companion.Round as strokeCapRound
+      |import androidx.compose.ui.graphics.StrokeJoin.Companion.Round as strokeJoinRound
+      |
+      |public fun main(): Unit {
+      |  val strokeCapRound = strokeCapRound()
+      |  val strokeJoinRound = strokeJoinRound()
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun memberImportsOverGeneratedImportAliases() {
     val squareTaco = ClassName("com.squareup.tacos", "Taco")
     val blockTaco = ClassName("xyz.block.tacos", "Taco")
