@@ -26,12 +26,8 @@ plugins {
 
 include(
     ":kotlinpoet",
-    ":interop-javapoet",
-    ":interop-kotlinx-metadata",
-    ":interop-ksp",
-    ":interop-ksp:test-processor",
+    ":interop:javapoet",
+    ":interop:kotlinx-metadata",
+    ":interop:ksp",
+    ":interop:ksp:test-processor",
 )
-
-project(":interop-javapoet").projectDir = file("interop/javapoet")
-project(":interop-kotlinx-metadata").projectDir = file("interop/kotlinx-metadata")
-project(":interop-ksp").projectDir = file("interop/ksp")
