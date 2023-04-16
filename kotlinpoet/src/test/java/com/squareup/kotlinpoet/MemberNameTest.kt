@@ -171,11 +171,11 @@ class MemberNameTest {
       |package com.example
       |
       |import kotlin.Unit
-      |import com.squareup.tacos.SquareTacos.Companion.createTaco as squareupTacosCreateTaco
+      |import com.squareup.tacos.SquareTacos.Companion.createTaco as squareTacosCreateTaco
       |import com.twitter.tacos.TwitterTacos.Companion.createTaco as twitterTacosCreateTaco
       |
       |public fun makeTastyTacos(): Unit {
-      |  squareupTacosCreateTaco()
+      |  squareTacosCreateTaco()
       |  twitterTacosCreateTaco()
       |}
       |
@@ -416,11 +416,11 @@ class MemberNameTest {
       |package com.example
       |
       |import kotlin.Unit
-      |import com.squareup.tacos.SquareTacos.Companion.`when` as squareupTacosWhen
+      |import com.squareup.tacos.SquareTacos.Companion.`when` as squareTacosWhen
       |import com.twitter.tacos.TwitterTacos.Companion.`when` as twitterTacosWhen
       |
       |public fun whenTastyTacos(): Unit {
-      |  squareupTacosWhen()
+      |  squareTacosWhen()
       |  twitterTacosWhen()
       |}
       |
