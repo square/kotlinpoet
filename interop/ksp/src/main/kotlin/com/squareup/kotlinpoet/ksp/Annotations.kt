@@ -38,10 +38,11 @@ public fun KSAnnotation.toAnnotationSpec(): AnnotationSpec {
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
   // TODO support type params once they're exposed https://github.com/google/ksp/issues/753
   for (argument in arguments) {
+    val value = argument.value ?: continue
     val member = CodeBlock.builder()
     val name = argument.name!!.getShortName()
     member.add("%N = ", name)
-    addValueToBlock(argument.value!!, member)
+    addValueToBlock(value, member)
     builder.addMember(member.build())
   }
   return builder.build()
