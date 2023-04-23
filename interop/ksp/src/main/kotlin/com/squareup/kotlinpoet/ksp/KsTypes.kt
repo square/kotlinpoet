@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet.ksp
 
-import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
@@ -64,12 +63,6 @@ internal fun KSType.toTypeName(
   }
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
-      val arguments = if (decl.classKind == ClassKind.ANNOTATION_CLASS) {
-        arguments
-      } else {
-        typeArguments
-      }
-
       decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
     }
     is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
