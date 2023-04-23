@@ -483,6 +483,118 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun regression_1513() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           interface Repository<T>
+           @ExampleAnnotation
+           class RealRepository @Inject constructor() : Repository<String>
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import kotlin.String
+
+        public class RealRepository : Repository<String>
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun regression_1513_annotation() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           annotation class GenericAnnotation<T>
+
+           @ExampleAnnotation
+           @GenericAnnotation<String>
+           class RealRepository
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import kotlin.String
+
+        @GenericAnnotation<String>
+        public class RealRepository
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun regression_1304() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           interface Flow<T>
+           typealias LeAlias = Map<Int, String>
+
+           @ExampleAnnotation
+           class RealRepository {
+             lateinit var prop: LeAlias
+             lateinit var complicated: Flow<LeAlias>
+           }
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        public class RealRepository {
+          public lateinit var prop: LeAlias
+
+          public lateinit var complicated: Flow<LeAlias>
+        }
+
+      """.trimIndent(),
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
