@@ -1,62 +1,21 @@
-name: Build
+name: Release
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '[0-9]+.[0-9]+*'
+  release:
+    types: [published]
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
 
 jobs:
-  jvm:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 19
-
-      - name: Test
-        run: ./gradlew build
-
-  build-docs:
-    runs-on: ubuntu-latest
-    if: github.repository == 'square/kotlinpoet' && github.ref != 'refs/heads/master'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 19
-
-      - name: Prep docs
-        run: ./gradlew dokkaHtml
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Build mkdocs
-        run: |
-          pip3 install -r .github/workflows/mkdocs-requirements.txt
-          mkdocs build
-
   publish:
     runs-on: ubuntu-latest
-    if: github.repository == 'square/kotlinpoet' && github.ref == 'refs/heads/master'
-    needs:
-      - jvm
+    if: github.repository == 'square/kotlinpoet'
 
     steps:
       - name: Checkout
@@ -67,6 +26,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 19
+
+      - name: Set release version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "VERSION_NAME=${GITHUB_REF#refs/tags/}" >> gradle.properties
+
+      - name: Set snapshot version
+        if: !startsWith(github.ref, 'refs/tags/')
+        run: echo "VERSION_NAME=$(date +'%Y%m%d.%H%M%S').$(git rev-parse --short HEAD)" >> gradle.properties
 
       - name: Upload Artifacts
         run: ./gradlew publish
