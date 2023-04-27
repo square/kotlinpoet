@@ -69,18 +69,18 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             .map { it.toAnnotationSpec() }.asIterable(),
         )
         val allSupertypes = decl.superTypes.toList()
-        val superclassReference = if (allSupertypes.isNotEmpty()) {
-          allSupertypes[0].takeIf {
+        val (superclassReference, superInterfaces) = if (allSupertypes.isNotEmpty()) {
+          val superClass = allSupertypes.firstOrNull {
             val resolved = it.resolve()
             resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
           }
+          if (superClass != null) {
+            superClass to allSupertypes.filterNot { it == superClass }
+          } else {
+            null to allSupertypes
+          }
         } else {
-          null
-        }
-        val superInterfaces = if (superclassReference != null) {
-          allSupertypes.drop(1)
-        } else {
-          allSupertypes
+          null to allSupertypes
         }
 
         superclassReference?.let {
