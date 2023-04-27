@@ -22,8 +22,10 @@ import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
@@ -65,6 +67,32 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           decl.annotations
             .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
             .map { it.toAnnotationSpec() }.asIterable(),
+        )
+        val allSupertypes = decl.superTypes.toList()
+        val (superclassReference, superInterfaces) = if (allSupertypes.isNotEmpty()) {
+          val superClass = allSupertypes.firstOrNull {
+            val resolved = it.resolve()
+            resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
+          }
+          if (superClass != null) {
+            superClass to allSupertypes.filterNot { it == superClass }
+          } else {
+            null to allSupertypes
+          }
+        } else {
+          null to allSupertypes
+        }
+
+        superclassReference?.let {
+          val typeName = it.toTypeName(decl.typeParameters.toTypeParameterResolver())
+          if (typeName != ANY) {
+            superclass(typeName)
+          }
+        }
+        addSuperinterfaces(
+          superInterfaces.map { it.toTypeName(decl.typeParameters.toTypeParameterResolver()) }
+            .filterNot { it == ANY }
+            .toList(),
         )
       }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
