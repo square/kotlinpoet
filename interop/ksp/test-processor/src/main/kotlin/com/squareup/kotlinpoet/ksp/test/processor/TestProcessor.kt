@@ -31,6 +31,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
@@ -50,7 +51,6 @@ import com.squareup.kotlinpoet.ksp.writeTo
 class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
 
   private val unwrapTypeAliases = env.options["unwrapTypeAliases"]?.toBooleanStrictOrNull() ?: false
-  private val toTypeNameMode = ToTypeNameMode.valueOf(env.options["toTypeNameMode"] ?: "REFERENCE")
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
     resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
@@ -58,20 +58,14 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
     return emptyList()
   }
 
-  enum class ToTypeNameMode {
-    REFERENCE, TYPE
+  private fun KSTypeReference.toValidatedTypeName(resolver: TypeParameterResolver): TypeName {
+    // Validates that both toTypeName() and resolve() return the same TypeName.
+    // Regression for https://github.com/square/kotlinpoet/issues/1513.
+    val typeName = toTypeName(resolver)
+    val resolvedTypeName = resolve().toTypeName(resolver)
+    check(typeName == resolvedTypeName)
+    return typeName
   }
-
-  private fun KSTypeReference.toTypeName(mode: ToTypeNameMode, resolver: TypeParameterResolver) = when (mode) {
-    ToTypeNameMode.REFERENCE -> {
-      this.toTypeName(resolver)
-    }
-
-    ToTypeNameMode.TYPE -> {
-      this.resolve().toTypeName(resolver)
-    }
-  }
-
 
   private fun process(decl: KSAnnotated) {
     check(decl is KSClassDeclaration)
@@ -102,13 +96,13 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         }
 
         superclassReference?.let {
-          val typeName = it.toTypeName(toTypeNameMode, decl.typeParameters.toTypeParameterResolver())
+          val typeName = it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver())
           if (typeName != ANY) {
             superclass(typeName)
           }
         }
         addSuperinterfaces(
-          superInterfaces.map { it.toTypeName(toTypeNameMode, decl.typeParameters.toTypeParameterResolver()) }
+          superInterfaces.map { it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver()) }
             .filterNot { it == ANY }
             .toList(),
         )
@@ -131,7 +125,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
       classBuilder.addProperty(
         PropertySpec.builder(
           property.simpleName.getShortName(),
-          property.type.toTypeName(toTypeNameMode, classTypeParams).let {
+          property.type.toValidatedTypeName(classTypeParams).let {
             if (unwrapTypeAliases) {
               it.unwrapTypeAlias()
             } else {
@@ -176,7 +170,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           )
           .addParameters(
             function.parameters.map { parameter ->
-              val parameterType = parameter.type.toTypeName(toTypeNameMode, functionTypeParams).let {
+              val parameterType = parameter.type.toValidatedTypeName(functionTypeParams).let {
                 if (unwrapTypeAliases) {
                   it.unwrapTypeAlias()
                 } else {
@@ -189,7 +183,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             },
           )
           .returns(
-            function.returnType!!.toTypeName(functionTypeParams).let {
+            function.returnType!!.toValidatedTypeName(functionTypeParams).let {
               if (unwrapTypeAliases) {
                 it.unwrapTypeAlias()
               } else {
