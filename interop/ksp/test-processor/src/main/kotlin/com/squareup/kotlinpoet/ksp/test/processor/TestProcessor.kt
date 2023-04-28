@@ -25,21 +25,14 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
-import com.squareup.kotlinpoet.ksp.kspDependencies
-import com.squareup.kotlinpoet.ksp.originatingKSFiles
-import com.squareup.kotlinpoet.ksp.toAnnotationSpec
-import com.squareup.kotlinpoet.ksp.toKModifier
-import com.squareup.kotlinpoet.ksp.toTypeName
-import com.squareup.kotlinpoet.ksp.toTypeParameterResolver
-import com.squareup.kotlinpoet.ksp.toTypeVariableName
-import com.squareup.kotlinpoet.ksp.writeTo
+import com.squareup.kotlinpoet.ksp.*
 
 /**
  * A simple processor that generates a skeleton API of classes annotated with [ExampleAnnotation]
@@ -48,12 +41,27 @@ import com.squareup.kotlinpoet.ksp.writeTo
 class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
 
   private val unwrapTypeAliases = env.options["unwrapTypeAliases"]?.toBooleanStrictOrNull() ?: false
+  private val toTypeNameMode = ToTypeNameMode.valueOf(env.options["toTypeNameMode"] ?: "REFERENCE")
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
     resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
       .forEach(::process)
     return emptyList()
   }
+
+  enum class ToTypeNameMode {
+    REFERENCE, TYPE
+  }
+
+  private fun KSTypeReference.toTypeName(mode: ToTypeNameMode, resolver: TypeParameterResolver) = when (mode) {
+    ToTypeNameMode.REFERENCE -> {
+      this.toTypeName(resolver)
+    }
+    ToTypeNameMode.TYPE -> {
+      this.resolve().toTypeName(resolver)
+    }
+  }
+
 
   private fun process(decl: KSAnnotated) {
     check(decl is KSClassDeclaration)
@@ -84,13 +92,13 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         }
 
         superclassReference?.let {
-          val typeName = it.toTypeName(decl.typeParameters.toTypeParameterResolver())
+          val typeName = it.toTypeName(toTypeNameMode, decl.typeParameters.toTypeParameterResolver())
           if (typeName != ANY) {
             superclass(typeName)
           }
         }
         addSuperinterfaces(
-          superInterfaces.map { it.toTypeName(decl.typeParameters.toTypeParameterResolver()) }
+          superInterfaces.map { it.toTypeName(toTypeNameMode, decl.typeParameters.toTypeParameterResolver()) }
             .filterNot { it == ANY }
             .toList(),
         )
@@ -113,7 +121,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
       classBuilder.addProperty(
         PropertySpec.builder(
           property.simpleName.getShortName(),
-          property.type.toTypeName(classTypeParams).let {
+          property.type.toTypeName(toTypeNameMode, classTypeParams).let {
             if (unwrapTypeAliases) {
               it.unwrapTypeAlias()
             } else {
@@ -158,7 +166,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           )
           .addParameters(
             function.parameters.map { parameter ->
-              val parameterType = parameter.type.toTypeName(functionTypeParams).let {
+              val parameterType = parameter.type.toTypeName(toTypeNameMode, functionTypeParams).let {
                 if (unwrapTypeAliases) {
                   it.unwrapTypeAlias()
                 } else {

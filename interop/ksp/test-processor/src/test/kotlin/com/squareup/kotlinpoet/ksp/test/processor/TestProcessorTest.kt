@@ -16,19 +16,27 @@
 package com.squareup.kotlinpoet.ksp.test.processor
 
 import com.google.common.truth.Truth.assertThat
-import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.*
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
-import com.tschuchort.compiletesting.kspArgs
-import com.tschuchort.compiletesting.kspIncremental
-import com.tschuchort.compiletesting.kspSourcesDir
-import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class TestProcessorTest {
+@RunWith(Parameterized::class)
+class TestProcessorTest(private val toTypeNameMode: TestProcessor.ToTypeNameMode) {
+  companion object {
+    @Parameterized.Parameters
+    @JvmStatic
+    fun data(): Collection<Any> {
+      return listOf(
+        TestProcessor.ToTypeNameMode.TYPE,
+        TestProcessor.ToTypeNameMode.REFERENCE
+      )
+    }
+  }
 
   @Rule
   @JvmField
@@ -604,6 +612,7 @@ class TestProcessorTest {
         sources = sourceFiles.asList()
         verbose = false
         kspIncremental = true // The default now
+        kspArgs["toTypeNameMode"] = toTypeNameMode.name
       }
   }
 }
