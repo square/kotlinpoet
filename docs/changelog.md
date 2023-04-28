@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+## Version 1.13.1
+
+_2023-04-28_
+
+Thanks to [@rickclephas][rickclephas] for contributing to this release.
+
+ * Fix: Look at canonical names instead of just package names when generating import aliases (#1519).
+ * Fix: Ignore KSP annotation arguments without a value (#1523).
+ * Fix: Fix arguments handling in `KSType.toTypeName()` (#1529).
+
 ## Version 1.13.0
 
 _2023-04-06_
@@ -621,3 +631,4 @@ _2017-05-16_
  [polarene]: https://github.com/polarene
  [DeoTimeTheGithubUser]: https://github.com/DeoTimeTheGithubUser
  [drawers]: https://github.com/drawers
+ [rickclephas]: https://github.com/rickclephas
