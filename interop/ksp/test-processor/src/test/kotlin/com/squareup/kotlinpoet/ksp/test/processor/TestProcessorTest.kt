@@ -16,8 +16,13 @@
 package com.squareup.kotlinpoet.ksp.test.processor
 
 import com.google.common.truth.Truth.assertThat
-import com.tschuchort.compiletesting.*
+import com.tschuchort.compiletesting.KotlinCompilation
+import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
+import com.tschuchort.compiletesting.kspArgs
+import com.tschuchort.compiletesting.kspIncremental
+import com.tschuchort.compiletesting.kspSourcesDir
+import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +38,7 @@ class TestProcessorTest(private val toTypeNameMode: TestProcessor.ToTypeNameMode
     fun data(): Collection<Any> {
       return listOf(
         TestProcessor.ToTypeNameMode.TYPE,
-        TestProcessor.ToTypeNameMode.REFERENCE
+        TestProcessor.ToTypeNameMode.REFERENCE,
       )
     }
   }
