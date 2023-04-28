@@ -52,7 +52,7 @@ public fun KSType.toClassName(): ClassName {
  */
 public fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
-): TypeName = toTypeName(typeParamResolver, emptyList())
+): TypeName = toTypeName(typeParamResolver, arguments)
 
 internal fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver,

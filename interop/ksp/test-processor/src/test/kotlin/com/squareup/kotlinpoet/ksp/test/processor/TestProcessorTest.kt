@@ -595,6 +595,46 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun regression_1304_with_type_parameters() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           interface Flow<T>
+           typealias LeAlias<T> = Flow<T>
+
+           @ExampleAnnotation
+           class RealRepository {
+             lateinit var prop: LeAlias<String>
+           }
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import kotlin.String
+
+        public class RealRepository {
+          public lateinit var prop: LeAlias<String>
+        }
+
+      """.trimIndent(),
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
