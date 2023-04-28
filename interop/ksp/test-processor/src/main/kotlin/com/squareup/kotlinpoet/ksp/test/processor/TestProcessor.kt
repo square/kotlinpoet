@@ -32,6 +32,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.kspDependencies
 import com.squareup.kotlinpoet.ksp.originatingKSFiles
@@ -65,6 +66,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
     ToTypeNameMode.REFERENCE -> {
       this.toTypeName(resolver)
     }
+
     ToTypeNameMode.TYPE -> {
       this.resolve().toTypeName(resolver)
     }
