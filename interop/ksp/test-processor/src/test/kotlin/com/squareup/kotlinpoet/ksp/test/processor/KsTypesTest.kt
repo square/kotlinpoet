@@ -36,7 +36,7 @@ class KsTypesTest {
       override val annotations: Sequence<KSAnnotation>
         get() = throw NotImplementedError()
       override val arguments: List<KSTypeArgument>
-        get() = throw NotImplementedError()
+        get() = emptyList()
       override val declaration: KSDeclaration
         get() = throw NotImplementedError()
       override val isFunctionType: Boolean
