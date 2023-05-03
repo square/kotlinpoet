@@ -1,10 +1,12 @@
 name: Build
 
 on:
-  pull_request: {}
   push:
     branches-ignore:
-      - "master"
+      - master
+    tags-ignore:
+      - '**'
+  pull_request:
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"

@@ -3,8 +3,9 @@ name: Release
 on:
   push:
     branches:
-      - "master"
-    tags: {}
+      - master
+    tags:
+      - '**'
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
