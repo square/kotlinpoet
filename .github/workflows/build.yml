@@ -1,6 +1,10 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  pull_request: {}
+  push:
+    branches-ignore:
+      - "master"
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
@@ -27,7 +31,7 @@ jobs:
 
   build-docs:
     runs-on: ubuntu-latest
-    if: github.repository == 'square/kotlinpoet' && github.ref != 'refs/heads/master'
+    if: github.repository == 'square/kotlinpoet'
 
     steps:
       - name: Checkout
@@ -51,48 +55,3 @@ jobs:
         run: |
           pip3 install -r .github/workflows/mkdocs-requirements.txt
           mkdocs build
-
-  publish:
-    runs-on: ubuntu-latest
-    if: github.repository == 'square/kotlinpoet' && github.ref == 'refs/heads/master'
-    needs:
-      - jvm
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 19
-
-      - name: Upload Artifacts
-        run: ./gradlew publish
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
-
-      - name: Prep docs
-        run: ./gradlew dokkaHtml
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Build mkdocs
-        run: |
-          pip3 install -r .github/workflows/mkdocs-requirements.txt
-          mkdocs build
-
-      - name: Deploy 🚀
-        if: success() && github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: site # The folder the action should deploy.
-          SINGLE_COMMIT: true
