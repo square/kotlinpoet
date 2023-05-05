@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+## Version 1.13.2
+
+_2023-05-05_
+
+Thanks to [@Squiry][Squiry] for contributing to this release.
+
+* Fix: `KSType.toTypeName` fixed to work with aliased types (#1534).
+
 ## Version 1.13.1
 
 _2023-04-28_
@@ -632,3 +640,4 @@ _2017-05-16_
  [DeoTimeTheGithubUser]: https://github.com/DeoTimeTheGithubUser
  [drawers]: https://github.com/drawers
  [rickclephas]: https://github.com/rickclephas
+ [Squiry]: https://github.com/Squiry
