@@ -1,5 +1,6 @@
 public final class com/squareup/kotlinpoet/ksp/AnnotationsKt {
-	public static final fun toAnnotationSpec (Lcom/google/devtools/ksp/symbol/KSAnnotation;)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public static final fun toAnnotationSpec (Lcom/google/devtools/ksp/symbol/KSAnnotation;Z)Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public static synthetic fun toAnnotationSpec$default (Lcom/google/devtools/ksp/symbol/KSAnnotation;ZILjava/lang/Object;)Lcom/squareup/kotlinpoet/AnnotationSpec;
 }
 
 public final class com/squareup/kotlinpoet/ksp/KsClassDeclarationsKt {

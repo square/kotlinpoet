@@ -78,7 +78,8 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
         addAnnotations(
           decl.annotations
             .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
-            .map { it.toAnnotationSpec() }.asIterable(),
+            .map { it.toAnnotationSpec(it.shortName.getShortName() == "ExampleAnnotationWithDefaults") }
+            .asIterable(),
         )
         val allSupertypes = decl.superTypes.toList()
         val (superclassReference, superInterfaces) = if (allSupertypes.isNotEmpty()) {
