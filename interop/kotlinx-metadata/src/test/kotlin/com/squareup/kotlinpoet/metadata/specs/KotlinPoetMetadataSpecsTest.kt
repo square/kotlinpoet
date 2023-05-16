@@ -426,14 +426,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public abstract class OverriddenThings() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.OverriddenThingsBase(), com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.OverriddenThingsInterface {
-        public override var openProp: kotlin.String = throw NotImplementedError("Stub!")
+        override var openProp: kotlin.String = throw NotImplementedError("Stub!")
 
-        public override var openPropInterface: kotlin.String = throw NotImplementedError("Stub!")
+        override var openPropInterface: kotlin.String = throw NotImplementedError("Stub!")
 
-        public override fun openFunction(): kotlin.Unit {
+        override fun openFunction(): kotlin.Unit {
         }
 
-        public override fun openFunctionInterface(): kotlin.Unit {
+        override fun openFunctionInterface(): kotlin.Unit {
         }
       }
       """.trimIndent(),
@@ -551,13 +551,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public val `value`: kotlin.String,
       ) {
         FOO {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         BAR {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         BAZ {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         ;
       }
@@ -616,14 +616,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public val `value`: kotlin.String,
       ) {
         FOO {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         BAZ {
-          public override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
+          override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
         ;
       }
@@ -687,11 +687,11 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(subInterfaceSpec.trimmedToString()).isEqualTo(
       """
       public interface SubInterface : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.TestInterface {
-        public override fun hasDefault(): kotlin.Unit {
+        override fun hasDefault(): kotlin.Unit {
         }
 
         @kotlin.jvm.JvmDefault
-        public override fun hasJvmDefault(): kotlin.Unit {
+        override fun hasJvmDefault(): kotlin.Unit {
         }
 
         public fun subInterfaceFunction(): kotlin.Unit {
@@ -706,13 +706,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(implSpec.trimmedToString()).isEqualTo(
       """
       public class TestSubInterfaceImpl() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.SubInterface {
-        public override fun noDefault(): kotlin.Unit {
+        override fun noDefault(): kotlin.Unit {
         }
 
-        public override fun noDefaultWithInput(input: kotlin.String): kotlin.Unit {
+        override fun noDefaultWithInput(input: kotlin.String): kotlin.Unit {
         }
 
-        public override fun noDefaultWithInputDefault(input: kotlin.String): kotlin.Unit {
+        override fun noDefaultWithInputDefault(input: kotlin.String): kotlin.Unit {
         }
       }
       """.trimIndent(),
@@ -2100,14 +2100,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       public abstract class AbstractModalities() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
         public val implicitFinalProp: kotlin.String? = null
 
-        public override val interfaceProp: kotlin.String? = null
+        override val interfaceProp: kotlin.String? = null
 
         public open val openProp: kotlin.String? = null
 
         public fun implicitFinalFun(): kotlin.Unit {
         }
 
-        public override fun interfaceFun(): kotlin.Unit {
+        override fun interfaceFun(): kotlin.Unit {
         }
 
         public open fun openFun(): kotlin.Unit {
@@ -2122,9 +2122,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(finalAbstractModalities.trimmedToString()).isEqualTo(
       """
       public abstract class FinalAbstractModalities() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
-        public final override val interfaceProp: kotlin.String? = null
+        final override val interfaceProp: kotlin.String? = null
 
-        public final override fun interfaceFun(): kotlin.Unit {
+        final override fun interfaceFun(): kotlin.Unit {
         }
       }
       """.trimIndent(),
@@ -2136,14 +2136,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(modalities.trimmedToString()).isEqualTo(
       """
       public class Modalities() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.AbstractModalities() {
-        public override val interfaceProp: kotlin.String? = null
+        override val interfaceProp: kotlin.String? = null
 
-        public override val openProp: kotlin.String? = null
+        override val openProp: kotlin.String? = null
 
-        public override fun interfaceFun(): kotlin.Unit {
+        override fun interfaceFun(): kotlin.Unit {
         }
 
-        public override fun openFun(): kotlin.Unit {
+        override fun openFun(): kotlin.Unit {
         }
       }
       """.trimIndent(),
