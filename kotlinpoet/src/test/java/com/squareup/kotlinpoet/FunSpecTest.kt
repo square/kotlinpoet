@@ -96,7 +96,7 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
         |@kotlin.jvm.Throws(java.io.IOException::class, java.lang.SecurityException::class)
-        |protected override fun <T> everything(arg0: java.lang.String, arg1: java.util.List<out T>): java.lang.Runnable where T : java.lang.Runnable, T : java.io.Closeable {
+        |override fun <T> everything(arg0: java.lang.String, arg1: java.util.List<out T>): java.lang.Runnable where T : java.lang.Runnable, T : java.io.Closeable {
         |}
         |
       """.trimMargin(),

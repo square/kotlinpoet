@@ -161,12 +161,13 @@ internal class CodeWriter constructor(
       emit(KModifier.PUBLIC.keyword)
       emit(" ")
     }
-    val uniqueNonPublicExplicitOnlyModifiers =
+    val uniqueNonPublicOrProtectedExplicitOnlyModifiers =
       modifiers
         .filterNot { it == KModifier.PUBLIC }
+        .filterNot { it == KModifier.PROTECTED && modifiers.contains(KModifier.OVERRIDE) }
         .filterNot { implicitModifiers.contains(it) }
         .toEnumSet()
-    for (modifier in uniqueNonPublicExplicitOnlyModifiers) {
+    for (modifier in uniqueNonPublicOrProtectedExplicitOnlyModifiers) {
       emit(modifier.keyword)
       emit(" ")
     }
