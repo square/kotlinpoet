@@ -565,9 +565,9 @@ class AnnotationSpecTest {
       )
 
       public object ExternalClassParceler : Parceler<ExternalClass> {
-        public override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
+        override fun create(parcel: Parcel) = ExternalClass(parcel.readInt())
 
-        public override fun ExternalClass.write(parcel: Parcel, flags: Int): Unit {
+        override fun ExternalClass.write(parcel: Parcel, flags: Int): Unit {
           parcel.writeInt(value)
         }
       }

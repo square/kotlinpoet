@@ -596,7 +596,7 @@ class MemberNameTest {
       import kotlin.hashCode
 
       public class Message {
-        public override fun hashCode(): Int {
+        override fun hashCode(): Int {
           var result = super.hashCode
           if (result == 0) {
             result = result * 37 + embedded_message.hashCode()

@@ -634,6 +634,10 @@ internal class CodeWriter constructor(
     modifiers: Set<KModifier>,
     implicitModifiers: Set<KModifier>,
   ): Boolean {
+    if (modifiers.contains(KModifier.OVERRIDE)) {
+      return false
+    }
+
     if (modifiers.contains(KModifier.PUBLIC)) {
       return true
     }

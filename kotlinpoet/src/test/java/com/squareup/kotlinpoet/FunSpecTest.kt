@@ -109,7 +109,7 @@ class FunSpecTest {
     val funSpec = FunSpec.overriding(exec).build()
     assertThat(funSpec.toString()).isEqualTo(
       """
-        |public override fun toString(): java.lang.String {
+        |override fun toString(): java.lang.String {
         |}
         |
       """.trimMargin(),
@@ -125,7 +125,7 @@ class FunSpecTest {
     assertThat(funSpec.toString()).isEqualTo(
       """
         |@kotlin.jvm.Throws(java.lang.Exception::class)
-        |public override fun call(): java.lang.Integer {
+        |override fun call(): java.lang.Integer {
         |}
         |
       """.trimMargin(),
@@ -134,7 +134,7 @@ class FunSpecTest {
     funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo(
       """
-        |public override fun compareTo(arg0: java.lang.Long): kotlin.Int {
+        |override fun compareTo(arg0: java.lang.Long): kotlin.Int {
         |}
         |
       """.trimMargin(),
