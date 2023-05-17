@@ -83,12 +83,12 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class Taco {
-        |  final override fun toString(): String = "taco"
+        |  public final override fun toString(): String = "taco"
         |}
         |
       """.trimMargin(),
     )
-    assertEquals(-49503836, taco.hashCode().toLong()) // Update expected number if source changes.
+    assertEquals(1906837485, taco.hashCode().toLong()) // Update expected number if source changes.
   }
 
   @Test fun interestingTypes() {
@@ -173,8 +173,9 @@ class TypeSpecTest {
         |
         |public class Taco {
         |  public val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung) {
-        |      override fun doSomething(bar: Bar): Unit {
+        |    public override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
+        |        {
+        |      public override fun doSomething(bar: Bar): Unit {
         |        /* code snippets */
         |      }
         |    }
@@ -243,7 +244,7 @@ class TypeSpecTest {
         |
         |public class Taco {
         |  public val NAME: Runnable = object : Message(), Runnable {
-        |    override fun run(): Unit {
+        |    public override fun run(): Unit {
         |      /* code snippets */
         |    }
         |  }
@@ -583,7 +584,7 @@ class TypeSpecTest {
         |   */
         |  ROCK,
         |  PAPER("flat") {
-        |    override fun toString(): String = "paper airplane!"
+        |    public override fun toString(): String = "paper airplane!"
         |  },
         |  SCISSORS("peace sign"),
         |  ;
@@ -625,7 +626,7 @@ class TypeSpecTest {
         |
         |public enum class Tortilla {
         |  CORN {
-        |    override fun fold(): Unit {
+        |    public override fun fold(): Unit {
         |    }
         |  },
         |  ;
@@ -856,7 +857,7 @@ class TypeSpecTest {
         |
         |public enum class Roshambo {
         |  SPOCK {
-        |    override fun toString(): String = "west side"
+        |    public override fun toString(): String = "west side"
         |  },
         |}
         |
@@ -999,7 +1000,7 @@ class TypeSpecTest {
         |
         |  public val y: P
         |
-        |  override fun compareTo(p: P): Int = 0
+        |  public override fun compareTo(p: P): Int = 0
         |
         |  public fun <T, P : Number> of(
         |    label: T,
@@ -2438,7 +2439,7 @@ class TypeSpecTest {
       .addStatement("return %S", "taco")
       .build()
     assertThat(funSpec.toString())
-      .isEqualTo("override fun toString(): kotlin.String = \"taco\"\n")
+      .isEqualTo("public override fun toString(): kotlin.String = \"taco\"\n")
   }
 
   @Test fun constructorToString() {
@@ -2543,7 +2544,7 @@ class TypeSpecTest {
         |import kotlin.String
         |
         |public class Taco {
-        |  override fun toString(): String {
+        |  public override fun toString(): String {
         |    val result = "Taco("
         |        + "beef,"
         |        + "lettuce,"
@@ -2605,7 +2606,7 @@ class TypeSpecTest {
         |  public fun comparePrefix(length: Int): Comparator<String> {
         |    // Return a new comparator for the target length.
         |    return object : Comparator<String> {
-        |      override fun compare(a: String, b: String): Int {
+        |      public override fun compare(a: String, b: String): Int {
         |        // Prefix the strings and compare them
         |        return a.substring(0, length)
         |            .compareTo(b.substring(0, length))
@@ -2617,7 +2618,7 @@ class TypeSpecTest {
         |    Collections.sort(
         |        list,
         |        object : Comparator<String> {
-        |          override fun compare(a: String, b: String): Int {
+        |          public override fun compare(a: String, b: String): Int {
         |            // Prefix the strings and compare them
         |            return a.substring(0, length)
         |                .compareTo(b.substring(0, length))
@@ -3097,7 +3098,7 @@ class TypeSpecTest {
         |
         |  private const val FOO: String = "FOO"
         |
-        |  override fun toString(): String = FOO
+        |  public override fun toString(): String = FOO
         |}
         |
       """.trimMargin(),
@@ -3143,7 +3144,7 @@ class TypeSpecTest {
         |
         |  public constructor()
         |
-        |  override fun toString(): String = FOO
+        |  public override fun toString(): String = FOO
         |}
         |
       """.trimMargin(),
@@ -3197,7 +3198,7 @@ class TypeSpecTest {
         |
         |  public constructor()
         |
-        |  override fun toString(): String = FOO
+        |  public override fun toString(): String = FOO
         |}
         |
       """.trimMargin(),
