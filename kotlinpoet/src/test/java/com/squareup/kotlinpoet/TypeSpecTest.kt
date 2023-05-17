@@ -5336,6 +5336,63 @@ class TypeSpecTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1548
+  @Test fun overrideInternalAbstractFunctionVisibility() {
+    val baseClass = TypeSpec.classBuilder("Base")
+      .addModifiers(PUBLIC, ABSTRACT)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(INTERNAL, ABSTRACT)
+          .build(),
+      )
+      .build()
+    assertThat(baseClass.toString()).isEqualTo(
+      """
+      |public abstract class Base {
+      |  internal abstract fun foo(): kotlin.Unit
+      |}
+      |
+      """.trimMargin(),
+    )
+    val bassClassName = ClassName("", "Base")
+    val exampleClass = TypeSpec.classBuilder("Example")
+      .addModifiers(PUBLIC)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    assertThat(exampleClass.toString()).isEqualTo(
+      """
+      |public class Example : Base() {
+      |  override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+    val example2Class = TypeSpec.classBuilder("Example2")
+      .addModifiers(PUBLIC)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(PUBLIC, KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    assertThat(example2Class.toString()).isEqualTo(
+      """
+      |public class Example2 : Base() {
+      |  public override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun contextReceiver() {
     val typeSpec = TypeSpec.classBuilder("Example")
       .contextReceivers(STRING)

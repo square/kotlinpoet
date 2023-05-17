@@ -624,9 +624,10 @@ internal class CodeWriter constructor(
   /**
    * Returns whether a [KModifier.PUBLIC] should be emitted.
    *
-   * If [modifiers] contains [KModifier.OVERRIDE], this method will always return `false`.
+   * If [modifiers] contains [KModifier.PUBLIC], this method always returns `true`.
    *
-   * Next, if [modifiers] contains [KModifier.PUBLIC], this method will return `true`.
+   * Next, if [implicitModifiers] contains [KModifier.PUBLIC] and [modifiers] contains
+   * [KModifier.OVERRIDE], this method will return `false`.
    *
    * Otherwise, this will return `true` when [KModifier.PUBLIC] is one of the [implicitModifiers]
    * and there are no other opposing modifiers (like [KModifier.PROTECTED] etc.) supplied by the
@@ -636,12 +637,12 @@ internal class CodeWriter constructor(
     modifiers: Set<KModifier>,
     implicitModifiers: Set<KModifier>,
   ): Boolean {
-    if (modifiers.contains(KModifier.OVERRIDE)) {
-      return false
-    }
-
     if (modifiers.contains(KModifier.PUBLIC)) {
       return true
+    }
+
+    if (implicitModifiers.contains(KModifier.PUBLIC) && modifiers.contains(KModifier.OVERRIDE)) {
+      return false
     }
 
     if (!implicitModifiers.contains(KModifier.PUBLIC)) {
