@@ -5382,7 +5382,8 @@ class TypeSpecTest {
           .build(),
       )
       .build()
-    // Don't omit the public modifier here. The bytecode is different.
+    // Don't omit the public modifier here,
+    // as we're explicitly increasing the visibility of this method in the subclass.
     assertThat(example2Class.toString()).isEqualTo(
       """
       |public class Example2 : Base() {
@@ -5401,7 +5402,8 @@ class TypeSpecTest {
           .build(),
       )
       .build()
-    // We cannot omit the public modifier here. The bytecode is different.
+    // Don't omit the public modifier here,
+    // as we're explicitly increasing the visibility of this method in the subclass.
     assertThat(example3Class.toString()).isEqualTo(
       """
       |internal class Example3 : Base() {
