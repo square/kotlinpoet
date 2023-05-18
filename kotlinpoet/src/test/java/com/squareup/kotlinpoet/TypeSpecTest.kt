@@ -5382,9 +5382,29 @@ class TypeSpecTest {
           .build(),
       )
       .build()
+    // Don't omit the public modifier here. The bytecode is different.
     assertThat(example2Class.toString()).isEqualTo(
       """
       |public class Example2 : Base() {
+      |  public override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+    val example3Class = TypeSpec.classBuilder("Example3")
+      .addModifiers(INTERNAL)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(PUBLIC, KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    // We cannot omit the public modifier here. The bytecode is different.
+    assertThat(example3Class.toString()).isEqualTo(
+      """
+      |internal class Example3 : Base() {
       |  public override fun foo(): kotlin.Unit {
       |  }
       |}
