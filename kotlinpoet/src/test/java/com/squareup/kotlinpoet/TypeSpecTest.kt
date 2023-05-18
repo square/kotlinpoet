@@ -2486,7 +2486,7 @@ class TypeSpecTest {
     assertThat(type.toString()).isEqualTo(
       """
         |object : java.lang.Runnable {
-        |  override fun run(): kotlin.Unit {
+        |  public override fun run(): kotlin.Unit {
         |  }
         |}
       """.trimMargin(),
