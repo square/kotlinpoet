@@ -638,6 +638,10 @@ internal class CodeWriter constructor(
       return true
     }
 
+    if (implicitModifiers.contains(KModifier.PUBLIC) && modifiers.contains(KModifier.OVERRIDE)) {
+      return false
+    }
+
     if (!implicitModifiers.contains(KModifier.PUBLIC)) {
       return false
     }

@@ -4133,9 +4133,9 @@ class TypeSpecTest {
       |import kotlin.String
       |
       |public data class Person(
-      |  public override val id: Int,
-      |  public override val name: String,
-      |  public override val surname: String,
+      |  override val id: Int,
+      |  override val name: String,
+      |  override val surname: String,
       |)
       |
       """.trimMargin(),
@@ -5333,6 +5333,85 @@ class TypeSpecTest {
       )
 
       """.trimIndent(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1548
+  @Test fun overrideInternalAbstractFunctionVisibility() {
+    val baseClass = TypeSpec.classBuilder("Base")
+      .addModifiers(PUBLIC, ABSTRACT)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(INTERNAL, ABSTRACT)
+          .build(),
+      )
+      .build()
+    assertThat(baseClass.toString()).isEqualTo(
+      """
+      |public abstract class Base {
+      |  internal abstract fun foo(): kotlin.Unit
+      |}
+      |
+      """.trimMargin(),
+    )
+    val bassClassName = ClassName("", "Base")
+    val exampleClass = TypeSpec.classBuilder("Example")
+      .addModifiers(PUBLIC)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    assertThat(exampleClass.toString()).isEqualTo(
+      """
+      |public class Example : Base() {
+      |  override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+    val example2Class = TypeSpec.classBuilder("Example2")
+      .addModifiers(PUBLIC)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(PUBLIC, KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    // Don't omit the public modifier here,
+    // as we're explicitly increasing the visibility of this method in the subclass.
+    assertThat(example2Class.toString()).isEqualTo(
+      """
+      |public class Example2 : Base() {
+      |  public override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+    val example3Class = TypeSpec.classBuilder("Example3")
+      .addModifiers(INTERNAL)
+      .superclass(bassClassName)
+      .addFunction(
+        FunSpec.builder("foo")
+          .addModifiers(PUBLIC, KModifier.OVERRIDE)
+          .build(),
+      )
+      .build()
+    // Don't omit the public modifier here,
+    // as we're explicitly increasing the visibility of this method in the subclass.
+    assertThat(example3Class.toString()).isEqualTo(
+      """
+      |internal class Example3 : Base() {
+      |  public override fun foo(): kotlin.Unit {
+      |  }
+      |}
+      |
+      """.trimMargin(),
     )
   }
 
