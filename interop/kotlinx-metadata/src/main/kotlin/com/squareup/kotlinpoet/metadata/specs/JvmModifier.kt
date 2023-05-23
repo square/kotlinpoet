@@ -26,6 +26,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
  * This API is considered read-only and should not be implemented outside of KotlinPoet.
  */
 @KotlinPoetMetadataPreview
+@JvmDefaultWithCompatibility
 public interface JvmModifier {
   public fun annotationSpec(): AnnotationSpec? {
     return null

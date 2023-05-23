@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import kotlin.reflect.KClass
 
 /** A type that can be tagged with extra metadata of the user's choice. */
+@JvmDefaultWithCompatibility
 public interface Taggable {
 
   /** Returns all tags. */
@@ -33,6 +34,7 @@ public interface Taggable {
   }
 
   /** The builder analogue to [Taggable] types. */
+  @JvmDefaultWithCompatibility
   public interface Builder<out T : Builder<T>> {
 
     /** Mutable map of the current tags this builder contains. */

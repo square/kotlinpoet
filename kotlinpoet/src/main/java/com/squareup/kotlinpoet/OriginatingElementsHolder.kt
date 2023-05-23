@@ -24,6 +24,7 @@ public interface OriginatingElementsHolder {
   public val originatingElements: List<Element>
 
   /** The builder analogue to [OriginatingElementsHolder] types. */
+  @JvmDefaultWithCompatibility
   public interface Builder<out T : Builder<T>> {
 
     /** Mutable map of the current originating elements this builder contains. */

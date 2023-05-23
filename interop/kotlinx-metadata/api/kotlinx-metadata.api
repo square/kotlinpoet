@@ -273,7 +273,6 @@ public class com/squareup/kotlinpoet/metadata/specs/JvmFieldModifier : java/lang
 	public static final field TRANSIENT Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public static final field VOLATILE Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun annotationSpec ()Lcom/squareup/kotlinpoet/AnnotationSpec;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public static fun values ()[Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 }
@@ -283,13 +282,12 @@ public class com/squareup/kotlinpoet/metadata/specs/JvmMethodModifier : java/lan
 	public static final field STATIC Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public static final field SYNCHRONIZED Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun annotationSpec ()Lcom/squareup/kotlinpoet/AnnotationSpec;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public static fun values ()[Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 }
 
 public abstract interface class com/squareup/kotlinpoet/metadata/specs/JvmModifier {
-	public abstract fun annotationSpec ()Lcom/squareup/kotlinpoet/AnnotationSpec;
+	public fun annotationSpec ()Lcom/squareup/kotlinpoet/AnnotationSpec;
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/JvmModifier$DefaultImpls {
