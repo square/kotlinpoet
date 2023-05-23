@@ -4074,28 +4074,58 @@ class TypeSpecTest {
     }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
   }
 
-  @Test fun internalFunForbiddenInAnnotation() {
+  @Test fun internalConstructorForbiddenInAnnotation() {
+    val type = TypeSpec.annotationBuilder("Taco")
+
+    assertThrows<IllegalArgumentException> {
+      type.primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addModifiers(INTERNAL)
+          .build(),
+      )
+        .build()
+    }.hasMessageThat().isEqualTo("modifiers [INTERNAL] must contain none of [INTERNAL, PROTECTED, PRIVATE, ABSTRACT]")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1557
+  @Test fun memberFunForbiddenInAnnotation() {
     val type = TypeSpec.annotationBuilder("Taco")
 
     assertThrows<IllegalArgumentException> {
       type.addFunction(
         FunSpec.builder("eat")
-          .addModifiers(INTERNAL)
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("annotation class Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("annotation class Taco cannot declare member function eat")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1557
+  @Test fun secondaryConstructorForbiddenInAnnotation() {
+    val type = TypeSpec.annotationBuilder("Taco")
 
     assertThrows<IllegalArgumentException> {
-      type.addFunctions(
-        listOf(
-          FunSpec.builder("eat")
-            .addModifiers(INTERNAL)
+      type.primaryConstructor(FunSpec.constructorBuilder().build())
+        .addFunction(
+          FunSpec.constructorBuilder()
+            .addParameter("value", String::class)
             .build(),
-        ),
+        ).build()
+    }.hasMessageThat().isEqualTo("annotation class Taco cannot declare member function constructor()")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1556
+  @Test fun abstractFunForbiddenInObject() {
+    val type = TypeSpec.objectBuilder("Taco")
+
+    assertThrows<IllegalArgumentException> {
+      type.addFunction(
+        FunSpec.builder("eat")
+          .addModifiers(ABSTRACT)
+          .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("annotation class Taco.eat requires modifiers [PUBLIC, ABSTRACT]")
+    }.hasMessageThat().isEqualTo("non-abstract type Taco cannot declare abstract function eat")
   }
 
   @Test fun classHeaderFormatting() {

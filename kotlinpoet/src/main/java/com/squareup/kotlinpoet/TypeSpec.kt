@@ -441,7 +441,6 @@ public class TypeSpec private constructor(
 
     internal fun implicitFunctionModifiers(modifiers: Set<KModifier> = setOf()): Set<KModifier> {
       return defaultImplicitFunctionModifiers + when {
-        ANNOTATION in modifiers -> setOf(ABSTRACT)
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         else -> emptySet()
@@ -771,8 +770,7 @@ public class TypeSpec private constructor(
         "typevariables are forbidden on anonymous types"
       }
 
-      val isAbstract = ABSTRACT in modifiers || SEALED in modifiers || kind != Kind.CLASS ||
-        !isSimpleClass
+      val isAbstract = ABSTRACT in modifiers || SEALED in modifiers || kind == Kind.INTERFACE || isEnum
       for (funSpec in funSpecs) {
         require(isAbstract || ABSTRACT !in funSpec.modifiers) {
           "non-abstract type $name cannot declare abstract function ${funSpec.name}"
@@ -782,13 +780,18 @@ public class TypeSpec private constructor(
             requireNoneOf(funSpec.modifiers, INTERNAL, PROTECTED)
             requireNoneOrOneOf(funSpec.modifiers, ABSTRACT, PRIVATE)
           }
-          isAnnotation -> require(funSpec.modifiers == kind.implicitFunctionModifiers(modifiers)) {
-            "annotation class $name.${funSpec.name} " +
-              "requires modifiers ${kind.implicitFunctionModifiers(modifiers)}"
+          isAnnotation -> {
+            throw IllegalArgumentException("annotation class $name cannot declare member function ${funSpec.name}")
           }
           EXPECT in modifiers -> require(funSpec.body.isEmpty()) {
             "functions in expect classes can't have bodies"
           }
+        }
+      }
+
+      if (isAnnotation) {
+        primaryConstructor?.let {
+          requireNoneOf(it.modifiers, INTERNAL, PROTECTED, PRIVATE, ABSTRACT)
         }
       }
 
