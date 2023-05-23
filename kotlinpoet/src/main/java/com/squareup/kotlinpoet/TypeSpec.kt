@@ -31,6 +31,7 @@ import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
+import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration. */
@@ -42,11 +43,14 @@ public class TypeSpec private constructor(
     .plus(builder.typeSpecs.flatMap(TypeSpec::originatingElements))
     .buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElements, ContextReceivable by contextReceivers {
+) : Taggable by tagMap,
+  OriginatingElementsHolder by delegateOriginatingElements,
+  ContextReceivable by contextReceivers,
+  Annotatable {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
-  public val annotationSpecs: List<AnnotationSpec> = builder.annotationSpecs.toImmutableList()
+  override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val primaryConstructor: FunSpec? = builder.primaryConstructor
@@ -74,12 +78,15 @@ public class TypeSpec private constructor(
   public val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
+  @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
+  public val annotationSpecs: List<AnnotationSpec> get() = annotations
+
   @JvmOverloads
   public fun toBuilder(kind: Kind = this.kind, name: String? = this.name): Builder {
     val builder = Builder(kind, name)
     builder.modifiers += modifiers
     builder.kdoc.add(kdoc)
-    builder.annotationSpecs += annotationSpecs
+    builder.annotations += annotations
     builder.typeVariables += typeVariables
     builder.superclass = superclass
     builder.superclassConstructorParameters += superclassConstructorParameters
@@ -117,7 +124,7 @@ public class TypeSpec private constructor(
     try {
       if (enumName != null) {
         codeWriter.emitKdoc(kdocWithConstructorParameters())
-        codeWriter.emitAnnotations(annotationSpecs, false)
+        codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitCode("%N", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
           codeWriter.emit("(")
@@ -158,7 +165,7 @@ public class TypeSpec private constructor(
       } else {
         codeWriter.emitKdoc(kdocWithConstructorParameters())
         codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
-        codeWriter.emitAnnotations(annotationSpecs, false)
+        codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(
           modifiers,
           if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC),
@@ -460,7 +467,10 @@ public class TypeSpec private constructor(
     internal var kind: Kind,
     internal val name: String?,
     vararg modifiers: KModifier,
-  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>,
+    OriginatingElementsHolder.Builder<Builder>,
+    ContextReceivable.Builder<Builder>,
+    Annotatable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
@@ -484,12 +494,15 @@ public class TypeSpec private constructor(
     public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
     public val superinterfaces: MutableMap<TypeName, CodeBlock?> = mutableMapOf()
     public val enumConstants: MutableMap<String, TypeSpec> = mutableMapOf()
-    public val annotationSpecs: MutableList<AnnotationSpec> = mutableListOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val superclassConstructorParameters: MutableList<CodeBlock> = mutableListOf()
     public val propertySpecs: MutableList<PropertySpec> = mutableListOf()
     public val funSpecs: MutableList<FunSpec> = mutableListOf()
     public val typeSpecs: MutableList<TypeSpec> = mutableListOf()
+
+    @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
+    public val annotationSpecs: MutableList<AnnotationSpec> get() = annotations
 
     public fun addKdoc(format: String, vararg args: Any): Builder = apply {
       kdoc.add(format, *args)
@@ -498,27 +511,6 @@ public class TypeSpec private constructor(
     public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
-
-    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
-      this.annotationSpecs += annotationSpecs
-    }
-
-    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      annotationSpecs += annotationSpec
-    }
-
-    public fun addAnnotation(annotation: ClassName): Builder =
-      addAnnotation(AnnotationSpec.builder(annotation).build())
-
-    @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
-    )
-    public fun addAnnotation(annotation: Class<*>): Builder =
-      addAnnotation(annotation.asClassName())
-
-    public fun addAnnotation(annotation: KClass<*>): Builder =
-      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }

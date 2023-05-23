@@ -66,8 +66,8 @@ public sealed class TypeName constructor(
   public val isNullable: Boolean,
   annotations: List<AnnotationSpec>,
   internal val tagMap: TagMap,
-) : Taggable by tagMap {
-  public val annotations: List<AnnotationSpec> = annotations.toImmutableList()
+) : Taggable by tagMap, Annotatable {
+  override val annotations: List<AnnotationSpec> = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */
   private val cachedString: String by lazy {

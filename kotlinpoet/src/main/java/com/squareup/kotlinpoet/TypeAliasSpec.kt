@@ -26,13 +26,13 @@ import kotlin.reflect.KClass
 public class TypeAliasSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap {
+) : Taggable by tagMap, Annotatable {
   public val name: String = builder.name
   public val type: TypeName = builder.type
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val kdoc: CodeBlock = builder.kdoc.build()
-  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
     codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
@@ -69,12 +69,12 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
 
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
-    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
@@ -104,28 +104,6 @@ public class TypeAliasSpec private constructor(
     public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
-
-    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
-      this.annotations += annotationSpecs
-    }
-
-    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      annotations += annotationSpec
-    }
-
-    public fun addAnnotation(annotation: ClassName): Builder = apply {
-      annotations += AnnotationSpec.builder(annotation).build()
-    }
-
-    @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
-    )
-    public fun addAnnotation(annotation: Class<*>): Builder =
-      addAnnotation(annotation.asClassName())
-
-    public fun addAnnotation(annotation: KClass<*>): Builder =
-      addAnnotation(annotation.asClassName())
 
     public fun build(): TypeAliasSpec {
       for (it in modifiers) {
