@@ -31,7 +31,7 @@ autoCommon = { module = "com.google.auto:auto-common", version = "1.2.1" }
 guava = { module = "com.google.guava:guava", version = "31.1-jre" }
 javapoet = "com.squareup:javapoet:1.13.0"
 
-autoService = "com.google.auto.service:auto-service-annotations:1.0.1"
+autoService = "com.google.auto.service:auto-service-annotations:1.1.0"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
 
 kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
