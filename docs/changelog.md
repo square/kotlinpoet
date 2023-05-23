@@ -1,6 +1,52 @@
 Change Log
 ==========
 
+## Unreleased
+
+ *  Function return types now default to `Unit` unless explicitly set.
+
+    Previously the default was `null` which behaved like `Unit` for block bodies. When an expression body was produced,
+    however, no return type would be emitted. This meant that the return type was implicit based on the contents of
+    the body.
+
+    With this change, when no return type is specified and an expression body is produced, the return type will be
+    explicitly `Unit`. Specify the actual return type explicitly to correct the output.
+
+    Old versions:
+    ```kotlin
+    val funSpec = FunSpec.builder("foo")
+      .addStatement("return 1")
+      .build()
+    ```
+    ```kotlin
+    public fun foo() = 1
+    ```
+
+    This version, incorrect:
+    ```kotlin
+    val funSpec = FunSpec.builder("foo")
+      .addStatement("return 1")
+      .build()
+    ```
+    ```kotlin
+    public fun foo(): Unit = 1 // ❌
+    ```
+
+    This version, correct:
+    ```diff
+     val funSpec = FunSpec.builder("foo")
+    +  .returns(INT)
+       .addStatement("return 1")
+       .build()
+    ```
+    ```kotlin
+    public fun foo(): Int = 1 // ✅
+    ```
+
+    Additionally, as part of this change, `FunSpec.returnType` has changed to be non-nullable. This is a source- and
+    binary-compatible change, although if you were performing null-checks then new warnings may appear after upgrade.
+
+
 ## Version 1.13.2
 
 _2023-05-05_
