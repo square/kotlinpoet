@@ -50,7 +50,6 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.Int
       import kotlin.Long
       import kotlin.String
-      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.jvm.JvmField
       import kotlin.jvm.JvmName
@@ -58,21 +57,21 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      public fun jvmNameFunction(): Unit {
+      public fun jvmNameFunction() {
       }
 
       public fun jvmOverloads(
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!"),
-      ): Unit {
+      ) {
       }
 
-      public fun regularFun(): Unit {
+      public fun regularFun() {
       }
 
       @Synchronized
-      public fun synchronizedFun(): Unit {
+      public fun synchronizedFun() {
       }
 
       public val BINARY_PROP: Int = 11
@@ -186,7 +185,6 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.Int
       import kotlin.Long
       import kotlin.String
-      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.jvm.JvmName
       import kotlin.jvm.JvmOverloads
@@ -194,7 +192,7 @@ class FacadeFileTest : MultiClassInspectorTest() {
       import kotlin.jvm.Synchronized
 
       @JvmName(name = "jvmStaticFunction")
-      public fun jvmNameFunction(): Unit {
+      public fun jvmNameFunction() {
       }
 
       @JvmOverloads
@@ -202,14 +200,14 @@ class FacadeFileTest : MultiClassInspectorTest() {
         param1: String,
         optionalParam2: String = throw NotImplementedError("Stub!"),
         nullableParam3: String? = throw NotImplementedError("Stub!"),
-      ): Unit {
+      ) {
       }
 
-      public fun regularFun(): Unit {
+      public fun regularFun() {
       }
 
       @Synchronized
-      public fun synchronizedFun(): Unit {
+      public fun synchronizedFun() {
       }
 
       public val BINARY_PROP: Int = throw NotImplementedError("Stub!")

@@ -48,7 +48,7 @@ public class FunSpec private constructor(
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
 
-  public val returnType: TypeName? = builder.returnType
+  public val returnType: TypeName = builder.returnType
   public val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
   public val delegateConstructor: String? = builder.delegateConstructor
   public val delegateConstructorArguments: List<CodeBlock> =
@@ -165,10 +165,8 @@ public class FunSpec private constructor(
       }
     }
 
-    if (returnType != null) {
+    if (returnType != UNIT || emitUnitReturnType()) {
       codeWriter.emitCode(": %T", returnType)
-    } else if (emitUnitReturnType()) {
-      codeWriter.emitCode(": %T", UNIT)
     }
 
     if (delegateConstructor != null) {
@@ -217,10 +215,7 @@ public class FunSpec private constructor(
   /**
    * Returns whether [Unit] should be emitted as the return type.
    *
-   * [Unit] is emitted as return type on a function unless:
-   *   - It's a constructor
-   *   - It's a getter/setter on a property
-   *   - It's an expression body
+   * [Unit] is emitted as return type on a function only if it is an expression body.
    */
   private fun emitUnitReturnType(): Boolean {
     if (isConstructor) {
@@ -231,7 +226,7 @@ public class FunSpec private constructor(
       return false
     }
 
-    return body.asExpressionBody() == null
+    return body.asExpressionBody() != null
   }
 
   private fun CodeBlock.asExpressionBody(): CodeBlock? {
@@ -309,7 +304,7 @@ public class FunSpec private constructor(
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
-    internal var returnType: TypeName? = null
+    internal var returnType: TypeName = UNIT
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()

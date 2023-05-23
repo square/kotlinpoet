@@ -517,9 +517,7 @@ class CodeBlockTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
-      |public fun test(): Unit {
+      |public fun test() {
       |  if ("Very long string that would wrap the line " ==
       |      "Very long string that would wrap the line ") {
       |  } else if ("Long string that would wrap the line 2 " ==

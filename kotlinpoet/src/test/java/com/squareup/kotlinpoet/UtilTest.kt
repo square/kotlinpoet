@@ -124,9 +124,8 @@ class UtilTest {
       import kotlin.Function1
       import kotlin.Int
       import kotlin.String
-      import kotlin.Unit
 
-      public fun foo(`aaa bbb`: Function1<Int, String>): Unit {
+      public fun foo(`aaa bbb`: Function1<Int, String>) {
         `aaa bbb`(0) + `aaa bbb`(1) + `aaa bbb`(2) + `aaa bbb`(3) + `aaa bbb`(4) + `aaa bbb`(5) +
             `aaa bbb`(6) + `aaa bbb`(7) + `aaa bbb`(8) + `aaa bbb`(9) + `aaa bbb`(100)
       }

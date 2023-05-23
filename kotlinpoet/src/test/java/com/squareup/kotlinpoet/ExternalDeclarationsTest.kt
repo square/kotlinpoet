@@ -26,7 +26,7 @@ class ExternalDeclarationsTest {
 
     assertThat(methodSpec.toString()).isEqualTo(
       """
-      |public external fun function(): kotlin.Unit
+      |public external fun function()
       |
       """.trimMargin(),
     )
@@ -35,12 +35,13 @@ class ExternalDeclarationsTest {
   @Test fun externalFunDeclarationWithDefinedExternally() {
     val methodSpec = FunSpec.builder("function")
       .addModifiers(KModifier.EXTERNAL)
+      .returns(STRING)
       .addCode("return kotlin.js.definedExternally")
       .build()
 
     assertThat(methodSpec.toString()).isEqualTo(
       """
-      |public external fun function() = kotlin.js.definedExternally
+      |public external fun function(): kotlin.String = kotlin.js.definedExternally
       |
       """.trimMargin(),
     )
@@ -54,7 +55,7 @@ class ExternalDeclarationsTest {
 
     assertThat(methodSpec.toString()).isEqualTo(
       """
-      |public external fun function(): kotlin.Unit {
+      |public external fun function() {
       |  kotlin.js.definedExternally
       |}
       |
@@ -72,7 +73,7 @@ class ExternalDeclarationsTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public external class Test {
-        |  public fun function(): kotlin.Unit
+        |  public fun function()
         |}
         |
       """.trimMargin(),
@@ -83,6 +84,7 @@ class ExternalDeclarationsTest {
     val builder = TypeSpec.classBuilder("Test")
       .addModifiers(KModifier.EXTERNAL)
     val methodSpec = FunSpec.builder("function")
+      .returns(STRING)
       .addCode("return kotlin.js.definedExternally")
       .build()
     builder.addFunction(methodSpec)
@@ -90,7 +92,7 @@ class ExternalDeclarationsTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public external class Test {
-        |  public fun function() = kotlin.js.definedExternally
+        |  public fun function(): kotlin.String = kotlin.js.definedExternally
         |}
         |
       """.trimMargin(),
@@ -109,7 +111,7 @@ class ExternalDeclarationsTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public external class Test {
-        |  public fun function(): kotlin.Unit {
+        |  public fun function() {
         |    kotlin.js.definedExternally
         |  }
         |}

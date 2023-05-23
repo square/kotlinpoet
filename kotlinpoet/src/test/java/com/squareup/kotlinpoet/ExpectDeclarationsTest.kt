@@ -26,7 +26,7 @@ class ExpectDeclarationsTest {
 
     assertThat(methodSpec.toString()).isEqualTo(
       """
-      |public expect fun function(): kotlin.Unit
+      |public expect fun function()
       |
       """.trimMargin(),
     )
@@ -42,7 +42,7 @@ class ExpectDeclarationsTest {
     assertThat(builder.build().toString()).isEqualTo(
       """
         |public expect class Test {
-        |  public fun function(): kotlin.Unit
+        |  public fun function()
         |}
         |
       """.trimMargin(),

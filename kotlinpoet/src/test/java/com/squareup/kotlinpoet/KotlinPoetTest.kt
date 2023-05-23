@@ -47,16 +47,15 @@ class KotlinPoetTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
-        |import kotlin.Unit
         |
-        |public fun a(): Unit {
+        |public fun a() {
         |}
         |
         |public class B
         |
         |public val c: String = "C"
         |
-        |public fun d(): Unit {
+        |public fun d() {
         |}
         |
         |public class E
@@ -224,19 +223,17 @@ class KotlinPoetTest {
       """
         |package com.squareup.tacos
         |
-        |import kotlin.Unit
-        |
         |public class Taco {
-        |  public fun a(): Unit {
+        |  public fun a() {
         |  }
         |
-        |  protected fun b(): Unit {
+        |  protected fun b() {
         |  }
         |
-        |  internal fun c(): Unit {
+        |  internal fun c() {
         |  }
         |
-        |  private fun d(): Unit {
+        |  private fun d() {
         |  }
         |}
         |
@@ -260,10 +257,8 @@ class KotlinPoetTest {
       "" +
         "package com.squareup.tacos\n" +
         "\n" +
-        "import kotlin.Unit\n" +
-        "\n" +
         "public class Taco {\n" +
-        "  public fun strings(): Unit {\n" +
+        "  public fun strings() {\n" +
         "    val a = \"basic string\"\n" +
         "    val b = \"string with a \${\'\$\'} dollar sign\"\n" +
         "  }\n" +
@@ -305,10 +300,8 @@ class KotlinPoetTest {
       "" +
         "package com.squareup.tacos\n" +
         "\n" +
-        "import kotlin.Unit\n" +
-        "\n" +
         "public class Taco {\n" +
-        "  public fun strings(): Unit {\n" +
+        "  public fun strings() {\n" +
         "    val a = \"\"\"\n" +
         "        |\"\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -351,10 +344,8 @@ class KotlinPoetTest {
       "" +
         "package com.squareup.tacos\n" +
         "\n" +
-        "import kotlin.Unit\n" +
-        "\n" +
         "public class Taco {\n" +
-        "  public fun strings(): Unit {\n" +
+        "  public fun strings() {\n" +
         "    val a = \"\"\"\n" +
         "        |\n" +
         "        |\"\"\".trimMargin()\n" +
@@ -387,10 +378,9 @@ class KotlinPoetTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
-        |import kotlin.Unit
         |
         |public class Taco {
-        |  public fun addCheese(kind: String = "monterey jack"): Unit {
+        |  public fun addCheese(kind: String = "monterey jack") {
         |  }
         |}
         |
@@ -792,13 +782,11 @@ class KotlinPoetTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
       |public var bar: suspend (Foo) -> Bar = { Bar() }
       |
       |public var nullBar: (suspend (Foo) -> Bar)? = null
       |
-      |public fun foo(bar: suspend (Foo) -> Bar): Unit {
+      |public fun foo(bar: suspend (Foo) -> Bar) {
       |}
       |
       """.trimMargin(),
@@ -825,9 +813,8 @@ class KotlinPoetTest {
       |
       |import java.util.concurrent.TimeUnit
       |import kotlin.Long
-      |import kotlin.Unit
       |
-      |public fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS): Unit {
+      |public fun timeout(duration: Long, timeUnit: TimeUnit = TimeUnit.MILLISECONDS) {
       |  this.timeout = timeUnit.toMillis(duration)
       |}
       |
@@ -864,9 +851,7 @@ class KotlinPoetTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
-      |public fun dynamicTest(): Unit {
+      |public fun dynamicTest() {
       |  val d1: dynamic = "Taco"
       |  val d2: dynamic = 1f
       |  // dynamics are dangerous!
@@ -929,11 +914,10 @@ class KotlinPoetTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
-      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
+      |public fun foo(a: List<@JvmSuppressWildcards Int>) {
       |}
       |
       """.trimMargin(),
@@ -1031,11 +1015,9 @@ class KotlinPoetTest {
       |package com.squareup.tacos
       |
       |import kotlin.String
-      |import kotlin.Unit
       |
       |public
-      |    fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String):
-      |    Unit {
+      |    fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String) {
       |}
       |
       """.trimMargin(),
@@ -1154,9 +1136,8 @@ class KotlinPoetTest {
       |package com.squareup.example
       |
       |import com.squareup.tacos.Taco
-      |import kotlin.Unit
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  println(${'"'}""Here's a taco: ${'$'}{Taco()}""${'"'})
       |}
       |
@@ -1179,10 +1160,9 @@ class KotlinPoetTest {
       """
       |package com.squareup.example
       |
-      |import kotlin.Unit
       |import kotlin.collections.contentToString
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  val ints = arrayOf(1, 2, 3)
       |  println(${'"'}""${'$'}{ints.contentToString()}""${'"'})
       |}
@@ -1217,7 +1197,7 @@ class KotlinPoetTest {
       | * @param a Progress in %
       | * @param b Some other parameter with %
       | */
-      |public fun test(a: kotlin.Int, b: kotlin.Int): kotlin.Unit {
+      |public fun test(a: kotlin.Int, b: kotlin.Int) {
       |}
       |
       """.trimMargin(),
@@ -1248,10 +1228,8 @@ class KotlinPoetTest {
       """
       |package test
       |
-      |import kotlin.Unit
-      |
       |public class Exception : kotlin.Exception() {
-      |  public fun test(e: Exception): Unit {
+      |  public fun test(e: Exception) {
       |  }
       |}
       |
@@ -1316,13 +1294,12 @@ class KotlinPoetTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.cash.util.isNullOrEmpty as utilIsNullOrEmpty
       |import com.squareup.tacos.Taco as SquareupTacosTaco
       |import kotlin.text.isNullOrEmpty as textIsNullOrEmpty
       |import xyz.block.tacos.Taco as BlockTacosTaco
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  val squareTaco = ::SquareupTacosTaco
       |  val blockTaco = ::BlockTacosTaco
       |  val isSquareTacoNull = "Taco".textIsNullOrEmpty()
@@ -1355,11 +1332,10 @@ class KotlinPoetTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import androidx.compose.ui.graphics.StrokeCap.Companion.Round as strokeCapRound
       |import androidx.compose.ui.graphics.StrokeJoin.Companion.Round as strokeJoinRound
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  val strokeCapRound = strokeCapRound()
       |  val strokeJoinRound = strokeJoinRound()
       |}
@@ -1391,13 +1367,12 @@ class KotlinPoetTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.cash.util.isNullOrEmpty as cashIsNullOrEmpty
       |import com.squareup.tacos.Taco as SquareTaco
       |import kotlin.text.isNullOrEmpty as kotlinIsNullOrEmpty
       |import xyz.block.tacos.Taco as BlockTaco
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  val squareTaco = ::SquareTaco
       |  val blockTaco = ::BlockTaco
       |  val isSquareTacoNull = "Taco".kotlinIsNullOrEmpty()

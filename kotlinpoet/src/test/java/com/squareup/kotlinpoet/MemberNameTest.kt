@@ -39,9 +39,8 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.bestTacoEver
       |import com.squareup.tacos.randomTaco
-      |import kotlin.Unit
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  val randomTaco = randomTaco()
       |  val bestTaco = bestTacoEver
       |}
@@ -65,9 +64,8 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.Taco.Companion.createTaco
-      |import kotlin.Unit
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  createTaco()
       |}
       |
@@ -88,9 +86,7 @@ class MemberNameTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  createTaco()
       |}
       |
@@ -115,9 +111,8 @@ class MemberNameTest {
       |package com.squareup.tacos
       |
       |import com.squareup.tacos.Town.createTaco
-      |import kotlin.Unit
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  createTaco()
       |}
       |
@@ -140,11 +135,10 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.tacos.createTaco as squareupTacosCreateTaco
       |import com.twitter.tacos.createTaco as twitterTacosCreateTaco
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  squareupTacosCreateTaco()
       |  twitterTacosCreateTaco()
       |}
@@ -170,11 +164,10 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.tacos.SquareTacos.Companion.createTaco as squareTacosCreateTaco
       |import com.twitter.tacos.TwitterTacos.Companion.createTaco as twitterTacosCreateTaco
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  squareTacosCreateTaco()
       |  twitterTacosCreateTaco()
       |}
@@ -199,9 +192,8 @@ class MemberNameTest {
       |package com.example
       |
       |import com.squareup.tacos.SquareTacos
-      |import kotlin.Unit
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  val tacos = SquareTacos()
       |  com.squareup.tacos.math.SquareTacos(tacos)
       |}
@@ -232,14 +224,12 @@ class MemberNameTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
       |public class TacoTest {
-      |  public fun test(): Unit {
+      |  public fun test() {
       |    kotlin.error("errorText")
       |  }
       |
-      |  public fun error(): Unit {
+      |  public fun error() {
       |  }
       |}
       |
@@ -274,14 +264,12 @@ class MemberNameTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
-      |
       |public class Test {
-      |  public fun error(): Unit {
+      |  public fun error() {
       |  }
       |
       |  public inner class TacoTest {
-      |    public fun test(): Unit {
+      |    public fun test() {
       |      kotlin.error("errorText")
       |    }
       |  }
@@ -317,15 +305,14 @@ class MemberNameTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import kotlin.error
       |
       |public class Test {
-      |  public fun error(): Unit {
+      |  public fun error() {
       |  }
       |
       |  public class TacoTest {
-      |    public fun test(): Unit {
+      |    public fun test() {
       |      error("errorText")
       |    }
       |  }
@@ -352,11 +339,10 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.tacos.createTaco as createSquareTaco
       |import com.twitter.tacos.createTaco as createTwitterTaco
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  createSquareTaco()
       |  createTwitterTaco()
       |}
@@ -383,13 +369,12 @@ class MemberNameTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import org.junit.Before
       |import org.mockito.`when`
       |
       |public class TacoTest {
       |  @Before
-      |  public fun setUp(): Unit {
+      |  public fun setUp() {
       |    `when`(tacoService.createTaco()).thenReturn(tastyTaco())
       |  }
       |}
@@ -415,11 +400,10 @@ class MemberNameTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.tacos.SquareTacos.Companion.`when` as squareTacosWhen
       |import com.twitter.tacos.TwitterTacos.Companion.`when` as twitterTacosWhen
       |
-      |public fun whenTastyTacos(): Unit {
+      |public fun whenTastyTacos() {
       |  squareTacosWhen()
       |  twitterTacosWhen()
       |}
@@ -445,9 +429,8 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.TacoTruck
       |import com.squareup.tacos.randomTaco
-      |import kotlin.Unit
       |
-      |public fun makeTastyTacos(): Unit {
+      |public fun makeTastyTacos() {
       |  val randomTacoFactory = ::randomTaco
       |  val bestTacoFactory = TacoTruck::bestTacoEver
       |}
@@ -470,9 +453,8 @@ class MemberNameTest {
       |package com.squareup.tacos
       |
       |import com.squareup.`taco factory`.`produce tacos`
-      |import kotlin.Unit
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  println(`produce tacos`())
       |}
       |
@@ -514,10 +496,9 @@ class MemberNameTest {
       |
       |import com.squareup.tacos.Taco
       |import com.squareup.tacos.TacoPackager
-      |import kotlin.Unit
       |import kotlin.collections.List
       |
-      |public fun packageTacos(tacos: List<Taco>, packager: TacoPackager): Unit {
+      |public fun packageTacos(tacos: List<Taco>, packager: TacoPackager) {
       |  packager.`package`(tacos)
       |}
       |
@@ -549,9 +530,8 @@ class MemberNameTest {
       |import com.squareup.tacos.`internal`.iterator
       |import com.squareup.tacos.`internal`.minusAssign
       |import com.squareup.tacos.ingredient.Meat
-      |import kotlin.Unit
       |
-      |public fun makeTacoHealthy(taco: Taco): Unit {
+      |public fun makeTacoHealthy(taco: Taco) {
       |  for (ingredient in taco) {
       |    if (ingredient is Meat) taco -= ingredient
       |  }

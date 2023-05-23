@@ -21,6 +21,7 @@ import org.junit.Test
 class LineWrappingTest {
   @Test fun codeSpacesWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
       .addStatement(
         "return %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L",
         10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
@@ -31,7 +32,9 @@ class LineWrappingTest {
       """
         |package com.squareup.tacos
         |
-        |public fun wrapMe() = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 *
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 *
         |    50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 *
         |    10_000_000_000 * 20_000_000_000 * 30_000_000_000
         |
@@ -41,6 +44,7 @@ class LineWrappingTest {
 
   @Test fun stringSpacesDoNotWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
       .addStatement(
         "return %S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S",
         "Aaaa Aaaa", "Bbbb Bbbb", "Cccc Cccc", "Dddd Dddd", "Eeee Eeee", "Ffff Ffff",
@@ -51,7 +55,9 @@ class LineWrappingTest {
       """
         |package com.squareup.tacos
         |
-        |public fun wrapMe() =
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String =
         |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
         |
       """.trimMargin(),
@@ -60,6 +66,7 @@ class LineWrappingTest {
 
   @Test fun nonwrappingWhitespaceDoesNotWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
       .addStatement(
         "return %L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L",
         10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
@@ -70,7 +77,9 @@ class LineWrappingTest {
       """
         |package com.squareup.tacos
         |
-        |public fun wrapMe() =
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String =
         |    10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
         |
       """.trimMargin(),
@@ -79,13 +88,16 @@ class LineWrappingTest {
 
   @Test fun nonwrappingWhitespaceIsRetainedInStrings() {
     val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
       .addStatement("return %S", "a·b")
       .build()
     assertThat(toString(wrapMe)).isEqualTo(
       """
         |package com.squareup.tacos
         |
-        |public fun wrapMe() = "a·b"
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String = "a·b"
         |
       """.trimMargin(),
     )
@@ -102,9 +114,7 @@ class LineWrappingTest {
       """
         |package com.squareup.tacos
         |
-        |import kotlin.Unit
-        |
-        |public fun wrapMe(): Unit {
+        |public fun wrapMe() {
         |  val a =    8
         |  val b =   64
         |  val c =  512
@@ -126,9 +136,7 @@ class LineWrappingTest {
       """
         |package com.squareup.tacos
         |
-        |import kotlin.Unit
-        |
-        |public fun wrapMe(): Unit {
+        |public fun wrapMe() {
         |  val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
         |  val bbbbbb =
         |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
@@ -159,7 +167,6 @@ class LineWrappingTest {
         |package com.squareup.tacos
         |
         |import kotlin.String
-        |import kotlin.Unit
         |
         |public class Taco {
         |  public fun call(
@@ -195,7 +202,7 @@ class LineWrappingTest {
         |    s29: String,
         |    s30: String,
         |    s31: String,
-        |  ): Unit {
+        |  ) {
         |    call("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
         |  }
