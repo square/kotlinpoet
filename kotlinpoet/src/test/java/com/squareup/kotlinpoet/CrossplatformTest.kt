@@ -72,7 +72,6 @@ class CrossplatformTest {
       """
       |import java.util.concurrent.atomic.AtomicReference
       |import kotlin.Boolean
-      |import kotlin.Unit
       |
       |internal expect class AtomicRef<V>(
       |  `value`: V,
@@ -81,7 +80,7 @@ class CrossplatformTest {
       |
       |  public fun `get`(): V
       |
-      |  public fun `set`(`value`: V): Unit
+      |  public fun `set`(`value`: V)
       |
       |  public fun getAndSet(`value`: V): V
       |
@@ -157,6 +156,7 @@ class CrossplatformTest {
       .addFunction(
         FunSpec.builder("f1")
           .addModifiers(KModifier.ACTUAL)
+          .returns(INT)
           .addStatement("return 1")
           .build(),
       )
@@ -168,7 +168,7 @@ class CrossplatformTest {
       |
       |public expect fun f1(): Int
       |
-      |public actual fun f1() = 1
+      |public actual fun f1(): Int = 1
       |
       """.trimMargin(),
     )

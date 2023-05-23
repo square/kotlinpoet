@@ -160,7 +160,6 @@ class TestProcessorTest {
       import kotlin.Int
       import kotlin.IntArray
       import kotlin.String
-      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.collections.Map
       import kotlin.collections.MutableList
@@ -225,7 +224,7 @@ class TestProcessorTest {
           param1: Function0<String>,
           param2: Function1<String, String>,
           param3: Function1<String, String>,
-        ): Unit {
+        ) {
         }
 
         public fun wildTypes(
@@ -252,7 +251,7 @@ class TestProcessorTest {
           genericAlias: GenericTypeAlias,
           parameterizedTypeAlias: ParameterizedTypeAlias<String>,
           nestedArray: Array<Map<String, Any>>?,
-        ): Unit {
+        ) {
         }
       }
 
@@ -302,7 +301,6 @@ class TestProcessorTest {
 
       import kotlin.Int
       import kotlin.String
-      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.collections.Map
 
@@ -313,7 +311,7 @@ class TestProcessorTest {
           genericMapAlias: Map<Int, String>,
           t1Unused: Map<Int, String>,
           a1: Map<String, Int>,
-        ): Unit {
+        ) {
         }
       }
 
@@ -431,10 +429,9 @@ class TestProcessorTest {
     package test
 
     import kotlin.Int
-    import kotlin.Unit
 
     public class TransitiveAliases {
-      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T): Unit {
+      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T) {
       }
     }
 
@@ -471,11 +468,10 @@ class TestProcessorTest {
       """
     package test
 
-    import kotlin.Unit
     import kotlin.collections.List
 
     public class AliasAsTypeArgument {
-      public fun bar(arg1: List<Alias997>): Unit {
+      public fun bar(arg1: List<Alias997>) {
       }
     }
 

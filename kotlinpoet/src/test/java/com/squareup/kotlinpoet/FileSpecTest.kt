@@ -413,9 +413,8 @@ class FileSpecTest {
       |package com.example
       |
       |import com.squareup.`taco factory`.TacoFactory
-      |import kotlin.Unit
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  println(TacoFactory.produceTacos())
       |}
       |
@@ -437,10 +436,9 @@ class FileSpecTest {
       """
       |package com.example
       |
-      |import kotlin.Unit
       |import com.squareup.`taco factory`.TacoFactory as `La Taqueria`
       |
-      |public fun main(): Unit {
+      |public fun main() {
       |  println(`La Taqueria`.produceTacos())
       |}
       |
@@ -492,10 +490,9 @@ class FileSpecTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import java.util.concurrent.TimeUnit.MINUTES as MINS
       |
-      |public fun sleepForFiveMins(): Unit {
+      |public fun sleepForFiveMins() {
       |  MINS.sleep(5)
       |}
       |
@@ -726,10 +723,9 @@ class FileSpecTest {
         |import java.lang.System
         |import kotlin.Array
         |import kotlin.String
-        |import kotlin.Unit
         |
         |public class HelloWorld {
-        |  public fun main(args: Array<String>): Unit {
+        |  public fun main(args: Array<String>) {
         |    System.out.println("Hello World!");
         |  }
         |}
@@ -1041,9 +1037,7 @@ class FileSpecTest {
       """
       |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.`get`.a.really.large.packagename
       |
-      |import kotlin.Unit
-      |
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
@@ -1123,16 +1117,15 @@ class FileSpecTest {
       |
       |import com.squareup.kotlinpoet.FileSpecTest
       |import kotlin.String
-      |import kotlin.Unit
       |import kotlin.collections.Collection
       |import kotlin.collections.List
       |import kotlin.collections.Map
       |
-      |public fun f1(): Unit {
+      |public fun f1() {
       |  // this is a long line with a possibly long parameterized type with annotation: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>
       |}
       |
-      |public fun f2(): Unit {
+      |public fun f2() {
       |  // this is a very very very very very very very very very very long line with a very long lambda type: suspend String.(foo: List<Map<in String, Collection<Map<FileSpecTest.WackyKey, out FileSpecTest.OhNoThisDoesNotCompile>>>>) -> String
       |}
       |
@@ -1158,13 +1151,12 @@ class FileSpecTest {
     assertThat(spec.toString()).isEqualTo(
       """
       |import kotlin.String
-      |import kotlin.Unit
       |
       |val prop: String = "hi"
       |
       |println("hello!")
       |
-      |public fun localFun(): Unit {
+      |public fun localFun() {
       |}
       |
       |public class Yay

@@ -176,7 +176,7 @@ class TypeVariableNameTest {
       .build()
     assertThat(funSpec.toString()).isEqualTo(
       """
-      |public inline fun <reified T> printMembers(): kotlin.Unit {
+      |public inline fun <reified T> printMembers() {
       |  println(T::class.members)
       |}
       |

@@ -271,14 +271,13 @@ class JvmAnnotationsTest {
       |
       |import java.io.IOException
       |import java.lang.IllegalArgumentException
-      |import kotlin.Unit
       |import kotlin.jvm.Throws
       |
       |@Throws(
       |  IOException::class,
       |  IllegalArgumentException::class,
       |)
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
@@ -297,11 +296,10 @@ class JvmAnnotationsTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import kotlin.jvm.Throws
       |
       |@Throws(IllegalTacoException::class)
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
@@ -419,11 +417,10 @@ class JvmAnnotationsTest {
       |
       |import kotlin.Int
       |import kotlin.String
-      |import kotlin.Unit
       |import kotlin.jvm.JvmOverloads
       |
       |@JvmOverloads
-      |public fun foo(bar: Int, baz: String = "baz"): Unit {
+      |public fun foo(bar: Int, baz: String = "baz") {
       |}
       |
       """.trimMargin(),
@@ -515,11 +512,10 @@ class JvmAnnotationsTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import kotlin.jvm.JvmName
       |
       |@JvmName("getFoo")
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
@@ -649,11 +645,10 @@ class JvmAnnotationsTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import kotlin.jvm.JvmSuppressWildcards
       |
       |@JvmSuppressWildcards(suppress = false)
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
@@ -721,11 +716,10 @@ class JvmAnnotationsTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
-      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmSuppressWildcards
       |
-      |public fun foo(a: List<@JvmSuppressWildcards Int>): Unit {
+      |public fun foo(a: List<@JvmSuppressWildcards Int>) {
       |}
       |
       """.trimMargin(),
@@ -749,11 +743,10 @@ class JvmAnnotationsTest {
       |package com.squareup.tacos
       |
       |import kotlin.Int
-      |import kotlin.Unit
       |import kotlin.collections.List
       |import kotlin.jvm.JvmWildcard
       |
-      |public fun foo(a: List<@JvmWildcard Int>): Unit {
+      |public fun foo(a: List<@JvmWildcard Int>) {
       |}
       |
       """.trimMargin(),
@@ -765,6 +758,7 @@ class JvmAnnotationsTest {
       .addFunction(
         FunSpec.builder("foo")
           .synchronized()
+          .returns(STRING)
           .addStatement("return %S", "foo")
           .build(),
       )
@@ -773,10 +767,11 @@ class JvmAnnotationsTest {
       """
       |package com.squareup.tacos
       |
+      |import kotlin.String
       |import kotlin.jvm.Synchronized
       |
       |@Synchronized
-      |public fun foo() = "foo"
+      |public fun foo(): String = "foo"
       |
       """.trimMargin(),
     )
@@ -986,11 +981,10 @@ class JvmAnnotationsTest {
       """
       |package com.squareup.tacos
       |
-      |import kotlin.Unit
       |import kotlin.jvm.Strictfp
       |
       |@Strictfp
-      |public fun foo(): Unit {
+      |public fun foo() {
       |}
       |
       """.trimMargin(),
