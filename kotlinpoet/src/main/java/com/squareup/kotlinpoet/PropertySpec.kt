@@ -191,6 +191,8 @@ public class PropertySpec private constructor(
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+
+    @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     /** True to create a `var` instead of a `val`. */

@@ -315,6 +315,8 @@ public class FunSpec private constructor(
     public val parameters: MutableList<ParameterSpec> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
+
+    @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
     public fun addKdoc(format: String, vararg args: Any): Builder = apply {

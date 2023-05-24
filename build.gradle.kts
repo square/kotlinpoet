@@ -45,6 +45,7 @@ subprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_1_8)
+      freeCompilerArgs.add("-Xjvm-default=all")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
