@@ -4619,10 +4619,10 @@ class TypeSpecTest {
     val javaWord = AnnotationSpec.builder(JvmName::class.asClassName())
       .addMember("name = %S", "javaWord")
       .build()
-    builder.annotationSpecs.clear()
-    builder.annotationSpecs.add(javaWord)
+    builder.annotations.clear()
+    builder.annotations.add(javaWord)
 
-    assertThat(builder.build().annotationSpecs).containsExactly(javaWord)
+    assertThat(builder.build().annotations).containsExactly(javaWord)
   }
 
   @Test fun modifyTypeVariableNames() {

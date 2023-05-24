@@ -38,12 +38,15 @@ public class FunSpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder, ContextReceivable by contextReceivers {
+) : Taggable by tagMap,
+  OriginatingElementsHolder by delegateOriginatingElementsHolder,
+  ContextReceivable by contextReceivers,
+  Annotatable {
   public val name: String = builder.name
   public val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
   public val receiverKdoc: CodeBlock = builder.receiverKdoc
-  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
@@ -299,7 +302,10 @@ public class FunSpec private constructor(
 
   public class Builder internal constructor(
     internal val name: String,
-  ) : Taggable.Builder<Builder>, OriginatingElementsHolder.Builder<Builder>, ContextReceivable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>,
+    OriginatingElementsHolder.Builder<Builder>,
+    ContextReceivable.Builder<Builder>,
+    Annotatable.Builder<Builder> {
     internal val kdoc = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
@@ -309,7 +315,7 @@ public class FunSpec private constructor(
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
 
-    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val parameters: MutableList<ParameterSpec> = mutableListOf()
@@ -326,24 +332,6 @@ public class FunSpec private constructor(
     public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
-
-    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
-      this.annotations += annotationSpecs
-    }
-
-    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      annotations += annotationSpec
-    }
-
-    public fun addAnnotation(annotation: ClassName): Builder = apply {
-      annotations += AnnotationSpec.builder(annotation).build()
-    }
-
-    public fun addAnnotation(annotation: Class<*>): Builder =
-      addAnnotation(annotation.asClassName())
-
-    public fun addAnnotation(annotation: KClass<*>): Builder =
-      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers

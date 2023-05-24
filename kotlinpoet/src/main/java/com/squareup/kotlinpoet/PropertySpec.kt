@@ -30,12 +30,15 @@ public class PropertySpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
-) : Taggable by tagMap, OriginatingElementsHolder by delegateOriginatingElementsHolder, ContextReceivable by contextReceivers {
+) : Taggable by tagMap,
+  OriginatingElementsHolder by delegateOriginatingElementsHolder,
+  ContextReceivable by contextReceivers,
+  Annotatable {
   public val mutable: Boolean = builder.mutable
   public val name: String = builder.name
   public val type: TypeName = builder.type
   public val kdoc: CodeBlock = builder.kdoc.build()
-  public val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val initializer: CodeBlock? = builder.initializer
@@ -176,7 +179,8 @@ public class PropertySpec private constructor(
     internal val type: TypeName,
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
-    ContextReceivable.Builder<Builder> {
+    ContextReceivable.Builder<Builder>,
+    Annotatable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal val kdoc = CodeBlock.builder()
@@ -186,7 +190,7 @@ public class PropertySpec private constructor(
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
 
-    public val annotations: MutableList<AnnotationSpec> = mutableListOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -207,28 +211,6 @@ public class PropertySpec private constructor(
     public fun addKdoc(block: CodeBlock): Builder = apply {
       kdoc.add(block)
     }
-
-    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder = apply {
-      annotations += annotationSpecs
-    }
-
-    public fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      annotations += annotationSpec
-    }
-
-    public fun addAnnotation(annotation: ClassName): Builder = apply {
-      annotations += AnnotationSpec.builder(annotation).build()
-    }
-
-    @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
-    )
-    public fun addAnnotation(annotation: Class<*>): Builder =
-      addAnnotation(annotation.asClassName())
-
-    public fun addAnnotation(annotation: KClass<*>): Builder =
-      addAnnotation(annotation.asClassName())
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
