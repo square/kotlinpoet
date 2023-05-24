@@ -428,13 +428,14 @@ internal class CodeWriter constructor(
 
       // We don't care about nullability and type annotations here, as it's irrelevant for imports.
       if (resolved == c.copy(nullable = false, annotations = emptyList())) {
-        if (alias != null) return alias
-        val suffixOffset = c.simpleNames.size - 1
-        referencedNames.add(className.topLevelClassName().simpleName)
-        return className.simpleNames.subList(
-          suffixOffset,
+        if (alias == null) {
+          referencedNames.add(className.topLevelClassName().simpleName)
+        }
+        val nestedClassNames = className.simpleNames.subList(
+          c.simpleNames.size,
           className.simpleNames.size,
         ).joinToString(".")
+        return "$simpleName.$nestedClassNames"
       }
       c = c.enclosingClassName()
     }
