@@ -41,9 +41,10 @@ public class FunSpec private constructor(
 ) : Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
-  Annotatable {
+  Annotatable,
+  Documentable {
   public val name: String = builder.name
-  public val kdoc: CodeBlock = builder.kdoc.build()
+  override val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
   public val receiverKdoc: CodeBlock = builder.receiverKdoc
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
@@ -305,8 +306,9 @@ public class FunSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder> {
-    internal val kdoc = CodeBlock.builder()
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder> {
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
@@ -324,14 +326,6 @@ public class FunSpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
-
-    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
-      kdoc.add(format, *args)
-    }
-
-    public fun addKdoc(block: CodeBlock): Builder = apply {
-      kdoc.add(block)
-    }
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers

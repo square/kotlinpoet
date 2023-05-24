@@ -29,9 +29,9 @@ import kotlin.reflect.KClass
 public class ParameterSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable {
+) : Taggable by tagMap, Annotatable, Documentable {
   public val name: String = builder.name
-  public val kdoc: CodeBlock = builder.kdoc.build()
+  override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers
     .also {
@@ -96,21 +96,13 @@ public class ParameterSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
     internal var defaultValue: CodeBlock? = null
 
-    public val kdoc: CodeBlock.Builder = CodeBlock.builder()
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
-
-    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
-      kdoc.add(format, *args)
-    }
-
-    public fun addKdoc(block: CodeBlock): Builder = apply {
-      kdoc.add(block)
-    }
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers

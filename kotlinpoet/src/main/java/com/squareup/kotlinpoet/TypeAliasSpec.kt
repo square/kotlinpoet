@@ -26,12 +26,12 @@ import kotlin.reflect.KClass
 public class TypeAliasSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable {
+) : Taggable by tagMap, Annotatable, Documentable {
   public val name: String = builder.name
   public val type: TypeName = builder.type
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
-  public val kdoc: CodeBlock = builder.kdoc.build()
+  override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
@@ -69,8 +69,8 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
-    internal val kdoc = CodeBlock.builder()
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
 
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
@@ -95,14 +95,6 @@ public class TypeAliasSpec private constructor(
 
     public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
-    }
-
-    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
-      kdoc.add(format, *args)
-    }
-
-    public fun addKdoc(block: CodeBlock): Builder = apply {
-      kdoc.add(block)
     }
 
     public fun build(): TypeAliasSpec {

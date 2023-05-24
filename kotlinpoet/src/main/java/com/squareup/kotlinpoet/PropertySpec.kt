@@ -33,11 +33,12 @@ public class PropertySpec private constructor(
 ) : Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
-  Annotatable {
+  Annotatable,
+  Documentable {
   public val mutable: Boolean = builder.mutable
   public val name: String = builder.name
   public val type: TypeName = builder.type
-  public val kdoc: CodeBlock = builder.kdoc.build()
+  override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
@@ -180,10 +181,11 @@ public class PropertySpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder> {
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
-    internal val kdoc = CodeBlock.builder()
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var initializer: CodeBlock? = null
     internal var delegated = false
     internal var getter: FunSpec? = null
@@ -202,14 +204,6 @@ public class PropertySpec private constructor(
     /** True to create a `var` instead of a `val`. */
     public fun mutable(mutable: Boolean = true): Builder = apply {
       this.mutable = mutable
-    }
-
-    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
-      kdoc.add(format, *args)
-    }
-
-    public fun addKdoc(block: CodeBlock): Builder = apply {
-      kdoc.add(block)
     }
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
