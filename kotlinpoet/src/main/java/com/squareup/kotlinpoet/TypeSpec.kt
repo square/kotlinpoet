@@ -46,10 +46,11 @@ public class TypeSpec private constructor(
 ) : Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElements,
   ContextReceivable by contextReceivers,
-  Annotatable {
+  Annotatable,
+  Documentable {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
-  public val kdoc: CodeBlock = builder.kdoc.build()
+  override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
@@ -470,8 +471,9 @@ public class TypeSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder> {
-    internal val kdoc = CodeBlock.builder()
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder> {
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
@@ -503,14 +505,6 @@ public class TypeSpec private constructor(
 
     @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
     public val annotationSpecs: MutableList<AnnotationSpec> get() = annotations
-
-    public fun addKdoc(format: String, vararg args: Any): Builder = apply {
-      kdoc.add(format, *args)
-    }
-
-    public fun addKdoc(block: CodeBlock): Builder = apply {
-      kdoc.add(block)
-    }
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
