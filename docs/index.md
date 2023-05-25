@@ -347,7 +347,7 @@ val printKClass = FunSpec.builder("printKClass")
   .build()
 ```
 
-The `STAR` is represented as `*` in KotlinPoet. You can find more in [`com.squareup.kotlinpoet.TypeName`](https://github.com/square/kotlinpoet/blob/master/kotlinpoet/src/main/java/com/squareup/kotlinpoet/TypeName.kt)
+The `STAR` is represented as `*` in KotlinPoet. You can find more in the [KDoc][kdoc].
 
 KotlinPoet will decompose each type and import its components where possible.
 
