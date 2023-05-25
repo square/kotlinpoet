@@ -560,6 +560,9 @@ public class FunSpec private constructor(
 
     @JvmStatic public fun builder(name: String): Builder = Builder(name)
 
+    /** Create a new function builder from [MemberName.simpleName] */
+    @JvmStatic public fun builder(memberName: MemberName): Builder = Builder(memberName.simpleName)
+
     @JvmStatic public fun constructorBuilder(): Builder = Builder(CONSTRUCTOR)
 
     @JvmStatic public fun getterBuilder(): Builder = Builder(GETTER)

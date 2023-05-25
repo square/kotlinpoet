@@ -1219,4 +1219,18 @@ class FunSpecTest {
       """.trimMargin(),
     )
   }
+
+  @Test fun memberNameBuilder() {
+    val name = MemberName("com.example", "myCoolFunction")
+    val spec = FunSpec.builder(name)
+      .returns(STRING)
+      .addStatement("""return "hey"""")
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |public fun myCoolFunction(): kotlin.String = "hey"
+      |
+      """.trimMargin(),
+    )
+  }
 }
