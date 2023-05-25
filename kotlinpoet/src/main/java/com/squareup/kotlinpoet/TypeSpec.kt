@@ -789,6 +789,20 @@ public class TypeSpec private constructor(
         }
       }
 
+      for (propertySpec in propertySpecs) {
+        require(isAbstract || ABSTRACT !in propertySpec.modifiers) {
+          "non-abstract type $name cannot declare abstract property ${propertySpec.name}"
+        }
+        if (propertySpec.contextReceiverTypes.isNotEmpty()) {
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
+            requireNotNull(propertySpec.getter) { "non-abstract properties with context receivers require a ${FunSpec.GETTER}" }
+            if (propertySpec.mutable) {
+              requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}" }
+            }
+          }
+        }
+      }
+
       if (isAnnotation) {
         primaryConstructor?.let {
           requireNoneOf(it.modifiers, INTERNAL, PROTECTED, PRIVATE, ABSTRACT)

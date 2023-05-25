@@ -16,8 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
-import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -648,44 +646,6 @@ class PropertySpecTest {
 
       """.trimIndent(),
     )
-  }
-
-  @Test fun varWithContextReceiverWithoutCustomAccessors() {
-    val mutablePropertySpecBuilder = {
-      PropertySpec.builder("foo", STRING)
-        .mutable()
-        .contextReceivers(INT)
-    }
-
-    assertThrows<IllegalArgumentException> {
-      mutablePropertySpecBuilder()
-        .getter(
-          FunSpec.getterBuilder()
-            .build(),
-        )
-        .build()
-    }.hasMessageThat()
-      .isEqualTo("mutable properties with context receivers require a $SETTER")
-
-    assertThrows<IllegalArgumentException> {
-      mutablePropertySpecBuilder()
-        .setter(
-          FunSpec.setterBuilder()
-            .build(),
-        )
-        .build()
-    }.hasMessageThat()
-      .isEqualTo("properties with context receivers require a $GETTER")
-  }
-
-  @Test fun valWithContextReceiverWithoutGetter() {
-    assertThrows<IllegalArgumentException> {
-      PropertySpec.builder("foo", STRING)
-        .mutable(false)
-        .contextReceivers(INT)
-        .build()
-    }.hasMessageThat()
-      .isEqualTo("properties with context receivers require a $GETTER")
   }
 
   @Test fun varWithContextReceiver() {
