@@ -315,6 +315,7 @@ KotlinPoet has classes for building each of these:
 
 ```kotlin
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.STAR
 
 val hoverboard = ClassName("com.mattel", "Hoverboard")
 val list = ClassName("kotlin.collections", "List")
@@ -339,7 +340,14 @@ val printThings = FunSpec.builder("printThings")
   .addParameter("things", producerArrayOfThings)
   .addStatement("println(things)")
   .build()
+
+val printKClass = FunSpec.builder("printKClass")
+  .addParameter("kClass", KClass::class.asClassName().parameterizedBy(STAR))
+  .addStatement("println(kClass)")
+  .build()
 ```
+
+The `STAR` is represented as `*` in KotlinPoet. You can find more in the [KDoc][kdoc].
 
 KotlinPoet will decompose each type and import its components where possible.
 
@@ -351,6 +359,7 @@ import com.misc.Thing
 import kotlin.Array
 import kotlin.collections.ArrayList
 import kotlin.collections.List
+import kotlin.reflect.KClass
 
 class HelloWorld {
   fun beyond(): List<Hoverboard> {
@@ -363,6 +372,10 @@ class HelloWorld {
 
   fun printThings(things: Array<out Thing>) {
     println(things)
+  }
+
+  fun printKClass(kClass: KClass<*>) {
+    println(kClass)
   }
 }
 ```
