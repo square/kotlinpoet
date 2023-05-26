@@ -275,6 +275,7 @@ public final class com/squareup/kotlinpoet/FileSpec$Companion {
 
 public final class com/squareup/kotlinpoet/FunSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/ContextReceivable, com/squareup/kotlinpoet/Documentable, com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable {
 	public static final field Companion Lcom/squareup/kotlinpoet/FunSpec$Companion;
+	public static final fun builder (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static final fun builder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static final fun constructorBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public fun equals (Ljava/lang/Object;)Z
@@ -376,6 +377,7 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 }
 
 public final class com/squareup/kotlinpoet/FunSpec$Companion {
+	public final fun builder (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun builder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun constructorBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun getterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
