@@ -30,6 +30,7 @@ import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
 import java.lang.reflect.Type
+import java.util.EnumSet
 import javax.lang.model.element.Element
 import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
@@ -307,10 +308,10 @@ public class TypeSpec private constructor(
       }
 
       // Functions.
-      for (funSpec in funSpecs) {
+      for (funSpec in funSpecsOmittingVisibility()) {
         if (funSpec.isConstructor) continue
         if (!firstMember) codeWriter.emit("\n")
-        funSpec.emit(codeWriter, name, kind.implicitFunctionModifiers(modifiers + implicitModifiers), true)
+        funSpec.emit(codeWriter, name, implicitFunctionModifiers(implicitModifiers), true)
         firstMember = false
       }
 
@@ -330,6 +331,33 @@ public class TypeSpec private constructor(
     } finally {
       codeWriter.statementLine = previousStatementLine
     }
+  }
+
+  /**
+   * Returns the list of [FunSpec], optionally removing all non-private visibility modifiers
+   * if this is a private type.
+   */
+  private fun funSpecsOmittingVisibility(): List<FunSpec> {
+    return if (PRIVATE in modifiers) {
+      val omitted = EnumSet.of(PUBLIC, INTERNAL)
+      funSpecs.map {
+        it.toBuilder().apply { modifiers.removeAll(omitted) }.build()
+      }
+    } else {
+      funSpecs
+    }
+  }
+
+  /**
+   * Returns the implicit function modifiers for this kind, optionally removing PUBLIC
+   * if this is a private type.
+   */
+  private fun implicitFunctionModifiers(implicitModifiers: Set<KModifier>): Set<KModifier> {
+    val fModifiers = kind.implicitFunctionModifiers(modifiers + implicitModifiers).toMutableSet()
+    if (PRIVATE in modifiers) {
+      fModifiers -= PUBLIC
+    }
+    return fModifiers
   }
 
   /** Returns the properties that can be declared inline as constructor parameters. */
