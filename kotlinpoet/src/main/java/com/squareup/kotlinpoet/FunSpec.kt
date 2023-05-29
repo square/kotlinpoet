@@ -306,7 +306,7 @@ public class FunSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder>,
+    Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
     Documentable.Builder<Builder> {
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var returnKdoc = CodeBlock.EMPTY
@@ -317,7 +317,6 @@ public class FunSpec private constructor(
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
 
-    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val parameters: MutableList<ParameterSpec> = mutableListOf()

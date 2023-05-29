@@ -230,7 +230,7 @@ public class FileSpec private constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl() {
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
@@ -239,7 +239,6 @@ public class FileSpec private constructor(
     public val defaultImports: MutableSet<String> = mutableSetOf()
     public val imports: List<Import> get() = memberImports.toList()
     public val members: MutableList<Any> = mutableListOf()
-    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val body = CodeBlock.builder()
 
     /**

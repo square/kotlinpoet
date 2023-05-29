@@ -96,11 +96,10 @@ public class ParameterSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl(), Documentable.Builder<Builder> {
     internal var defaultValue: CodeBlock? = null
 
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
-    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 

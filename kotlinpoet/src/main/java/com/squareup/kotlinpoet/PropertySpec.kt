@@ -175,7 +175,7 @@ public class PropertySpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder>,
+    Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
     Documentable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
@@ -186,7 +186,6 @@ public class PropertySpec private constructor(
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
 
-    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()

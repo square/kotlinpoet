@@ -471,7 +471,7 @@ public class TypeSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder>,
+    Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
     Documentable.Builder<Builder> {
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var primaryConstructor: FunSpec? = null
@@ -496,7 +496,6 @@ public class TypeSpec private constructor(
     public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
     public val superinterfaces: MutableMap<TypeName, CodeBlock?> = mutableMapOf()
     public val enumConstants: MutableMap<String, TypeSpec> = mutableMapOf()
-    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val superclassConstructorParameters: MutableList<CodeBlock> = mutableListOf()
     public val propertySpecs: MutableList<PropertySpec> = mutableListOf()

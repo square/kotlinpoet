@@ -47,3 +47,13 @@ public interface Annotatable {
     public fun addAnnotation(annotation: KClass<*>): T = addAnnotation(annotation.asClassName())
   }
 }
+
+/**
+ * We use this impl with class delegation to preserve ABI stability.
+ *
+ * See https://github.com/square/kotlinpoet/issues/1579.
+ */
+@JvmInline
+internal value class AnnotatableBuilderImpl<out T : Annotatable.Builder<T>>(
+  override val annotations: MutableList<AnnotationSpec> = mutableListOf(),
+) : Annotatable.Builder<T>
