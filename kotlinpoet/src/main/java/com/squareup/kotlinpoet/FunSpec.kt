@@ -306,8 +306,8 @@ public class FunSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
-    Documentable.Builder<Builder> by DocumentableBuilderImpl() {
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder> {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
@@ -315,7 +315,8 @@ public class FunSpec private constructor(
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
     internal val body = CodeBlock.builder()
-
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val parameters: MutableList<ParameterSpec> = mutableListOf()
@@ -534,6 +535,30 @@ public class FunSpec private constructor(
     public fun clearBody(): Builder = apply {
       body.clear()
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
+      super.addAnnotations(annotationSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(format: String, vararg args: Any): Builder = super.addKdoc(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+    //endregion
 
     public fun build(): FunSpec {
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }

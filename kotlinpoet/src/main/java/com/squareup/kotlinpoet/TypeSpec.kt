@@ -471,8 +471,8 @@ public class TypeSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
-    Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
-    Documentable.Builder<Builder> by DocumentableBuilderImpl() {
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder> {
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
@@ -488,7 +488,9 @@ public class TypeSpec private constructor(
     internal val isFunInterface get() = kind == Kind.INTERFACE && FUN in modifiers
 
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val originatingElements: MutableList<Element> = mutableListOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
@@ -733,6 +735,30 @@ public class TypeSpec private constructor(
       check(isSimpleClass) { "contextReceivers can only be applied on simple classes" }
       contextReceiverTypes += receiverTypes
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
+      super.addAnnotations(annotationSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(format: String, vararg args: Any): Builder = super.addKdoc(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+    //endregion
 
     public fun build(): TypeSpec {
       if (enumConstants.isNotEmpty()) {

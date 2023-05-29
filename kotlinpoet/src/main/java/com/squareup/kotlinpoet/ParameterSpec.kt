@@ -96,11 +96,13 @@ public class ParameterSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl(), Documentable.Builder<Builder> by DocumentableBuilderImpl() {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
     internal var defaultValue: CodeBlock? = null
 
     public val modifiers: MutableList<KModifier> = mutableListOf()
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -125,6 +127,30 @@ public class ParameterSpec private constructor(
     public fun defaultValue(codeBlock: CodeBlock?): Builder = apply {
       this.defaultValue = codeBlock
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
+      super.addAnnotations(annotationSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(format: String, vararg args: Any): Builder = super.addKdoc(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+    //endregion
 
     public fun build(): ParameterSpec = ParameterSpec(this)
   }

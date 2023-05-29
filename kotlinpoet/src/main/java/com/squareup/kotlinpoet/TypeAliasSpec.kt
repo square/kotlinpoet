@@ -69,10 +69,12 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl(), Documentable.Builder<Builder> by DocumentableBuilderImpl() {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       modifiers.forEach(this::addModifier)
@@ -93,6 +95,30 @@ public class TypeAliasSpec private constructor(
     public fun addTypeVariable(typeVariable: TypeVariableName): Builder = apply {
       typeVariables += typeVariable
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
+      super.addAnnotations(annotationSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(format: String, vararg args: Any): Builder = super.addKdoc(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+    //endregion
 
     public fun build(): TypeAliasSpec {
       for (it in modifiers) {

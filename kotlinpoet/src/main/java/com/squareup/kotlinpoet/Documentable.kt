@@ -32,13 +32,3 @@ public interface Documentable {
     } as T
   }
 }
-
-/**
- * We use this impl with class delegation to preserve ABI stability.
- *
- * See https://github.com/square/kotlinpoet/issues/1579.
- */
-@JvmInline
-internal value class DocumentableBuilderImpl<out T : Documentable.Builder<T>>(
-  override val kdoc: CodeBlock.Builder = CodeBlock.builder(),
-) : Documentable.Builder<T>

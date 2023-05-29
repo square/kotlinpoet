@@ -230,7 +230,8 @@ public class FileSpec private constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl() {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
+    override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
@@ -490,6 +491,24 @@ public class FileSpec private constructor(
       }
       body.clear()
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
+      super.addAnnotations(annotationSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+
+    @Suppress("RedundantOverride")
+    override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
+    //endregion
 
     public fun build(): FileSpec {
       for (annotationSpec in annotations) {
