@@ -176,10 +176,9 @@ public class PropertySpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder> by DocumentableBuilderImpl() {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
-    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     internal var initializer: CodeBlock? = null
     internal var delegated = false
     internal var getter: FunSpec? = null

@@ -472,8 +472,7 @@ public class TypeSpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
-    Documentable.Builder<Builder> {
-    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
+    Documentable.Builder<Builder> by DocumentableBuilderImpl() {
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()

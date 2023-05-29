@@ -69,9 +69,7 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl(), Documentable.Builder<Builder> {
-    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
-
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> by AnnotatableBuilderImpl(), Documentable.Builder<Builder> by DocumentableBuilderImpl() {
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()

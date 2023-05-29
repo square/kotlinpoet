@@ -307,8 +307,7 @@ public class FunSpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder> by AnnotatableBuilderImpl(),
-    Documentable.Builder<Builder> {
-    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
+    Documentable.Builder<Builder> by DocumentableBuilderImpl() {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
