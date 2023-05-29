@@ -60,12 +60,6 @@ public class PropertySpec private constructor(
     require(mutable || setter == null) {
       "only a mutable property can have a setter"
     }
-    if (contextReceiverTypes.isNotEmpty()) {
-      requireNotNull(getter) { "properties with context receivers require a $GETTER" }
-      if (mutable) {
-        requireNotNull(setter) { "mutable properties with context receivers require a $SETTER" }
-      }
-    }
   }
 
   internal fun emit(

@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.throws
@@ -5428,6 +5429,181 @@ class TypeSpecTest {
         .contextReceivers(STRING)
     }
     assertThat(t).hasMessageThat().contains("contextReceivers can only be applied on simple classes")
+  }
+
+  @Test fun valWithContextReceiverWithoutGetter() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable(false)
+            .contextReceivers(INT)
+            .build(),
+        )
+        .build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context receivers require a get()")
+  }
+
+  @Test fun varWithContextReceiverWithoutAccessors() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextReceivers(INT)
+            .getter(
+              FunSpec.getterBuilder()
+                .build(),
+            )
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract mutable properties with context receivers require a set()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextReceivers(INT)
+            .setter(
+              FunSpec.setterBuilder()
+                .build(),
+            )
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context receivers require a get()")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1525
+  @Test fun propertyWithContextReceiverInInterface() {
+    val typeSpec = TypeSpec.interfaceBuilder("Bar")
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .contextReceivers(STRING)
+          .build(),
+      )
+      .addProperty(
+        PropertySpec.builder("bar", Int::class)
+          .contextReceivers(STRING)
+          .mutable(true)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public interface Bar {
+      |  context(kotlin.String)
+      |  public val foo: kotlin.Int
+      |
+      |  context(kotlin.String)
+      |  public var bar: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun nonAbstractPropertyWithContextReceiverInAbstractClass() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Bar")
+        .addModifiers(ABSTRACT)
+        .addProperty(
+          PropertySpec.builder("foo", Int::class)
+            .contextReceivers(STRING)
+            .build(),
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("non-abstract properties with context receivers require a get()")
+  }
+
+  @Test fun abstractPropertyWithContextReceiverInAbstractClass() {
+    val typeSpec = TypeSpec.classBuilder("Bar")
+      .addModifiers(ABSTRACT)
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .contextReceivers(STRING)
+          .addModifiers(ABSTRACT)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public abstract class Bar {
+      |  context(kotlin.String)
+      |  public abstract val foo: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun abstractPropertyInNonAbstractClass() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Bar")
+        .addProperty(
+          PropertySpec.builder("foo", Int::class)
+            .addModifiers(ABSTRACT)
+            .build(),
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("non-abstract type Bar cannot declare abstract property foo")
+  }
+
+  @Test fun abstractPropertyInObject() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.objectBuilder("Bar")
+        .addProperty(
+          PropertySpec.builder("foo", Int::class)
+            .addModifiers(ABSTRACT)
+            .build(),
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("non-abstract type Bar cannot declare abstract property foo")
+  }
+
+  @Test fun abstractPropertyInEnum() {
+    val typeSpec = TypeSpec.enumBuilder("Bar")
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .addModifiers(ABSTRACT)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public enum class Bar {
+      |  ;
+      |  public abstract val foo: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun abstractPropertyInSealedClass() {
+    val typeSpec = TypeSpec.classBuilder("Bar")
+      .addModifiers(SEALED)
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .addModifiers(ABSTRACT)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public sealed class Bar {
+      |  public abstract val foo: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
   }
 
   companion object {
