@@ -256,6 +256,9 @@ public class PropertySpec private constructor(
 
     //region Overrides for binary compatibility
     @Suppress("RedundantOverride")
+    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder = super.addAnnotation(annotationSpec)
+
+    @Suppress("RedundantOverride")
     override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
       super.addAnnotations(annotationSpecs)
 
