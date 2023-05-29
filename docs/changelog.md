@@ -3,7 +3,23 @@ Change Log
 
 ## Unreleased
 
- *  Function return types now default to `Unit` unless explicitly set.
+## Version 1.14.0
+
+_2023-05-29_
+
+Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contributing to this release.
+
+ * New: Kotlin 1.8.21.
+ * New: KSP 1.8.21-1.0.11.
+ * New: Enable default methods in Java bytecode (#1561).
+ * New: Group Kotlin and Renovate updates together in Renovate (#1562).
+ * New: Extract trait interface for annotatable constructs and their builders (#1564).
+ * New: Extract trait interface for documentable constructs and their builders (#1571).
+ * New: Document the usage of `STAR` (#1572).
+ * New: Add builder for `FunSpec` which accepts a `MemberName` (#1574).
+ * Fix: Omit public modifier on override function or constructor parameters (#1550).
+ * Fix: Correct handling of members in various types (#1558).
+ * Fix: Function return types now default to `Unit` unless explicitly set (#1559).
 
     Previously the default was `null` which behaved like `Unit` for block bodies. When an expression body was produced,
     however, no return type would be emitted. This meant that the return type was implicit based on the contents of
@@ -46,6 +62,8 @@ Change Log
     Additionally, as part of this change, `FunSpec.returnType` has changed to be non-nullable. This is a source- and
     binary-compatible change, although if you were performing null-checks then new warnings may appear after upgrade.
 
+ * Fix: Append nested class names to alias during name lookup (#1568).
+ * Fix: Allow PropertySpec with context receivers and without getter or setter (#1575).
 
 ## Version 1.13.2
 
@@ -687,3 +705,5 @@ _2017-05-16_
  [drawers]: https://github.com/drawers
  [rickclephas]: https://github.com/rickclephas
  [Squiry]: https://github.com/Squiry
+ [Omico]: https://github.com/Omico
+ [RBusarow]: https://github.com/RBusarow
