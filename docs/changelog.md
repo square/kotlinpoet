@@ -3,6 +3,12 @@ Change Log
 
 ## Unreleased
 
+## Version 1.14.1
+
+_2023-05-29_
+
+ * Fix: Restore ABI stability for annotatable and documentable builders (#1580).
+
 ## Version 1.14.0
 
 _2023-05-29_
