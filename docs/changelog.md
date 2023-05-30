@@ -3,6 +3,12 @@ Change Log
 
 ## Unreleased
 
+## Version 1.14.2
+
+_2023-05-30_
+
+ * Fix: Fix one more missing API in binary compatibility override in `Annotatable.Builder` (#1581).
+
 ## Version 1.14.1
 
 _2023-05-29_
