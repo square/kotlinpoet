@@ -536,6 +536,10 @@ public class FileSpec private constructor(
       return builder(className.packageName, className.simpleName)
     }
 
+    @JvmStatic public fun builder(memberName: MemberName): Builder {
+      return builder(memberName.packageName, memberName.simpleName)
+    }
+
     @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
       Builder(packageName, fileName, isScript = false)
 

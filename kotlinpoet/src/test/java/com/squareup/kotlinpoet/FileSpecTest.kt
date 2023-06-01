@@ -1204,4 +1204,11 @@ class FileSpecTest {
       FileSpec.builder(className)
     }
   }
+
+  @Test fun memberNameFactory() {
+    val memberName = MemberName("com.example", "Example")
+    val spec = FileSpec.builder(memberName).build()
+    assertThat(spec.packageName).isEqualTo(memberName.packageName)
+    assertThat(spec.name).isEqualTo(memberName.simpleName)
+  }
 }
