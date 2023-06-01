@@ -187,6 +187,7 @@ public abstract interface annotation class com/squareup/kotlinpoet/ExperimentalK
 public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/Taggable {
 	public static final field Companion Lcom/squareup/kotlinpoet/FileSpec$Companion;
 	public static final fun builder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public static final fun builder (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public static final fun builder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public fun equals (Ljava/lang/Object;)Z
 	public static final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec;
@@ -275,6 +276,7 @@ public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotli
 
 public final class com/squareup/kotlinpoet/FileSpec$Companion {
 	public final fun builder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun builder (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun builder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun get (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec;
 	public final fun scriptBuilder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
