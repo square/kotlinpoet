@@ -795,6 +795,29 @@ fun foo() = (100..10000).map { number -> number * number }.map { number ->
 The code is now correct and will compile properly. It still doesn't look perfect - you can play with
 replacing other spaces in the code block with `·` symbols to achieve better formatting.
 
+Another common use case where you'd want to ensure spaces don't wrap is when emitting string literals:
+
+```kotlin
+CodeBlock.of("""println("Class: $className")""")
+```
+
+If `$className` is long, KotlinPoet may wrap the space that precedes it, resulting in broken output:
+
+```kotlin
+println("Class:
+very.long.class.name.Here")
+```
+
+KotlinPoet doesn't know that `"Class: $className"` is, in fact, a string literal, and that the space inside of it
+should never be wrapped. To make sure this case is handled correctly, use the `%S` modifier (as described in
+[%S for Strings](#s-for-strings)):
+
+```kotlin
+CodeBlock.of("""println(%S)""", "Class: $className")
+```
+
+Now the library knows it's dealing with a string literal and can use appropriate line-wrapping rules.
+
 ### Constructors
 
 `FunSpec` is a slight misnomer; it can also be used for constructors:
