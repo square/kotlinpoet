@@ -273,7 +273,7 @@ private fun KmClass.toTypeSpec(
     isAnnotation -> TypeSpec.annotationBuilder(simpleName)
     isCompanionObject -> TypeSpec.companionObjectBuilder(companionObjectName(simpleName))
     isEnum -> TypeSpec.enumBuilder(simpleName)
-    isExpect -> TypeSpec.expectClassBuilder(simpleName)
+    isExpect -> TypeSpec.classBuilder(simpleName).addModifiers(EXPECT)
     isObject -> TypeSpec.objectBuilder(simpleName)
     isInterface -> {
       if (classData?.declarationContainer?.isFun == true) {

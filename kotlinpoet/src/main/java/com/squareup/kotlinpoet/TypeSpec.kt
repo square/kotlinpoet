@@ -897,7 +897,7 @@ public class TypeSpec private constructor(
       ReplaceWith("TypeSpec.classBuilder(className).addModifiers(KModifier.EXPECT)"),
     )
     @JvmStatic
-    public fun expectClassBuilder(className: ClassName): Builder = expectClassBuilder(className.simpleName)
+    public fun expectClassBuilder(className: ClassName): Builder = classBuilder(className.simpleName).addModifiers(EXPECT)
 
     @JvmStatic public fun valueClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, VALUE)
 
