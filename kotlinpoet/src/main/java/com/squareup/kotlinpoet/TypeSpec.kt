@@ -899,7 +899,12 @@ public class TypeSpec private constructor(
     @JvmStatic
     public fun expectClassBuilder(className: ClassName): Builder = classBuilder(className.simpleName).addModifiers(EXPECT)
 
-    @JvmStatic public fun valueClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, VALUE)
+    @Deprecated(
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      ReplaceWith("TypeSpec.classBuilder(name).addModifiers(KModifier.VALUE)"),
+    )
+    @JvmStatic
+    public fun valueClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, VALUE)
 
     @JvmStatic public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
 
