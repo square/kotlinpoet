@@ -33,6 +33,7 @@ import java.util.Objects
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
  * @param omitDefaultValues omit defining default values when `true`
  */
+@JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
   val builder = when (val type = annotationType.resolve().unwrapTypeAlias().toTypeName()) {
     is ClassName -> AnnotationSpec.builder(type)
