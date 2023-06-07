@@ -27,7 +27,6 @@ import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.ParameterizedTypeName
-import java.util.Objects
 
 /**
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
@@ -69,7 +68,7 @@ private fun isDefaultValue(value: Any?, defaultValue: Any?): Boolean {
       isDefaultValue(value[index], defaultValue[index])
     }
   }
-  return Objects.deepEquals(value, defaultValue)
+  return value == defaultValue
 }
 
 private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget get() = when (this) {
