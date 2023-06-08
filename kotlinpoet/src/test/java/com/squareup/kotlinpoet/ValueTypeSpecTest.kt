@@ -40,7 +40,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
   private val modifierString = modifier.keyword
 
   private fun classBuilder() = if (useValue) {
-    TypeSpec.valueClassBuilder("Guacamole")
+    TypeSpec.classBuilder("Guacamole")
+      .addModifiers(KModifier.VALUE)
   } else {
     TypeSpec.classBuilder("Guacamole")
       .addModifiers(modifier)

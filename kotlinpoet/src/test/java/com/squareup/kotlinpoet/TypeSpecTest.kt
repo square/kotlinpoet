@@ -1471,7 +1471,8 @@ class TypeSpecTest {
   }
 
   @Test fun expectClass() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addFunction(
         FunSpec.builder("test")
           .build(),
@@ -1489,7 +1490,8 @@ class TypeSpecTest {
   }
 
   @Test fun nestedExpectCompanionObjectWithFunction() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.companionObjectBuilder()
           .addFunction(
@@ -1513,7 +1515,8 @@ class TypeSpecTest {
   }
 
   @Test fun nestedExpectClassWithFunction() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.classBuilder("ClassB")
           .addFunction(
@@ -1537,7 +1540,8 @@ class TypeSpecTest {
   }
 
   @Test fun deeplyNestedExpectClassWithFunction() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.classBuilder("ClassB")
           .addType(
@@ -1567,7 +1571,8 @@ class TypeSpecTest {
   }
 
   @Test fun veryDeeplyNestedExpectClassWithFunction() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.classBuilder("ClassB")
           .addType(
@@ -1603,7 +1608,8 @@ class TypeSpecTest {
   }
 
   @Test fun deeplyNestedExpectClassWithConstructor() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.classBuilder("ClassB")
           .addType(
@@ -1633,7 +1639,8 @@ class TypeSpecTest {
   }
 
   @Test fun veryDeeplyNestedExpectClassWithConstructor() {
-    val classA = TypeSpec.expectClassBuilder("ClassA")
+    val classA = TypeSpec.classBuilder("ClassA")
+      .addModifiers(KModifier.EXPECT)
       .addType(
         TypeSpec.classBuilder("ClassB")
           .addType(
@@ -3264,8 +3271,8 @@ class TypeSpecTest {
   }
 
   @Test fun generalExpectClassBuilderEqualityTest() {
-    val expectSpec = TypeSpec.expectClassBuilder("AtmoicRef")
-      .addModifiers(KModifier.INTERNAL)
+    val expectSpec = TypeSpec.classBuilder("AtmoicRef")
+      .addModifiers(KModifier.EXPECT, KModifier.INTERNAL)
       .primaryConstructor(
         FunSpec.constructorBuilder()
           .addParameter("value", Int::class)

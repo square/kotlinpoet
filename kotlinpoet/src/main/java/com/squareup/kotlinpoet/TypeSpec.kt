@@ -883,22 +883,32 @@ public class TypeSpec private constructor(
   public companion object {
     @JvmStatic public fun classBuilder(name: String): Builder = Builder(Kind.CLASS, name)
 
-    @JvmStatic public fun classBuilder(className: ClassName): Builder =
-      classBuilder(className.simpleName)
+    @JvmStatic public fun classBuilder(className: ClassName): Builder = classBuilder(className.simpleName)
 
-    @JvmStatic public fun expectClassBuilder(name: String): Builder =
-      Builder(Kind.CLASS, name, EXPECT)
+    @Deprecated(
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      ReplaceWith("TypeSpec.classBuilder(name).addModifiers(KModifier.EXPECT)"),
+    )
+    @JvmStatic
+    public fun expectClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, EXPECT)
 
-    @JvmStatic public fun expectClassBuilder(className: ClassName): Builder =
-      expectClassBuilder(className.simpleName)
+    @Deprecated(
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      ReplaceWith("TypeSpec.classBuilder(className).addModifiers(KModifier.EXPECT)"),
+    )
+    @JvmStatic
+    public fun expectClassBuilder(className: ClassName): Builder = classBuilder(className.simpleName).addModifiers(EXPECT)
 
-    @JvmStatic public fun valueClassBuilder(name: String): Builder =
-      Builder(Kind.CLASS, name, VALUE)
+    @Deprecated(
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      ReplaceWith("TypeSpec.classBuilder(name).addModifiers(KModifier.VALUE)"),
+    )
+    @JvmStatic
+    public fun valueClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, VALUE)
 
     @JvmStatic public fun objectBuilder(name: String): Builder = Builder(Kind.OBJECT, name)
 
-    @JvmStatic public fun objectBuilder(className: ClassName): Builder =
-      objectBuilder(className.simpleName)
+    @JvmStatic public fun objectBuilder(className: ClassName): Builder = objectBuilder(className.simpleName)
 
     @JvmStatic @JvmOverloads
     public fun companionObjectBuilder(name: String? = null): Builder =
