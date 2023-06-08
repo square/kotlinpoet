@@ -18,6 +18,32 @@ package com.squareup.kotlinpoet.ksp.test.processor
 import kotlin.reflect.KClass
 
 annotation class ExampleAnnotation
+annotation class ExampleAnnotationWithDefaults(
+  val boolean: Boolean = true,
+  val booleanArray: BooleanArray = [true],
+  val byte: Byte = 1,
+  val byteArray: ByteArray = [1],
+  val char: Char = 'C',
+  val charArray: CharArray = ['C'],
+  val short: Short = 1,
+  val shortArray: ShortArray = [1],
+  val int: Int = 1,
+  val intArray: IntArray = [1],
+  val long: Long = 1,
+  val longArray: LongArray = [1],
+  val float: Float = 1.0f,
+  val floatArray: FloatArray = [1.0f],
+  val double: Double = 1.0,
+  val doubleArray: DoubleArray = [1.0],
+  val string: String = "",
+  val stringArray: Array<String> = [""],
+  val someClass: KClass<*> = String::class,
+  val someClasses: Array<KClass<*>> = [String::class],
+  val enumValue: AnnotationEnumValue = AnnotationEnumValue.ONE,
+  val enumValueArray: Array<AnnotationEnumValue> = [AnnotationEnumValue.ONE],
+  val anotherAnnotation: AnotherAnnotation = AnotherAnnotation(""),
+  val anotherAnnotationArray: Array<AnotherAnnotation> = [AnotherAnnotation("")],
+)
 
 annotation class ComprehensiveAnnotation<T : CharSequence>(
   val boolean: Boolean,

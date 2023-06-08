@@ -46,6 +46,7 @@ class TestProcessorTest {
            import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
            import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
 
            typealias TypeAliasName = String
            typealias GenericTypeAlias = List<String>
@@ -75,6 +76,32 @@ class TestProcessorTest {
              enumValue = AnnotationEnumValue.ONE,
              enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
              anotherAnnotation = AnotherAnnotation("Hello"),
+             anotherAnnotationArray = [AnotherAnnotation("Hello")]
+           )
+           @ExampleAnnotationWithDefaults(
+             true, // Omit the name intentionally here to test names are still picked up
+             booleanArray = [false],
+             byte = 0.toByte(),
+             byteArray = [1.toByte()],
+             char = 'C',
+             charArray = ['C'],
+             short = 0.toShort(),
+             shortArray = [1.toShort()],
+             int = 0,
+             intArray = [1],
+             long = 0L,
+             longArray = [1L],
+             float = 0f,
+             floatArray = [1f],
+             double = 1.0,
+             doubleArray = [0.0],
+             string = "Hello",
+             stringArray = [""],
+             someClass = String::class,
+             someClasses = [Int::class],
+             enumValue = AnnotationEnumValue.ONE,
+             enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
+             anotherAnnotation = AnotherAnnotation(""),
              anotherAnnotationArray = [AnotherAnnotation("Hello")]
            )
            @ExampleAnnotation
@@ -150,6 +177,7 @@ class TestProcessorTest {
       import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
       import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
       import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
+      import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
       import kotlin.Any
       import kotlin.Array
       import kotlin.Boolean
@@ -191,6 +219,18 @@ class TestProcessorTest {
         anotherAnnotation = AnotherAnnotation(input = "Hello"),
         anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
         defaultingString = "defaultValue",
+      )
+      @ExampleAnnotationWithDefaults(
+        booleanArray = booleanArrayOf(false),
+        byte = 0.toByte(),
+        short = 0.toShort(),
+        int = 0,
+        long = 0,
+        float = 0.0f,
+        doubleArray = doubleArrayOf(0.0),
+        string = "Hello",
+        someClasses = arrayOf(Int::class),
+        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
       )
       public class SmokeTestClass<T, R : Any, E : Enum<E>> {
         @field:AnotherAnnotation(input = "siteTargeting")
@@ -313,6 +353,75 @@ class TestProcessorTest {
           a1: Map<String, Int>,
         ) {
         }
+      }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun removeDefaultValues() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+
+           @ExampleAnnotation
+           @ExampleAnnotationWithDefaults(
+             true, // Omit the name intentionally here to test names are still picked up
+             booleanArray = [true],
+             byte = 1.toByte(),
+             byteArray = [1.toByte()],
+             char = 'C',
+             charArray = ['C'],
+             short = 1.toShort(),
+             shortArray = [1.toShort()],
+             int = 1,
+             intArray = [1],
+             long = 1L,
+             longArray = [1L],
+             float = 1f,
+             floatArray = [1f],
+             double = 1.0,
+             doubleArray = [1.0],
+             string = "",
+             stringArray = [""],
+             someClass = String::class,
+             someClasses = [String::class],
+             enumValue = AnnotationEnumValue.ONE,
+             enumValueArray = [AnnotationEnumValue.ONE],
+             anotherAnnotation = AnotherAnnotation(""),
+             anotherAnnotationArray = [AnotherAnnotation("")]
+           )
+           open class Node<T : Node<T, R>, R : Node<R, T>> {
+             var t: T? = null
+             var r: R? = null
+           }
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt")
+      .readText()
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+
+      @ExampleAnnotationWithDefaults
+      public open class Node<T : Node<T, R>, R : Node<R, T>> {
+        public var t: T?
+
+        public var r: R?
       }
 
       """.trimIndent(),
