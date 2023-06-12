@@ -170,7 +170,8 @@ internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
 private val KEYWORDS = setOf(
-  // Hard keywords
+  // Hard keywords. These are the keywords that KotlinPoet escapes with backticks (e.g. `as`) when they're used with
+  // the %N modifier.
   "as",
   "break",
   "class",
@@ -199,64 +200,6 @@ private val KEYWORDS = setOf(
   "var",
   "when",
   "while",
-
-  // Soft keywords
-  "by",
-  "catch",
-  "constructor",
-  "delegate",
-  "dynamic",
-  "field",
-  "file",
-  "finally",
-  "get",
-  "import",
-  "init",
-  "param",
-  "property",
-  "receiver",
-  "set",
-  "setparam",
-  "where",
-
-  // Modifier keywords
-  "actual",
-  "abstract",
-  "annotation",
-  "companion",
-  "const",
-  "crossinline",
-  "data",
-  "enum",
-  "expect",
-  "external",
-  "final",
-  "infix",
-  "inline",
-  "inner",
-  "internal",
-  "lateinit",
-  "noinline",
-  "open",
-  "operator",
-  "out",
-  "override",
-  "private",
-  "protected",
-  "public",
-  "reified",
-  "sealed",
-  "suspend",
-  "tailrec",
-  "value",
-  "vararg",
-
-  // These aren't keywords anymore but still break some code if unescaped. https://youtrack.jetbrains.com/issue/KT-52315
-  "header",
-  "impl",
-
-  // Other reserved keywords
-  "yield",
 )
 
 private const val ALLOWED_CHARACTER = '$'
