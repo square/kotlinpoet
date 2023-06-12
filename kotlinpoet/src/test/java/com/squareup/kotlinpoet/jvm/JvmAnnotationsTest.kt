@@ -242,7 +242,7 @@ class JvmAnnotationsTest {
       |  public companion object {
       |    public var foo: String = "foo"
       |      @JvmStatic
-      |      set(`value`) {
+      |      set(value) {
       |      }
       |  }
       |}
@@ -390,7 +390,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String
       |  @Throws(IOException::class)
-      |  set(`value`) {
+      |  set(value) {
       |    print("foo")
       |  }
       |
@@ -575,7 +575,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String = "foo"
       |  @JvmName("foo")
-      |  set(`value`) {
+      |  set(value) {
       |  }
       |
       """.trimMargin(),
@@ -830,7 +830,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String = "foo"
       |  @Synchronized
-      |  set(`value`) {
+      |  set(value) {
       |  }
       |
       """.trimMargin(),
@@ -1072,7 +1072,7 @@ class JvmAnnotationsTest {
       |
       |public var foo: String
       |  @Strictfp
-      |  set(`value`) {
+      |  set(value) {
       |    print("foo")
       |  }
       |
@@ -1167,7 +1167,7 @@ class JvmAnnotationsTest {
       |
       |@JvmInline
       |public value class Taco(
-      |  public val `value`: String,
+      |  public val value: String,
       |)
       |
       """.trimMargin(),
@@ -1202,7 +1202,7 @@ class JvmAnnotationsTest {
       |
       |@JvmRecord
       |public data class Taco(
-      |  public val `value`: String,
+      |  public val value: String,
       |)
       |
       """.trimMargin(),

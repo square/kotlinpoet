@@ -134,7 +134,7 @@ class PropertySpecTest {
       """
       |var foo: kotlin.String
       |  public get() = "_foo"
-      |  public set(`value`) {
+      |  public set(value) {
       |  }
       |
       """.trimMargin(),
@@ -201,7 +201,7 @@ class PropertySpecTest {
       """
       |inline var foo: kotlin.String
       |  get() = "foo"
-      |  set(`value`) {
+      |  set(value) {
       |  }
       |
       """.trimMargin(),
@@ -375,7 +375,7 @@ class PropertySpecTest {
       .build()
     assertThat(prop.toString()).isEqualTo(
       """
-      |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.`property`: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
+      |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.property: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
       |  get() = ""
       |
       """.trimMargin(),
@@ -496,7 +496,7 @@ class PropertySpecTest {
       .build()
     assertThat(property.toString()).isEqualTo(
       """
-      |val `property`: com.example.SomeTypeAlias = { arg: kotlin.Any ->
+      |val property: com.example.SomeTypeAlias = { arg: kotlin.Any ->
       |  println("arg=${'$'}arg")
       |}
       |
@@ -673,7 +673,7 @@ class PropertySpecTest {
       |context(kotlin.String)
       |var foo: kotlin.Int
       |  get() = ""
-      |  set(`value`) {
+      |  set(value) {
       |
       |  }
       |

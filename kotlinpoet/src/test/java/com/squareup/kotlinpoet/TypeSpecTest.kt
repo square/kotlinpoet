@@ -352,7 +352,7 @@ class TypeSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import javax.`annotation`.FreeRange
+        |import javax.annotation.FreeRange
         |import kotlin.String
         |
         |public class EthicalTaco {
@@ -793,7 +793,7 @@ class TypeSpecTest {
         |  contents: String,
         |) {
         |  public var contents: String = contents
-        |    set(`value`) {
+        |    set(value) {
         |      println("contents changed!")
         |      field = value
         |    }
@@ -1158,9 +1158,9 @@ class TypeSpecTest {
         |import kotlin.Int
         |
         |public enum class Sort(
-        |  `value`: Int,
+        |  value: Int,
         |) {
-        |  `open`(0),
+        |  open(0),
         |  closed(1),
         |}
         |
@@ -2452,7 +2452,7 @@ class TypeSpecTest {
       .addAnnotation(ClassName("javax.annotation", "Nullable"))
       .build()
     assertThat(parameter.toString())
-      .isEqualTo("@javax.`annotation`.Nullable crossinline taco: com.squareup.tacos.Taco")
+      .isEqualTo("@javax.annotation.Nullable crossinline taco: com.squareup.tacos.Taco")
   }
 
   @Test fun classToString() {
@@ -2919,7 +2919,7 @@ class TypeSpecTest {
 
   @Test fun nameFromProperty() {
     val property = PropertySpec.builder("property", String::class).build()
-    assertThat(CodeBlock.of("%N", property).toString()).isEqualTo("`property`")
+    assertThat(CodeBlock.of("%N", property).toString()).isEqualTo("property")
   }
 
   @Test fun nameFromParameter() {
@@ -5114,8 +5114,8 @@ class TypeSpecTest {
       |public enum class MyEnum(
       |  int: Int,
       |) {
-      |  `header`(1),
-      |  `impl`(2),
+      |  header(1),
+      |  impl(2),
       |}
       |
       """.trimMargin(),
@@ -5330,7 +5330,7 @@ class TypeSpecTest {
     assertThat(typeSpec.toString()).isEqualTo(
       """
       public data class Example(
-        public val `data`: kotlin.String,
+        public val data: kotlin.String,
       )
 
       """.trimIndent(),

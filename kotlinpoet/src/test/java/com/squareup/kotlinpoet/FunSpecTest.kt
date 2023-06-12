@@ -684,7 +684,7 @@ class FunSpecTest {
 
     assertThat(funSpec.toString()).isEqualTo(
       """
-      |public set(`value`) {
+      |public set(value) {
       |  this.value = this.value
       |}
       |

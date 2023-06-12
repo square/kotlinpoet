@@ -602,7 +602,7 @@ class KotlinPoetTest {
         |    println("getter")
         |    return field
         |  }
-        |  set(`value`) {
+        |  set(value) {
         |    println("setter")
         |    field = value
         |  }
@@ -723,7 +723,7 @@ class KotlinPoetTest {
         |import kotlin.String
         |
         |public open class A {
-        |  protected open external infix operator fun `get`(v: String): String
+        |  protected open external infix operator fun get(v: String): String
         |
         |  internal final tailrec inline fun loop(): String = "a"
         |}

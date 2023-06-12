@@ -106,9 +106,9 @@ class FileSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import java.lang.System.`out`
         |import java.lang.System.gc
         |import java.lang.System.nanoTime
+        |import java.lang.System.out
         |import java.lang.Thread
         |import java.lang.Thread.State.BLOCKED
         |import java.lang.Thread.State.valueOf
@@ -144,8 +144,8 @@ class FileSpecTest {
       """
         |package com.squareup.tacos
         |
-        |import com.squareup.tacos.`internal`.INGREDIENTS
-        |import com.squareup.tacos.`internal`.wrap
+        |import com.squareup.tacos.internal.INGREDIENTS
+        |import com.squareup.tacos.internal.wrap
         |import kotlin.collections.List
         |
         |public fun prepareTacos(): List<Taco> = wrap(INGREDIENTS)
@@ -1035,7 +1035,7 @@ class FileSpecTest {
       .build()
     assertThat(spec.toString()).isEqualTo(
       """
-      |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.`get`.a.really.large.packagename
+      |package com.squareup.taco.enchilada.quesadillas.tamales.burritos.`super`.burritos.trying.to.get.a.really.large.packagename
       |
       |public fun foo() {
       |}
