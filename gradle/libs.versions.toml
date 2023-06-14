@@ -27,7 +27,7 @@ mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.25.2" }
 kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.13.2" }
 
 [libraries]
-autoCommon = { module = "com.google.auto:auto-common", version = "1.2.1" }
+autoCommon = { module = "com.google.auto:auto-common", version = "1.2.2" }
 guava = { module = "com.google.guava:guava", version = "32.0.1-jre" }
 javapoet = "com.squareup:javapoet:1.13.0"
 
