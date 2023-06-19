@@ -21,7 +21,7 @@ tasks.jar {
 }
 
 dependencies {
-  api(project(":kotlinpoet"))
+  api(projects.kotlinpoet)
   api(libs.javapoet)
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
