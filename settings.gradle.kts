@@ -32,6 +32,6 @@ include(
   ":interop:ksp:test-processor",
 )
 
-rootProject.name = "kotlinpoet-parent"
+rootProject.name = "kotlinpoet-root"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
