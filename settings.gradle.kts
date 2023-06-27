@@ -25,9 +25,13 @@ plugins {
 }
 
 include(
-    ":kotlinpoet",
-    ":interop:javapoet",
-    ":interop:kotlinx-metadata",
-    ":interop:ksp",
-    ":interop:ksp:test-processor",
+  ":kotlinpoet",
+  ":interop:javapoet",
+  ":interop:kotlinx-metadata",
+  ":interop:ksp",
+  ":interop:ksp:test-processor",
 )
+
+rootProject.name = "kotlinpoet-root"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

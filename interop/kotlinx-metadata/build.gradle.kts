@@ -34,7 +34,7 @@ dependencies {
   implementation(libs.autoCommon)
   implementation(libs.guava)
   api(libs.kotlin.metadata)
-  api(project(":kotlinpoet"))
+  api(projects.kotlinpoet)
 
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
