@@ -33,7 +33,7 @@ Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contri
  * Fix: Correct handling of members in various types (#1558).
  * Fix: Function return types now default to `Unit` unless explicitly set (#1559).
 
-    Previously, when `FunSpec` didn't have a return type specified and that an expression body was produced, no return
+    Previously, when `FunSpec` didn't have a return type specified and an expression body was produced, no return
     type would be emitted. However, starting from `1.14.0`, KotlinPoet will not add `Unit` as a return type in such
     cases. In order to correct the generated output, you are to specify the actual return type of the `FunSpec`.
 
