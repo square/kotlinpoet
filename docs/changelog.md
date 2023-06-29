@@ -33,14 +33,11 @@ Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contri
  * Fix: Correct handling of members in various types (#1558).
  * Fix: Function return types now default to `Unit` unless explicitly set (#1559).
 
-    Previously the default was `null` which behaved like `Unit` for block bodies. When an expression body was produced,
-    however, no return type would be emitted. This meant that the return type was implicit based on the contents of
-    the body.
+    Previously, when `FunSpec` didn't have a return type specified and an expression body was produced, no return
+    type would be emitted. However, starting from `1.14.0`, KotlinPoet will not add `Unit` as a return type in such
+    cases. In order to correct the generated output, you are to specify the actual return type of the `FunSpec`.
 
-    With this change, when no return type is specified and an expression body is produced, the return type will be
-    explicitly `Unit`. Specify the actual return type explicitly to correct the output.
-
-    Old versions:
+    Before `1.14.0`, if omitted, no return type is produced:
     ```kotlin
     val funSpec = FunSpec.builder("foo")
       .addStatement("return 1")
@@ -50,7 +47,7 @@ Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contri
     public fun foo() = 1
     ```
 
-    This version, incorrect:
+    From `1.14.0`, the return type defaults to `Unit` if not otherwise set:
     ```kotlin
     val funSpec = FunSpec.builder("foo")
       .addStatement("return 1")
@@ -60,7 +57,7 @@ Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contri
     public fun foo(): Unit = 1 // ❌
     ```
 
-    This version, correct:
+    To fix it, explicitly define the return type:
     ```diff
      val funSpec = FunSpec.builder("foo")
     +  .returns(INT)
