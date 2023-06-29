@@ -57,7 +57,7 @@ Thanks to [@Omico][Omico], [@drawers][drawers], [@RBusarow][RBusarow] for contri
     public fun foo(): Unit = 1 // ❌
     ```
 
-    To fix it, explicitly defines the return type:
+    To fix it, explicitly define the return type:
     ```diff
      val funSpec = FunSpec.builder("foo")
     +  .returns(INT)
