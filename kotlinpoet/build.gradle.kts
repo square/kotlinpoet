@@ -44,6 +44,7 @@ dependencies {
   implementation(libs.kotlin.reflect)
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
+  testImplementation(libs.guava)
   testImplementation(libs.compileTesting)
   testImplementation(libs.jimfs)
   testImplementation(libs.ecj)
