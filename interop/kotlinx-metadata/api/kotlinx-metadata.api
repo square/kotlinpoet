@@ -107,6 +107,7 @@ public final class com/squareup/kotlinpoet/metadata/PropertyAccessorFlag : java/
 	public static final field IS_EXTERNAL Lcom/squareup/kotlinpoet/metadata/PropertyAccessorFlag;
 	public static final field IS_INLINE Lcom/squareup/kotlinpoet/metadata/PropertyAccessorFlag;
 	public static final field IS_NOT_DEFAULT Lcom/squareup/kotlinpoet/metadata/PropertyAccessorFlag;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/PropertyAccessorFlag;
 	public static fun values ()[Lcom/squareup/kotlinpoet/metadata/PropertyAccessorFlag;
 }
@@ -273,6 +274,7 @@ public class com/squareup/kotlinpoet/metadata/specs/JvmFieldModifier : java/lang
 	public static final field TRANSIENT Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public static final field VOLATILE Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 	public static fun values ()[Lcom/squareup/kotlinpoet/metadata/specs/JvmFieldModifier;
 }
@@ -282,6 +284,7 @@ public class com/squareup/kotlinpoet/metadata/specs/JvmMethodModifier : java/lan
 	public static final field STATIC Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public static final field SYNCHRONIZED Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 	public static fun values ()[Lcom/squareup/kotlinpoet/metadata/specs/JvmMethodModifier;
 }
