@@ -936,7 +936,7 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 private val METADATA = Metadata::class.asClassName()
 
 @Suppress("DEPRECATION")
-private val JVM_DEFAULT = JvmDefault::class.asClassName()
+private val JVM_DEFAULT = ClassName("kotlin.jvm", "JvmDefault")
 private val JVM_STATIC = JvmStatic::class.asClassName()
 
 @PublishedApi

@@ -67,6 +67,7 @@ public final class com/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget : java/l
 	public static final field RECEIVER Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
 	public static final field SET Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
 	public static final field SETPARAM Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
 	public static fun values ()[Lcom/squareup/kotlinpoet/AnnotationSpec$UseSiteTarget;
 }
@@ -457,6 +458,7 @@ public final class com/squareup/kotlinpoet/KModifier : java/lang/Enum {
 	public static final field TAILREC Lcom/squareup/kotlinpoet/KModifier;
 	public static final field VALUE Lcom/squareup/kotlinpoet/KModifier;
 	public static final field VARARG Lcom/squareup/kotlinpoet/KModifier;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/KModifier;
 	public static fun values ()[Lcom/squareup/kotlinpoet/KModifier;
 }
@@ -487,6 +489,7 @@ public final class com/squareup/kotlinpoet/KOperator : java/lang/Enum {
 	public static final field TIMES_ASSIGN Lcom/squareup/kotlinpoet/KOperator;
 	public static final field UNARY_MINUS Lcom/squareup/kotlinpoet/KOperator;
 	public static final field UNARY_PLUS Lcom/squareup/kotlinpoet/KOperator;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/KOperator;
 	public static fun values ()[Lcom/squareup/kotlinpoet/KOperator;
 }
@@ -1077,6 +1080,7 @@ public final class com/squareup/kotlinpoet/TypeSpec$Kind : java/lang/Enum {
 	public static final field CLASS Lcom/squareup/kotlinpoet/TypeSpec$Kind;
 	public static final field INTERFACE Lcom/squareup/kotlinpoet/TypeSpec$Kind;
 	public static final field OBJECT Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Kind;
 	public static fun values ()[Lcom/squareup/kotlinpoet/TypeSpec$Kind;
 }

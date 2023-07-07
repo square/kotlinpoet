@@ -126,10 +126,19 @@ public fun TypeName.jvmWildcard(): TypeName =
   copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
 @Suppress("DEPRECATION")
-@Deprecated("'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
-public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder =
-  addAnnotation(JvmDefault::class)
+@Deprecated(
+  """
+  'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`.
+  In KotlinPoet 1.15.0 and newer, this method is a no-op. It will be deleted in KotlinPoet 2.0.
+""",
+)
+public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder = this
 
 @Suppress("DEPRECATION")
-@Deprecated("'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
-public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = addAnnotation(JvmDefault::class)
+@Deprecated(
+  """
+  'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`.
+  In KotlinPoet 1.15.0 and newer, this method is a no-op. It will be deleted in KotlinPoet 2.0.
+""",
+)
+public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = this
