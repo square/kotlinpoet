@@ -668,10 +668,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
         public fun hasDefaultSingleParam(input: kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
 
-        @kotlin.jvm.JvmDefault
-        public fun hasJvmDefault() {
-        }
-
         public fun noDefault()
 
         public fun noDefaultWithInput(input: kotlin.String)
@@ -688,10 +684,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public interface SubInterface : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.TestInterface {
         override fun hasDefault() {
-        }
-
-        @kotlin.jvm.JvmDefault
-        override fun hasJvmDefault() {
         }
 
         public fun subInterfaceFunction() {
@@ -727,10 +719,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
     fun noDefaultWithInputDefault(input: String = "")
 
-    @JvmDefault
-    fun hasJvmDefault() {
-    }
-
     fun hasDefault() {
     }
 
@@ -749,11 +737,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   interface SubInterface : TestInterface {
     fun subInterfaceFunction() {
-    }
-
-    @JvmDefault
-    override fun hasJvmDefault() {
-      super.hasJvmDefault()
     }
 
     override fun hasDefault() {
@@ -1238,10 +1221,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(interfaceSpec.trimmedToString()).isEqualTo(
       """
       public interface JvmAnnotationsInterface {
-        @kotlin.jvm.JvmDefault
-        public fun defaultMethod() {
-        }
-
         public fun notDefaultMethod()
       }
       """.trimIndent(),
@@ -1263,9 +1242,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
   }
 
   interface JvmAnnotationsInterface {
-    @JvmDefault
-    fun defaultMethod() {
-    }
     fun notDefaultMethod()
   }
 
