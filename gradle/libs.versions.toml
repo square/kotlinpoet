@@ -32,7 +32,7 @@ guava = { module = "com.google.guava:guava", version = "32.1.1-jre" }
 javapoet = "com.squareup:javapoet:1.13.0"
 
 autoService = "com.google.auto.service:auto-service-annotations:1.1.1"
-autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.0.0"
+autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
 
 kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-annotationProcessingEmbeddable = { module = "org.jetbrains.kotlin:kotlin-annotation-processing-embeddable", version.ref = "kotlin" }
