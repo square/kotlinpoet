@@ -89,9 +89,10 @@ public class NameAllocator private constructor(
     tag: Any = UUID.randomUUID().toString(),
   ): String {
     var result = toJavaIdentifier(suggestion)
-    while (result.isKeyword || !allocatedNames.add(result)) {
+    while (!allocatedNames.add(result)) {
       result += "_"
     }
+    result = result.escapeIfNecessary()
 
     val replaced = tagToName.put(tag, result)
     if (replaced != null) {

@@ -66,8 +66,24 @@ class NameAllocatorTest {
 
   @Test fun kotlinKeyword() {
     val nameAllocator = NameAllocator()
-    assertThat(nameAllocator.newName("when", 1)).isEqualTo("when_")
-    assertThat(nameAllocator[1]).isEqualTo("when_")
+    assertThat(nameAllocator.newName("when", 1)).isEqualTo("`when`")
+    assertThat(nameAllocator[1]).isEqualTo("`when`")
+  }
+
+  @Test fun kotlinKeywordCollision() {
+    val nameAllocator = NameAllocator()
+    assertThat(nameAllocator.newName("when", 1)).isEqualTo("`when`")
+    assertThat(nameAllocator.newName("when", 2)).isEqualTo("when_")
+    assertThat(nameAllocator.newName("when", 3)).isEqualTo("when__")
+    assertThat(nameAllocator[1]).isEqualTo("`when`")
+    assertThat(nameAllocator[2]).isEqualTo("when_")
+    assertThat(nameAllocator[3]).isEqualTo("when__")
+  }
+
+  @Test fun noBackticksIfContainsIllegalCharacters() {
+    val nameAllocator = NameAllocator()
+    assertThat(nameAllocator.newName("proto3.kotlin.int32", 1)).isEqualTo("proto3_kotlin_int32")
+    assertThat(nameAllocator[1]).isEqualTo("proto3_kotlin_int32")
   }
 
   @Test fun tagReuseForbidden() {
