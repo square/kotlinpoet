@@ -15,8 +15,10 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
+import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.buildCodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
@@ -75,5 +77,10 @@ internal fun KmAnnotationArgument.toCodeBlock(): CodeBlock {
     is EnumValue -> CodeBlock.of("%T.%L", createClassName(enumClassName), enumEntryName)
     is AnnotationValue -> CodeBlock.of("%L", annotation.toAnnotationSpec())
     is ArrayValue -> elements.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
+    is KmAnnotationArgument.ArrayKClassValue -> buildCodeBlock {
+      repeat(arrayDimensionCount) { add("%T<", ARRAY) }
+      add("%T::class", createClassName(className))
+      repeat(arrayDimensionCount) { add(">") }
+    }
   }
 }

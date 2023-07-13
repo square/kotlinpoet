@@ -28,6 +28,7 @@ import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VARARG
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.jvm.jvmStatic
 import com.squareup.kotlinpoet.jvm.throws
 import java.io.IOException
 import java.io.Serializable
@@ -331,6 +332,122 @@ class TypeSpecTest {
         |}
         |
       """.trimMargin(),
+    )
+  }
+
+  /*
+    import dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory
+    import javax.inject.Provider
+    import kotlin.Suppress
+    import kotlin.jvm.JvmStatic
+    import dagger.`internal`.Factory as InternalFactory
+    import dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory as SummarizerPresenterFactory
+
+    public class SummarizerPresenterFactory_Factory(
+      private val factory: Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>,
+    ) : InternalFactory<SummarizerPresenterFactory> {
+      public override fun `get`(): SummarizerPresenterFactory = newInstance(factory.get())
+
+      public companion object {
+        @JvmStatic
+        public
+            fun create(factory: Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>):
+            dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory =
+            dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory(factory)
+
+        @JvmStatic
+        public fun newInstance(factory: dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory):
+            SummarizerPresenterFactory = SummarizerPresenterFactory(factory)
+      }
+    }
+
+    public class SummarizerPresenterFactory_Factory(
+      private val factory: javax.inject.Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>,
+    ) : dagger.`internal`.Factory<dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory> {
+      public override fun `get`(): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory = newInstance(factory.get())
+
+      public companion object {
+        @kotlin.jvm.JvmStatic
+        public fun create(factory: javax.inject.Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory = dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory(factory)
+
+        @kotlin.jvm.JvmStatic
+        public fun newInstance(factory: dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory = dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory(factory)
+      }
+    }
+
+    public class SummarizerPresenterFactory_Factory(
+      private val `param`: javax.inject.Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>,
+    ) : dagger.`internal`.Factory<dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory> {
+      override fun `get`(): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory = newInstance(param.get())
+
+      public companion object {
+        @kotlin.jvm.JvmStatic
+        public fun create(`param`: javax.inject.Provider<dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory>): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory = dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory_Factory(param)
+
+        @kotlin.jvm.JvmStatic
+        public fun newInstance(factory: dev.zacsweers.catchup.summarizer.SummarizerPresenter.Factory): dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory = dev.zacsweers.catchup.summarizer.SummarizerPresenterFactory(factory)
+      }
+    }
+   */
+
+  @Test fun repro() {
+    val packageName = "dev.zacsweers.catchup.summarizer."
+    val className = "SummarizerPresenterFactory_Factory"
+    val param = ParameterSpec.builder("factory", ClassName(packageName, "SummarizerPresenter").nestedClass("Factory"))
+      .build()
+
+    val provider = ClassName("javax.inject", "Provider")
+    val constructorParamType = ClassName("dev.zacsweers.catchup.summarizer", "SummarizerPresenter").nestedClass("Factory")
+    val presenterFactory = ClassName("dev.zacsweers.catchup.summarizer", "SummarizerPresenterFactory")
+    val daggerInternalFactory = ClassName("dagger.internal", "Factory")
+
+    val generatedFactoryClass = ClassName("dev.zacsweers.catchup.summarizer", "${presenterFactory.simpleName}_Factory")
+
+    val taco = TypeSpec.classBuilder(generatedFactoryClass)
+      .addSuperinterface(daggerInternalFactory.parameterizedBy(presenterFactory))
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("factory", provider.parameterizedBy(constructorParamType))
+          .build(),
+      )
+      .addProperty(
+        PropertySpec.builder("factory", provider.parameterizedBy(constructorParamType), KModifier.PRIVATE)
+          .initializer("%L", "factory")
+          .build(),
+      )
+      .addFunction(
+        FunSpec.builder("get")
+          .addModifiers(KModifier.OVERRIDE)
+          .returns(presenterFactory)
+          .addStatement("return newInstance(factory.get())")
+          .build(),
+      )
+      .addType(
+        TypeSpec.companionObjectBuilder()
+          .addFunction(
+            FunSpec.builder("create")
+              .jvmStatic()
+              .addParameter("factory", provider.parameterizedBy(constructorParamType))
+              .returns(generatedFactoryClass)
+              .addStatement("return %T(factory)", generatedFactoryClass)
+              .build(),
+          )
+          .addFunction(
+            FunSpec.builder("newInstance")
+              .jvmStatic()
+              .addParameter("factory", constructorParamType)
+              .returns(presenterFactory)
+              .addStatement("return %T(factory)", presenterFactory)
+              .build(),
+          )
+          .build(),
+      )
+      .build()
+
+    assertThat(FileSpec.get("dev.zacsweers.catchup.summarizer", taco).toString()).isEqualTo(
+      """
+
+      """.trimIndent(),
     )
   }
 

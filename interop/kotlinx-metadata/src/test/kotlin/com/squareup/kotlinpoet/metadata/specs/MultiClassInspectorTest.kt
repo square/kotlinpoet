@@ -113,7 +113,7 @@ abstract class MultiClassInspectorTest {
   protected fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
     val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
     return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
-      .toKmPackage()
+      .kmPackage
       .toFileSpec(classInspector, asClassName())
   }
 }

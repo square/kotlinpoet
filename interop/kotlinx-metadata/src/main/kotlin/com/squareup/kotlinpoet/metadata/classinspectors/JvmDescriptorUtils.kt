@@ -57,6 +57,7 @@ import kotlinx.metadata.jvm.JvmMethodSignature
  *
  * @return the name of this [Element] in its "internal form".
  */
+@Suppress("RecursivePropertyAccessor")
 internal val Element.internalName: String
   get() = when (this) {
     is TypeElement -> {

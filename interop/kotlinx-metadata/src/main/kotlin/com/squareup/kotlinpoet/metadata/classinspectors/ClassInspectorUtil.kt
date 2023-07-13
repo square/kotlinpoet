@@ -38,12 +38,12 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import java.util.Collections
 import java.util.TreeSet
 import kotlinx.metadata.KmProperty
-import kotlinx.metadata.isLocal
+import kotlinx.metadata.isConst
+import kotlinx.metadata.isLocalClassName
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
@@ -195,7 +195,7 @@ internal object ClassInspectorUtil {
    * with those.
    */
   fun createClassName(kotlinMetadataName: String): ClassName {
-    require(!kotlinMetadataName.isLocal) {
+    require(!kotlinMetadataName.isLocalClassName()) {
       "Local/anonymous classes are not supported!"
     }
     // Top-level: package/of/class/MyClass

@@ -13,11 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("unused")
-
 package com.squareup.kotlinpoet.metadata
 
+import com.squareup.kotlinpoet.KModifier
+import kotlinx.metadata.ClassKind
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.KmProperty
+import kotlinx.metadata.MemberKind
+import kotlinx.metadata.Modality
+import kotlinx.metadata.Visibility
+import kotlinx.metadata.isSecondary
+import kotlinx.metadata.isVar
+import kotlinx.metadata.kind
 
-internal inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
-  return mutableSetOf<E>().apply(body).toSet()
+internal val KmClass.isObject: Boolean
+  get() = kind == ClassKind.OBJECT
+
+internal val KmClass.isCompanionObject: Boolean
+  get() = kind == ClassKind.COMPANION_OBJECT
+
+internal val KmClass.isClass: Boolean
+  get() = kind == ClassKind.CLASS
+
+internal val KmClass.isAnnotation: Boolean
+  get() = kind == ClassKind.ANNOTATION_CLASS
+
+internal val KmClass.isEnum: Boolean
+  get() = kind == ClassKind.ENUM_CLASS
+
+internal val KmClass.isInterface: Boolean
+  get() = kind == ClassKind.INTERFACE
+
+internal val KmConstructor.isPrimary: Boolean
+  get() = !isSecondary
+
+internal val KmProperty.isVal: Boolean
+  get() = !isVar
+
+internal fun Modality.toKModifier(): KModifier = when (this) {
+  Modality.FINAL -> KModifier.FINAL
+  Modality.OPEN -> KModifier.OPEN
+  Modality.ABSTRACT -> KModifier.ABSTRACT
+  Modality.SEALED -> KModifier.SEALED
 }
+
+internal fun Visibility.toKModifier(): KModifier = when (this) {
+  Visibility.INTERNAL -> KModifier.INTERNAL
+  Visibility.PRIVATE -> KModifier.PRIVATE
+  Visibility.PROTECTED -> KModifier.PROTECTED
+  Visibility.PUBLIC -> KModifier.PUBLIC
+  Visibility.PRIVATE_TO_THIS,
+  Visibility.LOCAL -> {
+    // Default to public
+    KModifier.PUBLIC
+  }
+}
+
+internal val MemberKind.isDeclaration: Boolean get() = this == MemberKind.DECLARATION

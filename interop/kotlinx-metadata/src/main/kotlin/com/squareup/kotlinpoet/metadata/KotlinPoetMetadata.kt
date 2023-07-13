@@ -50,7 +50,7 @@ public fun TypeElement.toKmClass(): KmClass = readMetadata(::getAnnotation).toKm
 @KotlinPoetMetadataPreview
 public fun Metadata.toKmClass(): KmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>()
-    .toKmClass()
+    .kmClass
 }
 
 @KotlinPoetMetadataPreview

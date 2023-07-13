@@ -32,14 +32,7 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JAVA_DEPRECATED
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
-import com.squareup.kotlinpoet.metadata.hasAnnotations
-import com.squareup.kotlinpoet.metadata.hasConstant
-import com.squareup.kotlinpoet.metadata.isAnnotation
-import com.squareup.kotlinpoet.metadata.isCompanionObject
-import com.squareup.kotlinpoet.metadata.isConst
 import com.squareup.kotlinpoet.metadata.isDeclaration
-import com.squareup.kotlinpoet.metadata.isSynthesized
-import com.squareup.kotlinpoet.metadata.isValue
 import com.squareup.kotlinpoet.metadata.readKotlinClassMetadata
 import com.squareup.kotlinpoet.metadata.specs.ClassData
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
@@ -74,9 +67,14 @@ import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.LazyThreadSafetyMode.NONE
+import kotlinx.metadata.ClassKind
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.KmPackage
+import kotlinx.metadata.hasAnnotations
+import kotlinx.metadata.hasConstant
+import kotlinx.metadata.isConst
+import kotlinx.metadata.isValue
 import kotlinx.metadata.jvm.JvmFieldSignature
 import kotlinx.metadata.jvm.JvmMethodSignature
 import kotlinx.metadata.jvm.KotlinClassMetadata
@@ -85,6 +83,7 @@ import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
 import kotlinx.metadata.jvm.syntheticMethodForAnnotations
+import kotlinx.metadata.kind
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
@@ -117,8 +116,8 @@ public class ElementsClassInspector private constructor(
 
     val metadata = typeElement.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
-      is KotlinClassMetadata.Class -> kotlinClassMetadata.toKmClass()
-      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.toKmPackage()
+      is KotlinClassMetadata.Class -> kotlinClassMetadata.kmClass
+      is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.kmPackage
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
     }
   }
@@ -131,7 +130,7 @@ public class ElementsClassInspector private constructor(
   }
 
   private fun TypeElement.lookupField(fieldSignature: JvmFieldSignature): VariableElement? {
-    val signatureString = fieldSignature.asString()
+    val signatureString = fieldSignature.toString()
     return variableElementCache.getOrPut(this to signatureString) {
       ElementFilter.fieldsIn(enclosedElements)
         .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
@@ -150,7 +149,7 @@ public class ElementsClassInspector private constructor(
     methodSignature: JvmMethodSignature,
     elementFilter: (Iterable<Element>) -> List<ExecutableElement>,
   ): ExecutableElement? {
-    val signatureString = methodSignature.asString()
+    val signatureString = methodSignature.toString()
     return methodCache.getOrPut(this to signatureString) {
       elementFilter(enclosedElements)
         .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
@@ -313,7 +312,7 @@ public class ElementsClassInspector private constructor(
     val typeElement: TypeElement = lookupTypeElement(className) ?: error("No class found for: $className.")
     val isCompanionObject = when (declarationContainer) {
       is KmClass -> {
-        declarationContainer.isCompanionObject
+        declarationContainer.kind == ClassKind.COMPANION_OBJECT
       }
       is KmPackage -> {
         false
@@ -333,8 +332,7 @@ public class ElementsClassInspector private constructor(
 
     val propertyData = declarationContainer.properties
       .asSequence()
-      .filter { it.isDeclaration }
-      .filterNot { it.isSynthesized }
+      .filter { it.kind.isDeclaration }
       .associateWithTo(TreeMap(KM_PROPERTY_COMPARATOR)) { property ->
         val isJvmField = ClassInspectorUtil.computeIsJvmField(
           property = property,
@@ -397,7 +395,7 @@ public class ElementsClassInspector private constructor(
           val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = property.getterFlags.hasAnnotations,
+            hasAnnotations = property.getter.hasAnnotations,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
               ?: method,
@@ -409,7 +407,7 @@ public class ElementsClassInspector private constructor(
           val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = property.setterFlags.hasAnnotations,
+            hasAnnotations = property.setter?.hasAnnotations ?: false,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
               ?: method,
@@ -419,7 +417,7 @@ public class ElementsClassInspector private constructor(
         }
 
         val annotations = mutableListOf<AnnotationSpec>()
-        if (property.flags.hasAnnotations) {
+        if (property.hasAnnotations) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
             val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
               ?: return@let MethodData.SYNTHETIC
@@ -461,7 +459,7 @@ public class ElementsClassInspector private constructor(
           val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = kmFunction.flags.hasAnnotations,
+            hasAnnotations = kmFunction.hasAnnotations,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(signature, ElementFilter::methodsIn)
               ?: method,
@@ -476,7 +474,7 @@ public class ElementsClassInspector private constructor(
       is KmClass -> {
         val constructorData = declarationContainer.constructors
           .associateWithTo(TreeMap(KM_CONSTRUCTOR_COMPARATOR)) { kmConstructor ->
-            if (declarationContainer.isAnnotation || declarationContainer.isValue) {
+            if (declarationContainer.kind == ClassKind.ANNOTATION_CLASS || declarationContainer.isValue) {
               //
               // Annotations are interfaces in bytecode, but kotlin metadata will still report a
               // constructor signature
@@ -490,7 +488,7 @@ public class ElementsClassInspector private constructor(
               val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
                 ?: return@associateWithTo ConstructorData.EMPTY
               ConstructorData(
-                annotations = if (kmConstructor.flags.hasAnnotations) {
+                annotations = if (kmConstructor.hasAnnotations) {
                   constructor.annotationSpecs()
                 } else {
                   emptyList()
@@ -507,7 +505,7 @@ public class ElementsClassInspector private constructor(
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,
-          annotations = if (declarationContainer.flags.hasAnnotations) {
+          annotations = if (declarationContainer.hasAnnotations) {
             ClassInspectorUtil.createAnnotations {
               addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
             }
@@ -533,7 +531,6 @@ public class ElementsClassInspector private constructor(
                 }
                 jvmName = nameValue.value as String
               }
-              @Suppress("DEPRECATION")
               AnnotationSpec.get(it)
             },
           )
