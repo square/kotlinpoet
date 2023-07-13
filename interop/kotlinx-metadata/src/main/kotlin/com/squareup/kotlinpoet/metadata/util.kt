@@ -64,7 +64,8 @@ internal fun Visibility.toKModifier(): KModifier = when (this) {
   Visibility.PROTECTED -> KModifier.PROTECTED
   Visibility.PUBLIC -> KModifier.PUBLIC
   Visibility.PRIVATE_TO_THIS,
-  Visibility.LOCAL -> {
+  Visibility.LOCAL,
+  -> {
     // Default to public
     KModifier.PUBLIC
   }
