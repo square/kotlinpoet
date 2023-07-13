@@ -15,7 +15,6 @@
  */
 @file:OptIn(KotlinPoetMetadataPreview::class)
 @file:Suppress(
-  "DEPRECATION",
   "NOTHING_TO_INLINE",
   "RedundantSuspendModifier",
   "RedundantUnitReturnType",
@@ -366,21 +365,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
 
   class NestedTypeAliasTest {
     val prop: NestedTypeAlias = listOf(listOf(""))
-  }
-
-  @Test
-  fun inlineClass() {
-    val typeSpec = InlineClass::class.toTypeSpecWithTestHandler()
-
-    //language=kotlin
-    assertThat(typeSpec.trimmedToString()).isEqualTo(
-      """
-      @kotlin.jvm.JvmInline
-      public value class InlineClass(
-        public val `value`: kotlin.String,
-      )
-      """.trimIndent(),
-    )
   }
 
   @Test
@@ -2215,8 +2199,6 @@ class `Fuzzy$ClassNesting` {
 private fun TypeSpec.trimmedToString(): String {
   return toString().trim()
 }
-
-inline class InlineClass(val value: String)
 
 @JvmInline
 value class ValueClass(val value: String)
