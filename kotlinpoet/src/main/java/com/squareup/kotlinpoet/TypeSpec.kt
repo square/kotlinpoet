@@ -339,7 +339,7 @@ public class TypeSpec private constructor(
     // Properties added after the initializer are not permitted to be inlined into the constructor
     // due to ordering concerns.
     val range = if (hasInitializer) {
-      0 until initializerIndex
+      0..<initializerIndex
     } else {
       propertySpecs.indices
     }

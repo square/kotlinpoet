@@ -2101,7 +2101,7 @@ class TypeSpecTest {
       .build()
     val funBody = CodeBlock.builder()
       .addStatement("val size = %T.min(listA.size, listB.size)", Math::class)
-      .beginControlFlow("for (i in 0 until size)")
+      .beginControlFlow("for (i in 0..<size)")
       .addStatement("val %N = %N[i]", "a", "listA")
       .addStatement("val %N = %N[i]", "b", "listB")
       .add("%L", ifBlock)
@@ -2155,7 +2155,7 @@ class TypeSpecTest {
         |
         |  public fun commonPrefixLength(listA: List<String>, listB: List<String>): Int {
         |    val size = Math.min(listA.size, listB.size)
-        |    for (i in 0 until size) {
+        |    for (i in 0..<size) {
         |      val a = listA[i]
         |      val b = listB[i]
         |      if (a != b) {

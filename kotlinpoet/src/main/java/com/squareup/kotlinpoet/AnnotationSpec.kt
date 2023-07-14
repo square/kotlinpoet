@@ -215,7 +215,7 @@ public class AnnotationSpec private constructor(
           member.add("%L = ", method.name)
           if (value.javaClass.isArray) {
             member.add("arrayOf(⇥⇥")
-            for (i in 0 until Array.getLength(value)) {
+            for (i in 0..<Array.getLength(value)) {
               if (i > 0) member.add(", ")
               member.add(Builder.memberForValue(Array.get(value, i)))
             }

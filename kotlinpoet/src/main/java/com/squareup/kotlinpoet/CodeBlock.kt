@@ -108,12 +108,12 @@ public class CodeBlock private constructor(
     firstFormatPart?.let {
       resultFormatParts.add(it)
     }
-    for (i in prefix.formatParts.size until formatParts.size) {
+    for (i in prefix.formatParts.size..<formatParts.size) {
       resultFormatParts.add(formatParts[i])
     }
 
     val resultArgs = ArrayList<Any?>()
-    for (i in prefix.args.size until args.size) {
+    for (i in prefix.args.size..<args.size) {
       resultArgs.add(args[i])
     }
 
