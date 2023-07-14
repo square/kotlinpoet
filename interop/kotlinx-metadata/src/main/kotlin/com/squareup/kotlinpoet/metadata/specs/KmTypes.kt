@@ -26,10 +26,7 @@ import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
-import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
-import com.squareup.kotlinpoet.metadata.isReified
-import com.squareup.kotlinpoet.metadata.isSuspend
 import com.squareup.kotlinpoet.tags.TypeAliasTag
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmClassifier
@@ -47,6 +44,9 @@ import kotlinx.metadata.KmVariance
 import kotlinx.metadata.KmVariance.IN
 import kotlinx.metadata.KmVariance.INVARIANT
 import kotlinx.metadata.KmVariance.OUT
+import kotlinx.metadata.isNullable
+import kotlinx.metadata.isReified
+import kotlinx.metadata.isSuspend
 import kotlinx.metadata.jvm.annotations
 import kotlinx.metadata.jvm.signature
 
@@ -251,7 +251,7 @@ internal val KM_FUNCTION_COMPARATOR = Comparator<KmFunction> { o1, o2 ->
   val signature1 = o1.signature
   val signature2 = o2.signature
   if (signature1 != null && signature2 != null) {
-    result = signature1.asString().compareTo(signature2.asString())
+    result = signature1.toString().compareTo(signature2.toString())
     if (result != 0) return@Comparator result
   }
 
@@ -265,7 +265,7 @@ internal val KM_CONSTRUCTOR_COMPARATOR = Comparator<KmConstructor> { o1, o2 ->
   val signature1 = o1.signature
   val signature2 = o2.signature
   if (signature1 != null && signature2 != null) {
-    val result = signature1.asString().compareTo(signature2.asString())
+    val result = signature1.toString().compareTo(signature2.toString())
     if (result != 0) return@Comparator result
   }
 

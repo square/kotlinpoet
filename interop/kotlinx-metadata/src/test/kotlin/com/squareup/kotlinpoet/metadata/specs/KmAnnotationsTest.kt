@@ -209,7 +209,7 @@ class KmAnnotationsTest {
   @Test fun kClassValue() {
     val annotation = KmAnnotation(
       "test/KClassValueAnnotation",
-      mapOf("value" to KClassValue("test/OtherClass", 0)),
+      mapOf("value" to KClassValue("test/OtherClass")),
     )
     assertThat(annotation.toAnnotationSpec().toString()).isEqualTo(
       """
