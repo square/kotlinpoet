@@ -64,7 +64,7 @@ private fun isDefaultValue(value: Any?, defaultValue: Any?): Boolean {
     }
   }
   if (value is List<*> && defaultValue is List<*>) {
-    return value.size == defaultValue.size && (0..<defaultValue.size).all { index ->
+    return value.size == defaultValue.size && defaultValue.indices.all { index ->
       isDefaultValue(value[index], defaultValue[index])
     }
   }
