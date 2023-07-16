@@ -110,7 +110,7 @@ internal class LineWrapper(
     var start = 0
     var columnCount = segments[0].length
 
-    for (i in 1 until segments.size) {
+    for (i in 1..<segments.size) {
       val segment = segments[i]
       val newColumnCount = columnCount + 1 + segment.length
 
@@ -136,7 +136,7 @@ internal class LineWrapper(
     // If this is a wrapped line we need a newline and an indent.
     if (startIndex > 0) {
       out.append("\n")
-      for (i in 0 until indentLevel) {
+      for (i in 0..<indentLevel) {
         out.append(indent)
       }
       out.append(linePrefix)
@@ -144,7 +144,7 @@ internal class LineWrapper(
 
     // Emit each segment separated by spaces.
     out.append(segments[startIndex])
-    for (i in startIndex + 1 until endIndex) {
+    for (i in startIndex + 1..<endIndex) {
       out.append(" ")
       out.append(segments[i])
     }

@@ -81,7 +81,7 @@ take advantage of Kotlin's multiline strings to make this look nice:
 val main = FunSpec.builder("main")
   .addCode("""
     |var total = 0
-    |for (i in 0 until 10) {
+    |for (i in 0..<10) {
     |    total += i
     |}
     |""".trimMargin())
@@ -93,7 +93,7 @@ Which generates this:
 ```kotlin
 fun main() {
   var total = 0
-  for (i in 0 until 10) {
+  for (i in 0..<10) {
     total += i
   }
 }
@@ -104,7 +104,7 @@ There are additional APIs to assist with newlines, braces and indentation:
 ```kotlin
 val main = FunSpec.builder("main")
   .addStatement("var total = 0")
-  .beginControlFlow("for (i in 0 until 10)")
+  .beginControlFlow("for (i in 0..<10)")
   .addStatement("total += i")
   .endControlFlow()
   .build()
@@ -118,7 +118,7 @@ private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec 
   return FunSpec.builder(name)
     .returns(Int::class)
     .addStatement("var result = 1")
-    .beginControlFlow("for (i in $from until $to)")
+    .beginControlFlow("for (i in $from..<$to)")
     .addStatement("result = result $op i")
     .endControlFlow()
     .addStatement("return result")
@@ -131,7 +131,7 @@ And here's what we get when we call `computeRange("multiply10to20", 10, 20, "*")
 ```kotlin
 fun multiply10to20(): kotlin.Int {
   var result = 1
-  for (i in 10 until 20) {
+  for (i in 10..<20) {
     result = result * i
   }
   return result
@@ -612,7 +612,7 @@ private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec 
   return FunSpec.builder(name)
     .returns(Int::class)
     .addStatement("var result = 0")
-    .beginControlFlow("for (i in %L until %L)", from, to)
+    .beginControlFlow("for (i in %L..<%L)", from, to)
     .addStatement("result = result %L i", op)
     .endControlFlow()
     .addStatement("return result")

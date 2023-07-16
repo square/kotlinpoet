@@ -617,7 +617,7 @@ internal class CodeWriter constructor(
   }
 
   private fun emitIndentation() {
-    for (j in 0 until indentLevel) {
+    for (j in 0..<indentLevel) {
       out.appendNonWrapping(indent)
     }
   }
