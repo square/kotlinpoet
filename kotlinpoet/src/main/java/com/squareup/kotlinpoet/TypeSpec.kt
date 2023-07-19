@@ -124,7 +124,7 @@ public class TypeSpec private constructor(
 
     try {
       if (enumName != null) {
-        codeWriter.emitKdoc(kdocWithConstructorParameters())
+        codeWriter.emitKdoc(kdocWithConstructorDocs())
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitCode("%N", enumName)
         if (superclassConstructorParametersBlock.isNotEmpty()) {
@@ -164,7 +164,7 @@ public class TypeSpec private constructor(
         }
         codeWriter.emit(" {\n")
       } else {
-        codeWriter.emitKdoc(kdocWithConstructorParameters())
+        codeWriter.emitKdoc(kdocWithConstructorDocs())
         codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(
@@ -371,15 +371,15 @@ public class TypeSpec private constructor(
   }
 
   /**
-   * Returns KDoc comments including those of primary constructor parameters.
+   * Returns KDoc comments including those of the primary constructor and its parameters.
    *
    * If the primary constructor parameter is not mapped to a property, or if the property doesn't
    * have its own KDoc - the parameter's KDoc will be attached to the parameter. Otherwise, if both
    * the parameter and the property have KDoc - the property's KDoc will be attached to the
    * property/parameter, and the parameter's KDoc will be printed in the type header.
    */
-  private fun kdocWithConstructorParameters(): CodeBlock {
-    if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
+  private fun kdocWithConstructorDocs(): CodeBlock {
+    if (primaryConstructor == null) {
       return kdoc.ensureEndsWithNewLine()
     }
     val constructorProperties = constructorProperties()
@@ -389,8 +389,11 @@ public class TypeSpec private constructor(
         parameter.kdoc != propertyKdoc
     }
     return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
-      parametersWithKdoc.forEachIndexed { index, parameter ->
-        if (index == 0 && kdoc.isNotEmpty()) add("\n")
+      if (kdoc.isNotEmpty()) add("\n")
+      if (primaryConstructor.kdoc.isNotEmpty()) {
+        add("@constructor %L", primaryConstructor.kdoc.ensureEndsWithNewLine())
+      }
+      parametersWithKdoc.forEach { parameter ->
         add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
       }
       build()

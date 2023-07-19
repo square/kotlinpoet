@@ -4803,6 +4803,8 @@ class TypeSpecTest {
       """
       |/**
       | * This is a thing for stuff.
+      | *
+      | * @constructor Construct a thing!
       | */
       |public class MyType(
       |  /**
@@ -5610,6 +5612,31 @@ class TypeSpecTest {
       |}
       |
       """.trimMargin(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1630
+  @Test fun primaryConstructorKDoc() {
+    val type = TypeSpec.classBuilder("MyClass")
+      .addKdoc("This is my class")
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addKdoc("This is my constructor")
+          .build(),
+      )
+      .build()
+
+    //language=kotlin
+    assertThat(type.toString()).isEqualTo(
+      """
+      /**
+       * This is my class
+       *
+       * @constructor This is my constructor
+       */
+      public class MyClass()
+
+      """.trimIndent(),
     )
   }
 
