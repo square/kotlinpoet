@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets
  * A simple holder class for containing originating [KSFiles][KSFile], which are used by KSP to
  * inform its incremental processing.
  *
- * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
+ * See [the docs](https://kotlinlang.org/docs/ksp-incremental.html) for more information.
  */
 public interface OriginatingKSFiles {
   public val files: List<KSFile>
