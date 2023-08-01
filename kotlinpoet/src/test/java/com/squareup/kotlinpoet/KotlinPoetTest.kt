@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.jvmField
+import com.squareup.kotlinpoet.jvm.jvmStatic
 import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -1437,5 +1438,115 @@ class KotlinPoetTest {
         |
       """.trimMargin(),
     )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1648
+  @Test fun nestedClassesConflictingImports() {
+    val providerType = ClassName("javax.inject", "Provider")
+    val injectClassFactoryNestedType = ClassName("com.squareup.test", "InjectClass", "Factory")
+    val providerOfinjectClassFactoryNestedType = providerType.parameterizedBy(injectClassFactoryNestedType)
+    val factoryFactoryType = ClassName("com.squareup.test", "InjectClassFactory_Factory")
+    val injectClassFactoryType = ClassName("com.squareup.test", "InjectClassFactory")
+    val factoryType = ClassName("dagger.internal", "Factory")
+
+    val source = FileSpec.builder("com.squareup.test", "Test")
+      .addType(
+        TypeSpec.classBuilder(factoryFactoryType.simpleName)
+          .addProperty(
+            PropertySpec
+              .builder("factory", providerOfinjectClassFactoryNestedType, KModifier.PRIVATE)
+              .initializer("factory")
+              .build(),
+          )
+          .primaryConstructor(
+            FunSpec.constructorBuilder()
+              .addParameter("factory", providerOfinjectClassFactoryNestedType)
+              .build(),
+          )
+          .superclass(factoryType.parameterizedBy(injectClassFactoryType))
+          .addType(
+            TypeSpec.companionObjectBuilder()
+              .addFunction(
+                FunSpec.builder("create")
+                  .jvmStatic()
+                  .addParameter("factory", providerOfinjectClassFactoryNestedType)
+                  .returns(factoryFactoryType)
+                  .addStatement("return %T(factory)", factoryFactoryType)
+                  .build(),
+              )
+              .addFunction(
+                FunSpec.builder("newInstance")
+                  .jvmStatic()
+                  .addParameter("factory", injectClassFactoryNestedType)
+                  .returns(injectClassFactoryType)
+                  .addStatement("return %T(factory)", injectClassFactoryType)
+                  .build(),
+              )
+              .build(),
+          )
+          .addFunction(
+            FunSpec.builder("get")
+              .addModifiers(KModifier.OVERRIDE)
+              .returns(injectClassFactoryType)
+              .addStatement("return newInstance(factory.get())")
+              .build(),
+          )
+          .build(),
+      )
+      .build()
+    //language=kotlin
+    assertThat(source.toString()).isEqualTo(
+      """
+        |package com.squareup.test
+        |
+        |import dagger.`internal`.Factory
+        |import javax.inject.Provider
+        |import kotlin.jvm.JvmStatic
+        |
+        |public class InjectClassFactory_Factory(
+        |  private val factory: Provider<InjectClass.Factory>,
+        |) : Factory<InjectClassFactory>() {
+        |  override fun `get`(): InjectClassFactory = newInstance(factory.get())
+        |
+        |  public companion object {
+        |    @JvmStatic
+        |    public fun create(factory: Provider<InjectClass.Factory>): InjectClassFactory_Factory =
+        |        InjectClassFactory_Factory(factory)
+        |
+        |    @JvmStatic
+        |    public fun newInstance(factory: InjectClass.Factory): InjectClassFactory =
+        |        InjectClassFactory(factory)
+        |  }
+        |}
+        |
+      """.trimMargin(),
+    )
+    // Original example:
+    //
+    // package com.squareup.test
+    //
+    // import com.squareup.test.InjectClassFactory
+    // import javax.inject.Provider
+    // import kotlin.Suppress
+    // import kotlin.jvm.JvmStatic
+    // import com.squareup.test.InjectClass.Factory as InjectClassFactory
+    // import dagger.`internal`.Factory as InternalFactory
+    //
+    // public class InjectClassFactory_Factory(
+    //   private val factory: Provider<com.squareup.test.InjectClass.Factory>,
+    // ) : InternalFactory<InjectClassFactory> {
+    //   override fun `get`(): InjectClassFactory = newInstance(factory.get())
+    //
+    //   public companion object {
+    //     @JvmStatic
+    //     public fun create(factory: Provider<com.squareup.test.InjectClass.Factory>):
+    //         com.squareup.test.InjectClassFactory_Factory =
+    //         com.squareup.test.InjectClassFactory_Factory(factory)
+    //
+    //     @JvmStatic
+    //     public fun newInstance(factory: com.squareup.test.InjectClass.Factory): InjectClassFactory =
+    //         InjectClassFactory(factory)
+    //   }
+    // }
   }
 }
