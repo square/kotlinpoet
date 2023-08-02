@@ -15,7 +15,7 @@
 [versions]
 kotlin = "1.9.0"
 kct = "0.3.2"
-ksp = "1.9.0-1.0.12"
+ksp = "1.9.0-1.0.13"
 ktlint = "0.48.2"
 
 [plugins]
