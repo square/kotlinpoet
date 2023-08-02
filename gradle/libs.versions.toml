@@ -14,7 +14,7 @@
 
 [versions]
 kotlin = "1.9.0"
-kct = "0.3.1"
+kct = "0.3.2"
 ksp = "1.9.0-1.0.12"
 ktlint = "0.48.2"
 
