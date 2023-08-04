@@ -129,7 +129,7 @@ subprojects {
         group = LifecycleBasePlugin.VERIFICATION_GROUP
 
         // Copy inputs from normal Test task.
-        val testTask = tasks.getByName<Test>("test")
+        val testTask = tasks.getByName<Test>("jvmTest")
         classpath = testTask.classpath
         testClassesDirs = testTask.testClassesDirs
 
