@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-tasks.jar {
+project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
   }
 }
 
-tasks.compileTestKotlin {
+project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
   compilerOptions {
     freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
@@ -37,16 +37,25 @@ spotless {
     )
   }
 }
-
-dependencies {
-  implementation(libs.kotlin.reflect)
-  testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
-  testImplementation(libs.guava)
-  testImplementation(libs.compileTesting)
-  testImplementation(libs.jimfs)
-  testImplementation(libs.ecj)
-  testImplementation(libs.kotlinCompileTesting)
-  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
-  testImplementation(libs.kotlin.compilerEmbeddable)
+kotlin {
+  sourceSets {
+    val jvmMain by getting {
+      dependencies {
+        implementation(libs.kotlin.reflect)
+      }
+    }
+    val jvmTest by getting {
+      dependencies {
+        implementation(libs.kotlin.junit)
+        implementation(libs.truth)
+        implementation(libs.guava)
+        implementation(libs.compileTesting)
+        implementation(libs.jimfs)
+        implementation(libs.ecj)
+        implementation(libs.kotlinCompileTesting)
+        implementation(libs.kotlin.annotationProcessingEmbeddable)
+        implementation(libs.kotlin.compilerEmbeddable)
+      }
+    }
+  }
 }

@@ -15,15 +15,16 @@
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.DokkaTask
+//import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  alias(libs.plugins.kotlin.jvm) apply false
+  alias(libs.plugins.kotlin.multiplatform) apply false
   alias(libs.plugins.ksp) apply false
-  alias(libs.plugins.dokka) apply false
+//  alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
   alias(libs.plugins.kotlinBinaryCompatibilityValidator)
@@ -42,6 +43,11 @@ allprojects {
 }
 
 subprojects {
+  apply(plugin = "org.jetbrains.kotlin.multiplatform")
+  configure<KotlinMultiplatformExtension> {
+    jvm {}
+  }
+
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_1_8)
@@ -53,22 +59,24 @@ subprojects {
     options.release.set(8)
   }
 
-  apply(plugin = "org.jetbrains.kotlin.jvm")
   if ("test" !in name && buildFile.exists()) {
-    apply(plugin = "org.jetbrains.dokka")
+//    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     configure<KotlinProjectExtension> {
       explicitApi()
     }
-    afterEvaluate {
-      tasks.named<DokkaTask>("dokkaHtml") {
-        val projectFolder = project.path.trim(':').replace(':', '-')
-        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
-        dokkaSourceSets.configureEach {
-          skipDeprecated.set(true)
-        }
-      }
-    }
+    // Unable to run dokka with single target multiplatform project and
+    // kotlin 1.9.0
+    // https://github.com/Kotlin/dokka/issues/3038
+//    afterEvaluate {
+//      tasks.named<DokkaTask>("dokkaHtml") {
+//        val projectFolder = project.path.trim(':').replace(':', '-')
+//        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
+//        dokkaSourceSets.configureEach {
+//          skipDeprecated.set(true)
+//        }
+//      }
+//    }
   }
 
   apply(plugin = "com.diffplug.spotless")

@@ -45,15 +45,19 @@ jobs:
           distribution: 'zulu'
           java-version: 19
 
-      - name: Prep docs
-        run: ./gradlew dokkaHtml
+# Unable to run dokka with single target multiplatform project and
+# kotlin 1.9.0
+# https://github.com/Kotlin/dokka/issues/3038
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Build mkdocs
-        run: |
-          pip3 install -r .github/workflows/mkdocs-requirements.txt
-          mkdocs build
+#      - name: Prep docs
+#        run: ./gradlew dokkaHtml
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.8
+#
+#      - name: Build mkdocs
+#        run: |
+#          pip3 install -r .github/workflows/mkdocs-requirements.txt
+#          mkdocs build

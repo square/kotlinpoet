@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-tasks.jar {
+project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.ksp")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
   }
 }
 
-dependencies {
-  api(projects.kotlinpoet)
-  compileOnly(libs.ksp.api)
-  testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
+
+kotlin {
+  sourceSets {
+    val jvmMain by getting {
+      dependencies {
+        api(projects.kotlinpoet)
+        compileOnly(libs.ksp.api)
+      }
+    }
+    val jvmTest by getting {
+      dependencies {
+        implementation(libs.kotlin.junit)
+        implementation(libs.truth)
+      }
+    }
+  }
 }

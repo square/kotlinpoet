@@ -17,25 +17,39 @@ plugins {
   id("com.google.devtools.ksp")
 }
 
-tasks.compileTestKotlin {
+project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
   compilerOptions {
     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
   }
 }
 
+kotlin {
+  sourceSets {
+    val jvmMain by getting {
+      dependencies {
+        implementation(projects.kotlinpoet)
+        implementation(projects.interop.ksp)
+        implementation(libs.autoService)
+        compileOnly(libs.ksp.api)
+      }
+    }
+    val jvmTest by getting {
+      dependencies {
+
+        // Always force the latest version of the KSP/kotlin impl in tests to match what we're building against
+        implementation(libs.ksp.api)
+        implementation(libs.kotlin.compilerEmbeddable)
+        implementation(libs.kotlin.annotationProcessingEmbeddable)
+        implementation(libs.ksp)
+        implementation(libs.kotlinCompileTesting)
+        implementation(libs.kotlinCompileTesting.ksp)
+        implementation(libs.kotlin.junit)
+        implementation(libs.truth)
+      }
+    }
+  }
+}
+
 dependencies {
-  implementation(projects.kotlinpoet)
-  implementation(projects.interop.ksp)
-  implementation(libs.autoService)
-  compileOnly(libs.ksp.api)
-  ksp(libs.autoService.ksp)
-  // Always force the latest version of the KSP/kotlin impl in tests to match what we're building against
-  testImplementation(libs.ksp.api)
-  testImplementation(libs.kotlin.compilerEmbeddable)
-  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
-  testImplementation(libs.ksp)
-  testImplementation(libs.kotlinCompileTesting)
-  testImplementation(libs.kotlinCompileTesting.ksp)
-  testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
+  add("kspJvm", libs.autoService.ksp)
 }
