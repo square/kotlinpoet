@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.kotlin.multiplatform) apply false
+  alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
 //  alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
@@ -43,11 +44,6 @@ allprojects {
 }
 
 subprojects {
-  apply(plugin = "org.jetbrains.kotlin.multiplatform")
-  configure<KotlinMultiplatformExtension> {
-    jvm {}
-  }
-
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_1_8)
@@ -62,8 +58,15 @@ subprojects {
   if ("test" !in name && buildFile.exists()) {
 //    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
-    configure<KotlinProjectExtension> {
-      explicitApi()
+    pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+      configure<KotlinMultiplatformExtension> {
+        explicitApi()
+      }
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+      configure<KotlinProjectExtension> {
+        explicitApi()
+      }
     }
     // Unable to run dokka with single target multiplatform project and
     // kotlin 1.9.0
@@ -78,7 +81,6 @@ subprojects {
 //      }
 //    }
   }
-
   apply(plugin = "com.diffplug.spotless")
   configure<SpotlessExtension> {
     kotlin {
@@ -106,7 +108,7 @@ subprojects {
         | * See the License for the specific language governing permissions and
         | * limitations under the License.
         | */
-        """.trimMargin()
+        """.trimMargin(),
       )
     }
   }
@@ -120,16 +122,23 @@ subprojects {
     for (majorVersion in versionsToTest) {
       val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
         val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
-        javaLauncher.set(javaToolchains.launcherFor {
-          languageVersion.set(JavaLanguageVersion.of(majorVersion))
-          vendor.set(JvmVendorSpec.AZUL)
-        })
+        javaLauncher.set(
+          javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(majorVersion))
+            vendor.set(JvmVendorSpec.AZUL)
+          },
+        )
 
         description = "Runs the test suite on JDK $majorVersion"
         group = LifecycleBasePlugin.VERIFICATION_GROUP
 
         // Copy inputs from normal Test task.
-        val testTask = tasks.getByName<Test>("jvmTest")
+        val testTask =
+          if (pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+            tasks.getByName<Test>("jvmTest")
+          } else {
+            tasks.getByName<Test>("test")
+          }
         classpath = testTask.classpath
         testClassesDirs = testTask.testClassesDirs
 
@@ -148,6 +157,6 @@ apiValidation {
   nonPublicMarkers += "com.squareup.kotlinpoet.ExperimentalKotlinPoetApi"
   ignoredProjects += listOf(
     "interop", // Empty middle package
-    "test-processor" // Test only
+    "test-processor", // Test only
   )
 }

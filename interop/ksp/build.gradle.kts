@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+  kotlin("jvm")
+}
 
-project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
+tasks.jar {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.ksp")
   }
 }
 
-
-kotlin {
-  sourceSets {
-    val jvmMain by getting {
-      dependencies {
-        api(projects.kotlinpoet)
-        compileOnly(libs.ksp.api)
-      }
-    }
-    val jvmTest by getting {
-      dependencies {
-        implementation(libs.kotlin.junit)
-        implementation(libs.truth)
-      }
-    }
-  }
+dependencies {
+  api(projects.kotlinpoet)
+  compileOnly(libs.ksp.api)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
 }

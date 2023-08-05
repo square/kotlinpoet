@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+  kotlin("jvm")
+}
 
-project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
+tasks.jar {
   manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata")
   }
 }
 
-project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
+tasks.compileTestKotlin {
   compilerOptions {
     freeCompilerArgs.addAll(
       "-Xjvm-default=all",
@@ -30,25 +33,16 @@ project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTes
   }
 }
 
-kotlin {
-  sourceSets {
-    val jvmMain by getting {
-      dependencies {
-        implementation(libs.autoCommon)
-        implementation(libs.guava)
-        api(libs.kotlin.metadata)
-        api(projects.kotlinpoet)
-      }
-    }
-    val jvmTest by getting {
-      dependencies {
-        implementation(libs.kotlin.junit)
-        implementation(libs.truth)
-        implementation(libs.compileTesting)
-        implementation(libs.kotlinCompileTesting)
-        implementation(libs.kotlin.annotationProcessingEmbeddable)
-        implementation(libs.kotlin.compilerEmbeddable)
-      }
-    }
-  }
+dependencies {
+  implementation(libs.autoCommon)
+  implementation(libs.guava)
+  api(libs.kotlin.metadata)
+  api(projects.kotlinpoet)
+
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.compileTesting)
+  testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
+  testImplementation(libs.kotlin.compilerEmbeddable)
 }

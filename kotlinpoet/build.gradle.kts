@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
-  manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
-  }
-}
-
-project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
-  compilerOptions {
-    freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
-  }
+plugins {
+  kotlin("multiplatform")
 }
 
 spotless {
@@ -37,14 +29,17 @@ spotless {
     )
   }
 }
+
 kotlin {
+  jvm()
+
   sourceSets {
-    val jvmMain by getting {
+    val commonMain by getting {
       dependencies {
         implementation(libs.kotlin.reflect)
       }
     }
-    val jvmTest by getting {
+    val commonTest by getting {
       dependencies {
         implementation(libs.kotlin.junit)
         implementation(libs.truth)
@@ -59,3 +54,16 @@ kotlin {
     }
   }
 }
+
+project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
+  manifest {
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
+  }
+}
+
+project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
+  compilerOptions {
+    freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
+  }
+}
+
