@@ -36,6 +36,12 @@ class CodeBlockTest {
     assertThat(a.toString()).isEqualTo("delicious taco")
   }
 
+  @Test fun minusSignIsFormattedCorrectly() {
+    val i = -42
+    val s = CodeBlock.of("val i = %L", i)
+    assertThat(s.toString()).isEqualTo("val i = -42")
+  }
+
   @Test fun percentEscapeCannotBeIndexed() {
     assertThrows<IllegalArgumentException> {
       CodeBlock.builder().add("%1%", "taco").build()
