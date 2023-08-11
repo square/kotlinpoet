@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.util.Locale
 import kotlin.test.Test
 
 class CodeBlockTest {
@@ -626,5 +627,17 @@ class CodeBlockTest {
     assertThat(CodeBlock.of("%S", 10000.123f).toString()).isEqualTo("\"10000.123\"")
     assertThat(CodeBlock.of("%S", 10000.12345678901).toString()).isEqualTo("\"10000.12345678901\"")
     assertThat(CodeBlock.of("%S", 1281.toShort()).toString()).isEqualTo("\"1281\"")
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1657
+  @Test fun minusSignInSwedishLocale() {
+    val defaultLocale = Locale.getDefault()
+    Locale.setDefault(Locale.forLanguageTag("sv"))
+
+    val i = -42
+    val s = CodeBlock.of("val i = %L", i)
+    assertThat(s.toString()).isEqualTo("val i = -42")
+
+    Locale.setDefault(defaultLocale)
   }
 }

@@ -371,6 +371,7 @@ public class CodeBlock private constructor(
       val format = DecimalFormatSymbols().apply {
         decimalSeparator = '.'
         groupingSeparator = '_'
+        minusSign = '-'
       }
 
       val precision = if (o is Float || o is Double) o.toString().split(".").last().length else 0
