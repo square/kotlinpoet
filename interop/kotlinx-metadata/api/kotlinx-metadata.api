@@ -290,10 +290,6 @@ public abstract interface class com/squareup/kotlinpoet/metadata/specs/JvmModifi
 	public fun annotationSpec ()Lcom/squareup/kotlinpoet/AnnotationSpec;
 }
 
-public final class com/squareup/kotlinpoet/metadata/specs/JvmModifier$DefaultImpls {
-	public static fun annotationSpec (Lcom/squareup/kotlinpoet/metadata/specs/JvmModifier;)Lcom/squareup/kotlinpoet/AnnotationSpec;
-}
-
 public final class com/squareup/kotlinpoet/metadata/specs/KmTypesKt {
 	public static final fun isExtensionType (Lkotlinx/metadata/KmType;)Z
 }

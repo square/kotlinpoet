@@ -23,7 +23,6 @@ public interface ContextReceivable {
   public val contextReceiverTypes: List<TypeName>
 
   /** The builder analogue to [ContextReceivable] types. */
-  @JvmDefaultWithCompatibility
   public interface Builder<out T : Builder<T>> {
 
     /** Mutable map of the current originating elements this builder contains. */

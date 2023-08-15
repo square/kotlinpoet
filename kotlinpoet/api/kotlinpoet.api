@@ -155,10 +155,6 @@ public abstract interface class com/squareup/kotlinpoet/ContextReceivable {
 }
 
 public abstract interface class com/squareup/kotlinpoet/ContextReceivable$Builder {
-	public abstract fun getContextReceiverTypes ()Ljava/util/List;
-}
-
-public final class com/squareup/kotlinpoet/ContextReceivable$Builder$DefaultImpls {
 }
 
 public abstract interface annotation class com/squareup/kotlinpoet/DelicateKotlinPoetApi : java/lang/annotation/Annotation {
