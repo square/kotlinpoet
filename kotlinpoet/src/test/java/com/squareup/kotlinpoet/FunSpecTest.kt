@@ -740,7 +740,7 @@ class FunSpecTest {
 
   @Test fun thisConstructorDelegate() {
     val funSpec = FunSpec.constructorBuilder()
-      .addParameter("list", List::class.parameterizedBy(Int::class))
+      .addParameter("list", MutableList::class.parameterizedBy(Int::class))
       .callThisConstructor("list[0]", "list[1]")
       .build()
 
