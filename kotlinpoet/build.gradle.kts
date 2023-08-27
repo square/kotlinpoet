@@ -35,6 +35,13 @@ kotlin {
     withJava()
   }
 
+  // Check if the current running task is dokkaHtml
+  val isDokkaHtml = project.gradle.startParameter.taskNames.any { it.contains("dokkaHtml") }
+  if (isDokkaHtml) {
+    // TODO: Remove the phantom target after https://github.com/Kotlin/dokka/issues/3122
+    androidTarget()
+  }
+
   sourceSets {
     val commonMain by getting {
       dependencies {

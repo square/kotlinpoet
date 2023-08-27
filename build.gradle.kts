@@ -25,7 +25,7 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform) apply false
   alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
-//  alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.dokka) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.mavenPublish) apply false
   alias(libs.plugins.kotlinBinaryCompatibilityValidator)
@@ -56,7 +56,7 @@ subprojects {
   }
 
   if ("test" !in name && buildFile.exists()) {
-//    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
     pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
       configure<KotlinMultiplatformExtension> {
@@ -71,15 +71,15 @@ subprojects {
     // Unable to run dokka with single target multiplatform project and
     // kotlin 1.9.0
     // https://github.com/Kotlin/dokka/issues/3038
-//    afterEvaluate {
-//      tasks.named<DokkaTask>("dokkaHtml") {
-//        val projectFolder = project.path.trim(':').replace(':', '-')
-//        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
-//        dokkaSourceSets.configureEach {
-//          skipDeprecated.set(true)
-//        }
-//      }
-//    }
+    afterEvaluate {
+      tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
+        val projectFolder = project.path.trim(':').replace(':', '-')
+        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
+        dokkaSourceSets.configureEach {
+          skipDeprecated.set(true)
+        }
+      }
+    }
   }
   apply(plugin = "com.diffplug.spotless")
   configure<SpotlessExtension> {
