@@ -15,7 +15,7 @@
  */
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-//import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -68,11 +68,8 @@ subprojects {
         explicitApi()
       }
     }
-    // Unable to run dokka with single target multiplatform project and
-    // kotlin 1.9.0
-    // https://github.com/Kotlin/dokka/issues/3038
     afterEvaluate {
-      tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
+      tasks.named<DokkaTask>("dokkaHtml") {
         val projectFolder = project.path.trim(':').replace(':', '-')
         outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
         dokkaSourceSets.configureEach {
