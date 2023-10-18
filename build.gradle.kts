@@ -17,10 +17,12 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+  alias(libs.plugins.kotlin.multiplatform) apply false
   alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.dokka) apply false
@@ -53,12 +55,18 @@ subprojects {
     options.release.set(8)
   }
 
-  apply(plugin = "org.jetbrains.kotlin.jvm")
   if ("test" !in name && buildFile.exists()) {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.vanniktech.maven.publish")
-    configure<KotlinProjectExtension> {
-      explicitApi()
+    pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+      configure<KotlinMultiplatformExtension> {
+        explicitApi()
+      }
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+      configure<KotlinProjectExtension> {
+        explicitApi()
+      }
     }
     afterEvaluate {
       tasks.named<DokkaTask>("dokkaHtml") {
@@ -70,7 +78,6 @@ subprojects {
       }
     }
   }
-
   apply(plugin = "com.diffplug.spotless")
   configure<SpotlessExtension> {
     kotlin {
@@ -98,7 +105,7 @@ subprojects {
         | * See the License for the specific language governing permissions and
         | * limitations under the License.
         | */
-        """.trimMargin()
+        """.trimMargin(),
       )
     }
   }
@@ -106,32 +113,44 @@ subprojects {
   // Only enable the extra toolchain tests on CI. Otherwise local development is broken on Apple Silicon macs
   // because there are no matching toolchains for several older JDK versions.
   if ("CI" in System.getenv()) {
-    // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
-    // Create a test task for each supported JDK. We check every "LTS" + current version.
-    val versionsToTest = listOf(8, 11, 17, 19)
-    for (majorVersion in versionsToTest) {
-      val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
-        val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
-        javaLauncher.set(javaToolchains.launcherFor {
-          languageVersion.set(JavaLanguageVersion.of(majorVersion))
-          vendor.set(JvmVendorSpec.AZUL)
-        })
+    fun Project.setupCheckTask(testTaskName: String) {
+      // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
+      // Create a test task for each supported JDK. We check every "LTS" + current version.
+      val versionsToTest = listOf(8, 11, 17, 19)
+      for (majorVersion in versionsToTest) {
+        val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
+          val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
+          javaLauncher.set(
+            javaToolchains.launcherFor {
+              languageVersion.set(JavaLanguageVersion.of(majorVersion))
+              vendor.set(JvmVendorSpec.AZUL)
+            },
+          )
 
-        description = "Runs the test suite on JDK $majorVersion"
-        group = LifecycleBasePlugin.VERIFICATION_GROUP
+          description = "Runs the test suite on JDK $majorVersion"
+          group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-        // Copy inputs from normal Test task.
-        val testTask = tasks.getByName<Test>("test")
-        classpath = testTask.classpath
-        testClassesDirs = testTask.testClassesDirs
+          // Copy inputs from normal Test task.
+          val testTask =
+            tasks.getByName<Test>(testTaskName)
 
-        testLogging {
-          exceptionFormat = TestExceptionFormat.FULL
+          classpath = testTask.classpath
+          testClassesDirs = testTask.testClassesDirs
+
+          testLogging {
+            exceptionFormat = TestExceptionFormat.FULL
+          }
+        }
+        tasks.named("check").configure {
+          dependsOn(jdkTest)
         }
       }
-      tasks.named("check").configure {
-        dependsOn(jdkTest)
-      }
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+      setupCheckTask("jvmTest")
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+      setupCheckTask("test")
     }
   }
 }
@@ -140,6 +159,6 @@ apiValidation {
   nonPublicMarkers += "com.squareup.kotlinpoet.ExperimentalKotlinPoetApi"
   ignoredProjects += listOf(
     "interop", // Empty middle package
-    "test-processor" // Test only
+    "test-processor", // Test only
   )
 }

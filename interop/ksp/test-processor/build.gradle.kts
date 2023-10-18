@@ -15,6 +15,7 @@
  */
 plugins {
   id("com.google.devtools.ksp")
+  kotlin("jvm")
 }
 
 tasks.compileTestKotlin {
