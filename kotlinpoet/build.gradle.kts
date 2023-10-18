@@ -64,7 +64,7 @@ kotlin {
   }
 }
 
-project.tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
+tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
   manifest {
     attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet")
   }
