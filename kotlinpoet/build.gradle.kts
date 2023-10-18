@@ -70,7 +70,7 @@ tasks.withType(org.gradle.jvm.tasks.Jar::class.java) {
   }
 }
 
-project.tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJvm") {
   compilerOptions {
     freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
