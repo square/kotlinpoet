@@ -69,37 +69,37 @@ class FileWritingTest {
 
   @Test fun pathDefaultPackage() {
     val type = TypeSpec.classBuilder("Test").build()
-    FileSpec.get("", type).writeTo(fsRoot)
+    val testPath = FileSpec.get("", type).writeTo(fsRoot)
 
-    val testPath = fsRoot.resolve("Test.kt")
+    assertThat(testPath).isEqualTo(fsRoot.resolve("Test.kt"))
     assertThat(Files.exists(testPath)).isTrue()
   }
 
   @Test fun pathDefaultPackageWithSubdirectory() {
     val type = TypeSpec.classBuilder("Test").build()
-    FileSpec.get("", type).writeTo(fsRoot.resolve("sub"))
+    val testPath = FileSpec.get("", type).writeTo(fsRoot.resolve("sub"))
 
-    val testPath = fsRoot.resolve("sub/Test.kt")
+    assertThat(testPath).isEqualTo(fsRoot.resolve("sub/Test.kt"))
     assertThat(Files.exists(testPath)).isTrue()
   }
 
   @Test fun fileDefaultPackage() {
     val type = TypeSpec.classBuilder("Test").build()
-    FileSpec.get("", type).writeTo(tmp.root)
+    val testFile = FileSpec.get("", type).writeTo(tmp.root)
 
-    val testFile = File(tmp.root, "Test.kt")
+    assertThat(testFile).isEqualTo(File(tmp.root, "Test.kt"))
     assertThat(testFile.exists()).isTrue()
   }
 
   @Test fun pathNestedClasses() {
     val type = TypeSpec.classBuilder("Test").build()
-    FileSpec.get("foo", type).writeTo(fsRoot)
-    FileSpec.get("foo.bar", type).writeTo(fsRoot)
-    FileSpec.get("foo.bar.baz", type).writeTo(fsRoot)
+    val fooPath = FileSpec.get("foo", type).writeTo(fsRoot)
+    val barPath = FileSpec.get("foo.bar", type).writeTo(fsRoot)
+    val bazPath = FileSpec.get("foo.bar.baz", type).writeTo(fsRoot)
 
-    val fooPath = fsRoot.resolve(fs.getPath("foo", "Test.kt"))
-    val barPath = fsRoot.resolve(fs.getPath("foo", "bar", "Test.kt"))
-    val bazPath = fsRoot.resolve(fs.getPath("foo", "bar", "baz", "Test.kt"))
+    assertThat(fooPath).isEqualTo(fsRoot.resolve(fs.getPath("foo", "Test.kt")))
+    assertThat(barPath).isEqualTo(fsRoot.resolve(fs.getPath("foo", "bar", "Test.kt")))
+    assertThat(bazPath).isEqualTo(fsRoot.resolve(fs.getPath("foo", "bar", "baz", "Test.kt")))
     assertThat(Files.exists(fooPath)).isTrue()
     assertThat(Files.exists(barPath)).isTrue()
     assertThat(Files.exists(bazPath)).isTrue()
@@ -107,16 +107,16 @@ class FileWritingTest {
 
   @Test fun fileNestedClasses() {
     val type = TypeSpec.classBuilder("Test").build()
-    FileSpec.get("foo", type).writeTo(tmp.root)
-    FileSpec.get("foo.bar", type).writeTo(tmp.root)
-    FileSpec.get("foo.bar.baz", type).writeTo(tmp.root)
+    val fooFile = FileSpec.get("foo", type).writeTo(tmp.root)
+    val barFile = FileSpec.get("foo.bar", type).writeTo(tmp.root)
+    val bazFile = FileSpec.get("foo.bar.baz", type).writeTo(tmp.root)
 
     val fooDir = File(tmp.root, "foo")
-    val fooFile = File(fooDir, "Test.kt")
+    assertThat(fooFile).isEqualTo(File(fooDir, "Test.kt"))
     val barDir = File(fooDir, "bar")
-    val barFile = File(barDir, "Test.kt")
+    assertThat(barFile).isEqualTo(File(barDir, "Test.kt"))
     val bazDir = File(barDir, "baz")
-    val bazFile = File(bazDir, "Test.kt")
+    assertThat(bazFile).isEqualTo(File(bazDir, "Test.kt"))
     assertThat(fooFile.exists()).isTrue()
     assertThat(barFile.exists()).isTrue()
     assertThat(bazFile.exists()).isTrue()
