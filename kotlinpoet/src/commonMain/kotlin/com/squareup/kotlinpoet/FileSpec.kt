@@ -20,10 +20,8 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStreamWriter
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.file.Files
 import java.nio.file.Path
 import javax.annotation.processing.Filer
 import javax.tools.JavaFileObject
@@ -31,6 +29,10 @@ import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
 import javax.tools.StandardLocation
 import kotlin.DeprecationLevel.HIDDEN
+import kotlin.io.path.createDirectories
+import kotlin.io.path.isDirectory
+import kotlin.io.path.notExists
+import kotlin.io.path.outputStream
 import kotlin.reflect.KClass
 
 /**
@@ -60,6 +62,20 @@ public class FileSpec private constructor(
   private val indent = builder.indent
   private val extension = if (isScript) "kts" else "kt"
 
+  /**
+   * The relative path of the file which would be produced by a call to [writeTo].
+   * This value always uses unix-style path separators (`/`).
+   */
+  public val relativePath: String = buildString {
+    for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
+      append(packageComponent)
+      append('/')
+    }
+    append(name)
+    append('.')
+    append(extension)
+  }
+
   @Throws(IOException::class)
   public fun writeTo(out: Appendable) {
     val codeWriter = CodeWriter.withCollectedImports(
@@ -84,20 +100,12 @@ public class FileSpec private constructor(
    */
   @Throws(IOException::class)
   public fun writeTo(directory: Path): Path {
-    require(Files.notExists(directory) || Files.isDirectory(directory)) {
+    require(directory.notExists() || directory.isDirectory()) {
       "path $directory exists but is not a directory."
     }
-    var outputDirectory = directory
-    if (packageName.isNotEmpty()) {
-      for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
-        outputDirectory = outputDirectory.resolve(packageComponent)
-      }
-    }
-
-    Files.createDirectories(outputDirectory)
-
-    val outputPath = outputDirectory.resolve("$name.$extension")
-    OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
+    val outputPath = directory.resolve(relativePath)
+    outputPath.parent.createDirectories()
+    outputPath.outputStream().bufferedWriter().use(::writeTo)
     return outputPath
   }
 
@@ -211,13 +219,7 @@ public class FileSpec private constructor(
   override fun toString(): String = buildString { writeTo(this) }
 
   public fun toJavaFileObject(): JavaFileObject {
-    val uri = URI.create(
-      if (packageName.isEmpty()) {
-        name
-      } else {
-        packageName.replace('.', '/') + '/' + name
-      } + ".$extension",
-    )
+    val uri = URI.create(relativePath)
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
       override fun getCharContent(ignoreEncodingErrors: Boolean): String {

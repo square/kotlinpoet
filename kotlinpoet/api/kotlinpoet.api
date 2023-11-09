@@ -195,6 +195,7 @@ public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/An
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getRelativePath ()Ljava/lang/String;
 	public fun getTags ()Ljava/util/Map;
 	public fun hashCode ()I
 	public final fun isScript ()Z
