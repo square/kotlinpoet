@@ -181,7 +181,7 @@ public final class com/squareup/kotlinpoet/Dynamic : com/squareup/kotlinpoet/Typ
 public abstract interface annotation class com/squareup/kotlinpoet/ExperimentalKotlinPoetApi : java/lang/annotation/Annotation {
 }
 
-public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/Taggable {
+public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/Taggable, com/squareup/kotlinpoet/TypeSpecHolder {
 	public static final field Companion Lcom/squareup/kotlinpoet/FileSpec$Companion;
 	public static final fun builder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public static final fun builder (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
@@ -196,6 +196,7 @@ public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/An
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPackageName ()Ljava/lang/String;
 	public fun getTags ()Ljava/util/Map;
+	public fun getTypeSpecs ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isScript ()Z
 	public static final fun scriptBuilder (Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
@@ -213,7 +214,7 @@ public final class com/squareup/kotlinpoet/FileSpec : com/squareup/kotlinpoet/An
 	public final fun writeTo (Ljavax/annotation/processing/Filer;)V
 }
 
-public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotlinpoet/Annotatable$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotlinpoet/Annotatable$Builder, com/squareup/kotlinpoet/Taggable$Builder, com/squareup/kotlinpoet/TypeSpecHolder$Builder {
 	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addAliasedImport (Lcom/squareup/kotlinpoet/MemberName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
@@ -251,8 +252,11 @@ public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotli
 	public final fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addProperty (Lcom/squareup/kotlinpoet/PropertySpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
-	public final fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public synthetic fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 	public final fun addTypeAlias (Lcom/squareup/kotlinpoet/TypeAliasSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public synthetic fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 	public final fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun build ()Lcom/squareup/kotlinpoet/FileSpec;
 	public final fun clearBody ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
@@ -925,7 +929,7 @@ public final class com/squareup/kotlinpoet/TypeNames {
 	public static final fun get (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ClassName;
 }
 
-public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/ContextReceivable, com/squareup/kotlinpoet/Documentable, com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable {
+public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/ContextReceivable, com/squareup/kotlinpoet/Documentable, com/squareup/kotlinpoet/OriginatingElementsHolder, com/squareup/kotlinpoet/Taggable, com/squareup/kotlinpoet/TypeSpecHolder {
 	public static final field Companion Lcom/squareup/kotlinpoet/TypeSpec$Companion;
 	public static final fun annotationBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public static final fun annotationBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
@@ -959,7 +963,7 @@ public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/An
 	public final fun getSuperclassConstructorParameters ()Ljava/util/List;
 	public final fun getSuperinterfaces ()Ljava/util/Map;
 	public fun getTags ()Ljava/util/Map;
-	public final fun getTypeSpecs ()Ljava/util/List;
+	public fun getTypeSpecs ()Ljava/util/List;
 	public final fun getTypeVariables ()Ljava/util/List;
 	public fun hashCode ()I
 	public static final fun interfaceBuilder (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
@@ -981,7 +985,7 @@ public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/An
 	public static final fun valueClassBuilder (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 }
 
-public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotlinpoet/Annotatable$Builder, com/squareup/kotlinpoet/ContextReceivable$Builder, com/squareup/kotlinpoet/Documentable$Builder, com/squareup/kotlinpoet/OriginatingElementsHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotlinpoet/Annotatable$Builder, com/squareup/kotlinpoet/ContextReceivable$Builder, com/squareup/kotlinpoet/Documentable$Builder, com/squareup/kotlinpoet/OriginatingElementsHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder, com/squareup/kotlinpoet/TypeSpecHolder$Builder {
 	public synthetic fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/Annotatable$Builder;
 	public fun addAnnotation (Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public synthetic fun addAnnotation (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/Annotatable$Builder;
@@ -1023,10 +1027,12 @@ public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotli
 	public static synthetic fun addSuperinterface$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Ljava/lang/reflect/Type;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public static synthetic fun addSuperinterface$default (Lcom/squareup/kotlinpoet/TypeSpec$Builder;Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public final fun addSuperinterfaces (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
-	public final fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public synthetic fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
-	public final fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
+	public synthetic fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 	public final fun build ()Lcom/squareup/kotlinpoet/TypeSpec;
 	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public final fun getAnnotationSpecs ()Ljava/util/List;
@@ -1079,6 +1085,15 @@ public final class com/squareup/kotlinpoet/TypeSpec$Kind : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/squareup/kotlinpoet/TypeSpec$Kind;
 	public static fun values ()[Lcom/squareup/kotlinpoet/TypeSpec$Kind;
+}
+
+public abstract interface class com/squareup/kotlinpoet/TypeSpecHolder {
+	public abstract fun getTypeSpecs ()Ljava/util/List;
+}
+
+public abstract interface class com/squareup/kotlinpoet/TypeSpecHolder$Builder {
+	public abstract fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
+	public fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 }
 
 public final class com/squareup/kotlinpoet/TypeVariableName : com/squareup/kotlinpoet/TypeName {

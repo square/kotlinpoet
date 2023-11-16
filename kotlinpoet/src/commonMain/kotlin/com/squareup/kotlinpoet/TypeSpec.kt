@@ -47,7 +47,8 @@ public class TypeSpec private constructor(
   OriginatingElementsHolder by delegateOriginatingElements,
   ContextReceivable by contextReceivers,
   Annotatable,
-  Documentable {
+  Documentable,
+  TypeSpecHolder {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
@@ -76,7 +77,7 @@ public class TypeSpec private constructor(
   public val initializerBlock: CodeBlock = builder.initializerBlock.build()
   public val initializerIndex: Int = builder.initializerIndex
   public val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
-  public val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
+  public override val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
   @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
@@ -475,7 +476,8 @@ public class TypeSpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    TypeSpecHolder.Builder<Builder> {
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
@@ -725,11 +727,7 @@ public class TypeSpec private constructor(
       funSpecs += funSpec
     }
 
-    public fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = apply {
-      this.typeSpecs += typeSpecs
-    }
-
-    public fun addType(typeSpec: TypeSpec): Builder = apply {
+    override fun addType(typeSpec: TypeSpec): Builder = apply {
       typeSpecs += typeSpec
     }
 
@@ -764,6 +762,9 @@ public class TypeSpec private constructor(
 
     @Suppress("RedundantOverride")
     override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+
+    @Suppress("RedundantOverride")
+    override fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = super.addTypes(typeSpecs)
     //endregion
 
     public fun build(): TypeSpec {
