@@ -49,8 +49,9 @@ import kotlin.reflect.KClass
 public class FileSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable {
+) : Taggable by tagMap, Annotatable, TypeSpecHolder {
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
+  override val typeSpecs: List<TypeSpec> = builder.members.filterIsInstance<TypeSpec>().toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
   public val packageName: String = builder.packageName
   public val name: String = builder.name
@@ -252,7 +253,7 @@ public class FileSpec private constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, TypeSpecHolder.Builder<Builder> {
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
@@ -297,13 +298,18 @@ public class FileSpec private constructor(
       comment.clear()
     }
 
-    public fun addType(typeSpec: TypeSpec): Builder = apply {
+    override fun addType(typeSpec: TypeSpec): Builder = apply {
       if (isScript) {
         body.add("%L", typeSpec)
       } else {
         members += typeSpec
       }
     }
+
+    //region Overrides for binary compatibility
+    @Suppress("RedundantOverride")
+    override fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = super.addTypes(typeSpecs)
+    //endregion
 
     public fun addFunction(funSpec: FunSpec): Builder = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
