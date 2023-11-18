@@ -5615,6 +5615,27 @@ class TypeSpecTest {
     )
   }
 
+  @Test fun classKdoc() {
+    val type = TypeSpec.classBuilder("MyClass")
+      .addKdoc("This is my class")
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .build(),
+      )
+      .build()
+
+    //language=kotlin
+    assertThat(type.toString()).isEqualTo(
+      """
+      /**
+       * This is my class
+       */
+      public class MyClass()
+
+      """.trimIndent(),
+    )
+  }
+
   // https://github.com/square/kotlinpoet/issues/1630
   @Test fun primaryConstructorKDoc() {
     val type = TypeSpec.classBuilder("MyClass")

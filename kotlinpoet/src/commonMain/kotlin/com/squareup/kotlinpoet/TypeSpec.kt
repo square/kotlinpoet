@@ -380,25 +380,24 @@ public class TypeSpec private constructor(
    * property/parameter, and the parameter's KDoc will be printed in the type header.
    */
   private fun kdocWithConstructorDocs(): CodeBlock {
-    if (primaryConstructor == null) {
-      return kdoc.ensureEndsWithNewLine()
-    }
-    val constructorProperties = constructorProperties()
-    val parametersWithKdoc = primaryConstructor.parameters.filter { parameter ->
-      val propertyKdoc = constructorProperties[parameter.name]?.kdoc ?: CodeBlock.EMPTY
-      return@filter parameter.kdoc.isNotEmpty() && propertyKdoc.isNotEmpty() &&
-        parameter.kdoc != propertyKdoc
-    }
-    return with(kdoc.ensureEndsWithNewLine().toBuilder()) {
-      if (kdoc.isNotEmpty()) add("\n")
-      if (primaryConstructor.kdoc.isNotEmpty()) {
-        add("@constructor %L", primaryConstructor.kdoc.ensureEndsWithNewLine())
+    val classKdoc = kdoc.ensureEndsWithNewLine()
+    val constructorKdoc = buildCodeBlock {
+      if (primaryConstructor != null) {
+        if (primaryConstructor.kdoc.isNotEmpty()) {
+          add("@constructor %L", primaryConstructor.kdoc.ensureEndsWithNewLine())
+        }
+        val constructorProperties = constructorProperties()
+        primaryConstructor.parameters.forEach { parameter ->
+          val propertyKdoc = constructorProperties[parameter.name]?.kdoc ?: CodeBlock.EMPTY
+          if (parameter.kdoc.isNotEmpty() && propertyKdoc.isNotEmpty() && parameter.kdoc != propertyKdoc) {
+            add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
+          }
+        }
       }
-      parametersWithKdoc.forEach { parameter ->
-        add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
-      }
-      build()
     }
+    return listOf(classKdoc, constructorKdoc)
+      .filter(CodeBlock::isNotEmpty)
+      .joinToCode(separator = "\n")
   }
 
   private val hasInitializer: Boolean get() = initializerIndex != -1 && initializerBlock.isNotEmpty()
