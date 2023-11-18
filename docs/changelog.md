@@ -3,6 +3,29 @@ Change Log
 
 ## Unreleased
 
+## Version 1.15.0
+
+_2023-11-18_
+
+Thanks to [@drawers][drawers], [@fejesjoco][fejesjoco], [@takahirom][takahirom],
+[@martinbonnin][martinbonnin], [@mcarleio][mcarleio] for contributing to this release.
+
+In this release the `:kotlinpoet` module has been converted to a Kotlin Multiplatform module
+(#1654), though for now it only supports the JVM target.
+
+ * New: Kotlin 1.9.20.
+ * New: KSP 1.9.20-1.0.14.
+ * New: Extract `TypeSpecHolder` interface for constructs that can hold a TypeSpec and their builders (#1723).
+ * New: Expose relative path from `FileSpec` (#1720).
+ * New: Return the generated path from `FileSpec.writeTo()`. (#1514).
+ * New: Remove default compatibility from unstable types (#1662).
+ * New: Deprecate `TypeSpec.expectClassBuilder()` and `TypeSpec.valueClassBuilder()` (#1589).
+ * New: Add option to convert `KSAnnotation` to `AnnotationSpec` while omitting default values (#1538).
+ * New: Add `FileSpec.builder` convenience for `MemberName` (#1585).
+ * Fix: Set `DecimalFormatSymbols.minusSign` for consistency across locales (#1658).
+ * Fix: Fix link to incremental KSP in KDoc (#1638).
+ * Fix: Emit primary constructor KDoc (#1637).
+
 ## Version 1.14.2
 
 _2023-05-30_
@@ -716,3 +739,6 @@ _2017-05-16_
  [Squiry]: https://github.com/Squiry
  [Omico]: https://github.com/Omico
  [RBusarow]: https://github.com/RBusarow
+ [fejesjoco]: https://github.com/fejesjoco
+ [takahirom]: https://github.com/takahirom
+ [mcarleio]: https://github.com/mcarleio
