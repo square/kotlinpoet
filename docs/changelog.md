@@ -3,6 +3,13 @@ Change Log
 
 ## Unreleased
 
+## Version 1.15.1
+
+_2023-11-19_
+
+ * Fix: Fix a regression introduced by #1637, where a superfluous newline is added to a type's KDoc
+ if it has a primary constructor with no docs (#1727).
+
 ## Version 1.15.0
 
 _2023-11-18_
