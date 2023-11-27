@@ -171,7 +171,14 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           )
           .addParameters(
             function.parameters.map { parameter ->
-              val parameterType = parameter.type.toValidatedTypeName(functionTypeParams).let {
+              // function references can't be obtained from a resolved KSType because it resolves to FunctionN<> which
+              // loses the necessary context, skip validation in these cases as we know they won't match.
+              val typeName = if (parameter.type.resolve().isFunctionType) {
+                parameter.type.toTypeName(functionTypeParams)
+              } else {
+                parameter.type.toValidatedTypeName(functionTypeParams)
+              }
+              val parameterType = typeName.let {
                 if (unwrapTypeAliases) {
                   it.unwrapTypeAlias()
                 } else {

@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet.ksp
 
+import com.google.devtools.ksp.symbol.KSCallableReference
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
@@ -27,6 +28,8 @@ import com.google.devtools.ksp.symbol.Variance.COVARIANT
 import com.google.devtools.ksp.symbol.Variance.INVARIANT
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.LambdaTypeName
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
@@ -179,5 +182,14 @@ public fun KSTypeArgument.toTypeName(
 public fun KSTypeReference.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
 ): TypeName {
-  return resolve().toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
+  return when (val elem = element) {
+    is KSCallableReference -> {
+      LambdaTypeName.get(
+        receiver = elem.receiverType?.toTypeName(typeParamResolver),
+        parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
+        returnType = elem.returnType.toTypeName(typeParamResolver),
+      )
+    }
+    else -> resolve().toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
+  }
 }
