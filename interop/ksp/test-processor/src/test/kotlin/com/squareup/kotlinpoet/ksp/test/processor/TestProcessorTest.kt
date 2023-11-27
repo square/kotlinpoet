@@ -129,7 +129,10 @@ class TestProcessorTest {
              suspend fun functionD(
                param1: () -> String,
                param2: (String) -> String,
-               param3: String.() -> String
+               param3: String.() -> String,
+               param4: Function0<String>,
+               param5: Function1<String, String>,
+               param6: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit,
              ) {
              }
 
@@ -188,6 +191,7 @@ class TestProcessorTest {
       import kotlin.Int
       import kotlin.IntArray
       import kotlin.String
+      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.collections.Map
       import kotlin.collections.MutableList
@@ -261,9 +265,37 @@ class TestProcessorTest {
         }
 
         public suspend fun functionD(
-          param1: Function0<String>,
-          param2: Function1<String, String>,
-          param3: Function1<String, String>,
+          param1: () -> String,
+          param2: (String) -> String,
+          param3: String.() -> String,
+          param4: Function0<String>,
+          param5: Function1<String, String>,
+          param6: (
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+          ) -> Unit,
         ) {
         }
 
