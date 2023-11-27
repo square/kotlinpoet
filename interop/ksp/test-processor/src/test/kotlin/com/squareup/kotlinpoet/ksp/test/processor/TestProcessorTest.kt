@@ -129,7 +129,9 @@ class TestProcessorTest {
              suspend fun functionD(
                param1: () -> String,
                param2: (String) -> String,
-               param3: String.() -> String
+               param3: String.() -> String,
+               param4: Function0<String>,
+               param5: Function1<String, String>
              ) {
              }
 
@@ -183,6 +185,8 @@ class TestProcessorTest {
       import kotlin.Boolean
       import kotlin.Enum
       import kotlin.Float
+      import kotlin.Function0
+      import kotlin.Function1
       import kotlin.Int
       import kotlin.IntArray
       import kotlin.String
@@ -262,6 +266,8 @@ class TestProcessorTest {
           param1: () -> String,
           param2: (String) -> String,
           param3: String.() -> String,
+          param4: Function0<String>,
+          param5: Function1<String, String>,
         ) {
         }
 
