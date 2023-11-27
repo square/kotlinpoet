@@ -131,7 +131,8 @@ class TestProcessorTest {
                param2: (String) -> String,
                param3: String.() -> String,
                param4: Function0<String>,
-               param5: Function1<String, String>
+               param5: Function1<String, String>,
+               param6: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit,
              ) {
              }
 
@@ -190,6 +191,7 @@ class TestProcessorTest {
       import kotlin.Int
       import kotlin.IntArray
       import kotlin.String
+      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.collections.Map
       import kotlin.collections.MutableList
@@ -268,6 +270,32 @@ class TestProcessorTest {
           param3: String.() -> String,
           param4: Function0<String>,
           param5: Function1<String, String>,
+          param6: (
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+            Int,
+          ) -> Unit,
         ) {
         }
 
