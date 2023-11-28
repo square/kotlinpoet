@@ -32,6 +32,8 @@ In this release the `:kotlinpoet` module has been converted to a Kotlin Multipla
  * Fix: Set `DecimalFormatSymbols.minusSign` for consistency across locales (#1658).
  * Fix: Fix link to incremental KSP in KDoc (#1638).
  * Fix: Emit primary constructor KDoc (#1637).
+ * Change: kotlinx-metadata 0.7.0. This is a breaking change for users of the `:kotlinpoet-metadata`
+   module, as most `Flags`-API extensions have been removed in favor of the now-available first-party versions.
 
 ## Version 1.14.2
 
