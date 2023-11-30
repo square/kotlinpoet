@@ -3,6 +3,16 @@ Change Log
 
 ## Unreleased
 
+## Version 1.15.2
+
+Thanks to [@evant][evant] for contributing to this release.
+
+_2023-11-30_
+
+ * New: Kotlin 1.9.21.
+ * New: KSP 1.9.21-1.0.15.
+ * New: KSP: more accurately represent function types (#1742).
+
 ## Version 1.15.1
 
 _2023-11-19_
