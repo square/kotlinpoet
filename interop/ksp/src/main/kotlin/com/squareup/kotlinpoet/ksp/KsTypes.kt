@@ -188,7 +188,7 @@ public fun KSTypeReference.toTypeName(
         receiver = elem.receiverType?.toTypeName(typeParamResolver),
         parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
         returnType = elem.returnType.toTypeName(typeParamResolver),
-      )
+      ).copy(nullable = resolve().isMarkedNullable)
     }
     else -> resolve().toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
   }
