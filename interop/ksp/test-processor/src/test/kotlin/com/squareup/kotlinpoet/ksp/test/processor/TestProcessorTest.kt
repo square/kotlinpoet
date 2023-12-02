@@ -133,6 +133,7 @@ class TestProcessorTest {
                param4: Function0<String>,
                param5: Function1<String, String>,
                param6: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit,
+               param7: ((String) -> String)?,
              ) {
              }
 
@@ -296,6 +297,7 @@ class TestProcessorTest {
             Int,
             Int,
           ) -> Unit,
+          param7: ((String) -> String)?,
         ) {
         }
 
