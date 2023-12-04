@@ -3,6 +3,14 @@ Change Log
 
 ## Unreleased
 
+## Version 1.15.3
+
+Thanks to [@gabrielittner][gabrielittner] for contributing to this release.
+
+_2023-12-04_
+
+ * Fix: Fix nullability of lambdas in `KSTypeReference.toTypeName` (#1756).
+
 ## Version 1.15.2
 
 Thanks to [@evant][evant] for contributing to this release.
@@ -761,3 +769,4 @@ _2017-05-16_
  [fejesjoco]: https://github.com/fejesjoco
  [takahirom]: https://github.com/takahirom
  [mcarleio]: https://github.com/mcarleio
+ [gabrielittner]: https://github.com/gabrielittner
