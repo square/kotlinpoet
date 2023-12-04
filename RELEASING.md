@@ -10,4 +10,6 @@ Releasing
  7. `git push && git push --tags`.
 
 This will trigger a GitHub Action workflow which will create a GitHub release and upload the
-release artifacts to Maven Central.
+release artifacts to [Maven Central][maven-central].
+
+ [maven-central]: https://repo.maven.apache.org/maven2/com/squareup/kotlinpoet/
