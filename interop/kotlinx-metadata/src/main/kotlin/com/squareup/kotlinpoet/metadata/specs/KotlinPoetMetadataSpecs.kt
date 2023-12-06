@@ -33,13 +33,11 @@ import com.squareup.kotlinpoet.KModifier.CROSSINLINE
 import com.squareup.kotlinpoet.KModifier.DATA
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.FINAL
 import com.squareup.kotlinpoet.KModifier.INFIX
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.LATEINIT
 import com.squareup.kotlinpoet.KModifier.NOINLINE
-import com.squareup.kotlinpoet.KModifier.OPEN
 import com.squareup.kotlinpoet.KModifier.OPERATOR
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -93,7 +91,6 @@ import kotlinx.metadata.Modality
 import kotlinx.metadata.Visibility
 import kotlinx.metadata.declaresDefaultValue
 import kotlinx.metadata.hasAnnotations
-import kotlinx.metadata.hasSetter
 import kotlinx.metadata.isConst
 import kotlinx.metadata.isCrossinline
 import kotlinx.metadata.isData
@@ -113,6 +110,7 @@ import kotlinx.metadata.isTailrec
 import kotlinx.metadata.isValue
 import kotlinx.metadata.isVar
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
@@ -121,45 +119,69 @@ import kotlinx.metadata.kind
 import kotlinx.metadata.modality
 import kotlinx.metadata.visibility
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = java.toTypeSpec(classInspector)
+): TypeSpec = java.toTypeSpec(lenient, classInspector)
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [TypeSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [TypeElement].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = java.toFileSpec(classInspector)
+): FileSpec = java.toFileSpec(lenient, classInspector)
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun Class<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(lenient, classInspector))
 
-/** @return a [FileSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [TypeElement].
+ */
 @KotlinPoetMetadataPreview
 public fun TypeElement.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(
   packageName = packageName,
-  typeSpec = toTypeSpec(classInspector),
+  typeSpec = toTypeSpec(lenient, classInspector),
 )
 
 /** @return a [TypeSpec] ABI representation of this [KmClass]. */
