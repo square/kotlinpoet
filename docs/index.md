@@ -1537,7 +1537,7 @@ Download [the latest .jar][dl] or depend via Maven:
 ```xml
 <dependency>
   <groupId>com.squareup</groupId>
-  <artifactId>kotlinpoet</artifactId>
+  <artifactId>kotlinpoet-jvm</artifactId>
   <version>[version]</version>
 </dependency>
 ```
@@ -1569,7 +1569,7 @@ License
     limitations under the License.
 
 
- [dl]: https://search.maven.org/remote_content?g=com.squareup&a=kotlinpoet&v=LATEST
+ [dl]: https://search.maven.org/remote_content?g=com.squareup&a=kotlinpoet-jvm&v=LATEST
  [version-shield]: https://img.shields.io/maven-central/v/com.squareup/kotlinpoet
  [snap]: https://s01.oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
  [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/
