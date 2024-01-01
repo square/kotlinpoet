@@ -37,8 +37,8 @@ jobs:
         run: ./gradlew build
 
       - name: File system check
-        if: matrix.os != 'ubuntu-latest
-        run: ./gradlew :kotlinpoet:allTests
+        if: "matrix.os != 'ubuntu-latest'"
+        run: ./gradlew :kotlinpoet:check
 
   build-docs:
     runs-on: ubuntu-latest
