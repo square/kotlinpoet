@@ -19,9 +19,6 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - windows-latest
-        include:
-          - os: ubuntu-latest
-            full-build: true
 
     runs-on: ${{ matrix.os }}
 
@@ -36,11 +33,11 @@ jobs:
           java-version: 19
 
       - name: Full build
-        if: matrix.full-build
+        if: matrix.os == 'ubuntu-latest'
         run: ./gradlew build
 
       - name: File system check
-        if: "!matrix.full-build"
+        if: matrix.os != 'ubuntu-latest
         run: ./gradlew :kotlinpoet:allTests
 
   build-docs:
