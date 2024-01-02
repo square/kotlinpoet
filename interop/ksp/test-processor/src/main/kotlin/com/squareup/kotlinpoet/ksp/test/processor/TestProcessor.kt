@@ -173,7 +173,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             function.parameters.map { parameter ->
               // Function references can't be obtained from a resolved KSType because it resolves to FunctionN<> which
               // loses the necessary context, skip validation in these cases as we know they won't match.
-              val typeName = if (parameter.type.resolve().isFunctionType) {
+              val typeName = if (parameter.type.resolve().run { isFunctionType || isSuspendFunctionType }) {
                 parameter.type.toTypeName(functionTypeParams)
               } else {
                 parameter.type.toValidatedTypeName(functionTypeParams)

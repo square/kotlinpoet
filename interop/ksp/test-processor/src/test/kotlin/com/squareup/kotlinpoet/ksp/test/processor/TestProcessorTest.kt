@@ -134,6 +134,7 @@ class TestProcessorTest {
                param5: Function1<String, String>,
                param6: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit,
                param7: ((String) -> String)?,
+               param8: suspend () -> String,
              ) {
              }
 
@@ -298,6 +299,7 @@ class TestProcessorTest {
             Int,
           ) -> Unit,
           param7: ((String) -> String)?,
+          param8: suspend () -> String,
         ) {
         }
 
