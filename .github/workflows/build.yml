@@ -32,8 +32,13 @@ jobs:
           distribution: 'zulu'
           java-version: 19
 
-      - name: Test
+      - name: Full build
+        if: matrix.os == 'ubuntu-latest'
         run: ./gradlew build
+
+      - name: KotlinPoet check
+        if: "matrix.os != 'ubuntu-latest'"
+        run: ./gradlew :kotlinpoet:check
 
   build-docs:
     runs-on: ubuntu-latest
