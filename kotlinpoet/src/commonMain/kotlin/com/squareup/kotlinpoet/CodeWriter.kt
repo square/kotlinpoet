@@ -445,8 +445,8 @@ internal class CodeWriter constructor(
       return className.canonicalName
     }
 
-    // If the class is in the same package, we're done.
-    if (packageName == className.packageName) {
+    // If the class is in the same package and there's no import alias for that class, we're done.
+    if (packageName == className.packageName && imports[className.canonicalName]?.alias == null) {
       referencedNames.add(className.topLevelClassName().simpleName)
       return className.simpleNames.joinToString(".")
     }
@@ -722,11 +722,11 @@ internal class CodeWriter constructor(
       importsCollector.close()
 
       return CodeWriter(
-        out,
-        indent,
-        memberImports + generatedImports.filterKeys { it !in memberImports },
-        suggestedTypeImports,
-        suggestedMemberImports,
+        out = out,
+        indent = indent,
+        imports = memberImports + generatedImports.filterKeys { it !in memberImports },
+        importedTypes = suggestedTypeImports,
+        importedMembers = suggestedMemberImports,
       )
     }
 

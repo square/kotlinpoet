@@ -500,6 +500,37 @@ class FileSpecTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1696
+  @Test fun aliasedImportInSamePackage() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "StringKey")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "S")
+      .addType(
+        TypeSpec
+          .objectBuilder("K")
+          .addProperty(
+            PropertySpec.builder("test", className)
+              .initializer("%T(%L)", className, 0)
+              .build(),
+          )
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.StringKey as S
+      |
+      |public object K {
+      |  public val test: S = S(0)
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
       .addType(
