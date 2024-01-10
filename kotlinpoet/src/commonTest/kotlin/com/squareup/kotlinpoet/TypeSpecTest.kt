@@ -1975,14 +1975,12 @@ class TypeSpecTest {
         | * [random][java.util.Random] tex-mex stuff we could find in the pantry
         | * and some [kotlin.String] cheese.
         | *
+        | * @param temperature Taco temperature. Can be as cold as the famous ice tacos from
+        | * the Andes, or hot with lava-like cheese from the depths of
+        | * the Ninth Circle.
         | * @param mild Whether the taco is mild (ew) or crunchy (ye).
         | */
         |public class Taco(
-        |  /**
-        |   * Taco temperature. Can be as cold as the famous ice tacos from
-        |   * the Andes, or hot with lava-like cheese from the depths of
-        |   * the Ninth Circle.
-        |   */
         |  temperature: Double,
         |  /**
         |   * True for a soft flour tortilla; false for a crunchy corn tortilla.
@@ -4805,6 +4803,9 @@ class TypeSpecTest {
       | * This is a thing for stuff.
       | *
       | * @constructor Construct a thing!
+      | * @param first the first thing
+      | * @param second the second thing
+      | * @param third the third thing
       | */
       |public class MyType(
       |  /**
@@ -4839,10 +4840,10 @@ class TypeSpecTest {
       .build()
     assertThat(typeSpec.toString()).isEqualTo(
       """
+      |/**
+      | * @param first the first thing
+      | */
       |public class MyType(
-      |  /**
-      |   * the first thing
-      |   */
       |  first: kotlin.Int,
       |)
       |

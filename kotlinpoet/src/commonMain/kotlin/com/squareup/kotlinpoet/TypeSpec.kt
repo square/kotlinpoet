@@ -209,7 +209,7 @@ public class TypeSpec private constructor(
               )
               param.emitDefaultValue(codeWriter)
             } else {
-              param.emit(codeWriter, emitKdoc = true, inlineAnnotations = false)
+              param.emit(codeWriter, inlineAnnotations = false)
             }
           }
 
@@ -374,10 +374,7 @@ public class TypeSpec private constructor(
   /**
    * Returns KDoc comments including those of the primary constructor and its parameters.
    *
-   * If the primary constructor parameter is not mapped to a property, or if the property doesn't
-   * have its own KDoc - the parameter's KDoc will be attached to the parameter. Otherwise, if both
-   * the parameter and the property have KDoc - the property's KDoc will be attached to the
-   * property/parameter, and the parameter's KDoc will be printed in the type header.
+   * Parameters' KDocs, if present, will always be printed in the type header.
    */
   private fun kdocWithConstructorDocs(): CodeBlock {
     val classKdoc = kdoc.ensureEndsWithNewLine()
@@ -386,10 +383,8 @@ public class TypeSpec private constructor(
         if (primaryConstructor.kdoc.isNotEmpty()) {
           add("@constructor %L", primaryConstructor.kdoc.ensureEndsWithNewLine())
         }
-        val constructorProperties = constructorProperties()
         primaryConstructor.parameters.forEach { parameter ->
-          val propertyKdoc = constructorProperties[parameter.name]?.kdoc ?: CodeBlock.EMPTY
-          if (parameter.kdoc.isNotEmpty() && propertyKdoc.isNotEmpty() && parameter.kdoc != propertyKdoc) {
+          if (parameter.kdoc.isNotEmpty()) {
             add("@param %L %L", parameter.name, parameter.kdoc.ensureEndsWithNewLine())
           }
         }
