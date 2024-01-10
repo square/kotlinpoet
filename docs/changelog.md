@@ -36,7 +36,9 @@ Thanks to [@drawers][drawers], [@fejesjoco][fejesjoco], [@takahirom][takahirom],
 [@martinbonnin][martinbonnin], [@mcarleio][mcarleio] for contributing to this release.
 
 In this release the `:kotlinpoet` module has been converted to a Kotlin Multiplatform module
-(#1654), though for now it only supports the JVM target.
+(#1654), though for now it only supports the JVM target. **Important**: unless you're building
+with Gradle, you will now need to depend on the `kotlinpoet-jvm` artifact, instead of `kotlinpoet` -
+see [Downloads](index.md#download) for instructions.
 
  * New: Kotlin 1.9.20.
  * New: KSP 1.9.20-1.0.14.
