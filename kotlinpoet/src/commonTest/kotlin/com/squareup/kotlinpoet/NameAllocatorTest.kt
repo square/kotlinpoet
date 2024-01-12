@@ -70,6 +70,12 @@ class NameAllocatorTest {
     assertThat(nameAllocator[1]).isEqualTo("when_")
   }
 
+  @Test fun kotlinKeywordNotPreAllocated() {
+    val nameAllocator = NameAllocator(preAllocateKeywords = false)
+    assertThat(nameAllocator.newName("when", 1)).isEqualTo("when")
+    assertThat(nameAllocator[1]).isEqualTo("when")
+  }
+
   @Test fun tagReuseForbidden() {
     val nameAllocator = NameAllocator()
     nameAllocator.newName("foo", 1)

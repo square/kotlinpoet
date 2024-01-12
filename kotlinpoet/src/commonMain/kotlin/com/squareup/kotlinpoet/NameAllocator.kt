@@ -77,7 +77,39 @@ public class NameAllocator private constructor(
   private val allocatedNames: MutableSet<String>,
   private val tagToName: MutableMap<Any, String>,
 ) {
-  public constructor() : this(mutableSetOf(), mutableMapOf())
+  public constructor() : this(preAllocateKeywords = true)
+
+  /**
+   * @param preAllocateKeywords If true, all Kotlin keywords will be pre-allocated and suffixed with
+   * underscores to avoid using them as identifiers:
+   *
+   * ```kotlin
+   * val nameAllocator = NameAllocator(preAllocateKeywords = true)
+   * println(nameAllocator.newName("when")) // prints "when_"
+   * ```
+   *
+   * If false, keywords will not get any special treatment:
+   *
+   * ```kotlin
+   * val nameAllocator = NameAllocator(preAllocateKeywords = false)
+   * println(nameAllocator.newName("when")) // prints "when"
+   * ```
+   *
+   * Note that you can use the `%N` placeholder when emitting a name produced by [NameAllocator] to
+   * ensure it's properly escaped for use as an identifier:
+   *
+   * ```kotlin
+   * val nameAllocator = NameAllocator(preAllocateKeywords = false)
+   * println(CodeBlock.of("%N", nameAllocator.newName("when"))) // prints "`when`"
+   * ```
+   *
+   * The default behaviour of [NameAllocator] is to pre-allocate keywords - this is the behaviour you'll
+   * get when using the no-arg constructor.
+   */
+  public constructor(preAllocateKeywords: Boolean) : this(
+    allocatedNames = if (preAllocateKeywords) KEYWORDS.toMutableSet() else mutableSetOf(),
+    tagToName = mutableMapOf(),
+  )
 
   /**
    * Return a new name using `suggestion` that will not be a Java identifier or clash with other
@@ -89,7 +121,7 @@ public class NameAllocator private constructor(
     tag: Any = UUID.randomUUID().toString(),
   ): String {
     var result = toJavaIdentifier(suggestion)
-    while (result.isKeyword || !allocatedNames.add(result)) {
+    while (!allocatedNames.add(result)) {
       result += "_"
     }
 

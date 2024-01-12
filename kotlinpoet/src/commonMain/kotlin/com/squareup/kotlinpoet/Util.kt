@@ -169,7 +169,7 @@ private val IDENTIFIER_REGEX =
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
-private val KEYWORDS = setOf(
+internal val KEYWORDS = setOf(
   // Hard keywords
   "as",
   "break",
