@@ -80,8 +80,8 @@ public class NameAllocator private constructor(
   public constructor() : this(preallocateKeywords = true)
 
   /**
-   * @param preallocateKeywords If true, all Kotlin keywords will be preallocated and suffixed with
-   * underscores to avoid using them as identifiers:
+   * @param preallocateKeywords If true, all Kotlin keywords will be preallocated. Requested names which
+   * collide with keywords will be suffixed with underscores to avoid being used as identifiers:
    *
    * ```kotlin
    * val nameAllocator = NameAllocator(preallocateKeywords = true)
