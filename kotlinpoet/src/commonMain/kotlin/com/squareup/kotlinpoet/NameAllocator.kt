@@ -77,21 +77,21 @@ public class NameAllocator private constructor(
   private val allocatedNames: MutableSet<String>,
   private val tagToName: MutableMap<Any, String>,
 ) {
-  public constructor() : this(preAllocateKeywords = true)
+  public constructor() : this(preallocateKeywords = true)
 
   /**
-   * @param preAllocateKeywords If true, all Kotlin keywords will be pre-allocated and suffixed with
+   * @param preallocateKeywords If true, all Kotlin keywords will be preallocated and suffixed with
    * underscores to avoid using them as identifiers:
    *
    * ```kotlin
-   * val nameAllocator = NameAllocator(preAllocateKeywords = true)
+   * val nameAllocator = NameAllocator(preallocateKeywords = true)
    * println(nameAllocator.newName("when")) // prints "when_"
    * ```
    *
    * If false, keywords will not get any special treatment:
    *
    * ```kotlin
-   * val nameAllocator = NameAllocator(preAllocateKeywords = false)
+   * val nameAllocator = NameAllocator(preallocateKeywords = false)
    * println(nameAllocator.newName("when")) // prints "when"
    * ```
    *
@@ -99,15 +99,15 @@ public class NameAllocator private constructor(
    * ensure it's properly escaped for use as an identifier:
    *
    * ```kotlin
-   * val nameAllocator = NameAllocator(preAllocateKeywords = false)
+   * val nameAllocator = NameAllocator(preallocateKeywords = false)
    * println(CodeBlock.of("%N", nameAllocator.newName("when"))) // prints "`when`"
    * ```
    *
-   * The default behaviour of [NameAllocator] is to pre-allocate keywords - this is the behaviour you'll
+   * The default behaviour of [NameAllocator] is to preallocate keywords - this is the behaviour you'll
    * get when using the no-arg constructor.
    */
-  public constructor(preAllocateKeywords: Boolean) : this(
-    allocatedNames = if (preAllocateKeywords) KEYWORDS.toMutableSet() else mutableSetOf(),
+  public constructor(preallocateKeywords: Boolean) : this(
+    allocatedNames = if (preallocateKeywords) KEYWORDS.toMutableSet() else mutableSetOf(),
     tagToName = mutableMapOf(),
   )
 

@@ -71,7 +71,7 @@ class NameAllocatorTest {
   }
 
   @Test fun kotlinKeywordNotPreAllocated() {
-    val nameAllocator = NameAllocator(preAllocateKeywords = false)
+    val nameAllocator = NameAllocator(preallocateKeywords = false)
     assertThat(nameAllocator.newName("when", 1)).isEqualTo("when")
     assertThat(nameAllocator[1]).isEqualTo("when")
   }
