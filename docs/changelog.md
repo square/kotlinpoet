@@ -3,6 +3,19 @@ Change Log
 
 ## Unreleased
 
+## Version 1.16.0
+
+Thanks to [@drawers][drawers], [@rickclephas][rickclephas] for contributing to this release.
+
+_2024-01-18_
+
+ * New: Kotlin 1.9.22.
+ * New: KSP 1.9.22-1.0.16.
+ * New: Add `NameAllocator` API to control keyword pre-allocation (#1803).
+ * Fix: Fix issue with missing `suspend` modifier in `KSTypeReference.toTypeName` (#1793).
+ * Fix: Honour same-package import aliases (#1794).
+ * Fix: Always include parameter docs in the type header (#1800).
+
 ## Version 1.15.3
 
 Thanks to [@gabrielittner][gabrielittner] for contributing to this release.
