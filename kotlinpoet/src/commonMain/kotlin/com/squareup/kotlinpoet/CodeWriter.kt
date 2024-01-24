@@ -238,13 +238,14 @@ internal class CodeWriter constructor(
     codeBlock: CodeBlock,
     isConstantContext: Boolean = false,
     ensureTrailingNewline: Boolean = false,
+    omitImplicitModifiers: Boolean = false,
   ) = apply {
     var a = 0
     var deferredTypeName: ClassName? = null // used by "import static" logic
     val partIterator = codeBlock.formatParts.listIterator()
     while (partIterator.hasNext()) {
       when (val part = partIterator.next()) {
-        "%L" -> emitLiteral(codeBlock.args[a++], isConstantContext)
+        "%L" -> emitLiteral(codeBlock.args[a++], isConstantContext, omitImplicitModifiers)
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
@@ -393,7 +394,7 @@ internal class CodeWriter constructor(
     return false
   }
 
-  private fun emitLiteral(o: Any?, isConstantContext: Boolean) {
+  private fun emitLiteral(o: Any?, isConstantContext: Boolean, omitImplicitModifiers: Boolean) {
     when (o) {
       is TypeSpec -> o.emit(this, null)
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
@@ -401,7 +402,7 @@ internal class CodeWriter constructor(
       is FunSpec -> o.emit(
         codeWriter = this,
         enclosingName = null,
-        implicitModifiers = setOf(KModifier.PUBLIC),
+        implicitModifiers = if (omitImplicitModifiers) emptySet() else setOf(KModifier.PUBLIC),
         includeKdocTags = true,
       )
       is TypeAliasSpec -> o.emit(this)

@@ -191,7 +191,7 @@ public class FileSpec private constructor(
     }
 
     if (isScript) {
-      codeWriter.emitCode(body)
+      codeWriter.emitCode(body, omitImplicitModifiers = true)
     } else {
       members.forEachIndexed { index, member ->
         if (index > 0) codeWriter.emit("\n")
