@@ -1187,7 +1187,7 @@ class FileSpecTest {
       |
       |println("hello!")
       |
-      |public fun localFun() {
+      |fun localFun() {
       |}
       |
       |public class Yay
