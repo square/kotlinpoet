@@ -667,7 +667,7 @@ internal class CodeWriter constructor(
    * collisions, import aliases will be generated.
    */
   private fun suggestedMemberImports(): Map<String, Set<MemberName>> {
-    return importableMembers.filterKeys { it !in referencedNames }.mapValues { it.value.toSet() }
+    return importableMembers.mapValues { it.value.toSet() }
   }
 
   /**
@@ -713,12 +713,14 @@ internal class CodeWriter constructor(
           generatedImports,
           canonicalName = ClassName::canonicalName,
           capitalizeAliases = true,
+          referencedNames = importsCollector.referencedNames,
         )
       val suggestedMemberImports = importsCollector.suggestedMemberImports()
         .generateImports(
           generatedImports,
           canonicalName = MemberName::canonicalName,
           capitalizeAliases = false,
+          referencedNames = importsCollector.referencedNames,
         )
       importsCollector.close()
 
@@ -735,9 +737,10 @@ internal class CodeWriter constructor(
       generatedImports: MutableMap<String, Import>,
       canonicalName: T.() -> String,
       capitalizeAliases: Boolean,
+      referencedNames: Set<String>,
     ): Map<String, T> {
       return flatMap { (simpleName, qualifiedNames) ->
-        if (qualifiedNames.size == 1) {
+        if (qualifiedNames.size == 1 && simpleName !in referencedNames) {
           listOf(simpleName to qualifiedNames.first()).also {
             val canonicalName = qualifiedNames.first().canonicalName()
             generatedImports[canonicalName] = Import(canonicalName)
