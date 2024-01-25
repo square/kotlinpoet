@@ -517,7 +517,7 @@ internal class CodeWriter constructor(
     if (memberName.packageName.isNotEmpty()) {
       val simpleName = imports[memberName.canonicalName]?.alias ?: memberName.simpleName
       // Check for name clashes with types.
-      if (simpleName !in importableTypes) {
+      if (memberName.isExtension || simpleName !in importableTypes) {
         importableMembers[simpleName] = importableMembers.getValue(simpleName) + memberName
       }
     }
