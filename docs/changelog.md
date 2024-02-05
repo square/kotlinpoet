@@ -3,6 +3,9 @@ Change Log
 
 ## Unreleased
 
+* Fix: Fix extension function imports (#1814).
+* Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
+
 ## Version 1.16.0
 
 Thanks to [@drawers][drawers], [@rickclephas][rickclephas] for contributing to this release.
