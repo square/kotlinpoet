@@ -5,6 +5,7 @@ Change Log
 
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
+* Fix: Fix trailing newline in PropertySpec (#1827).
 
 ## Version 1.16.0
 

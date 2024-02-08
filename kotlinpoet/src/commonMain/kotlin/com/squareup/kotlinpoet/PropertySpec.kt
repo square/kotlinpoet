@@ -100,7 +100,7 @@ public class PropertySpec private constructor(
       }
       val initializerFormat = if (initializer.hasStatements()) "%L" else "«%L»"
       codeWriter.emitCode(
-        codeBlock = CodeBlock.of(initializerFormat, initializer),
+        codeBlock = CodeBlock.of(initializerFormat, initializer.trimTrailingNewLine()),
         isConstantContext = KModifier.CONST in modifiers,
       )
     }
