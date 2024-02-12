@@ -33,13 +33,11 @@ import com.squareup.kotlinpoet.KModifier.CROSSINLINE
 import com.squareup.kotlinpoet.KModifier.DATA
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
-import com.squareup.kotlinpoet.KModifier.FINAL
 import com.squareup.kotlinpoet.KModifier.INFIX
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.LATEINIT
 import com.squareup.kotlinpoet.KModifier.NOINLINE
-import com.squareup.kotlinpoet.KModifier.OPEN
 import com.squareup.kotlinpoet.KModifier.OPERATOR
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -93,8 +91,6 @@ import kotlinx.metadata.Modality
 import kotlinx.metadata.Visibility
 import kotlinx.metadata.declaresDefaultValue
 import kotlinx.metadata.hasAnnotations
-import kotlinx.metadata.hasGetter
-import kotlinx.metadata.hasSetter
 import kotlinx.metadata.isConst
 import kotlinx.metadata.isCrossinline
 import kotlinx.metadata.isData
@@ -114,6 +110,7 @@ import kotlinx.metadata.isTailrec
 import kotlinx.metadata.isValue
 import kotlinx.metadata.isVar
 import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.getterSignature
 import kotlinx.metadata.jvm.setterSignature
 import kotlinx.metadata.jvm.signature
@@ -122,45 +119,69 @@ import kotlinx.metadata.kind
 import kotlinx.metadata.modality
 import kotlinx.metadata.visibility
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = java.toTypeSpec(classInspector)
+): TypeSpec = java.toTypeSpec(lenient, classInspector)
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [TypeSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [TypeElement].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 @KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun KClass<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = java.toFileSpec(classInspector)
+): FileSpec = java.toFileSpec(lenient, classInspector)
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 @KotlinPoetMetadataPreview
 public fun Class<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(lenient, classInspector))
 
-/** @return a [FileSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [TypeElement].
+ */
 @KotlinPoetMetadataPreview
 public fun TypeElement.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(
   packageName = packageName,
-  typeSpec = toTypeSpec(classInspector),
+  typeSpec = toTypeSpec(lenient, classInspector),
 )
 
 /** @return a [TypeSpec] ABI representation of this [KmClass]. */
@@ -648,33 +669,31 @@ private fun KmProperty.toPropertySpec(
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
   if (containerData != null && propertyData != null) {
-    if (hasGetter) {
-      getterSignature?.let { getterSignature ->
-        if (!containerData.isInterface &&
-          modality != Modality.OPEN && modality != Modality.ABSTRACT
+    getterSignature?.let { getterSignature ->
+      if (!containerData.isInterface &&
+        modality != Modality.OPEN && modality != Modality.ABSTRACT
+      ) {
+        // Infer if JvmName was used
+        // We skip interface types or open/abstract properties because they can't have @JvmName.
+        // For annotation properties, kotlinc puts JvmName annotations by default in
+        // bytecode but they're implicit in source, so we expect the simple name for
+        // annotation types.
+        val expectedMetadataName = if (containerData is ClassData &&
+          containerData.declarationContainer.isAnnotation
         ) {
-          // Infer if JvmName was used
-          // We skip interface types or open/abstract properties because they can't have @JvmName.
-          // For annotation properties, kotlinc puts JvmName annotations by default in
-          // bytecode but they're implicit in source, so we expect the simple name for
-          // annotation types.
-          val expectedMetadataName = if (containerData is ClassData &&
-            containerData.declarationContainer.isAnnotation
-          ) {
-            name
-          } else {
-            "get${name.safeCapitalize(Locale.US)}"
-          }
-          getterSignature.jvmNameAnnotation(
-            metadataName = expectedMetadataName,
-            useSiteTarget = UseSiteTarget.GET,
-          )?.let { jvmNameAnnotation ->
-            mutableAnnotations += jvmNameAnnotation
-          }
+          name
+        } else {
+          "get${name.safeCapitalize(Locale.US)}"
+        }
+        getterSignature.jvmNameAnnotation(
+          metadataName = expectedMetadataName,
+          useSiteTarget = UseSiteTarget.GET,
+        )?.let { jvmNameAnnotation ->
+          mutableAnnotations += jvmNameAnnotation
         }
       }
     }
-    if (hasSetter) {
+    if (setter != null) {
       setterSignature?.let { setterSignature ->
         if (containerData is ClassData &&
           !containerData.declarationContainer.isAnnotation &&
@@ -777,7 +796,7 @@ private fun KmProperty.toPropertySpec(
       // since the delegate handles it
       // vals with initialized constants have a getter in bytecode but not a body in kotlin source
       val modifierSet = modifiers.toSet()
-      if (hasGetter && !isDelegated && modality != Modality.ABSTRACT) {
+      if (!isDelegated && modality != Modality.ABSTRACT) {
         propertyAccessor(
           modifierSet,
           getter,
@@ -785,7 +804,7 @@ private fun KmProperty.toPropertySpec(
           isOverride,
         )?.let(::getter)
       }
-      if (hasSetter && !isDelegated && modality != Modality.ABSTRACT) {
+      if (setter != null && !isDelegated && modality != Modality.ABSTRACT) {
         propertyAccessor(modifierSet, setter!!, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
@@ -886,7 +905,6 @@ private inline fun <E> setOf(body: MutableSet<E>.() -> Unit): Set<E> {
 
 private val METADATA = Metadata::class.asClassName()
 
-@Suppress("DEPRECATION")
 private val JVM_DEFAULT = ClassName("kotlin.jvm", "JvmDefault")
 private val JVM_STATIC = JvmStatic::class.asClassName()
 

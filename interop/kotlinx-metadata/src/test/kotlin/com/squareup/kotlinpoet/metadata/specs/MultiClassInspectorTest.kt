@@ -59,12 +59,12 @@ abstract class MultiClassInspectorTest {
     },
     REFLECTIVE {
       override fun create(testInstance: MultiClassInspectorTest): ClassInspector {
-        return ReflectiveClassInspector.create()
+        return ReflectiveClassInspector.create(lenient = false)
       }
     },
     ELEMENTS {
       override fun create(testInstance: MultiClassInspectorTest): ClassInspector {
-        return ElementsClassInspector.create(testInstance.compilation.elements, testInstance.compilation.types)
+        return ElementsClassInspector.create(lenient = false, testInstance.compilation.elements, testInstance.compilation.types)
       }
     },
     ;
@@ -107,12 +107,12 @@ abstract class MultiClassInspectorTest {
   }
 
   protected fun KClass<*>.toTypeSpecWithTestHandler(): TypeSpec {
-    return toTypeSpec(classInspectorType.create(this@MultiClassInspectorTest))
+    return toTypeSpec(lenient = false, classInspectorType.create(this@MultiClassInspectorTest))
   }
 
   protected fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
     val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
-    return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>()
+    return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>(lenient = false)
       .kmPackage
       .toFileSpec(classInspector, asClassName())
   }

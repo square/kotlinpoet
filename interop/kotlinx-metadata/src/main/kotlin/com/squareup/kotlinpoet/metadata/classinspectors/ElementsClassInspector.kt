@@ -92,6 +92,7 @@ private typealias ElementsModifier = javax.lang.model.element.Modifier
  */
 @KotlinPoetMetadataPreview
 public class ElementsClassInspector private constructor(
+  private val lenient: Boolean,
   private val elements: Elements,
   private val types: Types,
 ) : ClassInspector {
@@ -115,7 +116,7 @@ public class ElementsClassInspector private constructor(
       ?: error("No type element found for: $className.")
 
     val metadata = typeElement.getAnnotation(Metadata::class.java)
-    return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
+    return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata(lenient)) {
       is KotlinClassMetadata.Class -> kotlinClassMetadata.kmClass
       is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.kmPackage
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
@@ -207,7 +208,7 @@ public class ElementsClassInspector private constructor(
         .filter { types.isSubtype(enumTypeAsType, it.superclass) }
         .find { it.simpleName.contentEquals(memberName) }.toOptional()
     }.nullableValue
-    val declarationContainer = member?.getAnnotation(Metadata::class.java)?.toKmClass()
+    val declarationContainer = member?.getAnnotation(Metadata::class.java)?.toKmClass(lenient)
 
     val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
       .find { it.simpleName.contentEquals(memberName) }
@@ -571,11 +572,14 @@ public class ElementsClassInspector private constructor(
   }
 
   public companion object {
-    /** @return an [Elements]-based implementation of [ClassInspector]. */
+    /**
+     * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+     * @return an [Elements]-based implementation of [ClassInspector].
+     */
     @JvmStatic
     @KotlinPoetMetadataPreview
-    public fun create(elements: Elements, types: Types): ClassInspector {
-      return ElementsClassInspector(elements, types)
+    public fun create(lenient: Boolean, elements: Elements, types: Types): ClassInspector {
+      return ElementsClassInspector(lenient, elements, types)
     }
 
     private val JVM_STATIC = JvmStatic::class.asClassName()
