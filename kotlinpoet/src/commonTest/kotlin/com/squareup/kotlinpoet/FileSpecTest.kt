@@ -1242,4 +1242,35 @@ class FileSpecTest {
     assertThat(spec.packageName).isEqualTo(memberName.packageName)
     assertThat(spec.name).isEqualTo(memberName.simpleName)
   }
+
+  @Test fun topLevelPropertyWithControlFlow() {
+    val spec = FileSpec.builder("com.example.foo", "Test")
+      .addProperty(
+        PropertySpec.builder("MyProperty", String::class.java)
+          .initializer(
+            CodeBlock.builder()
+              .beginControlFlow("if (1 + 1 == 2)")
+              .addStatement("Expected")
+              .nextControlFlow("else")
+              .addStatement("Unexpected")
+              .endControlFlow()
+              .build(),
+          ).build(),
+      ).build()
+
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |package com.example.foo
+      |
+      |import java.lang.String
+      |
+      |public val MyProperty: String = if (1 + 1 == 2) {
+      |  Expected
+      |} else {
+      |  Unexpected
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
 }
