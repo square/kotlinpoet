@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.io.Serializable
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Path
@@ -49,7 +50,7 @@ import kotlin.reflect.KClass
 public class FileSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, TypeSpecHolder {
+) : Taggable by tagMap, Annotatable, TypeSpecHolder, Serializable {
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   override val typeSpecs: List<TypeSpec> = builder.members.filterIsInstance<TypeSpec>().toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
@@ -253,7 +254,7 @@ public class FileSpec private constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, TypeSpecHolder.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, TypeSpecHolder.Builder<Builder>, Serializable {
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()

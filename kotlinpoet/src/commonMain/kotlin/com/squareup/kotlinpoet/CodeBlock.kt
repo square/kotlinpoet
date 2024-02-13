@@ -17,6 +17,7 @@
 
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
 import java.lang.reflect.Type
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -61,7 +62,7 @@ import kotlin.reflect.KClass
 public class CodeBlock private constructor(
   internal val formatParts: List<String>,
   internal val args: List<Any?>,
-) {
+) : Serializable {
   /** A heterogeneous list containing string literals and value placeholders.  */
 
   public fun isEmpty(): Boolean = formatParts.isEmpty()

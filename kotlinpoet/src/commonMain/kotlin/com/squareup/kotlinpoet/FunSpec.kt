@@ -20,6 +20,7 @@ import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
+import java.io.Serializable
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
@@ -42,7 +43,8 @@ public class FunSpec private constructor(
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
   Annotatable,
-  Documentable {
+  Documentable,
+  Serializable {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
@@ -307,7 +309,8 @@ public class FunSpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    Serializable {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null

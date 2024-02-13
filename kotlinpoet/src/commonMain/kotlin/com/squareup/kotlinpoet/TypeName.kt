@@ -18,6 +18,7 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.io.Serializable
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -66,7 +67,7 @@ public sealed class TypeName constructor(
   public val isNullable: Boolean,
   annotations: List<AnnotationSpec>,
   internal val tagMap: TagMap,
-) : Taggable by tagMap, Annotatable {
+) : Taggable by tagMap, Annotatable, Serializable {
   override val annotations: List<AnnotationSpec> = annotations.toImmutableList()
 
   /** Lazily-initialized toString of this type name.  */

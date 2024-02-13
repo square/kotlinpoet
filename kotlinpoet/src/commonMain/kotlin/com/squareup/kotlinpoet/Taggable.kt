@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 
 /** A type that can be tagged with extra metadata of the user's choice. */
@@ -153,7 +154,7 @@ public inline fun <reified T : Any> TypeSpec.Builder.tag(tag: T?): TypeSpec.Buil
 internal fun Taggable.Builder<*>.buildTagMap(): TagMap = TagMap(tags)
 
 @JvmInline
-internal value class TagMap private constructor(override val tags: Map<KClass<*>, Any>) : Taggable {
+internal value class TagMap private constructor(override val tags: Map<KClass<*>, Any>) : Taggable, Serializable {
   companion object {
     operator fun invoke(tags: Map<KClass<*>, Any>): TagMap = TagMap(tags.toImmutableMap())
   }

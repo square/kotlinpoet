@@ -19,12 +19,13 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import java.io.Serializable
 import java.util.EnumSet
 
 public enum class KModifier(
   internal val keyword: String,
   private vararg val targets: Target,
-) {
+) : Serializable {
   // Modifier order defined here:
   // https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers
 

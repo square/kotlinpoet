@@ -29,6 +29,7 @@ import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
+import java.io.Serializable
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.DeprecationLevel.ERROR
@@ -48,7 +49,8 @@ public class TypeSpec private constructor(
   ContextReceivable by contextReceivers,
   Annotatable,
   Documentable,
-  TypeSpecHolder {
+  TypeSpecHolder,
+  Serializable {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
@@ -471,7 +473,8 @@ public class TypeSpec private constructor(
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     Documentable.Builder<Builder>,
-    TypeSpecHolder.Builder<Builder> {
+    TypeSpecHolder.Builder<Builder>,
+    Serializable {
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()

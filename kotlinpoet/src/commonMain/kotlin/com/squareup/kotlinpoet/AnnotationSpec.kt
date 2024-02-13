@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
 import java.lang.reflect.Array
 import java.util.Objects
 import javax.lang.model.element.AnnotationMirror
@@ -30,7 +31,7 @@ import kotlin.reflect.KClass
 public class AnnotationSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap {
+) : Taggable by tagMap, Serializable {
   @Deprecated(
     message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
     replaceWith = ReplaceWith("typeName"),
@@ -120,7 +121,7 @@ public class AnnotationSpec private constructor(
 
   public class Builder internal constructor(
     internal val typeName: TypeName,
-  ) : Taggable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Serializable {
     internal var useSiteTarget: UseSiteTarget? = null
 
     public val members: MutableList<CodeBlock> = mutableListOf()

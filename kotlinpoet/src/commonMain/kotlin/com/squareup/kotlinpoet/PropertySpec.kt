@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
 import com.squareup.kotlinpoet.KModifier.Target.PROPERTY
+import java.io.Serializable
 import java.lang.reflect.Type
 import java.util.EnumSet
 import javax.lang.model.element.Element
@@ -34,7 +35,8 @@ public class PropertySpec private constructor(
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
   Annotatable,
-  Documentable {
+  Documentable,
+  Serializable {
   public val mutable: Boolean = builder.mutable
   public val name: String = builder.name
   public val type: TypeName = builder.type
@@ -176,7 +178,8 @@ public class PropertySpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    Serializable {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal var initializer: CodeBlock? = null

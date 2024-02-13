@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.KModifier.ACTUAL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
+import java.io.Serializable
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -26,7 +27,7 @@ import kotlin.reflect.KClass
 public class TypeAliasSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+) : Taggable by tagMap, Annotatable, Documentable, Serializable {
   public val name: String = builder.name
   public val type: TypeName = builder.type
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
@@ -69,7 +70,7 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder>, Serializable {
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()

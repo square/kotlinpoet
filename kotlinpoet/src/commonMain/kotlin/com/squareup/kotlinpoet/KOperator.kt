@@ -15,10 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
+
 public enum class KOperator(
   internal val operator: String,
   internal val functionName: String,
-) {
+) : Serializable {
   UNARY_PLUS("+", "unaryPlus"),
   PLUS("+", "plus"),
   UNARY_MINUS("-", "unaryMinus"),

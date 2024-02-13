@@ -15,10 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
+
 public data class Import internal constructor(
   val qualifiedName: String,
   val alias: String? = null,
-) : Comparable<Import> {
+) : Comparable<Import>, Serializable {
 
   private val importString = buildString {
     append(qualifiedName.escapeSegmentsIfNecessary())

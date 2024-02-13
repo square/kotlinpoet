@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 
 /**
@@ -73,7 +74,7 @@ public data class MemberName internal constructor(
   public val simpleName: String,
   public val operator: KOperator? = null,
   public val isExtension: Boolean = false,
-) {
+) : Serializable {
   // TODO(egorand): Reduce the number of overloaded constructors in KotlinPoet 2.0.
 
   public constructor(

@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet
 import com.squareup.kotlinpoet.KModifier.CROSSINLINE
 import com.squareup.kotlinpoet.KModifier.NOINLINE
 import com.squareup.kotlinpoet.KModifier.VARARG
+import java.io.Serializable
 import java.lang.reflect.Type
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
@@ -29,7 +30,7 @@ import kotlin.reflect.KClass
 public class ParameterSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+) : Taggable by tagMap, Annotatable, Documentable, Serializable {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
@@ -94,7 +95,7 @@ public class ParameterSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder>, Serializable {
     internal var defaultValue: CodeBlock? = null
 
     public val modifiers: MutableList<KModifier> = mutableListOf()
