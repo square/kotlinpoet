@@ -648,34 +648,32 @@ private fun KmProperty.toPropertySpec(
   val returnTypeName = returnType.toTypeName(typeParamResolver)
   val mutableAnnotations = mutableListOf<AnnotationSpec>()
   if (containerData != null && propertyData != null) {
-    if (hasGetter) {
-      getterSignature?.let { getterSignature ->
-        if (!containerData.isInterface &&
-          modality != Modality.OPEN && modality != Modality.ABSTRACT
+    getterSignature?.let { getterSignature ->
+      if (!containerData.isInterface &&
+        modality != Modality.OPEN && modality != Modality.ABSTRACT
+      ) {
+        // Infer if JvmName was used
+        // We skip interface types or open/abstract properties because they can't have @JvmName.
+        // For annotation properties, kotlinc puts JvmName annotations by default in
+        // bytecode but they're implicit in source, so we expect the simple name for
+        // annotation types.
+        val expectedMetadataName = if (containerData is ClassData &&
+          containerData.declarationContainer.isAnnotation
         ) {
-          // Infer if JvmName was used
-          // We skip interface types or open/abstract properties because they can't have @JvmName.
-          // For annotation properties, kotlinc puts JvmName annotations by default in
-          // bytecode but they're implicit in source, so we expect the simple name for
-          // annotation types.
-          val expectedMetadataName = if (containerData is ClassData &&
-            containerData.declarationContainer.isAnnotation
-          ) {
-            name
-          } else {
-            "get${name.safeCapitalize(Locale.US)}"
-          }
-          getterSignature.jvmNameAnnotation(
-            metadataName = expectedMetadataName,
-            useSiteTarget = UseSiteTarget.GET,
-          )?.let { jvmNameAnnotation ->
-            mutableAnnotations += jvmNameAnnotation
-          }
+          name
+        } else {
+          "get${name.safeCapitalize(Locale.US)}"
+        }
+        getterSignature.jvmNameAnnotation(
+          metadataName = expectedMetadataName,
+          useSiteTarget = UseSiteTarget.GET,
+        )?.let { jvmNameAnnotation ->
+          mutableAnnotations += jvmNameAnnotation
         }
       }
     }
-    if (hasSetter) {
-      setterSignature?.let { setterSignature ->
+    if (setter != null) {
+        setterSignature?.let { setterSignature ->
         if (containerData is ClassData &&
           !containerData.declarationContainer.isAnnotation &&
           !containerData.declarationContainer.isInterface &&
@@ -777,16 +775,16 @@ private fun KmProperty.toPropertySpec(
       // since the delegate handles it
       // vals with initialized constants have a getter in bytecode but not a body in kotlin source
       val modifierSet = modifiers.toSet()
-      if (hasGetter && !isDelegated && modality != Modality.ABSTRACT) {
+      if (!isDelegated && modality != Modality.ABSTRACT) {
         propertyAccessor(
           modifierSet,
-          getter,
+          this@toPropertySpec.getter,
           FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED),
           isOverride,
         )?.let(::getter)
       }
-      if (hasSetter && !isDelegated && modality != Modality.ABSTRACT) {
-        propertyAccessor(modifierSet, setter!!, FunSpec.setterBuilder(), isOverride)?.let(::setter)
+      if (setter != null && !isDelegated && modality != Modality.ABSTRACT) {
+        propertyAccessor(modifierSet, this@toPropertySpec.setter!!, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
     .tag(this)
