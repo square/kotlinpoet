@@ -6,6 +6,9 @@ Change Log
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
 * Fix: Fix trailing newline in PropertySpec (#1827).
+Change: kotlinx-metadata 0.9.0. This is a breaking change for users of the
+:kotlinpoet-metadata module, as `read` is deprecated in 0.9.0 and the
+replacement `readStrict` was introduced in 0.9.0 (#1830).
 
 ## Version 1.16.0
 
