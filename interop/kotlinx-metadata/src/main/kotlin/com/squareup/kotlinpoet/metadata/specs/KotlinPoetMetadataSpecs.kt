@@ -670,23 +670,21 @@ private fun KmProperty.toPropertySpec(
         }
       }
     }
-    if (setter != null) {
-      setterSignature?.let { setterSignature ->
-        if (containerData is ClassData &&
-          !containerData.declarationContainer.isAnnotation &&
-          !containerData.declarationContainer.isInterface &&
-          classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
-          modality != Modality.OPEN && modality != Modality.ABSTRACT
-        ) {
-          // Infer if JvmName was used
-          // We skip annotation types for this because they can't have vars.
-          // We skip interface types or open/abstract properties because they can't have @JvmName.
-          setterSignature.jvmNameAnnotation(
-            metadataName = "set${name.safeCapitalize(Locale.US)}",
-            useSiteTarget = UseSiteTarget.SET,
-          )?.let { jvmNameAnnotation ->
-            mutableAnnotations += jvmNameAnnotation
-          }
+    setterSignature?.let { setterSignature ->
+      if (containerData is ClassData &&
+        !containerData.declarationContainer.isAnnotation &&
+        !containerData.declarationContainer.isInterface &&
+        classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
+        modality != Modality.OPEN && modality != Modality.ABSTRACT
+      ) {
+        // Infer if JvmName was used
+        // We skip annotation types for this because they can't have vars.
+        // We skip interface types or open/abstract properties because they can't have @JvmName.
+        setterSignature.jvmNameAnnotation(
+          metadataName = "set${name.safeCapitalize(Locale.US)}",
+          useSiteTarget = UseSiteTarget.SET,
+        )?.let { jvmNameAnnotation ->
+          mutableAnnotations += jvmNameAnnotation
         }
       }
     }
