@@ -93,8 +93,6 @@ import kotlinx.metadata.Modality
 import kotlinx.metadata.Visibility
 import kotlinx.metadata.declaresDefaultValue
 import kotlinx.metadata.hasAnnotations
-import kotlinx.metadata.hasGetter
-import kotlinx.metadata.hasSetter
 import kotlinx.metadata.isConst
 import kotlinx.metadata.isCrossinline
 import kotlinx.metadata.isData
@@ -673,7 +671,7 @@ private fun KmProperty.toPropertySpec(
       }
     }
     if (setter != null) {
-        setterSignature?.let { setterSignature ->
+      setterSignature?.let { setterSignature ->
         if (containerData is ClassData &&
           !containerData.declarationContainer.isAnnotation &&
           !containerData.declarationContainer.isInterface &&
