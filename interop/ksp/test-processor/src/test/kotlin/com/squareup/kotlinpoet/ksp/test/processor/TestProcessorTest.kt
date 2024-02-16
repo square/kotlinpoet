@@ -636,10 +636,10 @@ class TestProcessorTest {
 
            @ExampleAnnotation
            @OptIn(MyOptIn::class)
-           @AnnotationWithVararg("one", "two")
+           @AnnotationWithVararg(0, "one", "two")
            interface Example
-        """.trimIndent()
-      )
+        """.trimIndent(),
+      ),
     )
 
     val result = compilation.compile()
@@ -656,12 +656,13 @@ class TestProcessorTest {
 
       @OptIn(MyOptIn::class)
       @AnnotationWithVararg(
+        simpleArg = 0,
         "one",
         "two",
       )
       public class TestExample
 
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 

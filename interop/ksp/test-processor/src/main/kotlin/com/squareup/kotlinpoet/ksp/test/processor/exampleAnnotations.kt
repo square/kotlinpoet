@@ -80,4 +80,4 @@ enum class AnnotationEnumValue {
   ONE, TWO, THREE
 }
 
-annotation class AnnotationWithVararg(vararg val args: String)
+annotation class AnnotationWithVararg(val simpleArg: Int, vararg val args: String)

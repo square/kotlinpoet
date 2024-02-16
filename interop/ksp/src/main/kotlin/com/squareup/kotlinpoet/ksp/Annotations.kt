@@ -53,7 +53,7 @@ public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): An
       if (isDefaultValue(value, defaultValue)) { continue }
     }
     if (type?.isVararg == true) {
-      // wait to add varargs to end
+      // Wait to add varargs to end.
       varargValues = value as List<*>
     } else {
       val member = CodeBlock.builder()
@@ -61,12 +61,12 @@ public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): An
       addValueToBlock(value, member, omitDefaultValues)
       builder.addMember(member.build())
     }
-    if (varargValues != null) {
-      for (item in varargValues) {
-        val member = CodeBlock.builder()
-        addValueToBlock(item!!, member, omitDefaultValues)
-        builder.addMember(member.build())
-      }
+  }
+  if (varargValues != null) {
+    for (item in varargValues) {
+      val member = CodeBlock.builder()
+      addValueToBlock(item!!, member, omitDefaultValues)
+      builder.addMember(member.build())
     }
   }
   return builder.build()
