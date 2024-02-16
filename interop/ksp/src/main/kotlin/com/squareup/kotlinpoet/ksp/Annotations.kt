@@ -39,19 +39,35 @@ public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): An
     is ParameterizedTypeName -> AnnotationSpec.builder(type)
     else -> error("This is never possible.")
   }
+  val params = (annotationType.resolve().declaration as KSClassDeclaration).primaryConstructor?.parameters.orEmpty()
+    .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
   // TODO support type params once they're exposed https://github.com/google/ksp/issues/753
+  var varargValues: List<*>? = null
   for (argument in arguments) {
     val value = argument.value ?: continue
     val name = argument.name!!.getShortName()
+    val type = params[argument.name]
     if (omitDefaultValues) {
       val defaultValue = this.defaultArguments.firstOrNull { it.name?.asString() == name }?.value
       if (isDefaultValue(value, defaultValue)) { continue }
     }
-    val member = CodeBlock.builder()
-    member.add("%N = ", name)
-    addValueToBlock(value, member, omitDefaultValues)
-    builder.addMember(member.build())
+    if (type?.isVararg == true) {
+      // wait to add varargs to end
+      varargValues = value as List<*>
+    } else {
+      val member = CodeBlock.builder()
+      member.add("%N = ", name)
+      addValueToBlock(value, member, omitDefaultValues)
+      builder.addMember(member.build())
+    }
+    if (varargValues != null) {
+      for (item in varargValues) {
+        val member = CodeBlock.builder()
+        addValueToBlock(item!!, member, omitDefaultValues)
+        builder.addMember(member.build())
+      }
+    }
   }
   return builder.build()
 }

@@ -621,6 +621,51 @@ class TestProcessorTest {
   }
 
   @Test
+  fun varargArgument() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @RequiresOptIn
+           annotation class MyOptIn
+
+           @ExampleAnnotation
+           @OptIn(MyOptIn::class)
+           @AnnotationWithVararg("one", "two")
+           interface Example
+        """.trimIndent()
+      )
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+      import kotlin.OptIn
+
+      @OptIn(MyOptIn::class)
+      @AnnotationWithVararg(
+        "one",
+        "two",
+      )
+      public class TestExample
+
+      """.trimIndent()
+    )
+  }
+
+  @Test
   fun regression_1513() {
     val compilation = prepareCompilation(
       kotlin(
