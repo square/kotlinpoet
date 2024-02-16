@@ -7,7 +7,7 @@ Change Log
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
 * Fix: Fix trailing newline in PropertySpec (#1827).
 Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
-* Fix: `KSAnnotation.toAnnotationSpec` writes varargs in place instead of making them an array to work around a kotlin
+* Fix: `KSAnnotation.toAnnotationSpec` writes varargs in place instead of making them an array to work around a Kotlin
   issue with `OptIn` annotations (#1831).
 
 ## Version 1.16.0
