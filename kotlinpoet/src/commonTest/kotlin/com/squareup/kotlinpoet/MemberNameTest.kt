@@ -542,6 +542,29 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importMemberWithoutPackage() {
+    val createTaco = MemberName("", "createTaco")
+    val file = FileSpec.builder("com.example", "Test")
+      .addFunction(
+        FunSpec.builder("makeTacoHealthy")
+          .addStatement("val taco = %M()", createTaco)
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import createTaco
+      |
+      |public fun makeTacoHealthy() {
+      |  val taco = createTaco()
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   // https://github.com/square/kotlinpoet/issues/1089
   @Test fun `extension MemberName imported if name clash`() {
     val hashCode = MemberName("kotlin", "hashCode", isExtension = true)

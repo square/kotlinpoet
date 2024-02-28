@@ -514,12 +514,10 @@ internal class CodeWriter constructor(
   }
 
   private fun importableMember(memberName: MemberName) {
-    if (memberName.packageName.isNotEmpty()) {
-      val simpleName = imports[memberName.canonicalName]?.alias ?: memberName.simpleName
-      // Check for name clashes with types.
-      if (memberName.isExtension || simpleName !in importableTypes) {
-        importableMembers[simpleName] = importableMembers.getValue(simpleName) + memberName
-      }
+    val simpleName = imports[memberName.canonicalName]?.alias ?: memberName.simpleName
+    // Check for name clashes with types.
+    if (memberName.isExtension || simpleName !in importableTypes) {
+      importableMembers[simpleName] = importableMembers.getValue(simpleName) + memberName
     }
   }
 
