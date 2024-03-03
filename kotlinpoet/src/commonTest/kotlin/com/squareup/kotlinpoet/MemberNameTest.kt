@@ -322,6 +322,87 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importedMemberClassFunctionNameDontClashForParameterValue() {
+    fun createSimpleParameterCodeBlock(): CodeBlock {
+      val member = ClassName(
+        packageName = "com.squareup",
+        simpleNames = listOf("Fridge"),
+      ).member("meat")
+      val block = CodeBlock.builder()
+        .add("%M", member)
+        .add(" { }")
+        .build()
+      return CodeBlock
+        .builder()
+        .add("%L", block)
+        .build()
+    }
+
+    fun createFuncParameter(name: String) =
+      CodeBlock
+        .builder()
+        .add(name).add(" = ")
+        .add(createSimpleParameterCodeBlock())
+        .build()
+
+    fun createFuncParameters(names: List<String>): List<CodeBlock> =
+      names.map { name -> createFuncParameter(name) }
+
+    fun createBuildFunc(params: List<String>): FunSpec {
+      val tacoClassname = ClassName.bestGuess("com.squareup.tacos.Taco")
+      val paramsCodeBlock = CodeBlock.builder()
+        .add("return %T", tacoClassname)
+        .apply {
+          add(
+            params.let(::createFuncParameters)
+              .map { block -> CodeBlock.of("%L", block) }
+              .joinToCode(prefix = "(", suffix = ")"),
+          )
+        }
+        .build()
+      return FunSpec.builder("build")
+        .returns(tacoClassname)
+        .addCode(paramsCodeBlock).build()
+    }
+
+    val spec = FileSpec.builder("com.squareup.tacos", "Tacos")
+      .addType(
+        TypeSpec.classBuilder("DeliciousTaco")
+          .addFunction(createBuildFunc(listOf("deliciousMeat")))
+          .addFunction(FunSpec.builder("deliciousMeat").build())
+          .build(),
+      )
+      .addType(
+        TypeSpec.classBuilder("TastelessTaco")
+          .addFunction(createBuildFunc(listOf("meat")))
+          .addFunction(FunSpec.builder("meat").build())
+          .build(),
+      )
+    val source = spec.build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import com.squareup.Fridge.meat
+      |
+      |public class DeliciousTaco {
+      |  public fun build(): Taco = Taco(deliciousMeat = meat { })
+      |
+      |  public fun deliciousMeat() {
+      |  }
+      |}
+      |
+      |public class TastelessTaco {
+      |  public fun build(): Taco = Taco(meat = com.squareup.Fridge.meat { })
+      |
+      |  public fun meat() {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
