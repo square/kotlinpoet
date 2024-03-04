@@ -212,6 +212,52 @@ class LineWrappingTest {
       )
   }
 
+  @Test fun unbrokenLiteralsDoNotWrap() {
+    val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
+      .addStatement(
+        "%U",
+        "very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string",
+      )
+      .build()
+    assertThat(toString(wrapMe)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String {
+        |  very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun literalsDoWrap() {
+    val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
+      .addStatement(
+        "%L",
+        "very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string very long string",
+      )
+      .build()
+    assertThat(toString(wrapMe)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String {
+        |  very long string very long string very long string very long string very long string very long
+        |      string very long string very long string very long string very long string very long string
+        |      very long string
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
   private fun toString(typeSpec: TypeSpec): String {
     return FileSpec.get("com.squareup.tacos", typeSpec).toString()
   }

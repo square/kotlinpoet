@@ -247,6 +247,8 @@ internal class CodeWriter constructor(
       when (val part = partIterator.next()) {
         "%L" -> emitLiteral(codeBlock.args[a++], isConstantContext, omitImplicitModifiers)
 
+        "%U" -> emitLiteral(codeBlock.args[a++], isConstantContext, omitImplicitModifiers, true)
+
         "%N" -> emit(codeBlock.args[a++] as String)
 
         "%S" -> {
@@ -394,7 +396,7 @@ internal class CodeWriter constructor(
     return false
   }
 
-  private fun emitLiteral(o: Any?, isConstantContext: Boolean, omitImplicitModifiers: Boolean) {
+  private fun emitLiteral(o: Any?, isConstantContext: Boolean, omitImplicitModifiers: Boolean, nonWrapping: Boolean = false) {
     when (o) {
       is TypeSpec -> o.emit(this, null)
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
@@ -407,7 +409,7 @@ internal class CodeWriter constructor(
       )
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
-      else -> emit(o.toString())
+      else -> emit(o.toString(), nonWrapping)
     }
   }
 

@@ -343,6 +343,7 @@ public class CodeBlock private constructor(
       when (c) {
         'N' -> this.args += argToName(arg).escapeIfNecessary()
         'L' -> this.args += argToLiteral(arg)
+        'U' -> this.args += argToLiteral(arg)
         'S' -> this.args += argToString(arg)
         'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)
         'T' -> this.args += argToType(arg)

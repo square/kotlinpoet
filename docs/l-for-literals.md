@@ -20,6 +20,7 @@ private fun computeRange(name: String, from: Int, to: Int, op: String): FunSpec 
 ```
 
 Literals are emitted directly to the output code with no escaping. Arguments for literals may be
-strings, primitives, and a few KotlinPoet types described below.
+strings, primitives, and a few KotlinPoet types described below. Literals will have line breaks
+added if the literal is over 100 characters and has whitespace.
 
  [formatter]: https://developer.android.com/reference/java/util/Formatter.html
