@@ -464,11 +464,14 @@ internal class CodeWriter constructor(
     val simpleName = imports[memberName.canonicalName]?.alias ?: memberName.simpleName
     // Match an imported member.
     val importedMember = importedMembers[simpleName]
-    if (importedMember == memberName) {
+    val found = importedMember == memberName
+    if (found && !isMethodNameUsedInCurrentContext(simpleName)) {
       return simpleName
     } else if (importedMember != null && memberName.enclosingClassName != null) {
       val enclosingClassName = lookupName(memberName.enclosingClassName)
       return "$enclosingClassName.$simpleName"
+    } else if (found) {
+      return simpleName
     }
 
     // If the member is in the same package, we're done.

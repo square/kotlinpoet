@@ -322,6 +322,68 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importedMemberClassFunctionNameDontClashForParameterValue() {
+    fun createBuildFunc(params: List<String>): FunSpec {
+      val tacoClassname = ClassName.bestGuess("com.squareup.tacos.Taco")
+      val bodyCodeBlock = CodeBlock.builder()
+        .add("return %T", tacoClassname)
+        .apply {
+          val paramsBlock = params.map { paramName ->
+            val paramValue = ClassName(
+              packageName = "com.squareup",
+              simpleNames = listOf("Fridge"),
+            ).member("meat")
+            CodeBlock.of("$paramName = %L", CodeBlock.of("%M { }", paramValue))
+          }
+            .map { block -> CodeBlock.of("%L", block) }
+            .joinToCode(prefix = "(", suffix = ")")
+          add(paramsBlock)
+        }
+        .build()
+      return FunSpec.builder("build")
+        .returns(tacoClassname)
+        .addCode(bodyCodeBlock)
+        .build()
+    }
+
+    val spec = FileSpec.builder("com.squareup.tacos", "Tacos")
+      .addType(
+        TypeSpec.classBuilder("DeliciousTaco")
+          .addFunction(createBuildFunc(listOf("deliciousMeat")))
+          .addFunction(FunSpec.builder("deliciousMeat").build())
+          .build(),
+      )
+      .addType(
+        TypeSpec.classBuilder("TastelessTaco")
+          .addFunction(createBuildFunc(listOf("meat")))
+          .addFunction(FunSpec.builder("meat").build())
+          .build(),
+      )
+    val source = spec.build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import com.squareup.Fridge.meat
+      |
+      |public class DeliciousTaco {
+      |  public fun build(): Taco = Taco(deliciousMeat = meat { })
+      |
+      |  public fun deliciousMeat() {
+      |  }
+      |}
+      |
+      |public class TastelessTaco {
+      |  public fun build(): Taco = Taco(meat = com.squareup.Fridge.meat { })
+      |
+      |  public fun meat() {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
