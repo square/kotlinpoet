@@ -323,46 +323,27 @@ class MemberNameTest {
   }
 
   @Test fun importedMemberClassFunctionNameDontClashForParameterValue() {
-    fun createSimpleParameterCodeBlock(): CodeBlock {
-      val member = ClassName(
-        packageName = "com.squareup",
-        simpleNames = listOf("Fridge"),
-      ).member("meat")
-      val block = CodeBlock.builder()
-        .add("%M", member)
-        .add(" { }")
-        .build()
-      return CodeBlock
-        .builder()
-        .add("%L", block)
-        .build()
-    }
-
-    fun createFuncParameter(name: String) =
-      CodeBlock
-        .builder()
-        .add(name).add(" = ")
-        .add(createSimpleParameterCodeBlock())
-        .build()
-
-    fun createFuncParameters(names: List<String>): List<CodeBlock> =
-      names.map { name -> createFuncParameter(name) }
-
     fun createBuildFunc(params: List<String>): FunSpec {
       val tacoClassname = ClassName.bestGuess("com.squareup.tacos.Taco")
-      val paramsCodeBlock = CodeBlock.builder()
+      val bodyCodeBlock = CodeBlock.builder()
         .add("return %T", tacoClassname)
         .apply {
-          add(
-            params.let(::createFuncParameters)
-              .map { block -> CodeBlock.of("%L", block) }
-              .joinToCode(prefix = "(", suffix = ")"),
-          )
+          val paramsBlock = params.map { paramName ->
+            val paramValue = ClassName(
+              packageName = "com.squareup",
+              simpleNames = listOf("Fridge"),
+            ).member("meat")
+            CodeBlock.of("$paramName = %L", CodeBlock.of("%M { }", paramValue))
+          }
+            .map { block -> CodeBlock.of("%L", block) }
+            .joinToCode(prefix = "(", suffix = ")")
+          add(paramsBlock)
         }
         .build()
       return FunSpec.builder("build")
         .returns(tacoClassname)
-        .addCode(paramsCodeBlock).build()
+        .addCode(bodyCodeBlock)
+        .build()
     }
 
     val spec = FileSpec.builder("com.squareup.tacos", "Tacos")
