@@ -537,6 +537,13 @@ public class TypeSpec private constructor(
             "value/inline classes must have 1 parameter in constructor"
           }
         }
+
+        require(
+          primaryConstructor.delegateConstructor == null &&
+            primaryConstructor.delegateConstructorArguments.isEmpty(),
+        ) {
+          "primary constructor can't delegate to other constructors"
+        }
       }
       this.primaryConstructor = primaryConstructor
     }

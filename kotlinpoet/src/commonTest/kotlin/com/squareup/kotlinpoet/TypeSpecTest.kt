@@ -5662,6 +5662,24 @@ class TypeSpecTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1818
+  @Test fun primaryConstructorCanNotDelegate() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Child")
+        .superclass(ClassName("com.squareup", "Parent"))
+        .primaryConstructor(
+          FunSpec.constructorBuilder()
+            .callSuperConstructor(CodeBlock.of("%L", "param"))
+            .addParameter(
+              name = "param",
+              type = ClassName("com.squareup", "Param"),
+            )
+            .build(),
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("primary constructor can't delegate to other constructors")
+  }
+
   companion object {
     private const val donutsPackage = "com.squareup.donuts"
   }
