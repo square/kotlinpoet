@@ -596,6 +596,47 @@ class TypeSpecTest {
     )
   }
 
+  @Test fun enumWithPrimaryConstructorAndMultipleInterfaces() {
+    val roshambo = TypeSpec.enumBuilder("Roshambo")
+      .addSuperinterface(Runnable::class)
+      .addSuperinterface(Cloneable::class)
+      .addEnumConstant(
+        "SCISSORS",
+        TypeSpec.anonymousClassBuilder()
+          .addSuperclassConstructorParameter("%S", "peace sign")
+          .build(),
+      )
+      .addProperty(
+        PropertySpec.builder("handPosition", String::class, KModifier.PRIVATE)
+          .initializer("handPosition")
+          .build(),
+      )
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("handPosition", String::class)
+          .build(),
+      )
+      .build()
+    assertThat(toString(roshambo)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import java.lang.Runnable
+        |import kotlin.Cloneable
+        |import kotlin.String
+        |
+        |public enum class Roshambo(
+        |  private val handPosition: String,
+        |) : Runnable,
+        |    Cloneable {
+        |  SCISSORS("peace sign"),
+        |  ;
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
   /** https://github.com/square/javapoet/issues/193  */
   @Test fun enumsMayDefineAbstractFunctions() {
     val roshambo = TypeSpec.enumBuilder("Tortilla")
@@ -1056,6 +1097,63 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |
         |public abstract class Taco : AbstractSet<Food>(), Serializable, Comparable<Taco>
+        |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun classImplementsExtendsPrimaryConstructorNoParams() {
+    val taco = ClassName(tacosPackage, "Taco")
+    val food = ClassName("com.squareup.tacos", "Food")
+    val typeSpec = TypeSpec.classBuilder("Taco")
+      .addModifiers(ABSTRACT)
+      .superclass(AbstractSet::class.asClassName().parameterizedBy(food))
+      .addSuperinterface(Serializable::class)
+      .addSuperinterface(Comparable::class.asClassName().parameterizedBy(taco))
+      .primaryConstructor(FunSpec.constructorBuilder().build())
+      .build()
+    assertThat(toString(typeSpec)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import java.io.Serializable
+        |import java.util.AbstractSet
+        |import kotlin.Comparable
+        |
+        |public abstract class Taco() : AbstractSet<Food>(), Serializable, Comparable<Taco>
+        |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun classImplementsExtendsPrimaryConstructorWithParams() {
+    val taco = ClassName(tacosPackage, "Taco")
+    val food = ClassName("com.squareup.tacos", "Food")
+    val typeSpec = TypeSpec.classBuilder("Taco")
+      .addModifiers(ABSTRACT)
+      .superclass(AbstractSet::class.asClassName().parameterizedBy(food))
+      .addSuperinterface(Serializable::class)
+      .addSuperinterface(Comparable::class.asClassName().parameterizedBy(taco))
+      .primaryConstructor(
+        FunSpec.constructorBuilder()
+          .addParameter("name", String::class)
+          .build(),
+      )
+      .build()
+    assertThat(toString(typeSpec)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import java.io.Serializable
+        |import java.util.AbstractSet
+        |import kotlin.Comparable
+        |import kotlin.String
+        |
+        |public abstract class Taco(
+        |  name: String,
+        |) : AbstractSet<Food>(),
+        |    Serializable,
+        |    Comparable<Taco>
         |
       """.trimMargin(),
     )

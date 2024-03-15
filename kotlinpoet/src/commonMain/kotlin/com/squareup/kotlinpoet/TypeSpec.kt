@@ -178,6 +178,7 @@ public class TypeSpec private constructor(
         }
         codeWriter.emitTypeVariables(typeVariables)
 
+        var wrapSupertypes = false
         primaryConstructor?.let {
           codeWriter.pushType(this) // avoid name collisions when emitting primary constructor
           val emittedAnnotations = it.annotations.isNotEmpty()
@@ -198,6 +199,8 @@ public class TypeSpec private constructor(
           }
 
           it.parameters.emit(codeWriter, forceNewLines = true) { param ->
+            wrapSupertypes = true
+
             val property = constructorProperties[param.name]
             if (property != null) {
               property.emit(
@@ -232,7 +235,8 @@ public class TypeSpec private constructor(
         }
 
         if (superTypes.isNotEmpty()) {
-          codeWriter.emitCode(superTypes.joinToCode(separator = ", ", prefix = " : "))
+          val separator = if (wrapSupertypes) ",\n    " else ", "
+          codeWriter.emitCode(superTypes.joinToCode(separator = separator, prefix = " : "))
         }
 
         codeWriter.emitWhereBlock(typeVariables)
