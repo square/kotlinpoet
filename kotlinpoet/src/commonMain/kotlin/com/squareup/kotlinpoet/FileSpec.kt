@@ -49,9 +49,11 @@ import kotlin.reflect.KClass
 public class FileSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, TypeSpecHolder {
+) : Taggable by tagMap, Annotatable, TypeSpecHolder, MemberSpecHolder {
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   override val typeSpecs: List<TypeSpec> = builder.members.filterIsInstance<TypeSpec>().toImmutableList()
+  override val propertySpecs: List<PropertySpec> = builder.members.filterIsInstance<PropertySpec>().toImmutableList()
+  override val funSpecs: List<FunSpec> = builder.members.filterIsInstance<FunSpec>().toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
   public val packageName: String = builder.packageName
   public val name: String = builder.name
@@ -253,7 +255,11 @@ public class FileSpec private constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, TypeSpecHolder.Builder<Builder> {
+  ) : Taggable.Builder<Builder>,
+    Annotatable.Builder<Builder>,
+    TypeSpecHolder.Builder<Builder>,
+    MemberSpecHolder.Builder<Builder> {
+
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val comment = CodeBlock.builder()
     internal val memberImports = sortedSetOf<Import>()
@@ -311,7 +317,7 @@ public class FileSpec private constructor(
     override fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = super.addTypes(typeSpecs)
     //endregion
 
-    public fun addFunction(funSpec: FunSpec): Builder = apply {
+    override fun addFunction(funSpec: FunSpec): Builder = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
         "cannot add ${funSpec.name} to file $name"
       }
@@ -322,7 +328,7 @@ public class FileSpec private constructor(
       }
     }
 
-    public fun addProperty(propertySpec: PropertySpec): Builder = apply {
+    override fun addProperty(propertySpec: PropertySpec): Builder = apply {
       if (isScript) {
         body.add("%L", propertySpec)
       } else {

@@ -48,7 +48,8 @@ public class TypeSpec private constructor(
   ContextReceivable by contextReceivers,
   Annotatable,
   Documentable,
-  TypeSpecHolder {
+  TypeSpecHolder,
+  MemberSpecHolder {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
@@ -73,10 +74,10 @@ public class TypeSpec private constructor(
    */
   public val superinterfaces: Map<TypeName, CodeBlock?> = builder.superinterfaces.toImmutableMap()
   public val enumConstants: Map<String, TypeSpec> = builder.enumConstants.toImmutableMap()
-  public val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
+  override val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
   public val initializerBlock: CodeBlock = builder.initializerBlock.build()
   public val initializerIndex: Int = builder.initializerIndex
-  public val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
+  override val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
   public override val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
@@ -475,7 +476,8 @@ public class TypeSpec private constructor(
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     Documentable.Builder<Builder>,
-    TypeSpecHolder.Builder<Builder> {
+    TypeSpecHolder.Builder<Builder>,
+    MemberSpecHolder.Builder<Builder> {
     internal var primaryConstructor: FunSpec? = null
     internal var superclass: TypeName = ANY
     internal val initializerBlock = CodeBlock.builder()
@@ -664,11 +666,7 @@ public class TypeSpec private constructor(
       enumConstants[name] = typeSpec
     }
 
-    public fun addProperties(propertySpecs: Iterable<PropertySpec>): Builder = apply {
-      propertySpecs.map(this::addProperty)
-    }
-
-    public fun addProperty(propertySpec: PropertySpec): Builder = apply {
+    override fun addProperty(propertySpec: PropertySpec): Builder = apply {
       if (EXPECT in modifiers) {
         require(propertySpec.initializer == null) {
           "properties in expect classes can't have initializers"
@@ -685,32 +683,6 @@ public class TypeSpec private constructor(
       propertySpecs += propertySpec
     }
 
-    public fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
-      addProperty(PropertySpec.builder(name, type, *modifiers).build())
-
-    @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
-    )
-    public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
-      addProperty(name, type.asTypeName(), *modifiers)
-
-    public fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
-      addProperty(name, type.asTypeName(), *modifiers)
-
-    public fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
-      addProperty(PropertySpec.builder(name, type, modifiers).build())
-
-    @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
-    )
-    public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
-      addProperty(name, type.asTypeName(), modifiers)
-
-    public fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): Builder =
-      addProperty(name, type.asTypeName(), modifiers)
-
     public fun addInitializerBlock(block: CodeBlock): Builder = apply {
       checkCanHaveInitializerBlocks()
       // Set index to however many properties we have
@@ -724,11 +696,7 @@ public class TypeSpec private constructor(
         .add("}\n")
     }
 
-    public fun addFunctions(funSpecs: Iterable<FunSpec>): Builder = apply {
-      funSpecs.forEach { addFunction(it) }
-    }
-
-    public fun addFunction(funSpec: FunSpec): Builder = apply {
+    override fun addFunction(funSpec: FunSpec): Builder = apply {
       funSpecs += funSpec
     }
 
@@ -770,6 +738,43 @@ public class TypeSpec private constructor(
 
     @Suppress("RedundantOverride")
     override fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = super.addTypes(typeSpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addProperties(propertySpecs: Iterable<PropertySpec>): Builder =
+      super.addProperties(propertySpecs)
+
+    @Suppress("RedundantOverride")
+    override fun addProperty(name: String, type: TypeName, vararg modifiers: KModifier): Builder =
+      super.addProperty(name, type, *modifiers)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
+      super.addProperty(name, type, *modifiers)
+
+    @Suppress("RedundantOverride")
+    override fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
+      super.addProperty(name, type, *modifiers)
+
+    @Suppress("RedundantOverride")
+    override fun addProperty(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder =
+      super.addProperty(name, type, modifiers)
+
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    override fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
+      super.addProperty(name, type, modifiers)
+
+    @Suppress("RedundantOverride")
+    override fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): Builder =
+      super.addProperty(name, type, modifiers)
+
+    @Suppress("RedundantOverride")
+    override fun addFunctions(funSpecs: Iterable<FunSpec>): Builder = super.addFunctions(funSpecs)
     //endregion
 
     public fun build(): TypeSpec {
