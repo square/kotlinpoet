@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+* New: Extract `MemberSpecHolder` interface for constructs that can hold `PropertySpec`s and `FunSpec`s and their builders (#1877).
 * Fix: Prevent name clashes between a function in class and a function call in current scope (#1850).
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
