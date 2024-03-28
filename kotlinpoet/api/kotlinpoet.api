@@ -148,7 +148,9 @@ public final class com/squareup/kotlinpoet/CodeBlocks {
 	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
 	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
 	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static final fun joinToCode (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock;
 	public static synthetic fun joinToCode$default (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock;
+	public static synthetic fun joinToCode$default (Ljava/util/Collection;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock;
 	public static final fun withIndent (Lcom/squareup/kotlinpoet/CodeBlock$Builder;Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 }
 
