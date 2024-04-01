@@ -531,6 +531,54 @@ class FileSpecTest {
     )
   }
 
+  @Test fun aliasedImportClass() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "Class")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "C")
+      .addFunction(
+        FunSpec.builder("main")
+          .returns(className)
+          .addCode("return %T()", className)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.Class as C
+      |
+      |public fun main(): C = C()
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun aliasedImportWithNestedClass() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "Outer").nestedClass("Inner")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "INNER")
+      .addFunction(
+        FunSpec.builder("main")
+          .returns(className)
+          .addCode("return %T()", className)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.Outer.Inner as INNER
+      |
+      |public fun main(): INNER = INNER()
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
       .addType(

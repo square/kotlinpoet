@@ -509,10 +509,17 @@ internal class CodeWriter constructor(
 
   private fun importableType(className: ClassName) {
     val topLevelClassName = className.topLevelClassName()
-    val simpleName = imports[className.canonicalName]?.alias ?: topLevelClassName.simpleName
+    val alias = imports[className.canonicalName]?.alias
+    val simpleName = alias ?: topLevelClassName.simpleName
     // Check for name clashes with members.
     if (simpleName !in importableMembers) {
-      importableTypes[simpleName] = importableTypes.getValue(simpleName) + topLevelClassName
+      // Maintain the inner class name if the alias exists.
+      val newImportTypes = if (alias == null) {
+        topLevelClassName
+      } else {
+        className
+      }
+      importableTypes[simpleName] = importableTypes.getValue(simpleName) + newImportTypes
     }
   }
 

@@ -15,6 +15,7 @@ Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is dep
   issue with `OptIn` annotations (#1831).
 * Fix: `MemberName`s without a package are now correctly imported (#1841)
 * Fix: Throw if primary constructor delegates to other constructors (#1859).
+* Fix: Aliased imports with nested class (#1876).
 
 ## Version 1.16.0
 
