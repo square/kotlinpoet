@@ -652,6 +652,10 @@ internal class CodeWriter constructor(
       return false
     }
 
+    if (implicitModifiers.contains(KModifier.INTERNAL)) {
+      return false
+    }
+
     if (!implicitModifiers.contains(KModifier.PUBLIC)) {
       return false
     }

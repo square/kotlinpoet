@@ -20,6 +20,7 @@ Change Log
 * Fix: Throw if primary constructor delegates to other constructors (#1859).
 * Fix: Aliased imports with nested class (#1876).
 * Fix: Check for error types in `KSType.toClassName()` (#1890).
+* Fix: Omit more permissive modifiers on restricted visibility types (#1301).
 
 ## Version 1.16.0
 

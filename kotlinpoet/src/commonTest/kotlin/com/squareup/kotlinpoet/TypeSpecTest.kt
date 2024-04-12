@@ -5778,6 +5778,96 @@ class TypeSpecTest {
     }.hasMessageThat().isEqualTo("primary constructor can't delegate to other constructors")
   }
 
+  // https://github.com/square/kotlinpoet/issues/1301
+  @Test fun permissiveModifiersOmittedOnRestrictedVisibilityTypesInSealedInterface() {
+    val pageStateClass = ClassName("", "FeaturePageState")
+    val type =
+      TypeSpec.interfaceBuilder("FeaturePageState")
+        .addModifiers(SEALED)
+        .addModifiers(INTERNAL)
+        .addType(
+          TypeSpec.objectBuilder("Loading")
+            .addModifiers(DATA)
+            .addSuperinterface(pageStateClass)
+            .build(),
+        )
+        .addType(
+          TypeSpec.objectBuilder("Error")
+            .addModifiers(DATA)
+            .addSuperinterface(pageStateClass)
+            .build(),
+        )
+        .addType(
+          TypeSpec.objectBuilder("Content")
+            .addModifiers(DATA)
+            .addSuperinterface(pageStateClass)
+            .build(),
+        )
+        .build()
+
+    //language=kotlin
+    assertThat(type.toString()).isEqualTo(
+      // no public visibility modifier on implicitly internal sealed types
+      """
+      internal sealed interface FeaturePageState {
+        data object Loading : FeaturePageState
+
+        data object Error : FeaturePageState
+
+        data object Content : FeaturePageState
+      }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test fun permissiveModifiersOmittedOnRestrictedVisibilityPropertyInClass() {
+    val type = TypeSpec.classBuilder("Taco")
+      .addModifiers(INTERNAL)
+      .addProperty("ints", IntArray::class)
+      .build()
+
+    //language=kotlin
+    assertThat(toString(type)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.IntArray
+
+      internal class Taco {
+        val ints: IntArray
+      }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test fun permissiveModifiersOmittedOnRestrictedVisibilityFunctionInClass() {
+    val taco = TypeSpec.classBuilder("Taco")
+      .addModifiers(INTERNAL)
+      .addFunction(
+        FunSpec.builder("toString")
+          .addModifiers(KModifier.FINAL, KModifier.OVERRIDE)
+          .returns(String::class)
+          .addStatement("return %S", "taco")
+          .build(),
+      )
+      .build()
+
+    assertThat(toString(taco)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |internal class Taco {
+        |  final override fun toString(): String = "taco"
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
   companion object {
     private const val donutsPackage = "com.squareup.donuts"
   }
