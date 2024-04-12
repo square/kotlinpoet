@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.KModifier.IN
 import com.squareup.kotlinpoet.KModifier.INNER
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VARARG
@@ -5822,20 +5823,155 @@ class TypeSpecTest {
   }
 
   @Test fun permissiveModifiersOmittedOnRestrictedVisibilityPropertyInClass() {
-    val type = TypeSpec.classBuilder("Taco")
-      .addModifiers(INTERNAL)
-      .addProperty("ints", IntArray::class)
+    val privateClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PRIVATE)
+      .addProperty("unspecifiedInts", IntArray::class)
+      .addProperty("privateInts", IntArray::class, PRIVATE)
+      .addProperty("protectedInts", IntArray::class, PROTECTED)
+      .addProperty("publicInts", IntArray::class, PUBLIC)
+      .addProperty("internalInts", IntArray::class, INTERNAL)
       .build()
 
     //language=kotlin
-    assertThat(toString(type)).isEqualTo(
+    assertThat(toString(privateClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.IntArray
+
+      private class Taco {
+        val unspecifiedInts: IntArray
+
+        private val privateInts: IntArray
+
+        protected val protectedInts: IntArray
+
+        public val publicInts: IntArray
+
+        internal val internalInts: IntArray
+      }
+
+      """.trimIndent(),
+    )
+
+    val internalClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(INTERNAL)
+      .addProperty("unspecifiedInts", IntArray::class)
+      .addProperty("privateInts", IntArray::class, PRIVATE)
+      .addProperty("protectedInts", IntArray::class, PROTECTED)
+      .addProperty("publicInts", IntArray::class, PUBLIC)
+      .addProperty("internalInts", IntArray::class, INTERNAL)
+      .build()
+
+    //language=kotlin
+    assertThat(toString(internalClass)).isEqualTo(
       """
       package com.squareup.tacos
 
       import kotlin.IntArray
 
       internal class Taco {
-        val ints: IntArray
+        val unspecifiedInts: IntArray
+
+        private val privateInts: IntArray
+
+        protected val protectedInts: IntArray
+
+        public val publicInts: IntArray
+
+        internal val internalInts: IntArray
+      }
+
+      """.trimIndent(),
+    )
+
+    val publicClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PUBLIC)
+      .addProperty("unspecifiedInts", IntArray::class)
+      .addProperty("privateInts", IntArray::class, PRIVATE)
+      .addProperty("protectedInts", IntArray::class, PROTECTED)
+      .addProperty("publicInts", IntArray::class, PUBLIC)
+      .addProperty("internalInts", IntArray::class, INTERNAL)
+      .build()
+
+    //language=kotlin
+    assertThat(toString(publicClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.IntArray
+
+      public class Taco {
+        public val unspecifiedInts: IntArray
+
+        private val privateInts: IntArray
+
+        protected val protectedInts: IntArray
+
+        public val publicInts: IntArray
+
+        internal val internalInts: IntArray
+      }
+
+      """.trimIndent(),
+    )
+
+    val protectedClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PROTECTED)
+      .addProperty("unspecifiedInts", IntArray::class)
+      .addProperty("privateInts", IntArray::class, PRIVATE)
+      .addProperty("protectedInts", IntArray::class, PROTECTED)
+      .addProperty("publicInts", IntArray::class, PUBLIC)
+      .addProperty("internalInts", IntArray::class, INTERNAL)
+      .build()
+
+    //language=kotlin
+    assertThat(toString(protectedClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.IntArray
+
+      protected class Taco {
+        val unspecifiedInts: IntArray
+
+        private val privateInts: IntArray
+
+        protected val protectedInts: IntArray
+
+        public val publicInts: IntArray
+
+        internal val internalInts: IntArray
+      }
+
+      """.trimIndent(),
+    )
+
+    val unspecifiedClass = TypeSpec.classBuilder("Taco")
+      .addProperty("unspecifiedInts", IntArray::class)
+      .addProperty("privateInts", IntArray::class, PRIVATE)
+      .addProperty("protectedInts", IntArray::class, PROTECTED)
+      .addProperty("publicInts", IntArray::class, PUBLIC)
+      .addProperty("internalInts", IntArray::class, INTERNAL)
+      .build()
+
+    //language=kotlin
+    assertThat(toString(unspecifiedClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.IntArray
+
+      public class Taco {
+        public val unspecifiedInts: IntArray
+
+        private val privateInts: IntArray
+
+        protected val protectedInts: IntArray
+
+        public val publicInts: IntArray
+
+        internal val internalInts: IntArray
       }
 
       """.trimIndent(),
@@ -5843,28 +5979,182 @@ class TypeSpecTest {
   }
 
   @Test fun permissiveModifiersOmittedOnRestrictedVisibilityFunctionInClass() {
-    val taco = TypeSpec.classBuilder("Taco")
-      .addModifiers(INTERNAL)
-      .addFunction(
-        FunSpec.builder("toString")
-          .addModifiers(KModifier.FINAL, KModifier.OVERRIDE)
-          .returns(String::class)
-          .addStatement("return %S", "taco")
-          .build(),
-      )
+    val unspecifiedVisibilityMethod = FunSpec.builder("unspecifiedStringMethod")
+      .returns(String::class)
+      .addStatement("return %S", "taco")
       .build()
 
-    assertThat(toString(taco)).isEqualTo(
+    val privateVisibilityMethod = FunSpec.builder("privateStringMethod")
+      .returns(String::class)
+      .addModifiers(PRIVATE)
+      .addStatement("return %S", "taco")
+      .build()
+
+    val internalVisibilityMethod = FunSpec.builder("internalStringMethod")
+      .returns(String::class)
+      .addModifiers(INTERNAL)
+      .addStatement("return %S", "taco")
+      .build()
+
+    val protectedVisibilityMethod = FunSpec.builder("protectedStringMethod")
+      .returns(String::class)
+      .addModifiers(PROTECTED)
+      .addStatement("return %S", "taco")
+      .build()
+
+    val publicVisibilityMethod = FunSpec.builder("publicStringMethod")
+      .returns(String::class)
+      .addModifiers(PUBLIC)
+      .addStatement("return %S", "taco")
+      .build()
+
+    val privateClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PRIVATE)
+      .addFunction(unspecifiedVisibilityMethod)
+      .addFunction(privateVisibilityMethod)
+      .addFunction(internalVisibilityMethod)
+      .addFunction(protectedVisibilityMethod)
+      .addFunction(publicVisibilityMethod)
+      .build()
+
+    assertThat(toString(privateClass)).isEqualTo(
       """
-        |package com.squareup.tacos
-        |
-        |import kotlin.String
-        |
-        |internal class Taco {
-        |  final override fun toString(): String = "taco"
-        |}
-        |
-      """.trimMargin(),
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      private class Taco {
+        fun unspecifiedStringMethod(): String = "taco"
+
+        private fun privateStringMethod(): String = "taco"
+
+        internal fun internalStringMethod(): String = "taco"
+
+        protected fun protectedStringMethod(): String = "taco"
+
+        public fun publicStringMethod(): String = "taco"
+      }
+
+      """.trimIndent(),
+    )
+
+    val protectedClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PROTECTED)
+      .addFunction(unspecifiedVisibilityMethod)
+      .addFunction(privateVisibilityMethod)
+      .addFunction(internalVisibilityMethod)
+      .addFunction(protectedVisibilityMethod)
+      .addFunction(publicVisibilityMethod)
+      .build()
+
+    assertThat(toString(protectedClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      protected class Taco {
+        fun unspecifiedStringMethod(): String = "taco"
+
+        private fun privateStringMethod(): String = "taco"
+
+        internal fun internalStringMethod(): String = "taco"
+
+        protected fun protectedStringMethod(): String = "taco"
+
+        public fun publicStringMethod(): String = "taco"
+      }
+
+      """.trimIndent(),
+    )
+
+    val internalClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(INTERNAL)
+      .addFunction(unspecifiedVisibilityMethod)
+      .addFunction(privateVisibilityMethod)
+      .addFunction(internalVisibilityMethod)
+      .addFunction(protectedVisibilityMethod)
+      .addFunction(publicVisibilityMethod)
+      .build()
+
+    assertThat(toString(internalClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      internal class Taco {
+        fun unspecifiedStringMethod(): String = "taco"
+
+        private fun privateStringMethod(): String = "taco"
+
+        internal fun internalStringMethod(): String = "taco"
+
+        protected fun protectedStringMethod(): String = "taco"
+
+        public fun publicStringMethod(): String = "taco"
+      }
+
+      """.trimIndent(),
+    )
+
+    val publicClass = TypeSpec.classBuilder("Taco")
+      .addModifiers(PUBLIC)
+      .addFunction(unspecifiedVisibilityMethod)
+      .addFunction(privateVisibilityMethod)
+      .addFunction(internalVisibilityMethod)
+      .addFunction(protectedVisibilityMethod)
+      .addFunction(publicVisibilityMethod)
+      .build()
+
+    assertThat(toString(publicClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      public class Taco {
+        public fun unspecifiedStringMethod(): String = "taco"
+
+        private fun privateStringMethod(): String = "taco"
+
+        internal fun internalStringMethod(): String = "taco"
+
+        protected fun protectedStringMethod(): String = "taco"
+
+        public fun publicStringMethod(): String = "taco"
+      }
+
+      """.trimIndent(),
+    )
+
+    val unspecifiedClass = TypeSpec.classBuilder("Taco")
+      .addFunction(unspecifiedVisibilityMethod)
+      .addFunction(privateVisibilityMethod)
+      .addFunction(internalVisibilityMethod)
+      .addFunction(protectedVisibilityMethod)
+      .addFunction(publicVisibilityMethod)
+      .build()
+
+    assertThat(toString(unspecifiedClass)).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import kotlin.String
+
+      public class Taco {
+        public fun unspecifiedStringMethod(): String = "taco"
+
+        private fun privateStringMethod(): String = "taco"
+
+        internal fun internalStringMethod(): String = "taco"
+
+        protected fun protectedStringMethod(): String = "taco"
+
+        public fun publicStringMethod(): String = "taco"
+      }
+
+      """.trimIndent(),
     )
   }
 

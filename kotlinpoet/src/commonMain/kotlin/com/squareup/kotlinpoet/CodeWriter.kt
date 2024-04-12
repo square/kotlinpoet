@@ -161,11 +161,19 @@ internal class CodeWriter constructor(
       emit(KModifier.PUBLIC.keyword)
       emit(" ")
     }
+
+    // public always being an implicit modifier in addition to whatever we inherited.
+    // we don't want to throw away the implicit modifier we inherited
+    val implicitModifierContainsAtLeastTwoAccessMonitors = implicitModifiers.count {
+      it == KModifier.PUBLIC || it == KModifier.PRIVATE || it == KModifier.INTERNAL || it == KModifier.PROTECTED
+    } >= 2
+
     val uniqueNonPublicExplicitOnlyModifiers =
       modifiers
         .filterNot { it == KModifier.PUBLIC }
-        .filterNot { implicitModifiers.contains(it) }
+        .filterNot { implicitModifiers.contains(it) && implicitModifierContainsAtLeastTwoAccessMonitors.not() }
         .toEnumSet()
+
     for (modifier in uniqueNonPublicExplicitOnlyModifiers) {
       emit(modifier.keyword)
       emit(" ")
@@ -652,7 +660,8 @@ internal class CodeWriter constructor(
       return false
     }
 
-    if (implicitModifiers.contains(KModifier.INTERNAL)) {
+    if (implicitModifiers.contains(KModifier.INTERNAL) || implicitModifiers.contains(KModifier.PRIVATE) || implicitModifiers.contains(KModifier.PROTECTED)) {
+      // omit more permissive modifiers on more restrictive visibility modifiers
       return false
     }
 

@@ -447,6 +447,8 @@ public class TypeSpec private constructor(
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
@@ -456,6 +458,8 @@ public class TypeSpec private constructor(
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
@@ -465,6 +469,8 @@ public class TypeSpec private constructor(
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
         INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
