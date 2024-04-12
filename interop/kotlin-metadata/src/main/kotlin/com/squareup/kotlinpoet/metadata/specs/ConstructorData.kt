@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 
 /**
@@ -30,7 +29,6 @@ import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
  * @property jvmModifiers set of [JvmMethodModifiers][JvmMethodModifier] on this constructor.
  * @property exceptions list of exceptions thrown by this constructor.
  */
-@KotlinPoetMetadataPreview
 public data class ConstructorData(
   private val annotations: List<AnnotationSpec>,
   val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,

@@ -54,7 +54,6 @@ import com.squareup.kotlinpoet.TypeAliasSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createAnnotations
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
@@ -121,39 +120,33 @@ import kotlin.metadata.modality
 import kotlin.metadata.visibility
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadataPreview
 public fun KClass<*>.toTypeSpec(
   classInspector: ClassInspector? = null,
 ): TypeSpec = java.toTypeSpec(classInspector)
 
 /** @return a [TypeSpec] ABI representation of this [KClass]. */
 @OptIn(DelicateKotlinPoetApi::class)
-@KotlinPoetMetadataPreview
 public fun Class<*>.toTypeSpec(
   classInspector: ClassInspector? = null,
 ): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [TypeSpec] ABI representation of this [TypeElement]. */
 @OptIn(DelicateKotlinPoetApi::class)
-@KotlinPoetMetadataPreview
 public fun TypeElement.toTypeSpec(
   classInspector: ClassInspector? = null,
 ): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadataPreview
 public fun KClass<*>.toFileSpec(
   classInspector: ClassInspector? = null,
 ): FileSpec = java.toFileSpec(classInspector)
 
 /** @return a [FileSpec] ABI representation of this [KClass]. */
-@KotlinPoetMetadataPreview
 public fun Class<*>.toFileSpec(
   classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
 
 /** @return a [FileSpec] ABI representation of this [TypeElement]. */
-@KotlinPoetMetadataPreview
 public fun TypeElement.toFileSpec(
   classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(
@@ -162,7 +155,6 @@ public fun TypeElement.toFileSpec(
 )
 
 /** @return a [TypeSpec] ABI representation of this [KmClass]. */
-@KotlinPoetMetadataPreview
 public fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name),
@@ -171,7 +163,6 @@ public fun KmClass.toTypeSpec(
 }
 
 /** @return a [FileSpec] ABI representation of this [KmClass]. */
-@KotlinPoetMetadataPreview
 public fun KmClass.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName = createClassName(name),
@@ -183,7 +174,6 @@ public fun KmClass.toFileSpec(
 }
 
 /** @return a [FileSpec] ABI representation of this [KmPackage]. */
-@KotlinPoetMetadataPreview
 public fun KmPackage.toFileSpec(
   classInspector: ClassInspector?,
   className: ClassName,
@@ -241,7 +231,6 @@ public fun KmPackage.toFileSpec(
 
 private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
 
-@KotlinPoetMetadataPreview
 private fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,
   className: ClassName,
@@ -481,7 +470,6 @@ private fun companionObjectName(name: String): String? {
   return if (name == "Companion") null else name
 }
 
-@KotlinPoetMetadataPreview
 private fun KmConstructor.toFunSpec(
   typeParamResolver: TypeParameterResolver,
   constructorData: ConstructorData?,
@@ -509,14 +497,12 @@ private fun KmConstructor.toFunSpec(
     .build()
 }
 
-@KotlinPoetMetadataPreview
 private val ContainerData.isInterface: Boolean get() {
   return declarationContainer.let { container ->
     container is KmClass && container.isInterface
   }
 }
 
-@KotlinPoetMetadataPreview
 private fun KmFunction.toFunSpec(
   classTypeParamsResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   classInspector: ClassInspector? = null,
@@ -607,7 +593,6 @@ private fun KmFunction.toFunSpec(
     .build()
 }
 
-@KotlinPoetMetadataPreview
 private fun KmValueParameter.toParameterSpec(
   typeParamResolver: TypeParameterResolver,
   annotations: Collection<AnnotationSpec>,
@@ -633,7 +618,6 @@ private fun KmValueParameter.toParameterSpec(
     .build()
 }
 
-@KotlinPoetMetadataPreview
 private fun KmProperty.toPropertySpec(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
   isConstructorParam: Boolean = false,
@@ -787,7 +771,6 @@ private fun KmProperty.toPropertySpec(
     .build()
 }
 
-@KotlinPoetMetadataPreview
 private fun propertyAccessor(
   propertyModifiers: Set<KModifier>,
   attrs: KmPropertyAccessorAttributes,
@@ -825,7 +808,6 @@ private fun propertyAccessor(
   }
 }
 
-@KotlinPoetMetadataPreview
 private fun KmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
   val typeParamResolver = typeParameters.toTypeParameterResolver()
   return TypeAliasSpec.builder(name, underlyingType.toTypeName(typeParamResolver))
@@ -862,7 +844,6 @@ private val JAVA_ANNOTATION_ANNOTATIONS = setOf(
   java.lang.annotation.Target::class.asClassName(),
 )
 
-@KotlinPoetMetadataPreview
 private fun visibilityFrom(visibility: Visibility, body: (KModifier) -> Unit) {
   val modifierVisibility = visibility.toKModifier()
   if (modifierVisibility != PUBLIC) {

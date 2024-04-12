@@ -20,7 +20,6 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.buildCodeBlock
 import com.squareup.kotlinpoet.joinToCode
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.tag
 import kotlin.metadata.KmAnnotation
@@ -43,7 +42,6 @@ import kotlin.metadata.KmAnnotationArgument.UIntValue
 import kotlin.metadata.KmAnnotationArgument.ULongValue
 import kotlin.metadata.KmAnnotationArgument.UShortValue
 
-@KotlinPoetMetadataPreview
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
   val cn = createClassName(className)
   return AnnotationSpec.builder(cn)
@@ -57,7 +55,6 @@ internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-@KotlinPoetMetadataPreview
 internal fun KmAnnotationArgument.toCodeBlock(): CodeBlock {
   return when (this) {
     is ByteValue -> CodeBlock.of("%L", value)

@@ -37,7 +37,6 @@ import com.squareup.kotlinpoet.SET
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.joinToCode
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import java.util.Collections
 import java.util.TreeSet
@@ -47,7 +46,6 @@ import kotlin.metadata.isLocalClassName
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
-@KotlinPoetMetadataPreview
 internal object ClassInspectorUtil {
   val JVM_NAME: ClassName = JvmName::class.asClassName()
   private val JVM_FIELD = JvmField::class.asClassName()

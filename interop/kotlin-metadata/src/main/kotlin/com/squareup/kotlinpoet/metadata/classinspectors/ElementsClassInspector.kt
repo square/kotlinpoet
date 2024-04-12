@@ -28,7 +28,6 @@ import com.squareup.kotlinpoet.DelicateKotlinPoetApi
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JAVA_DEPRECATED
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JVM_NAME
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
@@ -90,7 +89,6 @@ private typealias ElementsModifier = javax.lang.model.element.Modifier
 /**
  * An [Elements]-based implementation of [ClassInspector].
  */
-@KotlinPoetMetadataPreview
 public class ElementsClassInspector private constructor(
   private val elements: Elements,
   private val types: Types,
@@ -573,7 +571,6 @@ public class ElementsClassInspector private constructor(
   public companion object {
     /** @return an [Elements]-based implementation of [ClassInspector]. */
     @JvmStatic
-    @KotlinPoetMetadataPreview
     public fun create(elements: Elements, types: Types): ClassInspector {
       return ElementsClassInspector(elements, types)
     }

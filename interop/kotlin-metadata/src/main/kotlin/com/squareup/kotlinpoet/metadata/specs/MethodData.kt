@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 
 /**
@@ -32,7 +31,6 @@ import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
  * @property isOverride indicates if this method overrides one in a supertype.
  * @property exceptions list of exceptions thrown by this method.
  */
-@KotlinPoetMetadataPreview
 public data class MethodData(
   private val annotations: List<AnnotationSpec>,
   val parameterAnnotations: Map<Int, Collection<AnnotationSpec>>,

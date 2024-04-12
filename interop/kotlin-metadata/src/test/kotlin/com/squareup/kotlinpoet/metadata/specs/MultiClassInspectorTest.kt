@@ -19,7 +19,6 @@ import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.classinspectors.ReflectiveClassInspector
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType
@@ -38,7 +37,6 @@ import org.junit.runners.model.Statement
 
 /** Base test class that runs all tests with multiple [ClassInspectorTypes][ClassInspectorType]. */
 @RunWith(Parameterized::class)
-@KotlinPoetMetadataPreview
 abstract class MultiClassInspectorTest {
   companion object {
     @JvmStatic

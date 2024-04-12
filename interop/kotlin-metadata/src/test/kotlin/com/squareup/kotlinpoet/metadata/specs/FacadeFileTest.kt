@@ -17,12 +17,10 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType.ELEMENTS
 import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspectorType.REFLECTIVE
 import org.junit.Test
 
-@KotlinPoetMetadataPreview
 class FacadeFileTest : MultiClassInspectorTest() {
 
   @IgnoreForHandlerType(

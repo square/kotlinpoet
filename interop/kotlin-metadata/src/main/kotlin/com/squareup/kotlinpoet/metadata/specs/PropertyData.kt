@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.GET
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 
 /**
@@ -31,7 +30,6 @@ import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
  * @property setterData associated setter (as [MethodData]) with this property, if any.
  * @property isJvmField indicates if this property should be treated as a jvm field.
  */
-@KotlinPoetMetadataPreview
 public data class PropertyData(
   private val annotations: List<AnnotationSpec>,
   val fieldData: FieldData?,

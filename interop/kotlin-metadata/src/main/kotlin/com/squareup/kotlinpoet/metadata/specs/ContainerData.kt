@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmDeclarationContainer
@@ -35,7 +34,6 @@ import kotlin.metadata.KmProperty
  * @property properties the mapping of [declarationContainer]'s properties to parsed [PropertyData].
  * @property methods the mapping of [declarationContainer]'s methods to parsed [MethodData].
  */
-@KotlinPoetMetadataPreview
 public interface ContainerData {
   public val declarationContainer: KmDeclarationContainer
   public val annotations: Collection<AnnotationSpec>
@@ -53,7 +51,6 @@ public interface ContainerData {
  * @property constructors the mapping of [declarationContainer]'s constructors to parsed
  * [ConstructorData].
  */
-@KotlinPoetMetadataPreview
 public data class ClassData(
   override val declarationContainer: KmClass,
   val className: ClassName,
@@ -72,7 +69,6 @@ public data class ClassData(
  * @property jvmName the `@JvmName` of the class or null if it does not have a custom name.
  *           Default will try to infer from the [className].
  */
-@KotlinPoetMetadataPreview
 public data class FileData(
   override val declarationContainer: KmPackage,
   override val annotations: Collection<AnnotationSpec>,
@@ -97,7 +93,6 @@ public data class FileData(
  * [@Metadata][Metadata] annotation.
  * @property annotations the annotations for the entry
  */
-@KotlinPoetMetadataPreview
 public data class EnumEntryData(
   val declarationContainer: KmClass?,
   val annotations: Collection<AnnotationSpec>,

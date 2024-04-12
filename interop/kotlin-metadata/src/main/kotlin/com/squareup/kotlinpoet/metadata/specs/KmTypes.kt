@@ -24,7 +24,6 @@ import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.tags.TypeAliasTag
@@ -59,7 +58,6 @@ public val KmType.isExtensionType: Boolean get() {
   return annotations.any { it.className == "kotlin/ExtensionFunctionType" }
 }
 
-@KotlinPoetMetadataPreview
 internal val KmClass.primaryConstructor: KmConstructor?
   get() = constructors.find { it.isPrimary }
 
@@ -71,7 +69,6 @@ internal fun KmVariance.toKModifier(): KModifier? {
   }
 }
 
-@KotlinPoetMetadataPreview
 internal fun KmTypeProjection.toTypeName(
   typeParamResolver: TypeParameterResolver,
 ): TypeName {
@@ -89,7 +86,6 @@ internal fun KmTypeProjection.toTypeName(
  * "source" representation. This includes converting [functions][kotlin.Function] and `suspend`
  * types to appropriate [lambda representations][LambdaTypeName].
  */
-@KotlinPoetMetadataPreview
 internal fun KmType.toTypeName(
   typeParamResolver: TypeParameterResolver,
 ): TypeName {
@@ -164,7 +160,6 @@ internal fun KmType.toTypeName(
   } ?: finalType
 }
 
-@KotlinPoetMetadataPreview
 internal fun KmTypeParameter.toTypeVariableName(
   typeParamResolver: TypeParameterResolver,
 ): TypeVariableName {
@@ -186,7 +181,6 @@ internal fun KmTypeParameter.toTypeVariableName(
   )
 }
 
-@KotlinPoetMetadataPreview
 private fun KmFlexibleTypeUpperBound.toTypeName(
   typeParamResolver: TypeParameterResolver,
 ): TypeName {
@@ -207,7 +201,6 @@ internal interface TypeParameterResolver {
   }
 }
 
-@KotlinPoetMetadataPreview
 internal fun List<KmTypeParameter>.toTypeParameterResolver(
   fallback: TypeParameterResolver? = null,
 ): TypeParameterResolver {
