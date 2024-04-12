@@ -17,9 +17,9 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmDeclarationContainer
-import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmDeclarationContainer
+import kotlin.metadata.jvm.JvmMethodSignature
 
 /** A basic interface for looking up JVM information about a given Class. */
 @KotlinPoetMetadataPreview

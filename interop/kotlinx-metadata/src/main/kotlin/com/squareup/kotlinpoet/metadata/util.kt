@@ -16,16 +16,16 @@
 package com.squareup.kotlinpoet.metadata
 
 import com.squareup.kotlinpoet.KModifier
-import kotlinx.metadata.ClassKind
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmConstructor
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.MemberKind
-import kotlinx.metadata.Modality
-import kotlinx.metadata.Visibility
-import kotlinx.metadata.isSecondary
-import kotlinx.metadata.isVar
-import kotlinx.metadata.kind
+import kotlin.metadata.ClassKind
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmProperty
+import kotlin.metadata.MemberKind
+import kotlin.metadata.Modality
+import kotlin.metadata.Visibility
+import kotlin.metadata.isSecondary
+import kotlin.metadata.isVar
+import kotlin.metadata.kind
 
 internal val KmClass.isObject: Boolean
   get() = kind == ClassKind.OBJECT

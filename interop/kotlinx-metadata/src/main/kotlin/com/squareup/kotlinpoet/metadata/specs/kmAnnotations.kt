@@ -23,25 +23,25 @@ import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.createClassName
 import com.squareup.kotlinpoet.tag
-import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.KmAnnotationArgument
-import kotlinx.metadata.KmAnnotationArgument.AnnotationValue
-import kotlinx.metadata.KmAnnotationArgument.ArrayValue
-import kotlinx.metadata.KmAnnotationArgument.BooleanValue
-import kotlinx.metadata.KmAnnotationArgument.ByteValue
-import kotlinx.metadata.KmAnnotationArgument.CharValue
-import kotlinx.metadata.KmAnnotationArgument.DoubleValue
-import kotlinx.metadata.KmAnnotationArgument.EnumValue
-import kotlinx.metadata.KmAnnotationArgument.FloatValue
-import kotlinx.metadata.KmAnnotationArgument.IntValue
-import kotlinx.metadata.KmAnnotationArgument.KClassValue
-import kotlinx.metadata.KmAnnotationArgument.LongValue
-import kotlinx.metadata.KmAnnotationArgument.ShortValue
-import kotlinx.metadata.KmAnnotationArgument.StringValue
-import kotlinx.metadata.KmAnnotationArgument.UByteValue
-import kotlinx.metadata.KmAnnotationArgument.UIntValue
-import kotlinx.metadata.KmAnnotationArgument.ULongValue
-import kotlinx.metadata.KmAnnotationArgument.UShortValue
+import kotlin.metadata.KmAnnotation
+import kotlin.metadata.KmAnnotationArgument
+import kotlin.metadata.KmAnnotationArgument.AnnotationValue
+import kotlin.metadata.KmAnnotationArgument.ArrayValue
+import kotlin.metadata.KmAnnotationArgument.BooleanValue
+import kotlin.metadata.KmAnnotationArgument.ByteValue
+import kotlin.metadata.KmAnnotationArgument.CharValue
+import kotlin.metadata.KmAnnotationArgument.DoubleValue
+import kotlin.metadata.KmAnnotationArgument.EnumValue
+import kotlin.metadata.KmAnnotationArgument.FloatValue
+import kotlin.metadata.KmAnnotationArgument.IntValue
+import kotlin.metadata.KmAnnotationArgument.KClassValue
+import kotlin.metadata.KmAnnotationArgument.LongValue
+import kotlin.metadata.KmAnnotationArgument.ShortValue
+import kotlin.metadata.KmAnnotationArgument.StringValue
+import kotlin.metadata.KmAnnotationArgument.UByteValue
+import kotlin.metadata.KmAnnotationArgument.UIntValue
+import kotlin.metadata.KmAnnotationArgument.ULongValue
+import kotlin.metadata.KmAnnotationArgument.UShortValue
 
 @KotlinPoetMetadataPreview
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {

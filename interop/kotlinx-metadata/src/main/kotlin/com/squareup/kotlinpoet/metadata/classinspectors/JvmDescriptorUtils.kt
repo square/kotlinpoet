@@ -43,8 +43,8 @@ import javax.lang.model.type.UnionType
 import javax.lang.model.type.WildcardType
 import javax.lang.model.util.AbstractTypeVisitor8
 import javax.lang.model.util.Types
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.JvmFieldSignature
+import kotlin.metadata.jvm.JvmMethodSignature
 
 /*
  * Adapted from
