@@ -164,14 +164,14 @@ internal class CodeWriter constructor(
 
     // public always being an implicit modifier in addition to whatever we inherited.
     // we don't want to throw away the implicit modifier we inherited
-    val implicitModifierContainsAtLeastTwoAccessMonitors = implicitModifiers.count {
+    val implicitModifierContainsAtLeastTwoAccessModifiers = implicitModifiers.count {
       it == KModifier.PUBLIC || it == KModifier.PRIVATE || it == KModifier.INTERNAL || it == KModifier.PROTECTED
     } >= 2
 
     val uniqueNonPublicExplicitOnlyModifiers =
       modifiers
         .filterNot { it == KModifier.PUBLIC }
-        .filterNot { implicitModifiers.contains(it) && implicitModifierContainsAtLeastTwoAccessMonitors.not() }
+        .filterNot { implicitModifiers.contains(it) && implicitModifierContainsAtLeastTwoAccessModifiers.not() }
         .toEnumSet()
 
     for (modifier in uniqueNonPublicExplicitOnlyModifiers) {
