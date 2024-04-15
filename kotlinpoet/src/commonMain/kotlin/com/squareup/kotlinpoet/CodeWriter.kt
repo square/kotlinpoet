@@ -660,7 +660,7 @@ internal class CodeWriter constructor(
       return false
     }
 
-    if (implicitModifiers.contains(KModifier.INTERNAL) || implicitModifiers.contains(KModifier.PRIVATE) || implicitModifiers.contains(KModifier.PROTECTED)) {
+    if (implicitModifiers.containsAnyOf(KModifier.INTERNAL, KModifier.PRIVATE, KModifier.PROTECTED)) {
       // omit more permissive modifiers on more restrictive visibility modifiers
       return false
     }
