@@ -101,13 +101,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Properties() {
-        public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
+        public val foo: kotlin.String = throw NotImplementedError("Stub!")
 
         public val bar: kotlin.String? = null
 
         public var baz: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val foo: kotlin.String = throw NotImplementedError("Stub!")
+        public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
       }
       """.trimIndent(),
     )
@@ -125,13 +125,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Properties() {
-        public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
+        public val foo: kotlin.String = throw NotImplementedError("Stub!")
 
         public val bar: kotlin.String? = null
 
         public var baz: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val foo: kotlin.String = throw NotImplementedError("Stub!")
+        public var aList: kotlin.collections.List<kotlin.Int> = throw NotImplementedError("Stub!")
       }
       """.trimIndent(),
     )
@@ -261,13 +261,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       public class SuspendTypes() {
         public val testProp: suspend (kotlin.Int, kotlin.Long) -> kotlin.String = throw NotImplementedError("Stub!")
 
-        public suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
-        }
-
         public fun testFun(body: suspend (kotlin.Int, kotlin.Long) -> kotlin.String) {
         }
 
         public suspend fun testSuspendFun(param1: kotlin.String) {
+        }
+
+        public suspend fun testComplexSuspendFun(body: suspend (kotlin.Int, suspend (kotlin.Long) -> kotlin.String) -> kotlin.String) {
         }
       }
       """.trimIndent(),
@@ -294,13 +294,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class Parameters() {
-        public inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")) {
-        }
-
         public inline fun `inline`(crossinline param1: () -> kotlin.String) {
         }
 
         public inline fun `noinline`(noinline param1: () -> kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
+
+        public inline fun hasDefault(param1: kotlin.String = throw NotImplementedError("Stub!")) {
+        }
       }
       """.trimIndent(),
     )
@@ -600,7 +600,6 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         FOO {
           override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
-        @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.FieldAnnotation
         BAR {
           override fun toString(): kotlin.String = throw NotImplementedError("Stub!")
         },
@@ -641,20 +640,20 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(testInterfaceSpec.trimmedToString()).isEqualTo(
       """
       public interface TestInterface {
-        public fun complex(input: kotlin.String, input2: kotlin.String = throw NotImplementedError("Stub!")): kotlin.String = throw NotImplementedError("Stub!")
-
-        public fun hasDefault() {
-        }
-
-        public fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
-
-        public fun hasDefaultSingleParam(input: kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
-
         public fun noDefault()
 
         public fun noDefaultWithInput(input: kotlin.String)
 
         public fun noDefaultWithInputDefault(input: kotlin.String = throw NotImplementedError("Stub!"))
+
+        public fun hasDefault() {
+        }
+
+        public fun hasDefaultSingleParam(input: kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
+
+        public fun hasDefaultMultiParam(input: kotlin.String, input2: kotlin.String): kotlin.String = throw NotImplementedError("Stub!")
+
+        public fun complex(input: kotlin.String, input2: kotlin.String = throw NotImplementedError("Stub!")): kotlin.String = throw NotImplementedError("Stub!")
       }
       """.trimIndent(),
     )
@@ -665,10 +664,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(subInterfaceSpec.trimmedToString()).isEqualTo(
       """
       public interface SubInterface : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.TestInterface {
-        override fun hasDefault() {
+        public fun subInterfaceFunction() {
         }
 
-        public fun subInterfaceFunction() {
+        override fun hasDefault() {
         }
       }
       """.trimIndent(),
@@ -803,13 +802,13 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class GenericClass<T>() {
+        public fun functionWithT(`param`: T) {
+        }
+
         public fun <T> functionAlsoWithT(`param`: T) {
         }
 
         public fun <R> functionWithADifferentType(`param`: R) {
-        }
-
-        public fun functionWithT(`param`: T) {
         }
 
         /**
@@ -879,12 +878,12 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.GetterAnnotation
         public var getter: kotlin.String? = null
 
+        @set:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.SetterAnnotation
+        public var setter: kotlin.String? = null
+
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.HolderAnnotation
         @kotlin.jvm.JvmField
         public var holder: kotlin.String? = null
-
-        @set:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.SetterAnnotation
-        public var setter: kotlin.String? = null
 
         @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.ConstructorAnnotation
         public constructor(`value`: kotlin.String)
@@ -953,76 +952,76 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       public class Constants(
         public val `param`: kotlin.String = throw NotImplementedError("Stub!"),
       ) {
-        public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
-
         public val boolProp: kotlin.Boolean = throw NotImplementedError("Stub!")
 
-        public val doubleProp: kotlin.Double = throw NotImplementedError("Stub!")
-
-        public val floatProp: kotlin.Float = throw NotImplementedError("Stub!")
-
-        public val hexProp: kotlin.Int = throw NotImplementedError("Stub!")
+        public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
         public val intProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val longProp: kotlin.Long = throw NotImplementedError("Stub!")
+        public val underscoresProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val stringProp: kotlin.String = throw NotImplementedError("Stub!")
+        public val hexProp: kotlin.Int = throw NotImplementedError("Stub!")
 
         public val underscoresHexProp: kotlin.Long = throw NotImplementedError("Stub!")
 
-        public val underscoresProp: kotlin.Int = throw NotImplementedError("Stub!")
+        public val longProp: kotlin.Long = throw NotImplementedError("Stub!")
+
+        public val floatProp: kotlin.Float = throw NotImplementedError("Stub!")
+
+        public val doubleProp: kotlin.Double = throw NotImplementedError("Stub!")
+
+        public val stringProp: kotlin.String = throw NotImplementedError("Stub!")
 
         public companion object {
-          public const val CONST_BINARY_PROP: kotlin.Int = 11
-
-          public const val CONST_BOOL_PROP: kotlin.Boolean = false
-
-          public const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
-
-          public const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
-
-          public const val CONST_HEX_PROP: kotlin.Int = 15
-
-          public const val CONST_INT_PROP: kotlin.Int = 1
-
-          public const val CONST_LONG_PROP: kotlin.Long = 1L
-
-          public const val CONST_STRING_PROP: kotlin.String = "prop"
-
-          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
-
-          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
+          @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_BOOL_PROP: kotlin.Boolean = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_BINARY_PROP: kotlin.Int = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_BOOL_PROP: kotlin.Boolean = throw NotImplementedError("Stub!")
+          public val STATIC_CONST_INT_PROP: kotlin.Int = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_DOUBLE_PROP: kotlin.Double = throw NotImplementedError("Stub!")
-
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_FLOAT_PROP: kotlin.Float = throw NotImplementedError("Stub!")
+          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_HEX_PROP: kotlin.Int = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_INT_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_LONG_PROP: kotlin.Long = throw NotImplementedError("Stub!")
 
           @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_FLOAT_PROP: kotlin.Float = throw NotImplementedError("Stub!")
+
+          @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_DOUBLE_PROP: kotlin.Double = throw NotImplementedError("Stub!")
+
+          @kotlin.jvm.JvmStatic
           public val STATIC_CONST_STRING_PROP: kotlin.String = throw NotImplementedError("Stub!")
 
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = throw NotImplementedError("Stub!")
+          public const val CONST_BOOL_PROP: kotlin.Boolean = false
 
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = throw NotImplementedError("Stub!")
+          public const val CONST_BINARY_PROP: kotlin.Int = 11
+
+          public const val CONST_INT_PROP: kotlin.Int = 1
+
+          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
+
+          public const val CONST_HEX_PROP: kotlin.Int = 15
+
+          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
+
+          public const val CONST_LONG_PROP: kotlin.Long = 1L
+
+          public const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          public const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          public const val CONST_STRING_PROP: kotlin.String = "prop"
         }
       }
       """.trimIndent(),
@@ -1046,76 +1045,76 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       public class Constants(
         public val `param`: kotlin.String = throw NotImplementedError("Stub!"),
       ) {
-        public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
-
         public val boolProp: kotlin.Boolean = throw NotImplementedError("Stub!")
 
-        public val doubleProp: kotlin.Double = throw NotImplementedError("Stub!")
-
-        public val floatProp: kotlin.Float = throw NotImplementedError("Stub!")
-
-        public val hexProp: kotlin.Int = throw NotImplementedError("Stub!")
+        public val binaryProp: kotlin.Int = throw NotImplementedError("Stub!")
 
         public val intProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val longProp: kotlin.Long = throw NotImplementedError("Stub!")
+        public val underscoresProp: kotlin.Int = throw NotImplementedError("Stub!")
 
-        public val stringProp: kotlin.String = throw NotImplementedError("Stub!")
+        public val hexProp: kotlin.Int = throw NotImplementedError("Stub!")
 
         public val underscoresHexProp: kotlin.Long = throw NotImplementedError("Stub!")
 
-        public val underscoresProp: kotlin.Int = throw NotImplementedError("Stub!")
+        public val longProp: kotlin.Long = throw NotImplementedError("Stub!")
+
+        public val floatProp: kotlin.Float = throw NotImplementedError("Stub!")
+
+        public val doubleProp: kotlin.Double = throw NotImplementedError("Stub!")
+
+        public val stringProp: kotlin.String = throw NotImplementedError("Stub!")
 
         public companion object {
-          public const val CONST_BINARY_PROP: kotlin.Int = 11
-
-          public const val CONST_BOOL_PROP: kotlin.Boolean = false
-
-          public const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
-
-          public const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
-
-          public const val CONST_HEX_PROP: kotlin.Int = 15
-
-          public const val CONST_INT_PROP: kotlin.Int = 1
-
-          public const val CONST_LONG_PROP: kotlin.Long = 1L
-
-          public const val CONST_STRING_PROP: kotlin.String = "prop"
-
-          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
-
-          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
+          @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_BOOL_PROP: kotlin.Boolean = false
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_BINARY_PROP: kotlin.Int = 11
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_BOOL_PROP: kotlin.Boolean = false
+          public val STATIC_CONST_INT_PROP: kotlin.Int = 1
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_DOUBLE_PROP: kotlin.Double = 1.0
-
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_FLOAT_PROP: kotlin.Float = 1.0F
+          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_HEX_PROP: kotlin.Int = 15
 
           @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_INT_PROP: kotlin.Int = 1
+          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
 
           @kotlin.jvm.JvmStatic
           public val STATIC_CONST_LONG_PROP: kotlin.Long = 1L
 
           @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          @kotlin.jvm.JvmStatic
+          public val STATIC_CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          @kotlin.jvm.JvmStatic
           public val STATIC_CONST_STRING_PROP: kotlin.String = "prop"
 
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
+          public const val CONST_BOOL_PROP: kotlin.Boolean = false
 
-          @kotlin.jvm.JvmStatic
-          public val STATIC_CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
+          public const val CONST_BINARY_PROP: kotlin.Int = 11
+
+          public const val CONST_INT_PROP: kotlin.Int = 1
+
+          public const val CONST_UNDERSCORES_PROP: kotlin.Int = 1_000_000
+
+          public const val CONST_HEX_PROP: kotlin.Int = 15
+
+          public const val CONST_UNDERSCORES_HEX_PROP: kotlin.Long = 4_293_713_502L
+
+          public const val CONST_LONG_PROP: kotlin.Long = 1L
+
+          public const val CONST_FLOAT_PROP: kotlin.Float = 1.0F
+
+          public const val CONST_DOUBLE_PROP: kotlin.Double = 1.0
+
+          public const val CONST_STRING_PROP: kotlin.String = "prop"
         }
       }
       """.trimIndent(),
@@ -1178,17 +1177,17 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public class JvmAnnotations() {
-        @get:kotlin.jvm.Synchronized
-        public val synchronizedGetProp: kotlin.String? = null
-
-        @set:kotlin.jvm.Synchronized
-        public var synchronizedSetProp: kotlin.String? = null
-
         @kotlin.jvm.Transient
         public val transientProp: kotlin.String? = null
 
         @kotlin.jvm.Volatile
         public var volatileProp: kotlin.String? = null
+
+        @get:kotlin.jvm.Synchronized
+        public val synchronizedGetProp: kotlin.String? = null
+
+        @set:kotlin.jvm.Synchronized
+        public var synchronizedSetProp: kotlin.String? = null
 
         @kotlin.jvm.Synchronized
         public fun synchronizedFun() {
@@ -1267,12 +1266,12 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
 
+        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
+        public var propertySet: kotlin.String? = null
+
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         public var propertyGetAndSet: kotlin.String? = null
-
-        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
-        public var propertySet: kotlin.String? = null
 
         @kotlin.jvm.JvmName(name = "jvmFunction")
         public fun function() {
@@ -1314,12 +1313,12 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGet")
         public val propertyGet: kotlin.String? = null
 
+        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
+        public var propertySet: kotlin.String? = null
+
         @get:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         @set:kotlin.jvm.JvmName(name = "jvmPropertyGetAndSet")
         public var propertyGetAndSet: kotlin.String? = null
-
-        @set:kotlin.jvm.JvmName(name = "jvmPropertySet")
-        public var propertySet: kotlin.String? = null
 
         @kotlin.jvm.JvmName(name = "jvmFunction")
         public fun function() {
@@ -1440,10 +1439,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           @kotlin.jvm.JvmField
           public val companionProp: kotlin.String = ""
 
-          public const val constCompanionProp: kotlin.String = ""
-
           @kotlin.jvm.JvmStatic
           public val staticCompanionProp: kotlin.String = ""
+
+          public const val constCompanionProp: kotlin.String = ""
         }
       }
       """.trimIndent(),
@@ -1472,10 +1471,10 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
           @kotlin.jvm.JvmField
           public val companionProp: kotlin.String = throw NotImplementedError("Stub!")
 
-          public const val constCompanionProp: kotlin.String = ""
-
           @kotlin.jvm.JvmStatic
           public val staticCompanionProp: kotlin.String = throw NotImplementedError("Stub!")
+
+          public const val constCompanionProp: kotlin.String = ""
         }
       }
       """.trimIndent(),
@@ -1512,20 +1511,20 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public val `param`: kotlin.String,
       ) {
         @field:kotlin.jvm.JvmSynthetic
-        public val fieldProperty: kotlin.String? = null
+        public val `property`: kotlin.String? = null
 
         @field:kotlin.jvm.JvmSynthetic
-        public val `property`: kotlin.String? = null
+        public val fieldProperty: kotlin.String? = null
 
         @get:kotlin.jvm.JvmSynthetic
         public val propertyGet: kotlin.String? = null
 
+        @set:kotlin.jvm.JvmSynthetic
+        public var propertySet: kotlin.String? = null
+
         @get:kotlin.jvm.JvmSynthetic
         @set:kotlin.jvm.JvmSynthetic
         public var propertyGetAndSet: kotlin.String? = null
-
-        @set:kotlin.jvm.JvmSynthetic
-        public var propertySet: kotlin.String? = null
 
         /**
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
@@ -1577,20 +1576,20 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public val `param`: kotlin.String,
       ) {
         @field:kotlin.jvm.JvmSynthetic
-        public val fieldProperty: kotlin.String? = null
+        public val `property`: kotlin.String? = null
 
         @field:kotlin.jvm.JvmSynthetic
-        public val `property`: kotlin.String? = null
+        public val fieldProperty: kotlin.String? = null
 
         @get:kotlin.jvm.JvmSynthetic
         public val propertyGet: kotlin.String? = null
 
+        @set:kotlin.jvm.JvmSynthetic
+        public var propertySet: kotlin.String? = null
+
         @get:kotlin.jvm.JvmSynthetic
         @set:kotlin.jvm.JvmSynthetic
         public var propertyGetAndSet: kotlin.String? = null
-
-        @set:kotlin.jvm.JvmSynthetic
-        public var propertySet: kotlin.String? = null
 
         /**
          * Note: Since this is a synthetic function, some JVM information (annotations, modifiers) may be missing.
@@ -1676,14 +1675,14 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       """
       public class Throwing @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class]) constructor() {
         @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
-        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
-        public var getterAndSetterThrows: kotlin.String? = null
-
-        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         public val getterThrows: kotlin.String? = null
 
         @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         public var setterThrows: kotlin.String? = null
+
+        @get:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        @set:kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
+        public var getterAndSetterThrows: kotlin.String? = null
 
         @kotlin.jvm.Throws(exceptionClasses = [java.lang.IllegalStateException::class])
         public fun testFunction() {
@@ -1972,9 +1971,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         public fun <D : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<A>> function() {
         }
 
-        public class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>()
-
         public class AssetOut<out B : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset.AssetOut<B>>()
+
+        public class AssetIn<in C : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset.AssetIn<C>>()
       }
       """.trimIndent(),
     )
@@ -1997,9 +1996,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public abstract class AbstractClass() {
-        public val baz: kotlin.String? = null
-
         public abstract val foo: kotlin.String
+
+        public val baz: kotlin.String? = null
 
         public abstract fun bar()
 
@@ -2056,16 +2055,16 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(abstractModalities.trimmedToString()).isEqualTo(
       """
       public abstract class AbstractModalities() : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.ModalitiesInterface {
-        public val implicitFinalProp: kotlin.String? = null
-
         override val interfaceProp: kotlin.String? = null
+
+        public val implicitFinalProp: kotlin.String? = null
 
         public open val openProp: kotlin.String? = null
 
-        public fun implicitFinalFun() {
+        override fun interfaceFun() {
         }
 
-        override fun interfaceFun() {
+        public fun implicitFinalFun() {
         }
 
         public open fun openFun() {
@@ -2164,9 +2163,9 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString()).isEqualTo(
       """
       public open class Node<T : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<T, R>, R : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<R, T>>() {
-        public var r: R? = null
-
         public var t: T? = null
+
+        public var r: R? = null
       }
       """.trimIndent(),
     )

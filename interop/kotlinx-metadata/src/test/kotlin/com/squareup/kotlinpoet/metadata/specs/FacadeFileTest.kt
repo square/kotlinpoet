@@ -58,13 +58,6 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun jvmNameFunction() {
       }
 
-      public fun jvmOverloads(
-        param1: String,
-        optionalParam2: String = throw NotImplementedError("Stub!"),
-        nullableParam3: String? = throw NotImplementedError("Stub!"),
-      ) {
-      }
-
       public fun regularFun() {
       }
 
@@ -72,65 +65,72 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun synchronizedFun() {
       }
 
-      public val BINARY_PROP: Int = 11
+      public fun jvmOverloads(
+        param1: String,
+        optionalParam2: String = throw NotImplementedError("Stub!"),
+        nullableParam3: String? = throw NotImplementedError("Stub!"),
+      ) {
+      }
 
       public val BOOL_PROP: Boolean = false
 
-      public const val CONST_BINARY_PROP: Int = 11
-
-      public const val CONST_BOOL_PROP: Boolean = false
-
-      public const val CONST_DOUBLE_PROP: Double = 1.0
-
-      public const val CONST_FLOAT_PROP: Float = 1.0F
-
-      public const val CONST_HEX_PROP: Int = 15
-
-      public const val CONST_INT_PROP: Int = 1
-
-      public const val CONST_LONG_PROP: Long = 1L
-
-      public const val CONST_STRING_PROP: String = "prop"
-
-      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
-
-      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
-
-      public val DOUBLE_PROP: Double = 1.0
-
-      public val FLOAT_PROP: Float = 1.0F
-
-      public val HEX_PROP: Int = 15
+      public val BINARY_PROP: Int = 11
 
       public val INT_PROP: Int = 1
 
-      public val LONG_PROP: Long = 1L
+      public val UNDERSCORES_PROP: Int = 1_000_000
 
-      public val STRING_PROP: String = "prop"
+      public val HEX_PROP: Int = 15
 
       public val UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
 
-      public val UNDERSCORES_PROP: Int = 1_000_000
+      public val LONG_PROP: Long = 1L
 
-      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
+      public val FLOAT_PROP: Float = 1.0F
+
+      public val DOUBLE_PROP: Double = 1.0
+
+      public val STRING_PROP: String = "prop"
 
       public var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
-
-      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
-
-      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
       public var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
-      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
       public var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+
+      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
+
+      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
+
+      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+
+      public const val CONST_BOOL_PROP: Boolean = false
+
+      public const val CONST_BINARY_PROP: Int = 11
+
+      public const val CONST_INT_PROP: Int = 1
+
+      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
+
+      public const val CONST_HEX_PROP: Int = 15
+
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
+
+      public const val CONST_LONG_PROP: Long = 1L
+
+      public const val CONST_FLOAT_PROP: Float = 1.0F
+
+      public const val CONST_DOUBLE_PROP: Double = 1.0
+
+      public const val CONST_STRING_PROP: String = "prop"
 
       @field:JvmSynthetic
       @JvmField
@@ -149,11 +149,11 @@ class FacadeFileTest : MultiClassInspectorTest() {
       @set:JvmSynthetic
       public var syntheticPropertySet: String? = null
 
+      public typealias FacadeTypeAliasName = String
+
       public typealias FacadeGenericTypeAlias = List<String>
 
       public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
-
-      public typealias FacadeTypeAliasName = String
       """.trimIndent(),
     )
   }
@@ -193,6 +193,13 @@ class FacadeFileTest : MultiClassInspectorTest() {
       public fun jvmNameFunction() {
       }
 
+      public fun regularFun() {
+      }
+
+      @Synchronized
+      public fun synchronizedFun() {
+      }
+
       @JvmOverloads
       public fun jvmOverloads(
         param1: String,
@@ -201,72 +208,65 @@ class FacadeFileTest : MultiClassInspectorTest() {
       ) {
       }
 
-      public fun regularFun() {
-      }
-
-      @Synchronized
-      public fun synchronizedFun() {
-      }
+      public val BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
       public val BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
-      public val BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
-
-      public const val CONST_BINARY_PROP: Int = 11
-
-      public const val CONST_BOOL_PROP: Boolean = false
-
-      public const val CONST_DOUBLE_PROP: Double = 1.0
-
-      public const val CONST_FLOAT_PROP: Float = 1.0F
-
-      public const val CONST_HEX_PROP: Int = 15
-
-      public const val CONST_INT_PROP: Int = 1
-
-      public const val CONST_LONG_PROP: Long = 1L
-
-      public const val CONST_STRING_PROP: String = "prop"
-
-      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
-
-      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
-
-      public val DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
-
-      public val FLOAT_PROP: Float = throw NotImplementedError("Stub!")
-
-      public val HEX_PROP: Int = throw NotImplementedError("Stub!")
-
       public val INT_PROP: Int = throw NotImplementedError("Stub!")
-
-      public val LONG_PROP: Long = throw NotImplementedError("Stub!")
-
-      public val STRING_PROP: String = throw NotImplementedError("Stub!")
-
-      public val UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
       public val UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
-      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
+      public val HEX_PROP: Int = throw NotImplementedError("Stub!")
+
+      public val UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
+
+      public val LONG_PROP: Long = throw NotImplementedError("Stub!")
+
+      public val FLOAT_PROP: Float = throw NotImplementedError("Stub!")
+
+      public val DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
+
+      public val STRING_PROP: String = throw NotImplementedError("Stub!")
 
       public var VAR_BOOL_PROP: Boolean = throw NotImplementedError("Stub!")
 
-      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
-
-      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
-
-      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_BINARY_PROP: Int = throw NotImplementedError("Stub!")
 
       public var VAR_INT_PROP: Int = throw NotImplementedError("Stub!")
 
-      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
 
-      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+      public var VAR_HEX_PROP: Int = throw NotImplementedError("Stub!")
 
       public var VAR_UNDERSCORES_HEX_PROP: Long = throw NotImplementedError("Stub!")
 
-      public var VAR_UNDERSCORES_PROP: Int = throw NotImplementedError("Stub!")
+      public var VAR_LONG_PROP: Long = throw NotImplementedError("Stub!")
+
+      public var VAR_FLOAT_PROP: Float = throw NotImplementedError("Stub!")
+
+      public var VAR_DOUBLE_PROP: Double = throw NotImplementedError("Stub!")
+
+      public var VAR_STRING_PROP: String = throw NotImplementedError("Stub!")
+
+      public const val CONST_BOOL_PROP: Boolean = false
+
+      public const val CONST_BINARY_PROP: Int = 11
+
+      public const val CONST_INT_PROP: Int = 1
+
+      public const val CONST_UNDERSCORES_PROP: Int = 1_000_000
+
+      public const val CONST_HEX_PROP: Int = 15
+
+      public const val CONST_UNDERSCORES_HEX_PROP: Long = 4_293_713_502L
+
+      public const val CONST_LONG_PROP: Long = 1L
+
+      public const val CONST_FLOAT_PROP: Float = 1.0F
+
+      public const val CONST_DOUBLE_PROP: Double = 1.0
+
+      public const val CONST_STRING_PROP: String = "prop"
 
       @field:JvmSynthetic
       public val syntheticFieldProperty: String? = null
@@ -284,11 +284,11 @@ class FacadeFileTest : MultiClassInspectorTest() {
       @set:JvmSynthetic
       public var syntheticPropertySet: String? = null
 
+      public typealias FacadeTypeAliasName = String
+
       public typealias FacadeGenericTypeAlias = List<String>
 
       public typealias FacadeNestedTypeAlias = List<GenericTypeAlias>
-
-      public typealias FacadeTypeAliasName = String
       """.trimIndent(),
     )
   }
