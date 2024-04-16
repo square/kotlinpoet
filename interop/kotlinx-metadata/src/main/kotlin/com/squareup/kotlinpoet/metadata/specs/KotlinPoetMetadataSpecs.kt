@@ -799,7 +799,7 @@ private fun KmProperty.toPropertySpec(
       if (!isDelegated && modality != Modality.ABSTRACT) {
         propertyAccessor(
           modifierSet,
-          getter,
+          this@toPropertySpec.getter,
           FunSpec.getterBuilder().addStatement(NOT_IMPLEMENTED),
           isOverride,
         )?.let(::getter)

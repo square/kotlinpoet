@@ -3,6 +3,33 @@ Change Log
 
 ## Unreleased
 
+* New: Supertype list wraps to one-per-line if the primary constructor spans multiple lines (#1866).
+* New: Extract `MemberSpecHolder` interface for constructs that can hold `PropertySpec`s and `FunSpec`s and their builders (#1877).
+* New: `joinToCode` variant which operates on any type, but requires a transform lambda to convert each element into a `CodeBlock`.
+* Fix: Prevent name clashes between a function in class and a function call in current scope (#1850).
+* Fix: Fix extension function imports (#1814).
+* Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
+* Fix: Fix trailing newline in PropertySpec (#1827).
+Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
+* Fix: `KSAnnotation.toAnnotationSpec` writes varargs in place instead of making them an array to work around a Kotlin
+  issue with `OptIn` annotations (#1831).
+* Fix: `MemberName`s without a package are now correctly imported (#1841)
+* Fix: Throw if primary constructor delegates to other constructors (#1859).
+* Fix: Aliased imports with nested class (#1876).
+
+## Version 1.16.0
+
+Thanks to [@drawers][drawers], [@rickclephas][rickclephas] for contributing to this release.
+
+_2024-01-18_
+
+ * New: Kotlin 1.9.22.
+ * New: KSP 1.9.22-1.0.16.
+ * New: Add `NameAllocator` API to control keyword pre-allocation (#1803).
+ * Fix: Fix issue with missing `suspend` modifier in `KSTypeReference.toTypeName` (#1793).
+ * Fix: Honour same-package import aliases (#1794).
+ * Fix: Always include parameter docs in the type header (#1800).
+
 ## Version 1.15.3
 
 Thanks to [@gabrielittner][gabrielittner] for contributing to this release.
@@ -36,7 +63,9 @@ Thanks to [@drawers][drawers], [@fejesjoco][fejesjoco], [@takahirom][takahirom],
 [@martinbonnin][martinbonnin], [@mcarleio][mcarleio] for contributing to this release.
 
 In this release the `:kotlinpoet` module has been converted to a Kotlin Multiplatform module
-(#1654), though for now it only supports the JVM target.
+(#1654), though for now it only supports the JVM target. **Important**: unless you're building
+with Gradle, you will now need to depend on the `kotlinpoet-jvm` artifact, instead of `kotlinpoet` -
+see [Downloads](index.md#download) for instructions.
 
  * New: Kotlin 1.9.20.
  * New: KSP 1.9.20-1.0.14.

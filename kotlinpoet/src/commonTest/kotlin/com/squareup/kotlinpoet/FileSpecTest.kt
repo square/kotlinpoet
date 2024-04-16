@@ -500,6 +500,85 @@ class FileSpecTest {
     )
   }
 
+  // https://github.com/square/kotlinpoet/issues/1696
+  @Test fun aliasedImportInSamePackage() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "StringKey")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "S")
+      .addType(
+        TypeSpec
+          .objectBuilder("K")
+          .addProperty(
+            PropertySpec.builder("test", className)
+              .initializer("%T(%L)", className, 0)
+              .build(),
+          )
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.StringKey as S
+      |
+      |public object K {
+      |  public val test: S = S(0)
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun aliasedImportClass() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "Class")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "C")
+      .addFunction(
+        FunSpec.builder("main")
+          .returns(className)
+          .addCode("return %T()", className)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.Class as C
+      |
+      |public fun main(): C = C()
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun aliasedImportWithNestedClass() {
+    val packageName = "com.mypackage"
+    val className = ClassName(packageName, "Outer").nestedClass("Inner")
+    val source = FileSpec.builder(packageName, "K")
+      .addAliasedImport(className, "INNER")
+      .addFunction(
+        FunSpec.builder("main")
+          .returns(className)
+          .addCode("return %T()", className)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+      |package com.mypackage
+      |
+      |import com.mypackage.Outer.Inner as INNER
+      |
+      |public fun main(): INNER = INNER()
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun conflictingParentName() {
     val source = FileSpec.builder("com.squareup.tacos", "A")
       .addType(
@@ -1156,7 +1235,7 @@ class FileSpecTest {
       |
       |println("hello!")
       |
-      |public fun localFun() {
+      |fun localFun() {
       |}
       |
       |public class Yay
@@ -1210,5 +1289,36 @@ class FileSpecTest {
     val spec = FileSpec.builder(memberName).build()
     assertThat(spec.packageName).isEqualTo(memberName.packageName)
     assertThat(spec.name).isEqualTo(memberName.simpleName)
+  }
+
+  @Test fun topLevelPropertyWithControlFlow() {
+    val spec = FileSpec.builder("com.example.foo", "Test")
+      .addProperty(
+        PropertySpec.builder("MyProperty", String::class.java)
+          .initializer(
+            CodeBlock.builder()
+              .beginControlFlow("if (1 + 1 == 2)")
+              .addStatement("Expected")
+              .nextControlFlow("else")
+              .addStatement("Unexpected")
+              .endControlFlow()
+              .build(),
+          ).build(),
+      ).build()
+
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |package com.example.foo
+      |
+      |import java.lang.String
+      |
+      |public val MyProperty: String = if (1 + 1 == 2) {
+      |  Expected
+      |} else {
+      |  Unexpected
+      |}
+      |
+      """.trimMargin(),
+    )
   }
 }

@@ -26,7 +26,9 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ANY
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
@@ -70,7 +72,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
   private fun process(decl: KSAnnotated) {
     check(decl is KSClassDeclaration)
 
-    val classBuilder = TypeSpec.classBuilder(decl.simpleName.getShortName())
+    val classBuilder = TypeSpec.classBuilder("Test${decl.simpleName.getShortName()}")
       .addOriginatingKSFile(decl.containingFile!!)
       .apply {
         decl.getVisibility().toKModifier()?.let { addModifiers(it) }
@@ -143,6 +145,9 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               property.annotations
                 .map { it.toAnnotationSpec() }.asIterable(),
             )
+            if (Modifier.LATEINIT !in property.modifiers) {
+              initializer(CodeBlock.of("TODO()"))
+            }
           }
           .build(),
       )
@@ -173,7 +178,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             function.parameters.map { parameter ->
               // Function references can't be obtained from a resolved KSType because it resolves to FunctionN<> which
               // loses the necessary context, skip validation in these cases as we know they won't match.
-              val typeName = if (parameter.type.resolve().isFunctionType) {
+              val typeName = if (parameter.type.resolve().run { isFunctionType || isSuspendFunctionType }) {
                 parameter.type.toTypeName(functionTypeParams)
               } else {
                 parameter.type.toValidatedTypeName(functionTypeParams)
@@ -199,12 +204,13 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               }
             },
           )
+          .addCode(CodeBlock.of("return TODO()"))
           .build(),
       )
     }
 
     val typeSpec = classBuilder.build()
-    val fileSpec = FileSpec.builder(decl.packageName.asString(), "Test${typeSpec.name}")
+    val fileSpec = FileSpec.builder(decl.packageName.asString(), typeSpec.name!!)
       .addType(typeSpec)
       .build()
 

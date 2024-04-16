@@ -22,6 +22,7 @@ import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
 import com.tschuchort.compiletesting.kspArgs
 import com.tschuchort.compiletesting.kspIncremental
 import com.tschuchort.compiletesting.kspSourcesDir
+import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
 import org.junit.Rule
@@ -115,15 +116,15 @@ class TestProcessorTest {
              var propF: T? = null
 
              fun functionA(): String {
-               error()
+               TODO()
              }
 
              fun functionB(): R {
-               error()
+               TODO()
              }
 
              fun <F> functionC(param1: String, param2: T, param3: F, param4: F?): R {
-               error()
+               TODO()
              }
 
              suspend fun functionD(
@@ -134,6 +135,7 @@ class TestProcessorTest {
                param5: Function1<String, String>,
                param6: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit,
                param7: ((String) -> String)?,
+               param8: suspend () -> String,
              ) {
              }
 
@@ -237,33 +239,30 @@ class TestProcessorTest {
         someClasses = arrayOf(Int::class),
         enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
       )
-      public class SmokeTestClass<T, R : Any, E : Enum<E>> {
+      public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
         @field:AnotherAnnotation(input = "siteTargeting")
-        private val propA: String
+        private val propA: String = TODO()
 
-        internal val propB: String
+        internal val propB: String = TODO()
 
-        public val propC: Int
+        public val propC: Int = TODO()
 
-        public val propD: Int?
+        public val propD: Int? = TODO()
 
         public lateinit var propE: String
 
-        public var propF: T?
+        public var propF: T? = TODO()
 
-        public fun functionA(): String {
-        }
+        public fun functionA(): String = TODO()
 
-        public fun functionB(): R {
-        }
+        public fun functionB(): R = TODO()
 
         public fun <F> functionC(
           param1: String,
           param2: T,
           param3: F,
           param4: F?,
-        ): R {
-        }
+        ): R = TODO()
 
         public suspend fun functionD(
           param1: () -> String,
@@ -298,8 +297,8 @@ class TestProcessorTest {
             Int,
           ) -> Unit,
           param7: ((String) -> String)?,
-        ) {
-        }
+          param8: suspend () -> String,
+        ): Unit = TODO()
 
         public fun wildTypes(
           age: Int,
@@ -325,8 +324,7 @@ class TestProcessorTest {
           genericAlias: GenericTypeAlias,
           parameterizedTypeAlias: ParameterizedTypeAlias<String>,
           nestedArray: Array<Map<String, Any>>?,
-        ) {
-        }
+        ): Unit = TODO()
       }
 
       """.trimIndent(),
@@ -375,18 +373,18 @@ class TestProcessorTest {
 
       import kotlin.Int
       import kotlin.String
+      import kotlin.Unit
       import kotlin.collections.List
       import kotlin.collections.Map
 
-      public class Example {
+      public class TestExample {
         public fun aliases(
           aliasedName: String,
           genericAlias: List<String>,
           genericMapAlias: Map<Int, String>,
           t1Unused: Map<Int, String>,
           a1: Map<String, Int>,
-        ) {
-        }
+        ): Unit = TODO()
       }
 
       """.trimIndent(),
@@ -452,10 +450,10 @@ class TestProcessorTest {
       import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
 
       @ExampleAnnotationWithDefaults
-      public open class Node<T : Node<T, R>, R : Node<R, T>> {
-        public var t: T?
+      public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+        public var t: T? = TODO()
 
-        public var r: R?
+        public var r: R? = TODO()
       }
 
       """.trimIndent(),
@@ -489,10 +487,10 @@ class TestProcessorTest {
       """
       package test
 
-      public open class Node<T : Node<T, R>, R : Node<R, T>> {
-        public var t: T?
+      public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+        public var t: T? = TODO()
 
-        public var r: R?
+        public var r: R? = TODO()
       }
 
       """.trimIndent(),
@@ -512,7 +510,7 @@ class TestProcessorTest {
 
            @ExampleAnnotation
            class EnumWrapper {
-            val enumValue: Enum<*>
+            val enumValue: Enum<*> = TODO()
            }
            """,
       ),
@@ -528,8 +526,8 @@ class TestProcessorTest {
 
       import kotlin.Enum
 
-      public class EnumWrapper {
-        public val enumValue: Enum<*>
+      public class TestEnumWrapper {
+        public val enumValue: Enum<*> = TODO()
       }
 
       """.trimIndent(),
@@ -572,10 +570,10 @@ class TestProcessorTest {
     package test
 
     import kotlin.Int
+    import kotlin.Unit
 
-    public class TransitiveAliases {
-      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T) {
-      }
+    public class TestTransitiveAliases {
+      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T): Unit = TODO()
     }
 
       """.trimIndent(),
@@ -611,12 +609,58 @@ class TestProcessorTest {
       """
     package test
 
+    import kotlin.Unit
     import kotlin.collections.List
 
-    public class AliasAsTypeArgument {
-      public fun bar(arg1: List<Alias997>) {
-      }
+    public class TestAliasAsTypeArgument {
+      public fun bar(arg1: List<Alias997>): Unit = TODO()
     }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun varargArgument() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @RequiresOptIn
+           annotation class MyOptIn
+
+           @ExampleAnnotation
+           @OptIn(MyOptIn::class)
+           @AnnotationWithVararg(0, "one", "two")
+           interface Example
+        """.trimIndent(),
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+      package test
+
+      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+      import kotlin.OptIn
+
+      @OptIn(MyOptIn::class)
+      @AnnotationWithVararg(
+        simpleArg = 0,
+        "one",
+        "two",
+      )
+      public class TestExample
 
       """.trimIndent(),
     )
@@ -632,6 +676,7 @@ class TestProcessorTest {
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
+           annotation class Inject
            interface Repository<T>
            @ExampleAnnotation
            class RealRepository @Inject constructor() : Repository<String>
@@ -650,7 +695,7 @@ class TestProcessorTest {
 
         import kotlin.String
 
-        public class RealRepository : Repository<String>
+        public class TestRealRepository : Repository<String>
 
       """.trimIndent(),
     )
@@ -687,7 +732,7 @@ class TestProcessorTest {
         import kotlin.String
 
         @GenericAnnotation<String>
-        public class RealRepository
+        public class TestRealRepository
 
       """.trimIndent(),
     )
@@ -724,7 +769,7 @@ class TestProcessorTest {
       """
         package test
 
-        public class RealRepository {
+        public class TestRealRepository {
           public lateinit var prop: LeAlias
 
           public lateinit var complicated: Flow<LeAlias>
@@ -766,7 +811,7 @@ class TestProcessorTest {
 
         import kotlin.String
 
-        public class RealRepository {
+        public class TestRealRepository {
           public lateinit var prop: LeAlias<String>
         }
 
@@ -783,6 +828,7 @@ class TestProcessorTest {
         sources = sourceFiles.asList()
         verbose = false
         kspIncremental = true // The default now
+        kspWithCompilation = true
       }
   }
 }
