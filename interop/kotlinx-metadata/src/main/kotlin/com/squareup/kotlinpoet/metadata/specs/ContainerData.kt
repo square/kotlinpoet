@@ -18,12 +18,12 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmConstructor
-import kotlinx.metadata.KmDeclarationContainer
-import kotlinx.metadata.KmFunction
-import kotlinx.metadata.KmPackage
-import kotlinx.metadata.KmProperty
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmDeclarationContainer
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmPackage
+import kotlin.metadata.KmProperty
 
 /**
  * Represents relevant information on a declaration container used for [ClassInspector]. Can only

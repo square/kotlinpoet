@@ -42,12 +42,12 @@ import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
 import kotlin.properties.Delegates
 import kotlin.test.fail
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmConstructor
-import kotlinx.metadata.KmFunction
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.KmTypeParameter
-import kotlinx.metadata.KmValueParameter
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmProperty
+import kotlin.metadata.KmTypeParameter
+import kotlin.metadata.KmValueParameter
 import org.junit.Ignore
 import org.junit.Test
 

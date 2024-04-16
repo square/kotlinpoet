@@ -41,9 +41,9 @@ import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.ClassInspector
 import java.util.Collections
 import java.util.TreeSet
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.isConst
-import kotlinx.metadata.isLocalClassName
+import kotlin.metadata.KmProperty
+import kotlin.metadata.isConst
+import kotlin.metadata.isLocalClassName
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
@@ -186,7 +186,7 @@ internal object ClassInspectorUtil {
   }
 
   /**
-   * Best guesses a [ClassName] as represented in Metadata's [kotlinx.metadata.ClassName], where
+   * Best guesses a [ClassName] as represented in Metadata's [kotlin.metadata.ClassName], where
    * package names in this name are separated by '/' and class names are separated by '.'.
    *
    * For example: `"org/foo/bar/Baz.Nested"`.

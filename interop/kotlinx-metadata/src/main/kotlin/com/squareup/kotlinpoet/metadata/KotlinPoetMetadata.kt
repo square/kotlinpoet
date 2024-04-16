@@ -22,9 +22,9 @@ import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
 import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.reflect.KClass
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.Metadata
+import kotlin.metadata.KmClass
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.Metadata
 
 /**
  * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists

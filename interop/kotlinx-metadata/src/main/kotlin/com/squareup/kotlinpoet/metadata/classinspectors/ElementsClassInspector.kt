@@ -67,23 +67,23 @@ import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.LazyThreadSafetyMode.NONE
-import kotlinx.metadata.ClassKind
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmDeclarationContainer
-import kotlinx.metadata.KmPackage
-import kotlinx.metadata.hasAnnotations
-import kotlinx.metadata.hasConstant
-import kotlinx.metadata.isConst
-import kotlinx.metadata.isValue
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.fieldSignature
-import kotlinx.metadata.jvm.getterSignature
-import kotlinx.metadata.jvm.setterSignature
-import kotlinx.metadata.jvm.signature
-import kotlinx.metadata.jvm.syntheticMethodForAnnotations
-import kotlinx.metadata.kind
+import kotlin.metadata.ClassKind
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmDeclarationContainer
+import kotlin.metadata.KmPackage
+import kotlin.metadata.hasAnnotations
+import kotlin.metadata.hasConstant
+import kotlin.metadata.isConst
+import kotlin.metadata.isValue
+import kotlin.metadata.jvm.JvmFieldSignature
+import kotlin.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.fieldSignature
+import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.setterSignature
+import kotlin.metadata.jvm.signature
+import kotlin.metadata.jvm.syntheticMethodForAnnotations
+import kotlin.metadata.kind
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
