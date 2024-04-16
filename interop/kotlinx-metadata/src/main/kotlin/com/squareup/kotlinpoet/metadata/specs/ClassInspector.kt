@@ -16,13 +16,11 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmDeclarationContainer
 import kotlin.metadata.jvm.JvmMethodSignature
 
 /** A basic interface for looking up JVM information about a given Class. */
-@KotlinPoetMetadataPreview
 public interface ClassInspector {
 
   /**
@@ -91,7 +89,6 @@ public interface ClassInspector {
  * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
  *        companion object.
  */
-@KotlinPoetMetadataPreview
 public fun ClassInspector.containerData(
   className: ClassName,
   parentClassName: ClassName?,
@@ -107,7 +104,6 @@ public fun ClassInspector.containerData(
  * @return the read [KmClass] from its metadata. If no class was found, this should throw
  *         an exception.
  */
-@KotlinPoetMetadataPreview
 public fun ClassInspector.classFor(className: ClassName): KmClass {
   val container = declarationContainerFor(className)
   check(container is KmClass) {

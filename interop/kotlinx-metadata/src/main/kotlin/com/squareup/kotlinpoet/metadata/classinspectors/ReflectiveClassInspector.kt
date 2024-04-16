@@ -22,7 +22,6 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.DelicateKotlinPoetApi
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.JAVA_DEPRECATED
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil.filterOutNullabilityAnnotations
 import com.squareup.kotlinpoet.metadata.isDeclaration
@@ -73,7 +72,6 @@ import kotlin.metadata.jvm.signature
 import kotlin.metadata.jvm.syntheticMethodForAnnotations
 import kotlin.metadata.kind
 
-@KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
   private val classLoader: ClassLoader?,
 ) : ClassInspector {
@@ -543,7 +541,6 @@ public class ReflectiveClassInspector private constructor(
 
   public companion object {
     @JvmStatic
-    @KotlinPoetMetadataPreview
     public fun create(classLoader: ClassLoader? = null): ClassInspector {
       return ReflectiveClassInspector(classLoader)
     }

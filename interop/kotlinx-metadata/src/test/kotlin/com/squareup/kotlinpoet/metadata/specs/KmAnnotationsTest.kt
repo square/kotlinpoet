@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import kotlin.test.Test
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument.AnnotationValue
@@ -37,8 +36,6 @@ import kotlin.metadata.KmAnnotationArgument.UIntValue
 import kotlin.metadata.KmAnnotationArgument.ULongValue
 import kotlin.metadata.KmAnnotationArgument.UShortValue
 
-@OptIn(ExperimentalUnsignedTypes::class)
-@KotlinPoetMetadataPreview
 class KmAnnotationsTest {
 
   @Test fun noMembers() {

@@ -26,34 +26,20 @@ import kotlin.metadata.KmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
 
-/**
- * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
- * because kotlinx-metadata is not a stable API, and will remain in place until it is.
- */
-@RequiresOptIn
-@Retention(AnnotationRetention.BINARY)
-@Target(CLASS, FUNCTION, PROPERTY)
-public annotation class KotlinPoetMetadataPreview
-
 /** @return a new [KmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetMetadataPreview
 public fun KClass<*>.toKmClass(): KmClass = java.toKmClass()
 
 /** @return a new [KmClass] representation of the Kotlin metadata for [this] class. */
-@KotlinPoetMetadataPreview
 public fun Class<*>.toKmClass(): KmClass = readMetadata(::getAnnotation).toKmClass()
 
 /** @return a new [KmClass] representation of the Kotlin metadata for [this] type. */
-@KotlinPoetMetadataPreview
 public fun TypeElement.toKmClass(): KmClass = readMetadata(::getAnnotation).toKmClass()
 
-@KotlinPoetMetadataPreview
 public fun Metadata.toKmClass(): KmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>()
     .kmClass
 }
 
-@KotlinPoetMetadataPreview
 public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(): T {
   val expectedType = T::class
   val metadata = readKotlinClassMetadata()
@@ -83,7 +69,6 @@ public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetada
  * when you don't know what the underlying [KotlinClassMetadata] subtype is, otherwise you should
  * use one of the more direct functions like [toKmClass].
  */
-@KotlinPoetMetadataPreview
 public fun Metadata.readKotlinClassMetadata(): KotlinClassMetadata {
   val metadata = KotlinClassMetadata.readStrict(asClassHeader())
   checkNotNull(metadata) {

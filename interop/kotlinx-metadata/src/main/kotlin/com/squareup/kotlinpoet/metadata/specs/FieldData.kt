@@ -18,7 +18,6 @@ package com.squareup.kotlinpoet.metadata.specs
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FIELD
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 
 /**
@@ -31,7 +30,6 @@ import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
  * @property constant the constant value of this field, if available. Note that this is does not
  *           strictly imply that the associated property is `const`.
  */
-@KotlinPoetMetadataPreview
 public data class FieldData(
   private val annotations: List<AnnotationSpec>,
   val isSynthetic: Boolean,
