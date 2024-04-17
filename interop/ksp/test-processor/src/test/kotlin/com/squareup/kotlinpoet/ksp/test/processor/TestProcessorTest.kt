@@ -834,6 +834,47 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     )
   }
 
+  @Test
+  fun intersectionTypes() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           class Example {
+             fun <T> example() where T : Appendable, T : CharSequence {
+
+             }
+           }
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import kotlin.CharSequence
+        import kotlin.Unit
+        import kotlin.text.Appendable
+
+        public class TestExample {
+          public fun <T> example(): Unit where T : Appendable, T : CharSequence = TODO()
+        }
+
+      """.trimIndent(),
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {
