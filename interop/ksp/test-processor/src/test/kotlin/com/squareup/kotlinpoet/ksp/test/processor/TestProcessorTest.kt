@@ -19,8 +19,9 @@ import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
-import com.tschuchort.compiletesting.kspArgs
+import com.tschuchort.compiletesting.configureKsp
 import com.tschuchort.compiletesting.kspIncremental
+import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
@@ -28,8 +29,22 @@ import java.io.File
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class TestProcessorTest {
+@RunWith(Parameterized::class)
+class TestProcessorTest(private val useKsp2: Boolean) {
+
+  companion object {
+    @JvmStatic
+    @Parameterized.Parameters(name = "useKsp2={0}")
+    fun data(): Collection<Array<Any>> {
+      return listOf(
+        arrayOf(false),
+        arrayOf(true),
+      )
+    }
+  }
 
   @Rule
   @JvmField
@@ -362,7 +377,7 @@ class TestProcessorTest {
            """,
       ),
     )
-    compilation.kspArgs["unwrapTypeAliases"] = "true"
+    compilation.kspProcessorOptions["unwrapTypeAliases"] = "true"
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
     val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
@@ -824,11 +839,16 @@ class TestProcessorTest {
       .apply {
         workingDir = temporaryFolder.root
         inheritClassPath = true
-        symbolProcessorProviders = listOf(TestProcessorProvider())
         sources = sourceFiles.asList()
         verbose = false
-        kspIncremental = true // The default now
-        kspWithCompilation = true
+        configureKsp(useKsp2) {
+          incremental = true // The default now
+          if (!useKsp2) {
+            // Doesn't exist in KSP 2
+            withCompilation = true
+          }
+          symbolProcessorProviders += TestProcessorProvider()
+        }
       }
   }
 }
