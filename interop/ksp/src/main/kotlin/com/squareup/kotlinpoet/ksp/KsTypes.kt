@@ -36,8 +36,15 @@ import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.tags.TypeAliasTag
 
+private fun KSType.requireNotErrorType() {
+  require(!isError) {
+    "Error type '$this' is not resolvable in the current round of processing."
+  }
+}
+
 /** Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration]. */
 public fun KSType.toClassName(): ClassName {
+  requireNotErrorType()
   val decl = declaration
   check(decl is KSClassDeclaration) {
     "Declaration was not a KSClassDeclaration: $this"
@@ -61,9 +68,7 @@ internal fun KSType.toTypeName(
   typeParamResolver: TypeParameterResolver,
   typeArguments: List<KSTypeArgument>,
 ): TypeName {
-  require(!isError) {
-    "Error type '$this' is not resolvable in the current round of processing."
-  }
+  requireNotErrorType()
   val type = when (val decl = declaration) {
     is KSClassDeclaration -> {
       decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
