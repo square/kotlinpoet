@@ -24,7 +24,6 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.reflect.KClass
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.Metadata
 
 /**
  * Indicates that a given API is part of the experimental KotlinPoet metadata support. This exists
@@ -39,28 +38,24 @@ public annotation class KotlinPoetMetadataPreview
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  * @return a new [KmClass] representation of the Kotlin metadata for [this] class.
  */
-@KotlinPoetMetadataPreview
-public fun KClass<*>.toKmClass(lenient: Boolean): KmClass = java.toKmClass(lenient)
+internal fun KClass<*>.toKmClass(lenient: Boolean): KmClass = java.toKmClass(lenient)
 
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  * @return a new [KmClass] representation of the Kotlin metadata for [this] class.
  */
-@KotlinPoetMetadataPreview
-public fun Class<*>.toKmClass(lenient: Boolean): KmClass = readMetadata(::getAnnotation).toKmClass(lenient)
+internal fun Class<*>.toKmClass(lenient: Boolean): KmClass = readMetadata(::getAnnotation).toKmClass(lenient)
 
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  * @return a new [KmClass] representation of the Kotlin metadata for [this] type.
  */
-@KotlinPoetMetadataPreview
-public fun TypeElement.toKmClass(lenient: Boolean): KmClass = readMetadata(::getAnnotation).toKmClass(lenient)
+internal fun TypeElement.toKmClass(lenient: Boolean): KmClass = readMetadata(::getAnnotation).toKmClass(lenient)
 
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  */
-@KotlinPoetMetadataPreview
-public fun Metadata.toKmClass(lenient: Boolean): KmClass {
+internal fun Metadata.toKmClass(lenient: Boolean): KmClass {
   return toKotlinClassMetadata<KotlinClassMetadata.Class>(lenient)
     .kmClass
 }
@@ -68,8 +63,7 @@ public fun Metadata.toKmClass(lenient: Boolean): KmClass {
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  */
-@KotlinPoetMetadataPreview
-public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(
+internal inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetadata(
   lenient: Boolean,
 ): T {
   val expectedType = T::class
@@ -102,8 +96,7 @@ public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetada
  *
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
  */
-@KotlinPoetMetadataPreview
-public fun Metadata.readKotlinClassMetadata(lenient: Boolean): KotlinClassMetadata {
+internal fun Metadata.readKotlinClassMetadata(lenient: Boolean): KotlinClassMetadata {
   return if (lenient) {
     KotlinClassMetadata.readLenient(this)
   } else {
