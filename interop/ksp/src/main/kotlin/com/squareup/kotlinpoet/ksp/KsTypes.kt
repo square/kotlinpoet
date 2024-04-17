@@ -182,14 +182,15 @@ public fun KSTypeArgument.toTypeName(
 public fun KSTypeReference.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
 ): TypeName {
+  val type = resolve()
   return when (val elem = element) {
     is KSCallableReference -> {
       LambdaTypeName.get(
         receiver = elem.receiverType?.toTypeName(typeParamResolver),
         parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
         returnType = elem.returnType.toTypeName(typeParamResolver),
-      ).copy(nullable = resolve().isMarkedNullable)
+      ).copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
     }
-    else -> resolve().toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
+    else -> type.toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
   }
 }

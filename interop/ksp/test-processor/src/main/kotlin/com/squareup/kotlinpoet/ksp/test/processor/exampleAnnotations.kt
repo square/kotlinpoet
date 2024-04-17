@@ -79,3 +79,5 @@ annotation class AnotherAnnotation(val input: String)
 enum class AnnotationEnumValue {
   ONE, TWO, THREE
 }
+
+annotation class AnnotationWithVararg(val simpleArg: Int, vararg val args: String)

@@ -55,10 +55,30 @@ markdown_extensions:
 
 nav:
   - 'Overview':
-    - 'KotlinPoet': index.md
-    - 'Interop - JavaPoet': interop-javapoet.md
-    - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
-    - 'Interop - KSP': interop-ksp.md
+    - 'Code & Control Flow': code-control-flow.md
+    - 'Format Specifiers':
+      - '%S for Strings': s-for-strings.md
+      - '%P for String Templates': p-for-string-templates.md
+      - '%T for Types': t-for-types.md
+      - '%M for Members': m-for-members.md
+      - '%N for Names': n-for-names.md
+      - '%L for Literals': l-for-literals.md
+      - 'Code Block Format Strings': code-block-format-strings.md
+    - 'Functions': functions.md
+    - 'Constructors': constructors.md
+    - 'Parameters': parameters.md
+    - 'Properties': properties.md
+    - 'Interfaces': interfaces.md
+    - 'Objects': objects.md
+    - 'Enums': enums.md
+    - 'Anonymous Inner Classes': anonymous-inner-classes.md
+    - 'Annotations': annotations.md
+    - 'Type Aliases': type-aliases.md
+    - 'Callable References': callable-references.md
+    - 'kotlin-reflect': kotlin-reflect.md
+  - 'Interop - JavaPoet': interop-javapoet.md
+  - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
+  - 'Interop - KSP': interop-ksp.md
   - 'API':
     - 'kotlinpoet': 1.x/kotlinpoet/index.html
     - 'interop-javapoet': 1.x/interop-javapoet/index.html

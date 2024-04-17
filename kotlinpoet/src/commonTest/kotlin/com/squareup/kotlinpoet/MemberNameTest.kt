@@ -322,6 +322,51 @@ class MemberNameTest {
     )
   }
 
+  @Test fun importedMemberClassFunctionNameDontClashForParameterValue() {
+    val tacoName = ClassName("com.squareup.tacos", "Taco")
+    val meatMember = ClassName("com.squareup", "Fridge").member("meat")
+    val buildFun = FunSpec.builder("build")
+      .returns(tacoName)
+      .addStatement("return %T(%M { })", tacoName, meatMember)
+      .build()
+    val spec = FileSpec.builder(tacoName)
+      .addType(
+        TypeSpec.classBuilder("DeliciousTaco")
+          .addFunction(buildFun)
+          .addFunction(FunSpec.builder("deliciousMeat").build())
+          .build(),
+      )
+      .addType(
+        TypeSpec.classBuilder("TastelessTaco")
+          .addFunction(buildFun)
+          .addFunction(FunSpec.builder("meat").build())
+          .build(),
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |package com.squareup.tacos
+      |
+      |import com.squareup.Fridge.meat
+      |
+      |public class DeliciousTaco {
+      |  public fun build(): Taco = Taco(meat { })
+      |
+      |  public fun deliciousMeat() {
+      |  }
+      |}
+      |
+      |public class TastelessTaco {
+      |  public fun build(): Taco = Taco(com.squareup.Fridge.meat { })
+      |
+      |  public fun meat() {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun memberNameAliases() {
     val createSquareTaco = MemberName("com.squareup.tacos", "createTaco")
     val createTwitterTaco = MemberName("com.twitter.tacos", "createTaco")
@@ -536,6 +581,29 @@ class MemberNameTest {
       |    if (ingredient is Meat) taco -= ingredient
       |  }
       |  return taco
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun importMemberWithoutPackage() {
+    val createTaco = MemberName("", "createTaco")
+    val file = FileSpec.builder("com.example", "Test")
+      .addFunction(
+        FunSpec.builder("makeTacoHealthy")
+          .addStatement("val taco = %M()", createTaco)
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import createTaco
+      |
+      |public fun makeTacoHealthy() {
+      |  val taco = createTaco()
       |}
       |
       """.trimMargin(),

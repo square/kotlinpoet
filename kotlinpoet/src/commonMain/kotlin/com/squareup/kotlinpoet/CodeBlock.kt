@@ -494,6 +494,10 @@ public class CodeBlock private constructor(
   }
 }
 
+/**
+ * Join each [CodeBlock] in [this] into a single [CodeBlock] using [separator] with an optional
+ * [prefix] and [suffix].
+ */
 @JvmOverloads
 public fun Collection<CodeBlock>.joinToCode(
   separator: CharSequence = ", ",
@@ -503,6 +507,19 @@ public fun Collection<CodeBlock>.joinToCode(
   val blocks = toTypedArray()
   val placeholders = Array(blocks.size) { "%L" }
   return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
+}
+
+/**
+ * Apply [transform] to each element in [this], then join into a single [CodeBlock] using
+ * [separator] with an optional [prefix] and [suffix].
+ */
+public fun <T> Collection<T>.joinToCode(
+  separator: CharSequence = ", ",
+  prefix: CharSequence = "",
+  suffix: CharSequence = "",
+  transform: (T) -> CodeBlock,
+): CodeBlock {
+  return map(transform).joinToCode(separator, prefix, suffix)
 }
 
 /**

@@ -452,6 +452,12 @@ class CodeBlockTest {
       .isEqualTo(CodeBlock.of("(%L, %L, %L)", "taco1", "taco2", "taco3"))
   }
 
+  @Test fun joinToCodeTransform() {
+    val blocks = listOf("taco1", "taco2", "taco3")
+    assertThat(blocks.joinToCode { CodeBlock.of("%S", it) })
+      .isEqualTo(CodeBlock.of("%S, %S, %S", "taco1", "taco2", "taco3"))
+  }
+
   @Test fun beginControlFlowWithParams() {
     val controlFlow = CodeBlock.builder()
       .beginControlFlow("list.forEach { element ->")

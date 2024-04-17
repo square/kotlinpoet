@@ -138,7 +138,9 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) {
+internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
+
+internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
   this
 } else {
   with(toBuilder()) {
@@ -146,11 +148,18 @@ internal fun CodeBlock.ensureEndsWithNewLine() = if (isEmpty()) {
     if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
       val lastArg = args.last()
       if (lastArg is String) {
-        args[args.size - 1] = lastArg.trimEnd('\n') + '\n'
+        val trimmedArg = lastArg.trimEnd('\n')
+        args[args.size - 1] = if (replaceWith != null) {
+          trimmedArg + replaceWith
+        } else {
+          trimmedArg
+        }
       }
     } else {
       formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-      formatParts += "\n"
+      if (replaceWith != null) {
+        formatParts += "$replaceWith"
+      }
     }
     return@with build()
   }
@@ -169,7 +178,7 @@ private val IDENTIFIER_REGEX =
 internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
-private val KEYWORDS = setOf(
+internal val KEYWORDS = setOf(
   // Hard keywords
   "as",
   "break",
