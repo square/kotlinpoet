@@ -105,9 +105,9 @@ public inline fun <reified T : KotlinClassMetadata> Metadata.toKotlinClassMetada
 @KotlinPoetMetadataPreview
 public fun Metadata.readKotlinClassMetadata(lenient: Boolean): KotlinClassMetadata {
   return if (lenient) {
-    KotlinClassMetadata.readLenient(asClassHeader())
+    KotlinClassMetadata.readLenient(this)
   } else {
-    KotlinClassMetadata.readStrict(asClassHeader())
+    KotlinClassMetadata.readStrict(this)
   }
 }
 
@@ -115,16 +115,4 @@ private inline fun readMetadata(lookup: ((Class<Metadata>) -> Metadata?)): Metad
   return checkNotNull(lookup.invoke(Metadata::class.java)) {
     "No Metadata annotation found! Must be Kotlin code built with the standard library on the classpath."
   }
-}
-
-private fun Metadata.asClassHeader(): Metadata {
-  return Metadata(
-    kind = kind,
-    metadataVersion = metadataVersion,
-    data1 = data1,
-    data2 = data2,
-    extraString = extraString,
-    packageName = packageName,
-    extraInt = extraInt,
-  )
 }
