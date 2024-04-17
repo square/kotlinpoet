@@ -40,7 +40,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     @Parameterized.Parameters(name = "useKsp2={0}")
     fun data(): Collection<Array<Any>> {
       return listOf(
-//        arrayOf(false),
+        arrayOf(false),
         arrayOf(true),
       )
     }
