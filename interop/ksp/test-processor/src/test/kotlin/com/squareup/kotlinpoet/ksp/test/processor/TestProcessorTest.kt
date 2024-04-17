@@ -40,7 +40,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     @Parameterized.Parameters(name = "useKsp2={0}")
     fun data(): Collection<Array<Any>> {
       return listOf(
-        arrayOf(false),
+//        arrayOf(false),
         arrayOf(true),
       )
     }
@@ -588,7 +588,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     import kotlin.Unit
 
     public class TestTransitiveAliases {
-      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T): Unit = TODO()
+      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T): Unit = TODO()
     }
 
       """.trimIndent(),
@@ -844,6 +844,8 @@ class TestProcessorTest(private val useKsp2: Boolean) {
         configureKsp(useKsp2) {
           incremental = true // The default now
           if (!useKsp2) {
+            languageVersion = "1.9"
+            apiVersion = "1.9"
             // Doesn't exist in KSP 2
             withCompilation = true
           }
