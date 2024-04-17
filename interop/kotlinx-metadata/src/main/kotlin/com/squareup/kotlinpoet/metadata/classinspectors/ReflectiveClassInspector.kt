@@ -75,6 +75,7 @@ import kotlinx.metadata.kind
 
 @KotlinPoetMetadataPreview
 public class ReflectiveClassInspector private constructor(
+  private val lenient: Boolean,
   private val classLoader: ClassLoader?,
 ) : ClassInspector {
 
@@ -105,7 +106,7 @@ public class ReflectiveClassInspector private constructor(
       ?: error("No type element found for: $className.")
 
     val metadata = clazz.getAnnotation(Metadata::class.java)
-    return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata()) {
+    return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata(lenient)) {
       is KotlinClassMetadata.Class -> kotlinClassMetadata.kmClass
       is KotlinClassMetadata.FileFacade -> kotlinClassMetadata.kmPackage
       else -> TODO("Not implemented yet: ${kotlinClassMetadata.javaClass.simpleName}")
@@ -251,7 +252,7 @@ public class ReflectiveClassInspector private constructor(
         // class.
         null
       } else {
-        enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toKmClass()
+        enumEntry.javaClass.getAnnotation(Metadata::class.java)?.toKmClass(lenient)
       },
       annotations = clazz.getField(enumEntry.name).annotationSpecs(),
     )
@@ -542,10 +543,13 @@ public class ReflectiveClassInspector private constructor(
   }
 
   public companion object {
+    /**
+     * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+     */
     @JvmStatic
     @KotlinPoetMetadataPreview
-    public fun create(classLoader: ClassLoader? = null): ClassInspector {
-      return ReflectiveClassInspector(classLoader)
+    public fun create(lenient: Boolean, classLoader: ClassLoader? = null): ClassInspector {
+      return ReflectiveClassInspector(lenient, classLoader)
     }
 
     private val Class<*>.descriptor: String
