@@ -3,6 +3,9 @@ Change Log
 
 ## Unreleased
 
+* Change: Kotlin Metadata Library 2.0.0-RC1. With version 2.0.0 the Kotlin Metadata Library moved to be stable and has changed namespace
+from `kotlinx.metadata` to `kotlin.metadata`. This includes the changes from updating to version 0.9.0. This also chage the APIs using
+Kotlin Metadata types to no longer be experimental (removed the `KotlinPoetMetadataPreview` annotation) (#XXXX).
 * New: Supertype list wraps to one-per-line if the primary constructor spans multiple lines (#1866).
 * New: Extract `MemberSpecHolder` interface for constructs that can hold `PropertySpec`s and `FunSpec`s and their builders (#1877).
 * New: `joinToCode` variant which operates on any type, but requires a transform lambda to convert each element into a `CodeBlock`.
@@ -10,7 +13,7 @@ Change Log
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
 * Fix: Fix trailing newline in PropertySpec (#1827).
-Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
+* Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
 * Fix: `KSAnnotation.toAnnotationSpec` writes varargs in place instead of making them an array to work around a Kotlin
   issue with `OptIn` annotations (#1831).
 * Fix: `MemberName`s without a package are now correctly imported (#1841)
