@@ -1,11 +1,3 @@
-public final class com/squareup/kotlinpoet/metadata/KotlinPoetMetadata {
-	public static final fun readKotlinClassMetadata (Lkotlin/Metadata;Z)Lkotlinx/metadata/jvm/KotlinClassMetadata;
-	public static final fun toKmClass (Ljava/lang/Class;Z)Lkotlinx/metadata/KmClass;
-	public static final fun toKmClass (Ljavax/lang/model/element/TypeElement;Z)Lkotlinx/metadata/KmClass;
-	public static final fun toKmClass (Lkotlin/Metadata;Z)Lkotlinx/metadata/KmClass;
-	public static final fun toKmClass (Lkotlin/reflect/KClass;Z)Lkotlinx/metadata/KmClass;
-}
-
 public abstract interface annotation class com/squareup/kotlinpoet/metadata/KotlinPoetMetadataPreview : java/lang/annotation/Annotation {
 }
 
