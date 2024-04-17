@@ -17,6 +17,7 @@ Change Log
 * Fix: `MemberName`s without a package are now correctly imported (#1841)
 * Fix: Throw if primary constructor delegates to other constructors (#1859).
 * Fix: Aliased imports with nested class (#1876).
+* Fix: Check for error types in `KSType.toClassName()` (#1890).
 
 ## Version 1.16.0
 
