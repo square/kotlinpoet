@@ -6,6 +6,7 @@ Change Log
 * New: Supertype list wraps to one-per-line if the primary constructor spans multiple lines (#1866).
 * New: Extract `MemberSpecHolder` interface for constructs that can hold `PropertySpec`s and `FunSpec`s and their builders (#1877).
 * New: `joinToCode` variant which operates on any type, but requires a transform lambda to convert each element into a `CodeBlock`.
+* New: Support annotation type arguments in `KSAnnotation.toAnnotationSpec()` (#1889).
 * Fix: Prevent name clashes between a function in class and a function call in current scope (#1850).
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).

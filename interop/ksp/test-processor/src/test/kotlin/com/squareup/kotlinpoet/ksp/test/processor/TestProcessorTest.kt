@@ -819,6 +819,45 @@ class TestProcessorTest {
     )
   }
 
+  @Test
+  fun typeArgs() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+
+           @ExampleAnnotation
+           @AnnotationWithTypeArgs<String, List<Int>>
+           class Example
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+        import kotlin.Int
+        import kotlin.String
+        import kotlin.collections.List
+
+        @AnnotationWithTypeArgs<String, List<Int>>
+        public class TestExample
+
+      """.trimIndent(),
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {

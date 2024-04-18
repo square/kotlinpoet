@@ -26,7 +26,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 /**
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
@@ -34,15 +34,21 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
-  val builder = when (val type = annotationType.resolve().unwrapTypeAlias().toTypeName()) {
-    is ClassName -> AnnotationSpec.builder(type)
-    is ParameterizedTypeName -> AnnotationSpec.builder(type)
-    else -> error("This is never possible.")
-  }
+  val builder = annotationType.resolve().unwrapTypeAlias().toClassName()
+    .let { className ->
+      val typeArgs = annotationType.element?.typeArguments.orEmpty()
+        .map { it.toTypeName() }
+      if (typeArgs.isEmpty()) {
+        AnnotationSpec.builder(className)
+      } else {
+        AnnotationSpec.builder(className.parameterizedBy(typeArgs))
+      }
+    }
+
   val params = (annotationType.resolve().declaration as KSClassDeclaration).primaryConstructor?.parameters.orEmpty()
     .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
-  // TODO support type params once they're exposed https://github.com/google/ksp/issues/753
+
   var varargValues: List<*>? = null
   for (argument in arguments) {
     val value = argument.value ?: continue
@@ -50,7 +56,9 @@ public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): An
     val type = params[argument.name]
     if (omitDefaultValues) {
       val defaultValue = this.defaultArguments.firstOrNull { it.name?.asString() == name }?.value
-      if (isDefaultValue(value, defaultValue)) { continue }
+      if (isDefaultValue(value, defaultValue)) {
+        continue
+      }
     }
     if (type?.isVararg == true) {
       // Wait to add varargs to end.
@@ -87,17 +95,18 @@ private fun isDefaultValue(value: Any?, defaultValue: Any?): Boolean {
   return value == defaultValue
 }
 
-private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget get() = when (this) {
-  AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
-  AnnotationUseSiteTarget.PROPERTY -> UseSiteTarget.PROPERTY
-  AnnotationUseSiteTarget.FIELD -> UseSiteTarget.FIELD
-  AnnotationUseSiteTarget.GET -> UseSiteTarget.GET
-  AnnotationUseSiteTarget.SET -> UseSiteTarget.SET
-  AnnotationUseSiteTarget.RECEIVER -> UseSiteTarget.RECEIVER
-  AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
-  AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
-  AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
-}
+private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
+  get() = when (this) {
+    AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
+    AnnotationUseSiteTarget.PROPERTY -> UseSiteTarget.PROPERTY
+    AnnotationUseSiteTarget.FIELD -> UseSiteTarget.FIELD
+    AnnotationUseSiteTarget.GET -> UseSiteTarget.GET
+    AnnotationUseSiteTarget.SET -> UseSiteTarget.SET
+    AnnotationUseSiteTarget.RECEIVER -> UseSiteTarget.RECEIVER
+    AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
+    AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
+    AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
+  }
 
 internal fun KSType.unwrapTypeAlias(): KSType {
   return if (this.declaration is KSTypeAlias) {
@@ -129,6 +138,7 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
       }
       member.add("⇤⇤)")
     }
+
     is KSType -> {
       val unwrapped = value.unwrapTypeAlias()
       val isEnum = (unwrapped.declaration as KSClassDeclaration).classKind == ClassKind.ENUM_ENTRY
@@ -140,12 +150,14 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
         member.add("%T::class", unwrapped.toClassName())
       }
     }
+
     is KSName ->
       member.add(
         "%T.%L",
         ClassName.bestGuess(value.getQualifier()),
         value.getShortName(),
       )
+
     is KSAnnotation -> member.add("%L", value.toAnnotationSpec(omitDefaultValues))
     else -> member.add(memberForValue(value))
   }
