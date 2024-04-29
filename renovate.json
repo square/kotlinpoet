@@ -15,6 +15,13 @@
         "^com\\.google\\.devtools\\.ksp:(?:[\\w-]+)$"
       ],
       "groupName": "Kotlin and KSP"
+    },
+    {
+      "matchManagers": ["pip_requirements"],
+      "matchPackagePrefixes": [
+        "mkdocs"
+      ],
+      "groupName": "MkDocs"
     }
   ]
 }
