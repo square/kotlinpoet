@@ -24,6 +24,7 @@ public interface MemberSpecHolder {
   public val funSpecs: List<FunSpec>
 
   public interface Builder<out T : Builder<T>> {
+    @Suppress("UNCHECKED_CAST")
     public fun addProperties(propertySpecs: Iterable<PropertySpec>): T = apply {
       propertySpecs.map(::addProperty)
     } as T
@@ -56,6 +57,7 @@ public interface MemberSpecHolder {
     public fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): T =
       addProperty(name, type.asTypeName(), modifiers)
 
+    @Suppress("UNCHECKED_CAST")
     public fun addFunctions(funSpecs: Iterable<FunSpec>): T = apply {
       funSpecs.forEach(::addFunction)
     } as T

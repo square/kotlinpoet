@@ -54,7 +54,7 @@ internal fun buildCodeString(
  * Converts a [FileSpec] to a string suitable to both human- and kotlinc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
-internal class CodeWriter constructor(
+internal class CodeWriter(
   out: Appendable,
   private val indent: String = DEFAULT_INDENT,
   imports: Map<String, Import> = emptyMap(),
@@ -687,6 +687,7 @@ internal class CodeWriter constructor(
     LineWrapper(out, indent = DEFAULT_INDENT, columnLimit = Int.MAX_VALUE).use { newOut ->
       val oldOut = codeWrapper.out
       codeWrapper.out = newOut
+      @Suppress("UNUSED_EXPRESSION", "unused")
       action()
       codeWrapper.out = oldOut
     }
@@ -719,14 +720,14 @@ internal class CodeWriter constructor(
       val suggestedTypeImports = importsCollector.suggestedTypeImports()
         .generateImports(
           generatedImports,
-          canonicalName = ClassName::canonicalName,
+          computeCanonicalName = ClassName::canonicalName,
           capitalizeAliases = true,
           referencedNames = importsCollector.referencedNames,
         )
       val suggestedMemberImports = importsCollector.suggestedMemberImports()
         .generateImports(
           generatedImports,
-          canonicalName = MemberName::canonicalName,
+          computeCanonicalName = MemberName::canonicalName,
           capitalizeAliases = false,
           referencedNames = importsCollector.referencedNames,
         )
@@ -743,20 +744,20 @@ internal class CodeWriter constructor(
 
     private fun <T> Map<String, Set<T>>.generateImports(
       generatedImports: MutableMap<String, Import>,
-      canonicalName: T.() -> String,
+      computeCanonicalName: T.() -> String,
       capitalizeAliases: Boolean,
       referencedNames: Set<String>,
     ): Map<String, T> {
       return flatMap { (simpleName, qualifiedNames) ->
         if (qualifiedNames.size == 1 && simpleName !in referencedNames) {
           listOf(simpleName to qualifiedNames.first()).also {
-            val canonicalName = qualifiedNames.first().canonicalName()
+            val canonicalName = qualifiedNames.first().computeCanonicalName()
             generatedImports[canonicalName] = Import(canonicalName)
           }
         } else {
-          generateImportAliases(simpleName, qualifiedNames, canonicalName, capitalizeAliases)
+          generateImportAliases(simpleName, qualifiedNames, computeCanonicalName, capitalizeAliases)
             .onEach { (alias, qualifiedName) ->
-              val canonicalName = qualifiedName.canonicalName()
+              val canonicalName = qualifiedName.computeCanonicalName()
               generatedImports[canonicalName] = Import(canonicalName, alias)
             }
         }

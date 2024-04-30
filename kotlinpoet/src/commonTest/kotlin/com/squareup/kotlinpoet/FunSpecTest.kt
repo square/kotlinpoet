@@ -84,7 +84,9 @@ class FunSpecTest {
     }
 
     companion object {
-      @JvmStatic open fun staticMethod() {
+      @Suppress("NON_FINAL_MEMBER_IN_OBJECT")
+      @JvmStatic
+      open fun staticMethod() {
       }
     }
   }
@@ -121,6 +123,8 @@ class FunSpecTest {
     val classType = classElement.asType() as DeclaredType
     val methods = methodsIn(elements.getAllMembers(classElement))
     var exec = findFirst(methods, "call")
+
+    @Suppress("DEPRECATION")
     var funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo(
       """
@@ -131,6 +135,7 @@ class FunSpecTest {
       """.trimMargin(),
     )
     exec = findFirst(methods, "compareTo")
+    @Suppress("DEPRECATION")
     funSpec = FunSpec.overriding(exec, classType, types).build()
     assertThat(funSpec.toString()).isEqualTo(
       """

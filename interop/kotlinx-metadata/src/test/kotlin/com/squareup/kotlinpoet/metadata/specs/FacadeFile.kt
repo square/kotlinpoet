@@ -15,6 +15,7 @@
  */
 @file:JvmName("FacadeFile")
 @file:FileAnnotation("file annotations!")
+@file:Suppress("unused", "UNUSED_PARAMETER")
 
 package com.squareup.kotlinpoet.metadata.specs
 
