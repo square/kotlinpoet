@@ -115,7 +115,7 @@ public class ParameterSpec private constructor(
       ReplaceWith(""),
       level = ERROR,
     )
-    public fun jvmModifiers(modifiers: Iterable<Modifier>): Builder = apply {
+    public fun jvmModifiers(@Suppress("UNUSED_PARAMETER", "unused") modifiers: Iterable<Modifier>): Builder = apply {
       throw IllegalArgumentException("JVM modifiers are not permitted on parameters in Kotlin")
     }
 

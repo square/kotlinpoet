@@ -1174,6 +1174,7 @@ class FileSpecTest {
   class OhNoThisDoesNotCompile
 
   @Test fun longCommentWithTypes() {
+    @Suppress("REDUNDANT_PROJECTION")
     val someLongParameterizedTypeName = typeNameOf<List<Map<in String, Collection<Map<WackyKey, out OhNoThisDoesNotCompile>>>>>()
     val param = ParameterSpec.builder("foo", someLongParameterizedTypeName).build()
     val someLongLambdaTypeName = LambdaTypeName.get(STRING, listOf(param), STRING).copy(suspending = true)
