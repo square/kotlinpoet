@@ -523,7 +523,7 @@ class MemberNameTest {
       .isEqualTo(MemberName(ClassName("kotlin.text", "Regex"), "fromLiteral"))
   }
 
-  @Test fun `%N escapes MemberNames`() {
+  @Test fun `N escapes MemberNames`() {
     val taco = ClassName("com.squareup.tacos", "Taco")
     val packager = ClassName("com.squareup.tacos", "TacoPackager")
     val file = FileSpec.builder("com.example", "Test")
