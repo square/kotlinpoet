@@ -209,7 +209,7 @@ class TypeVariableNameTest {
   }
 
   @Test fun emptyBoundsShouldDefaultToAnyNullable() {
-    val typeVariable = TypeVariableName("E", bounds = *emptyArray<TypeName>())
+    val typeVariable = TypeVariableName("E", bounds = emptyArray<TypeName>())
     val typeSpec = TypeSpec.classBuilder("Taco")
       .addTypeVariable(typeVariable)
       .build()

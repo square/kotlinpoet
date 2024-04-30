@@ -553,12 +553,12 @@ class CodeBlockTest {
     )
   }
 
-  @Test fun `%N escapes keywords`() {
+  @Test fun `N escapes keywords`() {
     val funSpec = FunSpec.builder("object").build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("`object`")
   }
 
-  @Test fun `%N escapes spaces`() {
+  @Test fun `N escapes spaces`() {
     val funSpec = FunSpec.builder("create taco").build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("`create taco`")
   }
