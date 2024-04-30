@@ -1,16 +1,13 @@
-public abstract interface annotation class com/squareup/kotlinpoet/metadata/KotlinPoetMetadataPreview : java/lang/annotation/Annotation {
-}
-
 public final class com/squareup/kotlinpoet/metadata/classinspectors/ElementsClassInspector : com/squareup/kotlinpoet/metadata/specs/ClassInspector {
 	public static final field Companion Lcom/squareup/kotlinpoet/metadata/classinspectors/ElementsClassInspector$Companion;
 	public synthetic fun <init> (ZLjavax/lang/model/util/Elements;Ljavax/lang/model/util/Types;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun containerData (Lkotlinx/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
+	public fun containerData (Lkotlin/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
 	public static final fun create (ZLjavax/lang/model/util/Elements;Ljavax/lang/model/util/Types;)Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;
-	public fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlinx/metadata/KmDeclarationContainer;
+	public fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlin/metadata/KmDeclarationContainer;
 	public fun enumEntry (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
 	public fun getSupportsNonRuntimeRetainedAnnotations ()Z
 	public fun isInterface (Lcom/squareup/kotlinpoet/ClassName;)Z
-	public fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlinx/metadata/jvm/JvmMethodSignature;)Z
+	public fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlin/metadata/jvm/JvmMethodSignature;)Z
 }
 
 public final class com/squareup/kotlinpoet/metadata/classinspectors/ElementsClassInspector$Companion {
@@ -20,13 +17,13 @@ public final class com/squareup/kotlinpoet/metadata/classinspectors/ElementsClas
 public final class com/squareup/kotlinpoet/metadata/classinspectors/ReflectiveClassInspector : com/squareup/kotlinpoet/metadata/specs/ClassInspector {
 	public static final field Companion Lcom/squareup/kotlinpoet/metadata/classinspectors/ReflectiveClassInspector$Companion;
 	public synthetic fun <init> (ZLjava/lang/ClassLoader;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun containerData (Lkotlinx/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
+	public fun containerData (Lkotlin/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
 	public static final fun create (ZLjava/lang/ClassLoader;)Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;
-	public fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlinx/metadata/KmDeclarationContainer;
+	public fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlin/metadata/KmDeclarationContainer;
 	public fun enumEntry (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
 	public fun getSupportsNonRuntimeRetainedAnnotations ()Z
 	public fun isInterface (Lcom/squareup/kotlinpoet/ClassName;)Z
-	public fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlinx/metadata/jvm/JvmMethodSignature;)Z
+	public fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlin/metadata/jvm/JvmMethodSignature;)Z
 }
 
 public final class com/squareup/kotlinpoet/metadata/classinspectors/ReflectiveClassInspector$Companion {
@@ -35,21 +32,21 @@ public final class com/squareup/kotlinpoet/metadata/classinspectors/ReflectiveCl
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/ClassData : com/squareup/kotlinpoet/metadata/specs/ContainerData {
-	public fun <init> (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V
-	public final fun component1 ()Lkotlinx/metadata/KmClass;
+	public fun <init> (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V
+	public final fun component1 ()Lkotlin/metadata/KmClass;
 	public final fun component2 ()Lcom/squareup/kotlinpoet/ClassName;
 	public final fun component3 ()Ljava/util/Collection;
 	public final fun component4 ()Ljava/util/Map;
 	public final fun component5 ()Ljava/util/Map;
 	public final fun component6 ()Ljava/util/Map;
-	public final fun copy (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/squareup/kotlinpoet/metadata/specs/ClassData;
-	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/ClassData;Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/ClassData;
+	public final fun copy (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/squareup/kotlinpoet/metadata/specs/ClassData;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/ClassData;Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/ClassName;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/ClassData;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAnnotations ()Ljava/util/Collection;
 	public final fun getClassName ()Lcom/squareup/kotlinpoet/ClassName;
 	public final fun getConstructors ()Ljava/util/Map;
-	public fun getDeclarationContainer ()Lkotlinx/metadata/KmClass;
-	public synthetic fun getDeclarationContainer ()Lkotlinx/metadata/KmDeclarationContainer;
+	public fun getDeclarationContainer ()Lkotlin/metadata/KmClass;
+	public synthetic fun getDeclarationContainer ()Lkotlin/metadata/KmDeclarationContainer;
 	public fun getMethods ()Ljava/util/Map;
 	public fun getProperties ()Ljava/util/Map;
 	public fun hashCode ()I
@@ -57,16 +54,16 @@ public final class com/squareup/kotlinpoet/metadata/specs/ClassData : com/square
 }
 
 public abstract interface class com/squareup/kotlinpoet/metadata/specs/ClassInspector {
-	public abstract fun containerData (Lkotlinx/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
-	public abstract fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlinx/metadata/KmDeclarationContainer;
+	public abstract fun containerData (Lkotlin/metadata/KmDeclarationContainer;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
+	public abstract fun declarationContainerFor (Lcom/squareup/kotlinpoet/ClassName;)Lkotlin/metadata/KmDeclarationContainer;
 	public abstract fun enumEntry (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
 	public abstract fun getSupportsNonRuntimeRetainedAnnotations ()Z
 	public abstract fun isInterface (Lcom/squareup/kotlinpoet/ClassName;)Z
-	public abstract fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlinx/metadata/jvm/JvmMethodSignature;)Z
+	public abstract fun methodExists (Lcom/squareup/kotlinpoet/ClassName;Lkotlin/metadata/jvm/JvmMethodSignature;)Z
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/ClassInspectorKt {
-	public static final fun classFor (Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lkotlinx/metadata/KmClass;
+	public static final fun classFor (Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lkotlin/metadata/KmClass;
 	public static final fun containerData (Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/metadata/specs/ContainerData;
 }
 
@@ -95,20 +92,20 @@ public final class com/squareup/kotlinpoet/metadata/specs/ConstructorData$Compan
 
 public abstract interface class com/squareup/kotlinpoet/metadata/specs/ContainerData {
 	public abstract fun getAnnotations ()Ljava/util/Collection;
-	public abstract fun getDeclarationContainer ()Lkotlinx/metadata/KmDeclarationContainer;
+	public abstract fun getDeclarationContainer ()Lkotlin/metadata/KmDeclarationContainer;
 	public abstract fun getMethods ()Ljava/util/Map;
 	public abstract fun getProperties ()Ljava/util/Map;
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/EnumEntryData {
-	public fun <init> (Lkotlinx/metadata/KmClass;Ljava/util/Collection;)V
-	public final fun component1 ()Lkotlinx/metadata/KmClass;
+	public fun <init> (Lkotlin/metadata/KmClass;Ljava/util/Collection;)V
+	public final fun component1 ()Lkotlin/metadata/KmClass;
 	public final fun component2 ()Ljava/util/Collection;
-	public final fun copy (Lkotlinx/metadata/KmClass;Ljava/util/Collection;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
-	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;Lkotlinx/metadata/KmClass;Ljava/util/Collection;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
+	public final fun copy (Lkotlin/metadata/KmClass;Ljava/util/Collection;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;Lkotlin/metadata/KmClass;Ljava/util/Collection;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/EnumEntryData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotations ()Ljava/util/Collection;
-	public final fun getDeclarationContainer ()Lkotlinx/metadata/KmClass;
+	public final fun getDeclarationContainer ()Lkotlin/metadata/KmClass;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -135,21 +132,21 @@ public final class com/squareup/kotlinpoet/metadata/specs/FieldData$Companion {
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/FileData : com/squareup/kotlinpoet/metadata/specs/ContainerData {
-	public fun <init> (Lkotlinx/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)V
-	public synthetic fun <init> (Lkotlinx/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lkotlinx/metadata/KmPackage;
+	public fun <init> (Lkotlin/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)V
+	public synthetic fun <init> (Lkotlin/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlin/metadata/KmPackage;
 	public final fun component2 ()Ljava/util/Collection;
 	public final fun component3 ()Ljava/util/Map;
 	public final fun component4 ()Ljava/util/Map;
 	public final fun component5 ()Lcom/squareup/kotlinpoet/ClassName;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun copy (Lkotlinx/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/FileData;
-	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/FileData;Lkotlinx/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/FileData;
+	public final fun copy (Lkotlin/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;)Lcom/squareup/kotlinpoet/metadata/specs/FileData;
+	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/metadata/specs/FileData;Lkotlin/metadata/KmPackage;Ljava/util/Collection;Ljava/util/Map;Ljava/util/Map;Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/metadata/specs/FileData;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAnnotations ()Ljava/util/Collection;
 	public final fun getClassName ()Lcom/squareup/kotlinpoet/ClassName;
-	public synthetic fun getDeclarationContainer ()Lkotlinx/metadata/KmDeclarationContainer;
-	public fun getDeclarationContainer ()Lkotlinx/metadata/KmPackage;
+	public synthetic fun getDeclarationContainer ()Lkotlin/metadata/KmDeclarationContainer;
+	public fun getDeclarationContainer ()Lkotlin/metadata/KmPackage;
 	public final fun getFileName ()Ljava/lang/String;
 	public final fun getJvmName ()Ljava/lang/String;
 	public fun getMethods ()Ljava/util/Map;
@@ -183,28 +180,28 @@ public abstract interface class com/squareup/kotlinpoet/metadata/specs/JvmModifi
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/KmTypesKt {
-	public static final fun isExtensionType (Lkotlinx/metadata/KmType;)Z
+	public static final fun isExtensionType (Lkotlin/metadata/KmType;)Z
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/KotlinPoetMetadataSpecs {
 	public static final fun getPackageName (Ljavax/lang/model/element/Element;)Ljava/lang/String;
 	public static final fun toFileSpec (Ljava/lang/Class;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static final fun toFileSpec (Ljavax/lang/model/element/TypeElement;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;
+	public static final fun toFileSpec (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec;
+	public static final fun toFileSpec (Lkotlin/metadata/KmPackage;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static final fun toFileSpec (Lkotlin/reflect/KClass;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/FileSpec;
-	public static final fun toFileSpec (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec;
-	public static final fun toFileSpec (Lkotlinx/metadata/KmPackage;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static synthetic fun toFileSpec$default (Ljava/lang/Class;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static synthetic fun toFileSpec$default (Ljavax/lang/model/element/TypeElement;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec;
+	public static synthetic fun toFileSpec$default (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static synthetic fun toFileSpec$default (Lkotlin/reflect/KClass;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec;
-	public static synthetic fun toFileSpec$default (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec;
 	public static final fun toTypeSpec (Ljava/lang/Class;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/TypeSpec;
 	public static final fun toTypeSpec (Ljavax/lang/model/element/TypeElement;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/TypeSpec;
+	public static final fun toTypeSpec (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec;
 	public static final fun toTypeSpec (Lkotlin/reflect/KClass;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;)Lcom/squareup/kotlinpoet/TypeSpec;
-	public static final fun toTypeSpec (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeSpec;
 	public static synthetic fun toTypeSpec$default (Ljava/lang/Class;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec;
 	public static synthetic fun toTypeSpec$default (Ljavax/lang/model/element/TypeElement;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec;
+	public static synthetic fun toTypeSpec$default (Lkotlin/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec;
 	public static synthetic fun toTypeSpec$default (Lkotlin/reflect/KClass;ZLcom/squareup/kotlinpoet/metadata/specs/ClassInspector;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec;
-	public static synthetic fun toTypeSpec$default (Lkotlinx/metadata/KmClass;Lcom/squareup/kotlinpoet/metadata/specs/ClassInspector;Lcom/squareup/kotlinpoet/ClassName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeSpec;
 }
 
 public final class com/squareup/kotlinpoet/metadata/specs/MethodData {
