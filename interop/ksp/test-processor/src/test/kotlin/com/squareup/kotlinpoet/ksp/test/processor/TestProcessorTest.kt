@@ -20,10 +20,8 @@ import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
 import com.tschuchort.compiletesting.configureKsp
-import com.tschuchort.compiletesting.kspIncremental
 import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
-import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
 import org.junit.Rule
@@ -870,6 +868,45 @@ class TestProcessorTest(private val useKsp2: Boolean) {
         public class TestExample {
           public fun <T> example(): Unit where T : Appendable, T : CharSequence = TODO()
         }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun typeArgs() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+
+           @ExampleAnnotation
+           @AnnotationWithTypeArgs<String, List<Int>>
+           class Example
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+        import kotlin.Int
+        import kotlin.String
+        import kotlin.collections.List
+
+        @AnnotationWithTypeArgs<String, List<Int>>
+        public class TestExample
 
       """.trimIndent(),
     )

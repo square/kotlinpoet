@@ -21,6 +21,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.Nullability
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import kotlin.test.assertFailsWith
 import org.junit.Test
@@ -77,10 +78,16 @@ class KsTypesTest {
       }
     }
 
-    val exception = assertFailsWith<IllegalArgumentException> {
+    val exception1 = assertFailsWith<IllegalArgumentException> {
+      type.toClassName()
+    }
+    assertThat(exception1).hasMessageThat()
+      .contains("is not resolvable in the current round of processing")
+
+    val exception2 = assertFailsWith<IllegalArgumentException> {
       type.toTypeName()
     }
-    assertThat(exception).hasMessageThat()
+    assertThat(exception2).hasMessageThat()
       .contains("is not resolvable in the current round of processing")
   }
 }

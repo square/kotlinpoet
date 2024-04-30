@@ -117,39 +117,63 @@ import kotlin.metadata.kind
 import kotlin.metadata.modality
 import kotlin.metadata.visibility
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 public fun KClass<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = java.toTypeSpec(classInspector)
+): TypeSpec = java.toTypeSpec(lenient, classInspector)
 
-/** @return a [TypeSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [KClass].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 public fun Class<*>.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [TypeSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [TypeSpec] ABI representation of this [TypeElement].
+ */
 @OptIn(DelicateKotlinPoetApi::class)
 public fun TypeElement.toTypeSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): TypeSpec = toKmClass().toTypeSpec(classInspector, asClassName())
+): TypeSpec = toKmClass(lenient).toTypeSpec(classInspector, asClassName())
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 public fun KClass<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = java.toFileSpec(classInspector)
+): FileSpec = java.toFileSpec(lenient, classInspector)
 
-/** @return a [FileSpec] ABI representation of this [KClass]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [KClass].
+ */
 public fun Class<*>.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
-): FileSpec = FileSpec.get(`package`.name, toTypeSpec(classInspector))
+): FileSpec = FileSpec.get(`package`.name, toTypeSpec(lenient, classInspector))
 
-/** @return a [FileSpec] ABI representation of this [TypeElement]. */
+/**
+ * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+ * @return a [FileSpec] ABI representation of this [TypeElement].
+ */
 public fun TypeElement.toFileSpec(
+  lenient: Boolean,
   classInspector: ClassInspector? = null,
 ): FileSpec = FileSpec.get(
   packageName = packageName,
-  typeSpec = toTypeSpec(classInspector),
+  typeSpec = toTypeSpec(lenient, classInspector),
 )
 
 /** @return a [TypeSpec] ABI representation of this [KmClass]. */
@@ -652,21 +676,23 @@ private fun KmProperty.toPropertySpec(
         }
       }
     }
-    setterSignature?.let { setterSignature ->
-      if (containerData is ClassData &&
-        !containerData.declarationContainer.isAnnotation &&
-        !containerData.declarationContainer.isInterface &&
-        classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
-        modality != Modality.OPEN && modality != Modality.ABSTRACT
-      ) {
-        // Infer if JvmName was used
-        // We skip annotation types for this because they can't have vars.
-        // We skip interface types or open/abstract properties because they can't have @JvmName.
-        setterSignature.jvmNameAnnotation(
-          metadataName = "set${name.safeCapitalize(Locale.US)}",
-          useSiteTarget = UseSiteTarget.SET,
-        )?.let { jvmNameAnnotation ->
-          mutableAnnotations += jvmNameAnnotation
+    if (setter != null) {
+      setterSignature?.let { setterSignature ->
+        if (containerData is ClassData &&
+          !containerData.declarationContainer.isAnnotation &&
+          !containerData.declarationContainer.isInterface &&
+          classInspector?.supportsNonRuntimeRetainedAnnotations == false &&
+          modality != Modality.OPEN && modality != Modality.ABSTRACT
+        ) {
+          // Infer if JvmName was used
+          // We skip annotation types for this because they can't have vars.
+          // We skip interface types or open/abstract properties because they can't have @JvmName.
+          setterSignature.jvmNameAnnotation(
+            metadataName = "set${name.safeCapitalize(Locale.US)}",
+            useSiteTarget = UseSiteTarget.SET,
+          )?.let { jvmNameAnnotation ->
+            mutableAnnotations += jvmNameAnnotation
+          }
         }
       }
     }
@@ -762,7 +788,7 @@ private fun KmProperty.toPropertySpec(
         )?.let(::getter)
       }
       if (setter != null && !isDelegated && modality != Modality.ABSTRACT) {
-        propertyAccessor(modifierSet, this@toPropertySpec.setter!!, FunSpec.setterBuilder(), isOverride)?.let(::setter)
+        propertyAccessor(modifierSet, setter!!, FunSpec.setterBuilder(), isOverride)?.let(::setter)
       }
     }
     .tag(this)

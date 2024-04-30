@@ -6,16 +6,20 @@ Change Log
 * New: Supertype list wraps to one-per-line if the primary constructor spans multiple lines (#1866).
 * New: Extract `MemberSpecHolder` interface for constructs that can hold `PropertySpec`s and `FunSpec`s and their builders (#1877).
 * New: `joinToCode` variant which operates on any type, but requires a transform lambda to convert each element into a `CodeBlock`.
+* New: Support annotation type arguments in `KSAnnotation.toAnnotationSpec()` (#1889).
 * Fix: Prevent name clashes between a function in class and a function call in current scope (#1850).
 * Fix: Fix extension function imports (#1814).
 * Fix: Omit implicit modifiers on FileSpec.scriptBuilder (#1813).
 * Fix: Fix trailing newline in PropertySpec (#1827).
-Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
+* Change: kotlinx-metadata 0.9.0. Note that the `KotlinClassMetadata .read` is deprecated in 0.9.0 and replaced with `readStrict` (#1830).
+  * Note: we now also `lenient` parameters to map to the underlying `readStrict()` and `readLenient()` calls (#1766).
+  * We have also removed various `Class`/`TypeElement`/`Metadata`-to-`KmClass` APIs from the public API, as these are trivial to write now with kotlinx-metadata's newer APIs and allows us to focus the API surface area of this artifact better (#1891).
 * Fix: `KSAnnotation.toAnnotationSpec` writes varargs in place instead of making them an array to work around a Kotlin
   issue with `OptIn` annotations (#1831).
 * Fix: `MemberName`s without a package are now correctly imported (#1841)
 * Fix: Throw if primary constructor delegates to other constructors (#1859).
 * Fix: Aliased imports with nested class (#1876).
+* Fix: Check for error types in `KSType.toClassName()` (#1890).
 
 ## Version 1.16.0
 

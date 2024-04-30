@@ -39,7 +39,7 @@ class ReflectiveClassInspectorTest {
    */
   @Test
   fun standardClassLoaderTest() {
-    val classInspector = ReflectiveClassInspector.create()
+    val classInspector = ReflectiveClassInspector.create(lenient = false)
     val className = Person::class.asClassName()
     val declarationContainer = classInspector.declarationContainerFor(className)
     assertNotNull(declarationContainer)
@@ -72,7 +72,7 @@ class ReflectiveClassInspectorTest {
 
     assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
     val classLoader = result.classLoader
-    val classInspector = ReflectiveClassInspector.create(classLoader)
+    val classInspector = ReflectiveClassInspector.create(lenient = false, classLoader)
 
     val declarationContainer = classInspector.declarationContainerFor(testClassName)
 
