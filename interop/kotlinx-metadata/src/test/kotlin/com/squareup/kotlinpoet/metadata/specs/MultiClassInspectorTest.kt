@@ -25,8 +25,8 @@ import com.squareup.kotlinpoet.metadata.specs.MultiClassInspectorTest.ClassInspe
 import com.squareup.kotlinpoet.metadata.toKotlinClassMetadata
 import java.lang.annotation.Inherited
 import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.reflect.KClass
 import kotlin.metadata.jvm.KotlinClassMetadata.FileFacade
+import kotlin.reflect.KClass
 import org.junit.Assume
 import org.junit.Rule
 import org.junit.rules.TestRule

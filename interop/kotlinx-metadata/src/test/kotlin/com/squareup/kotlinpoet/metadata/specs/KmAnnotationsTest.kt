@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet.metadata.specs
 
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.Test
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument.AnnotationValue
 import kotlin.metadata.KmAnnotationArgument.ArrayValue
@@ -35,6 +34,7 @@ import kotlin.metadata.KmAnnotationArgument.UByteValue
 import kotlin.metadata.KmAnnotationArgument.UIntValue
 import kotlin.metadata.KmAnnotationArgument.ULongValue
 import kotlin.metadata.KmAnnotationArgument.UShortValue
+import kotlin.test.Test
 
 class KmAnnotationsTest {
 

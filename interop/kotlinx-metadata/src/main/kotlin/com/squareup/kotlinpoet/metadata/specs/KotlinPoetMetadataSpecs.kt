@@ -74,7 +74,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
-import kotlin.reflect.KClass
 import kotlin.metadata.ClassKind
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmClassifier
@@ -116,6 +115,7 @@ import kotlin.metadata.jvm.toJvmInternalName
 import kotlin.metadata.kind
 import kotlin.metadata.modality
 import kotlin.metadata.visibility
+import kotlin.reflect.KClass
 
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.

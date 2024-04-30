@@ -38,14 +38,14 @@ import com.squareup.kotlinpoet.tags.TypeAliasTag
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
-import kotlin.properties.Delegates
-import kotlin.test.fail
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
 import kotlin.metadata.KmTypeParameter
 import kotlin.metadata.KmValueParameter
+import kotlin.properties.Delegates
+import kotlin.test.fail
 import org.junit.Ignore
 import org.junit.Test
 

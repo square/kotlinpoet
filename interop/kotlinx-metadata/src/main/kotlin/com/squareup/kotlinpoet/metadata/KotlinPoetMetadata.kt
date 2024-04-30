@@ -18,13 +18,10 @@
 package com.squareup.kotlinpoet.metadata
 
 import javax.lang.model.element.TypeElement
-import kotlin.annotation.AnnotationTarget.CLASS
-import kotlin.annotation.AnnotationTarget.FUNCTION
-import kotlin.annotation.AnnotationTarget.PROPERTY
-import kotlin.reflect.KClass
 import kotlin.metadata.KmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
+import kotlin.reflect.KClass
 
 /**
  * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
