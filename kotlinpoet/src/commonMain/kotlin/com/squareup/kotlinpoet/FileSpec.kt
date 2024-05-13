@@ -143,7 +143,7 @@ public class FileSpec private constructor(
     } catch (e: Exception) {
       try {
         filerSourceFile.delete()
-      } catch (ignored: Exception) {
+      } catch (_: Exception) {
       }
       throw e
     }
@@ -345,7 +345,7 @@ public class FileSpec private constructor(
     }
 
     public fun addImport(constant: Enum<*>): Builder = addImport(
-      (constant as java.lang.Enum<*>).declaringClass.asClassName(),
+      constant.declaringJavaClass.asClassName(),
       constant.name,
     )
 
