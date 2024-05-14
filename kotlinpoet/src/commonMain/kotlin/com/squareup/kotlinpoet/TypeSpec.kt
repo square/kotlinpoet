@@ -171,7 +171,7 @@ public class TypeSpec private constructor(
         codeWriter.emitAnnotations(annotations, false)
         codeWriter.emitModifiers(
           modifiers,
-          if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC),
+          implicitModifiers + if (isNestedExternal) setOf(PUBLIC, EXTERNAL) else setOf(PUBLIC),
         )
         codeWriter.emit(kind.declarationKeyword)
         if (name != null) {
@@ -446,6 +446,9 @@ public class TypeSpec private constructor(
         ANNOTATION in modifiers -> emptySet()
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
+        INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
@@ -454,6 +457,9 @@ public class TypeSpec private constructor(
       return defaultImplicitFunctionModifiers + when {
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
+        INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
@@ -462,6 +468,9 @@ public class TypeSpec private constructor(
       return defaultImplicitTypeModifiers + when {
         EXPECT in modifiers -> setOf(EXPECT)
         EXTERNAL in modifiers -> setOf(EXTERNAL)
+        INTERNAL in modifiers -> setOf(INTERNAL)
+        PRIVATE in modifiers -> setOf(PRIVATE)
+        PROTECTED in modifiers -> setOf(PROTECTED)
         else -> emptySet()
       }
     }
