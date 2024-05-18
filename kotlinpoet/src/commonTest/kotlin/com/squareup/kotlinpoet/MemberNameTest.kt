@@ -657,4 +657,19 @@ class MemberNameTest {
       """.trimIndent(),
     )
   }
+
+  @Test fun `extension and non-extension MemberName clash`() {
+    val file = FileSpec.builder("foo.bar", "Foo")
+      .addFunction(
+        FunSpec.builder("Bar")
+          .addCode(
+            "%M%M",
+            MemberName("foo.bar.baz", "a"),
+            MemberName("foo.bar.baz", "a", isExtension = true),
+          )
+          .build()
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo("")
+  }
 }
