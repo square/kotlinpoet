@@ -59,7 +59,7 @@ internal class CodeWriter(
   private val indent: String = DEFAULT_INDENT,
   imports: Map<String, Import> = emptyMap(),
   private val importedTypes: Map<String, ClassName> = emptyMap(),
-  private val importedMembers: Map<String, MemberName> = emptyMap(),
+  private val importedMembers: Map<String, Set<MemberName>> = emptyMap(),
   columnLimit: Int = 100,
 ) : Closeable {
   private var out = LineWrapper(out, indent, columnLimit)
@@ -463,11 +463,11 @@ internal class CodeWriter(
   fun lookupName(memberName: MemberName): String {
     val simpleName = imports[memberName.canonicalName]?.alias ?: memberName.simpleName
     // Match an imported member.
-    val importedMember = importedMembers[simpleName]
-    val found = importedMember == memberName
+    val importedMembers = importedMembers[simpleName] ?: emptySet()
+    val found = memberName in importedMembers
     if (found && !isMethodNameUsedInCurrentContext(simpleName)) {
       return simpleName
-    } else if (importedMember != null && memberName.enclosingClassName != null) {
+    } else if (importedMembers.isNotEmpty() && memberName.enclosingClassName != null) {
       val enclosingClassName = lookupName(memberName.enclosingClassName)
       return "$enclosingClassName.$simpleName"
     } else if (found) {
@@ -717,14 +717,14 @@ internal class CodeWriter(
       )
       emitStep(importsCollector)
       val generatedImports = mutableMapOf<String, Import>()
-      val suggestedTypeImports = importsCollector.suggestedTypeImports()
+      val importedTypes = importsCollector.suggestedTypeImports()
         .generateImports(
           generatedImports,
           computeCanonicalName = ClassName::canonicalName,
           capitalizeAliases = true,
           referencedNames = importsCollector.referencedNames,
         )
-      val suggestedMemberImports = importsCollector.suggestedMemberImports()
+      val importedMembers = importsCollector.suggestedMemberImports()
         .generateImports(
           generatedImports,
           computeCanonicalName = MemberName::canonicalName,
@@ -737,8 +737,8 @@ internal class CodeWriter(
         out = out,
         indent = indent,
         imports = memberImports + generatedImports.filterKeys { it !in memberImports },
-        importedTypes = suggestedTypeImports,
-        importedMembers = suggestedMemberImports,
+        importedTypes = importedTypes.mapValues { it.value.single() },
+        importedMembers = importedMembers,
       )
     }
 
@@ -747,31 +747,38 @@ internal class CodeWriter(
       computeCanonicalName: T.() -> String,
       capitalizeAliases: Boolean,
       referencedNames: Set<String>,
-    ): Map<String, T> {
-      return flatMap { (simpleName, qualifiedNames) ->
-        if (qualifiedNames.size == 1 && simpleName !in referencedNames) {
-          listOf(simpleName to qualifiedNames.first()).also {
-            val canonicalName = qualifiedNames.first().computeCanonicalName()
-            generatedImports[canonicalName] = Import(canonicalName)
-          }
+    ): Map<String, Set<T>> {
+      val imported = mutableMapOf<String, Set<T>>()
+      forEach { (simpleName, qualifiedNames) ->
+        val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
+        if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
+          val canonicalName = canonicalNamesToQualifiedNames.keys.single()
+          generatedImports[canonicalName] = Import(canonicalName)
+
+          // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
+          // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
+          // functions declared in the same package. In these cases, a single import will suffice for all of them.
+          imported[simpleName] = qualifiedNames
         } else {
-          generateImportAliases(simpleName, qualifiedNames, computeCanonicalName, capitalizeAliases)
+          generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases)
             .onEach { (alias, qualifiedName) ->
               val canonicalName = qualifiedName.computeCanonicalName()
               generatedImports[canonicalName] = Import(canonicalName, alias)
+
+              imported[alias] = setOf(qualifiedName)
             }
         }
-      }.toMap()
+      }
+      return imported
     }
 
     private fun <T> generateImportAliases(
       simpleName: String,
-      qualifiedNames: Set<T>,
-      canonicalName: T.() -> String,
+      canonicalNamesToQualifiedNames: Map<String, T>,
       capitalizeAliases: Boolean,
     ): List<Pair<String, T>> {
-      val canonicalNameSegments = qualifiedNames.associateWith { qualifiedName ->
-        qualifiedName.canonicalName().split('.')
+      val canonicalNameSegmentsToQualifiedNames = canonicalNamesToQualifiedNames.mapKeys { (canonicalName, _) ->
+        canonicalName.split('.')
           .dropLast(1) // Last segment of the canonical name is the simple name, drop it to avoid repetition.
           .filter { it != "Companion" }
           .map { it.replaceFirstChar(Char::uppercaseChar) }
@@ -779,10 +786,10 @@ internal class CodeWriter(
       val aliasNames = mutableMapOf<String, T>()
       var segmentsToUse = 0
       // Iterate until we have unique aliases for all names.
-      while (aliasNames.size != qualifiedNames.size) {
+      while (aliasNames.size != canonicalNamesToQualifiedNames.size) {
         segmentsToUse += 1
         aliasNames.clear()
-        for ((qualifiedName, segments) in canonicalNameSegments) {
+        for ((segments, qualifiedName) in canonicalNameSegmentsToQualifiedNames) {
           val aliasPrefix = segments.takeLast(min(segmentsToUse, segments.size))
             .joinToString(separator = "")
             .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }

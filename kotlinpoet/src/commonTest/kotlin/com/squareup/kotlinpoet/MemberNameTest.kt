@@ -657,4 +657,29 @@ class MemberNameTest {
       """.trimIndent(),
     )
   }
+
+  // https://github.com/square/kotlinpoet/issues/1907
+  @Test fun `extension and non-extension MemberName clash`() {
+    val file = FileSpec.builder("com.squareup.tacos", "Tacos")
+      .addFunction(
+        FunSpec.builder("main")
+          .addStatement("println(%M(Taco()))", MemberName("com.squareup.wrappers", "wrap"))
+          .addStatement("println(Taco().%M())", MemberName("com.squareup.wrappers", "wrap", isExtension = true))
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      package com.squareup.tacos
+
+      import com.squareup.wrappers.wrap
+
+      public fun main() {
+        println(wrap(Taco()))
+        println(Taco().wrap())
+      }
+
+      """.trimIndent(),
+    )
+  }
 }
