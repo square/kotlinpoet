@@ -20,6 +20,7 @@ Change Log
 * Fix: Throw if primary constructor delegates to other constructors (#1859).
 * Fix: Aliased imports with nested class (#1876).
 * Fix: Check for error types in `KSType.toClassName()` (#1890).
+* Fix: Support generating a single import for overloaded `MemberName`s (#1909).
 
 ## Version 1.16.0
 
