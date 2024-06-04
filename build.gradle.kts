@@ -40,6 +40,18 @@ allprojects {
 
   repositories {
     mavenCentral()
+
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+
+    // Kotlin dev repository, useful for testing against Kotlin dev builds. Usually only tested on CI shadow jobs
+    // https://kotlinlang.slack.com/archives/C0KLZSCHF/p1616514468003200?thread_ts=1616509748.001400&cid=C0KLZSCHF
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/") {
+      name = "Kotlin-Dev"
+      content {
+        // this repository *only* contains Kotlin artifacts (don't try others here)
+        includeGroupByRegex("org\\.jetbrains.*")
+      }
+    }
   }
 }
 
