@@ -4,7 +4,7 @@ Change Log
 ## Unreleased
 
 * **Fix**: Don't expand typealiases of function types to `LambdaTypeName`s in `KSTypeReference.toTypeName()`.
-* **Enhancement**: Make enum entry references in `KSAnnotation.toAnnotationSpec()` more robust.
+* **Enhancement**: Make enum entry references in `KSAnnotation.toAnnotationSpec()` and `KSClassDeclaration.toClassName()` more robust.
 * Migrate `kotlinpoet-metadata` to stable `org.jetbrains.kotlin:kotlin-metadata-jvm` artifact for Metadata parsing.
 * Promote `kotlinpoet-metadata` out of preview to stable.
 * Update to Kotlin `2.0.0`.
