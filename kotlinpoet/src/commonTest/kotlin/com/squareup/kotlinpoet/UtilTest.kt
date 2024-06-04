@@ -143,6 +143,52 @@ class UtilTest {
     assertThat("`A`".escapeIfNecessary()).isEqualTo("`A`")
   }
 
+  @Test
+  fun `escapeAsAlias all underscores`() {
+    val input = "____"
+    val expected = "____0"
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `escapeAsAlias keyword`() {
+    val input = "if"
+    val expected = "__if"
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `escapeAsAlias first character cannot be used as identifier start`() {
+    val input = "1abc"
+    val expected = "_1abc"
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `escapeAsAlias dollar sign`() {
+    val input = "\$\$abc"
+    val expected = "____abc"
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `escapeAsAlias characters that cannot be used as identifier part`() {
+    val input = "a b-c"
+    val expected = "a_U0020b_U002dc"
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `escapeAsAlias double escape does nothing`() {
+    val input = "1SampleClass_\$Generated "
+    val expected = "_1SampleClass___Generated_U0020"
+
+    assertThat(input.escapeAsAlias())
+      .isEqualTo(expected)
+    assertThat(input.escapeAsAlias().escapeAsAlias())
+      .isEqualTo(expected)
+  }
+
   private fun stringLiteral(string: String) = stringLiteral(string, string)
 
   private fun stringLiteral(expected: String, value: String) =

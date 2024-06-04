@@ -3,6 +3,18 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Fix KT-18706: kotlinpoet now generates import aliases without backticks (#1920)
+   * For example:
+     ```kotlin
+     // before, doesn't compile due to KT-18706
+     import com.example.one.`$Foo` as `One$Foo`
+     import com.example.two.`$Foo` as `Two$Foo`
+
+     // now, compiles
+     import com.example.one.`$Foo` as One__Foo
+     import com.example.two.`$Foo` as Two__Foo
+     ```
+
 ## Version 1.18.0
 
 Thanks to [@DanielGronau][DanielGronau] for contributing to this release.

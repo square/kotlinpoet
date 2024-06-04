@@ -761,7 +761,8 @@ internal class CodeWriter(
           imported[simpleName] = qualifiedNames
         } else {
           generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases)
-            .onEach { (alias, qualifiedName) ->
+            .onEach { (a, qualifiedName) ->
+              val alias = a.escapeAsAlias()
               val canonicalName = qualifiedName.computeCanonicalName()
               generatedImports[canonicalName] = Import(canonicalName, alias)
 
