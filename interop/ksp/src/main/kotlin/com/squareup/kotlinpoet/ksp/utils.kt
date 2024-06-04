@@ -16,6 +16,8 @@
 package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.isLocal
+import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.LambdaTypeName
@@ -59,7 +61,15 @@ internal fun KSDeclaration.toClassNameInternal(): ClassName {
   require(!isLocal()) {
     "Local/anonymous classes are not supported!"
   }
+
+  if (this is KSClassDeclaration && classKind == ClassKind.ENUM_ENTRY) {
+    val simpleName = this.simpleName.asString()
+    val parent = parentDeclaration!!.toClassNameInternal()
+    return parent.nestedClass(simpleName)
+  }
+
   val pkgName = packageName.asString()
+
   val typesString = checkNotNull(qualifiedName).asString().removePrefix("$pkgName.")
 
   val simpleNames = typesString
