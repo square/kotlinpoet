@@ -373,6 +373,42 @@ class FileSpecTest {
     )
   }
 
+  @Test fun conflictingImportsEscapedWithoutBackticks() {
+    val foo1Type = ClassName("com.example.generated.one", "\$Foo")
+    val foo2Type = ClassName("com.example.generated.another", "\$Foo")
+
+    val testFun = FunSpec.builder("testFun")
+      .addCode(
+        """
+        val foo1 = %T()
+        val foo2 = %T()
+        """.trimIndent(),
+        foo1Type,
+        foo2Type,
+      )
+      .build()
+
+    val testFile = FileSpec.builder("com.squareup.kotlinpoet.test", "TestFile")
+      .addFunction(testFun)
+      .build()
+
+    assertThat(testFile.toString())
+      .isEqualTo(
+        """
+          |package com.squareup.kotlinpoet.test
+          |
+          |import com.example.generated.another.`${'$'}Foo` as Another__Foo
+          |import com.example.generated.one.`${'$'}Foo` as One__Foo
+          |
+          |public fun testFun() {
+          |  val foo1 = One__Foo()
+          |  val foo2 = Another__Foo()
+          |}
+          |
+        """.trimMargin(),
+      )
+  }
+
   @Test fun conflictingImportsEscapeKeywords() {
     val source = FileSpec.builder("com.squareup.tacos", "Taco")
       .addType(
