@@ -20,7 +20,7 @@ plugins {
 
 tasks.compileTestKotlin {
   compilerOptions {
-    freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+    optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
   }
 }
 
@@ -43,6 +43,7 @@ dependencies {
   testImplementation(libs.ksp)
   testImplementation(libs.kotlinCompileTesting)
   testImplementation(libs.kotlinCompileTesting.ksp)
+  testImplementation(libs.ksp.aaEmbeddable)
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
 }
