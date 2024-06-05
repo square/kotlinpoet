@@ -22,6 +22,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
+import kotlin.math.max
 import kotlin.reflect.KClass
 
 /**
@@ -374,7 +375,11 @@ public class CodeBlock private constructor(
         minusSign = '-'
       }
 
-      val precision = if (o is Float || o is Double) o.toString().split(".").last().length else 0
+      val precision = when(o) {
+        is Float -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
+        is Double -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
+        else -> 0
+      }
 
       val pattern = when (o) {
         is Float, is Double -> "###,##0.0" + "#".repeat(precision - 1)
