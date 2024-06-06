@@ -73,6 +73,7 @@ internal fun KSType.toTypeName(
     is KSClassDeclaration -> {
       decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
     }
+
     is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
     is KSTypeAlias -> {
       var typeAlias: KSTypeAlias = decl
@@ -110,6 +111,7 @@ internal fun KSType.toTypeName(
         .withTypeArguments(aliasArgs)
         .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
     }
+
     else -> error("Unsupported type: $declaration")
   }
 
@@ -188,14 +190,15 @@ public fun KSTypeReference.toTypeName(
   typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
 ): TypeName {
   val type = resolve()
-  return when (val elem = element) {
-    is KSCallableReference -> {
-      LambdaTypeName.get(
-        receiver = elem.receiverType?.toTypeName(typeParamResolver),
-        parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
-        returnType = elem.returnType.toTypeName(typeParamResolver),
-      ).copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
-    }
-    else -> type.toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
+  val elem = element
+  // Don't wrap in a lambda if this is a typealias, even if the underlying type is a function type.
+  return if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
+    LambdaTypeName.get(
+      receiver = elem.receiverType?.toTypeName(typeParamResolver),
+      parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
+      returnType = elem.returnType.toTypeName(typeParamResolver),
+    ).copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
+  } else {
+    type.toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
   }
 }
