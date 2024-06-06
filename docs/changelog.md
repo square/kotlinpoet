@@ -8,7 +8,7 @@ Change Log
 * Migrate `kotlinpoet-metadata` to stable `org.jetbrains.kotlin:kotlin-metadata-jvm` artifact for Metadata parsing.
 * Promote `kotlinpoet-metadata` out of preview to stable.
 * Update to Kotlin `2.0.0`.
-* Update to KSP `2.0.0-1.0.21`.
+* Update to KSP `2.0.0-1.0.22`.
 
 ## Version 1.17.0
 
