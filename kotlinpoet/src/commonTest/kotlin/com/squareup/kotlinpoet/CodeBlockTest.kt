@@ -50,7 +50,7 @@ class CodeBlockTest {
       0.000001 to "0.000001",
       0.0000001 to "0.0000001",
     )
-    for((d, expected) in doubles) {
+    for ((d, expected) in doubles) {
       val a = CodeBlock.of("number %L", d)
       assertThat(a.toString()).isEqualTo("number $expected")
     }
@@ -68,7 +68,7 @@ class CodeBlockTest {
       0.000001f to "0.000001",
       0.0000001f to "0.0000001",
     )
-    for((f, expected) in floats) {
+    for ((f, expected) in floats) {
       val a = CodeBlock.of("number %L", f)
       assertThat(a.toString()).isEqualTo("number $expected")
     }

@@ -375,7 +375,7 @@ public class CodeBlock private constructor(
         minusSign = '-'
       }
 
-      val precision = when(o) {
+      val precision = when (o) {
         is Float -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
         is Double -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
         else -> 0

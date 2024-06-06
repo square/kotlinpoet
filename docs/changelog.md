@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+* Fix: Small double and float values were set to 0.0 in %L translation (#1919)
+
 ## Version 1.17.0
 
 Thanks to [@jisungbin][jisungbin], [@hfhbd][hfhbd], [@evant][evant], [@sgjesse][sgjesse], [@sebek64][sebek64] for
