@@ -19,17 +19,29 @@ import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
-import com.tschuchort.compiletesting.kspArgs
-import com.tschuchort.compiletesting.kspIncremental
+import com.tschuchort.compiletesting.configureKsp
+import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
-import com.tschuchort.compiletesting.kspWithCompilation
-import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class TestProcessorTest {
+@RunWith(Parameterized::class)
+class TestProcessorTest(private val useKsp2: Boolean) {
+
+  companion object {
+    @JvmStatic
+    @Parameterized.Parameters(name = "useKsp2={0}")
+    fun data(): Collection<Array<Any>> {
+      return listOf(
+        arrayOf(false),
+        arrayOf(true),
+      )
+    }
+  }
 
   @Rule
   @JvmField
@@ -362,7 +374,7 @@ class TestProcessorTest {
            """,
       ),
     )
-    compilation.kspArgs["unwrapTypeAliases"] = "true"
+    compilation.kspProcessorOptions["unwrapTypeAliases"] = "true"
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
     val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
@@ -573,7 +585,7 @@ class TestProcessorTest {
     import kotlin.Unit
 
     public class TestTransitiveAliases {
-      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(arg1: T): Unit = TODO()
+      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T): Unit = TODO()
     }
 
       """.trimIndent(),
@@ -820,6 +832,47 @@ class TestProcessorTest {
   }
 
   @Test
+  fun intersectionTypes() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           class Example {
+             fun <T> example() where T : Appendable, T : CharSequence {
+
+             }
+           }
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import kotlin.CharSequence
+        import kotlin.Unit
+        import kotlin.text.Appendable
+
+        public class TestExample {
+          public fun <T> example(): Unit where T : Appendable, T : CharSequence = TODO()
+        }
+
+      """.trimIndent(),
+    )
+  }
+
+  @Test
   fun typeArgs() {
     val compilation = prepareCompilation(
       kotlin(
@@ -863,11 +916,18 @@ class TestProcessorTest {
       .apply {
         workingDir = temporaryFolder.root
         inheritClassPath = true
-        symbolProcessorProviders = listOf(TestProcessorProvider())
         sources = sourceFiles.asList()
         verbose = false
-        kspIncremental = true // The default now
-        kspWithCompilation = true
+        configureKsp(useKsp2) {
+          incremental = true // The default now
+          if (!useKsp2) {
+            languageVersion = "1.9"
+            apiVersion = "1.9"
+            // Doesn't exist in KSP 2
+            withCompilation = true
+          }
+          symbolProcessorProviders += TestProcessorProvider()
+        }
       }
   }
 }
