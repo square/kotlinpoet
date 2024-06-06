@@ -22,9 +22,7 @@ import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
 import com.tschuchort.compiletesting.configureKsp
 import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
-import com.tschuchort.compiletesting.symbolProcessorProviders
 import java.io.File
-import org.junit.Assume.assumeFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -51,9 +49,6 @@ class TestProcessorTest(private val useKsp2: Boolean) {
 
   @Test
   fun smokeTest() {
-    // TODO broken in KSP2 https://github.com/google/ksp/issues/1948
-    assumeFalse(useKsp2)
-
     val compilation = prepareCompilation(
       kotlin(
         "Example.kt",
@@ -410,9 +405,6 @@ class TestProcessorTest(private val useKsp2: Boolean) {
 
   @Test
   fun removeDefaultValues() {
-    // TODO broken in KSP2 https://github.com/google/ksp/issues/1948
-    assumeFalse(useKsp2)
-
     val compilation = prepareCompilation(
       kotlin(
         "Example.kt",
