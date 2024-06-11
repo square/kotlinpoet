@@ -5,6 +5,7 @@ Change Log
 
 * **Fix**: Don't expand typealiases of function types to `LambdaTypeName`s in `KSTypeReference.toTypeName()`.
 * **Fix**: Small double and float values were set to 0.0 in %L translation (#1919)
+* **Fix**: Fix typealias type argument resolution in KSP2.
 * **Enhancement**: Make enum entry references in `KSAnnotation.toAnnotationSpec()` and `KSClassDeclaration.toClassName()` more robust.
 * Migrate `kotlinpoet-metadata` to stable `org.jetbrains.kotlin:kotlin-metadata-jvm` artifact for Metadata parsing.
 * Promote `kotlinpoet-metadata` out of preview to stable.
