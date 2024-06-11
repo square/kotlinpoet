@@ -911,6 +911,49 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     )
   }
 
+  @Test
+  fun complexAliasing() {
+    val compilation = prepareCompilation(
+      kotlin(
+        "Example.kt",
+        """
+           package test
+
+           import javax.inject.Provider
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           typealias DaggerProvider<T> = @JvmSuppressWildcards Provider<T>
+           interface SelectOptions
+           interface SelectHandler<T>
+
+           @ExampleAnnotation
+           class Example(
+             private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>>,
+           )
+           """,
+      ),
+    )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
+      .readText()
+
+    assertThat(generatedFileText).isEqualTo(
+      """
+        package test
+
+        import java.lang.Class
+        import kotlin.collections.Map
+
+        public class TestExample {
+          private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>> = TODO()
+        }
+
+      """.trimIndent(),
+    )
+  }
+
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
     return KotlinCompilation()
       .apply {

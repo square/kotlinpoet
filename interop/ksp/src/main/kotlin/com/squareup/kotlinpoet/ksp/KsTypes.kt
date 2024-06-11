@@ -199,6 +199,6 @@ public fun KSTypeReference.toTypeName(
       returnType = elem.returnType.toTypeName(typeParamResolver),
     ).copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
   } else {
-    type.toTypeName(typeParamResolver, element?.typeArguments.orEmpty())
+    type.toTypeName(typeParamResolver, type.arguments)
   }
 }
