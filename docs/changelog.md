@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+* Fix: Fix KT-18706 in CodeWriter.generateImports (#1920)
+
 ## Version 1.17.0
 
 Thanks to [@jisungbin][jisungbin], [@hfhbd][hfhbd], [@evant][evant], [@sgjesse][sgjesse], [@sebek64][sebek64] for
