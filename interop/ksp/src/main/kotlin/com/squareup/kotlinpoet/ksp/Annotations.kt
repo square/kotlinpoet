@@ -151,6 +151,14 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
       }
     }
 
+    is KSClassDeclaration -> {
+      check(value.classKind == ClassKind.ENUM_ENTRY)
+      member.add(
+        "%T",
+        value.toClassName(),
+      )
+    }
+
     is KSName ->
       member.add(
         "%T.%L",

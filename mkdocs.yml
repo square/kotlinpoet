@@ -77,7 +77,7 @@ nav:
     - 'Callable References': callable-references.md
     - 'kotlin-reflect': kotlin-reflect.md
   - 'Interop - JavaPoet': interop-javapoet.md
-  - 'Interop - kotlinx-metadata': interop-kotlinx-metadata.md
+  - 'Interop - kotlin-metadata': interop-kotlin-metadata.md
   - 'Interop - KSP': interop-ksp.md
   - 'API':
     - 'kotlinpoet': 1.x/kotlinpoet/index.html

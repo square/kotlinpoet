@@ -28,13 +28,17 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ANY
+import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.kspDependencies
@@ -176,12 +180,32 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           )
           .addParameters(
             function.parameters.map { parameter ->
+              val isVararg = parameter.isVararg
+              val possibleVararg = if (isVararg) {
+                arrayOf(KModifier.VARARG)
+              } else {
+                emptyArray()
+              }
               // Function references can't be obtained from a resolved KSType because it resolves to FunctionN<> which
               // loses the necessary context, skip validation in these cases as we know they won't match.
               val typeName = if (parameter.type.resolve().run { isFunctionType || isSuspendFunctionType }) {
                 parameter.type.toTypeName(functionTypeParams)
               } else {
                 parameter.type.toValidatedTypeName(functionTypeParams)
+              }.let { paramType ->
+                // In KSP1, this just gives us the T type for the param
+                // In KSP2, this gives us an Array<out T> for the param
+                if (paramType is ParameterizedTypeName && paramType.rawType == ARRAY && isVararg) {
+                  paramType.typeArguments.single().let { componentType ->
+                    if (componentType is WildcardTypeName) {
+                      componentType.outTypes.single()
+                    } else {
+                      componentType
+                    }
+                  }
+                } else {
+                  paramType
+                }
               }
               val parameterType = typeName.let {
                 if (unwrapTypeAliases) {
@@ -191,7 +215,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
                 }
               }
               parameter.name?.let {
-                ParameterSpec.builder(it.getShortName(), parameterType).build()
+                ParameterSpec.builder(it.getShortName(), parameterType, *possibleVararg).build()
               } ?: ParameterSpec.unnamed(parameterType)
             },
           )

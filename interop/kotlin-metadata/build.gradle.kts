@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Square, Inc.
+ * Copyright (C) 2019 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 plugins {
-  id("com.google.devtools.ksp")
   kotlin("jvm")
+}
+
+tasks.jar {
+  manifest {
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.metadata")
+  }
 }
 
 tasks.compileTestKotlin {
   compilerOptions {
+    freeCompilerArgs.addAll("-Xjvm-default=all")
     optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
   }
 }
 
-tasks.test {
-  // KSP2 needs more memory to run
-  minHeapSize = "1g"
-  maxHeapSize = "4g"
-}
-
 dependencies {
-  implementation(projects.kotlinpoet)
-  implementation(projects.interop.ksp)
-  implementation(libs.autoService)
-  compileOnly(libs.ksp.api)
-  ksp(libs.autoService.ksp)
-  // Always force the latest version of the KSP/kotlin impl in tests to match what we're building against
-  testImplementation(libs.ksp.api)
-  testImplementation(libs.kotlin.compilerEmbeddable)
-  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
-  testImplementation(libs.ksp)
-  testImplementation(libs.kotlinCompileTesting)
-  testImplementation(libs.kotlinCompileTesting.ksp)
-  testImplementation(libs.ksp.aaEmbeddable)
+  implementation(libs.autoCommon)
+  implementation(libs.guava)
+  api(libs.kotlin.metadata)
+  api(projects.kotlinpoet)
+
   testImplementation(libs.kotlin.junit)
   testImplementation(libs.truth)
+  testImplementation(libs.compileTesting)
+  testImplementation(libs.kotlinCompileTesting)
+  testImplementation(libs.kotlin.annotationProcessingEmbeddable)
+  testImplementation(libs.kotlin.compilerEmbeddable)
 }
