@@ -6,6 +6,17 @@ Change Log
 * **Fix**: Don't expand typealiases of function types to `LambdaTypeName`s in `KSTypeReference.toTypeName()`.
 * **Fix**: Small double and float values were set to 0.0 in %L translation (#1919)
 * **Fix**: Fix typealias type argument resolution in KSP2.
+* **Fix**: Fix KT-18706: kotlinpoet now generates import aliases without backticks (#1920)
+  * For example:
+    ```
+    // before, doesn't compile due to KT-18706
+    import com.example.one.`$Foo` as `One$Foo`
+    import com.example.two.`$Foo` as `Two$Foo`
+
+    // now, compiles
+    import com.example.one.`$Foo` as One__Foo
+    import com.example.two.`$Foo` as Two__Foo
+    ```
 * **Enhancement**: Make enum entry references in `KSAnnotation.toAnnotationSpec()` and `KSClassDeclaration.toClassName()` more robust.
 * Migrate `kotlinpoet-metadata` to stable `org.jetbrains.kotlin:kotlin-metadata-jvm` artifact for Metadata parsing.
 * Promote `kotlinpoet-metadata` out of preview to stable.
