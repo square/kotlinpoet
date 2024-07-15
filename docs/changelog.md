@@ -3,17 +3,23 @@ Change Log
 
 ## Unreleased
 
- * Fix: Fix KT-18706: kotlinpoet now generates import aliases without backticks (#1920)
-   * For example:
-     ```kotlin
-     // before, doesn't compile due to KT-18706
-     import com.example.one.`$Foo` as `One$Foo`
-     import com.example.two.`$Foo` as `Two$Foo`
+## Version 1.18.1
 
-     // now, compiles
-     import com.example.one.`$Foo` as One__Foo
-     import com.example.two.`$Foo` as Two__Foo
-     ```
+Thanks to [@mitasov-ra][mitasov-ra] for contributing to this release.
+
+_2024-07-15_
+
+ * Fix: Workaround for [KT-18706][kt-18706]: KotlinPoet now generates import aliases without backticks (#1920).
+
+   ```kotlin
+   // before, doesn't compile due to KT-18706
+   import com.example.one.`$Foo` as `One$Foo`
+   import com.example.two.`$Foo` as `Two$Foo`
+
+   // now, compiles
+   import com.example.one.`$Foo` as One__Foo
+   import com.example.two.`$Foo` as Two__Foo
+   ```
 
 ## Version 1.18.0
 
@@ -810,6 +816,7 @@ _2017-05-16_
  [ksp-interop-docs]: https://square.github.io/kotlinpoet/interop-ksp/
  [javapoet]: https://github.com/square/javapoet
  [javapoet-interop-docs]: https://square.github.io/kotlinpoet/interop-javapoet/
+ [kt-18706]: https://youtrack.jetbrains.com/issue/KT-18706
 
  [martinbonnin]: https://github.com/martinbonnin
  [idanakav]: https://github.com/idanakav
@@ -849,3 +856,4 @@ _2017-05-16_
  [sgjesse]: https://github.com/sgjesse
  [sebek64]: https://github.com/sebek64
  [DanielGronau]: https://github.com/DanielGronau
+ [mitasov-ra]: https://github.com/mitasov-ra
