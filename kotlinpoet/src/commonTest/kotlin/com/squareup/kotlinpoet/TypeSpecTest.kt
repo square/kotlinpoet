@@ -5714,6 +5714,23 @@ class TypeSpecTest {
     )
   }
 
+  @Test fun enumClassWithOnlyInitializerBlock() {
+    val typeSpec = TypeSpec.enumBuilder("Foo")
+      .addInitializerBlock(CodeBlock.EMPTY)
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public enum class Foo {
+      |  ;
+      |  init {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun classKdoc() {
     val type = TypeSpec.classBuilder("MyClass")
       .addKdoc("This is my class")
