@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+* Fix: Enum classes that only have an init block now also generate the required semicolon (#1952)
+
 ## Version 1.18.1
 
 Thanks to [@mitasov-ra][mitasov-ra] for contributing to this release.

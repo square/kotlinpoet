@@ -262,7 +262,7 @@ public class TypeSpec private constructor(
         if (!firstMember) {
           codeWriter.emit("\n")
         }
-        if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty()) {
+        if (propertySpecs.isNotEmpty() || funSpecs.isNotEmpty() || typeSpecs.isNotEmpty() || initializerBlock.isNotEmpty()) {
           codeWriter.emit(";\n")
         }
       }
