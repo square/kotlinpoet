@@ -53,6 +53,22 @@ public fun KSType.toClassName(): ClassName {
 }
 
 /**
+ * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or [KSTypeAlias].
+ *
+ * If it's unable to resolve to a [ClassName] for any reason, this returns null.
+ */
+public fun KSType.toClassNameOrNull(): ClassName? {
+  if (isError) return null
+  if (arguments.isNotEmpty()) return null
+  return when (val decl = declaration) {
+    is KSClassDeclaration -> decl.toClassName()
+    is KSTypeAlias -> decl.toClassName()
+    is KSTypeParameter -> null
+    else -> null
+  }?.let { it.copy(nullable = isMarkedNullable) as ClassName }
+}
+
+/**
  * Returns the [TypeName] representation of this [KSType].
  *
  * @see toTypeParameterResolver
