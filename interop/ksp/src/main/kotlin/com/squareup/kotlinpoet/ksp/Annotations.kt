@@ -25,7 +25,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /**
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
@@ -33,15 +33,12 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
-  val className = annotationType.resolve().toClassName()
+  val typeName = annotationType.resolve().toTypeName()
 
-  val typeArgs = annotationType.element?.typeArguments.orEmpty()
-    .map { it.toTypeName() }
-
-  val builder = if (typeArgs.isEmpty()) {
-    AnnotationSpec.builder(className)
+  val builder = if (typeName is ClassName) {
+    AnnotationSpec.builder(typeName)
   } else {
-    AnnotationSpec.builder(className.parameterizedBy(typeArgs))
+    AnnotationSpec.builder(typeName as ParameterizedTypeName)
   }
 
   val params = annotationType.resolve()
