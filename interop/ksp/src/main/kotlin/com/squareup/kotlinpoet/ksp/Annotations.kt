@@ -108,14 +108,6 @@ private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
     AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
   }
 
-internal fun KSType.unwrapTypeAlias(): KSType {
-  return if (this.declaration is KSTypeAlias) {
-    (this.declaration as KSTypeAlias).type.resolve()
-  } else {
-    this
-  }
-}
-
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultValues: Boolean) {
   when (value) {
     is List<*> -> {

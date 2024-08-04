@@ -19,6 +19,9 @@ import com.google.devtools.ksp.isLocal
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeAlias
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -75,4 +78,41 @@ internal fun KSDeclaration.toClassNameInternal(): ClassName {
   val simpleNames = typesString
     .split(".")
   return ClassName(pkgName, simpleNames)
+}
+
+internal fun KSType.requireNotErrorType() {
+  require(!isError) {
+    "Error type '$this' is not resolvable in the current round of processing."
+  }
+}
+
+/**
+ * Resolves the [KSClassDeclaration] for this type, including following typealiases as needed.
+ */
+internal fun KSType.resolveKSClassDeclaration(): KSClassDeclaration? {
+  requireNotErrorType()
+  return declaration.resolveKSClassDeclaration()
+}
+
+/**
+ * Resolves the [KSClassDeclaration] representation of this declaration, including following
+ * typealiases as needed.
+ *
+ * [KSTypeParameter] types will return null. If you expect one here, you should check the
+ * declaration directly.
+ */
+internal fun KSDeclaration.resolveKSClassDeclaration(): KSClassDeclaration? {
+  return when (val declaration = unwrapTypealiases()) {
+    is KSClassDeclaration -> declaration
+    is KSTypeParameter -> null
+    else -> error("Unexpected declaration type: $this")
+  }
+}
+
+/**
+ * Returns the resolved declaration following any typealiases.
+ */
+internal tailrec fun KSDeclaration.unwrapTypealiases(): KSDeclaration = when (this) {
+  is KSTypeAlias -> type.resolve().declaration.unwrapTypealiases()
+  else -> this
 }
