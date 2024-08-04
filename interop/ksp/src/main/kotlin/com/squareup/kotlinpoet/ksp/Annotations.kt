@@ -132,14 +132,15 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
     }
 
     is KSType -> {
-      val unwrapped = value.unwrapTypeAlias()
-      val isEnum = (unwrapped.declaration as KSClassDeclaration).classKind == ClassKind.ENUM_ENTRY
+      val declaration = value.resolveKSClassDeclaration() ?: error("Cannot resolve type of $value")
+      val isEnum = declaration.classKind == ClassKind.ENUM_ENTRY
       if (isEnum) {
-        val parent = unwrapped.declaration.parentDeclaration as KSClassDeclaration
-        val entry = unwrapped.declaration.simpleName.getShortName()
+        val parent = declaration.parentDeclaration?.resolveKSClassDeclaration()
+          ?: error("Could not resolve enclosing enum class of entry ${declaration.qualifiedName?.asString()}")
+        val entry = declaration.simpleName.getShortName()
         member.add("%T.%L", parent.toClassName(), entry)
       } else {
-        member.add("%T::class", unwrapped.toClassName())
+        member.add("%T::class", declaration.toClassName())
       }
     }
 
