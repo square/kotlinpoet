@@ -34,18 +34,19 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
-  val builder = annotationType.resolve().unwrapTypeAlias().toClassName()
-    .let { className ->
-      val typeArgs = annotationType.element?.typeArguments.orEmpty()
-        .map { it.toTypeName() }
-      if (typeArgs.isEmpty()) {
-        AnnotationSpec.builder(className)
-      } else {
-        AnnotationSpec.builder(className.parameterizedBy(typeArgs))
-      }
-    }
+  val className = annotationType.resolve().toClassName()
 
-  val params = (annotationType.resolve().declaration as KSClassDeclaration).primaryConstructor?.parameters.orEmpty()
+  val typeArgs = annotationType.element?.typeArguments.orEmpty()
+    .map { it.toTypeName() }
+
+  val builder = if (typeArgs.isEmpty()) {
+    AnnotationSpec.builder(className)
+  } else {
+    AnnotationSpec.builder(className.parameterizedBy(typeArgs))
+  }
+
+  val params = annotationType.resolve()
+    .resolveKSClassDeclaration()?.primaryConstructor?.parameters.orEmpty()
     .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
 
