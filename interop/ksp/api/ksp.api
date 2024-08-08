@@ -6,10 +6,12 @@ public final class com/squareup/kotlinpoet/ksp/AnnotationsKt {
 
 public final class com/squareup/kotlinpoet/ksp/KsClassDeclarationsKt {
 	public static final fun toClassName (Lcom/google/devtools/ksp/symbol/KSClassDeclaration;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun toClassName (Lcom/google/devtools/ksp/symbol/KSTypeAlias;)Lcom/squareup/kotlinpoet/ClassName;
 }
 
 public final class com/squareup/kotlinpoet/ksp/KsTypesKt {
 	public static final fun toClassName (Lcom/google/devtools/ksp/symbol/KSType;)Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun toClassNameOrNull (Lcom/google/devtools/ksp/symbol/KSType;)Lcom/squareup/kotlinpoet/ClassName;
 	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSType;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;
 	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSTypeArgument;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;
 	public static final fun toTypeName (Lcom/google/devtools/ksp/symbol/KSTypeReference;Lcom/squareup/kotlinpoet/ksp/TypeParameterResolver;)Lcom/squareup/kotlinpoet/TypeName;

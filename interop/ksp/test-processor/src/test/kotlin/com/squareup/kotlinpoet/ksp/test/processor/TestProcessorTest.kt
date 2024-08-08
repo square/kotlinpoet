@@ -925,7 +925,10 @@ class TestProcessorTest(private val useKsp2: Boolean) {
            typealias DaggerProvider<T> = @JvmSuppressWildcards Provider<T>
            interface SelectOptions
            interface SelectHandler<T>
+           annotation class SomeAnnotation
+           typealias AliasedAnnotation = SomeAnnotation
 
+           @AliasedAnnotation
            @ExampleAnnotation
            class Example(
              private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>>,
@@ -946,6 +949,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
         import java.lang.Class
         import kotlin.collections.Map
 
+        @AliasedAnnotation
         public class TestExample {
           private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>> = TODO()
         }

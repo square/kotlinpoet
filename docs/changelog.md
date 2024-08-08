@@ -4,6 +4,10 @@ Change Log
 ## Unreleased
 
 * Fix: Enum classes that only have an init block now also generate the required semicolon (#1952)
+* Fix: Preserve typealiases in `KSAnnotation.toAnnotationSpec()`. (#1945)
+* Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
+* New: Add `KSTypeAlias.toClassName()`. (#1956)
+* New: Add `KSType.toClassNameOrNull()`. (#1956)
 
 ## Version 1.18.1
 

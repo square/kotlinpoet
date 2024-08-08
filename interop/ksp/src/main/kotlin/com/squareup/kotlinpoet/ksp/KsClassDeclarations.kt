@@ -16,9 +16,15 @@
 package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.squareup.kotlinpoet.ClassName
 
 /** Returns the [ClassName] representation of this [KSClassDeclaration]. */
 public fun KSClassDeclaration.toClassName(): ClassName {
+  return toClassNameInternal()
+}
+
+/** Returns the [ClassName] representation of this [KSTypeAlias]. */
+public fun KSTypeAlias.toClassName(): ClassName {
   return toClassNameInternal()
 }

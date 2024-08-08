@@ -21,12 +21,11 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /**
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
@@ -34,18 +33,16 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
-  val builder = annotationType.resolve().unwrapTypeAlias().toClassName()
-    .let { className ->
-      val typeArgs = annotationType.element?.typeArguments.orEmpty()
-        .map { it.toTypeName() }
-      if (typeArgs.isEmpty()) {
-        AnnotationSpec.builder(className)
-      } else {
-        AnnotationSpec.builder(className.parameterizedBy(typeArgs))
-      }
-    }
+  val typeName = annotationType.resolve().toTypeName()
 
-  val params = (annotationType.resolve().declaration as KSClassDeclaration).primaryConstructor?.parameters.orEmpty()
+  val builder = if (typeName is ClassName) {
+    AnnotationSpec.builder(typeName)
+  } else {
+    AnnotationSpec.builder(typeName as ParameterizedTypeName)
+  }
+
+  val params = annotationType.resolve()
+    .resolveKSClassDeclaration()?.primaryConstructor?.parameters.orEmpty()
     .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
 
@@ -108,14 +105,6 @@ private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
     AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
   }
 
-internal fun KSType.unwrapTypeAlias(): KSType {
-  return if (this.declaration is KSTypeAlias) {
-    (this.declaration as KSTypeAlias).type.resolve()
-  } else {
-    this
-  }
-}
-
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultValues: Boolean) {
   when (value) {
     is List<*> -> {
@@ -140,14 +129,15 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
     }
 
     is KSType -> {
-      val unwrapped = value.unwrapTypeAlias()
-      val isEnum = (unwrapped.declaration as KSClassDeclaration).classKind == ClassKind.ENUM_ENTRY
+      val declaration = value.resolveKSClassDeclaration() ?: error("Cannot resolve type of $value")
+      val isEnum = declaration.classKind == ClassKind.ENUM_ENTRY
       if (isEnum) {
-        val parent = unwrapped.declaration.parentDeclaration as KSClassDeclaration
-        val entry = unwrapped.declaration.simpleName.getShortName()
+        val parent = declaration.parentDeclaration?.resolveKSClassDeclaration()
+          ?: error("Could not resolve enclosing enum class of entry ${declaration.qualifiedName?.asString()}")
+        val entry = declaration.simpleName.getShortName()
         member.add("%T.%L", parent.toClassName(), entry)
       } else {
-        member.add("%T::class", unwrapped.toClassName())
+        member.add("%T::class", declaration.toClassName())
       }
     }
 

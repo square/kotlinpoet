@@ -36,20 +36,36 @@ import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.tags.TypeAliasTag
 
-private fun KSType.requireNotErrorType() {
-  require(!isError) {
-    "Error type '$this' is not resolvable in the current round of processing."
-  }
-}
-
-/** Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration]. */
+/**
+ * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or [KSTypeAlias].
+ */
 public fun KSType.toClassName(): ClassName {
   requireNotErrorType()
-  val decl = declaration
-  check(decl is KSClassDeclaration) {
-    "Declaration was not a KSClassDeclaration: $this"
+  check(arguments.isEmpty()) {
+    "KSType '$this' has type arguments, which are not supported for ClassName conversion. Use KSType.toTypeName()."
   }
-  return decl.toClassName()
+  return when (val decl = declaration) {
+    is KSClassDeclaration -> decl.toClassName()
+    is KSTypeAlias -> decl.toClassName()
+    is KSTypeParameter -> error("Cannot convert KSTypeParameter to ClassName: '$this'")
+    else -> error("Could not compute ClassName for '$this'")
+  }.copy(nullable = isMarkedNullable) as ClassName
+}
+
+/**
+ * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or [KSTypeAlias].
+ *
+ * If it's unable to resolve to a [ClassName] for any reason, this returns null.
+ */
+public fun KSType.toClassNameOrNull(): ClassName? {
+  if (isError) return null
+  if (arguments.isNotEmpty()) return null
+  return when (val decl = declaration) {
+    is KSClassDeclaration -> decl.toClassName()
+    is KSTypeAlias -> decl.toClassName()
+    is KSTypeParameter -> null
+    else -> null
+  }?.let { it.copy(nullable = isMarkedNullable) as ClassName }
 }
 
 /**
@@ -73,7 +89,6 @@ internal fun KSType.toTypeName(
     is KSClassDeclaration -> {
       decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
     }
-
     is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
     is KSTypeAlias -> {
       var typeAlias: KSTypeAlias = decl
@@ -107,11 +122,10 @@ internal fun KSType.toTypeName(
 
       val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
 
-      decl.toClassNameInternal()
+      decl.toClassName()
         .withTypeArguments(aliasArgs)
         .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
     }
-
     else -> error("Unsupported type: $declaration")
   }
 
