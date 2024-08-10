@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import kotlin.reflect.KClass
 
 internal object NullAppendable : Appendable {
@@ -146,33 +147,32 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-// TODO Wait for CodeBlock
-// internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
-//
-// internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
-//   this
-// } else {
-//   with(toBuilder()) {
-//     val lastFormatPart = trim().formatParts.last()
-//     if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-//       val lastArg = args.last()
-//       if (lastArg is String) {
-//         val trimmedArg = lastArg.trimEnd('\n')
-//         args[args.size - 1] = if (replaceWith != null) {
-//           trimmedArg + replaceWith
-//         } else {
-//           trimmedArg
-//         }
-//       }
-//     } else {
-//       formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-//       if (replaceWith != null) {
-//         formatParts += "$replaceWith"
-//       }
-//     }
-//     return@with build()
-//   }
-// }
+internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
+
+internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
+  this
+} else {
+  with(toBuilder()) {
+    val lastFormatPart = trim().formatParts.last()
+    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
+      val lastArg = args.last()
+      if (lastArg is String) {
+        val trimmedArg = lastArg.trimEnd('\n')
+        args[args.size - 1] = if (replaceWith != null) {
+          trimmedArg + replaceWith
+        } else {
+          trimmedArg
+        }
+      }
+    } else {
+      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+      if (replaceWith != null) {
+        formatParts += "$replaceWith"
+      }
+    }
+    return@with build()
+  }
+}
 
 // TODO Will be crashed in wasm-js :(
 //  -> PatternSyntaxException: No such character class

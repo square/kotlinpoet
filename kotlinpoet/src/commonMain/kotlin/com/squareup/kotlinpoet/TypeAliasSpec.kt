@@ -19,7 +19,10 @@ import com.squareup.kotlinpoet.KModifier.ACTUAL
 import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.lang.reflect.Type
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import com.squareup.kotlinpoet.jvm.alias.JvmType
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
@@ -47,7 +50,7 @@ public class TypeAliasSpec private constructor(
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
-    if (javaClass != other.javaClass) return false
+    if (this::class != other::class) return false
     return toString() == other.toString()
   }
 
@@ -111,7 +114,7 @@ public class TypeAliasSpec private constructor(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+    override fun addAnnotation(annotation: JvmClass<*>): Builder = super.addAnnotation(annotation)
 
     @Suppress("RedundantOverride")
     override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
@@ -145,7 +148,7 @@ public class TypeAliasSpec private constructor(
         "using the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
-    public fun builder(name: String, type: Type): Builder =
+    public fun builder(name: String, type: JvmType): Builder =
       builder(name, type.asTypeName())
 
     @JvmStatic public fun builder(name: String, type: KClass<*>): Builder =

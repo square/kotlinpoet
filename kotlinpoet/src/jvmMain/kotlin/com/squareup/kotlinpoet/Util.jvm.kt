@@ -15,41 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import java.util.Collections
 import java.util.EnumSet
 import java.util.TreeSet
 import kotlin.collections.toSortedSet as toSortedSetKt
 import kotlin.reflect.KClass
 import kotlin.sequences.toSortedSet as toSortedSetKt
-
-// TODO Wait for CodeBlock
-internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
-
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
-  this
-} else {
-  with(toBuilder()) {
-    val lastFormatPart = trim().formatParts.last()
-    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-      val lastArg = args.last()
-      if (lastArg is String) {
-        val trimmedArg = lastArg.trimEnd('\n')
-        args[args.size - 1] = if (replaceWith != null) {
-          trimmedArg + replaceWith
-        } else {
-          trimmedArg
-        }
-      }
-    } else {
-      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-      if (replaceWith != null) {
-        formatParts += "$replaceWith"
-      }
-    }
-    return@with build()
-  }
-}
 
 // TODO Wait for KModifier
 internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
@@ -92,11 +63,11 @@ internal actual fun <T : Comparable<T>> sortedSetOf(): MutableSet<T> =
 internal actual inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E> {
   return when {
     values.isEmpty() -> EnumSet.noneOf(E::class.java)
-    values.size == 1 -> EnumSet.of(values.first())
-    values.size == 2 -> EnumSet.of(values.first(), values[1])
-    values.size == 3 -> EnumSet.of(values.first(), values[1], values[2])
-    values.size == 4 -> EnumSet.of(values.first(), values[1], values[2], values[3])
-    values.size == 5 -> EnumSet.of(values.first(), values[1], values[2], values[3], values[4])
+    values.size == 1 -> EnumSet.of(values[0])
+    values.size == 2 -> EnumSet.of(values[0], values[1])
+    values.size == 3 -> EnumSet.of(values[0], values[1], values[2])
+    values.size == 4 -> EnumSet.of(values[0], values[1], values[2], values[3])
+    values.size == 5 -> EnumSet.of(values[0], values[1], values[2], values[3], values[4])
     else -> EnumSet.copyOf(values.toSet())
   }
 }
