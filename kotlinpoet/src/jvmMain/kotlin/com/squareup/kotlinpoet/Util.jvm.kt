@@ -22,20 +22,6 @@ import kotlin.collections.toSortedSet as toSortedSetKt
 import kotlin.reflect.KClass
 import kotlin.sequences.toSortedSet as toSortedSetKt
 
-// TODO Wait for KModifier
-internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
-  val count = mutuallyExclusive.count(modifiers::contains)
-  require(count <= 1) {
-    "modifiers $modifiers must contain none or only one of ${mutuallyExclusive.contentToString()}"
-  }
-}
-
-internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifier) {
-  require(forbidden.none(modifiers::contains)) {
-    "modifiers $modifiers must contain none of ${forbidden.contentToString()}"
-  }
-}
-
 internal actual fun formatIsoControlCode(code: Int): String =
   String.format("\\u%04x", code)
 
