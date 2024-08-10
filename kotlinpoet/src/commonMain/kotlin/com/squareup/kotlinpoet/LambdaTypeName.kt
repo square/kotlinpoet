@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 @OptIn(ExperimentalKotlinPoetApi::class)
@@ -86,10 +87,8 @@ public class LambdaTypeName private constructor(
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
+    if (other !is LambdaTypeName) return false
     if (!super.equals(other)) return false
-
-    other as LambdaTypeName
 
     if (receiver != other.receiver) return false
     if (contextReceivers != other.contextReceivers) return false
