@@ -231,13 +231,13 @@ public sealed class TypeName constructor(
 @JvmName("get")
 public fun JvmTypeMirror.asTypeName(): TypeName = asTypeNameInternal()
 
-/** Returns a [TypeName] equivalent to this [JvmType].  */
-@JvmName("get")
-public fun JvmType.asTypeName(): TypeName = asTypeNameInternal()
-
 /** Returns a [TypeName] equivalent to this [KClass].  */
 @JvmName("get")
 public fun KClass<*>.asTypeName(): ClassName = asClassName()
+
+/** Returns a [TypeName] equivalent to this [JvmType].  */
+@JvmName("get")
+public fun JvmType.asTypeName(): TypeName = asTypeNameInternal()
 
 internal expect fun JvmTypeMirror.asTypeNameInternal(): TypeName
 

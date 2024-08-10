@@ -317,7 +317,6 @@ internal fun String.escapeIfNecessary(validate: Boolean = true): String = escape
  * - all characters that cannot be used as identifier part (e.g. space or hyphen) are
  *   replaced with `"_U<code>"` where `code` is 4-digit Unicode character code in hexadecimal form
  */
-@OptIn(ExperimentalStdlibApi::class)
 internal fun String.escapeAsAlias(validate: Boolean = true): String {
   if (allCharactersAreUnderscore) {
     return "${this}0" // add '0' to make it a valid identifier

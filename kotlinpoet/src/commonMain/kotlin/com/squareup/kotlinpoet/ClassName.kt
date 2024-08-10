@@ -212,8 +212,7 @@ public class ClassName internal constructor(
      * [IllegalArgumentException] otherwise. For that reason, the constructor should be preferred as
      * it can create [ClassName] instances without such restrictions.
      */
-    @JvmStatic
-    public fun bestGuess(classNameString: String): ClassName {
+    @JvmStatic public fun bestGuess(classNameString: String): ClassName {
       val names = mutableListOf<String>()
 
       // Add the package name, like "java.util.concurrent", or "" for no package.

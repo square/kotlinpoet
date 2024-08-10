@@ -309,12 +309,10 @@ public class CodeBlock private constructor(
         }
 
         require(index >= 0 && index < args.size) {
-          "index ${index + 1} for '${
-            format.substring(
-              indexStart - 1,
-              indexEnd + 1,
-            )
-          }' not in range (received ${args.size} arguments)"
+          "index ${index + 1} for '${format.substring(
+            indexStart - 1,
+            indexEnd + 1,
+          )}' not in range (received ${args.size} arguments)"
         }
         require(!hasIndexed || !hasRelative) { "cannot mix indexed and positional parameters" }
 
@@ -451,12 +449,10 @@ public class CodeBlock private constructor(
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
-    @JvmStatic
-    public fun of(format: String, vararg args: Any?): CodeBlock =
+    @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
       Builder().add(format, *args).build()
 
-    @JvmStatic
-    public fun builder(): Builder = Builder()
+    @JvmStatic public fun builder(): Builder = Builder()
 
     internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
     internal val Char.isSingleCharNoArgPlaceholder get() = isOneOf('⇥', '⇤', '«', '»')
