@@ -36,7 +36,10 @@ public expect fun JvmType.typeName(): String
  *
  * @author ForteScarlet
  */
-public expect class JvmClass<@Suppress("unused") T : Any> : JvmType
+public expect class JvmClass<
+  @Suppress("unused")
+  T : Any,
+  > : JvmType
 
 /**
  * Convert [JvmClass] to [KClass].

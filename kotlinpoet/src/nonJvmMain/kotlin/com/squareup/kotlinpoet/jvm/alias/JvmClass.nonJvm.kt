@@ -26,7 +26,10 @@ public actual fun JvmType.typeName(): String =
   throw UnsupportedOperationException()
 
 @JvmTypeAliasKotlinPoetApi
-public actual class JvmClass<@Suppress("unused") T : Any> private constructor() : JvmType {
+public actual class JvmClass<
+  @Suppress("unused")
+  T : Any,
+  > private constructor() : JvmType {
   init {
     error("JvmClass can't be constructed in a non-JVM platform")
   }
