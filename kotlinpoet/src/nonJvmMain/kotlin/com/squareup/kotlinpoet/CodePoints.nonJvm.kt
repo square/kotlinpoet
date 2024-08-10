@@ -20,7 +20,6 @@ package com.squareup.kotlinpoet
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 internal actual fun StringBuilder.appendCodePoint(codePoint: CodePoint): StringBuilder {
-  // Copied from StringBuilder.kt,
   // TODO Is this correct?
   val code = codePoint.code
   if (code <= Char.MAX_VALUE.code) {
@@ -32,14 +31,36 @@ internal actual fun StringBuilder.appendCodePoint(codePoint: CodePoint): StringB
   return this
 }
 
-internal actual fun CodePoint.isJavaIdentifierStart(): Boolean {
-  // TODO How check Java identifier start use code point?
+internal expect fun CodePoint.stringValue(): String
 
-  return true
+// TODO How check Java identifier start use code point?
+internal actual fun CodePoint.isJavaIdentifierStart(): Boolean {
+  if (charCount() != 1) return false
+
+  return stringValue()[0].isJavaIdentifierStart()
 }
 
+// TODO How check Java identifier part use code point?
 internal actual fun CodePoint.isJavaIdentifierPart(): Boolean {
-  // TODO How check Java identifier part use code point?
+  if (charCount() != 1) return false
 
-  return true
+  return stringValue()[0].isJavaIdentifierPart()
+}
+
+// TODO CodePoint.isLowerCase
+internal actual fun CodePoint.isLowerCase(): Boolean {
+  if (charCount() != 1) return false
+
+  return stringValue()[0].isLowerCase()
+}
+
+// TODO CodePoint.isUpperCase
+internal actual fun CodePoint.isUpperCase(): Boolean {
+  if (charCount() != 1) return false
+
+  return stringValue()[0].isUpperCase()
+}
+
+internal actual fun CodePoint.charCount(): Int {
+  return if (code > Char.MAX_VALUE.code) 2 else 1
 }
