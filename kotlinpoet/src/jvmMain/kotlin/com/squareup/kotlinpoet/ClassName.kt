@@ -220,7 +220,7 @@ public class ClassName internal constructor(
 
       // Add the package name, like "java.util.concurrent", or "" for no package.
       var p = 0
-      while (p < classNameString.length && Character.isLowerCase(classNameString.codePointAt(p))) {
+      while (p < classNameString.length && classNameString.codePointAt(p).isLowerCase()) {
         p = classNameString.indexOf('.', p) + 1
         require(p != 0) { "couldn't make a guess for $classNameString" }
       }
@@ -228,7 +228,7 @@ public class ClassName internal constructor(
 
       // Add the class names, like "Map" and "Entry".
       for (part in classNameString.substring(p).split('.')) {
-        require(part.isNotEmpty() && Character.isUpperCase(part.codePointAt(0))) {
+        require(part.isNotEmpty() && part.codePointAt(0).isUpperCase()) {
           "couldn't make a guess for $classNameString"
         }
 
