@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
 import kotlin.reflect.KClass
 
 /** A spec or type which can be annotated. */
@@ -42,7 +43,7 @@ public interface Annotatable {
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    public fun addAnnotation(annotation: Class<*>): T = addAnnotation(annotation.asClassName())
+    public fun addAnnotation(annotation: JvmClass<*>): T = addAnnotation(annotation.asClassName())
 
     public fun addAnnotation(annotation: KClass<*>): T = addAnnotation(annotation.asClassName())
   }

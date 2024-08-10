@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("AnnotationSpecs")
+@file:JvmMultifileClass
+
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Array
-import java.util.Objects
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
-import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleAnnotationValueVisitor8
+import com.squareup.kotlinpoet.jvm.alias.JvmAnnotationMirror
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
 import kotlin.LazyThreadSafetyMode.NONE
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration. */
@@ -98,13 +99,13 @@ public class AnnotationSpec private constructor(
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
-    if (javaClass != other.javaClass) return false
+    if (this::class != other::class) return false
     return toString() == other.toString()
   }
 
   override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString(): String = cachedString
+  override fun toString(): String = TODO("cachedString") // cachedString
 
   public enum class UseSiteTarget(internal val keyword: String) {
     FILE("file"),
@@ -146,44 +147,13 @@ public class AnnotationSpec private constructor(
        * `%L` for other types.
        */
       internal fun memberForValue(value: Any) = when (value) {
-        is Class<*> -> CodeBlock.of("%T::class", value)
-        is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
+        is JvmClass<*> -> CodeBlock.of("%T::class", value)
+        is Enum<*> -> resolveEnumValueCodeBlock(value)
         is String -> CodeBlock.of("%S", value)
         is Float -> CodeBlock.of("%Lf", value)
         is Char -> CodeBlock.of("'%L'", characterLiteralWithoutSingleQuotes(value))
         else -> CodeBlock.of("%L", value)
       }
-    }
-  }
-
-  /**
-   * Annotation value visitor adding members to the given builder instance.
-   */
-  @OptIn(DelicateKotlinPoetApi::class)
-  private class Visitor(
-    val builder: CodeBlock.Builder,
-  ) : SimpleAnnotationValueVisitor8<CodeBlock.Builder, String>(builder) {
-
-    override fun defaultAction(o: Any, name: String) =
-      builder.add(Builder.memberForValue(o))
-
-    override fun visitAnnotation(a: AnnotationMirror, name: String) =
-      builder.add("%L", get(a))
-
-    override fun visitEnumConstant(c: VariableElement, name: String) =
-      builder.add("%T.%L", c.asType().asTypeName(), c.simpleName)
-
-    override fun visitType(t: TypeMirror, name: String) =
-      builder.add("%T::class", t.asTypeName())
-
-    override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
-      builder.add("arrayOf(⇥⇥")
-      values.forEachIndexed { index, value ->
-        if (index > 0) builder.add(", ")
-        value.accept(this, name)
-      }
-      builder.add("⇤⇤)")
-      return builder
     }
   }
 
@@ -198,43 +168,7 @@ public class AnnotationSpec private constructor(
       annotation: Annotation,
       includeDefaultValues: Boolean = false,
     ): AnnotationSpec {
-      try {
-        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-        val javaAnnotation = annotation as java.lang.annotation.Annotation
-        val builder = builder(javaAnnotation.annotationType())
-          .tag(annotation)
-        val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
-        for (method in methods) {
-          val value = method.invoke(annotation)
-          if (!includeDefaultValues) {
-            if (Objects.deepEquals(value, method.defaultValue)) {
-              continue
-            }
-          }
-          val member = CodeBlock.builder()
-          member.add("%L = ", method.name)
-          if (value.javaClass.isArray) {
-            member.add("arrayOf(⇥⇥")
-            for (i in 0..<Array.getLength(value)) {
-              if (i > 0) member.add(", ")
-              member.add(Builder.memberForValue(Array.get(value, i)))
-            }
-            member.add("⇤⇤)")
-            builder.addMember(member.build())
-            continue
-          }
-          if (value is Annotation) {
-            member.add("%L", get(value))
-            builder.addMember(member.build())
-            continue
-          }
-          member.add("%L", Builder.memberForValue(value))
-          builder.addMember(member.build())
-        }
-        return builder.build()
-      } catch (e: Exception) {
-        throw RuntimeException("Reflecting $annotation failed!", e)
-      }
+      return doGet(annotation, includeDefaultValues)
     }
 
     @DelicateKotlinPoetApi(
@@ -242,19 +176,8 @@ public class AnnotationSpec private constructor(
         " the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
-    public fun get(annotation: AnnotationMirror): AnnotationSpec {
-      val element = annotation.annotationType.asElement() as TypeElement
-      val builder = builder(element.asClassName()).tag(annotation)
-      for (executableElement in annotation.elementValues.keys) {
-        val member = CodeBlock.builder()
-        val visitor = Visitor(member)
-        val name = executableElement.simpleName.toString()
-        member.add("%L = ", name)
-        val value = annotation.elementValues[executableElement]!!
-        value.accept(visitor, name)
-        builder.addMember(member.build())
-      }
-      return builder.build()
+    public fun get(annotation: JvmAnnotationMirror): AnnotationSpec {
+      return doGet(annotation)
     }
 
     @JvmStatic public fun builder(type: ClassName): Builder = Builder(type)
@@ -266,10 +189,19 @@ public class AnnotationSpec private constructor(
         "using the kotlinpoet-metadata APIs instead.",
     )
     @JvmStatic
-    public fun builder(type: Class<out Annotation>): Builder =
+    public fun builder(type: JvmClass<out Annotation>): Builder =
       builder(type.asClassName())
 
     @JvmStatic public fun builder(type: KClass<out Annotation>): Builder =
       builder(type.asClassName())
   }
 }
+
+internal expect fun resolveEnumValueCodeBlock(value: Enum<*>): CodeBlock
+
+internal expect fun doGet(
+  annotation: Annotation,
+  includeDefaultValues: Boolean,
+): AnnotationSpec
+
+internal expect fun doGet(annotation: JvmAnnotationMirror): AnnotationSpec
