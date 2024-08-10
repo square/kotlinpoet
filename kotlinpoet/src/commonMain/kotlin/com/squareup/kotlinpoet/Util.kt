@@ -15,39 +15,36 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
-import java.util.Collections
+import kotlin.reflect.KClass
 
 internal object NullAppendable : Appendable {
-  override fun append(charSequence: CharSequence) = this
-  override fun append(charSequence: CharSequence, start: Int, end: Int) = this
+  override fun append(charSequence: CharSequence?) = this
+  override fun append(charSequence: CharSequence?, start: Int, end: Int) = this
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-  Collections.unmodifiableMap(LinkedHashMap(this))
+internal expect fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
 
-internal fun <T> Collection<T>.toImmutableList(): List<T> =
-  Collections.unmodifiableList(ArrayList(this))
+internal expect fun <T> Collection<T>.toImmutableList(): List<T>
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
-  Collections.unmodifiableSet(LinkedHashSet(this))
+internal expect fun <T> Collection<T>.toImmutableSet(): Set<T>
 
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
   enumValues<T>().filterTo(mutableSetOf(), this::contains)
 
-internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
-  val count = mutuallyExclusive.count(modifiers::contains)
-  require(count <= 1) {
-    "modifiers $modifiers must contain none or only one of ${mutuallyExclusive.contentToString()}"
-  }
-}
-
-internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifier) {
-  require(forbidden.none(modifiers::contains)) {
-    "modifiers $modifiers must contain none of ${forbidden.contentToString()}"
-  }
-}
+// TODO Wait for KModifier
+// internal fun requireNoneOrOneOf(modifiers: Set<KModifier>, vararg mutuallyExclusive: KModifier) {
+//   val count = mutuallyExclusive.count(modifiers::contains)
+//   require(count <= 1) {
+//     "modifiers $modifiers must contain none or only one of ${mutuallyExclusive.contentToString()}"
+//   }
+// }
+//
+// internal fun requireNoneOf(modifiers: Set<KModifier>, vararg forbidden: KModifier) {
+//   require(forbidden.none(modifiers::contains)) {
+//     "modifiers $modifiers must contain none of ${forbidden.contentToString()}"
+//   }
+// }
 
 internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = null, t6: T? = null) =
   this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
@@ -63,9 +60,20 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\"' -> "\"" // \u0022: double quote (")
   c == '\'' -> "\\'" // \u0027: single quote (')
   c == '\\' -> "\\\\" // \u005c: backslash (\)
-  c.isIsoControl -> String.format("\\u%04x", c.code)
+  c.isIsoControl -> formatIsoControlCode(c.code)
   else -> c.toString()
 }
+
+internal expect fun formatIsoControlCode(code: Int): String
+
+@ExperimentalStdlibApi
+internal val HexFormatWithoutLeadingZeros = HexFormat {
+  number {
+    removeLeadingZeros = true
+  }
+}
+
+internal expect fun Int.toHexStr(): String
 
 internal fun escapeCharacterLiterals(s: String) = buildString {
   for (c in s) append(characterLiteralWithoutSingleQuotes(c))
@@ -138,33 +146,37 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
+// TODO Wait for CodeBlock
+// internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
+//
+// internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
+//   this
+// } else {
+//   with(toBuilder()) {
+//     val lastFormatPart = trim().formatParts.last()
+//     if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
+//       val lastArg = args.last()
+//       if (lastArg is String) {
+//         val trimmedArg = lastArg.trimEnd('\n')
+//         args[args.size - 1] = if (replaceWith != null) {
+//           trimmedArg + replaceWith
+//         } else {
+//           trimmedArg
+//         }
+//       }
+//     } else {
+//       formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+//       if (replaceWith != null) {
+//         formatParts += "$replaceWith"
+//       }
+//     }
+//     return@with build()
+//   }
+// }
 
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
-  this
-} else {
-  with(toBuilder()) {
-    val lastFormatPart = trim().formatParts.last()
-    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-      val lastArg = args.last()
-      if (lastArg is String) {
-        val trimmedArg = lastArg.trimEnd('\n')
-        args[args.size - 1] = if (replaceWith != null) {
-          trimmedArg + replaceWith
-        } else {
-          trimmedArg
-        }
-      }
-    } else {
-      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-      if (replaceWith != null) {
-        formatParts += "$replaceWith"
-      }
-    }
-    return@with build()
-  }
-}
-
+// TODO Will be crashed in wasm-js :(
+//  -> PatternSyntaxException: No such character class
+//  It works in JS and JVM
 private val IDENTIFIER_REGEX =
   (
     "((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
@@ -306,6 +318,7 @@ internal fun String.escapeIfNecessary(validate: Boolean = true): String = escape
  * - all characters that cannot be used as identifier part (e.g. space or hyphen) are
  *   replaced with `"_U<code>"` where `code` is 4-digit Unicode character code in hexadecimal form
  */
+@OptIn(ExperimentalStdlibApi::class)
 internal fun String.escapeAsAlias(validate: Boolean = true): String {
   if (allCharactersAreUnderscore) {
     return "${this}0" // add '0' to make it a valid identifier
@@ -317,7 +330,7 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
 
   val newAlias = StringBuilder("")
 
-  if (!Character.isJavaIdentifierStart(first())) {
+  if (!first().isJavaIdentifierStart()) {
     newAlias.append('_')
   }
 
@@ -327,8 +340,8 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
       continue
     }
 
-    if (!Character.isJavaIdentifierPart(ch)) {
-      newAlias.append("_U").append(Integer.toHexString(ch.code).padStart(4, '0'))
+    if (!ch.isJavaIdentifierPart()) {
+      newAlias.append("_U").append(ch.code.toHexStr().padStart(4, '0'))
       continue
     }
 
@@ -348,8 +361,8 @@ private fun String.escapeIfAllCharactersAreUnderscore() = if (allCharactersAreUn
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if ((
-      !Character.isJavaIdentifierStart(first()) ||
-        drop(1).any { !Character.isJavaIdentifierPart(it) }
+      !first().isJavaIdentifierStart() ||
+        drop(1).any { !it.isJavaIdentifierPart() }
       ) &&
     !alreadyEscaped()
   ) {
@@ -362,3 +375,15 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
   .filter { it.isNotEmpty() }
   .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
+internal expect fun <T : Comparable<T>> Sequence<T>.toSortedSet(): Set<T>
+internal expect fun <T : Comparable<T>> List<T>.toSortedSet(): Set<T>
+internal expect fun <T : Comparable<T>> sortedSetOf(): MutableSet<T>
+
+internal expect inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E>
+
+internal expect fun KClass<*>.enclosingClass(): KClass<*>?
+
+internal expect fun Char.isJavaIdentifierStart(): Boolean
+
+internal expect fun Char.isJavaIdentifierPart(): Boolean
