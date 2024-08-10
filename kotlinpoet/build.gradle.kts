@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
   kotlin("multiplatform")
@@ -23,11 +24,12 @@ spotless {
   kotlin {
     targetExclude(
       // Non-Square licensed files
-      "src/commonMain/kotlin/com/squareup/kotlinpoet/ClassName.kt",
-      "src/commonTest/kotlin/com/squareup/kotlinpoet/AbstractTypesTest.kt",
-      "src/commonTest/kotlin/com/squareup/kotlinpoet/ClassNameTest.kt",
-      "src/commonTest/kotlin/com/squareup/kotlinpoet/TypesEclipseTest.kt",
-      "src/commonTest/kotlin/com/squareup/kotlinpoet/TypesTest.kt",
+      "src/*Main/kotlin/com/squareup/kotlinpoet/ClassName.kt",
+      "src/*Main/kotlin/com/squareup/kotlinpoet/ClassName.*.kt",
+      "src/*Test/kotlin/com/squareup/kotlinpoet/AbstractTypesTest.kt",
+      "src/*Test/kotlin/com/squareup/kotlinpoet/ClassNameTest.kt",
+      "src/*Test/kotlin/com/squareup/kotlinpoet/TypesEclipseTest.kt",
+      "src/*Test/kotlin/com/squareup/kotlinpoet/TypesTest.kt",
     )
   }
 }
@@ -37,19 +39,46 @@ kotlin {
     withJava()
   }
 
+  js {
+    nodejs {
+      testTask {
+        useMocha()
+      }
+    }
+    binaries.library()
+  }
+
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    nodejs {
+      testTask {
+        useMocha()
+      }
+    }
+    binaries.library()
+  }
+
   @OptIn(ExperimentalKotlinGradlePluginApi::class)
   compilerOptions {
     allWarningsAsErrors = true
     optIn.add("com.squareup.kotlinpoet.DelicateKotlinPoetApi")
+    freeCompilerArgs.add("-Xexpect-actual-classes")
   }
 
   sourceSets {
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(libs.kotlin.reflect)
       }
     }
-    val commonTest by getting {
+
+    commonTest {
+      dependencies {
+        implementation(kotlin("test"))
+      }
+    }
+
+    jvmTest {
       dependencies {
         implementation(libs.kotlin.junit)
         implementation(libs.truth)
@@ -62,6 +91,18 @@ kotlin {
         implementation(libs.kotlin.compilerEmbeddable)
       }
     }
+
+    val nonJvmMain by creating {
+      dependsOn(commonMain.get())
+    }
+
+    jsMain {
+      dependsOn(nonJvmMain)
+    }
+    wasmJsMain {
+      dependsOn(nonJvmMain)
+    }
+
   }
 }
 
