@@ -105,7 +105,7 @@ public class AnnotationSpec private constructor(
 
   override fun hashCode(): Int = toString().hashCode()
 
-  override fun toString(): String = TODO("cachedString") // cachedString
+  override fun toString(): String = cachedString
 
   public enum class UseSiteTarget(internal val keyword: String) {
     FILE("file"),
