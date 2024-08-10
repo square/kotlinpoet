@@ -345,10 +345,9 @@ public class FunSpec private constructor(
           JvmModifier.FINAL -> this.modifiers += KModifier.FINAL
           JvmModifier.NATIVE -> this.modifiers += EXTERNAL
           JvmModifier.DEFAULT -> Unit
-          // TODO Jvm annotation classes
-          // JvmModifier.STATIC -> addAnnotation(JvmStaticClassName)
-          // JvmModifier.SYNCHRONIZED -> addAnnotation(SynchronizedClassName)
-          // JvmModifier.STRICTFP -> addAnnotation(StrictfpClassName)
+          JvmModifier.STATIC -> addAnnotation(JvmStaticClassName)
+          JvmModifier.SYNCHRONIZED -> addAnnotation(SynchronizedClassName)
+          JvmModifier.STRICTFP -> addAnnotation(StrictfpClassName)
           else -> throw IllegalArgumentException("unexpected fun modifier $modifier")
         }
       }
