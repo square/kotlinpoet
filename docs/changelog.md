@@ -8,7 +8,6 @@ Change Log
 * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 * New: Add `KSTypeAlias.toClassName()`. (#1956)
 * New: Add `KSType.toClassNameOrNull()`. (#1956)
-* Fix: Rename `interop-kotlinx-metadata.md` to `interop-kotlin-metadata.md` to fix link in docs (#1961)
 
 ## Version 1.18.1
 
