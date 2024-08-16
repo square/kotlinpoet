@@ -8,7 +8,7 @@ Change Log
 * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 * New: Add `KSTypeAlias.toClassName()`. (#1956)
 * New: Add `KSType.toClassNameOrNull()`. (#1956)
-* New: Simple Kotlin DSL Property Assignment (#1960)
+* New: Simple Kotlin DSL Property Assignment (#1962)
 
 ## Version 1.18.1
 
