@@ -39,7 +39,7 @@ kotlin {
 
   @OptIn(ExperimentalKotlinGradlePluginApi::class)
   compilerOptions {
-    allWarningsAsErrors.set(true)
+    allWarningsAsErrors = true
     optIn.add("com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
 

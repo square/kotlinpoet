@@ -46,13 +46,13 @@ allprojects {
 subprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_1_8)
+      jvmTarget = JvmTarget.JVM_1_8
       freeCompilerArgs.add("-Xjvm-default=all")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.
   tasks.withType<JavaCompile> {
-    options.release.set(8)
+    options.release = 8
   }
 
   if ("test" !in name && buildFile.exists()) {
@@ -71,9 +71,9 @@ subprojects {
     afterEvaluate {
       tasks.named<DokkaTask>("dokkaHtml") {
         val projectFolder = project.path.trim(':').replace(':', '-')
-        outputDirectory.set(rootProject.rootDir.resolve("docs/1.x/$projectFolder"))
+        outputDirectory = rootProject.rootDir.resolve("docs/1.x/$projectFolder")
         dokkaSourceSets.configureEach {
-          skipDeprecated.set(true)
+          skipDeprecated = true
         }
       }
     }
@@ -120,12 +120,10 @@ subprojects {
       for (majorVersion in versionsToTest) {
         val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
           val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
-          javaLauncher.set(
-            javaToolchains.launcherFor {
-              languageVersion.set(JavaLanguageVersion.of(majorVersion))
-              vendor.set(JvmVendorSpec.AZUL)
-            },
-          )
+          javaLauncher = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(majorVersion)
+            vendor = JvmVendorSpec.AZUL
+          }
 
           description = "Runs the test suite on JDK $majorVersion"
           group = LifecycleBasePlugin.VERIFICATION_GROUP
