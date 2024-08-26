@@ -173,10 +173,14 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEm
   }
 }
 
-// TODO Will be crashed in wasm-js :(
+// TODO Will crash if used `IDENTIFIER_REGEX_VALUE.toRegex()` directly in WasmJs :(
 //  -> PatternSyntaxException: No such character class
-//  It works in JS and JVM
-private val IDENTIFIER_REGEX =
+//  It works in JS and JVM.
+//  So I tried:
+//  Keep the use of Regex in JVM and JS
+//  and use RegExp directly in WasmJs for matching,
+//  using it in a similar way as in JS.
+internal const val IDENTIFIER_REGEX_VALUE =
   (
     "((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
       "\\d*" +
@@ -184,9 +188,8 @@ private val IDENTIFIER_REGEX =
       "|" +
       "(`[^\n\r`]+`)"
     )
-    .toRegex()
 
-internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
+internal expect val String.isIdentifier: Boolean
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
 internal val KEYWORDS = setOf(

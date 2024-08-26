@@ -22,6 +22,10 @@ import kotlin.collections.toSortedSet as toSortedSetKt
 import kotlin.reflect.KClass
 import kotlin.sequences.toSortedSet as toSortedSetKt
 
+private val IDENTIFIER_REGEX = IDENTIFIER_REGEX_VALUE.toRegex()
+
+internal actual val String.isIdentifier: Boolean get() = IDENTIFIER_REGEX.matches(this)
+
 internal actual fun formatIsoControlCode(code: Int): String =
   String.format("\\u%04x", code)
 
