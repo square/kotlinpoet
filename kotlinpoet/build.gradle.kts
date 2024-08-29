@@ -53,7 +53,6 @@ kotlin {
       }
     }
     binaries.library()
-
   }
 
   @OptIn(ExperimentalWasmDsl::class)
@@ -117,7 +116,6 @@ kotlin {
     wasmJsMain {
       dependsOn(nonJvmMain)
     }
-
   }
 }
 

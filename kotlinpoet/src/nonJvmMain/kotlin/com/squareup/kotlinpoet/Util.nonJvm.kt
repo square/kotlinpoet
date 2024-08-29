@@ -69,21 +69,17 @@ internal actual fun Char.isJavaIdentifierStart(): Boolean {
     this == '_'
 }
 
-/*
-* A character may be part of a Java identifier if any of the following conditions are true:
-* - it is a letter
-* - it is a currency symbol (such as '$')
-* - it is a connecting punctuation character (such as '_')
-* - it is a digit
-* - it is a numeric letter (such as a Roman numeral character)
-* - it is a combining mark
-* - it is a non-spacing mark
-* isIdentifierIgnorable returns true for the character
- */
-
 internal actual fun Char.isJavaIdentifierPart(): Boolean {
   // TODO How check Java identifier part?
-  //  a combining mark, isIdentifierIgnorable
+  // A character may be part of a Java identifier if any of the following conditions are true:
+  // - [x] it is a letter
+  // - [x] it is a currency symbol (such as '$')
+  // - [x] it is a connecting punctuation character (such as  '_')
+  // - [x] it is a digit
+  // - [x] it is a numeric letter (such as a Roman numeral character)
+  // - [ ] it is a combining mark
+  // - [x] it is a non-spacing mark
+  // - [x] isIdentifierIgnorable returns true for the character
   return isLetter() ||
     isDigit() ||
     this in CharCategory.LETTER_NUMBER ||
@@ -94,15 +90,12 @@ internal actual fun Char.isJavaIdentifierPart(): Boolean {
 }
 
 internal fun Char.isIdentifierIgnorable(): Boolean {
-  /*
-   * The following Unicode characters are ignorable in a Java identifier or a Unicode identifier:
-   *
-   * - ISO control characters that are not whitespace
-   *   - '\u0000' through '\u0008'
-   *   - '\u000E' through '\u001B'
-   *   - '\u007F' through '\u009F'
-   * - all characters that have the FORMAT general category value
-   */
+  // The following Unicode characters are ignorable in a Java identifier or a Unicode identifier:
+  // - ISO control characters that are not whitespace
+  //   - '\u0000' through '\u0008'
+  //   - '\u000E' through '\u001B'
+  //   - '\u007F' through '\u009F'
+  // - all characters that have the FORMAT general category value
   return (
     isISOControl() && (
       this in '\u0000'..'\u0008' ||
