@@ -16,7 +16,6 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.jvm.alias.JvmClass
-import com.squareup.kotlinpoet.jvm.alias.JvmTypeElement
 import com.squareup.kotlinpoet.jvm.alias.kotlin
 import kotlin.reflect.KClass
 
@@ -27,14 +26,6 @@ import kotlin.reflect.KClass
 )
 public actual fun JvmClass<*>.asClassName(): ClassName =
   kotlin.asClassName()
-
-@JvmTypeAliasKotlinPoetApi
-@DelicateKotlinPoetApi(
-  message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
-)
-public actual fun JvmTypeElement.asClassName(): ClassName =
-  throw UnsupportedOperationException()
 
 internal actual fun Enum<*>.declaringClassName(): ClassName =
   this::class.asClassName()

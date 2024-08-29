@@ -248,13 +248,6 @@ public class ClassName internal constructor(
 )
 public expect fun JvmClass<*>.asClassName(): ClassName
 
-/** Returns the class name for `element`. */
-@DelicateKotlinPoetApi(
-  message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead."
-)
-public expect fun JvmTypeElement.asClassName(): ClassName
-
 internal expect fun KClass<*>.qualifiedNameInternal(): String?
 
 @JvmName("get")

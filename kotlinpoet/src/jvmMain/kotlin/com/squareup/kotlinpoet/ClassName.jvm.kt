@@ -60,7 +60,7 @@ public actual fun JvmClass<*>.asClassName(): ClassName {
     " the kotlinpoet-metadata APIs instead.",
 )
 @JvmName("get")
-public actual fun JvmTypeElement.asClassName(): ClassName {
+public fun JvmTypeElement.asClassName(): ClassName {
   fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface
 
   fun getPackage(type: Element): PackageElement {
