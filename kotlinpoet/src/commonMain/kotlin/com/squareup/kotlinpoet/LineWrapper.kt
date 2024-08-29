@@ -24,7 +24,7 @@ internal class LineWrapper(
   private val out: Appendable,
   private val indent: String,
   private val columnLimit: Int,
-) : Closeable {
+) : AutoCloseable {
 
   private var closed = false
 

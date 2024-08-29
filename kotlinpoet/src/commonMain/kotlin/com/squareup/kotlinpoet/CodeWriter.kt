@@ -62,7 +62,7 @@ internal class CodeWriter(
   private val importedTypes: Map<String, ClassName> = emptyMap(),
   private val importedMembers: Map<String, Set<MemberName>> = emptyMap(),
   columnLimit: Int = 100,
-) : Closeable {
+) : AutoCloseable {
   private var out = LineWrapper(out, indent, columnLimit)
   private var indentLevel = 0
 
