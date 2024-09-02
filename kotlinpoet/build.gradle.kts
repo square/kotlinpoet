@@ -40,13 +40,6 @@ kotlin {
   }
 
   js {
-    browser {
-      testTask {
-        useKarma {
-          useChromeHeadless()
-        }
-      }
-    }
     nodejs {
       testTask {
         useMocha()
