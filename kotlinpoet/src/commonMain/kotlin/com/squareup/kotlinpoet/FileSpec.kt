@@ -265,7 +265,7 @@ public class FileSpec private constructor(
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
-    internal var relativePath :String? = null
+    internal var relativePath: String? = null
 
     public val defaultImports: MutableSet<String> = mutableSetOf()
     public val imports: List<Import> get() = memberImports.toList()
