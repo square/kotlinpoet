@@ -312,4 +312,12 @@ class FileWritingTest {
     val testPath = fsRoot.resolve("fun.kt")
     assertThat(Files.exists(testPath)).isTrue()
   }
+
+  @Test fun fileWithDifferentRelativePathFromThePackageName() {
+    val expectRelativePath = "example/directory"
+    val file = FileSpec.builder("com.example", "File")
+      .relativePath(expectRelativePath)
+      .build()
+    assertThat(file.relativePath).isEqualTo(expectRelativePath)
+  }
 }
