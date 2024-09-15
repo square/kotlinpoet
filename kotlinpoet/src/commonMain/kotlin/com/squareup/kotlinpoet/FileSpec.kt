@@ -69,7 +69,7 @@ public class FileSpec private constructor(
    * The relative path of the file which would be produced by a call to [writeTo].
    * This value always uses unix-style path separators (`/`).
    */
-  public val relativePath: String = buildString {
+  public val relativePath: String = builder.relativePath ?: buildString {
     for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
       append(packageComponent)
       append('/')
@@ -265,6 +265,7 @@ public class FileSpec private constructor(
     internal val memberImports = sortedSetOf<Import>()
     internal var indent = DEFAULT_INDENT
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
+    internal var relativePath :String? = null
 
     public val defaultImports: MutableSet<String> = mutableSetOf()
     public val imports: List<Import> get() = memberImports.toList()
@@ -553,6 +554,10 @@ public class FileSpec private constructor(
         }
       }
       return FileSpec(this)
+    }
+
+    public fun relativePath(relativePath: String): Builder = apply {
+      this.relativePath = relativePath
     }
   }
 
