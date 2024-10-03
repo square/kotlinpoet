@@ -8,6 +8,7 @@ Change Log
 * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 * New: Add `KSTypeAlias.toClassName()`. (#1956)
 * New: Add `KSType.toClassNameOrNull()`. (#1956)
+* New: Make the kotlinpoet module multi-platform and add source set configuration for the JS and wasmJs platforms. (#1959)
 
 ## Version 1.18.1
 

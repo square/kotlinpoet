@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 @file:JvmName("ClassNames")
+@file:JvmMultifileClass
 
 package com.squareup.kotlinpoet
 
-import java.util.ArrayDeque
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.NestingKind.MEMBER
-import javax.lang.model.element.NestingKind.TOP_LEVEL
-import javax.lang.model.element.PackageElement
-import javax.lang.model.element.TypeElement
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import com.squareup.kotlinpoet.jvm.alias.JvmTypeElement
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 /** A fully-qualified class name for top-level and member classes.  */
@@ -191,10 +190,8 @@ public class ClassName internal constructor(
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
+    if (other !is ClassName) return false
     if (!super.equals(other)) return false
-
-    other as ClassName
 
     if (names != other.names) return false
 
@@ -220,7 +217,7 @@ public class ClassName internal constructor(
 
       // Add the package name, like "java.util.concurrent", or "" for no package.
       var p = 0
-      while (p < classNameString.length && Character.isLowerCase(classNameString.codePointAt(p))) {
+      while (p < classNameString.length && classNameString.codePointAt(p).isLowerCase()) {
         p = classNameString.indexOf('.', p) + 1
         require(p != 0) { "couldn't make a guess for $classNameString" }
       }
@@ -228,7 +225,7 @@ public class ClassName internal constructor(
 
       // Add the class names, like "Map" and "Entry".
       for (part in classNameString.substring(p).split('.')) {
-        require(part.isNotEmpty() && Character.isUpperCase(part.codePointAt(0))) {
+        require(part.isNotEmpty() && part.codePointAt(0).isUpperCase()) {
           "couldn't make a guess for $classNameString"
         }
 
@@ -249,28 +246,13 @@ public class ClassName internal constructor(
   message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
     " the kotlinpoet-metadata APIs instead."
 )
-@JvmName("get")
-public fun Class<*>.asClassName(): ClassName {
-  require(!isPrimitive) { "primitive types cannot be represented as a ClassName" }
-  require(Void.TYPE != this) { "'void' type cannot be represented as a ClassName" }
-  require(!isArray) { "array types cannot be represented as a ClassName" }
-  val names = mutableListOf<String>()
-  var c = this
-  while (true) {
-    names += c.simpleName
-    val enclosing = c.enclosingClass ?: break
-    c = enclosing
-  }
-  // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
-  val lastDot = c.name.lastIndexOf('.')
-  if (lastDot != -1) names += c.name.substring(0, lastDot)
-  names.reverse()
-  return ClassName(names)
-}
+public expect fun JvmClass<*>.asClassName(): ClassName
+
+internal expect fun KClass<*>.qualifiedNameInternal(): String?
 
 @JvmName("get")
 public fun KClass<*>.asClassName(): ClassName {
-  var qualifiedName = requireNotNull(qualifiedName) { "$this cannot be represented as a ClassName" }
+  var qualifiedName = requireNotNull(qualifiedNameInternal()) { "$this cannot be represented as a ClassName" }
 
   // First, check for Kotlin types whose enclosing class name is a type that is mapped to a JVM
   // class. Thus, the class backing the nested Kotlin type does not have an enclosing class
@@ -288,9 +270,9 @@ public fun KClass<*>.asClassName(): ClassName {
     "kotlin.String.Companion" -> listOf("kotlin", "String", "Companion")
     else -> {
       val names = ArrayDeque<String>()
-      var target: Class<*>? = java
+      var target: KClass<*>? = this
       while (target != null) {
-        target = target.enclosingClass
+        target = target.enclosingClass()
 
         val dot = qualifiedName.lastIndexOf('.')
         if (dot == -1) {
@@ -311,34 +293,4 @@ public fun KClass<*>.asClassName(): ClassName {
   return ClassName(names)
 }
 
-/** Returns the class name for `element`. */
-@DelicateKotlinPoetApi(
-  message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead."
-)
-@JvmName("get")
-public fun TypeElement.asClassName(): ClassName {
-  fun isClassOrInterface(e: Element) = e.kind.isClass || e.kind.isInterface
-
-  fun getPackage(type: Element): PackageElement {
-    var t = type
-    while (t.kind != ElementKind.PACKAGE) {
-      t = t.enclosingElement
-    }
-    return t as PackageElement
-  }
-
-  val names = mutableListOf<String>()
-  var e: Element = this
-  while (isClassOrInterface(e)) {
-    val eType = e as TypeElement
-    require(eType.nestingKind.isOneOf(TOP_LEVEL, MEMBER)) {
-      "unexpected type testing"
-    }
-    names += eType.simpleName.toString()
-    e = eType.enclosingElement
-  }
-  names += getPackage(this).qualifiedName.toString()
-  names.reverse()
-  return ClassName(names)
-}
+internal expect fun Enum<*>.declaringClassName(): ClassName

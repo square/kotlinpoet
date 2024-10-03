@@ -19,7 +19,6 @@ import com.squareup.kotlinpoet.KModifier.INTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
-import java.util.EnumSet
 
 public enum class KModifier(
   internal val keyword: String,
@@ -89,4 +88,4 @@ public enum class KModifier(
   }
 }
 
-internal val VISIBILITY_MODIFIERS: Set<KModifier> = EnumSet.of(PUBLIC, INTERNAL, PROTECTED, PRIVATE)
+internal val VISIBILITY_MODIFIERS: Set<KModifier> = enumSetOf(PUBLIC, INTERNAL, PROTECTED, PRIVATE)

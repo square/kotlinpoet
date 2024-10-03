@@ -15,6 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.JvmDefaultWithCompatibility
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import com.squareup.kotlinpoet.jvm.alias.kotlin
+import kotlin.jvm.JvmInline
 import kotlin.reflect.KClass
 
 /** A type that can be tagged with extra metadata of the user's choice. */
@@ -25,7 +29,7 @@ public interface Taggable {
   public val tags: Map<KClass<*>, Any> get() = emptyMap()
 
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
-  public fun <T : Any> tag(type: Class<T>): T? = tag(type.kotlin)
+  public fun <T : Any> tag(type: JvmClass<T>): T? = tag(type.kotlin)
 
   /** Returns the tag attached with [type] as a key, or null if no tag is attached with that key. */
   public fun <T : Any> tag(type: KClass<T>): T? {
@@ -48,7 +52,7 @@ public interface Taggable {
      * Use this API to attach originating elements, debugging, or other application data to a spec
      * so that you may read it in other APIs or callbacks.
      */
-    public fun tag(type: Class<*>, tag: Any?): T = tag(type.kotlin, tag)
+    public fun tag(type: JvmClass<*>, tag: Any?): T = tag(type.kotlin, tag)
 
     /**
      * Attaches [tag] to the request using [type] as a key. Tags can be read from a

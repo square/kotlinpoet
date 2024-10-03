@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 @file:JvmName("CodeBlocks")
+@file:JvmMultifileClass
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Type
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import javax.lang.model.element.Element
-import javax.lang.model.type.TypeMirror
-import kotlin.math.max
-import kotlin.reflect.KClass
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 
 /**
  * A fragment of a .kt file, potentially containing declarations, statements, and documentation.
@@ -156,7 +154,7 @@ public class CodeBlock private constructor(
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
-    if (javaClass != other.javaClass) return false
+    if (this::class != other::class) return false
     return toString() == other.toString()
   }
 
@@ -299,7 +297,7 @@ public class CodeBlock private constructor(
         // Find either the indexed argument, or the relative argument. (0-based).
         val index: Int
         if (indexStart < indexEnd) {
-          index = Integer.parseInt(format.substring(indexStart, indexEnd)) - 1
+          index = format.substring(indexStart, indexEnd).toInt() - 1
           hasIndexed = true
           if (args.isNotEmpty()) {
             indexedParameterCount[index % args.size]++ // modulo is needed, checked below anyway
@@ -349,7 +347,7 @@ public class CodeBlock private constructor(
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
         else -> throw IllegalArgumentException(
-          String.format("invalid format string: '%s'", format),
+          "invalid format string: '$format'",
         )
       }
     }
@@ -368,27 +366,6 @@ public class CodeBlock private constructor(
 
     private fun argToString(o: Any?) = o?.toString()
 
-    private fun formatNumericValue(o: Number): Any? {
-      val format = DecimalFormatSymbols().apply {
-        decimalSeparator = '.'
-        groupingSeparator = '_'
-        minusSign = '-'
-      }
-
-      val precision = when (o) {
-        is Float -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
-        is Double -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
-        else -> 0
-      }
-
-      val pattern = when (o) {
-        is Float, is Double -> "###,##0.0" + "#".repeat(precision - 1)
-        else -> "###,##0"
-      }
-
-      return DecimalFormat(pattern, format).format(o)
-    }
-
     private fun logDeprecationWarning(o: Any) {
       println(
         "Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
@@ -396,19 +373,8 @@ public class CodeBlock private constructor(
       )
     }
 
-    private fun argToType(o: Any?) = when (o) {
-      is TypeName -> o
-      is TypeMirror -> {
-        logDeprecationWarning(o)
-        o.asTypeName()
-      }
-      is Element -> {
-        logDeprecationWarning(o)
-        o.asType().asTypeName()
-      }
-      is Type -> o.asTypeName()
-      is KClass<*> -> o.asTypeName()
-      else -> throw IllegalArgumentException("expected type but was $o")
+    private fun argToType(o: Any?) = argToType(o) { o1 ->
+      logDeprecationWarning(o1)
     }
 
     /**
@@ -543,3 +509,10 @@ public inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): C
 public inline fun CodeBlock.Builder.withIndent(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock.Builder {
   return indent().also(builderAction).unindent()
 }
+
+internal expect fun formatNumericValue(o: Number): Any?
+
+internal expect inline fun argToType(
+  o: Any?,
+  logDeprecationWarning: (Any) -> Unit,
+): TypeName

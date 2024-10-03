@@ -15,16 +15,17 @@
  */
 package com.squareup.kotlinpoet
 
-import java.io.Closeable
 import kotlin.math.min
 
+internal expect fun initNoPackage(): String
+
 /** Sentinel value that indicates that no user-provided package has been set.  */
-private val NO_PACKAGE = String()
+private val NO_PACKAGE = initNoPackage()
 
 internal val NULLABLE_ANY = ANY.copy(nullable = true)
 
 private fun extractMemberName(part: String): String {
-  require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
+  require(part[0].isJavaIdentifierStart()) { "not an identifier: $part" }
   for (i in 1..part.length) {
     if (!part.substring(0, i).isIdentifier) {
       return part.substring(0, i - 1)
@@ -35,7 +36,7 @@ private fun extractMemberName(part: String): String {
 
 internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
   val stringBuilder = StringBuilder()
-  CodeWriter(stringBuilder, columnLimit = Integer.MAX_VALUE).use {
+  CodeWriter(stringBuilder, columnLimit = Int.MAX_VALUE).use {
     it.builderAction()
   }
   return stringBuilder.toString()
@@ -61,7 +62,7 @@ internal class CodeWriter(
   private val importedTypes: Map<String, ClassName> = emptyMap(),
   private val importedMembers: Map<String, Set<MemberName>> = emptyMap(),
   columnLimit: Int = 100,
-) : Closeable {
+) : AutoCloseable {
   private var out = LineWrapper(out, indent, columnLimit)
   private var indentLevel = 0
 
@@ -380,7 +381,7 @@ internal class CodeWriter(
     val partWithoutLeadingDot = part.substring(1)
     if (partWithoutLeadingDot.isEmpty()) return false
     val first = partWithoutLeadingDot[0]
-    if (!Character.isJavaIdentifierStart(first)) return false
+    if (!first.isJavaIdentifierStart()) return false
     val explicit = imports[canonical + "." + extractMemberName(partWithoutLeadingDot)]
     if (explicit != null) {
       if (explicit.alias != null) {
@@ -713,7 +714,7 @@ internal class CodeWriter(
         NullAppendable,
         indent,
         memberImports,
-        columnLimit = Integer.MAX_VALUE,
+        columnLimit = Int.MAX_VALUE,
       )
       emitStep(importsCollector)
       val generatedImports = mutableMapOf<String, Import>()

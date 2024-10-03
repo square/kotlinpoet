@@ -16,22 +16,19 @@
 package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
-import java.util.Collections
+import kotlin.reflect.KClass
 
 internal object NullAppendable : Appendable {
-  override fun append(charSequence: CharSequence) = this
-  override fun append(charSequence: CharSequence, start: Int, end: Int) = this
+  override fun append(charSequence: CharSequence?) = this
+  override fun append(charSequence: CharSequence?, start: Int, end: Int) = this
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-  Collections.unmodifiableMap(LinkedHashMap(this))
+internal expect fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
 
-internal fun <T> Collection<T>.toImmutableList(): List<T> =
-  Collections.unmodifiableList(ArrayList(this))
+internal expect fun <T> Collection<T>.toImmutableList(): List<T>
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
-  Collections.unmodifiableSet(LinkedHashSet(this))
+internal expect fun <T> Collection<T>.toImmutableSet(): Set<T>
 
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
   enumValues<T>().filterTo(mutableSetOf(), this::contains)
@@ -63,9 +60,20 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\"' -> "\"" // \u0022: double quote (")
   c == '\'' -> "\\'" // \u0027: single quote (')
   c == '\\' -> "\\\\" // \u005c: backslash (\)
-  c.isIsoControl -> String.format("\\u%04x", c.code)
+  c.isIsoControl -> formatIsoControlCode(c.code)
   else -> c.toString()
 }
+
+internal expect fun formatIsoControlCode(code: Int): String
+
+@ExperimentalStdlibApi
+internal val HexFormatWithoutLeadingZeros = HexFormat {
+  number {
+    removeLeadingZeros = true
+  }
+}
+
+internal expect fun Int.toHexStr(): String
 
 internal fun escapeCharacterLiterals(s: String) = buildString {
   for (c in s) append(characterLiteralWithoutSingleQuotes(c))
@@ -165,7 +173,14 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEm
   }
 }
 
-private val IDENTIFIER_REGEX =
+// TODO Will crash if used `IDENTIFIER_REGEX_VALUE.toRegex()` directly in WasmJs :(
+//  -> PatternSyntaxException: No such character class
+//  It works in JS and JVM.
+//  So I tried:
+//  Keep the use of Regex in JVM and JS
+//  and use RegExp directly in WasmJs for matching,
+//  using it in a similar way as in JS.
+internal const val IDENTIFIER_REGEX_VALUE =
   (
     "((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
       "\\d*" +
@@ -173,9 +188,8 @@ private val IDENTIFIER_REGEX =
       "|" +
       "(`[^\n\r`]+`)"
     )
-    .toRegex()
 
-internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
+internal expect val String.isIdentifier: Boolean
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
 internal val KEYWORDS = setOf(
@@ -317,7 +331,7 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
 
   val newAlias = StringBuilder("")
 
-  if (!Character.isJavaIdentifierStart(first())) {
+  if (!first().isJavaIdentifierStart()) {
     newAlias.append('_')
   }
 
@@ -327,8 +341,8 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
       continue
     }
 
-    if (!Character.isJavaIdentifierPart(ch)) {
-      newAlias.append("_U").append(Integer.toHexString(ch.code).padStart(4, '0'))
+    if (!ch.isJavaIdentifierPart()) {
+      newAlias.append("_U").append(ch.code.toHexStr().padStart(4, '0'))
       continue
     }
 
@@ -348,8 +362,8 @@ private fun String.escapeIfAllCharactersAreUnderscore() = if (allCharactersAreUn
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if ((
-      !Character.isJavaIdentifierStart(first()) ||
-        drop(1).any { !Character.isJavaIdentifierPart(it) }
+      !first().isJavaIdentifierStart() ||
+        drop(1).any { !it.isJavaIdentifierPart() }
       ) &&
     !alreadyEscaped()
   ) {
@@ -362,3 +376,15 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
   .filter { it.isNotEmpty() }
   .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
+internal expect fun <T : Comparable<T>> Sequence<T>.toSortedSet(): Set<T>
+internal expect fun <T : Comparable<T>> List<T>.toSortedSet(): Set<T>
+internal expect fun <T : Comparable<T>> sortedSetOf(): MutableSet<T>
+
+internal expect inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E>
+
+internal expect fun KClass<*>.enclosingClass(): KClass<*>?
+
+internal expect fun Char.isJavaIdentifierStart(): Boolean
+
+internal expect fun Char.isJavaIdentifierPart(): Boolean

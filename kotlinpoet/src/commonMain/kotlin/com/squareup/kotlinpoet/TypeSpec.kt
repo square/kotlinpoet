@@ -29,9 +29,12 @@ import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
-import java.lang.reflect.Type
-import javax.lang.model.element.Element
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import com.squareup.kotlinpoet.jvm.alias.JvmElement
+import com.squareup.kotlinpoet.jvm.alias.JvmType
 import kotlin.DeprecationLevel.ERROR
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration. */
@@ -422,7 +425,7 @@ public class TypeSpec private constructor(
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
-    if (javaClass != other.javaClass) return false
+    if (this::class != other::class) return false
     return toString() == other.toString()
   }
 
@@ -494,7 +497,7 @@ public class TypeSpec private constructor(
 
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
-    override val originatingElements: MutableList<Element> = mutableListOf()
+    override val originatingElements: MutableList<JvmElement> = mutableListOf()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
     @ExperimentalKotlinPoetApi
@@ -582,7 +585,7 @@ public class TypeSpec private constructor(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    public fun superclass(superclass: Type): Builder = superclass(superclass.asTypeName())
+    public fun superclass(superclass: JvmType): Builder = superclass(superclass.asTypeName())
 
     public fun superclass(superclass: KClass<*>): Builder = superclass(superclass.asTypeName())
 
@@ -628,7 +631,7 @@ public class TypeSpec private constructor(
         "using the kotlinpoet-metadata APIs instead.",
     )
     public fun addSuperinterface(
-      superinterface: Type,
+      superinterface: JvmType,
       delegate: CodeBlock = CodeBlock.EMPTY,
     ): Builder = addSuperinterface(superinterface.asTypeName(), delegate)
 
@@ -725,7 +728,7 @@ public class TypeSpec private constructor(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
+    override fun addAnnotation(annotation: JvmClass<*>): Builder = super.addAnnotation(annotation)
 
     @Suppress("RedundantOverride")
     override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
@@ -751,7 +754,7 @@ public class TypeSpec private constructor(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    override fun addProperty(name: String, type: Type, vararg modifiers: KModifier): Builder =
+    override fun addProperty(name: String, type: JvmType, vararg modifiers: KModifier): Builder =
       super.addProperty(name, type, *modifiers)
 
     @Suppress("RedundantOverride")
@@ -766,7 +769,7 @@ public class TypeSpec private constructor(
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    override fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
+    override fun addProperty(name: String, type: JvmType, modifiers: Iterable<KModifier>): Builder =
       super.addProperty(name, type, modifiers)
 
     @Suppress("RedundantOverride")

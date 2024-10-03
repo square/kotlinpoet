@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 @file:JvmName("ParameterizedTypeNames")
+@file:JvmMultifileClass
 
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Modifier
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import com.squareup.kotlinpoet.jvm.alias.JvmType
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
 
 public class ParameterizedTypeName internal constructor(
   private val enclosingType: TypeName?,
@@ -71,7 +73,7 @@ public class ParameterizedTypeName internal constructor(
   public fun plusParameter(typeArgument: KClass<*>): ParameterizedTypeName =
     plusParameter(typeArgument.asClassName())
 
-  public fun plusParameter(typeArgument: Class<*>): ParameterizedTypeName =
+  public fun plusParameter(typeArgument: JvmClass<*>): ParameterizedTypeName =
     plusParameter(typeArgument.asClassName())
 
   override fun emit(out: CodeWriter): CodeWriter {
@@ -105,10 +107,8 @@ public class ParameterizedTypeName internal constructor(
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
+    if (other !is ParameterizedTypeName) return false
     if (!super.equals(other)) return false
-
-    other as ParameterizedTypeName
 
     if (enclosingType != other.enclosingType) return false
     if (rawType != other.rawType) return false
@@ -144,8 +144,8 @@ public class ParameterizedTypeName internal constructor(
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
     @JvmStatic
     @JvmName("get")
-    public fun Class<*>.parameterizedBy(
-      vararg typeArguments: Type,
+    public fun JvmClass<*>.parameterizedBy(
+      vararg typeArguments: JvmType,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
@@ -167,8 +167,8 @@ public class ParameterizedTypeName internal constructor(
     /** Returns a parameterized type, applying `typeArguments` to `this`. */
     @JvmStatic
     @JvmName("get")
-    public fun Class<*>.parameterizedBy(
-      typeArguments: Iterable<Type>,
+    public fun JvmClass<*>.parameterizedBy(
+      typeArguments: Iterable<JvmType>,
     ): ParameterizedTypeName =
       ParameterizedTypeName(null, asClassName(), typeArguments.map { it.asTypeName() })
 
@@ -189,74 +189,17 @@ public class ParameterizedTypeName internal constructor(
     /** Returns a parameterized type, applying `typeArgument` to `this`. */
     @JvmStatic
     @JvmName("get")
-    public fun Class<*>.plusParameter(
-      typeArgument: Class<*>,
+    public fun JvmClass<*>.plusParameter(
+      typeArgument: JvmClass<*>,
     ): ParameterizedTypeName = parameterizedBy(typeArgument)
-
-    /** Returns a parameterized type equivalent to `type`. */
-    internal fun get(
-      type: ParameterizedType,
-      map: MutableMap<Type, TypeVariableName>,
-    ): ParameterizedTypeName {
-      val rawType = (type.rawType as Class<*>).asClassName()
-      val ownerType = if (type.ownerType is ParameterizedType &&
-        !Modifier.isStatic((type.rawType as Class<*>).modifiers)
-      ) {
-        type.ownerType as ParameterizedType
-      } else {
-        null
-      }
-
-      val typeArguments = type.actualTypeArguments.map { get(it, map = map) }
-      return if (ownerType != null) {
-        get(ownerType, map = map).nestedClass(rawType.simpleName, typeArguments)
-      } else {
-        ParameterizedTypeName(null, rawType, typeArguments)
-      }
-    }
-
-    /** Returns a type name equivalent to type with given list of type arguments. */
-    internal fun get(
-      type: KClass<*>,
-      nullable: Boolean,
-      typeArguments: List<KTypeProjection>,
-    ): TypeName {
-      if (typeArguments.isEmpty()) {
-        return type.asTypeName().run { if (nullable) copy(nullable = true) else this }
-      }
-
-      val effectiveType = if (type.java.isArray) Array<Unit>::class else type
-      val enclosingClass = type.java.enclosingClass?.kotlin
-
-      return ParameterizedTypeName(
-        enclosingClass?.let {
-          get(it, false, typeArguments.drop(effectiveType.typeParameters.size))
-        },
-        effectiveType.asTypeName(),
-        typeArguments.take(effectiveType.typeParameters.size).map { (paramVariance, paramType) ->
-          val typeName = paramType?.asTypeName() ?: return@map STAR
-          when (paramVariance) {
-            null -> STAR
-            KVariance.INVARIANT -> typeName
-            KVariance.IN -> WildcardTypeName.consumerOf(typeName)
-            KVariance.OUT -> WildcardTypeName.producerOf(typeName)
-          }
-        },
-        nullable,
-        effectiveType.annotations.map { AnnotationSpec.get(it) },
-      )
-    }
   }
 }
 
-/** Returns a parameterized type equivalent to `type`.  */
-@DelicateKotlinPoetApi(
-  message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-    "using the kotlinpoet-metadata APIs instead.",
-)
-@JvmName("get")
-public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
-  ParameterizedTypeName.get(this, mutableMapOf())
+internal expect fun ParameterizedTypeName.Companion.get(
+  type: KClass<*>,
+  nullable: Boolean,
+  typeArguments: List<KTypeProjection>,
+): TypeName
 
 /**
  * Returns a [TypeName] equivalent to the given Kotlin KType using reflection, maybe using kotlin-reflect

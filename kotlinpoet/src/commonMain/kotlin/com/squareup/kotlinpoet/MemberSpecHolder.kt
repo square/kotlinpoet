@@ -15,7 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-import java.lang.reflect.Type
+import com.squareup.kotlinpoet.jvm.alias.JvmType
 import kotlin.reflect.KClass
 
 /** A spec which can contain [PropertySpec]s and [FunSpec]s. */
@@ -38,7 +38,7 @@ public interface MemberSpecHolder {
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): T =
+    public fun addProperty(name: String, type: JvmType, vararg modifiers: KModifier): T =
       addProperty(name, type.asTypeName(), *modifiers)
 
     public fun addProperty(name: String, type: KClass<*>, vararg modifiers: KModifier): T =
@@ -51,7 +51,7 @@ public interface MemberSpecHolder {
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): T =
+    public fun addProperty(name: String, type: JvmType, modifiers: Iterable<KModifier>): T =
       addProperty(name, type.asTypeName(), modifiers)
 
     public fun addProperty(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): T =
