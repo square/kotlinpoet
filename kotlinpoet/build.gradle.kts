@@ -102,7 +102,6 @@ kotlin {
     wasmJsMain {
       dependsOn(nonJvmMain)
     }
-
   }
 }
 
