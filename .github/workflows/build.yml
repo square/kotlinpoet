@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 19
+          java-version: 21
 
       - name: Full build
         if: matrix.os == 'ubuntu-latest'
@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 19
+          java-version: 21
 
       - name: Prep docs
         run: ./gradlew dokkaHtml
