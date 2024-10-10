@@ -116,7 +116,7 @@ subprojects {
     fun Project.setupCheckTask(testTaskName: String) {
       // Copied from https://github.com/square/retrofit/blob/master/retrofit/build.gradle#L28.
       // Create a test task for each supported JDK. We check every "LTS" + current version.
-      val versionsToTest = listOf(8, 11, 17, 19)
+      val versionsToTest = listOf(8, 11, 17, 21, 22)
       for (majorVersion in versionsToTest) {
         val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
           val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
