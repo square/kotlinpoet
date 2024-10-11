@@ -92,7 +92,7 @@ class UtilTest {
   @Test fun escapeNonJavaIdentifiers() {
     assertThat("8startWithNumber".escapeIfNecessary()).isEqualTo("`8startWithNumber`")
     assertThat("with-hyphen".escapeIfNecessary()).isEqualTo("`with-hyphen`")
-    assertThat("with space".escapeIfNecessary()).isEqualTo("`with·space`")
+    assertThat("with space".escapeIfNecessary()).isEqualTo("`with space`")
     assertThat("with_unicode_punctuation\u2026".escapeIfNecessary()).isEqualTo("`with_unicode_punctuation\u2026`")
   }
 

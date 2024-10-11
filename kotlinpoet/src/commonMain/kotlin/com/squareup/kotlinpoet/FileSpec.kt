@@ -164,7 +164,7 @@ public class FileSpec private constructor(
     val escapedPackageName = packageName.escapeSegmentsIfNecessary()
 
     if (escapedPackageName.isNotEmpty()) {
-      codeWriter.emitCode("package·%L\n", escapedPackageName)
+      codeWriter.emitCode("package %L\n", escapedPackageName)
       codeWriter.emit("\n")
     }
 
@@ -186,7 +186,7 @@ public class FileSpec private constructor(
 
     if (imports.isNotEmpty()) {
       for (import in imports) {
-        codeWriter.emitCode("import·%L", import)
+        codeWriter.emitCode("import %L", import)
         codeWriter.emit("\n")
       }
       codeWriter.emit("\n")
@@ -290,7 +290,7 @@ public class FileSpec private constructor(
 
     /** Adds a file-site comment. This is prefixed to the start of the file and different from [addBodyComment]. */
     public fun addFileComment(format: String, vararg args: Any): Builder = apply {
-      comment.add(format.replace(' ', '·'), *args)
+      comment.add(format, *args)
     }
 
     @Deprecated(
@@ -480,7 +480,7 @@ public class FileSpec private constructor(
       check(isScript) {
         "addBodyComment() is only allowed in script files"
       }
-      body.add("//·${format.replace(' ', '·')}\n", *args)
+      body.add("// $format\n", *args)
     }
 
     /**

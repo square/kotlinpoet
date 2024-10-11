@@ -62,10 +62,10 @@ public class LambdaTypeName private constructor(
     }
 
     if (isSuspending) {
-      out.emit("suspend·")
+      out.emit("suspend ")
     }
 
-    out.emitContextReceivers(contextReceivers, suffix = "·")
+    out.emitContextReceivers(contextReceivers, suffix = " ")
 
     receiver?.let {
       if (it.isAnnotated) {
@@ -76,7 +76,7 @@ public class LambdaTypeName private constructor(
     }
 
     parameters.emit(out)
-    out.emitCode(if (returnType is LambdaTypeName) "·->·(%T)" else "·->·%T", returnType)
+    out.emitCode(if (returnType is LambdaTypeName) " -> (%T)" else " -> %T", returnType)
 
     if (isNullable) {
       out.emit(")")

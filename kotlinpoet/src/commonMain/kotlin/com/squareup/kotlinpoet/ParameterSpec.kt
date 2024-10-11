@@ -59,7 +59,7 @@ public class ParameterSpec private constructor(
     codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(modifiers)
     if (name.isNotEmpty()) codeWriter.emitCode("%N", this)
-    if (name.isNotEmpty() && includeType) codeWriter.emitCode(":·")
+    if (name.isNotEmpty() && includeType) codeWriter.emitCode(": ")
     if (includeType) codeWriter.emitCode("%T", type)
     emitDefaultValue(codeWriter)
   }
