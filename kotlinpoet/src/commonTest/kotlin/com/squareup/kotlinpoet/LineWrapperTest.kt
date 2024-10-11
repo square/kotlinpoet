@@ -143,34 +143,6 @@ class LineWrapperTest {
     )
   }
 
-  @Test fun noWrapPrecedingUnaryPlus() {
-    val out = StringBuffer()
-    val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("a♢+♢b♢♢♢♢♢♢♢+♢c", indentLevel = 2)
-    lineWrapper.close()
-    assertThat(out.toString()).isEqualTo(
-      """
-        |a +
-        |    b       +
-        |    c
-      """.trimMargin(),
-    )
-  }
-
-  @Test fun noWrapPrecedingUnaryMinus() {
-    val out = StringBuffer()
-    val lineWrapper = LineWrapper(out, "  ", 10)
-    lineWrapper.append("a♢-♢b♢♢♢♢♢♢♢-♢c", indentLevel = 2)
-    lineWrapper.close()
-    assertThat(out.toString()).isEqualTo(
-      """
-        |a -
-        |    b       -
-        |    c
-      """.trimMargin(),
-    )
-  }
-
   @Test fun appendNonWrapping() {
     val out = StringBuffer()
     val lineWrapper = LineWrapper(out, "  ", 10)

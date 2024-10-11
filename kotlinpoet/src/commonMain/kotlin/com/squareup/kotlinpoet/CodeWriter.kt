@@ -587,7 +587,7 @@ internal class CodeWriter(
       if (!first) {
         if ((kdoc || comment) && trailingNewline) {
           emitIndentation()
-          out.appendNonWrapping(if (kdoc) " *" else "//")
+          out.append(if (kdoc) " *" else "//")
         }
         out.newline()
         trailingNewline = true
@@ -606,9 +606,9 @@ internal class CodeWriter(
       if (trailingNewline) {
         emitIndentation()
         if (kdoc) {
-          out.appendNonWrapping(" * ")
+          out.append(" * ")
         } else if (comment) {
-          out.appendNonWrapping("// ")
+          out.append("// ")
         }
       }
 
@@ -627,7 +627,7 @@ internal class CodeWriter(
 
   private fun emitIndentation() {
     for (j in 0..<indentLevel) {
-      out.appendNonWrapping(indent)
+      out.append(indent)
     }
   }
 

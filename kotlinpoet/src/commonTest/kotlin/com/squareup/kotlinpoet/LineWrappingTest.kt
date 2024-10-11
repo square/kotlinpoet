@@ -144,30 +144,6 @@ class LineWrappingTest {
     )
   }
 
-  @Test fun wrappingWhitespacePrecedingUnaryOperatorsDoesNotWrap() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .addStatement("val aaaaaa =♢%S♢+1", "x".repeat(80))
-      .addStatement("val bbbbbb =♢%S♢+1", "x".repeat(81))
-      .addStatement("val cccccc =♢%S♢-1", "x".repeat(80))
-      .addStatement("val dddddd =♢%S♢-1", "x".repeat(81))
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
-        |package com.squareup.tacos
-        |
-        |public fun wrapMe() {
-        |  val aaaaaa = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
-        |  val bbbbbb =
-        |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +1
-        |  val cccccc = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
-        |  val dddddd =
-        |      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" -1
-        |}
-        |
-      """.trimMargin(),
-    )
-  }
-
   @Test fun parameterWrapping() {
     val funSpecBuilder = FunSpec.builder("call")
     funSpecBuilder.addCode("«call(")
