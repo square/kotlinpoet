@@ -100,7 +100,7 @@ public class FunSpec private constructor(
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {
-      codeWriter.emitCode("fun·")
+      codeWriter.emitCode("fun ")
     }
 
     if (typeVariables.isNotEmpty()) {

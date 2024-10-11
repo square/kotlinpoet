@@ -236,7 +236,7 @@ public class TypeSpec private constructor(
         }
 
         if (superTypes.isNotEmpty()) {
-          val separator = if (wrapSupertypes) ",\n    " else ", "
+          val separator = if (wrapSupertypes) ",\n    " else ",♢"
           codeWriter.emitCode(superTypes.joinToCode(separator = separator, prefix = " : "))
         }
 

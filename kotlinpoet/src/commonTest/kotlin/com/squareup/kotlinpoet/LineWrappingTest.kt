@@ -19,7 +19,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class LineWrappingTest {
-  @Test fun codeSpacesWrap() {
+  @Test fun codeSpacesDoNotWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
       .returns(STRING)
       .addStatement(
@@ -34,9 +34,7 @@ class LineWrappingTest {
         |
         |import kotlin.String
         |
-        |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 *
-        |    50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 *
-        |    10_000_000_000 * 20_000_000_000 * 30_000_000_000
+        |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
         |
       """.trimMargin(),
     )
@@ -57,8 +55,7 @@ class LineWrappingTest {
         |
         |import kotlin.String
         |
-        |public fun wrapMe(): String =
-        |    "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
+        |public fun wrapMe(): String = "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
         |
       """.trimMargin(),
     )
@@ -79,8 +76,30 @@ class LineWrappingTest {
         |
         |import kotlin.String
         |
-        |public fun wrapMe(): String =
-        |    10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
+        |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
+        |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun wrappingWhitespaceWraps() {
+    val wrapMe = FunSpec.builder("wrapMe")
+      .returns(STRING)
+      .addStatement(
+        "return %L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L",
+        10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
+        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
+      )
+      .build()
+    assertThat(toString(wrapMe)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 *
+        |    50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 *
+        |    10_000_000_000 * 20_000_000_000 * 30_000_000_000
         |
       """.trimMargin(),
     )
@@ -125,12 +144,12 @@ class LineWrappingTest {
     )
   }
 
-  @Test fun spacesPrecedingUnaryOperatorsDoNotWrap() {
+  @Test fun wrappingWhitespacePrecedingUnaryOperatorsDoesNotWrap() {
     val wrapMe = FunSpec.builder("wrapMe")
-      .addStatement("val aaaaaa = %S +1", "x".repeat(80))
-      .addStatement("val bbbbbb = %S +1", "x".repeat(81))
-      .addStatement("val cccccc = %S -1", "x".repeat(80))
-      .addStatement("val dddddd = %S -1", "x".repeat(81))
+      .addStatement("val aaaaaa =♢%S♢+1", "x".repeat(80))
+      .addStatement("val bbbbbb =♢%S♢+1", "x".repeat(81))
+      .addStatement("val cccccc =♢%S♢-1", "x".repeat(80))
+      .addStatement("val dddddd =♢%S♢-1", "x".repeat(81))
       .build()
     assertThat(toString(wrapMe)).isEqualTo(
       """
@@ -154,7 +173,7 @@ class LineWrappingTest {
     funSpecBuilder.addCode("«call(")
     for (i in 0..31) {
       funSpecBuilder.addParameter("s$i", String::class)
-      funSpecBuilder.addCode(if (i > 0) ", %S" else "%S", i)
+      funSpecBuilder.addCode(if (i > 0) ",♢%S" else "%S", i)
     }
     funSpecBuilder.addCode(")»\n")
 

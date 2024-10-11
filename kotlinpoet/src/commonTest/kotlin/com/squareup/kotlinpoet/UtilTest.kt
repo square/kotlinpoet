@@ -105,7 +105,7 @@ class UtilTest {
           addStatement(
             StringBuilder().apply {
               repeat(10) {
-                append("%N($it) + ")
+                append("%N($it) +♢")
                 arg += "aaa bbb"
               }
               append("%N(100)")

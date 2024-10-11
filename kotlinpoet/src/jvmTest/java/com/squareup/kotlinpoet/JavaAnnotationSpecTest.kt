@@ -43,8 +43,7 @@ class JavaAnnotationSpecTest {
             |import java.lang.Boolean
             |import java.lang.Object
             |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
-            |        Boolean::class))
+            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
             |public class Result
             |
       """.trimMargin(),
@@ -66,8 +65,7 @@ class JavaAnnotationSpecTest {
         |import java.lang.Boolean
         |import java.lang.Object
         |
-        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class,
-        |        Boolean::class))
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
       """.trimMargin(),
     )

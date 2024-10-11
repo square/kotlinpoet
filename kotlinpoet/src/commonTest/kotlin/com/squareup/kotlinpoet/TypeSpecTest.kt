@@ -172,8 +172,7 @@ class TypeSpecTest {
         |
         |public class Taco {
         |  public val NAME: Thing.Thang<Foo, Bar> = object : Thing.Thang<Foo, Bar>() {
-        |    public override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung)
-        |        {
+        |    public override fun call(thung: Thung<in Foo>): Thung<in Bar> = object : SimpleThung<Bar>(thung) {
         |      public override fun doSomething(bar: Bar) {
         |        /* code snippets */
         |      }
@@ -1068,8 +1067,8 @@ class TypeSpecTest {
         |import kotlin.Comparable
         |import kotlin.Number
         |
-        |public class Location<P, Q>() : Number(), Comparable where P : Number, P : Comparable, Q : Number, Q
-        |    : Comparable {
+        |public class Location<P, Q>() : Number(),
+        |    Comparable where P : Number, P : Comparable, Q : Number, Q : Comparable {
         |  public val x: P
         |
         |  public val y: @A Q
@@ -4410,8 +4409,8 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.String
         |
-        |public class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?:
-        |    0 }), Runnable by Runnable ({ Logger.debug("Hello world") })
+        |public class StringToInteger() : Function<String, Int> by Function ({ text -> text.toIntOrNull() ?: 0 }),
+        |    Runnable by Runnable ({ Logger.debug("Hello world") })
         |
     """.trimMargin()
 

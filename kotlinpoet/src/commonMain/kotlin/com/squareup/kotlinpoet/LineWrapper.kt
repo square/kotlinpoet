@@ -52,7 +52,7 @@ internal class LineWrapper(
     var pos = 0
     while (pos < s.length) {
       when (s[pos]) {
-        ' ' -> {
+        '♢' -> {
           // Each space starts a new empty segment.
           this.indentLevel = indentLevel
           this.linePrefix = linePrefix
@@ -66,7 +66,7 @@ internal class LineWrapper(
           pos++
         }
 
-        '·' -> {
+        '·', ' ' -> {
           // Render · as a non-breaking space.
           segments[segments.size - 1] += " "
           pos++
@@ -170,6 +170,6 @@ internal class LineWrapper(
 
   companion object {
     private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
-    private val SPECIAL_CHARACTERS = " \n·".toCharArray()
+    private val SPECIAL_CHARACTERS = " \n·♢".toCharArray()
   }
 }

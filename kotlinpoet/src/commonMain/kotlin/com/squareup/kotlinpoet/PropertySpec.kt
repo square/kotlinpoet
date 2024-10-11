@@ -79,10 +79,10 @@ public class PropertySpec private constructor(
     codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
     codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
-    codeWriter.emitCode(if (mutable) "var·" else "val·")
+    codeWriter.emitCode(if (mutable) "var " else "val ")
     if (typeVariables.isNotEmpty()) {
       codeWriter.emitTypeVariables(typeVariables)
-      codeWriter.emit(" ")
+      codeWriter.emit("♢")
     }
     if (receiverType != null) {
       if (receiverType is LambdaTypeName) {
@@ -91,12 +91,12 @@ public class PropertySpec private constructor(
         codeWriter.emitCode("%T.", receiverType)
       }
     }
-    codeWriter.emitCode("%N: %T", this, type)
+    codeWriter.emitCode("%N:♢%T", this, type)
     if (withInitializer && initializer != null) {
       if (delegated) {
-        codeWriter.emit(" by ")
+        codeWriter.emit("♢by♢")
       } else {
-        codeWriter.emitCode(" = ")
+        codeWriter.emitCode("♢=♢")
       }
       val initializerFormat = if (initializer.hasStatements()) "%L" else "«%L»"
       codeWriter.emitCode(

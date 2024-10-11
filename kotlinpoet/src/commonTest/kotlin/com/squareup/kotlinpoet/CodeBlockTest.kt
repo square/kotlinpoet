@@ -562,10 +562,8 @@ class CodeBlockTest {
       |package com.squareup.tacos
       |
       |public fun test() {
-      |  if ("Very long string that would wrap the line " ==
-      |      "Very long string that would wrap the line ") {
-      |  } else if ("Long string that would wrap the line 2 " ==
-      |      "Long string that would wrap the line 2 ") {
+      |  if ("Very long string that would wrap the line " == "Very long string that would wrap the line ") {
+      |  } else if ("Long string that would wrap the line 2 " == "Long string that would wrap the line 2 ") {
       |  }
       |}
       |
