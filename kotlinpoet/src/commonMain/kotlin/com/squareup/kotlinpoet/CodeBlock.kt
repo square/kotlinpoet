@@ -50,9 +50,10 @@ import kotlin.reflect.KClass
  *    importable, e.g. it's a top-level function or a property declared inside an object, the import
  *    will be resolved if possible. Arguments for members must be of type [MemberName].
  *  * `%%` emits a percent sign.
- *  * `·` emits a space that never wraps. KotlinPoet prefers to wrap lines longer than 100 columns.
- *    It does this by replacing normal spaces with a newline and indent. Note that spaces in strings
- *    are never wrapped.
+ *  * `♢` emits a space or a newline, depending on its position on the line. This prefers to wrap
+ *    lines before 100 columns. It does this by replacing normal spaces with a newline and indent.
+ *    Note that spaces in strings are never wrapped.
+ *  * `·` emits a space that never wraps. Equivalent to the regular space (` `).
  *  * `⇥` increases the indentation level.
  *  * `⇤` decreases the indentation level.
  *  * `«` begins a statement. For multiline statements, every line after the first line is
