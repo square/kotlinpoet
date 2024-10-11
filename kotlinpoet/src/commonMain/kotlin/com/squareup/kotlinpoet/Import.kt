@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+@ExposedCopyVisibility
 public data class Import internal constructor(
   val qualifiedName: String,
   val alias: String? = null,
