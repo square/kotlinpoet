@@ -94,11 +94,11 @@ FunSpec.builder("add")
   .build()
 ```
 
-## Spaces wrap by default!
+## Spaces don't wrap by default
 
-In order to provide meaningful formatting, KotlinPoet would replace spaces, found in blocks of code,
-with new line symbols, in cases when the line of code exceeds the length limit. Let's take this
-function for example:
+In order to guarantee code correctness, starting in version 2.0, KotlinPoet will never replace
+spaces, found in blocks of code, with new line symbols, even in cases when the line of code exceeds
+the length limit. Let's take this function for example:
 
 ```kotlin
 val funSpec = FunSpec.builder("foo")
@@ -106,55 +106,36 @@ val funSpec = FunSpec.builder("foo")
   .build()
 ```
 
-Depending on where it's found in the file, it may end up being printed out like this:
+The function will always be printed out like this:
 
 ```kotlin
-fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString() }.also
-{ string -> println(string) }
+public fun foo() = (100..10000).map { number -> number * number }.map { number -> number.toString() }.also { string -> println(string) }
 ```
 
-Unfortunately this code is broken: the compiler expects `also` and `{` to be on the same line.
-KotlinPoet is unable to understand the context of the expression and fix the formatting for you, but
-there's a trick you can use to declare a non-breaking space - use the `·` symbol where you would
-otherwise use a space. Let's apply this to our example:
+While the output is correct, the resulting line of code is quite long and hard to read. KotlinPoet
+nis unable to understand the context of the expression and adjust the formatting for you, but
+there's a trick you can use to declare a breaking space - use the `♢` symbol where you know it's
+safe to optionally wrap the line. Let's apply this to our example:
 
 ```kotlin
 val funSpec = FunSpec.builder("foo")
-  .addStatement("return (100..10000).map·{ number -> number * number }.map·{ number -> number.toString() }.also·{ string -> println(string) }")
+  .addStatement("return (100..10000).map { number ->♢number * number♢}.map { number ->♢number.toString()♢}.also { string ->♢println(string)♢}")
   .build()
 ```
 
 This will now produce the following result:
 
 ```kotlin
-fun foo() = (100..10000).map { number -> number * number }.map { number ->
-  number.toString()
-}.also { string -> println(string) }
+public fun foo(): Unit = (100..10000).map { number -> number * number }.map { number ->
+  number.toString() }.also { string -> println(string) }
 ```
 
-The code is now correct and will compile properly. It still doesn't look perfect - you can play with
-replacing other spaces in the code block with `·` symbols to achieve better formatting.
+This is slightly better, but far from perfect - feel free to play around with other formatting
+modifiers, such as the standard `\n` character which KotlinPoet honors, or the indentation
+formatters (`⇥` and `⇤`) that the library ships with (see the documentation for `CodeBlock` for
+more information).
 
-Another common use case where you'd want to ensure spaces don't wrap is when emitting string
-literals:
-
-```kotlin
-CodeBlock.of("""println("Class: $className")""")
-```
-
-If `$className` is long, KotlinPoet may wrap the space that precedes it, resulting in broken output:
-
-```kotlin
-println("Class:
-very.long.class.name.Here")
-```
-
-KotlinPoet doesn't know that `"Class: $className"` is, in fact, a string literal, and that the space
-inside of it should never be wrapped. To make sure this case is handled correctly, use the `%S`
-modifier (as described in [%S for Strings](s-for-strings.md)):
-
-```kotlin
-CodeBlock.of("""println(%S)""", "Class: $className")
-```
-
-Now the library knows it's dealing with a string literal and can use appropriate line-wrapping rules.
+Lastly, imperfect formatting is a known limitation of the library, as KotlinPoet by design
+prioritizes correctness of generated code over style. If correct and clean formatting is important
+for your use case, please consider post-processing KotlinPoet's output using a dedicated code
+formatter.

@@ -19,7 +19,7 @@ import java.io.Closeable
 
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
- * [LineWrapper.append], which will replace spaces with newlines where necessary. Use
+ * [LineWrapper.append], which will handle formatting characters as necessary. Use
  * [LineWrapper.appendNonWrapping] to append a string that never wraps.
  */
 internal class LineWrapper(
@@ -45,7 +45,7 @@ internal class LineWrapper(
   /** @return whether or not there are pending segments for the current line. */
   val hasPendingSegments get() = segments.size != 1 || segments[0].isNotEmpty()
 
-  /** Emit `s` replacing its spaces with line wraps as necessary. */
+  /** Emit `s` handling formatting characters as necessary. */
   fun append(s: String, indentLevel: Int = -1, linePrefix: String = "") {
     check(!closed) { "closed" }
 
@@ -82,7 +82,7 @@ internal class LineWrapper(
     }
   }
 
-  /** Emit `s` leaving spaces as-is. */
+  /** Emit `s` leaving formatting characters as-is. */
   fun appendNonWrapping(s: String) {
     check(!closed) { "closed" }
     require(!s.contains("\n"))
