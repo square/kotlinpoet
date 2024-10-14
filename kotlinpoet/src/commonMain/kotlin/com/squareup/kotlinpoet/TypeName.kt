@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 @file:JvmName("TypeNames")
+// @file:JvmMultifileClass
+// Can't use JvmMultifileClass because of
+// err: JvmField can't be applied to top level property of a file annotated with JvmMultifileClass
 
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
-import java.lang.reflect.WildcardType
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.TypeParameterElement
-import javax.lang.model.type.ArrayType
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.ErrorType
-import javax.lang.model.type.NoType
-import javax.lang.model.type.PrimitiveType
-import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.SimpleTypeVisitor8
+import com.squareup.kotlinpoet.jvm.alias.JvmType
+import com.squareup.kotlinpoet.jvm.alias.JvmTypeMirror
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 import kotlin.reflect.typeOf
 
@@ -95,9 +85,7 @@ public sealed class TypeName constructor(
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as TypeName
+    if (other !is TypeName) return false
 
     if (isNullable != other.isNullable) return false
     if (annotations != other.annotations) return false
@@ -130,105 +118,6 @@ public sealed class TypeName constructor(
   }
 
   public companion object {
-    internal fun get(
-      mirror: TypeMirror,
-      typeVariables: Map<TypeParameterElement, TypeVariableName>,
-    ): TypeName {
-      return mirror.accept(
-        object : SimpleTypeVisitor8<TypeName, Void?>() {
-          override fun visitPrimitive(t: PrimitiveType, p: Void?): TypeName {
-            return when (t.kind) {
-              TypeKind.BOOLEAN -> BOOLEAN
-              TypeKind.BYTE -> BYTE
-              TypeKind.SHORT -> SHORT
-              TypeKind.INT -> INT
-              TypeKind.LONG -> LONG
-              TypeKind.CHAR -> CHAR
-              TypeKind.FLOAT -> FLOAT
-              TypeKind.DOUBLE -> DOUBLE
-              else -> throw AssertionError()
-            }
-          }
-
-          override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
-            val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
-            val enclosingType = t.enclosingType
-            val enclosing = if (enclosingType.kind != TypeKind.NONE &&
-              Modifier.STATIC !in t.asElement().modifiers
-            ) {
-              enclosingType.accept(this, null)
-            } else {
-              null
-            }
-            if (t.typeArguments.isEmpty() && enclosing !is ParameterizedTypeName) {
-              return rawType
-            }
-
-            val typeArgumentNames = mutableListOf<TypeName>()
-            for (typeArgument in t.typeArguments) {
-              typeArgumentNames += get(typeArgument, typeVariables)
-            }
-            return if (enclosing is ParameterizedTypeName) {
-              enclosing.nestedClass(rawType.simpleName, typeArgumentNames)
-            } else {
-              ParameterizedTypeName(null, rawType, typeArgumentNames)
-            }
-          }
-
-          override fun visitError(t: ErrorType, p: Void?): TypeName {
-            return visitDeclared(t, p)
-          }
-
-          override fun visitArray(t: ArrayType, p: Void?): ParameterizedTypeName {
-            return ARRAY.parameterizedBy(get(t.componentType, typeVariables))
-          }
-
-          override fun visitTypeVariable(
-            t: javax.lang.model.type.TypeVariable,
-            p: Void?,
-          ): TypeName {
-            return TypeVariableName.get(t, typeVariables.toMutableMap())
-          }
-
-          override fun visitWildcard(t: javax.lang.model.type.WildcardType, p: Void?): TypeName {
-            return WildcardTypeName.get(t, typeVariables)
-          }
-
-          override fun visitNoType(t: NoType, p: Void?): TypeName {
-            if (t.kind == TypeKind.VOID) return UNIT
-            return super.visitUnknown(t, p)
-          }
-
-          override fun defaultAction(e: TypeMirror?, p: Void?): TypeName {
-            throw IllegalArgumentException("Unexpected type mirror: " + e!!)
-          }
-        },
-        null,
-      )
-    }
-
-    internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
-      return when (type) {
-        is Class<*> -> when {
-          type === Void.TYPE -> UNIT
-          type === Boolean::class.javaPrimitiveType -> BOOLEAN
-          type === Byte::class.javaPrimitiveType -> BYTE
-          type === Short::class.javaPrimitiveType -> SHORT
-          type === Int::class.javaPrimitiveType -> INT
-          type === Long::class.javaPrimitiveType -> LONG
-          type === Char::class.javaPrimitiveType -> CHAR
-          type === Float::class.javaPrimitiveType -> FLOAT
-          type === Double::class.javaPrimitiveType -> DOUBLE
-          type.isArray -> ARRAY.parameterizedBy(get(type.componentType, map))
-          else -> type.asClassName()
-        }
-        is ParameterizedType -> ParameterizedTypeName.get(type, map)
-        is WildcardType -> WildcardTypeName.get(type, map)
-        is TypeVariable<*> -> TypeVariableName.get(type, map)
-        is GenericArrayType -> ARRAY.parameterizedBy(get(type.genericComponentType, map))
-        else -> throw IllegalArgumentException("unexpected type: $type")
-      }
-    }
   }
 }
 
@@ -334,21 +223,26 @@ public sealed class TypeName constructor(
 /** [Dynamic] is a singleton `object` type, so this is a shorthand for it in Java. */
 @JvmField public val DYNAMIC: Dynamic = Dynamic
 
-/** Returns a [TypeName] equivalent to this [TypeMirror]. */
+/** Returns a [TypeName] equivalent to this [JvmTypeMirror]. */
 @DelicateKotlinPoetApi(
   message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
     " the kotlinpoet-metadata APIs instead.",
 )
 @JvmName("get")
-public fun TypeMirror.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
+public fun JvmTypeMirror.asTypeName(): TypeName = asTypeNameInternal()
 
 /** Returns a [TypeName] equivalent to this [KClass].  */
 @JvmName("get")
 public fun KClass<*>.asTypeName(): ClassName = asClassName()
 
-/** Returns a [TypeName] equivalent to this [Type].  */
+/** Returns a [TypeName] equivalent to this [JvmType].  */
 @JvmName("get")
-public fun Type.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
+public fun JvmType.asTypeName(): TypeName = asTypeNameInternal()
+
+internal expect fun JvmTypeMirror.asTypeNameInternal(): TypeName
+
+/** Returns a [TypeName] equivalent to this [JvmType].  */
+internal expect fun JvmType.asTypeNameInternal(): TypeName
 
 /**
  * Returns a [TypeName] equivalent of the reified type parameter [T] using reflection, maybe using kotlin-reflect

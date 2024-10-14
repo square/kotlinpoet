@@ -434,6 +434,9 @@ public final class com/squareup/kotlinpoet/Import : java/lang/Comparable {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface annotation class com/squareup/kotlinpoet/JvmTypeAliasKotlinPoetApi : java/lang/annotation/Annotation {
+}
+
 public final class com/squareup/kotlinpoet/KModifier : java/lang/Enum {
 	public static final field ABSTRACT Lcom/squareup/kotlinpoet/KModifier;
 	public static final field ACTUAL Lcom/squareup/kotlinpoet/KModifier;
@@ -1251,6 +1254,15 @@ public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
 	public static final fun throws (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static final fun transient (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public static final fun volatile (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+}
+
+public final class com/squareup/kotlinpoet/jvm/alias/JvmClasses {
+	public static final fun getKotlin (Ljava/lang/Class;)Lkotlin/reflect/KClass;
+	public static final fun typeName (Ljava/lang/reflect/Type;)Ljava/lang/String;
+}
+
+public final class com/squareup/kotlinpoet/jvm/alias/JvmPath_jvmKt {
+	public static final fun toJvmFile (Ljava/nio/file/Path;)Ljava/io/File;
 }
 
 public final class com/squareup/kotlinpoet/tags/TypeAliasTag {

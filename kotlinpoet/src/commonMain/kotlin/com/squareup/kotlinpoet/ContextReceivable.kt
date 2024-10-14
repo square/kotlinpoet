@@ -15,6 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
+import kotlin.jvm.JvmInline
+
 /** A KotlinPoet spec type that can have a context receiver. */
 public interface ContextReceivable {
 

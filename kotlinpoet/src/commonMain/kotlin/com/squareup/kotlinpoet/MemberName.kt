@@ -15,6 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.jvm.alias.JvmClass
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
 
 /**
@@ -162,7 +166,7 @@ public data class MemberName internal constructor(
     )
     @JvmStatic
     @JvmName("get")
-    public fun Class<*>.member(simpleName: String): MemberName =
+    public fun JvmClass<*>.member(simpleName: String): MemberName =
       asClassName().member(simpleName)
   }
 }
