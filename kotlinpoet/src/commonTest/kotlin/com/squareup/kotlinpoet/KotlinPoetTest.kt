@@ -1016,8 +1016,7 @@ class KotlinPoetTest {
       |
       |import kotlin.String
       |
-      |public
-      |    fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String) {
+      |public fun functionWithAPrettyLongNameThatWouldCauseWrapping(parameterWithALongNameThatWouldAlsoCauseWrapping: String) {
       |}
       |
       """.trimMargin(),
@@ -1103,13 +1102,11 @@ class KotlinPoetTest {
       |import kotlin.String
       |
       |/**
-      | * Builder class for Foo. Allows creating instances of Foo by initializing a subset of their fields,
-      | * following the Builder pattern.
+      | * Builder class for Foo. Allows creating instances of Foo by initializing a subset of their fields, following the Builder pattern.
       | */
       |public class Builder {
       |  /**
-      |   * The description for the choice, e.g. "Currently unavailable due to high demand. Please try
-      |   * later." May be null.
+      |   * The description for the choice, e.g. "Currently unavailable due to high demand. Please try later." May be null.
       |   */
       |  public fun summary_text(summary_text: String?): Builder {
       |    this.summary_text = summary_text

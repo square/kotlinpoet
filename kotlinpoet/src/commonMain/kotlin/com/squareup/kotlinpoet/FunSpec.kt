@@ -100,7 +100,7 @@ public class FunSpec private constructor(
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {
-      codeWriter.emitCode("fun·")
+      codeWriter.emitCode("fun ")
     }
 
     if (typeVariables.isNotEmpty()) {
@@ -120,7 +120,7 @@ public class FunSpec private constructor(
     if (asExpressionBody != null) {
       codeWriter.emitCode(CodeBlock.of(" = %L", asExpressionBody), ensureTrailingNewline = true)
     } else if (!isEmptySetter) {
-      codeWriter.emitCode("·{\n")
+      codeWriter.emitCode(" {\n")
       codeWriter.indent()
       codeWriter.emitCode(body.returnsWithoutLinebreak(), ensureTrailingNewline = true)
       codeWriter.unindent()
@@ -505,7 +505,7 @@ public class FunSpec private constructor(
     }
 
     public fun addComment(format: String, vararg args: Any): Builder = apply {
-      body.add("//·${format.replace(' ', '·')}\n", *args)
+      body.add("// $format\n", *args)
     }
 
     /**

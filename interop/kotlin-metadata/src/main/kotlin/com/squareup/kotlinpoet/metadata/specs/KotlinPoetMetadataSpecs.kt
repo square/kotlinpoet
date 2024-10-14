@@ -251,7 +251,7 @@ public fun KmPackage.toFileSpec(
     .build()
 }
 
-private const val NOT_IMPLEMENTED = "throw·NotImplementedError(\"Stub!\")"
+private const val NOT_IMPLEMENTED = "throw NotImplementedError(\"Stub!\")"
 
 private fun KmClass.toTypeSpec(
   classInspector: ClassInspector?,

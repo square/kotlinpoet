@@ -52,8 +52,8 @@ internal class LineWrapper(
     var pos = 0
     while (pos < s.length) {
       when (s[pos]) {
-        ' ' -> {
-          // Each space starts a new empty segment.
+        '♢' -> {
+          // Each wrapping space starts a new empty segment.
           this.indentLevel = indentLevel
           this.linePrefix = linePrefix
           segments += ""
@@ -66,7 +66,7 @@ internal class LineWrapper(
           pos++
         }
 
-        '·' -> {
+        ' ', '·' -> {
           // Render · as a non-breaking space.
           segments[segments.size - 1] += " "
           pos++
@@ -105,8 +105,6 @@ internal class LineWrapper(
   }
 
   private fun emitCurrentLine() {
-    foldUnsafeBreaks()
-
     var start = 0
     var columnCount = segments[0].length
 
@@ -150,26 +148,7 @@ internal class LineWrapper(
     }
   }
 
-  /**
-   * Any segment that starts with '+' or '-' can't have a break preceding it. Combine it with the
-   * preceding segment. Note that this doesn't apply to the first segment.
-   */
-  private fun foldUnsafeBreaks() {
-    var i = 1
-    while (i < segments.size) {
-      val segment = segments[i]
-      if (UNSAFE_LINE_START.matches(segment)) {
-        segments[i - 1] = segments[i - 1] + " " + segments[i]
-        segments.removeAt(i)
-        if (i > 1) i--
-      } else {
-        i++
-      }
-    }
-  }
-
   companion object {
-    private val UNSAFE_LINE_START = Regex("\\s*[-+].*")
-    private val SPECIAL_CHARACTERS = " \n·".toCharArray()
+    private val SPECIAL_CHARACTERS = " \n·♢".toCharArray()
   }
 }

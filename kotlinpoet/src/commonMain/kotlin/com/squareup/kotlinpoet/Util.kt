@@ -353,7 +353,7 @@ private fun String.escapeIfNotJavaIdentifier(): String {
       ) &&
     !alreadyEscaped()
   ) {
-    "`$this`".replace(' ', '·')
+    "`$this`"
   } else {
     this
   }
