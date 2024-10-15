@@ -94,10 +94,10 @@ FunSpec.builder("add")
   .build()
 ```
 
-## Spaces don't wrap by default
+## Wrapping is explicit
 
 In order to guarantee code correctness, starting in version 2.0, KotlinPoet will never replace
-spaces, found in blocks of code, with new line symbols, even in cases when the line of code exceeds
+spaces found in blocks of code with new line symbols, even in cases when the line of code exceeds
 the length limit. Let's take this function for example:
 
 ```kotlin
@@ -113,7 +113,7 @@ public fun foo() = (100..10000).map { number -> number * number }.map { number -
 ```
 
 While the output is correct, the resulting line of code is quite long and hard to read. KotlinPoet
-nis unable to understand the context of the expression and adjust the formatting for you, but
+is unable to understand the context of the expression and adjust the formatting for you, but
 there's a trick you can use to declare a breaking space - use the `♢` symbol where you know it's
 safe to optionally wrap the line. Let's apply this to our example:
 
