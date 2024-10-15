@@ -8,6 +8,7 @@ Change Log
 * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 * New: Add `KSTypeAlias.toClassName()`. (#1956)
 * New: Add `KSType.toClassNameOrNull()`. (#1956)
+* New: Introduce `Modifiable` interface to standardize `KModifier` API across specs. (#2005)
 
 ## Version 1.18.1
 
