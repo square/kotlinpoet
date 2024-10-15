@@ -118,6 +118,10 @@ subprojects {
       // Create a test task for each supported JDK. We check every "LTS" + current version.
       val versionsToTest = listOf(8, 11, 17, 21, 23)
       for (majorVersion in versionsToTest) {
+        if (name == "javapoet" && majorVersion < 17) {
+          continue // JavaPoet requires Java 17+.
+        }
+
         val jdkTest = tasks.register<Test>("testJdk$majorVersion") {
           val javaToolchains = project.extensions.getByType(JavaToolchainService::class)
           javaLauncher = javaToolchains.launcherFor {
