@@ -69,7 +69,7 @@ internal actual val String.isIdentifier: Boolean
   get() = IDENTIFIER_REGEX.matches(this)
 
 internal actual inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E> {
-  return when(values.size) {
+  return when (values.size) {
     0 -> EnumSet.noneOf(E::class.java)
     1 -> EnumSet.of(values[0])
     2 -> EnumSet.of(values[0], values[1])
