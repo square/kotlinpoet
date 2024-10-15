@@ -8,6 +8,8 @@ Change Log
 * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 * New: Add `KSTypeAlias.toClassName()`. (#1956)
 * New: Add `KSType.toClassNameOrNull()`. (#1956)
+* New: `com.squareup:kotlinpoet:kotlinpoet-palantirjavapoet` module integrates with
+  [Palantir's JavaPoet successor project]. The original integration module is still available.
 
 ## Version 1.18.1
 
@@ -863,3 +865,4 @@ _2017-05-16_
  [sebek64]: https://github.com/sebek64
  [DanielGronau]: https://github.com/DanielGronau
  [mitasov-ra]: https://github.com/mitasov-ra
+ [Palantir's JavaPoet project]: https://github.com/palantir/javapoet
