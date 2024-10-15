@@ -384,7 +384,7 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun getParameters ()Ljava/util/List;
 	public fun getTags ()Ljava/util/Map;
 	public final fun getTypeVariables ()Ljava/util/List;
-	public final fun jvmModifiers (Ljava/lang/Iterable;)V
+	public final fun jvmModifiers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun receiver (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun receiver (Lcom/squareup/kotlinpoet/TypeName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
