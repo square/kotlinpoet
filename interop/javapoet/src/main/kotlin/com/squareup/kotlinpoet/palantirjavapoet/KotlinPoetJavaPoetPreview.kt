@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-  kotlin("jvm")
-}
+package com.squareup.kotlinpoet.palantirjavapoet
 
-tasks.jar {
-  manifest {
-    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.palantirjavapoet")
-  }
-}
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.PROPERTY
+import kotlin.annotation.AnnotationTarget.TYPEALIAS
 
-dependencies {
-  api(projects.kotlinpoet)
-  api(libs.javapoet)
-  testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
-}
+/**
+ * Indicates that a given API is part of the experimental KotlinPoet JavaPoet support and is
+ * subject to API changes.
+ */
+@RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, FUNCTION, PROPERTY, TYPEALIAS)
+public annotation class KotlinPoetJavaPoetPreview

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2021 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-  repositories {
-    mavenCentral()
-    gradlePluginPortal()
+plugins {
+  kotlin("jvm")
+}
+
+tasks.jar {
+  manifest {
+    attributes("Automatic-Module-Name" to "com.squareup.kotlinpoet.javapoet")
   }
 }
 
-plugins {
-  id("org.gradle.toolchains.foojay-resolver-convention") version("0.8.0")
+dependencies {
+  api(projects.kotlinpoet)
+  api(libs.javapoet.deprecated)
+  testImplementation(libs.kotlin.junit)
+  testImplementation(libs.truth)
 }
-
-include(
-  ":kotlinpoet",
-  ":interop:javapoet",
-  ":interop:javapoet-deprecated",
-  ":interop:kotlin-metadata",
-  ":interop:ksp",
-  ":interop:ksp:test-processor",
-)
-
-rootProject.name = "kotlinpoet-root"
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

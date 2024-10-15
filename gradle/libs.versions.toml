@@ -30,7 +30,8 @@ kotlinBinaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compat
 [libraries]
 autoCommon = { module = "com.google.auto:auto-common", version = "1.2.2" }
 guava = { module = "com.google.guava:guava", version = "33.3.1-jre" }
-javapoet = "com.squareup:javapoet:1.13.0"
+javapoet-deprecated = "com.squareup:javapoet:1.13.0"
+javapoet = "com.palantir.javapoet:javapoet:0.5.0"
 
 autoService = "com.google.auto.service:auto-service-annotations:1.1.1"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.2.0"

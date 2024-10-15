@@ -1,7 +1,7 @@
 JavaPoet Extensions for KotlinPoet
 ==================================
 
-`interop:javapoet` is an interop API for converting [JavaPoet](https://github.com/square/javapoet)
+`interop:javapoet` is an interop API for converting [JavaPoet](https://github.com/palantir/javapoet)
 types to KotlinPoet types. This is particularly useful for projects that support code gen in
 multiple languages and want to easily be able to jump between.
 
@@ -15,7 +15,7 @@ in to the `@KotlinPoetJavaPoetPreview` annotation.
 ```kotlin
 // Points to com.squareup.kotlinpoet.TypeName
 KTypeName
-// Points to com.squareup.javapoet.TypeName
+// Points to com.palantir.javapoet.TypeName
 JTypeName
 ```
 
