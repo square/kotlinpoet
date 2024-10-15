@@ -88,4 +88,4 @@ public enum class KModifier(
   }
 }
 
-internal val VISIBILITY_MODIFIERS: Set<KModifier> = enumSetOf(PUBLIC, INTERNAL, PROTECTED, PRIVATE)
+internal val VISIBILITY_MODIFIERS: Set<KModifier> = setOf(PUBLIC, INTERNAL, PROTECTED, PRIVATE)

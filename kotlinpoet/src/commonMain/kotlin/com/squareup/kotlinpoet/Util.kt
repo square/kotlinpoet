@@ -353,8 +353,6 @@ internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(del
   .filter { it.isNotEmpty() }
   .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
 
-internal expect inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E>
-
 internal expect fun Char.isJavaIdentifierStart(): Boolean
 
 internal expect fun Char.isJavaIdentifierPart(): Boolean

@@ -51,9 +51,6 @@ internal fun Appendable.appendFormat04x(code: Int) {
 internal actual fun Int.toHexStr(): String =
   toHexString(HexFormatWithoutLeadingZeros)
 
-internal actual inline fun <reified E : Enum<E>> enumSetOf(vararg values: E): MutableSet<E> =
-  values.toMutableSet()
-
 internal actual fun Char.isJavaIdentifierStart(): Boolean {
   return isLetter() ||
     this in CharCategory.LETTER_NUMBER ||
