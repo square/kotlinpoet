@@ -24,7 +24,6 @@ internal actual fun <T> Collection<T>.toImmutableList(): List<T> =
 internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
   toSet()
 
-
 internal actual fun Char.isJavaIdentifierStart(): Boolean {
   return isLetter() ||
     this in CharCategory.LETTER_NUMBER ||
