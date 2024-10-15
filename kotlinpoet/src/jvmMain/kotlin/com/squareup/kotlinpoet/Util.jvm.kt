@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import java.util.Collections
-import java.util.EnumSet
 
 internal actual fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
   Collections.unmodifiableMap(LinkedHashMap(this))
@@ -27,12 +26,6 @@ internal actual fun <T> Collection<T>.toImmutableList(): List<T> =
 
 internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
   Collections.unmodifiableSet(LinkedHashSet(this))
-
-internal actual fun formatIsoControlCode(code: Int): String =
-  String.format("\\u%04x", code)
-
-internal actual fun Int.toHexStr(): String =
-  Integer.toHexString(this)
 
 // TODO Waiting for `CodeBlock` migration.
 internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')

@@ -24,32 +24,6 @@ internal actual fun <T> Collection<T>.toImmutableList(): List<T> =
 internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
   toSet()
 
-internal actual fun formatIsoControlCode(code: Int): String {
-  return buildString(6) {
-    append("\\u")
-    appendFormat04x(code)
-  }
-}
-
-@OptIn(ExperimentalStdlibApi::class)
-private val HexFormatWithoutLeadingZeros = HexFormat {
-  number {
-    removeLeadingZeros = true
-  }
-}
-
-@OptIn(ExperimentalStdlibApi::class)
-internal fun Appendable.appendFormat04x(code: Int) {
-  val hex = code.toHexString(HexFormatWithoutLeadingZeros)
-  if (hex.length < 4) {
-    repeat(4 - hex.length) { append('0') }
-  }
-  append(hex)
-}
-
-@OptIn(ExperimentalStdlibApi::class)
-internal actual fun Int.toHexStr(): String =
-  toHexString(HexFormatWithoutLeadingZeros)
 
 internal actual fun Char.isJavaIdentifierStart(): Boolean {
   return isLetter() ||

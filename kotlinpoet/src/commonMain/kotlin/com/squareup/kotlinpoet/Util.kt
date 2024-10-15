@@ -61,9 +61,11 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   else -> c.toString()
 }
 
-internal expect fun formatIsoControlCode(code: Int): String
+internal fun formatIsoControlCode(code: Int): String =
+  "\\u${code.toHexStr().padStart(4, '0')}"
 
-internal expect fun Int.toHexStr(): String
+internal fun Int.toHexStr(): String =
+  toUInt().toString(16)
 
 internal fun escapeCharacterLiterals(s: String) = buildString {
   for (c in s) append(characterLiteralWithoutSingleQuotes(c))
