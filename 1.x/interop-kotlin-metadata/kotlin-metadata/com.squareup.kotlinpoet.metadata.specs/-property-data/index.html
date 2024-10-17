@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PropertyData</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            kotlin-metadata
+                    </a>
+            </div>
+            <div class="library-version">
+1.19.0-SNAPSHOT            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":interop:kotlin-metadata:dokkaHtml/main">jvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="kotlin-metadata::com.squareup.kotlinpoet.metadata.specs/PropertyData///PointingToDeclaration//-410216173">
+  <div class="breadcrumbs"><a href="../../../index.html">kotlin-metadata</a><span class="delimiter">/</span><a href="../index.html">com.squareup.kotlinpoet.metadata.specs</a><span class="delimiter">/</span><span class="current">PropertyData</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Property</span><wbr></wbr><span><span>Data</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">PropertyData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fieldData<span class="token operator">: </span><a href="../-field-data/index.html">FieldData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>getterData<span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>setterData<span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isJvmField<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Represents relevant information on a property used for <a href="../-class-inspector/index.html">ClassInspector</a>. Should only be associated with properties of a <a href="../-class-data/index.html">ClassData</a>.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>annotations</span></span></u></div></span></div><div><div class="title"><p class="paragraph">declared annotations on this property.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1148517267%2FConstructors%2F-410216173" anchor-label="PropertyData" id="-1148517267%2FConstructors%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-property-data.html"><span>Property</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1148517267%2FConstructors%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">fieldData<span class="token operator">: </span><a href="../-field-data/index.html">FieldData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">getterData<span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">setterData<span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">isJvmField<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="121005834%2FProperties%2F-410216173" anchor-label="allAnnotations" id="121005834%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="all-annotations.html"><span>all</span><wbr></wbr><span><span>Annotations</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="121005834%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="all-annotations.html">allAnnotations</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A collection of all annotations on this property including declared ones and any derived from <a href="field-data.html">fieldData</a>, <a href="getter-data.html">getterData</a>, <a href="setter-data.html">setterData</a>, and <a href="is-jvm-field.html">isJvmField</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1187527223%2FProperties%2F-410216173" anchor-label="fieldData" id="-1187527223%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="field-data.html"><span>field</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1187527223%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="field-data.html">fieldData</a><span class="token operator">: </span><a href="../-field-data/index.html">FieldData</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">associated <a href="../-field-data/index.html">FieldData</a> with this property, if any.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1531485512%2FProperties%2F-410216173" anchor-label="getterData" id="-1531485512%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="getter-data.html"><span>getter</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1531485512%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="getter-data.html">getterData</a><span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">associated getter (as <a href="../-method-data/index.html">MethodData</a>) with this property, if any.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1249010262%2FProperties%2F-410216173" anchor-label="isJvmField" id="-1249010262%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-jvm-field.html"><span>is</span><wbr></wbr><span>Jvm</span><wbr></wbr><span><span>Field</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1249010262%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-jvm-field.html">isJvmField</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">indicates if this property should be treated as a jvm field.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="261061143%2FProperties%2F-410216173" anchor-label="isOverride" id="261061143%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-override.html"><span>is</span><wbr></wbr><span><span>Override</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="261061143%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-override.html">isOverride</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Indicates if this property overrides another from a supertype.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1994416068%2FProperties%2F-410216173" anchor-label="setterData" id="1994416068%2FProperties%2F-410216173" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main"></a>
+          <div class="table-row" data-filterable-current=":interop:kotlin-metadata:dokkaHtml/main" data-filterable-set=":interop:kotlin-metadata:dokkaHtml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="setter-data.html"><span>setter</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1994416068%2FProperties%2F-410216173"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata:dokkaHtml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="setter-data.html">setterData</a><span class="token operator">: </span><a href="../-method-data/index.html">MethodData</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">associated setter (as <a href="../-method-data/index.html">MethodData</a>) with this property, if any.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
