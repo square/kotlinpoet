@@ -1044,10 +1044,11 @@ class FunSpecTest {
   }
 
   @Test fun jvmStaticModifier() {
-    val builder = FunSpec.builder("staticMethod")
-    builder.jvmModifiers(listOf(Modifier.STATIC))
+    val funSpec = FunSpec.builder("staticMethod")
+      .jvmModifiers(listOf(Modifier.STATIC))
+      .build()
 
-    assertThat(builder.build().toString()).isEqualTo(
+    assertThat(funSpec.toString()).isEqualTo(
       """
       |@kotlin.jvm.JvmStatic
       |internal fun staticMethod() {
@@ -1058,10 +1059,11 @@ class FunSpecTest {
   }
 
   @Test fun jvmFinalModifier() {
-    val builder = FunSpec.builder("finalMethod")
-    builder.jvmModifiers(listOf(Modifier.FINAL))
+    val funSpec = FunSpec.builder("finalMethod")
+      .jvmModifiers(listOf(Modifier.FINAL))
+      .build()
 
-    assertThat(builder.build().toString()).isEqualTo(
+    assertThat(funSpec.toString()).isEqualTo(
       """
       |internal final fun finalMethod() {
       |}
@@ -1071,10 +1073,11 @@ class FunSpecTest {
   }
 
   @Test fun jvmSynchronizedModifier() {
-    val builder = FunSpec.builder("synchronizedMethod")
-    builder.jvmModifiers(listOf(Modifier.SYNCHRONIZED))
+    val funSpec = FunSpec.builder("synchronizedMethod")
+      .jvmModifiers(listOf(Modifier.SYNCHRONIZED))
+      .build()
 
-    assertThat(builder.build().toString()).isEqualTo(
+    assertThat(funSpec.toString()).isEqualTo(
       """
       |@kotlin.jvm.Synchronized
       |internal fun synchronizedMethod() {

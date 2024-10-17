@@ -334,7 +334,7 @@ public class FunSpec private constructor(
       this.modifiers += modifiers
     }
 
-    public fun jvmModifiers(modifiers: Iterable<Modifier>) {
+    public fun jvmModifiers(modifiers: Iterable<Modifier>): Builder = apply {
       var visibility = KModifier.INTERNAL
       for (modifier in modifiers) {
         when (modifier) {
