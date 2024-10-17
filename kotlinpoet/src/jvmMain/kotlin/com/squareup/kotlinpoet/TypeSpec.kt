@@ -48,13 +48,14 @@ public class TypeSpec private constructor(
   ContextReceivable by contextReceivers,
   Annotatable,
   Documentable,
+  Modifiable,
   TypeSpecHolder,
   MemberSpecHolder {
   public val kind: Kind = builder.kind
   public val name: String? = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  override val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val primaryConstructor: FunSpec? = builder.primaryConstructor
   public val superclass: TypeName = builder.superclass
@@ -476,6 +477,7 @@ public class TypeSpec private constructor(
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     Documentable.Builder<Builder>,
+    Modifiable.Builder<Builder>,
     TypeSpecHolder.Builder<Builder>,
     MemberSpecHolder.Builder<Builder> {
     internal var primaryConstructor: FunSpec? = null
@@ -499,7 +501,7 @@ public class TypeSpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
-    public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
+    override val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
     public val superinterfaces: MutableMap<TypeName, CodeBlock?> = mutableMapOf()
     public val enumConstants: MutableMap<String, TypeSpec> = mutableMapOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
@@ -511,14 +513,14 @@ public class TypeSpec private constructor(
     @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
     public val annotationSpecs: MutableList<AnnotationSpec> get() = annotations
 
-    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
+    override fun addModifiers(vararg modifiers: KModifier): Builder {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
-      this.modifiers += modifiers
+      return super.addModifiers(*modifiers)
     }
 
-    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
+    override fun addModifiers(modifiers: Iterable<KModifier>): Builder {
       check(!isAnonymousClass) { "forbidden on anonymous types." }
-      this.modifiers += modifiers
+      return super.addModifiers(modifiers)
     }
 
     public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
