@@ -3,11 +3,36 @@ Change Log
 
 ## Unreleased
 
-* Fix: Enum classes that only have an init block now also generate the required semicolon (#1952)
-* Fix: Preserve typealiases in `KSAnnotation.toAnnotationSpec()`. (#1945)
-* Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
-* New: Add `KSTypeAlias.toClassName()`. (#1956)
-* New: Add `KSType.toClassNameOrNull()`. (#1956)
+## Version 2.0.0
+
+Thanks to [@brokenhappy][brokenhappy], [@tajobe][tajobe], [@niyajali][niyajali],
+[@ForteScarlet][ForteScarlet] for contributing to this release.
+
+_2024-10-23_
+
+This release is source- and binary-compatible with KotlinPoet 1.x.
+
+The most important behavior change in this release is that spaces in generated code don't wrap by
+default anymore.
+
+KotlinPoet 1.x used to replace space characters with newline characters whenever a given line of
+code exceeded the length limit. This usually led to better code formatting, but could also lead to
+compilation errors in generated code. Non-breaking spaces could be marked by the `·` character, but
+the discoverability of this feature wasn't great.
+
+KotlinPoet 2.0 does not wrap spaces, even if the line of code they occur in exceeds the length
+limit. The newly introduced `♢` character can be used to mark spaces that are safe to wrap, which
+can improve code formatting. The `·` character has been preserved for compatibility, but its
+behavior is now equivalent to a regular space character.
+
+ * New: Kotlin 2.0.10.
+ * New: Spaces don't break by default.
+ * New: New `♢` placeholder representing a space that is safe to wrap.
+ * New: Add `KSTypeAlias.toClassName()`. (#1956)
+ * New: Add `KSType.toClassNameOrNull()`. (#1956)
+ * Fix: Enum classes that only have an init block now also generate the required semicolon. (#1953)
+ * Fix: Preserve typealiases in `KSAnnotation.toAnnotationSpec()`. (#1956)
+ * Fix: Preserve nullability in `KSType.toClassName()`. (#1956)
 
 ## Version 1.18.1
 
@@ -863,3 +888,7 @@ _2017-05-16_
  [sebek64]: https://github.com/sebek64
  [DanielGronau]: https://github.com/DanielGronau
  [mitasov-ra]: https://github.com/mitasov-ra
+ [brokenhappy]: https://github.com/brokenhappy
+ [tajobe]: https://github.com/tajobe
+ [niyajali]: https://github.com/niyajali
+ [ForteScarlet]: https://github.com/ForteScarlet
