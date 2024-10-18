@@ -15,23 +15,17 @@
  */
 package com.squareup.kotlinpoet
 
-import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
-import java.util.Collections
-
 internal object NullAppendable : Appendable {
-  override fun append(charSequence: CharSequence) = this
-  override fun append(charSequence: CharSequence, start: Int, end: Int) = this
-  override fun append(c: Char) = this
+  override fun append(value: CharSequence?) = this
+  override fun append(value: CharSequence?, startIndex: Int, endIndex: Int) = this
+  override fun append(value: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-  Collections.unmodifiableMap(LinkedHashMap(this))
+internal expect fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
 
-internal fun <T> Collection<T>.toImmutableList(): List<T> =
-  Collections.unmodifiableList(ArrayList(this))
+internal expect fun <T> Collection<T>.toImmutableList(): List<T>
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T> =
-  Collections.unmodifiableSet(LinkedHashSet(this))
+internal expect fun <T> Collection<T>.toImmutableSet(): Set<T>
 
 internal inline fun <reified T : Enum<T>> Collection<T>.toEnumSet(): Set<T> =
   enumValues<T>().filterTo(mutableSetOf(), this::contains)
@@ -63,9 +57,15 @@ internal fun characterLiteralWithoutSingleQuotes(c: Char) = when {
   c == '\"' -> "\"" // \u0022: double quote (")
   c == '\'' -> "\\'" // \u0027: single quote (')
   c == '\\' -> "\\\\" // \u005c: backslash (\)
-  c.isIsoControl -> String.format("\\u%04x", c.code)
+  c.isIsoControl -> formatIsoControlCode(c.code)
   else -> c.toString()
 }
+
+internal fun formatIsoControlCode(code: Int): String =
+  "\\u${code.toHexStr().padStart(4, '0')}"
+
+internal fun Int.toHexStr(): String =
+  toUInt().toString(16)
 
 internal fun escapeCharacterLiterals(s: String) = buildString {
   for (c in s) append(characterLiteralWithoutSingleQuotes(c))
@@ -138,34 +138,27 @@ internal fun stringLiteralWithQuotes(
   }
 }
 
-internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
+// TODO Waiting for `CodeBlock` migration.
+// internal fun CodeBlock.ensureEndsWithNewLine()
 
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
-  this
-} else {
-  with(toBuilder()) {
-    val lastFormatPart = trim().formatParts.last()
-    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-      val lastArg = args.last()
-      if (lastArg is String) {
-        val trimmedArg = lastArg.trimEnd('\n')
-        args[args.size - 1] = if (replaceWith != null) {
-          trimmedArg + replaceWith
-        } else {
-          trimmedArg
-        }
-      }
-    } else {
-      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-      if (replaceWith != null) {
-        formatParts += "$replaceWith"
-      }
-    }
-    return@with build()
-  }
-}
+// TODO Waiting for `CodeBlock` migration.
+// internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null)
 
-private val IDENTIFIER_REGEX =
+/**
+ *  Will crash if used `IDENTIFIER_REGEX_VALUE.toRegex()` directly in WasmJs:
+ *  `PatternSyntaxException: No such character class`.
+ *
+ *  It works in JS and JVM.
+ *
+ *  For now:
+ *  - Keep the use of `Regex` in JVM and JS.
+ *  - And use `RegExp` directly in WasmJs for matching,
+ *    using it in a similar way as in JS.
+ *
+ *  See also: [KT-71003](https://youtrack.jetbrains.com/issue/KT-71003)
+ */
+internal const val IDENTIFIER_REGEX_VALUE =
+  // language=regexp
   (
     "((\\p{gc=Lu}+|\\p{gc=Ll}+|\\p{gc=Lt}+|\\p{gc=Lm}+|\\p{gc=Lo}+|\\p{gc=Nl}+)+" +
       "\\d*" +
@@ -173,9 +166,8 @@ private val IDENTIFIER_REGEX =
       "|" +
       "(`[^\n\r`]+`)"
     )
-    .toRegex()
 
-internal val String.isIdentifier get() = IDENTIFIER_REGEX.matches(this)
+internal expect val String.isIdentifier: Boolean
 
 // https://kotlinlang.org/docs/reference/keyword-reference.html
 internal val KEYWORDS = setOf(
@@ -317,7 +309,7 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
 
   val newAlias = StringBuilder("")
 
-  if (!Character.isJavaIdentifierStart(first())) {
+  if (!first().isJavaIdentifierStart()) {
     newAlias.append('_')
   }
 
@@ -327,8 +319,8 @@ internal fun String.escapeAsAlias(validate: Boolean = true): String {
       continue
     }
 
-    if (!Character.isJavaIdentifierPart(ch)) {
-      newAlias.append("_U").append(Integer.toHexString(ch.code).padStart(4, '0'))
+    if (!ch.isJavaIdentifierPart()) {
+      newAlias.append("_U").append(ch.code.toHexStr().padStart(4, '0'))
       continue
     }
 
@@ -348,8 +340,8 @@ private fun String.escapeIfAllCharactersAreUnderscore() = if (allCharactersAreUn
 
 private fun String.escapeIfNotJavaIdentifier(): String {
   return if ((
-      !Character.isJavaIdentifierStart(first()) ||
-        drop(1).any { !Character.isJavaIdentifierPart(it) }
+      !first().isJavaIdentifierStart() ||
+        drop(1).any { !it.isJavaIdentifierPart() }
       ) &&
     !alreadyEscaped()
   ) {
@@ -362,3 +354,7 @@ private fun String.escapeIfNotJavaIdentifier(): String {
 internal fun String.escapeSegmentsIfNecessary(delimiter: Char = '.') = split(delimiter)
   .filter { it.isNotEmpty() }
   .joinToString(delimiter.toString()) { it.escapeIfNecessary() }
+
+internal expect fun Char.isJavaIdentifierStart(): Boolean
+
+internal expect fun Char.isJavaIdentifierPart(): Boolean
