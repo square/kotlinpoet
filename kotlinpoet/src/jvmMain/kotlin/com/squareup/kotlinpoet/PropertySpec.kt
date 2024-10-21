@@ -34,13 +34,14 @@ public class PropertySpec private constructor(
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
   Annotatable,
-  Documentable {
+  Documentable,
+  Modifiable {
   public val mutable: Boolean = builder.mutable
   public val name: String = builder.name
   public val type: TypeName = builder.type
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  override val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val initializer: CodeBlock? = builder.initializer
   public val delegated: Boolean = builder.delegated
@@ -176,7 +177,8 @@ public class PropertySpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    Modifiable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
     internal var mutable = false
     internal var initializer: CodeBlock? = null
@@ -185,7 +187,7 @@ public class PropertySpec private constructor(
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
 
-    public val modifiers: MutableList<KModifier> = mutableListOf()
+    override val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
@@ -198,14 +200,6 @@ public class PropertySpec private constructor(
     /** True to create a `var` instead of a `val`. */
     public fun mutable(mutable: Boolean = true): Builder = apply {
       this.mutable = mutable
-    }
-
-    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
-      this.modifiers += modifiers
-    }
-
-    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
-      this.modifiers += modifiers
     }
 
     public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {

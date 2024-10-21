@@ -42,13 +42,14 @@ public class FunSpec private constructor(
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
   Annotatable,
-  Documentable {
+  Documentable,
+  Modifiable {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
   public val receiverKdoc: CodeBlock = builder.receiverKdoc
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  override val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   public val receiverType: TypeName? = builder.receiverType
 
@@ -307,7 +308,8 @@ public class FunSpec private constructor(
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    Modifiable.Builder<Builder> {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
@@ -317,7 +319,7 @@ public class FunSpec private constructor(
     internal val body = CodeBlock.builder()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
-    public val modifiers: MutableList<KModifier> = mutableListOf()
+    override val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
     public val parameters: MutableList<ParameterSpec> = mutableListOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -325,14 +327,6 @@ public class FunSpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
-
-    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
-      this.modifiers += modifiers
-    }
-
-    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
-      this.modifiers += modifiers
-    }
 
     public fun jvmModifiers(modifiers: Iterable<Modifier>) {
       var visibility = KModifier.INTERNAL

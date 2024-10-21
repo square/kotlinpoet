@@ -29,11 +29,11 @@ import kotlin.reflect.KClass
 public class ParameterSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+) : Taggable by tagMap, Annotatable, Documentable, Modifiable {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers
+  override val modifiers: Set<KModifier> = builder.modifiers
     .also {
       LinkedHashSet(it).apply {
         removeAll(ALLOWED_PARAMETER_MODIFIERS)
@@ -94,21 +94,16 @@ public class ParameterSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  ) : Taggable.Builder<Builder>,
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder>,
+    Modifiable.Builder<Builder> {
     internal var defaultValue: CodeBlock? = null
 
-    public val modifiers: MutableList<KModifier> = mutableListOf()
+    override val modifiers: MutableSet<KModifier> = mutableSetOf()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
-
-    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
-      this.modifiers += modifiers
-    }
-
-    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
-      this.modifiers += modifiers
-    }
 
     @Deprecated(
       "There are no jvm modifiers applicable to parameters in Kotlin",

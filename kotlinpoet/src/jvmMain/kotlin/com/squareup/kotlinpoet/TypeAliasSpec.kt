@@ -26,10 +26,10 @@ import kotlin.reflect.KClass
 public class TypeAliasSpec private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+) : Taggable by tagMap, Annotatable, Documentable, Modifiable {
   public val name: String = builder.name
   public val type: TypeName = builder.type
-  public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
+  override val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
@@ -69,24 +69,15 @@ public class TypeAliasSpec private constructor(
   public class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
-    public val modifiers: MutableSet<KModifier> = mutableSetOf()
+  ) : Taggable.Builder<Builder>,
+    Annotatable.Builder<Builder>,
+    Documentable.Builder<Builder>,
+    Modifiable.Builder<Builder> {
+    override val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
-
-    public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
-      modifiers.forEach(this::addModifier)
-    }
-
-    public fun addModifiers(modifiers: Iterable<KModifier>): Builder = apply {
-      modifiers.forEach(this::addModifier)
-    }
-
-    private fun addModifier(modifier: KModifier) {
-      this.modifiers.add(modifier)
-    }
 
     public fun addTypeVariables(typeVariables: Iterable<TypeVariableName>): Builder = apply {
       this.typeVariables += typeVariables
