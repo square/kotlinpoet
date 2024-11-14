@@ -589,7 +589,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
         public fun <T : Alias41<Alias43<Alias23>, Alias47<out Alias77<Alias73<Int>>>>> bar(vararg arg1: T): Unit = TODO()
       }
 
-      """.trimIndent(),
+        """.trimIndent(),
       )
     } else {
       assertThat(generatedFileText).isEqualTo(
@@ -603,7 +603,7 @@ class TestProcessorTest(private val useKsp2: Boolean) {
         public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T): Unit = TODO()
       }
 
-      """.trimIndent(),
+        """.trimIndent(),
       )
     }
   }
