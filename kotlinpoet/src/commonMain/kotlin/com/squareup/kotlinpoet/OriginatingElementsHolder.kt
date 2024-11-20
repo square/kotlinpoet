@@ -15,24 +15,26 @@
  */
 package com.squareup.kotlinpoet
 
-import javax.lang.model.element.Element
+import com.squareup.kotlinpoet.jvm.alias.JvmDefaultWithCompatibility
+import com.squareup.kotlinpoet.jvm.alias.JvmElement
+import kotlin.jvm.JvmInline
 
 /** A type that can have originating [elements][Element]. */
 public interface OriginatingElementsHolder {
 
   /** The originating elements of this type. */
-  public val originatingElements: List<Element>
+  public val originatingElements: List<JvmElement>
 
   /** The builder analogue to [OriginatingElementsHolder] types. */
   @JvmDefaultWithCompatibility
   public interface Builder<out T : Builder<T>> {
 
     /** Mutable map of the current originating elements this builder contains. */
-    public val originatingElements: MutableList<Element>
+    public val originatingElements: MutableList<JvmElement>
 
     /** Adds an [originatingElement] to this type's list of originating elements. */
     @Suppress("UNCHECKED_CAST")
-    public fun addOriginatingElement(originatingElement: Element): T = apply {
+    public fun addOriginatingElement(originatingElement: JvmElement): T = apply {
       originatingElements += originatingElement
     } as T
   }
@@ -41,10 +43,10 @@ public interface OriginatingElementsHolder {
 internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements() =
   OriginatingElements(originatingElements.toImmutableList())
 
-internal fun List<Element>.buildOriginatingElements() =
+internal fun List<JvmElement>.buildOriginatingElements() =
   OriginatingElements(toImmutableList())
 
 @JvmInline
 internal value class OriginatingElements(
-  override val originatingElements: List<Element>,
+  override val originatingElements: List<JvmElement>,
 ) : OriginatingElementsHolder
