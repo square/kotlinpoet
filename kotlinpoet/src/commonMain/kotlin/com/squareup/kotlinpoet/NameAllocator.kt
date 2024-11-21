@@ -120,7 +120,8 @@ public class NameAllocator private constructor(
    */
   @JvmOverloads public fun newName(
     suggestion: String,
-    tag: Any = Random.nextULong().toString(), // TODO Since Kotlin 2.0.20, it's possible to use kotlin.uuid.Uuid
+    // TODO It's possible to use `kotlin.uuid.Uuid` when it's stable
+    tag: Any = Random.nextULong().toString(16).padStart(16, '0'),
   ): String {
     var result = toJavaIdentifier(suggestion)
     while (!allocatedNames.add(result)) {
