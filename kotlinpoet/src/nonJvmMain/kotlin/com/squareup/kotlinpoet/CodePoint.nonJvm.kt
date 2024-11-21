@@ -51,5 +51,5 @@ internal actual fun CodePoint.isJavaIdentifierPart(): Boolean {
 }
 
 internal actual fun CodePoint.charCount(): Int {
-  return if (code >= 0x010000) 2 else 1
+  return if (code >= 0x10000) 2 else 1
 }
