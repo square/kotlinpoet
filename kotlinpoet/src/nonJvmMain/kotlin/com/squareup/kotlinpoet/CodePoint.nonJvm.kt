@@ -26,7 +26,7 @@ internal actual fun StringBuilder.appendCodePoint(codePoint: CodePoint): StringB
   if (code <= Char.MAX_VALUE.code) {
     append(code.toChar())
   } else {
-    append(Char.MIN_HIGH_SURROGATE + ((code - 0x10000) shr 10))
+    append(Char.MIN_HIGH_SURROGATE + ((code - 0x10000) ushr 10))
     append(Char.MIN_LOW_SURROGATE + (code and 0x3ff))
   }
   return this
