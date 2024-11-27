@@ -67,6 +67,7 @@ import kotlin.reflect.KClass
  * }
  * ```
  */
+@ExposedCopyVisibility
 public data class MemberName internal constructor(
   public val packageName: String,
   public val enclosingClassName: ClassName?,

@@ -577,19 +577,35 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
     val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestTransitiveAliases.kt")
       .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-    package test
+    if (useKsp2) {
+      assertThat(generatedFileText).isEqualTo(
+        """
+      package test
 
-    import kotlin.Int
-    import kotlin.Unit
+      import kotlin.Int
+      import kotlin.Unit
 
-    public class TestTransitiveAliases {
-      public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T): Unit = TODO()
+      public class TestTransitiveAliases {
+        public fun <T : Alias41<Alias43<Alias23>, Alias47<out Alias77<Alias73<Int>>>>> bar(vararg arg1: T): Unit = TODO()
+      }
+
+        """.trimIndent(),
+      )
+    } else {
+      assertThat(generatedFileText).isEqualTo(
+        """
+      package test
+
+      import kotlin.Int
+      import kotlin.Unit
+
+      public class TestTransitiveAliases {
+        public fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T): Unit = TODO()
+      }
+
+        """.trimIndent(),
+      )
     }
-
-      """.trimIndent(),
-    )
   }
 
   @Test
