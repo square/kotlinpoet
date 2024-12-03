@@ -159,7 +159,7 @@ public class TypeSpec private constructor(
         }
 
         if (allSuperTypes.isNotEmpty()) {
-          codeWriter.emitCode(allSuperTypes.joinToCode(separator = ", ", prefix = " : "))
+          codeWriter.emitCode(allSuperTypes.joinToCode(prefix = " : "))
         }
         if (hasNoBody) {
           codeWriter.emit(" {\n}")
