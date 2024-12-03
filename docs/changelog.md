@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+* Fix: Support delegates on anonymous classes. (#2034)
+
 ## Version 2.0.0
 
 Thanks to [@brokenhappy][brokenhappy], [@tajobe][tajobe], [@niyajali][niyajali],
