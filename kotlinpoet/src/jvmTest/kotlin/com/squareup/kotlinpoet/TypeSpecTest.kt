@@ -4396,7 +4396,7 @@ class TypeSpecTest {
       )
       .addSuperinterface(
         Runnable::class,
-        CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class.asTypeName()),
+        CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class),
       )
       .build()
 
@@ -4435,17 +4435,13 @@ class TypeSpecTest {
   // https://github.com/square/kotlinpoet/issues/2033
   @Test fun testMultipleDelegatesOnAnonymousObject() {
     val type = TypeSpec.anonymousClassBuilder()
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .build(),
-      )
       .addSuperinterface(
         Function::class.parameterizedBy(String::class, Int::class),
         CodeBlock.of("kotlin.Function ({ text -> text.toIntOrNull() ?: 0 })"),
       )
       .addSuperinterface(
         Runnable::class,
-        CodeBlock.of("java.lang.Runnable ({ %T.debug(\"Hello world\") })", Logger::class.asTypeName()),
+        CodeBlock.of("java.lang.Runnable ({ %T.debug(\"Hello world\") })", Logger::class),
       )
       .build()
 
