@@ -142,23 +142,24 @@ public class TypeSpec private constructor(
         codeWriter.emitCode("object")
         val supertype = if (superclass != ANY) {
           if (!areNestedExternal && !modifiers.contains(EXPECT)) {
-            listOf(CodeBlock.of(" %T(%L)", superclass, superclassConstructorParametersBlock))
+            listOf(CodeBlock.of("%T(%L)", superclass, superclassConstructorParametersBlock))
           } else {
-            listOf(CodeBlock.of(" %T", superclass))
+            listOf(CodeBlock.of("%T", superclass))
           }
         } else {
           listOf()
         }
 
-        val allSuperTypes = supertype + if (superinterfaces.isNotEmpty()) {
-          superinterfaces.keys.map { CodeBlock.of(" %T", it) }
-        } else {
-          emptyList()
+        val allSuperTypes = supertype + superinterfaces.entries.map { (type, init) ->
+          if (init == null) {
+            CodeBlock.of("%T", type)
+          } else {
+            CodeBlock.of("%T by %L", type, init)
+          }
         }
 
         if (allSuperTypes.isNotEmpty()) {
-          codeWriter.emitCode(" :")
-          codeWriter.emitCode(allSuperTypes.joinToCode(","))
+          codeWriter.emitCode(allSuperTypes.joinToCode(separator = ", ", prefix = " : "))
         }
         if (hasNoBody) {
           codeWriter.emit(" {\n}")
