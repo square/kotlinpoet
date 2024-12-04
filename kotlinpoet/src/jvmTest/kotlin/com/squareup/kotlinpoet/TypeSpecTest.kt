@@ -4416,6 +4416,7 @@ class TypeSpecTest {
 
     assertThat(toString(type)).isEqualTo(expect)
   }
+
 // https://github.com/square/kotlinpoet/issues/2033
   @Test fun testDelegateOnAnonymousObject() {
     val type = TypeSpec.anonymousClassBuilder()
@@ -4432,6 +4433,7 @@ class TypeSpecTest {
 
     assertThat(type.toString()).isEqualTo(expect)
   }
+
   // https://github.com/square/kotlinpoet/issues/2033
   @Test fun testMultipleDelegatesOnAnonymousObject() {
     val type = TypeSpec.anonymousClassBuilder()
@@ -4452,7 +4454,6 @@ class TypeSpecTest {
 
     assertThat(type.toString()).isEqualTo(expect)
   }
-
 
   @Test fun testNoSuchParameterDelegate() {
     assertThrows<IllegalArgumentException> {
