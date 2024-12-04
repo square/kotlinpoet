@@ -4367,7 +4367,7 @@ class TypeSpecTest {
     val type = TypeSpec.objectBuilder("Guac")
       .addSuperinterface(
         Consumer::class.parameterizedBy(String::class),
-        CodeBlock.of("({ println(it) })"),
+        CodeBlock.of("Consumer({ println(it) })"),
       )
       .build()
 
@@ -4377,7 +4377,7 @@ class TypeSpecTest {
         |import java.util.function.Consumer
         |import kotlin.String
         |
-        |public object Guac : Consumer<String> by ({ println(it) })
+        |public object Guac : Consumer<String> by Consumer({ println(it) })
         |
     """.trimMargin()
 
@@ -4396,7 +4396,7 @@ class TypeSpecTest {
       )
       .addSuperinterface(
         Runnable::class,
-        CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class.asTypeName()),
+        CodeBlock.of("Runnable ({ %T.debug(\"Hello world\") })", Logger::class),
       )
       .build()
 
@@ -4415,6 +4415,44 @@ class TypeSpecTest {
     """.trimMargin()
 
     assertThat(toString(type)).isEqualTo(expect)
+  }
+
+// https://github.com/square/kotlinpoet/issues/2033
+  @Test fun testDelegateOnAnonymousObject() {
+    val type = TypeSpec.anonymousClassBuilder()
+      .addSuperinterface(
+        Consumer::class.parameterizedBy(String::class),
+        CodeBlock.of("java.util.function.Consumer({ println(it) })"),
+      )
+      .build()
+
+    val expect = """
+        |object : java.util.function.Consumer<kotlin.String> by java.util.function.Consumer({ println(it) }) {
+        |}
+    """.trimMargin()
+
+    assertThat(type.toString()).isEqualTo(expect)
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2033
+  @Test fun testMultipleDelegatesOnAnonymousObject() {
+    val type = TypeSpec.anonymousClassBuilder()
+      .addSuperinterface(
+        Function::class.parameterizedBy(String::class, Int::class),
+        CodeBlock.of("kotlin.Function ({ text -> text.toIntOrNull() ?: 0 })"),
+      )
+      .addSuperinterface(
+        Runnable::class,
+        CodeBlock.of("java.lang.Runnable ({ %T.debug(\"Hello world\") })", Logger::class),
+      )
+      .build()
+
+    val expect = """
+        |object : kotlin.Function<kotlin.String, kotlin.Int> by kotlin.Function ({ text -> text.toIntOrNull() ?: 0 }), java.lang.Runnable by java.lang.Runnable ({ java.util.logging.Logger.debug("Hello world") }) {
+        |}
+    """.trimMargin()
+
+    assertThat(type.toString()).isEqualTo(expect)
   }
 
   @Test fun testNoSuchParameterDelegate() {
