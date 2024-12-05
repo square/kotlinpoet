@@ -202,7 +202,7 @@ public class AnnotationSpec private constructor(
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         val javaAnnotation = annotation as java.lang.annotation.Annotation
         val builder = builder(javaAnnotation.annotationType())
-          .tag(annotation)
+          .tag<Annotation>(annotation)
         val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
         for (method in methods) {
           val value = method.invoke(annotation)
