@@ -1253,6 +1253,10 @@ public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
 	public static final fun volatile (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 }
 
+public final class com/squareup/kotlinpoet/jvm/alias/JvmClass_jvmKt {
+	public static final fun getKotlin (Ljava/lang/Class;)Lkotlin/reflect/KClass;
+}
+
 public abstract interface annotation class com/squareup/kotlinpoet/jvm/alias/JvmTypeAliasKotlinPoetApi : java/lang/annotation/Annotation {
 }
 
