@@ -15,7 +15,4 @@
  */
 package com.squareup.kotlinpoet.jvm.alias
 
-/**
- * A typealias annotation for [kotlin.jvm.JvmDefaultWithCompatibility].
- */
 public actual typealias JvmDefaultWithCompatibility = kotlin.jvm.JvmDefaultWithCompatibility

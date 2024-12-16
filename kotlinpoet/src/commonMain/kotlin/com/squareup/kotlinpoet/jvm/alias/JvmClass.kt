@@ -22,7 +22,4 @@ import kotlin.reflect.KClass
  */
 public expect class JvmClass<T : Any>
 
-/**
- * Convert [JvmClass] to [KClass].
- */
-public expect val <T : Any> JvmClass<T>.kotlin: KClass<T>
+internal expect val <T : Any> JvmClass<T>.kotlin: KClass<T>

@@ -18,13 +18,7 @@ package com.squareup.kotlinpoet.jvm.alias
 import kotlin.jvm.kotlin as jvmKotlin
 import kotlin.reflect.KClass
 
-/**
- * An expected typealias for [Class].
- */
 public actual typealias JvmClass<T> = Class<T>
 
-/**
- * Convert [JvmClass] to [KClass].
- */
-public actual val <T : Any> JvmClass<T>.kotlin: KClass<T>
+internal actual val <T : Any> JvmClass<T>.kotlin: KClass<T>
   get() = jvmKotlin
