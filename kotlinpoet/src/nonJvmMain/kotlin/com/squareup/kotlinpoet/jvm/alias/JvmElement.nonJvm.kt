@@ -15,14 +15,14 @@
  */
 package com.squareup.kotlinpoet.jvm.alias
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 public actual interface JvmElement
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 public actual interface JvmTypeElement : JvmElement
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 public actual interface JvmExecutableElement : JvmElement
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 public actual interface JvmVariableElement : JvmElement

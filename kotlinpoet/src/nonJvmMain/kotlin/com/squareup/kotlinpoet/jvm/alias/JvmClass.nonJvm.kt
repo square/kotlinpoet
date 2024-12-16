@@ -17,9 +17,9 @@ package com.squareup.kotlinpoet.jvm.alias
 
 import kotlin.reflect.KClass
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 public actual class JvmClass<T : Any> private constructor()
 
-@JvmTypeAliasKotlinPoetApi
+@JvmOnlyKotlinPoetApi
 internal actual val <T : Any> JvmClass<T>.kotlin: KClass<T>
   get() = throw UnsupportedOperationException()

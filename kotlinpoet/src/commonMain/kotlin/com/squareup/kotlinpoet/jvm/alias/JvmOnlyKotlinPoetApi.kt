@@ -26,4 +26,4 @@ package com.squareup.kotlinpoet.jvm.alias
   message = "An expected type for JVM to `typealias` only." +
     " Don't implement or use it in non-JVM platforms.",
 )
-public annotation class JvmTypeAliasKotlinPoetApi
+public annotation class JvmOnlyKotlinPoetApi
