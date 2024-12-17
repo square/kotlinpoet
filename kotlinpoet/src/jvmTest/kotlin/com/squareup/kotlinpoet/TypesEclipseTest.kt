@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.base.Charsets.UTF_8
 import com.google.common.collect.ImmutableSet
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler
 import org.junit.Rule
@@ -23,6 +22,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.JUnit4
 import org.junit.runners.model.Statement
+import java.nio.charset.StandardCharsets.UTF_8
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicReference
 import javax.annotation.processing.AbstractProcessor
