@@ -796,7 +796,7 @@ internal class CodeWriter(
           val aliasPrefix = segments.takeLast(min(segmentsToUse, segments.size))
             .joinToString(separator = "")
             .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }
-          val aliasSuffix = "_".repeat(segmentsToUse - segments.size)
+          val aliasSuffix = "_".repeat((segmentsToUse - segments.size).coerceAtLeast(0))
           val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar) + aliasSuffix
           // If this name has already been imported (e.g. a regular import already exists with this name),
           // continue trying with a greater number of segments.
