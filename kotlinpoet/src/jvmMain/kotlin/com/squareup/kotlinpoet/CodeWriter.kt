@@ -405,6 +405,7 @@ internal class CodeWriter(
         implicitModifiers = if (omitImplicitModifiers) emptySet() else setOf(KModifier.PUBLIC),
         includeKdocTags = true,
       )
+
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
       else -> emit(o.toString())
@@ -751,7 +752,7 @@ internal class CodeWriter(
       val imported = mutableMapOf<String, Set<T>>()
       forEach { (simpleName, qualifiedNames) ->
         val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
-        if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
+        if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames && simpleName !in imported) {
           val canonicalName = canonicalNamesToQualifiedNames.keys.single()
           generatedImports[canonicalName] = Import(canonicalName)
 
@@ -760,7 +761,7 @@ internal class CodeWriter(
           // functions declared in the same package. In these cases, a single import will suffice for all of them.
           imported[simpleName] = qualifiedNames
         } else {
-          generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases)
+          generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases, imported.keys)
             .onEach { (a, qualifiedName) ->
               val alias = a.escapeAsAlias()
               val canonicalName = qualifiedName.computeCanonicalName()
@@ -777,6 +778,7 @@ internal class CodeWriter(
       simpleName: String,
       canonicalNamesToQualifiedNames: Map<String, T>,
       capitalizeAliases: Boolean,
+      imported: Set<String>,
     ): List<Pair<String, T>> {
       val canonicalNameSegmentsToQualifiedNames = canonicalNamesToQualifiedNames.mapKeys { (canonicalName, _) ->
         canonicalName.split('.')
@@ -787,14 +789,21 @@ internal class CodeWriter(
       val aliasNames = mutableMapOf<String, T>()
       var segmentsToUse = 0
       // Iterate until we have unique aliases for all names.
-      while (aliasNames.size != canonicalNamesToQualifiedNames.size) {
+      outer@ while (aliasNames.size != canonicalNamesToQualifiedNames.size) {
         segmentsToUse += 1
         aliasNames.clear()
         for ((segments, qualifiedName) in canonicalNameSegmentsToQualifiedNames) {
           val aliasPrefix = segments.takeLast(min(segmentsToUse, segments.size))
             .joinToString(separator = "")
             .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }
-          val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar)
+          val aliasSuffix = "_".repeat(segmentsToUse - segments.size)
+          val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar) + aliasSuffix
+          // If this name has already been imported (e.g. a regular import already exists with this name),
+          // continue trying with a greater number of segments.
+          if (aliasName in imported) {
+            aliasNames.clear()
+            continue@outer
+          }
           aliasNames[aliasName] = qualifiedName
         }
       }

@@ -4,6 +4,7 @@ Change Log
 ## Unreleased
 
 * Fix: Support delegates on anonymous classes. (#2034)
+* Fix: Prevent aliased imports from colliding with existing imports (#2046)
 
 ## Version 2.0.0
 

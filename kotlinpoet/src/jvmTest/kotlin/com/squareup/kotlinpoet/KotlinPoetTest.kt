@@ -1489,4 +1489,111 @@ class KotlinPoetTest {
       """.trimMargin(),
     )
   }
+
+  // https://github.com/square/kotlinpoet/issues/2046
+  @Test fun importAliasCollisionWithRegularImportWhenAliasesComputedFirst() {
+    val class1 = ClassName("com.squareup.taco", "Meal")
+    val class2 = ClassName("com.squareup.burrito", "Meal")
+    val class3 = ClassName("com.squareup.meal", "TacoMeal")
+    val source = FileSpec.builder("com.squareup.food", "Food")
+      .addType(
+        TypeSpec.classBuilder("Food")
+          .addProperty("tacoPackageMeal", class1)
+          .addProperty("burritoPackageMeal", class2)
+          .addProperty("mealPackageTacoMeal", class3)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+        |package com.squareup.food
+        |
+        |import com.squareup.burrito.Meal as BurritoMeal
+        |import com.squareup.meal.TacoMeal as MealTacoMeal
+        |import com.squareup.taco.Meal as TacoMeal
+        |
+        |public class Food {
+        |  public val tacoPackageMeal: TacoMeal
+        |
+        |  public val burritoPackageMeal: BurritoMeal
+        |
+        |  public val mealPackageTacoMeal: MealTacoMeal
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2046
+  @Test fun importAliasCollisionWithImportWhenRegularImportComputedFirst() {
+    val class1 = ClassName("com.squareup.taco", "Meal")
+    val class2 = ClassName("com.squareup.burrito", "Meal")
+    val class3 = ClassName("com.squareup.meal", "TacoMeal")
+    val source = FileSpec.builder("com.squareup.food", "Food")
+      .addType(
+        TypeSpec.classBuilder("Food")
+          .addProperty("mealPackageTacoMeal", class3)
+          .addProperty("tacoPackageMeal", class1)
+          .addProperty("burritoPackageMeal", class2)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+        |package com.squareup.food
+        |
+        |import com.squareup.meal.TacoMeal
+        |import com.squareup.burrito.Meal as SquareupBurritoMeal
+        |import com.squareup.taco.Meal as SquareupTacoMeal
+        |
+        |public class Food {
+        |  public val mealPackageTacoMeal: TacoMeal
+        |
+        |  public val tacoPackageMeal: SquareupTacoMeal
+        |
+        |  public val burritoPackageMeal: SquareupBurritoMeal
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2046
+  @Test fun importAliasCollisionWithImportWhenWeRunOutOfSegments() {
+    val class0 = ClassName("squareup", "SquareupTacoMeal")
+    val class1 = ClassName("squareup.taco", "Meal")
+    val class2 = ClassName("squareup.burrito", "Meal")
+    val class3 = ClassName("squareup", "TacoMeal")
+    val source = FileSpec.builder("squareup.food", "Food")
+      .addType(
+        TypeSpec.classBuilder("Food")
+          .addProperty("noMoreSegments", class0)
+          .addProperty("mealPackageTacoMeal", class3)
+          .addProperty("tacoPackageMeal", class1)
+          .addProperty("burritoPackageMeal", class2)
+          .build(),
+      )
+      .build()
+    assertThat(source.toString()).isEqualTo(
+      """
+        |package squareup.food
+        |
+        |import squareup.SquareupTacoMeal
+        |import squareup.TacoMeal
+        |import squareup.burrito.Meal as SquareupBurritoMeal_
+        |import squareup.taco.Meal as SquareupTacoMeal_
+        |
+        |public class Food {
+        |  public val noMoreSegments: SquareupTacoMeal
+        |
+        |  public val mealPackageTacoMeal: TacoMeal
+        |
+        |  public val tacoPackageMeal: SquareupTacoMeal_
+        |
+        |  public val burritoPackageMeal: SquareupBurritoMeal_
+        |}
+        |
+      """.trimMargin(),
+    )
+  }
 }
