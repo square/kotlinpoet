@@ -1508,16 +1508,16 @@ class KotlinPoetTest {
       """
         |package com.squareup.food
         |
-        |import com.squareup.burrito.Meal as BurritoMeal
-        |import com.squareup.meal.TacoMeal as MealTacoMeal
-        |import com.squareup.taco.Meal as TacoMeal
+        |import com.squareup.meal.TacoMeal
+        |import com.squareup.burrito.Meal as SquareupBurritoMeal
+        |import com.squareup.taco.Meal as SquareupTacoMeal
         |
         |public class Food {
-        |  public val tacoPackageMeal: TacoMeal
+        |  public val tacoPackageMeal: SquareupTacoMeal
         |
-        |  public val burritoPackageMeal: BurritoMeal
+        |  public val burritoPackageMeal: SquareupBurritoMeal
         |
-        |  public val mealPackageTacoMeal: MealTacoMeal
+        |  public val mealPackageTacoMeal: TacoMeal
         |}
         |
       """.trimMargin(),

@@ -750,27 +750,29 @@ internal class CodeWriter(
       referencedNames: Set<String>,
     ): Map<String, Set<T>> {
       val imported = mutableMapOf<String, Set<T>>()
-      forEach { (simpleName, qualifiedNames) ->
-        val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
-        if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames && simpleName !in imported) {
-          val canonicalName = canonicalNamesToQualifiedNames.keys.single()
-          generatedImports[canonicalName] = Import(canonicalName)
+      entries
+        .sortedBy { (_, qualifiedNames) -> qualifiedNames.size }
+        .forEach { (simpleName, qualifiedNames) ->
+          val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
+          if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
+            val canonicalName = canonicalNamesToQualifiedNames.keys.single()
+            generatedImports[canonicalName] = Import(canonicalName)
 
-          // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
-          // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
-          // functions declared in the same package. In these cases, a single import will suffice for all of them.
-          imported[simpleName] = qualifiedNames
-        } else {
-          generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases, imported.keys)
-            .onEach { (a, qualifiedName) ->
-              val alias = a.escapeAsAlias()
-              val canonicalName = qualifiedName.computeCanonicalName()
-              generatedImports[canonicalName] = Import(canonicalName, alias)
+            // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
+            // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
+            // functions declared in the same package. In these cases, a single import will suffice for all of them.
+            imported[simpleName] = qualifiedNames
+          } else {
+            generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases, imported.keys)
+              .onEach { (a, qualifiedName) ->
+                val alias = a.escapeAsAlias()
+                val canonicalName = qualifiedName.computeCanonicalName()
+                generatedImports[canonicalName] = Import(canonicalName, alias)
 
-              imported[alias] = setOf(qualifiedName)
-            }
+                imported[alias] = setOf(qualifiedName)
+              }
+          }
         }
-      }
       return imported
     }
 
