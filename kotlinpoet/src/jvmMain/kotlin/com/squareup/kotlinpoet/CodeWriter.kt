@@ -751,6 +751,9 @@ internal class CodeWriter(
     ): Map<String, Set<T>> {
       val imported = mutableMapOf<String, Set<T>>()
       entries
+        // Pre-sorting entries by the number of qualified names to ensure we first process simple names
+        // that don't require aliases (qualifiedNames.size == 1), that way we don't run into conflicts when
+        // a newly generated alias now clashes with a simple name that didn't originally need an alias.
         .sortedBy { (_, qualifiedNames) -> qualifiedNames.size }
         .forEach { (simpleName, qualifiedNames) ->
           val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
