@@ -292,7 +292,7 @@ public sealed class TypeName constructor(
 
 @JvmField public val MUTABLE_MAP: ClassName = ClassName("kotlin.collections", "MutableMap")
 
-@JvmField public val MUTABLE_MAP_ENTRY: ClassName = MUTABLE_MAP.nestedClass("Entry")
+@JvmField public val MUTABLE_MAP_ENTRY: ClassName = MUTABLE_MAP.nestedClass("MutableEntry")
 
 @JvmField public val BOOLEAN_ARRAY: ClassName = ClassName("kotlin", "BooleanArray")
 
