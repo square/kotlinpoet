@@ -1248,7 +1248,7 @@ class FunSpecTest {
         FunSpec.builder("pid")
           .returns(className.copy(nullable = true))
           .addCode("return %T()", className)
-          .build()
+          .build(),
       )
       .build()
     assertThat(spec.toString()).isEqualTo(
