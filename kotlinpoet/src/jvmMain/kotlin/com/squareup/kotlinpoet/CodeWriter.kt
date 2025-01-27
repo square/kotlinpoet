@@ -514,7 +514,7 @@ internal class CodeWriter(
     // Check for name clashes with members.
     if (simpleName !in importableMembers) {
       // Maintain the inner class name if the alias exists.
-      val newImportTypes = if (alias == null) {
+      val newImportTypes = if (alias == null || className.isNullable) {
         topLevelClassName
       } else {
         className
