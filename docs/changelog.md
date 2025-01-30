@@ -5,8 +5,7 @@ Change Log
 
 * Fix: Support delegates on anonymous classes. (#2034)
 * Fix: `TypeName.MUTABLE_MAP_ENTRY` now correctly uses the `MutableEntry` nested class name. (#2061)
-* Fix: Aliased import ignored for nullable variants of that type. (#2020)
-* Fix: Aliased import may throw java.lang.IllegalArgumentException if nullable and not nullable variants of it are used. (#2021)
+* Fix: Use the same aliased import for both the nullable and non-nullable versions of a type (#2020 #2021)
 
 
 ## Version 2.0.0
