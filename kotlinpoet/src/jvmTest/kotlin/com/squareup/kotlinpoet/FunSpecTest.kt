@@ -1262,28 +1262,28 @@ class FunSpecTest {
       """.trimMargin(),
     )
   }
-  
+
   @Test fun importAliasWithNullableReturnNestedClass() {
-  val packageName = "org.example"
-  val className = ClassName(packageName, "Person", "Id")
-  val spec = FileSpec.builder("org.example", "SomeFile")
-    .addAliasedImport(className, "PID")
-    .addFunction(
-      FunSpec.builder("pid")
-        .returns(className.copy(nullable = true))
-        .addCode("return %T()", className)
-        .build(),
-    )
-    .build()
-  assertThat(spec.toString()).isEqualTo(
-    """
+    val packageName = "org.example"
+    val className = ClassName(packageName, "Person", "Id")
+    val spec = FileSpec.builder("org.example", "SomeFile")
+      .addAliasedImport(className, "PID")
+      .addFunction(
+        FunSpec.builder("pid")
+          .returns(className.copy(nullable = true))
+          .addCode("return %T()", className)
+          .build(),
+      )
+      .build()
+    assertThat(spec.toString()).isEqualTo(
+      """
     |package org.example
     |
     |import org.example.Person.Id as PID
     |
     |public fun pid(): PID? = PID()
     |
-    """.trimMargin(),
-  )
-}
+      """.trimMargin(),
+    )
+  }
 }
