@@ -517,7 +517,7 @@ internal class CodeWriter(
       val newImportTypes = if (alias == null) {
         topLevelClassName
       } else {
-        className
+        className.copy(nullable = false) as ClassName
       }
       importableTypes[simpleName] = importableTypes.getValue(simpleName) + newImportTypes
     }
