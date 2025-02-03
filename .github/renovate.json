@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "semanticCommits": "disabled",
+  "packageRules": [
+    {
+      "matchManagers": [
+        "pip_requirements"
+      ],
+      "automerge": true
+    },
+    {
+      "groupName": "Kotlin and KSP",
+      "matchPackageNames": [
+        "/^org\\.jetbrains\\.kotlin:(?:[\\w-]+)$/",
+        "/^com\\.google\\.devtools\\.ksp:(?:[\\w-]+)$/"
+      ]
+    },
+    {
+      "matchManagers": [
+        "pip_requirements"
+      ],
+      "groupName": "MkDocs",
+      "matchPackageNames": [
+        "mkdocs{/,}**"
+      ]
+    }
+  ]
+}
