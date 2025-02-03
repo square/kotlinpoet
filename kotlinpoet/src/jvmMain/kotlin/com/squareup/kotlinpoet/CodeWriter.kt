@@ -405,6 +405,7 @@ internal class CodeWriter(
         implicitModifiers = if (omitImplicitModifiers) emptySet() else setOf(KModifier.PUBLIC),
         includeKdocTags = true,
       )
+
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
       else -> emit(o.toString())
@@ -749,27 +750,32 @@ internal class CodeWriter(
       referencedNames: Set<String>,
     ): Map<String, Set<T>> {
       val imported = mutableMapOf<String, Set<T>>()
-      forEach { (simpleName, qualifiedNames) ->
-        val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
-        if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
-          val canonicalName = canonicalNamesToQualifiedNames.keys.single()
-          generatedImports[canonicalName] = Import(canonicalName)
+      entries
+        // Pre-sorting entries by the number of qualified names to ensure we first process simple names
+        // that don't require aliases (qualifiedNames.size == 1), that way we don't run into conflicts when
+        // a newly generated alias now clashes with a simple name that didn't originally need an alias.
+        .sortedBy { (_, qualifiedNames) -> qualifiedNames.size }
+        .forEach { (simpleName, qualifiedNames) ->
+          val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
+          if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
+            val canonicalName = canonicalNamesToQualifiedNames.keys.single()
+            generatedImports[canonicalName] = Import(canonicalName)
 
-          // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
-          // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
-          // functions declared in the same package. In these cases, a single import will suffice for all of them.
-          imported[simpleName] = qualifiedNames
-        } else {
-          generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases)
-            .onEach { (a, qualifiedName) ->
-              val alias = a.escapeAsAlias()
-              val canonicalName = qualifiedName.computeCanonicalName()
-              generatedImports[canonicalName] = Import(canonicalName, alias)
+            // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
+            // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
+            // functions declared in the same package. In these cases, a single import will suffice for all of them.
+            imported[simpleName] = qualifiedNames
+          } else {
+            generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases, imported.keys)
+              .onEach { (a, qualifiedName) ->
+                val alias = a.escapeAsAlias()
+                val canonicalName = qualifiedName.computeCanonicalName()
+                generatedImports[canonicalName] = Import(canonicalName, alias)
 
-              imported[alias] = setOf(qualifiedName)
-            }
+                imported[alias] = setOf(qualifiedName)
+              }
+          }
         }
-      }
       return imported
     }
 
@@ -777,6 +783,7 @@ internal class CodeWriter(
       simpleName: String,
       canonicalNamesToQualifiedNames: Map<String, T>,
       capitalizeAliases: Boolean,
+      imported: Set<String>,
     ): List<Pair<String, T>> {
       val canonicalNameSegmentsToQualifiedNames = canonicalNamesToQualifiedNames.mapKeys { (canonicalName, _) ->
         canonicalName.split('.')
@@ -787,14 +794,21 @@ internal class CodeWriter(
       val aliasNames = mutableMapOf<String, T>()
       var segmentsToUse = 0
       // Iterate until we have unique aliases for all names.
-      while (aliasNames.size != canonicalNamesToQualifiedNames.size) {
+      outer@ while (aliasNames.size != canonicalNamesToQualifiedNames.size) {
         segmentsToUse += 1
         aliasNames.clear()
         for ((segments, qualifiedName) in canonicalNameSegmentsToQualifiedNames) {
           val aliasPrefix = segments.takeLast(min(segmentsToUse, segments.size))
             .joinToString(separator = "")
             .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }
-          val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar)
+          val aliasSuffix = "_".repeat((segmentsToUse - segments.size).coerceAtLeast(0))
+          val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar) + aliasSuffix
+          // If this name has already been imported (e.g. a regular import already exists with this name),
+          // continue trying with a greater number of segments.
+          if (aliasName in imported) {
+            aliasNames.clear()
+            continue@outer
+          }
           aliasNames[aliasName] = qualifiedName
         }
       }
