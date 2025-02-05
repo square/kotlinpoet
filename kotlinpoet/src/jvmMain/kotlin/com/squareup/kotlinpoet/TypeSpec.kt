@@ -873,9 +873,12 @@ public class TypeSpec private constructor(
       if (isFunInterface) {
         // Note: Functional interfaces can contain any number of non-abstract functions.
         val abstractFunSpecs = funSpecs.filter { ABSTRACT in it.modifiers }
-        check(abstractFunSpecs.size == 1) {
-          "Functional interfaces must have exactly one abstract function. Contained " +
-            "${abstractFunSpecs.size}: ${abstractFunSpecs.map { it.name }}"
+
+        if (superinterfaces.isEmpty()) {
+          check(abstractFunSpecs.size == 1) {
+            "Functional interfaces must have exactly one abstract function. Contained " +
+              "${abstractFunSpecs.size}: ${abstractFunSpecs.map { it.name }}"
+          }
         }
       }
 
