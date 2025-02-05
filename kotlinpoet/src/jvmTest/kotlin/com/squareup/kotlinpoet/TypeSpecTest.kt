@@ -1310,6 +1310,41 @@ class TypeSpecTest {
     )
   }
 
+  @Test fun funInterfaceExtendsFunInterfaceWithoutMethod() {
+    val food = ClassName("com.squareup.food", "Food")
+    val taco = ClassName(tacosPackage, "Taco")
+
+    val source = FileSpec.builder("com.squareup.food", "Food")
+      .addType(
+        TypeSpec.funInterfaceBuilder(food)
+          .addFunction(
+            FunSpec.builder("sam")
+              .addModifiers(ABSTRACT)
+              .build(),
+          )
+          .build(),
+      )
+      .addType(
+        TypeSpec.funInterfaceBuilder(taco)
+          .addSuperinterface(food)
+          .build(),
+      )
+      .build()
+
+    assertThat(source.toString()).isEqualTo(
+      """
+        |package com.squareup.food
+        |
+        |public fun interface Food {
+        |  public fun sam()
+        |}
+        |
+        |public fun interface Taco : Food
+        |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun funInterface_empty_shouldError() {
     assertThrows<IllegalStateException> {
       TypeSpec.funInterfaceBuilder("Taco")
