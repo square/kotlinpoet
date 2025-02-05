@@ -2164,7 +2164,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     fun example()
   }
 
-  fun interface SubFunInterface: FunInterface
+  fun interface SubFunInterface : FunInterface
 
   @Test
   fun selfReferencingTypeParams() {
