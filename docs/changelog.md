@@ -7,7 +7,7 @@ Change Log
 * Fix: Prevent aliased imports from colliding with existing imports (#2046)
 * Fix: `TypeName.MUTABLE_MAP_ENTRY` now correctly uses the `MutableEntry` nested class name. (#2061)
 * Fix: Use the same aliased import for both the nullable and non-nullable versions of a type (#2020 #2021)
-
+* Fix: Allow zero methods in a functional interface if it has a superinterface (#2075)
 
 ## Version 2.0.0
 

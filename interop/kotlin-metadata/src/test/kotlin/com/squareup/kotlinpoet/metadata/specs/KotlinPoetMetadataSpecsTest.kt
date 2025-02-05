@@ -2149,11 +2149,22 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       }
       """.trimIndent(),
     )
+
+    val subFunInterface = SubFunInterface::class.toTypeSpecWithTestHandler()
+
+    //language=kotlin
+    assertThat(subFunInterface.trimmedToString()).isEqualTo(
+      """
+      public fun interface SubFunInterface : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.FunInterface
+      """.trimIndent(),
+    )
   }
 
   fun interface FunInterface {
     fun example()
   }
+
+  fun interface SubFunInterface : FunInterface
 
   @Test
   fun selfReferencingTypeParams() {
