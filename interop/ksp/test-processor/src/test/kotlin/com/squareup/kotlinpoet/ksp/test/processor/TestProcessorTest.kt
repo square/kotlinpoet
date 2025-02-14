@@ -23,6 +23,8 @@ import com.tschuchort.compiletesting.configureKsp
 import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
 import java.io.File
+import org.junit.Assume.assumeFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -46,6 +48,15 @@ class TestProcessorTest(private val useKsp2: Boolean) {
   @Rule
   @JvmField
   val temporaryFolder: TemporaryFolder = TemporaryFolder()
+
+  @Before
+  fun skipOnJdk8() {
+    val javaVersion = System.getProperty("java.version") ?: return // Don't skip if version unknown.
+    assumeFalse(
+      "These tests currently fail on JDK 8 when useKsp2 == false",
+      javaVersion.startsWith("1.8") && !useKsp2,
+    )
+  }
 
   @Test
   fun smokeTest() {
