@@ -26,11 +26,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 21
+          java-version-file: .github/workflows/.java-version
 
       - name: Full build
         if: matrix.os == 'ubuntu-latest'
@@ -48,11 +47,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 21
+          java-version-file: .github/workflows/.java-version
 
       - name: Prep docs
         run: ./gradlew dokkaHtml
