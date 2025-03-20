@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.kotlinpoet.KModifier.VARARG
-import javax.annotation.Nullable
 import kotlin.test.Test
 
 @OptIn(ExperimentalKotlinPoetApi::class)
@@ -133,7 +132,7 @@ class LambdaTypeNameTest {
       LambdaTypeName.get(
         parameters = arrayOf(
           ParameterSpec.builder("foo", Int::class)
-            .addAnnotation(Nullable::class)
+            .addAnnotation(Deprecated::class)
             .build(),
         ),
         returnType = Unit::class.asTypeName(),
