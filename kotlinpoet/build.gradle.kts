@@ -82,7 +82,6 @@ kotlin {
       dependencies {
         implementation(libs.kotlin.junit)
         implementation(libs.truth)
-        implementation(libs.guava)
         implementation(libs.compileTesting)
         implementation(libs.jimfs)
         implementation(libs.ecj)
@@ -116,4 +115,3 @@ tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlinJ
     freeCompilerArgs.add("-opt-in=com.squareup.kotlinpoet.DelicateKotlinPoetApi")
   }
 }
-

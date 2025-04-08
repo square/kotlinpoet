@@ -32,7 +32,6 @@ tasks.compileTestKotlin {
 
 dependencies {
   implementation(libs.autoCommon)
-  implementation(libs.guava)
   api(libs.kotlin.metadata)
   api(projects.kotlinpoet)
 

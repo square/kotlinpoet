@@ -15,8 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.io.ByteStreams
 import com.google.common.truth.Truth.assertThat
+import java.io.InputStream
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.tools.JavaFileObject.Kind
@@ -56,7 +56,7 @@ class FileReadingTest {
       .addType(TypeSpec.classBuilder("Test").build())
       .addFileComment("Pi\u00f1ata\u00a1")
       .build()
-    val bytes = ByteStreams.toByteArray(source.toJavaFileObject().openInputStream())
+    val bytes = source.toJavaFileObject().openInputStream().use(InputStream::readBytes)
 
     // KotlinPoet always uses UTF-8.
     assertThat(bytes).isEqualTo(source.toString().toByteArray(UTF_8))
