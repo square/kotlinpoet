@@ -18,8 +18,6 @@ package com.squareup.kotlinpoet.metadata.classinspectors
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
 import com.google.auto.common.Visibility
-import com.google.common.collect.LinkedHashMultimap
-import com.google.common.collect.SetMultimap
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.ClassName
@@ -234,7 +232,7 @@ public class ElementsClassInspector private constructor(
    * overrides.
    */
   private fun ExecutableElement.isOverriddenIn(type: TypeElement): Boolean {
-    val methodMap = LinkedHashMultimap.create<String, ExecutableElement>()
+    val methodMap = mutableMapOf<String, MutableList<ExecutableElement>>()
     type.getAllMethods(MoreElements.getPackage(type), methodMap)
     // Find methods that are overridden using `Elements.overrides`. We reduce the performance
     // impact by:
@@ -245,8 +243,7 @@ public class ElementsClassInspector private constructor(
     //       which means we only have to check a method against the ones that follow it in
     //       that order. Below, this means we just need to find the index of our target method
     //       and compare against only preceding ones.
-    val methodList = methodMap.asMap()[simpleName.toString()]?.toList()
-      ?: return false
+    val methodList = methodMap[simpleName.toString()] ?: return false
     val signature = jvmMethodSignature(types)
     return methodList.asSequence()
       .filter { it.jvmMethodSignature(types) == signature }
@@ -269,7 +266,7 @@ public class ElementsClassInspector private constructor(
    */
   private fun TypeElement.getAllMethods(
     pkg: PackageElement,
-    methodsAccumulator: SetMultimap<String, ExecutableElement>,
+    methodsAccumulator: MutableMap<String, MutableList<ExecutableElement>>,
   ) {
     for (superInterface in interfaces) {
       MoreTypes.asTypeElement(superInterface).getAllMethods(pkg, methodsAccumulator)
@@ -285,7 +282,7 @@ public class ElementsClassInspector private constructor(
         ElementsModifier.PRIVATE !in method.modifiers &&
         method.isVisibleFrom(pkg)
       ) {
-        methodsAccumulator.put(method.simpleName.toString(), method)
+        methodsAccumulator.getOrPut(method.simpleName.toString(), ::ArrayList).add(method)
       }
     }
   }

@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.collect.Iterables.getOnlyElement
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
@@ -93,7 +92,7 @@ class FunSpecTest {
 
   @Test fun overrideEverything() {
     val classElement = getElement(Everything::class.java)
-    val methodElement = getOnlyElement(methodsIn(classElement.enclosedElements))
+    val methodElement = methodsIn(classElement.enclosedElements).single()
     val funSpec = FunSpec.overriding(methodElement).build()
     assertThat(funSpec.toString()).isEqualTo(
       """
@@ -107,7 +106,7 @@ class FunSpecTest {
 
   @Test fun overrideDoesNotCopyOverrideAnnotation() {
     val classElement = getElement(HasAnnotation::class.java)
-    val exec = getOnlyElement(methodsIn(classElement.enclosedElements))
+    val exec = methodsIn(classElement.enclosedElements).single()
     val funSpec = FunSpec.overriding(exec).build()
     assertThat(funSpec.toString()).isEqualTo(
       """
@@ -840,7 +839,7 @@ class FunSpecTest {
     assertThat(a == b).isTrue()
     assertThat(a.hashCode()).isEqualTo(b.hashCode())
     val classElement = getElement(Everything::class.java)
-    val methodElement = getOnlyElement(methodsIn(classElement.enclosedElements))
+    val methodElement = methodsIn(classElement.enclosedElements).single()
     a = FunSpec.overriding(methodElement).build()
     b = FunSpec.overriding(methodElement).build()
     assertThat(a == b).isTrue()

@@ -15,7 +15,6 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.collect.ImmutableMap
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
@@ -2238,8 +2237,9 @@ class TypeSpecTest {
       .endControlFlow()
       .addStatement("return size")
       .build()
+    val immutableMap = ClassName("com.google.common.collect", "ImmutableMap")
     val propertyBlock = CodeBlock.builder()
-      .add("%T.<%T, %T>builder()", ImmutableMap::class, String::class, String::class)
+      .add("%T.<%T, %T>builder()", immutableMap, String::class, String::class)
       .add("\n.add(%S, %S)", '\'', "&#39;")
       .add("\n.add(%S, %S)", '&', "&amp;")
       .add("\n.add(%S, %S)", '<', "&lt;")
