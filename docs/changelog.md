@@ -3,6 +3,12 @@ Change Log
 
 ## Unreleased
 
+Thanks to [@IRus][IRus] for contributing to this release.
+
+_2025-04-15_
+
+* New: Support for Context Parameters (#2094)
+
 ## Version 2.1.0
 
 Thanks to [@ForteScarlet][ForteScarlet], [@TrevorSStone][TrevorSStone],
