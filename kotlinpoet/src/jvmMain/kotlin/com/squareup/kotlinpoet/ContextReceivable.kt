@@ -32,12 +32,19 @@ public interface ContextReceivable {
     /** Adds the given [receiverTypes] to this type's list of originating elements. */
     @Suppress("UNCHECKED_CAST")
     @ExperimentalKotlinPoetApi
+    @Deprecated(
+      "Context receivers are deprecated in Kotlin. Use context parameters instead.",
+    )
     public fun contextReceivers(receiverTypes: Iterable<TypeName>): T = apply {
       contextReceiverTypes += receiverTypes
     } as T
 
     /** Adds the given [receiverTypes] to this type's list of originating elements. */
+    @Suppress("DEPRECATION")
     @ExperimentalKotlinPoetApi
+    @Deprecated(
+      "Context receivers are deprecated in Kotlin. Use context parameters instead.",
+    )
     public fun contextReceivers(vararg receiverTypes: TypeName): T =
       contextReceivers(receiverTypes.toList())
   }

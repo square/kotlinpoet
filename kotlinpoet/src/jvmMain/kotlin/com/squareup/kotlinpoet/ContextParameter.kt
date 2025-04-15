@@ -1,0 +1,84 @@
+/*
+ * Copyright (C) 2025 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.squareup.kotlinpoet
+
+/**
+ * Represents a context parameter with a name and type.
+ */
+public data class ContextParameter(
+  val name: String,
+  val type: TypeName
+) {
+  override fun toString(): String = "$name: $type"
+}
+
+/**
+ * A KotlinPoet spec type that can have context parameters.
+ */
+public interface ContextParameterizable {
+  /**
+   * The context parameters of this type.
+   */
+  public val contextParameters: List<ContextParameter>
+
+  /**
+   * The builder analogue to [ContextParameterizable] types.
+   */
+  public interface Builder<out T : Builder<T>> {
+    /**
+     * Mutable list of the current context parameters this builder contains.
+     */
+    public val contextParameters: MutableList<ContextParameter>
+
+    /**
+     * Adds the given [parameters] to this type's list of context parameters.
+     */
+    @Suppress("UNCHECKED_CAST")
+    public fun contextParameters(parameters: Iterable<ContextParameter>): T = apply {
+      contextParameters += parameters
+    } as T
+
+    /**
+     * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
+     */
+    public fun contextParameter(name: String, type: TypeName): T =
+      contextParameters(listOf(ContextParameter(name, type)))
+
+    /**
+     * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
+     */
+    @DelicateKotlinPoetApi(
+      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+        "using the kotlinpoet-metadata APIs instead.",
+    )
+    public fun contextParameter(name: String, type: java.lang.reflect.Type): T =
+      contextParameter(name, type.asTypeName())
+
+    /**
+     * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
+     */
+    public fun contextParameter(name: String, type: kotlin.reflect.KClass<*>): T =
+      contextParameter(name, type.asTypeName())
+  }
+}
+
+internal fun ContextParameterizable.Builder<*>.buildContextParameters() =
+  ContextParameters(contextParameters.toImmutableList())
+
+@JvmInline
+internal value class ContextParameters(
+  override val contextParameters: List<ContextParameter>,
+) : ContextParameterizable

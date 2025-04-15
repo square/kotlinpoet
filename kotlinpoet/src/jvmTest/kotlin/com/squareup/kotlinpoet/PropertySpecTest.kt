@@ -648,6 +648,7 @@ class PropertySpecTest {
   }
 
   @Test fun varWithContextReceiver() {
+    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable()
       .contextReceivers(STRING)
@@ -681,6 +682,7 @@ class PropertySpecTest {
   }
 
   @Test fun valWithContextReceiver() {
+    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable(false)
       .contextReceivers(STRING)
@@ -704,6 +706,7 @@ class PropertySpecTest {
   @OptIn(DelicateKotlinPoetApi::class)
   @Test
   fun annotatedValWithContextReceiver() {
+    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable(false)
       .addAnnotation(AnnotationSpec.get(TestAnnotation()))
@@ -724,5 +727,140 @@ class PropertySpecTest {
       |
       """.trimMargin(),
     )
+  }
+
+  @Test fun varWithContextParameter() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable()
+      .contextParameter("str", STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return str.length")
+          .build(),
+      )
+      .setter(
+        FunSpec.setterBuilder()
+          .addParameter(
+            ParameterSpec.builder("value", INT)
+              .build(),
+          )
+          .addStatement("println(str)")
+          .build(),
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(str: kotlin.String)
+      |var foo: kotlin.Int
+      |  get() = str.length
+      |  set(`value`) {
+      |    println(str)
+      |  }
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun valWithContextParameter() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .contextParameter("str", STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return str.length")
+          .build(),
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(str: kotlin.String)
+      |val foo: kotlin.Int
+      |  get() = str.length
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @OptIn(DelicateKotlinPoetApi::class)
+  @Test
+  fun annotatedValWithContextParameter() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .addAnnotation(AnnotationSpec.get(TestAnnotation()))
+      .contextParameter("str", STRING)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return str.length")
+          .build(),
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(str: kotlin.String)
+      |@com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation
+      |val foo: kotlin.Int
+      |  get() = str.length
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun valWithMultipleContextParameters() {
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .contextParameter("str", STRING)
+      .contextParameter("num", INT)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return str.length + num")
+          .build(),
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(str: kotlin.String, num: kotlin.Int)
+      |val foo: kotlin.Int
+      |  get() = str.length + num
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun valWithAnnotatedContextParameter() {
+    val annotation = AnnotationSpec.builder(TestAnnotation::class).build()
+    val annotatedType = STRING.copy(annotations = listOf(annotation))
+    val propertySpec = PropertySpec.builder("foo", INT)
+      .mutable(false)
+      .contextParameter("str", annotatedType)
+      .getter(
+        FunSpec.getterBuilder()
+          .addStatement("return str.length")
+          .build(),
+      )
+      .build()
+
+    assertThat(propertySpec.toString()).isEqualTo(
+      """
+      |context(str: @com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation kotlin.String)
+      |val foo: kotlin.Int
+      |  get() = str.length
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun valWithBothContextReceiverAndContextParameter() {
+    @Suppress("DEPRECATION")
+    assertThrows<IllegalStateException> {
+      PropertySpec.builder("foo", INT)
+        .mutable(false)
+        .contextReceivers(listOf(STRING))
+        .contextParameter("str", INT)
+        .build()
+    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
   }
 }

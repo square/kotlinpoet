@@ -491,6 +491,7 @@ class FunSpecTest {
 
   @Test fun functionWithContextReceiver() {
     val stringType = STRING
+    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(stringType)
       .build()
@@ -509,6 +510,7 @@ class FunSpecTest {
     val stringType = STRING
     val intType = INT
     val booleanType = BOOLEAN
+    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(stringType, intType, booleanType)
       .build()
@@ -525,6 +527,7 @@ class FunSpecTest {
 
   @Test fun functionWithGenericContextReceiver() {
     val genericType = TypeVariableName("T")
+    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .addTypeVariable(genericType)
       .contextReceivers(genericType)
@@ -541,6 +544,7 @@ class FunSpecTest {
   }
 
   @Test fun annotatedFunctionWithContextReceiver() {
+    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .addAnnotation(AnnotationSpec.get(TestAnnotation()))
       .contextReceivers(STRING)
@@ -559,6 +563,7 @@ class FunSpecTest {
 
   @Test fun functionWithAnnotatedContextReceiver() {
     val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
+    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(genericType)
       .build()
@@ -574,6 +579,7 @@ class FunSpecTest {
   }
 
   @Test fun constructorWithContextReceiver() {
+    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.constructorBuilder()
         .contextReceivers(STRING)
@@ -581,15 +587,143 @@ class FunSpecTest {
   }
 
   @Test fun accessorWithContextReceiver() {
+    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.getterBuilder()
         .contextReceivers(STRING)
     }.hasMessageThat().isEqualTo("$GETTER cannot have context receivers")
 
+    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.setterBuilder()
         .contextReceivers(STRING)
     }.hasMessageThat().isEqualTo("$SETTER cannot have context receivers")
+  }
+
+  @Test fun functionWithContextParameter() {
+    val funSpec = FunSpec.builder("foo")
+      .contextParameter("user", STRING)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(user: kotlin.String)
+      |public fun foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun functionWithMultipleContextParameters() {
+    val funSpec = FunSpec.builder("foo")
+      .contextParameter("user", STRING)
+      .contextParameter("counter", INT)
+      .contextParameter("enabled", BOOLEAN)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(user: kotlin.String, counter: kotlin.Int, enabled: kotlin.Boolean)
+      |public fun foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun functionWithUnnamedContextParameter() {
+    val funSpec = FunSpec.builder("foo")
+      .contextParameter("_", STRING)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(_: kotlin.String)
+      |public fun foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun functionWithGenericContextParameter() {
+    val genericType = TypeVariableName("T")
+    val funSpec = FunSpec.builder("foo")
+      .addTypeVariable(genericType)
+      .contextParameter("value", genericType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(value: T)
+      |public fun <T> foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun annotatedFunctionWithContextParameter() {
+    val funSpec = FunSpec.builder("foo")
+      .addAnnotation(AnnotationSpec.get(TestAnnotation()))
+      .contextParameter("user", STRING)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(user: kotlin.String)
+      |@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation
+      |public fun foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun functionWithAnnotatedContextParameter() {
+    val annotatedType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
+    val funSpec = FunSpec.builder("foo")
+      .contextParameter("user", annotatedType)
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |context(user: @com.squareup.kotlinpoet.FunSpecTest.TestAnnotation kotlin.String)
+      |public fun foo() {
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun functionWithBothContextReceiverAndContextParameter() {
+    @Suppress("DEPRECATION")
+    assertThrows<IllegalStateException> {
+      FunSpec.builder("foo")
+        .contextReceivers(listOf(STRING))
+        .contextParameter("num", INT)
+        .build()
+    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
+  }
+
+  @Test fun constructorWithContextParameter() {
+    assertThrows<IllegalStateException> {
+      FunSpec.constructorBuilder()
+        .contextParameter("user", STRING)
+    }.hasMessageThat().isEqualTo("constructors cannot have context parameters")
+  }
+
+  @Test fun accessorWithContextParameter() {
+    assertThrows<IllegalStateException> {
+      FunSpec.getterBuilder()
+        .contextParameter("user", STRING)
+    }.hasMessageThat().isEqualTo("$GETTER cannot have context parameters")
+
+    assertThrows<IllegalStateException> {
+      FunSpec.setterBuilder()
+        .contextParameter("user", STRING)
+    }.hasMessageThat().isEqualTo("$SETTER cannot have context parameters")
   }
 
   @Test fun functionParamSingleLambdaParam() {

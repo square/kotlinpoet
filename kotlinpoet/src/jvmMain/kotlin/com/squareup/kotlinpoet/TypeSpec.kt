@@ -706,6 +706,9 @@ public class TypeSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
+    @Deprecated(
+      "Context receivers are deprecated in Kotlin. Use context parameters instead.",
+    )
     override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(isSimpleClass) { "contextReceivers can only be applied on simple classes" }
       contextReceiverTypes += receiverTypes
@@ -820,6 +823,14 @@ public class TypeSpec private constructor(
       for (propertySpec in propertySpecs) {
         require(isAbstract || ABSTRACT !in propertySpec.modifiers) {
           "non-abstract type $name cannot declare abstract property ${propertySpec.name}"
+        }
+        if (propertySpec.contextParameters.isNotEmpty()) {
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
+            requireNotNull(propertySpec.getter) { "non-abstract properties with context parameters require a ${FunSpec.GETTER}" }
+            if (propertySpec.mutable) {
+              requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context parameters require a ${FunSpec.SETTER}" }
+            }
+          }
         }
         if (propertySpec.contextReceiverTypes.isNotEmpty()) {
           if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
