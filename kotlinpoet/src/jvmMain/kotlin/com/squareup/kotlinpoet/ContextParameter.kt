@@ -15,13 +15,73 @@
  */
 package com.squareup.kotlinpoet
 
+import java.lang.reflect.Type
+import kotlin.reflect.KClass
+
 /**
  * Represents a context parameter with a name and type.
+ *
+ * To create a new [ContextParameter], use the [ContextParameter] factory
+ * function or [Builder] in case of Java.
  */
-public data class ContextParameter(
-  val name: String,
-  val type: TypeName
-) {
+public sealed interface ContextParameter {
+  public val name: String
+  public val type: TypeName
+
+  public fun toBuilder(
+    name: String = this.name,
+    type: TypeName = this.type,
+  ): Builder = Builder()
+    .setName(name)
+    .setType(type)
+
+  public class Builder internal constructor() {
+    @set:JvmSynthetic
+    public var name: String? = null
+
+    @set:JvmSynthetic
+    public var type: TypeName? = null
+
+    public fun setName(name: String): Builder = apply { this.name = name }
+    public fun setType(type: TypeName): Builder = apply { this.type = type }
+
+    public fun build(): ContextParameter {
+      val errors = buildList {
+        if (name == null) add("name was not set")
+        if (name?.isBlank() == true) add("name is blank")
+        if (type == null) add("type was not set")
+      }
+      if (errors.isNotEmpty()) {
+        throw IllegalArgumentException(errors.joinToString(", "))
+      }
+      return DefaultContextParameter(
+        name = name!!,
+        type = type!!,
+      )
+    }
+  }
+
+  private companion object {
+    @JvmStatic fun builder(): Builder = Builder()
+  }
+}
+
+/**
+ * Creates a new [ContextParameter] with the given [name] and [type].
+ */
+@JvmSynthetic
+public fun ContextParameter(
+  name: String,
+  type: TypeName,
+): ContextParameter = DefaultContextParameter(name, type)
+
+/**
+ * A default implementation of [ContextParameter].
+ */
+private data class DefaultContextParameter(
+  override val name: String,
+  override val type: TypeName,
+) : ContextParameter {
   override fun toString(): String = "$name: $type"
 }
 
@@ -32,6 +92,7 @@ public interface ContextParameterizable {
   /**
    * The context parameters of this type.
    */
+  @ExperimentalKotlinPoetApi
   public val contextParameters: List<ContextParameter>
 
   /**
@@ -41,12 +102,14 @@ public interface ContextParameterizable {
     /**
      * Mutable list of the current context parameters this builder contains.
      */
+    @ExperimentalKotlinPoetApi
     public val contextParameters: MutableList<ContextParameter>
 
     /**
      * Adds the given [parameters] to this type's list of context parameters.
      */
     @Suppress("UNCHECKED_CAST")
+    @ExperimentalKotlinPoetApi
     public fun contextParameters(parameters: Iterable<ContextParameter>): T = apply {
       contextParameters += parameters
     } as T
@@ -54,6 +117,7 @@ public interface ContextParameterizable {
     /**
      * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
      */
+    @ExperimentalKotlinPoetApi
     public fun contextParameter(name: String, type: TypeName): T =
       contextParameters(listOf(ContextParameter(name, type)))
 
@@ -64,21 +128,25 @@ public interface ContextParameterizable {
       message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
         "using the kotlinpoet-metadata APIs instead.",
     )
-    public fun contextParameter(name: String, type: java.lang.reflect.Type): T =
+    @ExperimentalKotlinPoetApi
+    public fun contextParameter(name: String, type: Type): T =
       contextParameter(name, type.asTypeName())
 
     /**
      * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
      */
-    public fun contextParameter(name: String, type: kotlin.reflect.KClass<*>): T =
+    @ExperimentalKotlinPoetApi
+    public fun contextParameter(name: String, type: KClass<*>): T =
       contextParameter(name, type.asTypeName())
   }
 }
 
+@ExperimentalKotlinPoetApi
 internal fun ContextParameterizable.Builder<*>.buildContextParameters() =
   ContextParameters(contextParameters.toImmutableList())
 
 @JvmInline
+@ExperimentalKotlinPoetApi
 internal value class ContextParameters(
   override val contextParameters: List<ContextParameter>,
 ) : ContextParameterizable

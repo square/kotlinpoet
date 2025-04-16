@@ -29,6 +29,7 @@ import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
+import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.DeprecationLevel.ERROR
@@ -706,9 +707,6 @@ public class TypeSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
-    @Deprecated(
-      "Context receivers are deprecated in Kotlin. Use context parameters instead.",
-    )
     override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(isSimpleClass) { "contextReceivers can only be applied on simple classes" }
       contextReceiverTypes += receiverTypes
@@ -826,17 +824,31 @@ public class TypeSpec private constructor(
         }
         if (propertySpec.contextParameters.isNotEmpty()) {
           if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
-            requireNotNull(propertySpec.getter) { "non-abstract properties with context parameters require a ${FunSpec.GETTER}" }
-            if (propertySpec.mutable) {
-              requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context parameters require a ${FunSpec.SETTER}" }
+            val errors = buildList {
+              if (propertySpec.getter == null) {
+                add("non-abstract properties with context parameters require a ${FunSpec.GETTER}")
+              }
+              if (propertySpec.mutable && propertySpec.setter == null) {
+                add("non-abstract mutable properties with context parameters require a ${FunSpec.SETTER}")
+              }
+            }
+            if (errors.isNotEmpty()) {
+              throw IllegalArgumentException(errors.joinToString(", "))
             }
           }
         }
         if (propertySpec.contextReceiverTypes.isNotEmpty()) {
           if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
-            requireNotNull(propertySpec.getter) { "non-abstract properties with context receivers require a ${FunSpec.GETTER}" }
-            if (propertySpec.mutable) {
-              requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}" }
+            val errors = buildList {
+              if (propertySpec.getter == null) {
+                add("non-abstract properties with context receivers require a ${FunSpec.GETTER}")
+              }
+              if (propertySpec.mutable && propertySpec.setter == null) {
+                add("non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}")
+              }
+            }
+            if (errors.isNotEmpty()) {
+              throw IllegalArgumentException(errors.joinToString(", "))
             }
           }
         }

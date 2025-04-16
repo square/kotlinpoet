@@ -491,7 +491,7 @@ class FunSpecTest {
 
   @Test fun functionWithContextReceiver() {
     val stringType = STRING
-    @Suppress("DEPRECATION")
+
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(stringType)
       .build()
@@ -510,7 +510,7 @@ class FunSpecTest {
     val stringType = STRING
     val intType = INT
     val booleanType = BOOLEAN
-    @Suppress("DEPRECATION")
+
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(stringType, intType, booleanType)
       .build()
@@ -527,7 +527,7 @@ class FunSpecTest {
 
   @Test fun functionWithGenericContextReceiver() {
     val genericType = TypeVariableName("T")
-    @Suppress("DEPRECATION")
+
     val funSpec = FunSpec.builder("foo")
       .addTypeVariable(genericType)
       .contextReceivers(genericType)
@@ -544,7 +544,6 @@ class FunSpecTest {
   }
 
   @Test fun annotatedFunctionWithContextReceiver() {
-    @Suppress("DEPRECATION")
     val funSpec = FunSpec.builder("foo")
       .addAnnotation(AnnotationSpec.get(TestAnnotation()))
       .contextReceivers(STRING)
@@ -563,7 +562,7 @@ class FunSpecTest {
 
   @Test fun functionWithAnnotatedContextReceiver() {
     val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
-    @Suppress("DEPRECATION")
+
     val funSpec = FunSpec.builder("foo")
       .contextReceivers(genericType)
       .build()
@@ -579,7 +578,6 @@ class FunSpecTest {
   }
 
   @Test fun constructorWithContextReceiver() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.constructorBuilder()
         .contextReceivers(STRING)
@@ -587,13 +585,11 @@ class FunSpecTest {
   }
 
   @Test fun accessorWithContextReceiver() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.getterBuilder()
         .contextReceivers(STRING)
     }.hasMessageThat().isEqualTo("$GETTER cannot have context receivers")
 
-    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.setterBuilder()
         .contextReceivers(STRING)
@@ -698,7 +694,6 @@ class FunSpecTest {
   }
 
   @Test fun functionWithBothContextReceiverAndContextParameter() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       FunSpec.builder("foo")
         .contextReceivers(listOf(STRING))

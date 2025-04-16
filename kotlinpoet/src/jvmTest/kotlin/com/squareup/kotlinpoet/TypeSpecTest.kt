@@ -5590,7 +5590,6 @@ class TypeSpecTest {
   }
 
   @Test fun contextReceiver() {
-    @Suppress("DEPRECATION")
     val typeSpec = TypeSpec.classBuilder("Example")
       .contextReceivers(STRING)
       .build()
@@ -5605,7 +5604,6 @@ class TypeSpecTest {
   }
 
   @Test fun contextReceiver_mustBeClass() {
-    @Suppress("DEPRECATION")
     val t = assertFailsWith<IllegalStateException> {
       TypeSpec.interfaceBuilder("Example")
         .contextReceivers(STRING)
@@ -5614,7 +5612,6 @@ class TypeSpecTest {
   }
 
   @Test fun valWithContextReceiverWithoutGetter() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Example")
         .addProperty(
@@ -5629,7 +5626,6 @@ class TypeSpecTest {
   }
 
   @Test fun varWithContextReceiverWithoutAccessors() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Example")
         .addProperty(
@@ -5646,7 +5642,6 @@ class TypeSpecTest {
       .isEqualTo("non-abstract mutable properties with context receivers require a set()")
 
     assertThrows<IllegalArgumentException> {
-      @Suppress("DEPRECATION")
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5660,11 +5655,21 @@ class TypeSpecTest {
         ).build()
     }.hasMessageThat()
       .isEqualTo("non-abstract properties with context receivers require a get()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextReceivers(INT)
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context receivers require a get(), non-abstract mutable properties with context receivers require a set()")
   }
 
   // https://github.com/square/kotlinpoet/issues/1525
   @Test fun propertyWithContextReceiverInInterface() {
-    @Suppress("DEPRECATION")
     val typeSpec = TypeSpec.interfaceBuilder("Bar")
       .addProperty(
         PropertySpec.builder("foo", Int::class)
@@ -5694,7 +5699,6 @@ class TypeSpecTest {
   }
 
   @Test fun nonAbstractPropertyWithContextReceiverInAbstractClass() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalArgumentException> {
       TypeSpec.classBuilder("Bar")
         .addModifiers(ABSTRACT)
@@ -5708,7 +5712,6 @@ class TypeSpecTest {
   }
 
   @Test fun abstractPropertyWithContextReceiverInAbstractClass() {
-    @Suppress("DEPRECATION")
     val typeSpec = TypeSpec.classBuilder("Bar")
       .addModifiers(ABSTRACT)
       .addProperty(
@@ -5774,6 +5777,17 @@ class TypeSpecTest {
         ).build()
     }.hasMessageThat()
       .isEqualTo("non-abstract properties with context parameters require a get()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextParameter("bar", INT)
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context parameters require a get(), non-abstract mutable properties with context parameters require a set()")
   }
 
   @Test fun propertyWithContextParameterInInterface() {

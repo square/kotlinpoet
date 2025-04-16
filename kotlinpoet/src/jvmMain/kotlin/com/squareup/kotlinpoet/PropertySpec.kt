@@ -202,11 +202,13 @@ public class PropertySpec private constructor(
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
+    @ExperimentalKotlinPoetApi
     override val contextParameters: MutableList<ContextParameter> = mutableListOf()
 
     /**
      * Adds a context parameter with the given [name] and [type] to this property.
      */
+    @ExperimentalKotlinPoetApi
     override fun contextParameter(name: String, type: TypeName): Builder = apply {
       contextParameters += ContextParameter(name, type)
     }
@@ -214,6 +216,7 @@ public class PropertySpec private constructor(
     /**
      * Adds context parameters to this property.
      */
+    @ExperimentalKotlinPoetApi
     override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
       contextParameters += parameters
     }

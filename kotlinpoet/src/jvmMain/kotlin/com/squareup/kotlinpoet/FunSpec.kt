@@ -333,6 +333,7 @@ public class FunSpec private constructor(
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
+    @ExperimentalKotlinPoetApi
     override val contextParameters: MutableList<ContextParameter> = mutableListOf()
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
@@ -372,11 +373,6 @@ public class FunSpec private constructor(
     }
 
     @ExperimentalKotlinPoetApi
-    @Deprecated(
-      "Context receivers are deprecated in Kotlin. Use context parameters instead.",
-      ReplaceWith("contextParameters(receiverTypes.map { ContextParameter(\"_\", it) })"),
-      WARNING
-    )
     override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(!name.isConstructor) { "constructors cannot have context receivers" }
       check(!name.isAccessor) { "$name cannot have context receivers" }
@@ -386,6 +382,7 @@ public class FunSpec private constructor(
     /**
      * Adds a context parameter with the given [name] and [type] to this function.
      */
+    @ExperimentalKotlinPoetApi
     override fun contextParameter(name: String, type: TypeName): Builder = apply {
       val funName = this.name
       check(!funName.isConstructor) { "constructors cannot have context parameters" }
@@ -396,6 +393,7 @@ public class FunSpec private constructor(
     /**
      * Adds context parameters to this function.
      */
+    @ExperimentalKotlinPoetApi
     override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
       check(!name.isConstructor) { "constructors cannot have context parameters" }
       check(!name.isAccessor) { "$name cannot have context parameters" }

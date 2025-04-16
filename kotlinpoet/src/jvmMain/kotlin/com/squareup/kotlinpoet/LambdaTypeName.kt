@@ -59,15 +59,15 @@ public class LambdaTypeName private constructor(
     tags: Map<KClass<*>, Any> = this.tags.toMap(),
   ): LambdaTypeName {
     return LambdaTypeName(
-      receiver,
-      contextReceivers,
-      contextParameters,
-      parameters,
-      returnType,
-      nullable,
-      suspending,
-      annotations,
-      tags
+      receiver = receiver,
+      contextReceivers = contextReceivers,
+      contextParameters = contextParameters,
+      parameters = parameters,
+      returnType = returnType,
+      nullable = nullable,
+      isSuspending = suspending,
+      annotations = annotations,
+      tags = tags,
     )
   }
 
@@ -81,11 +81,7 @@ public class LambdaTypeName private constructor(
     }
 
     if (contextParameters.isNotEmpty()) {
-      val parameters = contextParameters
-        .map { CodeBlock.of("%T", it) }
-        .joinToCode(prefix = "context(", suffix = ")")
-      out.emitCode(parameters)
-      out.emit(" ")
+      out.emitContextParameters(contextParameters, suffix = " ")
     } else {
       out.emitContextReceivers(contextReceivers, suffix = " ")
     }

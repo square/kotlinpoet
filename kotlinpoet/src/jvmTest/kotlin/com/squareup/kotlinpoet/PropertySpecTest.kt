@@ -648,7 +648,6 @@ class PropertySpecTest {
   }
 
   @Test fun varWithContextReceiver() {
-    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable()
       .contextReceivers(STRING)
@@ -682,7 +681,6 @@ class PropertySpecTest {
   }
 
   @Test fun valWithContextReceiver() {
-    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable(false)
       .contextReceivers(STRING)
@@ -706,7 +704,6 @@ class PropertySpecTest {
   @OptIn(DelicateKotlinPoetApi::class)
   @Test
   fun annotatedValWithContextReceiver() {
-    @Suppress("DEPRECATION")
     val propertySpec = PropertySpec.builder("foo", INT)
       .mutable(false)
       .addAnnotation(AnnotationSpec.get(TestAnnotation()))
@@ -854,7 +851,6 @@ class PropertySpecTest {
   }
 
   @Test fun valWithBothContextReceiverAndContextParameter() {
-    @Suppress("DEPRECATION")
     assertThrows<IllegalStateException> {
       PropertySpec.builder("foo", INT)
         .mutable(false)
