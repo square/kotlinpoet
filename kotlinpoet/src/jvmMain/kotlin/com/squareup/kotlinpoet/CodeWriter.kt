@@ -190,9 +190,9 @@ internal class CodeWriter(
    */
   fun emitContextParameters(contextParameters: List<ContextParameter>, suffix: String = "") {
     if (contextParameters.isNotEmpty()) {
-      val parameters = contextParameters
-        .map { CodeBlock.of("%L: %T", it.name, it.type) }
-        .joinToCode(prefix = "context(", suffix = ")")
+      val parameters = contextParameters.joinToCode(prefix = "context(", suffix = ")") {
+        CodeBlock.of("%L: %T", it.name, it.type)
+      }
       emitCode(parameters)
       emit(suffix)
     }
