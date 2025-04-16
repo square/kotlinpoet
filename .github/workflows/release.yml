@@ -33,7 +33,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SECRET_PASSPHRASE }}
 
       - name: Prep docs
-        run: ./gradlew dokkaHtml
+        run: ./gradlew dokkaGeneratePublicationHtml
 
       - name: Set up Python
         uses: actions/setup-python@v5
