@@ -825,7 +825,7 @@ public class TypeSpec private constructor(
           "non-abstract type $name cannot declare abstract property ${propertySpec.name}"
         }
         if (propertySpec.contextParameters.isNotEmpty()) {
-          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
             requireNotNull(propertySpec.getter) { "non-abstract properties with context parameters require a ${FunSpec.GETTER}" }
             if (propertySpec.mutable) {
               requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context parameters require a ${FunSpec.SETTER}" }
@@ -833,7 +833,7 @@ public class TypeSpec private constructor(
           }
         }
         if (propertySpec.contextReceiverTypes.isNotEmpty()) {
-          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
             requireNotNull(propertySpec.getter) { "non-abstract properties with context receivers require a ${FunSpec.GETTER}" }
             if (propertySpec.mutable) {
               requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}" }
