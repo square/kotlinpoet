@@ -25,7 +25,7 @@ public class ContextParameter(
   public val name: String,
   public val type: TypeName,
 ) {
-  public constructor(type: TypeName): this(name = "_", type)
+  public constructor(type: TypeName) : this(name = "_", type)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
