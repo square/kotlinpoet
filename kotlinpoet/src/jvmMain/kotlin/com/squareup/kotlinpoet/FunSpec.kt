@@ -384,10 +384,17 @@ public class FunSpec private constructor(
      */
     @ExperimentalKotlinPoetApi
     override fun contextParameter(name: String, type: TypeName): Builder = apply {
-      val funName = this.name
-      check(!funName.isConstructor) { "constructors cannot have context parameters" }
-      check(!funName.isAccessor) { "$funName cannot have context parameters" }
+      checkContextParametersAllowed()
       contextParameters += ContextParameter(name, type)
+    }
+
+    /**
+     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(type: TypeName): Builder = apply {
+      checkContextParametersAllowed()
+      contextParameters += ContextParameter(type)
     }
 
     /**
@@ -395,9 +402,13 @@ public class FunSpec private constructor(
      */
     @ExperimentalKotlinPoetApi
     override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
+      checkContextParametersAllowed()
+      contextParameters += parameters
+    }
+
+    private fun checkContextParametersAllowed() {
       check(!name.isConstructor) { "constructors cannot have context parameters" }
       check(!name.isAccessor) { "$name cannot have context parameters" }
-      contextParameters += parameters
     }
 
     @JvmOverloads public fun receiver(

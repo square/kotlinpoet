@@ -630,7 +630,7 @@ class FunSpecTest {
 
   @Test fun functionWithUnnamedContextParameter() {
     val funSpec = FunSpec.builder("foo")
-      .contextParameter("_", STRING)
+      .contextParameter(STRING)
       .build()
 
     assertThat(funSpec.toString()).isEqualTo(

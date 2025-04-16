@@ -20,68 +20,31 @@ import kotlin.reflect.KClass
 
 /**
  * Represents a context parameter with a name and type.
- *
- * To create a new [ContextParameter], use the [ContextParameter] factory
- * function or [Builder] in case of Java.
  */
-public sealed interface ContextParameter {
-  public val name: String
-  public val type: TypeName
+public class ContextParameter(
+  public val name: String,
+  public val type: TypeName,
+) {
+  public constructor(type: TypeName): this(name = "_", type)
 
-  public fun toBuilder(
-    name: String = this.name,
-    type: TypeName = this.type,
-  ): Builder = Builder()
-    .setName(name)
-    .setType(type)
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
 
-  public class Builder internal constructor() {
-    @set:JvmSynthetic
-    public var name: String? = null
+    other as ContextParameter
 
-    @set:JvmSynthetic
-    public var type: TypeName? = null
+    if (name != other.name) return false
+    if (type != other.type) return false
 
-    public fun setName(name: String): Builder = apply { this.name = name }
-    public fun setType(type: TypeName): Builder = apply { this.type = type }
-
-    public fun build(): ContextParameter {
-      val errors = buildList {
-        if (name == null) add("name was not set")
-        if (name?.isBlank() == true) add("name is blank")
-        if (type == null) add("type was not set")
-      }
-      if (errors.isNotEmpty()) {
-        throw IllegalArgumentException(errors.joinToString(", "))
-      }
-      return DefaultContextParameter(
-        name = name!!,
-        type = type!!,
-      )
-    }
+    return true
   }
 
-  private companion object {
-    @JvmStatic fun builder(): Builder = Builder()
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + type.hashCode()
+    return result
   }
-}
 
-/**
- * Creates a new [ContextParameter] with the given [name] and [type].
- */
-@JvmSynthetic
-public fun ContextParameter(
-  name: String,
-  type: TypeName,
-): ContextParameter = DefaultContextParameter(name, type)
-
-/**
- * A default implementation of [ContextParameter].
- */
-private data class DefaultContextParameter(
-  override val name: String,
-  override val type: TypeName,
-) : ContextParameter {
   override fun toString(): String = "$name: $type"
 }
 
@@ -120,6 +83,13 @@ public interface ContextParameterizable {
     @ExperimentalKotlinPoetApi
     public fun contextParameter(name: String, type: TypeName): T =
       contextParameters(listOf(ContextParameter(name, type)))
+
+    /**
+     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    public fun contextParameter(type: TypeName): T =
+      contextParameters(listOf(ContextParameter(type)))
 
     /**
      * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.

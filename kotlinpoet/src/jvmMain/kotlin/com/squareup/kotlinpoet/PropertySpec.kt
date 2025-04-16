@@ -214,6 +214,14 @@ public class PropertySpec private constructor(
     }
 
     /**
+     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(type: TypeName): Builder = apply {
+      contextParameters += ContextParameter(type)
+    }
+
+    /**
      * Adds context parameters to this property.
      */
     @ExperimentalKotlinPoetApi

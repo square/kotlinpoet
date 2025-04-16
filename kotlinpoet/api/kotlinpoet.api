@@ -154,26 +154,14 @@ public final class com/squareup/kotlinpoet/CodeBlocks {
 	public static final fun withIndent (Lcom/squareup/kotlinpoet/CodeBlock$Builder;Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 }
 
-public abstract interface class com/squareup/kotlinpoet/ContextParameter {
-	public static fun builder ()Lcom/squareup/kotlinpoet/ContextParameter$Builder;
-	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getType ()Lcom/squareup/kotlinpoet/TypeName;
-	public fun toBuilder (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameter$Builder;
-	public static synthetic fun toBuilder$default (Lcom/squareup/kotlinpoet/ContextParameter;Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/ContextParameter$Builder;
-}
-
-public final class com/squareup/kotlinpoet/ContextParameter$Builder {
-	public final fun build ()Lcom/squareup/kotlinpoet/ContextParameter;
+public final class com/squareup/kotlinpoet/ContextParameter {
+	public fun <init> (Lcom/squareup/kotlinpoet/TypeName;)V
+	public fun <init> (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getType ()Lcom/squareup/kotlinpoet/TypeName;
-	public final fun setName (Ljava/lang/String;)Lcom/squareup/kotlinpoet/ContextParameter$Builder;
-	public final synthetic fun setName (Ljava/lang/String;)V
-	public final fun setType (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameter$Builder;
-	public final synthetic fun setType (Lcom/squareup/kotlinpoet/TypeName;)V
-}
-
-public final class com/squareup/kotlinpoet/ContextParameterKt {
-	public static final synthetic fun ContextParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameter;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class com/squareup/kotlinpoet/ContextParameterizable {
@@ -404,6 +392,7 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun callThisConstructor ([Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static synthetic fun callThisConstructor$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun clearBody ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public synthetic fun contextParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
@@ -806,6 +795,7 @@ public final class com/squareup/kotlinpoet/PropertySpec$Builder : com/squareup/k
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public final fun build ()Lcom/squareup/kotlinpoet/PropertySpec;
+	public synthetic fun contextParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public final fun delegate (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;

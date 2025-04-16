@@ -67,6 +67,7 @@ nav:
     - 'Functions': functions.md
     - 'Constructors': constructors.md
     - 'Parameters': parameters.md
+    - 'Context Parameters': context-parameters.md
     - 'Properties': properties.md
     - 'Interfaces': interfaces.md
     - 'Objects': objects.md
