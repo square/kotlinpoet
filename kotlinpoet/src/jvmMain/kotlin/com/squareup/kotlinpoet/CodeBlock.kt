@@ -362,6 +362,7 @@ public class CodeBlock private constructor(
       is FunSpec -> o.name
       is TypeSpec -> o.name!!
       is MemberName -> o.simpleName
+      is ContextParameter -> if (o.name == "_") throw IllegalStateException("Named context parameter required") else o.name
       else -> throw IllegalArgumentException("expected name but was $o")
     }
 

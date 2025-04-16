@@ -22,10 +22,16 @@ public fun greet() {
 You can add multiple context parameters:
 
 ```kotlin
+val loggerType = ClassName("java.util.logging", "Logger")
+val configType = ClassName("com.example", "Config")
+
+val logger = ContextParameter("logger", loggerType)
+val config = ContextParameter("config", configType)
+
 val processData = FunSpec.builder("processData")
-  .contextParameter("logger", ClassName("com.example", "Logger"))
-  .contextParameter("config", ClassName("com.example", "Config"))
-  .addStatement("logger.info(\"Processing with config: ${'$'}config\")")
+  .contextParameter("logger", loggerType)
+  .contextParameter("config", configType)
+  .addStatement("%N.info(\"Processing with config: ${'$'}%N\")", logger, config)
   .build()
 ```
 

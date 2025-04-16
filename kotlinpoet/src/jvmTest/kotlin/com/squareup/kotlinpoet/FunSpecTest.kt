@@ -702,6 +702,30 @@ class FunSpecTest {
     }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
   }
 
+  @Test fun contextParameterInAddStatement() {
+    val loggerType = ClassName("java.util.logging", "Logger")
+    val configType = ClassName("com.example", "Config")
+
+    val logger = ContextParameter("logger", loggerType)
+    val config = ContextParameter("config", configType)
+
+    val processData = FunSpec.builder("processData")
+      .contextParameter("logger", loggerType)
+      .contextParameter("config", configType)
+      .addStatement("%N.info(\"Processing with config: ${'$'}%N\")", logger, config)
+      .build()
+
+    assertThat(processData.toString()).isEqualTo(
+      """
+      |context(logger: java.util.logging.Logger, config: com.example.Config)
+      |public fun processData() {
+      |  logger.info("Processing with config: ${'$'}config")
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun constructorWithContextParameter() {
     assertThrows<IllegalStateException> {
       FunSpec.constructorBuilder()
