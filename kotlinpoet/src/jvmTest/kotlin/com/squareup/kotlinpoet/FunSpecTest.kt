@@ -710,8 +710,8 @@ class FunSpecTest {
     val config = ContextParameter("config", configType)
 
     val processData = FunSpec.builder("processData")
-      .contextParameter("logger", loggerType)
-      .contextParameter("config", configType)
+      .contextParameter(logger)
+      .contextParameter(config)
       .addStatement("%N.info(\"Processing with config: ${'$'}%N\")", logger, config)
       .build()
 
