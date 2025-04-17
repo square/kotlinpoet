@@ -392,8 +392,6 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun callThisConstructor ([Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static synthetic fun callThisConstructor$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun clearBody ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
-	public synthetic fun contextParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
-	public synthetic fun contextParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public final fun endControlFlow ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
@@ -795,9 +793,6 @@ public final class com/squareup/kotlinpoet/PropertySpec$Builder : com/squareup/k
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public final fun build ()Lcom/squareup/kotlinpoet/PropertySpec;
-	public synthetic fun contextParameter (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
-	public synthetic fun contextParameter (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
-	public synthetic fun contextParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
 	public final fun delegate (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public final fun delegate (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public fun getAnnotations ()Ljava/util/List;
