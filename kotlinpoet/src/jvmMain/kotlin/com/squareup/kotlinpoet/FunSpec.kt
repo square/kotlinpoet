@@ -38,9 +38,11 @@ public class FunSpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
+  private val contextParams: ContextParameters = builder.buildContextParameters(),
 ) : Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
+  ContextParameterizable by contextParams,
   Annotatable,
   Documentable {
   public val name: String = builder.name
@@ -95,7 +97,11 @@ public class FunSpec private constructor(
     } else {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
-    codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
+    if (contextParameters.isNotEmpty()) {
+      codeWriter.emitContextParameters(contextParameters, suffix = "\n")
+    } else {
+      codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
+    }
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
@@ -306,6 +312,7 @@ public class FunSpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
+    ContextParameterizable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     Documentable.Builder<Builder> {
     internal var returnKdoc = CodeBlock.EMPTY
@@ -325,6 +332,9 @@ public class FunSpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
+
+    @ExperimentalKotlinPoetApi
+    override val contextParameters: MutableList<ContextParameter> = mutableListOf()
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -367,6 +377,38 @@ public class FunSpec private constructor(
       check(!name.isConstructor) { "constructors cannot have context receivers" }
       check(!name.isAccessor) { "$name cannot have context receivers" }
       contextReceiverTypes += receiverTypes
+    }
+
+    /**
+     * Adds a context parameter with the given [name] and [type] to this function.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(name: String, type: TypeName): Builder = apply {
+      checkContextParametersAllowed()
+      contextParameters += ContextParameter(name, type)
+    }
+
+    /**
+     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(type: TypeName): Builder = apply {
+      checkContextParametersAllowed()
+      contextParameters += ContextParameter(type)
+    }
+
+    /**
+     * Adds context parameters to this function.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
+      checkContextParametersAllowed()
+      contextParameters += parameters
+    }
+
+    private fun checkContextParametersAllowed() {
+      check(!name.isConstructor) { "constructors cannot have context parameters" }
+      check(!name.isAccessor) { "$name cannot have context parameters" }
     }
 
     @JvmOverloads public fun receiver(
@@ -567,6 +609,9 @@ public class FunSpec private constructor(
       check(typeVariables.isEmpty() || !name.isAccessor) { "$name cannot have type variables" }
       check(!(name == GETTER && parameters.isNotEmpty())) { "$name cannot have parameters" }
       check(!(name == SETTER && parameters.size > 1)) { "$name can have at most one parameter" }
+      check(contextReceiverTypes.isEmpty() || contextParameters.isEmpty()) {
+        "Using both context receivers and context parameters is not allowed"
+      }
       return FunSpec(this)
     }
   }

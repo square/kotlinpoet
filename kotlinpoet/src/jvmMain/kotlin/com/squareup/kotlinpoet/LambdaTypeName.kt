@@ -22,6 +22,8 @@ public class LambdaTypeName private constructor(
   public val receiver: TypeName? = null,
   @property:ExperimentalKotlinPoetApi
   public val contextReceivers: List<TypeName> = emptyList(),
+  @property:ExperimentalKotlinPoetApi
+  public val contextParameters: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
   nullable: Boolean = false,
@@ -36,6 +38,9 @@ public class LambdaTypeName private constructor(
       require(param.annotations.isEmpty()) { "Parameters with annotations are not allowed" }
       require(param.modifiers.isEmpty()) { "Parameters with modifiers are not allowed" }
       require(param.defaultValue == null) { "Parameters with default values are not allowed" }
+    }
+    require(contextReceivers.isEmpty() || contextParameters.isEmpty()) {
+      "Using both context receivers and context parameters is not allowed"
     }
   }
 
@@ -53,7 +58,17 @@ public class LambdaTypeName private constructor(
     suspending: Boolean = this.isSuspending,
     tags: Map<KClass<*>, Any> = this.tags.toMap(),
   ): LambdaTypeName {
-    return LambdaTypeName(receiver, contextReceivers, parameters, returnType, nullable, suspending, annotations, tags)
+    return LambdaTypeName(
+      receiver = receiver,
+      contextReceivers = contextReceivers,
+      contextParameters = contextParameters,
+      parameters = parameters,
+      returnType = returnType,
+      nullable = nullable,
+      isSuspending = suspending,
+      annotations = annotations,
+      tags = tags,
+    )
   }
 
   override fun emit(out: CodeWriter): CodeWriter {
@@ -65,7 +80,11 @@ public class LambdaTypeName private constructor(
       out.emit("suspend ")
     }
 
-    out.emitContextReceivers(contextReceivers, suffix = " ")
+    if (contextParameters.isNotEmpty()) {
+      out.emitContextParameters(contextParameters, suffix = " ")
+    } else {
+      out.emitContextReceivers(contextReceivers, suffix = " ")
+    }
 
     receiver?.let {
       if (it.isAnnotated) {
@@ -93,6 +112,7 @@ public class LambdaTypeName private constructor(
 
     if (receiver != other.receiver) return false
     if (contextReceivers != other.contextReceivers) return false
+    if (contextParameters != other.contextParameters) return false
     if (returnType != other.returnType) return false
     if (isSuspending != other.isSuspending) return false
     if (parameters != other.parameters) return false
@@ -104,6 +124,7 @@ public class LambdaTypeName private constructor(
     var result = super.hashCode()
     result = 31 * result + (receiver?.hashCode() ?: 0)
     result = 31 * result + contextReceivers.hashCode()
+    result = 31 * result + contextParameters.hashCode()
     result = 31 * result + returnType.hashCode()
     result = 31 * result + isSuspending.hashCode()
     result = 31 * result + parameters.hashCode()
@@ -117,14 +138,15 @@ public class LambdaTypeName private constructor(
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName,
       contextReceivers: List<TypeName> = emptyList(),
-    ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, parameters, returnType)
+      contextParameters: List<TypeName> = emptyList(),
+    ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, contextParameters, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName,
-    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters, returnType)
+    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), emptyList(), parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic public fun get(
@@ -134,6 +156,7 @@ public class LambdaTypeName private constructor(
     ): LambdaTypeName {
       return LambdaTypeName(
         receiver,
+        emptyList(),
         emptyList(),
         parameters.toList().map { ParameterSpec.unnamed(it) },
         returnType,
@@ -145,6 +168,6 @@ public class LambdaTypeName private constructor(
       receiver: TypeName? = null,
       vararg parameters: ParameterSpec = emptyArray(),
       returnType: TypeName,
-    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), parameters.toList(), returnType)
+    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), emptyList(), parameters.toList(), returnType)
   }
 }

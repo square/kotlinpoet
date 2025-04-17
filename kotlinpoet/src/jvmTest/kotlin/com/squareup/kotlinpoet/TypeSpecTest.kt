@@ -5655,6 +5655,17 @@ class TypeSpecTest {
         ).build()
     }.hasMessageThat()
       .isEqualTo("non-abstract properties with context receivers require a get()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextReceivers(INT)
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context receivers require a get(), non-abstract mutable properties with context receivers require a set()")
   }
 
   // https://github.com/square/kotlinpoet/issues/1525
@@ -5715,6 +5726,127 @@ class TypeSpecTest {
       """
       |public abstract class Bar {
       |  context(kotlin.String)
+      |  public abstract val foo: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun valWithContextParameterWithoutGetter() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable(false)
+            .contextParameter("bar", INT)
+            .build(),
+        )
+        .build().also { println(it.toString()) }
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context parameters require a get()")
+  }
+
+  @Test fun varWithContextParameterWithoutAccessors() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextParameter("bar", INT)
+            .getter(
+              FunSpec.getterBuilder()
+                .build(),
+            )
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract mutable properties with context parameters require a set()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextParameter("bar", INT)
+            .setter(
+              FunSpec.setterBuilder()
+                .build(),
+            )
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context parameters require a get()")
+
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Example")
+        .addProperty(
+          PropertySpec.builder("foo", STRING)
+            .mutable()
+            .contextParameter("bar", INT)
+            .build(),
+        ).build()
+    }.hasMessageThat()
+      .isEqualTo("non-abstract properties with context parameters require a get(), non-abstract mutable properties with context parameters require a set()")
+  }
+
+  @Test fun propertyWithContextParameterInInterface() {
+    val typeSpec = TypeSpec.interfaceBuilder("Bar")
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .contextParameter("user", STRING)
+          .build(),
+      )
+      .addProperty(
+        PropertySpec.builder("bar", Int::class)
+          .contextParameter("user", STRING)
+          .mutable(true)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public interface Bar {
+      |  context(user: kotlin.String)
+      |  public val foo: kotlin.Int
+      |
+      |  context(user: kotlin.String)
+      |  public var bar: kotlin.Int
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  @Test fun nonAbstractPropertyWithContextParameterInAbstractClass() {
+    assertThrows<IllegalArgumentException> {
+      TypeSpec.classBuilder("Bar")
+        .addModifiers(ABSTRACT)
+        .addProperty(
+          PropertySpec.builder("foo", Int::class)
+            .contextParameter("bar", STRING)
+            .build(),
+        )
+        .build()
+    }.hasMessageThat().isEqualTo("non-abstract properties with context parameters require a get()")
+  }
+
+  @Test fun abstractPropertyWithContextParameterInAbstractClass() {
+    val typeSpec = TypeSpec.classBuilder("Bar")
+      .addModifiers(ABSTRACT)
+      .addProperty(
+        PropertySpec.builder("foo", Int::class)
+          .contextParameter("bar", STRING)
+          .addModifiers(ABSTRACT)
+          .build(),
+      )
+      .build()
+
+    assertThat(typeSpec.toString()).isEqualTo(
+      """
+      |public abstract class Bar {
+      |  context(bar: kotlin.String)
       |  public abstract val foo: kotlin.Int
       |}
       |

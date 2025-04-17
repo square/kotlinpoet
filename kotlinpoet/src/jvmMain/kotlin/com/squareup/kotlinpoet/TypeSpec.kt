@@ -29,6 +29,7 @@ import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 import com.squareup.kotlinpoet.KModifier.SEALED
 import com.squareup.kotlinpoet.KModifier.VALUE
+import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
 import kotlin.DeprecationLevel.ERROR
@@ -821,11 +822,33 @@ public class TypeSpec private constructor(
         require(isAbstract || ABSTRACT !in propertySpec.modifiers) {
           "non-abstract type $name cannot declare abstract property ${propertySpec.name}"
         }
+        if (propertySpec.contextParameters.isNotEmpty()) {
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
+            val errors = buildList {
+              if (propertySpec.getter == null) {
+                add("non-abstract properties with context parameters require a ${FunSpec.GETTER}")
+              }
+              if (propertySpec.mutable && propertySpec.setter == null) {
+                add("non-abstract mutable properties with context parameters require a ${FunSpec.SETTER}")
+              }
+            }
+            if (errors.isNotEmpty()) {
+              throw IllegalArgumentException(errors.joinToString(", "))
+            }
+          }
+        }
         if (propertySpec.contextReceiverTypes.isNotEmpty()) {
-          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) + propertySpec.modifiers) {
-            requireNotNull(propertySpec.getter) { "non-abstract properties with context receivers require a ${FunSpec.GETTER}" }
-            if (propertySpec.mutable) {
-              requireNotNull(propertySpec.setter) { "non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}" }
+          if (ABSTRACT !in kind.implicitPropertyModifiers(modifiers) && ABSTRACT !in propertySpec.modifiers) {
+            val errors = buildList {
+              if (propertySpec.getter == null) {
+                add("non-abstract properties with context receivers require a ${FunSpec.GETTER}")
+              }
+              if (propertySpec.mutable && propertySpec.setter == null) {
+                add("non-abstract mutable properties with context receivers require a ${FunSpec.SETTER}")
+              }
+            }
+            if (errors.isNotEmpty()) {
+              throw IllegalArgumentException(errors.joinToString(", "))
             }
           }
         }

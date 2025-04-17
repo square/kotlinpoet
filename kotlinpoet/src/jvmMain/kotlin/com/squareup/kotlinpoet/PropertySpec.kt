@@ -30,9 +30,11 @@ public class PropertySpec private constructor(
   private val tagMap: TagMap = builder.buildTagMap(),
   private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
+  private val contextParams: ContextParameters = builder.buildContextParameters(),
 ) : Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
+  ContextParameterizable by contextParams,
   Annotatable,
   Documentable {
   public val mutable: Boolean = builder.mutable
@@ -76,7 +78,11 @@ public class PropertySpec private constructor(
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
-    codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
+    if (contextParameters.isNotEmpty()) {
+      codeWriter.emitContextParameters(contextParameters, suffix = "\n")
+    } else {
+      codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
+    }
     codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emitCode(if (mutable) "var " else "val ")
@@ -175,6 +181,7 @@ public class PropertySpec private constructor(
   ) : Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
+    ContextParameterizable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     Documentable.Builder<Builder> {
     internal var isPrimaryConstructorParameter = false
@@ -194,6 +201,33 @@ public class PropertySpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
+
+    @ExperimentalKotlinPoetApi
+    override val contextParameters: MutableList<ContextParameter> = mutableListOf()
+
+    /**
+     * Adds a context parameter with the given [name] and [type] to this property.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(name: String, type: TypeName): Builder = apply {
+      contextParameters += ContextParameter(name, type)
+    }
+
+    /**
+     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameter(type: TypeName): Builder = apply {
+      contextParameters += ContextParameter(type)
+    }
+
+    /**
+     * Adds context parameters to this property.
+     */
+    @ExperimentalKotlinPoetApi
+    override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
+      contextParameters += parameters
+    }
 
     /** True to create a `var` instead of a `val`. */
     public fun mutable(mutable: Boolean = true): Builder = apply {
@@ -290,6 +324,9 @@ public class PropertySpec private constructor(
       }
       for (it in modifiers) {
         if (!isPrimaryConstructorParameter) it.checkTarget(PROPERTY)
+      }
+      check(contextReceiverTypes.isEmpty() || contextParameters.isEmpty()) {
+        "Using both context receivers and context parameters is not allowed"
       }
       return PropertySpec(this)
     }

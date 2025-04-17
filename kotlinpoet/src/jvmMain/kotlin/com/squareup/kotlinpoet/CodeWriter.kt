@@ -186,6 +186,39 @@ internal class CodeWriter(
   }
 
   /**
+   * Emits the `context` block for [contextParameters].
+   */
+  fun emitContextParameters(contextParameters: List<ContextParameter>, suffix: String = "") {
+    emitContextParameters(
+      contextParameters.map { CodeBlock.of("%L: %T", it.name, it.type) },
+      suffix,
+    )
+  }
+
+  /**
+   * Emits the `context` block for [contextParameters].
+   */
+  @JvmName("emitContextParametersFromTypeNames")
+  fun emitContextParameters(contextParameters: List<TypeName>, suffix: String = "") {
+    emitContextParameters(
+      contextParameters.map { CodeBlock.of("%T", it) },
+      suffix,
+    )
+  }
+
+  @JvmName("emitContextParametersFromCodeBlocks")
+  private fun emitContextParameters(
+    contextParameters: List<CodeBlock>,
+    suffix: String = "",
+  ) {
+    if (contextParameters.isNotEmpty()) {
+      val parameters = contextParameters.joinToCode(prefix = "context(", suffix = ")")
+      emitCode(parameters)
+      emit(suffix)
+    }
+  }
+
+  /**
    * Emit type variables with their bounds. If a type variable has more than a single bound - call
    * [emitWhereBlock] with same input to produce an additional `where` block.
    *

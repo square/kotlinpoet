@@ -127,6 +127,83 @@ class LambdaTypeNameTest {
     )
   }
 
+  @Test fun contextParameter() {
+    val typeName = LambdaTypeName.get(
+      receiver = Int::class.asTypeName(),
+      parameters = listOf(),
+      returnType = Unit::class.asTypeName(),
+      contextParameters = listOf(STRING),
+    )
+    assertThat(typeName.toString()).isEqualTo(
+      "context(kotlin.String) kotlin.Int.() -> kotlin.Unit",
+    )
+  }
+
+  @Test fun nullableFunctionWithContextParameter() {
+    val typeName = LambdaTypeName.get(
+      receiver = Int::class.asTypeName(),
+      parameters = listOf(),
+      returnType = Unit::class.asTypeName(),
+      contextParameters = listOf(STRING),
+    ).copy(nullable = true)
+    assertThat(typeName.toString()).isEqualTo(
+      "(context(kotlin.String) kotlin.Int.() -> kotlin.Unit)?",
+    )
+  }
+
+  @Test fun suspendingFunctionWithContextParameter() {
+    val typeName = LambdaTypeName.get(
+      receiver = Int::class.asTypeName(),
+      parameters = listOf(),
+      returnType = Unit::class.asTypeName(),
+      contextParameters = listOf(STRING),
+    ).copy(suspending = true)
+    assertThat(typeName.toString()).isEqualTo(
+      "suspend context(kotlin.String) kotlin.Int.() -> kotlin.Unit",
+    )
+  }
+
+  @Test fun functionWithMultipleContextParameters() {
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(),
+      Unit::class.asTypeName(),
+      contextParameters = listOf(
+        STRING,
+        INT,
+      ),
+    )
+    assertThat(typeName.toString()).isEqualTo(
+      "context(kotlin.String, kotlin.Int) kotlin.Int.() -> kotlin.Unit",
+    )
+  }
+
+  @Test fun functionWithAnnotatedContextParameter() {
+    val annotatedType = STRING.copy(annotations = listOf(AnnotationSpec.get(FunSpecTest.TestAnnotation())))
+    val typeName = LambdaTypeName.get(
+      Int::class.asTypeName(),
+      listOf(),
+      Unit::class.asTypeName(),
+      contextParameters = listOf(annotatedType),
+    )
+
+    assertThat(typeName.toString()).isEqualTo(
+      "context(@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation kotlin.String) kotlin.Int.() -> kotlin.Unit",
+    )
+  }
+
+  @Test fun functionWithContextReceiverAndContextParameter() {
+    assertThrows<IllegalArgumentException> {
+      LambdaTypeName.get(
+        Int::class.asTypeName(),
+        listOf(),
+        Unit::class.asTypeName(),
+        contextReceivers = listOf(STRING),
+        contextParameters = listOf(INT),
+      )
+    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
+  }
+
   @Test fun paramsWithAnnotationsForbidden() {
     assertThrows<IllegalArgumentException> {
       LambdaTypeName.get(
