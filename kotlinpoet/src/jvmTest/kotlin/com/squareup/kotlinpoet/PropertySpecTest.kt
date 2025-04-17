@@ -288,6 +288,7 @@ class PropertySpecTest {
       .addModifiers(KModifier.PUBLIC)
       .addTypeVariable(TypeVariableName("T"))
       .delegate("Delegates.notNull()")
+      .contextParameter("user", STRING)
       .receiver(Int::class)
       .getter(
         FunSpec.getterBuilder()

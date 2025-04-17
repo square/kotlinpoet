@@ -304,6 +304,7 @@ public class FunSpec private constructor(
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
     builder.contextReceiverTypes += contextReceiverTypes
+    builder.contextParameters += contextParameters
     return builder
   }
 
@@ -377,24 +378,6 @@ public class FunSpec private constructor(
       check(!name.isConstructor) { "constructors cannot have context receivers" }
       check(!name.isAccessor) { "$name cannot have context receivers" }
       contextReceiverTypes += receiverTypes
-    }
-
-    /**
-     * Adds a context parameter with the given [name] and [type] to this function.
-     */
-    @ExperimentalKotlinPoetApi
-    override fun contextParameter(name: String, type: TypeName): Builder = apply {
-      checkContextParametersAllowed()
-      contextParameters += ContextParameter(name, type)
-    }
-
-    /**
-     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
-     */
-    @ExperimentalKotlinPoetApi
-    override fun contextParameter(type: TypeName): Builder = apply {
-      checkContextParametersAllowed()
-      contextParameters += ContextParameter(type)
     }
 
     /**
