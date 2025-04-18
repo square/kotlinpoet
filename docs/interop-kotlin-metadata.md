@@ -1,8 +1,8 @@
 KotlinPoet-metadata
 ===================
 
-`interop:kotlinx-metadata` is an API for working with Kotlin `@Metadata` annotations. Its API
-sits atop [kotlinx-metadata](https://github.com/JetBrains/kotlin/tree/master/libraries/kotlinx-metadata/jvm),
+`interop:kotlin-metadata` is an API for working with Kotlin `@Metadata` annotations. Its API
+sits atop [kotlin-metadata](https://github.com/JetBrains/kotlin/tree/master/libraries/kotlinx-metadata/jvm),
 offering extensions for its types + JVM metadata information. This can be used to read
 Kotlin language semantics off of `Class` or `TypeElement` `@Metadata` annotations.
 
@@ -26,7 +26,7 @@ kmClass.functions.forEach { println(it.name) }
 ### Flags
 
 There are a number of boolean flags available to types as well under `Flags.kt`. These read the
-underlying kotlinx-metadata `Flags` property.
+underlying kotlin-metadata `Flags` property.
 
 Using the Taco example above, we can glean certain information:
 
@@ -37,7 +37,7 @@ println("Is data class? ${kmClass.isData}")
 
 ### Interop with KotlinPoet
 
-`interop:kotlinx-metadata` offers an API for converting core kotlinx-metadata `Km` types to
+`interop:kotlin-metadata` offers an API for converting core kotlin-metadata `Km` types to
 KotlinPoet source representations of their APIs. This includes full type resolution, signatures,
 enclosed elements, and general stub source representations of the underlying API.
 
