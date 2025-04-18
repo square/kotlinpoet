@@ -199,159 +199,313 @@ class TestProcessorTest(private val useKsp2: Boolean) {
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
     val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestSmokeTestClass.kt")
       .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    if (useKsp2) {
+      assertThat(generatedFileText).isEqualTo(
+        """
+        package test
 
-      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
-      import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
-      import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
-      import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
-      import kotlin.Any
-      import kotlin.Array
-      import kotlin.Boolean
-      import kotlin.Enum
-      import kotlin.Float
-      import kotlin.Function0
-      import kotlin.Function1
-      import kotlin.Int
-      import kotlin.IntArray
-      import kotlin.String
-      import kotlin.Unit
-      import kotlin.collections.List
-      import kotlin.collections.Map
-      import kotlin.collections.MutableList
-      import kotlin.collections.Set
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+        import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+        import kotlin.Any
+        import kotlin.Array
+        import kotlin.Boolean
+        import kotlin.Enum
+        import kotlin.Float
+        import kotlin.Int
+        import kotlin.IntArray
+        import kotlin.String
+        import kotlin.Unit
+        import kotlin.collections.List
+        import kotlin.collections.Map
+        import kotlin.collections.MutableList
+        import kotlin.collections.Set
 
-      @ComprehensiveAnnotation<String>(
-        boolean = true,
-        booleanArray = booleanArrayOf(true),
-        byte = 0.toByte(),
-        byteArray = byteArrayOf(0.toByte()),
-        char = 'a',
-        charArray = charArrayOf('a', 'b', 'c'),
-        short = 0.toShort(),
-        shortArray = shortArrayOf(0.toShort()),
-        int = 0,
-        intArray = intArrayOf(0),
-        long = 0,
-        longArray = longArrayOf(0),
-        float = 0.0f,
-        floatArray = floatArrayOf(0.0f),
-        double = 0.0,
-        doubleArray = doubleArrayOf(0.0),
-        string = "Hello",
-        stringArray = arrayOf("Hello"),
-        someClass = String::class,
-        someClasses = arrayOf(String::class, Int::class),
-        enumValue = AnnotationEnumValue.ONE,
-        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
-        anotherAnnotation = AnotherAnnotation(input = "Hello"),
-        anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
-        defaultingString = "defaultValue",
+        @ComprehensiveAnnotation<String>(
+          boolean = true,
+          booleanArray = booleanArrayOf(true),
+          byte = 0.toByte(),
+          byteArray = byteArrayOf(0.toByte()),
+          char = 'a',
+          charArray = charArrayOf('a', 'b', 'c'),
+          short = 0.toShort(),
+          shortArray = shortArrayOf(0.toShort()),
+          int = 0,
+          intArray = intArrayOf(0),
+          long = 0,
+          longArray = longArrayOf(0),
+          float = 0.0f,
+          floatArray = floatArrayOf(0.0f),
+          double = 0.0,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          stringArray = arrayOf("Hello"),
+          someClass = String::class,
+          someClasses = arrayOf(String::class, Int::class),
+          enumValue = AnnotationEnumValue.ONE,
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+          anotherAnnotation = AnotherAnnotation(input = "Hello"),
+          anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+          defaultingString = "defaultValue",
+        )
+        @ExampleAnnotationWithDefaults(
+          booleanArray = booleanArrayOf(false),
+          byte = 0.toByte(),
+          short = 0.toShort(),
+          int = 0,
+          long = 0,
+          float = 0.0f,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          someClasses = arrayOf(Int::class),
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+        )
+        public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
+          @field:AnotherAnnotation(input = "siteTargeting")
+          private val propA: String = TODO()
+
+          internal val propB: String = TODO()
+
+          public val propC: Int = TODO()
+
+          public val propD: Int? = TODO()
+
+          public lateinit var propE: String
+
+          public var propF: T? = TODO()
+
+          public fun functionA(): String = TODO()
+
+          public fun functionB(): R = TODO()
+
+          public fun <F> functionC(
+            param1: String,
+            param2: T,
+            param3: F,
+            param4: F?,
+          ): R = TODO()
+
+          public suspend fun functionD(
+            param1: () -> String,
+            param2: (String) -> String,
+            param3: String.() -> String,
+            param4: () -> String,
+            param5: (String) -> String,
+            param6: (
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+            ) -> Unit,
+            param7: ((String) -> String)?,
+            param8: suspend () -> String,
+          ): Unit = TODO()
+
+          public fun wildTypes(
+            age: Int,
+            nationalities: List<String>,
+            weight: Float,
+            tattoos: Boolean,
+            race: String?,
+            hasChildren: Boolean,
+            favoriteFood: String?,
+            favoriteDrink: String?,
+            wildcardOut: MutableList<out String>,
+            nullableWildcardOut: MutableList<out String?>,
+            wildcardIn: Array<in String>,
+            any: List<*>,
+            anyTwo: List<Any>,
+            anyOut: MutableList<out Any>,
+            nullableAnyOut: MutableList<*>,
+            favoriteThreeNumbers: IntArray,
+            favoriteArrayValues: Array<String>,
+            favoriteNullableArrayValues: Array<String?>,
+            nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
+            aliasedName: TypeAliasName,
+            genericAlias: GenericTypeAlias,
+            parameterizedTypeAlias: ParameterizedTypeAlias<String>,
+            nestedArray: Array<Map<String, Any>>?,
+          ): Unit = TODO()
+        }
+
+        """.trimIndent(),
       )
-      @ExampleAnnotationWithDefaults(
-        booleanArray = booleanArrayOf(false),
-        byte = 0.toByte(),
-        short = 0.toShort(),
-        int = 0,
-        long = 0,
-        float = 0.0f,
-        doubleArray = doubleArrayOf(0.0),
-        string = "Hello",
-        someClasses = arrayOf(Int::class),
-        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+    } else {
+      assertThat(generatedFileText).isEqualTo(
+        """
+        package test
+
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+        import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+        import kotlin.Any
+        import kotlin.Array
+        import kotlin.Boolean
+        import kotlin.Enum
+        import kotlin.Float
+        import kotlin.Function0
+        import kotlin.Function1
+        import kotlin.Int
+        import kotlin.IntArray
+        import kotlin.String
+        import kotlin.Unit
+        import kotlin.collections.List
+        import kotlin.collections.Map
+        import kotlin.collections.MutableList
+        import kotlin.collections.Set
+
+        @ComprehensiveAnnotation<String>(
+          boolean = true,
+          booleanArray = booleanArrayOf(true),
+          byte = 0.toByte(),
+          byteArray = byteArrayOf(0.toByte()),
+          char = 'a',
+          charArray = charArrayOf('a', 'b', 'c'),
+          short = 0.toShort(),
+          shortArray = shortArrayOf(0.toShort()),
+          int = 0,
+          intArray = intArrayOf(0),
+          long = 0,
+          longArray = longArrayOf(0),
+          float = 0.0f,
+          floatArray = floatArrayOf(0.0f),
+          double = 0.0,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          stringArray = arrayOf("Hello"),
+          someClass = String::class,
+          someClasses = arrayOf(String::class, Int::class),
+          enumValue = AnnotationEnumValue.ONE,
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+          anotherAnnotation = AnotherAnnotation(input = "Hello"),
+          anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+          defaultingString = "defaultValue",
+        )
+        @ExampleAnnotationWithDefaults(
+          booleanArray = booleanArrayOf(false),
+          byte = 0.toByte(),
+          short = 0.toShort(),
+          int = 0,
+          long = 0,
+          float = 0.0f,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          someClasses = arrayOf(Int::class),
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+        )
+        public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
+          @field:AnotherAnnotation(input = "siteTargeting")
+          private val propA: String = TODO()
+
+          internal val propB: String = TODO()
+
+          public val propC: Int = TODO()
+
+          public val propD: Int? = TODO()
+
+          public lateinit var propE: String
+
+          public var propF: T? = TODO()
+
+          public fun functionA(): String = TODO()
+
+          public fun functionB(): R = TODO()
+
+          public fun <F> functionC(
+            param1: String,
+            param2: T,
+            param3: F,
+            param4: F?,
+          ): R = TODO()
+
+          public suspend fun functionD(
+            param1: () -> String,
+            param2: (String) -> String,
+            param3: String.() -> String,
+            param4: Function0<String>,
+            param5: Function1<String, String>,
+            param6: (
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+            ) -> Unit,
+            param7: ((String) -> String)?,
+            param8: suspend () -> String,
+          ): Unit = TODO()
+
+          public fun wildTypes(
+            age: Int,
+            nationalities: List<String>,
+            weight: Float,
+            tattoos: Boolean,
+            race: String?,
+            hasChildren: Boolean,
+            favoriteFood: String?,
+            favoriteDrink: String?,
+            wildcardOut: MutableList<out String>,
+            nullableWildcardOut: MutableList<out String?>,
+            wildcardIn: Array<in String>,
+            any: List<*>,
+            anyTwo: List<Any>,
+            anyOut: MutableList<out Any>,
+            nullableAnyOut: MutableList<*>,
+            favoriteThreeNumbers: IntArray,
+            favoriteArrayValues: Array<String>,
+            favoriteNullableArrayValues: Array<String?>,
+            nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
+            aliasedName: TypeAliasName,
+            genericAlias: GenericTypeAlias,
+            parameterizedTypeAlias: ParameterizedTypeAlias<String>,
+            nestedArray: Array<Map<String, Any>>?,
+          ): Unit = TODO()
+        }
+
+        """.trimIndent(),
       )
-      public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
-        @field:AnotherAnnotation(input = "siteTargeting")
-        private val propA: String = TODO()
-
-        internal val propB: String = TODO()
-
-        public val propC: Int = TODO()
-
-        public val propD: Int? = TODO()
-
-        public lateinit var propE: String
-
-        public var propF: T? = TODO()
-
-        public fun functionA(): String = TODO()
-
-        public fun functionB(): R = TODO()
-
-        public fun <F> functionC(
-          param1: String,
-          param2: T,
-          param3: F,
-          param4: F?,
-        ): R = TODO()
-
-        public suspend fun functionD(
-          param1: () -> String,
-          param2: (String) -> String,
-          param3: String.() -> String,
-          param4: Function0<String>,
-          param5: Function1<String, String>,
-          param6: (
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-          ) -> Unit,
-          param7: ((String) -> String)?,
-          param8: suspend () -> String,
-        ): Unit = TODO()
-
-        public fun wildTypes(
-          age: Int,
-          nationalities: List<String>,
-          weight: Float,
-          tattoos: Boolean,
-          race: String?,
-          hasChildren: Boolean,
-          favoriteFood: String?,
-          favoriteDrink: String?,
-          wildcardOut: MutableList<out String>,
-          nullableWildcardOut: MutableList<out String?>,
-          wildcardIn: Array<in String>,
-          any: List<*>,
-          anyTwo: List<Any>,
-          anyOut: MutableList<out Any>,
-          nullableAnyOut: MutableList<*>,
-          favoriteThreeNumbers: IntArray,
-          favoriteArrayValues: Array<String>,
-          favoriteNullableArrayValues: Array<String?>,
-          nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
-          aliasedName: TypeAliasName,
-          genericAlias: GenericTypeAlias,
-          parameterizedTypeAlias: ParameterizedTypeAlias<String>,
-          nestedArray: Array<Map<String, Any>>?,
-        ): Unit = TODO()
-      }
-
-      """.trimIndent(),
-    )
+    }
   }
 
   @Test
