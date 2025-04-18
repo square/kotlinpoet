@@ -172,6 +172,7 @@ public class PropertySpec private constructor(
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
     builder.contextReceiverTypes += contextReceiverTypes
+    builder.contextParameters += contextParameters
     return builder
   }
 
@@ -204,30 +205,6 @@ public class PropertySpec private constructor(
 
     @ExperimentalKotlinPoetApi
     override val contextParameters: MutableList<ContextParameter> = mutableListOf()
-
-    /**
-     * Adds a context parameter with the given [name] and [type] to this property.
-     */
-    @ExperimentalKotlinPoetApi
-    override fun contextParameter(name: String, type: TypeName): Builder = apply {
-      contextParameters += ContextParameter(name, type)
-    }
-
-    /**
-     * Adds a context parameter with the name "_" and [type] to this type's list of context parameters.
-     */
-    @ExperimentalKotlinPoetApi
-    override fun contextParameter(type: TypeName): Builder = apply {
-      contextParameters += ContextParameter(type)
-    }
-
-    /**
-     * Adds context parameters to this property.
-     */
-    @ExperimentalKotlinPoetApi
-    override fun contextParameters(parameters: Iterable<ContextParameter>): Builder = apply {
-      contextParameters += parameters
-    }
 
     /** True to create a `var` instead of a `val`. */
     public fun mutable(mutable: Boolean = true): Builder = apply {

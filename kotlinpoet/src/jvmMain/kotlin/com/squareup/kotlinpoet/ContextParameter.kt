@@ -92,6 +92,13 @@ public interface ContextParameterizable {
       contextParameters(listOf(ContextParameter(type)))
 
     /**
+     * Adds the given [ContextParameter] to this type's list of context parameters.
+     */
+    @ExperimentalKotlinPoetApi
+    public fun contextParameter(contextParameter: ContextParameter): T =
+      contextParameters(listOf(contextParameter))
+
+    /**
      * Adds a context parameter with the given [name] and [type] to this type's list of context parameters.
      */
     @DelicateKotlinPoetApi(

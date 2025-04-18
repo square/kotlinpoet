@@ -681,4 +681,23 @@ class CodeBlockTest {
 
     Locale.setDefault(defaultLocale)
   }
+
+  @Test fun nameFromContextParameter() {
+    val logger = ContextParameter("logger", ClassName("java.util.logging", "Logger"))
+    assertThat(CodeBlock.of("%N", logger).toString()).isEqualTo("logger")
+  }
+
+  @Test fun nameFromMultipleContextParameters() {
+    val logger = ContextParameter("logger", ClassName("java.util.logging", "Logger"))
+    val config = ContextParameter("config", ClassName("com.example", "Config"))
+    assertThat(CodeBlock.of("%N.info(\"Processing with config: ${'$'}%N\")", logger, config).toString())
+      .isEqualTo("logger.info(\"Processing with config: ${'$'}config\")")
+  }
+
+  @Test fun nameFromUnnamedContextParameter() {
+    val unnamed = ContextParameter(ClassName("java.util.logging", "Logger"))
+    assertThrows<IllegalStateException> {
+      CodeBlock.of("%N", unnamed)
+    }.hasMessageThat().isEqualTo("Named context parameter required")
+  }
 }
