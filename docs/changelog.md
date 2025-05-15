@@ -5,9 +5,9 @@ Change Log
 
 Thanks to [@IRus][IRus] for contributing to this release.
 
-_2025-04-15_
-
 * New: Support for Context Parameters (#2094)
+* In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
+
 
 ## Version 2.1.0
 
