@@ -3,11 +3,17 @@ Change Log
 
 ## Unreleased
 
+## Version 2.2.0
+
 Thanks to [@IRus][IRus] for contributing to this release.
 
-_2025-04-15_
+_2025-05-16_
 
-* New: Support for Context Parameters (#2094)
+ * New: Kotlin 2.1.21.
+ * New: KSP 2.1.21-2.0.1.
+ * New: Add support for context parameters. (#2112)
+ * New: Eliminate Guava dependency. (#2110)
+ * New: Migrate to Dokka plugin V2. (#2113)
 
 ## Version 2.1.0
 
@@ -919,3 +925,4 @@ _2017-05-16_
  [damianw]: https://github.com/damianw
  [ansehoon1999]: https://github.com/ansehoon1999
  [TheMrMilchmann]: https://github.com/TheMrMilchmann
+ [IRus]: https://github.com/IRus
