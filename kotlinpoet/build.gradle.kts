@@ -35,9 +35,7 @@ spotless {
 }
 
 kotlin {
-  jvm {
-    withJava()
-  }
+  jvm()
 
   js {
     nodejs {
