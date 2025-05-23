@@ -65,6 +65,7 @@ class AnnotationSpecTest {
     val p: Int,
     val q: AnnotationC = AnnotationC("foo"),
     val r: Array<KClass<out Number>> = [Byte::class, Short::class, Int::class, Long::class],
+    val s: Array<AnnotationC> = [AnnotationC("foo"), AnnotationC("bar")],
   )
 
   @HasDefaultsAnnotation(
@@ -76,6 +77,7 @@ class AnnotationSpecTest {
     j = AnnotationA(),
     q = AnnotationC("bar"),
     r = [Float::class, Double::class],
+    s = [AnnotationC("bar")],
   )
   inner class IsAnnotated
 
@@ -116,6 +118,7 @@ class AnnotationSpecTest {
         |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
+        |  s = arrayOf(AnnotationSpecTest.AnnotationC(value = "bar")),
         |)
         |public class Taco
         |
@@ -147,6 +150,7 @@ class AnnotationSpecTest {
         |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
+        |  s = arrayOf(AnnotationSpecTest.AnnotationC(value = "bar")),
         |)
         |public class IsAnnotated
         |
@@ -194,6 +198,7 @@ class AnnotationSpecTest {
         |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
+        |  s = arrayOf(AnnotationSpecTest.AnnotationC(value = "bar")),
         |)
         |public class Taco
         |
@@ -233,6 +238,7 @@ class AnnotationSpecTest {
         |  p = 1_701,
         |  q = AnnotationSpecTest.AnnotationC(value = "bar"),
         |  r = arrayOf(Float::class, Double::class),
+        |  s = arrayOf(AnnotationSpecTest.AnnotationC(value = "bar")),
         |)
         |public class Taco
         |

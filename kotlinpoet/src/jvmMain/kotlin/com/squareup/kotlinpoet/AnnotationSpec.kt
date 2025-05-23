@@ -146,6 +146,7 @@ public class AnnotationSpec private constructor(
        * `%L` for other types.
        */
       internal fun memberForValue(value: Any) = when (value) {
+        is Annotation -> CodeBlock.of("%L", get(value))
         is Class<*> -> CodeBlock.of("%T::class", value)
         is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
         is String -> CodeBlock.of("%S", value)

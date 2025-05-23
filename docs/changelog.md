@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
+
 ## Version 2.2.0
 
 Thanks to [@IRus][IRus] for contributing to this release.
