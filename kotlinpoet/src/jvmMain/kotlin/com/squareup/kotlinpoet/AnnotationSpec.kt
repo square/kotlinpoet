@@ -116,6 +116,9 @@ public class AnnotationSpec private constructor(
     PARAM("param"),
     SETPARAM("setparam"),
     DELEGATE("delegate"),
+
+    @ExperimentalKotlinPoetApi
+    ALL("all"),
   }
 
   public class Builder internal constructor(
