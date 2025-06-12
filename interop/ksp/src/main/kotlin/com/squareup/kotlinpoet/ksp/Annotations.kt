@@ -25,6 +25,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.ExperimentalKotlinPoetApi
 import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /**
@@ -92,6 +93,7 @@ private fun isDefaultValue(value: Any?, defaultValue: Any?): Boolean {
   return value == defaultValue
 }
 
+@OptIn(ExperimentalKotlinPoetApi::class)
 private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
   get() = when (this) {
     AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
@@ -103,6 +105,7 @@ private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
     AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
     AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
     AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
+    AnnotationUseSiteTarget.ALL -> UseSiteTarget.ALL
   }
 
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultValues: Boolean) {

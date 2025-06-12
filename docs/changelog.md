@@ -3,11 +3,20 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
+ * In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
+
+## Version 2.2.0
+
 Thanks to [@IRus][IRus] for contributing to this release.
 
-* New: Support for Context Parameters (#2094)
-* In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
+_2025-05-16_
 
+ * New: Kotlin 2.1.21.
+ * New: KSP 2.1.21-2.0.1.
+ * New: Add support for context parameters. (#2112)
+ * New: Eliminate Guava dependency. (#2110)
+ * New: Migrate to Dokka plugin V2. (#2113)
 
 ## Version 2.1.0
 
@@ -919,3 +928,4 @@ _2017-05-16_
  [damianw]: https://github.com/damianw
  [ansehoon1999]: https://github.com/ansehoon1999
  [TheMrMilchmann]: https://github.com/TheMrMilchmann
+ [IRus]: https://github.com/IRus
