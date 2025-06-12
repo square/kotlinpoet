@@ -86,7 +86,7 @@ or Gradle:
 implementation("com.squareup:kotlinpoet:[version]")
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+Snapshots of the development version are available in [the Central Portal Snapshots repository][snap].
 
 License
 -------
@@ -110,4 +110,4 @@ License
  [explicit-api]: https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors
  [version-shield]: https://img.shields.io/maven-central/v/com.squareup/kotlinpoet
  [dl]: https://search.maven.org/remote_content?g=com.squareup&a=kotlinpoet-jvm&v=LATEST
- [snap]: https://s01.oss.sonatype.org/content/repositories/snapshots/com/squareup/kotlinpoet/
+ [snap]: https://central.sonatype.com/repository/maven-snapshots/
