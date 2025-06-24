@@ -13,9 +13,9 @@
 # limitations under the License.
 
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 kct = "0.7.1"
-ksp = "2.1.21-2.0.2"
+ksp = "2.2.0-2.0.2"
 ktlint = "0.48.2"
 
 [plugins]
