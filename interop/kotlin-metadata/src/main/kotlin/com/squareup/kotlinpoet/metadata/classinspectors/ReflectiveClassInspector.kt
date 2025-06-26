@@ -67,6 +67,7 @@ import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.hasAnnotationsInBytecode
 import kotlin.metadata.jvm.setterSignature
 import kotlin.metadata.jvm.signature
 import kotlin.metadata.jvm.syntheticMethodForAnnotations
@@ -390,7 +391,7 @@ public class ReflectiveClassInspector private constructor(
           method?.methodData(
             clazz = targetClass,
             signature = getterSignature,
-            hasAnnotations = property.getter.hasAnnotations,
+            hasAnnotations = property.getter.hasAnnotationsInBytecode,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
               ?.lookupMethod(getterSignature) ?: method,
           )
@@ -402,7 +403,7 @@ public class ReflectiveClassInspector private constructor(
           method?.methodData(
             clazz = targetClass,
             signature = setterSignature,
-            hasAnnotations = property.setter?.hasAnnotations ?: false,
+            hasAnnotations = property.setter?.hasAnnotationsInBytecode ?: false,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }
               ?.lookupMethod(setterSignature) ?: method,
             knownIsOverride = getterData?.isOverride,
@@ -411,7 +412,7 @@ public class ReflectiveClassInspector private constructor(
         }
 
         val annotations = mutableListOf<AnnotationSpec>()
-        if (property.hasAnnotations) {
+        if (property.hasAnnotationsInBytecode) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
             targetClass.lookupMethod(annotationsHolderSignature)?.let { method ->
               annotations += method.annotationSpecs()
@@ -438,7 +439,7 @@ public class ReflectiveClassInspector private constructor(
           method?.methodData(
             clazz = targetClass,
             signature = signature,
-            hasAnnotations = kmFunction.hasAnnotations,
+            hasAnnotations = kmFunction.hasAnnotationsInBytecode,
             jvmInformationMethod = classIfCompanion.takeIf { it != targetClass }?.lookupMethod(signature)
               ?: method,
           )
@@ -450,7 +451,7 @@ public class ReflectiveClassInspector private constructor(
 
     when (declarationContainer) {
       is KmClass -> {
-        val classAnnotations = if (declarationContainer.hasAnnotations) {
+        val classAnnotations = if (declarationContainer.hasAnnotationsInBytecode) {
           ClassInspectorUtil.createAnnotations {
             addAll(targetClass.annotations.map { AnnotationSpec.get(it, includeDefaultValues = true) })
           }
@@ -473,7 +474,7 @@ public class ReflectiveClassInspector private constructor(
               val constructor = targetClass.lookupConstructor(signature)
                 ?: error("No constructor $signature found in $targetClass.")
               ConstructorData(
-                annotations = if (kmConstructor.hasAnnotations) {
+                annotations = if (kmConstructor.hasAnnotationsInBytecode) {
                   constructor.annotationSpecs()
                 } else {
                   emptyList()
