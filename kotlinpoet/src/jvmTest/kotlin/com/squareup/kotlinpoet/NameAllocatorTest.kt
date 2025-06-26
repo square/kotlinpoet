@@ -22,6 +22,8 @@ class NameAllocatorTest {
   @Test fun usage() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
+    assertThat(1 in nameAllocator).isEqualTo(true)
+    assertThat(2 in nameAllocator).isEqualTo(false)
     assertThat(nameAllocator.newName("bar", 2)).isEqualTo("bar")
     assertThat(nameAllocator[1]).isEqualTo("foo")
     assertThat(nameAllocator[2]).isEqualTo("bar")
@@ -37,6 +39,8 @@ class NameAllocatorTest {
   @Test fun nameCollisionWithTag() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
+    assertThat(1 in nameAllocator).isEqualTo(true)
+    assertThat(2 in nameAllocator).isEqualTo(false)
     assertThat(nameAllocator.newName("foo", 2)).isEqualTo("foo_")
     assertThat(nameAllocator.newName("foo", 3)).isEqualTo("foo__")
     assertThat(nameAllocator[1]).isEqualTo("foo")
@@ -79,9 +83,11 @@ class NameAllocatorTest {
   @Test fun tagReuseForbidden() {
     val nameAllocator = NameAllocator()
     nameAllocator.newName("foo", 1)
+    assertThat(1 in nameAllocator).isEqualTo(true)
     assertThrows<IllegalArgumentException> {
       nameAllocator.newName("bar", 1)
     }.hasMessageThat().isEqualTo("tag 1 cannot be used for both 'foo' and 'bar'")
+    assertThat(1 in nameAllocator).isEqualTo(true)
   }
 
   @Test fun useBeforeAllocateForbidden() {

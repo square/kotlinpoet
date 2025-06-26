@@ -140,6 +140,9 @@ public class NameAllocator private constructor(
   /** Retrieve a name created with [NameAllocator.newName]. */
   public operator fun get(tag: Any): String = requireNotNull(tagToName[tag]) { "unknown tag: $tag" }
 
+  /** Check if the given [tag] is already allocated with [NameAllocator.newName]. */
+  public operator fun contains(tag: Any): Boolean = tag in tagToName
+
   /**
    * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
    * of a NameAllocator to be used in the respective definition of multiples, independently-scoped,
