@@ -85,11 +85,9 @@ import kotlin.metadata.KmPropertyAccessorAttributes
 import kotlin.metadata.KmType
 import kotlin.metadata.KmTypeAlias
 import kotlin.metadata.KmValueParameter
-import kotlin.metadata.KmEnumEntry
 import kotlin.metadata.Modality
 import kotlin.metadata.Visibility
 import kotlin.metadata.declaresDefaultValue
-import kotlin.metadata.hasAnnotations
 import kotlin.metadata.isConst
 import kotlin.metadata.isCrossinline
 import kotlin.metadata.isData
