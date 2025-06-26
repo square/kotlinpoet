@@ -77,6 +77,7 @@ import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.hasAnnotationsInBytecode
 import kotlin.metadata.jvm.setterSignature
 import kotlin.metadata.jvm.signature
 import kotlin.metadata.jvm.syntheticMethodForAnnotations
@@ -391,7 +392,7 @@ public class ElementsClassInspector private constructor(
           val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = property.getter.hasAnnotations,
+            hasAnnotations = property.getter.hasAnnotationsInBytecode,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
               ?: method,
@@ -403,7 +404,7 @@ public class ElementsClassInspector private constructor(
           val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = property.setter?.hasAnnotations ?: false,
+            hasAnnotations = property.setter?.hasAnnotationsInBytecode ?: false,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
               ?: method,
@@ -413,7 +414,7 @@ public class ElementsClassInspector private constructor(
         }
 
         val annotations = mutableListOf<AnnotationSpec>()
-        if (property.hasAnnotations) {
+        if (property.hasAnnotationsInBytecode) {
           property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
             val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
               ?: return@let MethodData.SYNTHETIC
@@ -455,7 +456,7 @@ public class ElementsClassInspector private constructor(
           val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
-            hasAnnotations = kmFunction.hasAnnotations,
+            hasAnnotations = kmFunction.hasAnnotationsInBytecode,
             jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
               ?.lookupMethod(signature, ElementFilter::methodsIn)
               ?: method,
@@ -484,7 +485,7 @@ public class ElementsClassInspector private constructor(
               val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
                 ?: return@associateWithTo ConstructorData.EMPTY
               ConstructorData(
-                annotations = if (kmConstructor.hasAnnotations) {
+                annotations = if (kmConstructor.hasAnnotationsInBytecode) {
                   constructor.annotationSpecs()
                 } else {
                   emptyList()
@@ -501,7 +502,7 @@ public class ElementsClassInspector private constructor(
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,
-          annotations = if (declarationContainer.hasAnnotations) {
+          annotations = if (declarationContainer.hasAnnotationsInBytecode) {
             ClassInspectorUtil.createAnnotations {
               addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
             }

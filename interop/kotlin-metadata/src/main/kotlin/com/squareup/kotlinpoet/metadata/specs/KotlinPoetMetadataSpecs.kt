@@ -85,6 +85,7 @@ import kotlin.metadata.KmPropertyAccessorAttributes
 import kotlin.metadata.KmType
 import kotlin.metadata.KmTypeAlias
 import kotlin.metadata.KmValueParameter
+import kotlin.metadata.KmEnumEntry
 import kotlin.metadata.Modality
 import kotlin.metadata.Visibility
 import kotlin.metadata.declaresDefaultValue
@@ -291,7 +292,8 @@ private fun KmClass.toTypeSpec(
     ?.let(builder::addAnnotations)
 
   if (kind == ClassKind.ENUM_CLASS) {
-    enumEntries.forEach { entryName ->
+    kmEnumEntries.forEach { entry ->
+      val entryName = entry.name
       val typeSpec = if (classInspector != null) {
         val entry = classInspector.enumEntry(className, entryName)
         entry.declarationContainer
@@ -839,7 +841,7 @@ private fun KmTypeAlias.toTypeAliasSpec(): TypeAliasSpec {
       visibilityFrom(visibility) {
         addModifiers(it)
       }
-      if (hasAnnotations) {
+      if (annotations.isNotEmpty()) {
         val annotationSpecs = this@toTypeAliasSpec.annotations
           .map { it.toAnnotationSpec() }
         addAnnotations(annotationSpecs)
