@@ -241,6 +241,12 @@ public class FunSpec private constructor(
 
   private fun CodeBlock.asExpressionBody(): CodeBlock? {
     val codeBlock = this.trim()
+
+    // If after trimming there are unmatched closing statement symbols, we can't have an expression body.
+    if (codeBlock.hasUnmatchedClosingStatement()) {
+      return null
+    }
+
     val asReturnExpressionBody = codeBlock.withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX_SPACE)
       ?: codeBlock.withoutPrefix(RETURN_EXPRESSION_BODY_PREFIX_NBSP)
     if (asReturnExpressionBody != null) {
