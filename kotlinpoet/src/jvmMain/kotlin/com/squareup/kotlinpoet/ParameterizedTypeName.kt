@@ -220,6 +220,7 @@ public class ParameterizedTypeName internal constructor(
       type: KClass<*>,
       nullable: Boolean,
       typeArguments: List<KTypeProjection>,
+      map: MutableMap<KTypeParameter, TypeVariableName> = mutableMapOf(),
     ): TypeName {
       if (typeArguments.isEmpty()) {
         return type.asTypeName().run { if (nullable) copy(nullable = true) else this }
@@ -230,11 +231,11 @@ public class ParameterizedTypeName internal constructor(
 
       return ParameterizedTypeName(
         enclosingClass?.let {
-          get(it, false, typeArguments.drop(effectiveType.typeParameters.size))
+          get(it, false, typeArguments.drop(effectiveType.typeParameters.size), map)
         },
         effectiveType.asTypeName(),
         typeArguments.take(effectiveType.typeParameters.size).map { (paramVariance, paramType) ->
-          val typeName = paramType?.asTypeName() ?: return@map STAR
+          val typeName = paramType?.asTypeName(map) ?: return@map STAR
           when (paramVariance) {
             null -> STAR
             KVariance.INVARIANT -> typeName
@@ -262,15 +263,21 @@ public fun ParameterizedType.asParameterizedTypeName(): ParameterizedTypeName =
  * Returns a [TypeName] equivalent to the given Kotlin KType using reflection, maybe using kotlin-reflect
  * if required.
  */
-public fun KType.asTypeName(): TypeName {
+public fun KType.asTypeName(): TypeName = asTypeName(mutableMapOf())
+
+/**
+ * Internal method for resolving KType with cycle detection.
+ * This is used to avoid infinite recursion when dealing with recursively bound generics.
+ */
+internal fun KType.asTypeName(map: MutableMap<KTypeParameter, TypeVariableName>): TypeName {
   val classifier = this.classifier
   if (classifier is KTypeParameter) {
-    return classifier.asTypeVariableName().run { if (isMarkedNullable) copy(nullable = true) else this }
+    return classifier.asTypeVariableName(map).run { if (isMarkedNullable) copy(nullable = true) else this }
   }
 
   if (classifier == null || classifier !is KClass<*>) {
     throw IllegalArgumentException("Cannot build TypeName for $this")
   }
 
-  return ParameterizedTypeName.get(classifier, this.isMarkedNullable, this.arguments)
+  return ParameterizedTypeName.get(classifier, this.isMarkedNullable, this.arguments, map)
 }

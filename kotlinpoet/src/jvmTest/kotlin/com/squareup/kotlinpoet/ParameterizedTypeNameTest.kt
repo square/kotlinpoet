@@ -26,6 +26,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
+import kotlin.reflect.jvm.kotlinFunction
 import org.junit.Test
 
 class ParameterizedTypeNameTest {
@@ -188,5 +189,18 @@ class ParameterizedTypeNameTest {
 
     assertThat(parameterizedTypeName).isEqualTo(tagged)
     assertThat(parameterizedTypeName.hashCode()).isEqualTo(tagged.hashCode())
+  }
+
+  // https://github.com/square/kotlinpoet/issues/1914
+  @Test fun stackOverflowOnRecursivelyBoundGeneric() {
+    val method = Class.forName("kotlin.collections.ArraysKt").methods.first {
+      it.name == "max" && it.parameters.first().parameterizedType.typeName.contains("Comparable")
+    }
+    val kotlinFunction = method.kotlinFunction
+    assertThat(kotlinFunction).isNotNull()
+    val parameter = kotlinFunction!!.parameters.first()
+    val typeName = parameter.type.asTypeName()
+    // Should produce a valid TypeName without stack overflow
+    assertThat(typeName.toString()).contains("T")
   }
 }

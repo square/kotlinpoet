@@ -23,7 +23,6 @@ import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
 import kotlin.reflect.KClass
-import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 
@@ -287,14 +286,37 @@ public fun TypeParameterElement.asTypeVariableName(): TypeVariableName {
 }
 
 public fun KTypeParameter.asTypeVariableName(): TypeVariableName {
-  return TypeVariableName.of(
-    name = name,
-    bounds = upperBounds.map(KType::asTypeName)
-      .ifEmpty(TypeVariableName.Companion::NULLABLE_ANY_LIST),
-    variance = when (variance) {
-      KVariance.INVARIANT -> null
-      KVariance.IN -> KModifier.IN
-      KVariance.OUT -> KModifier.OUT
-    },
-  )
+  return asTypeVariableName(mutableMapOf())
+}
+
+/**
+ * Internal method for resolving type parameters with cycle detection.
+ * This is used to avoid infinite recursion when dealing with recursively bound generics.
+ */
+internal fun KTypeParameter.asTypeVariableName(map: MutableMap<KTypeParameter, TypeVariableName>): TypeVariableName {
+  var result: TypeVariableName? = map[this]
+  if (result == null) {
+    val bounds = mutableListOf<TypeName>()
+    val visibleBounds = Collections.unmodifiableList(bounds)
+    result = TypeVariableName(
+      name = name,
+      bounds = visibleBounds,
+      variance = when (variance) {
+        KVariance.INVARIANT -> null
+        KVariance.IN -> KModifier.IN
+        KVariance.OUT -> KModifier.OUT
+      },
+    )
+    map[this] = result
+
+    for (bound in upperBounds) {
+      bounds += bound.asTypeName(map)
+    }
+
+    bounds.remove(ANY)
+    if (bounds.isEmpty()) {
+      bounds.add(NULLABLE_ANY)
+    }
+  }
+  return result
 }
