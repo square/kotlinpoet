@@ -17,6 +17,8 @@ reports
 *.iml
 classes
 
+.vscode
+
 # Mkdocs files
 docs/1.x/*
 site
