@@ -5,6 +5,7 @@ Change Log
 
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)
+ * Fix: Don't convert multi-statement function to expression body. (#1979)
  * In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
  * New: Add NameAllocator.contains to check if a given tag is already allocated (#2154)
 

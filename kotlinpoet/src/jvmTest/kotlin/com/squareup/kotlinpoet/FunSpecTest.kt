@@ -1438,4 +1438,23 @@ class FunSpecTest {
       """.trimMargin(),
     )
   }
+
+  // https://github.com/square/kotlinpoet/issues/1979
+  @Test fun returnExpressionMultipleStatements() {
+    val spec = FunSpec.builder("three")
+      .returns(INT)
+      .addStatement("return 1")
+      .addStatement(".plus(2)")
+      .build()
+
+    assertThat(spec.toString()).isEqualTo(
+      """
+      |public fun three(): kotlin.Int {
+      |  return 1
+      |  .plus(2)
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
 }

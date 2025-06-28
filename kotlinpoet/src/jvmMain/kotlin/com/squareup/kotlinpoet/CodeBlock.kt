@@ -154,6 +154,21 @@ public class CodeBlock private constructor(
 
   internal fun hasStatements() = formatParts.any { "«" in it }
 
+  internal fun hasUnmatchedClosingStatement(): Boolean {
+    var openCount = 0
+    for (formatPart in formatParts) {
+      if (formatPart == "«") {
+        openCount++
+      } else if (formatPart == "»") {
+        if (openCount == 0) {
+          return true
+        }
+        openCount--
+      }
+    }
+    return false
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
