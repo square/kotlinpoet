@@ -4834,6 +4834,17 @@ class TypeSpecTest {
     assertThat(builder.build().typeSpecs).containsExactly(seasoning)
   }
 
+  @Test fun modifyTypeAliases() {
+    val builder = TypeSpec.classBuilder("Taco")
+      .addTypeAlias(TypeAliasSpec.builder("Topping", String::class.asTypeName()).build())
+
+    val seasoning = TypeAliasSpec.builder("Seasoning", String::class.asTypeName()).build()
+    builder.typeAliasSpecs.clear()
+    builder.typeAliasSpecs.add(seasoning)
+
+    assertThat(builder.build().typeAliasSpecs).containsExactly(seasoning)
+  }
+
   @Test fun modifySuperinterfaces() {
     val builder = TypeSpec.classBuilder("Taco")
       .addSuperinterface(List::class)
@@ -5997,6 +6008,24 @@ class TypeSpecTest {
         )
         .build()
     }.hasMessageThat().isEqualTo("primary constructor can't delegate to other constructors")
+  }
+
+  @Test fun addTypeAlias() {
+    val typeSpec = TypeSpec.classBuilder("Taco")
+      .addTypeAlias(TypeAliasSpec.builder("Topping", String::class).build())
+      .build()
+    assertThat(toString(typeSpec)).isEqualTo(
+      """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public class Taco {
+        |  public typealias Topping = String
+        |}
+        |
+      """.trimMargin(),
+    )
   }
 
   companion object {

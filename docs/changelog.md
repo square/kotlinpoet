@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+ * New: Add support for type aliases in types. (#PR_NUMBER)
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)
  * Fix: Don't convert multi-statement function to expression body. (#1979)

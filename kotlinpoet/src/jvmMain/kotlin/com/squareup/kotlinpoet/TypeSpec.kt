@@ -80,6 +80,7 @@ public class TypeSpec private constructor(
   public val initializerIndex: Int = builder.initializerIndex
   override val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
   public override val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
+  public val typeAliasSpecs: List<TypeAliasSpec> = builder.typeAliasSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
   @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
@@ -98,6 +99,7 @@ public class TypeSpec private constructor(
     builder.propertySpecs += propertySpecs
     builder.funSpecs += funSpecs
     builder.typeSpecs += typeSpecs
+    builder.typeAliasSpecs += typeAliasSpecs
     builder.initializerBlock.add(initializerBlock)
     builder.initializerIndex = initializerIndex
     builder.superinterfaces.putAll(superinterfaces)
@@ -328,6 +330,12 @@ public class TypeSpec private constructor(
         firstMember = false
       }
 
+      for (typeAliasSpec in typeAliasSpecs) {
+        if (!firstMember) codeWriter.emit("\n")
+        typeAliasSpec.emit(codeWriter)
+        firstMember = false
+      }
+
       codeWriter.unindent()
       codeWriter.popType()
 
@@ -418,7 +426,8 @@ public class TypeSpec private constructor(
         initializerBlock.isEmpty() &&
         (primaryConstructor?.body?.isEmpty() ?: true) &&
         funSpecs.isEmpty() &&
-        typeSpecs.isEmpty()
+        typeSpecs.isEmpty() &&
+        typeAliasSpecs.isEmpty()
     }
 
   override fun equals(other: Any?): Boolean {
@@ -509,6 +518,7 @@ public class TypeSpec private constructor(
     public val propertySpecs: MutableList<PropertySpec> = mutableListOf()
     public val funSpecs: MutableList<FunSpec> = mutableListOf()
     public val typeSpecs: MutableList<TypeSpec> = mutableListOf()
+    public val typeAliasSpecs: MutableList<TypeAliasSpec> = mutableListOf()
 
     @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
     public val annotationSpecs: MutableList<AnnotationSpec> get() = annotations
@@ -704,6 +714,10 @@ public class TypeSpec private constructor(
 
     override fun addType(typeSpec: TypeSpec): Builder = apply {
       typeSpecs += typeSpec
+    }
+
+    public fun addTypeAlias(typeAliasSpec: TypeAliasSpec): Builder = apply {
+      typeAliasSpecs += typeAliasSpec
     }
 
     @ExperimentalKotlinPoetApi
