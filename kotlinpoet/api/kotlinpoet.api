@@ -1011,6 +1011,7 @@ public final class com/squareup/kotlinpoet/TypeSpec : com/squareup/kotlinpoet/An
 	public final fun getSuperclassConstructorParameters ()Ljava/util/List;
 	public final fun getSuperinterfaces ()Ljava/util/Map;
 	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeAliasSpecs ()Ljava/util/List;
 	public fun getTypeSpecs ()Ljava/util/List;
 	public final fun getTypeVariables ()Ljava/util/List;
 	public fun hashCode ()I
@@ -1087,6 +1088,7 @@ public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotli
 	public final fun addSuperinterfaces (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public synthetic fun addType (Lcom/squareup/kotlinpoet/TypeSpec;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
+	public final fun addTypeAlias (Lcom/squareup/kotlinpoet/TypeAliasSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
@@ -1105,6 +1107,7 @@ public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotli
 	public final fun getSuperclassConstructorParameters ()Ljava/util/List;
 	public final fun getSuperinterfaces ()Ljava/util/Map;
 	public fun getTags ()Ljava/util/Map;
+	public final fun getTypeAliasSpecs ()Ljava/util/List;
 	public final fun getTypeSpecs ()Ljava/util/List;
 	public final fun getTypeVariables ()Ljava/util/List;
 	public final fun primaryConstructor (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;

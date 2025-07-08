@@ -47,3 +47,26 @@ typealias FileTable<K> = Map<K, Set<File>>
 
 typealias Predicate<T> = (T) -> Boolean
 ```
+
+Type aliases can also be added to types (classes, interfaces, objects) as well:
+
+> Note: Nested type aliases are a beta feature in Kotlin. See the official documentation
+> [here](https://kotlinlang.org/docs/type-aliases.html#nested-type-aliases) for more details.
+
+```kotlin
+val taco = TypeSpec.classBuilder("Taco")
+  .addTypeAlias(TypeAliasSpec.builder("Topping", String::class).build())
+  .build()
+```
+
+Which generates the following:
+
+```kotlin
+package com.squareup.tacos
+
+import kotlin.String
+
+public class Taco {
+  public typealias Topping = String
+}
+```
