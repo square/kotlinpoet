@@ -46,7 +46,7 @@ ksp-aaEmbeddable = { module = "com.google.devtools.ksp:symbol-processing-aa-embe
 
 truth = { module = "com.google.truth:truth", version = "1.4.4" }
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.21.0" }
-jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.0" }
+jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.1" }
 ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }
 kotlinCompileTesting = { module = "dev.zacsweers.kctfork:core", version.ref = "kct" }
 kotlinCompileTesting-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kct" }
