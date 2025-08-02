@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+ * Fix: FunSpec.beginControlFlow to accept nullable arguments for consistency with CodeBlock.beginControlFlow. (#2174)
  * New: Add support for type aliases in types.
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)

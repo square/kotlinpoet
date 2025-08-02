@@ -1053,6 +1053,23 @@ class FunSpecTest {
     assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
   }
 
+  @Test fun beginControlFlowWithNullArgs() {
+    val funSpec = FunSpec.builder("f")
+      .beginControlFlow("foo(%S)", null)
+      .endControlFlow()
+      .build()
+
+    assertThat(funSpec.toString()).isEqualTo(
+      """
+      |public fun f() {
+      |  foo(null) {
+      |  }
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun receiverWithKdoc() {
     val funSpec = FunSpec.builder("toBar")
       .receiver(String::class, kdoc = "the string to transform.")
