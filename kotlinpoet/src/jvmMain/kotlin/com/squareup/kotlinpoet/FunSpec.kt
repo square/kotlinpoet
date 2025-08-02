@@ -543,7 +543,7 @@ public class FunSpec private constructor(
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      * * Shouldn't contain braces or newline characters.
      */
-    public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+    public fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       body.beginControlFlow(controlFlow, *args)
     }
 
