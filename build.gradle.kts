@@ -49,6 +49,7 @@ subprojects {
     compilerOptions {
       jvmTarget = JvmTarget.JVM_1_8
       freeCompilerArgs.add("-Xjvm-default=all")
+      freeCompilerArgs.add("-Xjdk-release=8")
     }
   }
   // Ensure "org.gradle.jvm.version" is set to "8" in Gradle metadata.

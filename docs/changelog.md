@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Add -Xjdk-release=8 compiler flag to ensure Java 8 API compatibility. (#2152)
  * Fix: FunSpec.beginControlFlow to accept nullable arguments for consistency with CodeBlock.beginControlFlow. (#2174)
  * New: Add support for type aliases in types.
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
