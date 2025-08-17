@@ -569,6 +569,77 @@ class KotlinPoetTest {
     assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
   }
 
+  @Test
+  fun typeVariableWithOutVariance() {
+    System.setProperty("kotlinpoet.emit.variance", "true")
+
+    try {
+      val funspec = FunSpec.builder("foo")
+        .addTypeVariable(TypeVariableName("T"))
+        .returns(
+          ClassName.bestGuess("kotlin.Array")
+            .parameterizedBy(TypeVariableName("T", variance = KModifier.OUT)),
+        )
+        .addStatement("TODO()")
+        .build()
+
+      val result = FileSpec.builder("foo.bar", "Baz")
+        .addFunction(funspec)
+        .build()
+        .toString()
+
+      assertThat(result).contains("Array<out T>")
+    } finally {
+      System.clearProperty("kotlinpoet.emit.variance")
+    }
+  }
+
+  @Test
+  fun typeVariableWithInVariance() {
+    System.setProperty("kotlinpoet.emit.variance", "true")
+
+    try {
+      val funspec = FunSpec.builder("foo")
+        .addTypeVariable(TypeVariableName("T"))
+        .returns(
+          ClassName.bestGuess("kotlin.Array")
+            .parameterizedBy(TypeVariableName("T", variance = KModifier.IN)),
+        )
+        .addStatement("TODO()")
+        .build()
+
+      val result = FileSpec.builder("foo.bar", "Baz")
+        .addFunction(funspec)
+        .build()
+        .toString()
+
+      assertThat(result).contains("Array<in T>")
+    } finally {
+      System.clearProperty("kotlinpoet.emit.variance")
+    }
+  }
+
+  @Test
+  fun typeVariableWithoutVariance() {
+    val funspec = FunSpec.builder("foo")
+      .addTypeVariable(TypeVariableName("T"))
+      .returns(
+        ClassName.bestGuess("kotlin.Array")
+          .parameterizedBy(TypeVariableName("T")),
+      )
+      .addStatement("TODO()")
+      .build()
+
+    val result = FileSpec.builder("foo.bar", "Baz")
+      .addFunction(funspec)
+      .build()
+      .toString()
+
+    assertThat(result).contains("Array<T>")
+    assertThat(result).doesNotContain("Array<out T>")
+    assertThat(result).doesNotContain("Array<in T>")
+  }
+
   @Test fun getAndSet() {
     val source = FileSpec.builder(tacosPackage, "Taco")
       .addProperty(
