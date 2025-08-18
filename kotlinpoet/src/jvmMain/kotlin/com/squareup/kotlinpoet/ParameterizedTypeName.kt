@@ -83,11 +83,25 @@ public class ParameterizedTypeName internal constructor(
       rawType.emitAnnotations(out)
       rawType.emit(out)
     }
+
     if (typeArguments.isNotEmpty()) {
       out.emit("<")
       typeArguments.forEachIndexed { index, parameter ->
         if (index > 0) out.emit(", ")
         parameter.emitAnnotations(out)
+
+        if (parameter is TypeVariableName && parameter.variance != null) {
+          val shouldEmitVariance = System.getProperty("kotlinpoet.emit.variance", "false").toBoolean()
+
+          if (shouldEmitVariance) {
+            when (parameter.variance) {
+              KModifier.OUT -> out.emit("out ")
+              KModifier.IN -> out.emit("in ")
+              else -> Unit
+            }
+          }
+        }
+
         parameter.emit(out)
         parameter.emitNullable(out)
       }
