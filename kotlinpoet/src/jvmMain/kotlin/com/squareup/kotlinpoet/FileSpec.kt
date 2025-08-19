@@ -377,6 +377,10 @@ public class FileSpec private constructor(
       }
     }
 
+    public fun addImport(memberName: MemberName): Builder = apply {
+      memberImports += Import(memberName.canonicalName)
+    }
+
     public fun addImport(packageName: String, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
       addImport(packageName, names.toList())

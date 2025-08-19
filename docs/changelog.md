@@ -3,13 +3,14 @@ Change Log
 
 ## Unreleased
 
- * Fix: FunSpec.beginControlFlow to accept nullable arguments for consistency with CodeBlock.beginControlFlow. (#2174)
  * New: Add support for type aliases in types.
+ * New: Add `FileSpec.addImport(MemberName)` to explicitly import a member (#2198)
+ * New: Add `NameAllocator.contains` to check if a given tag is already allocated (#2154)
+ * Fix: `FunSpec.beginControlFlow` to accept nullable arguments for consistency with `CodeBlock.beginControlFlow`. (#2174)
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)
  * Fix: Don't convert multi-statement function to expression body. (#1979)
  * In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
- * New: Add NameAllocator.contains to check if a given tag is already allocated (#2154)
 
 ## Version 2.2.0
 
