@@ -264,6 +264,7 @@ public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotli
 	public final fun addImport (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addImport (Lcom/squareup/kotlinpoet/ClassName;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addImport (Lcom/squareup/kotlinpoet/Import;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public final fun addImport (Lcom/squareup/kotlinpoet/MemberName;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addImport (Ljava/lang/Class;Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addImport (Ljava/lang/Class;[Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addImport (Ljava/lang/Enum;)Lcom/squareup/kotlinpoet/FileSpec$Builder;

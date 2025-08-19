@@ -1082,6 +1082,32 @@ class FileSpecTest {
     )
   }
 
+  @Test fun memberNameImports() {
+    val getValue = MemberName("androidx.compose.runtime", "getValue")
+    val mutableStateOf = MemberName("androidx.compose.runtime", "mutableStateOf")
+    val file = FileSpec.builder("com.taco", "Taco")
+      .addImport(getValue)
+      .addProperty(
+        PropertySpec.builder("name", STRING)
+          .delegate("%M<%T>(%S)", mutableStateOf, STRING, "Jake")
+          .build(),
+      )
+      .build()
+
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.taco
+      |
+      |import androidx.compose.runtime.getValue
+      |import androidx.compose.runtime.mutableStateOf
+      |import kotlin.String
+      |
+      |public val name: String by mutableStateOf<String>("Jake")
+      |
+      """.trimMargin(),
+    )
+  }
+
   @Test fun modifyMembers() {
     val builder = FileSpec.builder("com.taco", "Taco")
       .addFunction(FunSpec.builder("aFunction").build())
