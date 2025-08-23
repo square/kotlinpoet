@@ -1277,6 +1277,9 @@ public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
 	public static final fun volatile (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 }
 
+public abstract interface annotation class com/squareup/kotlinpoet/jvm/alias/JvmOnlyKotlinPoetApi : java/lang/annotation/Annotation {
+}
+
 public final class com/squareup/kotlinpoet/tags/TypeAliasTag {
 	public fun <init> (Lcom/squareup/kotlinpoet/TypeName;)V
 	public final fun getAbbreviatedType ()Lcom/squareup/kotlinpoet/TypeName;
