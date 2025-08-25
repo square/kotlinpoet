@@ -1168,13 +1168,55 @@ class KotlinPoetTest {
     )
   }
 
-  // https://github.com/square/kotlinpoet/issues/701
-  @Test fun noIllegalCharacterInIdentifier() {
-    assertThrows<IllegalArgumentException> {
-      TypeSpec.enumBuilder("MyEnum")
-        .addEnumConstant("with.dots") // dots are illegal, so this should fail
-        .build().toString()
-    }.hasMessageThat().isEqualTo("Can't escape identifier `with.dots` because it contains illegal characters: .")
+  // https://github.com/square/kotlinpoet/issues/2203
+  @Test fun allowIllegalCharactersInAutoEscapedIdentifiers() {
+    val enum = TypeSpec.enumBuilder("MyEnum")
+      // Dots are illegal, but the identifier will be escaped, so this shouldn't fail.
+      .addEnumConstant("with.dots")
+      .build()
+    // This is valid Kotlin code.
+    assertThat(enum.toString()).isEqualTo(
+      """
+      public enum class MyEnum {
+        `with.dots`,
+      }
+
+      """.trimIndent(),
+    )
+
+    val type = TypeSpec.classBuilder("Foo.Bar")
+      .build()
+    // Even with escaping, this is invalid Kotlin code, but our checks here are lenient.
+    assertThat(type.toString()).isEqualTo(
+      """
+      public class `Foo.Bar`
+
+      """.trimIndent(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2203
+  @Test fun allowIllegalCharactersInManuallyEscapedIdentifiers() {
+    val enum = TypeSpec.enumBuilder("MyEnum")
+      .addEnumConstant("`with.dots`")
+      .build()
+    assertThat(enum.toString()).isEqualTo(
+      """
+      public enum class MyEnum {
+        `with.dots`,
+      }
+
+      """.trimIndent(),
+    )
+
+    val type = TypeSpec.classBuilder("`Foo.Bar`")
+      .build()
+    assertThat(type.toString()).isEqualTo(
+      """
+      public class `Foo.Bar`
+
+      """.trimIndent(),
+    )
   }
 
   // https://github.com/square/kotlinpoet/issues/814
