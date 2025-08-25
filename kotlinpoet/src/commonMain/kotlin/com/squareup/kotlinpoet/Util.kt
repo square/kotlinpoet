@@ -274,7 +274,9 @@ internal val String.allCharactersAreUnderscore get() = this.all { it == UNDERSCO
 private val ILLEGAL_CHARACTERS_TO_ESCAPE = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
 
 private fun String.failIfEscapeInvalid() {
-  require(!any { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
+  // Don't check for illegal characters in escaped identifiers, even though escaping doesn't always
+  // make an invalid identifier valid.
+  require(alreadyEscaped() || none { it in ILLEGAL_CHARACTERS_TO_ESCAPE }) {
     "Can't escape identifier $this because it contains illegal characters: " +
       ILLEGAL_CHARACTERS_TO_ESCAPE.intersect(this.toSet()).joinToString("")
   }
