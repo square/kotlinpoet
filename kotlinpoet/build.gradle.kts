@@ -97,6 +97,9 @@ kotlin {
       dependsOn(nonJvmMain)
     }
     wasmJsMain {
+      languageSettings {
+        optIn("kotlin.js.ExperimentalWasmJsInterop")
+      }
       dependsOn(nonJvmMain)
     }
   }
