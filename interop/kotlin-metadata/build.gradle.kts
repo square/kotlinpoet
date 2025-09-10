@@ -36,7 +36,7 @@ dependencies {
   api(projects.kotlinpoet)
 
   testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
+  testImplementation(libs.assertk)
   testImplementation(libs.compileTesting)
   testImplementation(libs.kotlinCompileTesting)
   testImplementation(libs.kotlin.annotationProcessingEmbeddable)

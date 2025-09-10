@@ -15,7 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.squareup.kotlinpoet.KModifier.CROSSINLINE
 import org.junit.Before
 import org.junit.Test
