@@ -15,7 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import java.io.InputStream
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8

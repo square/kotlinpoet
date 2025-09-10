@@ -15,7 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.jvm.jvmField
 import com.squareup.kotlinpoet.jvm.jvmSuppressWildcards
@@ -67,10 +70,10 @@ class KotlinPoetTest {
   }
 
   @Test fun noTopLevelConstructor() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FileSpec.builder(tacosPackage, "Taco")
         .addFunction(FunSpec.constructorBuilder().build())
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun primaryConstructor() {
@@ -204,9 +207,9 @@ class KotlinPoetTest {
   }
 
   @Test fun mistargetedModifier() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("CHEESE", String::class, KModifier.DATA).build()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun visibilityModifiers() {

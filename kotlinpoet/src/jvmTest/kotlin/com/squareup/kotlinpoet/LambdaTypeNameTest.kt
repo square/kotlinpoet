@@ -15,7 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEqualTo
 import com.squareup.kotlinpoet.KModifier.VARARG
 import kotlin.test.Test
 
@@ -193,7 +198,7 @@ class LambdaTypeNameTest {
   }
 
   @Test fun functionWithContextReceiverAndContextParameter() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       LambdaTypeName.get(
         Int::class.asTypeName(),
         listOf(),
@@ -201,11 +206,12 @@ class LambdaTypeNameTest {
         contextReceivers = listOf(STRING),
         contextParameters = listOf(INT),
       )
-    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Using both context receivers and context parameters is not allowed")
   }
 
   @Test fun paramsWithAnnotationsForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       LambdaTypeName.get(
         parameters = arrayOf(
           ParameterSpec.builder("foo", Int::class)
@@ -214,11 +220,12 @@ class LambdaTypeNameTest {
         ),
         returnType = Unit::class.asTypeName(),
       )
-    }.hasMessageThat().isEqualTo("Parameters with annotations are not allowed")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Parameters with annotations are not allowed")
   }
 
   @Test fun paramsWithModifiersForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       LambdaTypeName.get(
         parameters = arrayOf(
           ParameterSpec.builder("foo", Int::class)
@@ -227,11 +234,12 @@ class LambdaTypeNameTest {
         ),
         returnType = Unit::class.asTypeName(),
       )
-    }.hasMessageThat().isEqualTo("Parameters with modifiers are not allowed")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Parameters with modifiers are not allowed")
   }
 
   @Test fun paramsWithDefaultValueForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       LambdaTypeName.get(
         parameters = arrayOf(
           ParameterSpec.builder("foo", Int::class)
@@ -240,7 +248,8 @@ class LambdaTypeNameTest {
         ),
         returnType = Unit::class.asTypeName(),
       )
-    }.hasMessageThat().isEqualTo("Parameters with default values are not allowed")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Parameters with default values are not allowed")
   }
 
   @Test fun lambdaReturnType() {

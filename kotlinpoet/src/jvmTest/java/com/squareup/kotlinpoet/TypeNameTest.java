@@ -23,10 +23,10 @@ import java.util.Set;
 import java.util.UUID;
 import org.junit.Test;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TypeNameTest {
 
@@ -70,7 +70,7 @@ public class TypeNameTest {
     TypeNames.get(recursiveEnum.getGenericParameterTypes()[0]);
 
     // Make sure the generic argument is present
-    assertThat(genericTypeName.toString()).contains("Enum");
+    assertTrue(genericTypeName.toString().contains("Enum"));
   }
 
   @Test public void innerClassInGenericType() throws Exception {
@@ -81,8 +81,10 @@ public class TypeNameTest {
         TypeNames.get(getClass().getDeclaredMethod("testGenericIntInner").getGenericReturnType()));
 
     // Make sure the generic argument is present
-    assertThat(genericTypeName.toString()).isEqualTo(
-        TestGeneric.class.getCanonicalName() + "<java.lang.String>.Inner");
+    assertEquals(
+      TestGeneric.class.getCanonicalName() + "<java.lang.String>.Inner",
+      genericTypeName.toString()
+    );
   }
 
   @Test public void innerGenericInGenericType() throws Exception {
@@ -93,8 +95,10 @@ public class TypeNameTest {
         TypeNames.get(getClass().getDeclaredMethod("testGenericInnerInt").getGenericReturnType()));
 
     // Make sure the generic argument is present
-    assertThat(genericTypeName.toString()).isEqualTo(
-        TestGeneric.class.getCanonicalName() + "<java.lang.Short>.InnerGeneric<java.lang.Long>");
+    assertEquals(
+      TestGeneric.class.getCanonicalName() + "<java.lang.Short>.InnerGeneric<java.lang.Long>",
+      genericTypeName.toString()
+    );
   }
 
   @Test public void innerStaticInGenericType() throws Exception {
@@ -103,8 +107,10 @@ public class TypeNameTest {
     TypeName typeName = TypeNames.get(staticInGeneric.getGenericReturnType());
 
     // Make sure there are no generic arguments
-    assertThat(typeName.toString()).isEqualTo(
-        TestGeneric.class.getCanonicalName() + ".NestedNonGeneric");
+    assertEquals(
+      TestGeneric.class.getCanonicalName() + ".NestedNonGeneric",
+      typeName.toString()
+    );
   }
 
   @Test public void equalsAndHashCodePrimitive() {
@@ -154,8 +160,8 @@ public class TypeNameTest {
 
   private void assertEqualsHashCodeAndToString(TypeName a, TypeName b) {
     assertEquals(a.toString(), b.toString());
-    assertThat(a.equals(b)).isTrue();
-    assertThat(a.hashCode()).isEqualTo(b.hashCode());
+    assertTrue(a.equals(b));
+    assertEquals(a.hashCode(), b.hashCode());
     assertFalse(a.equals(null));
   }
 }

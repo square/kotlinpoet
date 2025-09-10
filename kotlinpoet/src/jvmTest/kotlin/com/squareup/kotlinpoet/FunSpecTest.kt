@@ -15,7 +15,14 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isTrue
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
@@ -149,17 +156,20 @@ class FunSpecTest {
     val classElement = getElement(InvalidOverrideMethods::class.java)
     val methods = methodsIn(elements.getAllMembers(classElement))
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FunSpec.overriding(findFirst(methods, "finalMethod"))
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, final]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("cannot override method with modifiers: [public, final]")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FunSpec.overriding(findFirst(methods, "privateMethod"))
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [private, final]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("cannot override method with modifiers: [private, final]")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FunSpec.overriding(findFirst(methods, "staticMethod"))
-    }.hasMessageThat().isEqualTo("cannot override method with modifiers: [public, static]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("cannot override method with modifiers: [public, static]")
   }
 
   @Test fun nullableParam() {
@@ -578,22 +588,25 @@ class FunSpecTest {
   }
 
   @Test fun constructorWithContextReceiver() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .contextReceivers(STRING)
-    }.hasMessageThat().isEqualTo("constructors cannot have context receivers")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("constructors cannot have context receivers")
   }
 
   @Test fun accessorWithContextReceiver() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.getterBuilder()
         .contextReceivers(STRING)
-    }.hasMessageThat().isEqualTo("$GETTER cannot have context receivers")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("$GETTER cannot have context receivers")
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.setterBuilder()
         .contextReceivers(STRING)
-    }.hasMessageThat().isEqualTo("$SETTER cannot have context receivers")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("$SETTER cannot have context receivers")
   }
 
   @Test fun functionWithContextParameter() {
@@ -694,12 +707,13 @@ class FunSpecTest {
   }
 
   @Test fun functionWithBothContextReceiverAndContextParameter() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.builder("foo")
         .contextReceivers(listOf(STRING))
         .contextParameter("num", INT)
         .build()
-    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Using both context receivers and context parameters is not allowed")
   }
 
   @Test fun contextParameterInAddStatement() {
@@ -727,22 +741,25 @@ class FunSpecTest {
   }
 
   @Test fun constructorWithContextParameter() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .contextParameter("user", STRING)
-    }.hasMessageThat().isEqualTo("constructors cannot have context parameters")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("constructors cannot have context parameters")
   }
 
   @Test fun accessorWithContextParameter() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.getterBuilder()
         .contextParameter("user", STRING)
-    }.hasMessageThat().isEqualTo("$GETTER cannot have context parameters")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("$GETTER cannot have context parameters")
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.setterBuilder()
         .contextParameter("user", STRING)
-    }.hasMessageThat().isEqualTo("$SETTER cannot have context parameters")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("$SETTER cannot have context parameters")
   }
 
   @Test fun functionParamSingleLambdaParam() {
@@ -955,10 +972,11 @@ class FunSpecTest {
   }
 
   @Test fun addingDelegateParametersToNonConstructorForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.builder("main")
         .callThisConstructor("a", "b", "c")
-    }.hasMessageThat().isEqualTo("only constructors can delegate to other constructors!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("only constructors can delegate to other constructors!")
   }
 
   @Test fun emptySecondaryConstructor() {
@@ -975,11 +993,12 @@ class FunSpecTest {
   }
 
   @Test fun reifiedTypesOnNonInlineFunctionsForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FunSpec.builder("foo")
         .addTypeVariable(TypeVariableName("T").copy(reified = true))
         .build()
-    }.hasMessageThat().isEqualTo("only type parameters of inline functions can be reified!")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("only type parameters of inline functions can be reified!")
   }
 
   @Test fun equalsAndHashCode() {
@@ -1170,7 +1189,7 @@ class FunSpecTest {
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
 
-    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+    assertThat(builder.build().modifiers).containsExactlyInAnyOrder(KModifier.INTERNAL)
   }
 
   @Test fun modifyAnnotations() {

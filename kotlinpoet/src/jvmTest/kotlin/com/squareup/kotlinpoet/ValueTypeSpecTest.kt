@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import org.junit.Test
@@ -102,7 +106,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
   class InlineSuperClass
 
   @Test fun inlineClassWithSuperClass() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       classBuilder()
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -116,7 +120,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         )
         .superclass(InlineSuperClass::class)
         .build()
-    }.hasMessageThat().isEqualTo("value/inline classes cannot have super classes")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("value/inline classes cannot have super classes")
   }
 
   interface InlineSuperInterface
@@ -147,7 +152,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
   }
 
   @Test fun inlineClassWithoutBackingProperty() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       classBuilder()
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -156,11 +161,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
         )
         .addProperty("garlic", String::class)
         .build()
-    }.hasMessageThat().isEqualTo("value/inline classes must have a single read-only (val) property parameter.")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
   }
 
   @Test fun inlineClassWithoutProperties() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       classBuilder()
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -168,11 +174,12 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("value/inline classes must have at least 1 property")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("value/inline classes must have at least 1 property")
   }
 
   @Test fun inlineClassWithMutableProperties() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       classBuilder()
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -186,7 +193,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("value/inline classes must have a single read-only (val) property parameter.")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
   }
 
   @Test

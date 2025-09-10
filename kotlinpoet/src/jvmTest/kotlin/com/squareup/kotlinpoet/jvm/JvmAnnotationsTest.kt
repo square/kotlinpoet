@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet.jvm
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -28,7 +32,6 @@ import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.assertThrows
 import java.io.IOException
 import kotlin.test.Test
 
@@ -252,10 +255,11 @@ class JvmAnnotationsTest {
   }
 
   @Test fun jvmStaticForbiddenOnConstructor() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .jvmStatic()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmStatic to a constructor!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmStatic to a constructor!")
   }
 
   @Test fun throwsFunction() {
@@ -464,17 +468,19 @@ class JvmAnnotationsTest {
   }
 
   @Test fun jvmOverloadsOnGetterForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.getterBuilder()
         .jvmOverloads()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmOverloads to a getter!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmOverloads to a getter!")
   }
 
   @Test fun jvmOverloadsOnSetterForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.setterBuilder()
         .jvmOverloads()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmOverloads to a setter!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmOverloads to a setter!")
   }
 
   @Test fun jvmNameFile() {
@@ -583,10 +589,11 @@ class JvmAnnotationsTest {
   }
 
   @Test fun jvmNameForbiddenOnConstructor() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .jvmName("notAConstructor")
-    }.hasMessageThat().isEqualTo("Can't apply @JvmName to a constructor!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmName to a constructor!")
   }
 
   @Test fun jvmMultifileClass() {
@@ -657,24 +664,27 @@ class JvmAnnotationsTest {
   }
 
   @Test fun jvmSuppressWildcardsOnConstructorForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .jvmSuppressWildcards()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmSuppressWildcards to a constructor!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmSuppressWildcards to a constructor!")
   }
 
   @Test fun jvmSuppressWildcardsOnGetterForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.getterBuilder()
         .jvmSuppressWildcards()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmSuppressWildcards to a getter!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmSuppressWildcards to a getter!")
   }
 
   @Test fun jvmSuppressWildcardsOnSetterForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.setterBuilder()
         .jvmSuppressWildcards()
-    }.hasMessageThat().isEqualTo("Can't apply @JvmSuppressWildcards to a setter!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @JvmSuppressWildcards to a setter!")
   }
 
   @Test fun jvmSuppressWildcardsProperty() {
@@ -838,10 +848,11 @@ class JvmAnnotationsTest {
   }
 
   @Test fun synchronizedOnConstructorForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       FunSpec.constructorBuilder()
         .synchronized()
-    }.hasMessageThat().isEqualTo("Can't apply @Synchronized to a constructor!")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Can't apply @Synchronized to a constructor!")
   }
 
   @Test fun transient() {

@@ -15,7 +15,8 @@
  */
 package com.squareup.kotlinpoet.metadata.specs
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument.AnnotationValue
 import kotlin.metadata.KmAnnotationArgument.ArrayValue

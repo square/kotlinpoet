@@ -15,7 +15,8 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.google.testing.compile.CompilationRule
 import kotlin.test.Test
 import org.junit.Rule

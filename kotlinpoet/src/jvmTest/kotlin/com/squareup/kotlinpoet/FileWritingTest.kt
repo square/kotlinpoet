@@ -15,9 +15,16 @@
  */
 package com.squareup.kotlinpoet
 
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isTrue
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
-import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
@@ -44,9 +51,10 @@ class FileWritingTest {
     val path = fs.getPath("/foo/bar")
     Files.createDirectories(path.parent)
     Files.createFile(path)
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       source.writeTo(path)
-    }.hasMessageThat().isEqualTo("path /foo/bar exists but is not a directory.")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("path /foo/bar exists but is not a directory.")
   }
 
   @Test fun fileNotDirectory() {
@@ -54,9 +62,10 @@ class FileWritingTest {
     val source = FileSpec.get("example", type)
     val file = File(tmp.newFolder("foo"), "bar")
     file.createNewFile()
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       source.writeTo(file)
-    }.hasMessageThat().isEqualTo("path ${file.path} exists but is not a directory.")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("path ${file.path} exists but is not a directory.")
   }
 
   @Test fun filerDefaultPackage() {
@@ -198,16 +207,16 @@ class FileWritingTest {
       .writeTo(filer)
 
     val testPath1 = fsRoot.resolve(fs.getPath("example", "Test1.kt"))
-    assertThat(filer.getOriginatingElements(testPath1)).containsExactly(element1_1)
+    assertThat(filer.getOriginatingElements(testPath1)).containsExactlyInAnyOrder(element1_1)
     val testPath2 = fsRoot.resolve(fs.getPath("example", "Test2.kt"))
-    assertThat(filer.getOriginatingElements(testPath2)).containsExactly(element2_1, element2_2)
+    assertThat(filer.getOriginatingElements(testPath2)).containsExactlyInAnyOrder(element2_1, element2_2)
     val testPath3 = fsRoot.resolve(fs.getPath("example", "Test3.kt"))
-    assertThat(filer.getOriginatingElements(testPath3)).containsExactly(element3_1, element3_2)
+    assertThat(filer.getOriginatingElements(testPath3)).containsExactlyInAnyOrder(element3_1, element3_2)
     val testPath4 = fsRoot.resolve(fs.getPath("example", "Test4.kt"))
-    assertThat(filer.getOriginatingElements(testPath4)).containsExactly(element4_1, element4_2)
+    assertThat(filer.getOriginatingElements(testPath4)).containsExactlyInAnyOrder(element4_1, element4_2)
 
     val mixed = fsRoot.resolve(fs.getPath("example", "Mixed.kt"))
-    assertThat(filer.getOriginatingElements(mixed)).containsExactly(
+    assertThat(filer.getOriginatingElements(mixed)).containsExactlyInAnyOrder(
       element1_1,
       element2_1,
       element2_2,

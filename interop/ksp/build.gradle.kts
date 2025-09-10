@@ -27,5 +27,5 @@ dependencies {
   api(projects.kotlinpoet)
   compileOnly(libs.ksp.api)
   testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
+  testImplementation(libs.assertk)
 }

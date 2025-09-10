@@ -15,7 +15,10 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import kotlin.test.Test
 
 class DelegatedConstructorCallTest {
@@ -147,9 +150,8 @@ class DelegatedConstructorCallTest {
       .addModifiers(KModifier.EXTERNAL)
       .superclass(ClassName("testpackage", "TestSuper"))
       .addSuperclassConstructorParameter("anything")
-    assertThrows<IllegalStateException> {
-      builder.build()
-    }
+    assertFailure { builder.build() }
+      .isInstanceOf<IllegalStateException>()
   }
 
   @Test
@@ -158,9 +160,8 @@ class DelegatedConstructorCallTest {
       .addModifiers(KModifier.EXTERNAL)
       .superclass(ClassName("testpackage", "TestSuper"))
       .addSuperclassConstructorParameter("anything")
-    assertThrows<IllegalStateException> {
-      builder.build()
-    }
+    assertFailure { builder.build() }
+      .isInstanceOf<IllegalStateException>()
   }
 
   @Test
@@ -173,8 +174,7 @@ class DelegatedConstructorCallTest {
       .addParameter(ParameterSpec("foo", ClassName("kotlin", "String")))
       .callThisConstructor()
     builder.addFunction(secondaryConstructorBuilder.build())
-    assertThrows<IllegalStateException> {
-      builder.build()
-    }
+    assertFailure { builder.build() }
+      .isInstanceOf<IllegalStateException>()
   }
 }

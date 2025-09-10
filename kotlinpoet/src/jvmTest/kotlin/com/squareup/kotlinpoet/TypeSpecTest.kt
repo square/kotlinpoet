@@ -15,7 +15,16 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.containsExactly
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
+import assertk.assertions.isTrue
+import assertk.assertions.message
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.DATA
@@ -843,11 +852,11 @@ class TypeSpecTest {
   }
 
   @Test fun onlyEnumsMayHaveEnumConstants() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.classBuilder("Roshambo")
         .addEnumConstant("ROCK")
         .build()
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   /** https://github.com/square/kotlinpoet/issues/621  */
@@ -1345,15 +1354,17 @@ class TypeSpecTest {
   }
 
   @Test fun funInterface_empty_shouldError() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.funInterfaceBuilder("Taco")
         .build()
-    }.hasMessageThat()
+    }.isInstanceOf<IllegalStateException>()
+      .message()
+      .isNotNull()
       .contains("Functional interfaces must have exactly one abstract function. Contained 0")
   }
 
   @Test fun funInterface_multipleAbstract_shouldError() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.funInterfaceBuilder("Taco")
         .addFunction(
           FunSpec.builder("fun1")
@@ -1366,7 +1377,9 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat()
+    }.isInstanceOf<IllegalStateException>()
+      .message()
+      .isNotNull()
       .contains("Functional interfaces must have exactly one abstract function. Contained 2")
   }
 
@@ -3071,9 +3084,10 @@ class TypeSpecTest {
   }
 
   @Test fun nameFromUnsupportedType() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%N", String::class)
-    }.hasMessageThat().isEqualTo("expected name but was " + String::class)
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("expected name but was " + String::class)
   }
 
   @Test fun stringFromAnything() {
@@ -3109,85 +3123,91 @@ class TypeSpecTest {
   }
 
   @Test fun typeFromUnsupportedType() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%T", "kotlin.String")
-    }.hasMessageThat().isEqualTo("expected type but was kotlin.String")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("expected type but was kotlin.String")
   }
 
   @Test fun tooFewArguments() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%S")
-    }.hasMessageThat().isEqualTo("index 1 for '%S' not in range (received 0 arguments)")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("index 1 for '%S' not in range (received 0 arguments)")
   }
 
   @Test fun unusedArgumentsRelative() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%L %L", "a", "b", "c")
-    }.hasMessageThat().isEqualTo("unused arguments: expected 2, received 3")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("unused arguments: expected 2, received 3")
   }
 
   @Test fun unusedArgumentsIndexed() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1L %2L", "a", "b", "c")
-    }.hasMessageThat().isEqualTo("unused argument: %3")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("unused argument: %3")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1L %1L %1L", "a", "b", "c")
-    }.hasMessageThat().isEqualTo("unused arguments: %2, %3")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("unused arguments: %2, %3")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%3L %1L %3L %1L %3L", "a", "b", "c", "d")
-    }.hasMessageThat().isEqualTo("unused arguments: %2, %4")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("unused arguments: %2, %4")
   }
 
   @Test fun superClassOnlyValidForClasses() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.annotationBuilder("A").superclass(Any::class.asClassName())
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.enumBuilder("E").superclass(Any::class.asClassName())
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.interfaceBuilder("I").superclass(Any::class.asClassName())
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun superClassConstructorParametersOnlyValidForClasses() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.annotationBuilder("A").addSuperclassConstructorParameter("")
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.enumBuilder("E").addSuperclassConstructorParameter("")
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.interfaceBuilder("I").addSuperclassConstructorParameter("")
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun anonymousClassesCannotHaveModifiersOrTypeVariable() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.anonymousClassBuilder().addModifiers(PUBLIC)
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.anonymousClassBuilder().addTypeVariable(TypeVariableName("T")).build()
-    }
+    }.isInstanceOf<IllegalStateException>()
 
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.anonymousClassBuilder().addTypeVariables(listOf(TypeVariableName("T"))).build()
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun invalidSuperClass() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.classBuilder("foo")
         .superclass(List::class)
         .superclass(Map::class)
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun staticCodeBlock() {
@@ -3446,16 +3466,16 @@ class TypeSpecTest {
 
   @Test fun initializerBlockUnsupportedExceptionOnInterface() {
     val interfaceBuilder = TypeSpec.interfaceBuilder("Taco")
-    assertThrows<IllegalStateException> {
+    assertFailure {
       interfaceBuilder.addInitializerBlock(CodeBlock.builder().build())
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun initializerBlockUnsupportedExceptionOnAnnotation() {
     val annotationBuilder = TypeSpec.annotationBuilder("Taco")
-    assertThrows<IllegalStateException> {
+    assertFailure {
       annotationBuilder.addInitializerBlock(CodeBlock.builder().build())
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun equalsAndHashCode() {
@@ -3727,9 +3747,9 @@ class TypeSpecTest {
       .addModifiers(KModifier.PUBLIC)
       .addType(companion)
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       objectBuilder.build()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun companionObjectSuper() {
@@ -3980,10 +4000,10 @@ class TypeSpecTest {
   }
 
   @Test fun superclassConstructorParamsForbiddenForAnnotation() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.annotationBuilder("Taco")
         .addSuperclassConstructorParameter("%S", "foo")
-    }
+    }.isInstanceOf<IllegalStateException>()
   }
 
   @Test fun classExtendsNoPrimaryConstructor() {
@@ -4024,15 +4044,16 @@ class TypeSpecTest {
   }
 
   @Test fun classExtendsNoPrimaryConstructorButSuperclassParams() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("IoException")
         .superclass(Exception::class)
         .addSuperclassConstructorParameter("%S", "hey")
         .addFunction(FunSpec.constructorBuilder().build())
         .build()
-    }.hasMessageThat().isEqualTo(
-      "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "types without a primary constructor cannot specify secondary constructors and superclass constructor parameters",
+      )
   }
 
   @Test fun constructorWithDefaultParamValue() {
@@ -4138,16 +4159,17 @@ class TypeSpecTest {
   @Test fun internalFunForbiddenInInterface() {
     val type = TypeSpec.interfaceBuilder("ITaco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunction(
         FunSpec.builder("eat")
           .addModifiers(ABSTRACT, INTERNAL)
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunctions(
         listOf(
           FunSpec.builder("eat")
@@ -4156,22 +4178,24 @@ class TypeSpecTest {
         ),
       )
         .build()
-    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("modifiers [ABSTRACT, INTERNAL] must contain none of [INTERNAL, PROTECTED]")
   }
 
   @Test fun privateAbstractFunForbiddenInInterface() {
     val type = TypeSpec.interfaceBuilder("ITaco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunction(
         FunSpec.builder("eat")
           .addModifiers(ABSTRACT, PRIVATE)
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunctions(
         listOf(
           FunSpec.builder("eat")
@@ -4180,61 +4204,66 @@ class TypeSpecTest {
         ),
       )
         .build()
-    }.hasMessageThat().isEqualTo("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("modifiers [ABSTRACT, PRIVATE] must contain none or only one of [ABSTRACT, PRIVATE]")
   }
 
   @Test fun internalConstructorForbiddenInAnnotation() {
     val type = TypeSpec.annotationBuilder("Taco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.primaryConstructor(
         FunSpec.constructorBuilder()
           .addModifiers(INTERNAL)
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("modifiers [INTERNAL] must contain none of [INTERNAL, PROTECTED, PRIVATE, ABSTRACT]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("modifiers [INTERNAL] must contain none of [INTERNAL, PROTECTED, PRIVATE, ABSTRACT]")
   }
 
   // https://github.com/square/kotlinpoet/issues/1557
   @Test fun memberFunForbiddenInAnnotation() {
     val type = TypeSpec.annotationBuilder("Taco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunction(
         FunSpec.builder("eat")
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("annotation class Taco cannot declare member function eat")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("annotation class Taco cannot declare member function eat")
   }
 
   // https://github.com/square/kotlinpoet/issues/1557
   @Test fun secondaryConstructorForbiddenInAnnotation() {
     val type = TypeSpec.annotationBuilder("Taco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.primaryConstructor(FunSpec.constructorBuilder().build())
         .addFunction(
           FunSpec.constructorBuilder()
             .addParameter("value", String::class)
             .build(),
         ).build()
-    }.hasMessageThat().isEqualTo("annotation class Taco cannot declare member function constructor()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("annotation class Taco cannot declare member function constructor()")
   }
 
   // https://github.com/square/kotlinpoet/issues/1556
   @Test fun abstractFunForbiddenInObject() {
     val type = TypeSpec.objectBuilder("Taco")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       type.addFunction(
         FunSpec.builder("eat")
           .addModifiers(ABSTRACT)
           .build(),
       )
         .build()
-    }.hasMessageThat().isEqualTo("non-abstract type Taco cannot declare abstract function eat")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract type Taco cannot declare abstract function eat")
   }
 
   @Test fun classHeaderFormatting() {
@@ -4491,7 +4520,7 @@ class TypeSpecTest {
   }
 
   @Test fun testNoSuchParameterDelegate() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Taco")
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -4500,15 +4529,17 @@ class TypeSpecTest {
         )
         .addSuperinterface(KFunction::class, "notOther")
         .build()
-    }.hasMessageThat().isEqualTo("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("no such constructor parameter 'notOther' to delegate to for type 'Taco'")
   }
 
   @Test fun failAddParamDelegateWhenNullConstructor() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Taco")
         .addSuperinterface(Runnable::class, "etc")
         .build()
-    }.hasMessageThat().isEqualTo("delegating to constructor parameter requires not-null constructor")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("delegating to constructor parameter requires not-null constructor")
   }
 
   @Test fun testAddedDelegateByParamName() {
@@ -4536,7 +4567,7 @@ class TypeSpecTest {
   }
 
   @Test fun failOnAddExistingDelegateType() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Taco")
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -4547,10 +4578,11 @@ class TypeSpecTest {
         .addSuperinterface(Function::class, "superString")
         .build()
       fail()
-    }.hasMessageThat().isEqualTo(
-      "'Taco' can not delegate to kotlin.Function " +
-        "by superString with existing declaration by { print(Hello) }",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "'Taco' can not delegate to kotlin.Function " +
+          "by superString with existing declaration by { print(Hello) }",
+      )
   }
 
   @Test fun testDelegateIfaceWithOtherParamTypeName() {
@@ -4721,7 +4753,7 @@ class TypeSpecTest {
   }
 
   @Test fun multipleCompanionObjects() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Taco")
         .addTypes(
           listOf(
@@ -4732,7 +4764,7 @@ class TypeSpecTest {
           ),
         )
         .build()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun objectKindIsCompanion() {
@@ -4853,7 +4885,7 @@ class TypeSpecTest {
     builder.superinterfaces[Set::class.asTypeName()] = CodeBlock.EMPTY
 
     assertThat(builder.build().superinterfaces)
-      .containsExactlyEntriesIn(mapOf(Set::class.asTypeName() to CodeBlock.EMPTY))
+      .isEqualTo(mapOf(Set::class.asTypeName() to CodeBlock.EMPTY))
   }
 
   @Test fun modifyProperties() {
@@ -4875,7 +4907,7 @@ class TypeSpecTest {
     builder.enumConstants["SEASONING"] = TypeSpec.anonymousClassBuilder().build()
 
     assertThat(builder.build().enumConstants)
-      .containsExactlyEntriesIn(mapOf("SEASONING" to TypeSpec.anonymousClassBuilder().build()))
+      .isEqualTo(mapOf("SEASONING" to TypeSpec.anonymousClassBuilder().build()))
   }
 
   @Test fun modifySuperclassConstructorParams() {
@@ -5615,15 +5647,17 @@ class TypeSpecTest {
   }
 
   @Test fun contextReceiver_mustBeClass() {
-    val t = assertFailsWith<IllegalStateException> {
+    assertFailure {
       TypeSpec.interfaceBuilder("Example")
         .contextReceivers(STRING)
-    }
-    assertThat(t).hasMessageThat().contains("contextReceivers can only be applied on simple classes")
+    }.isInstanceOf<IllegalStateException>()
+      .message()
+      .isNotNull()
+      .contains("contextReceivers can only be applied on simple classes")
   }
 
   @Test fun valWithContextReceiverWithoutGetter() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5632,12 +5666,12 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context receivers require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context receivers require a get()")
   }
 
   @Test fun varWithContextReceiverWithoutAccessors() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5649,10 +5683,10 @@ class TypeSpecTest {
             )
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract mutable properties with context receivers require a set()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract mutable properties with context receivers require a set()")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5664,10 +5698,10 @@ class TypeSpecTest {
             )
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context receivers require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context receivers require a get()")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5675,8 +5709,8 @@ class TypeSpecTest {
             .contextReceivers(INT)
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context receivers require a get(), non-abstract mutable properties with context receivers require a set()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context receivers require a get(), non-abstract mutable properties with context receivers require a set()")
   }
 
   // https://github.com/square/kotlinpoet/issues/1525
@@ -5710,7 +5744,7 @@ class TypeSpecTest {
   }
 
   @Test fun nonAbstractPropertyWithContextReceiverInAbstractClass() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Bar")
         .addModifiers(ABSTRACT)
         .addProperty(
@@ -5719,7 +5753,8 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("non-abstract properties with context receivers require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context receivers require a get()")
   }
 
   @Test fun abstractPropertyWithContextReceiverInAbstractClass() {
@@ -5745,7 +5780,7 @@ class TypeSpecTest {
   }
 
   @Test fun valWithContextParameterWithoutGetter() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5754,12 +5789,12 @@ class TypeSpecTest {
             .build(),
         )
         .build().also { println(it.toString()) }
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context parameters require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context parameters require a get()")
   }
 
   @Test fun varWithContextParameterWithoutAccessors() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5771,10 +5806,10 @@ class TypeSpecTest {
             )
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract mutable properties with context parameters require a set()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract mutable properties with context parameters require a set()")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5786,10 +5821,10 @@ class TypeSpecTest {
             )
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context parameters require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context parameters require a get()")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Example")
         .addProperty(
           PropertySpec.builder("foo", STRING)
@@ -5797,8 +5832,8 @@ class TypeSpecTest {
             .contextParameter("bar", INT)
             .build(),
         ).build()
-    }.hasMessageThat()
-      .isEqualTo("non-abstract properties with context parameters require a get(), non-abstract mutable properties with context parameters require a set()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context parameters require a get(), non-abstract mutable properties with context parameters require a set()")
   }
 
   @Test fun propertyWithContextParameterInInterface() {
@@ -5831,7 +5866,7 @@ class TypeSpecTest {
   }
 
   @Test fun nonAbstractPropertyWithContextParameterInAbstractClass() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Bar")
         .addModifiers(ABSTRACT)
         .addProperty(
@@ -5840,7 +5875,8 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("non-abstract properties with context parameters require a get()")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract properties with context parameters require a get()")
   }
 
   @Test fun abstractPropertyWithContextParameterInAbstractClass() {
@@ -5866,7 +5902,7 @@ class TypeSpecTest {
   }
 
   @Test fun abstractPropertyInNonAbstractClass() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Bar")
         .addProperty(
           PropertySpec.builder("foo", Int::class)
@@ -5874,11 +5910,12 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("non-abstract type Bar cannot declare abstract property foo")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract type Bar cannot declare abstract property foo")
   }
 
   @Test fun abstractPropertyInObject() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.objectBuilder("Bar")
         .addProperty(
           PropertySpec.builder("foo", Int::class)
@@ -5886,7 +5923,8 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("non-abstract type Bar cannot declare abstract property foo")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("non-abstract type Bar cannot declare abstract property foo")
   }
 
   @Test fun abstractPropertyInEnum() {
@@ -5994,7 +6032,7 @@ class TypeSpecTest {
 
   // https://github.com/square/kotlinpoet/issues/1818
   @Test fun primaryConstructorCanNotDelegate() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("Child")
         .superclass(ClassName("com.squareup", "Parent"))
         .primaryConstructor(
@@ -6007,7 +6045,8 @@ class TypeSpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("primary constructor can't delegate to other constructors")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("primary constructor can't delegate to other constructors")
   }
 
   @Test fun addTypeAlias() {

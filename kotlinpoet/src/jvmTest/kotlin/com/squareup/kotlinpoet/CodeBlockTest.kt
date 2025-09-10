@@ -15,7 +15,14 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNull
+import assertk.assertions.isTrue
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.Locale
 import kotlin.test.Test
@@ -75,9 +82,10 @@ class CodeBlockTest {
   }
 
   @Test fun percentEscapeCannotBeIndexed() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1%", "taco").build()
-    }.hasMessageThat().isEqualTo("%% may not have an index")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("%% may not have an index")
   }
 
   @Test fun nameFormatCanBeIndexed() {
@@ -127,18 +135,20 @@ class CodeBlockTest {
   }
 
   @Test fun missingNamedArgument() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       val map = LinkedHashMap<String, Any>()
       CodeBlock.builder().addNamed("%text:S", map).build()
-    }.hasMessageThat().isEqualTo("Missing named argument for %text")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Missing named argument for %text")
   }
 
   @Test fun lowerCaseNamed() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       val map = LinkedHashMap<String, Any>()
       map["Text"] = "tacos"
       CodeBlock.builder().addNamed("%Text:S", map).build()
-    }.hasMessageThat().isEqualTo("argument 'Text' must start with a lowercase character")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("argument 'Text' must start with a lowercase character")
   }
 
   @Test fun multipleNamedArguments() {
@@ -165,57 +175,66 @@ class CodeBlockTest {
   @Test fun danglingNamed() {
     val map = LinkedHashMap<String, Any>()
     map["clazz"] = Int::class
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().addNamed("%clazz:T%", map).build()
-    }.hasMessageThat().isEqualTo("dangling % at end")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("dangling % at end")
   }
 
   @Test fun indexTooHigh() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%2T", String::class).build()
-    }.hasMessageThat().isEqualTo("index 2 for '%2T' not in range (received 1 arguments)")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("index 2 for '%2T' not in range (received 1 arguments)")
   }
 
   @Test fun indexIsZero() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%0T", String::class).build()
-    }.hasMessageThat().isEqualTo("index 0 for '%0T' not in range (received 1 arguments)")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("index 0 for '%0T' not in range (received 1 arguments)")
   }
 
   @Test fun indexIsNegative() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%-1T", String::class).build()
-    }.hasMessageThat().isEqualTo("invalid format string: '%-1T'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("invalid format string: '%-1T'")
   }
 
   @Test fun indexWithoutFormatType() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1", String::class).build()
-    }.hasMessageThat().isEqualTo("dangling format characters in '%1'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("dangling format characters in '%1'")
   }
 
   @Test fun indexWithoutFormatTypeNotAtStringEnd() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1 taco", String::class).build()
-    }.hasMessageThat().isEqualTo("invalid format string: '%1 taco'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("invalid format string: '%1 taco'")
   }
 
   @Test fun indexButNoArguments() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%1T").build()
-    }.hasMessageThat().isEqualTo("index 1 for '%1T' not in range (received 0 arguments)")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("index 1 for '%1T' not in range (received 0 arguments)")
   }
 
   @Test fun formatIndicatorAlone() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("%", String::class).build()
-    }.hasMessageThat().isEqualTo("dangling format characters in '%'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("dangling format characters in '%'")
   }
 
   @Test fun formatIndicatorWithoutIndexOrFormatType() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       CodeBlock.builder().add("% tacoString", String::class).build()
-    }.hasMessageThat().isEqualTo("invalid format string: '% tacoString'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("invalid format string: '% tacoString'")
   }
 
   @Test fun sameIndexCanBeUsedWithDifferentFormats() {
@@ -229,38 +248,40 @@ class CodeBlockTest {
     val codeBlock = CodeBlock.builder()
       .addStatement("print(«%L»)", "1 + 1")
       .build()
-    assertThrows<IllegalStateException> {
+    assertFailure {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo(
-      """
-      |Can't open a new statement until the current statement is closed (opening « followed
-      |by another « without a closing »).
-      |Current code block:
-      |- Format parts: [«, print(, «, %L, », ), \n, »]
-      |- Arguments: [1 + 1]
-      |
-      """.trimMargin(),
-    )
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage(
+        """
+        |Can't open a new statement until the current statement is closed (opening « followed
+        |by another « without a closing »).
+        |Current code block:
+        |- Format parts: [«, print(, «, %L, », ), \n, »]
+        |- Arguments: [1 + 1]
+        |
+        """.trimMargin(),
+      )
   }
 
   @Test fun statementExitWithoutStatementEnter() {
     val codeBlock = CodeBlock.builder()
       .addStatement("print(%L»)", "1 + 1")
       .build()
-    assertThrows<IllegalStateException> {
+    assertFailure {
       // We can't report this error until rendering type because code blocks might be composed.
       codeBlock.toString()
-    }.hasMessageThat().isEqualTo(
-      """
-      |Can't close a statement that hasn't been opened (closing » is not preceded by an
-      |opening «).
-      |Current code block:
-      |- Format parts: [«, print(, %L, », ), \n, »]
-      |- Arguments: [1 + 1]
-      |
-      """.trimMargin(),
-    )
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage(
+        """
+        |Can't close a statement that hasn't been opened (closing » is not preceded by an
+        |opening «).
+        |Current code block:
+        |- Format parts: [«, print(, %L, », ), \n, »]
+        |- Arguments: [1 + 1]
+        |
+        """.trimMargin(),
+      )
   }
 
   @Test fun nullableType() {
@@ -696,8 +717,9 @@ class CodeBlockTest {
 
   @Test fun nameFromUnnamedContextParameter() {
     val unnamed = ContextParameter(ClassName("java.util.logging", "Logger"))
-    assertThrows<IllegalStateException> {
+    assertFailure {
       CodeBlock.of("%N", unnamed)
-    }.hasMessageThat().isEqualTo("Named context parameter required")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Named context parameter required")
   }
 }
