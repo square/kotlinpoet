@@ -15,7 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEqualTo
 import com.squareup.kotlinpoet.TypeVariableName.Companion.NULLABLE_ANY_LIST
 import java.io.Serializable
 import kotlin.test.Test
@@ -163,9 +168,9 @@ class TypeVariableNameTest {
   }
 
   @Test fun invalidVariance() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeVariableName("E", KModifier.FINAL)
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun reified() {

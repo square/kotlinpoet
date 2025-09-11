@@ -15,7 +15,12 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
@@ -259,11 +264,12 @@ class FileSpecTest {
   }
 
   @Test fun importStaticWildcardsForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FileSpec.builder("readme", "Util")
         .addType(importStaticTypeSpec("Util"))
         .addImport(TimeUnit::class, "*")
-    }.hasMessageThat().isEqualTo("Wildcard imports are not allowed")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("Wildcard imports are not allowed")
   }
 
   private fun importStaticTypeSpec(name: String): TypeSpec {
@@ -1003,9 +1009,10 @@ class FileSpecTest {
       .useSiteTarget(SET)
       .addMember("value", "%S", "TacoUtils")
       .build()
-    assertThrows<IllegalStateException> {
+    assertFailure {
       builder.addAnnotation(annotation)
-    }.hasMessageThat().isEqualTo("Use-site target SET not supported for file annotations.")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Use-site target SET not supported for file annotations.")
   }
 
   @Test fun escapeKeywordInPackageName() {
@@ -1342,9 +1349,9 @@ class FileSpecTest {
 
   @Test fun classNameFactoryIllegalArgumentExceptionOnNestedType() {
     val className = ClassName("com.example", "Example", "Nested")
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       FileSpec.builder(className)
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun memberNameFactory() {

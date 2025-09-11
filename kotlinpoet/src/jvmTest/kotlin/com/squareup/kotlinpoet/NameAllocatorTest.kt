@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import kotlin.test.Test
 
 class NameAllocatorTest {
@@ -84,17 +88,19 @@ class NameAllocatorTest {
     val nameAllocator = NameAllocator()
     nameAllocator.newName("foo", 1)
     assertThat(1 in nameAllocator).isEqualTo(true)
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       nameAllocator.newName("bar", 1)
-    }.hasMessageThat().isEqualTo("tag 1 cannot be used for both 'foo' and 'bar'")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("tag 1 cannot be used for both 'foo' and 'bar'")
     assertThat(1 in nameAllocator).isEqualTo(true)
   }
 
   @Test fun useBeforeAllocateForbidden() {
     val nameAllocator = NameAllocator()
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       nameAllocator[1]
-    }.hasMessageThat().isEqualTo("unknown tag: 1")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("unknown tag: 1")
   }
 
   @Test fun cloneUsage() {

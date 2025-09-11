@@ -15,10 +15,18 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
+import assertk.assertions.isTrue
+import assertk.assertions.message
 import javax.lang.model.element.Modifier
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 
 class ParameterSpecTest {
   @Test fun equalsAndHashCode() {
@@ -68,7 +76,7 @@ class ParameterSpecTest {
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.CROSSINLINE)
 
-    assertThat(builder.build().modifiers).containsExactly(KModifier.CROSSINLINE)
+    assertThat(builder.build().modifiers).containsExactlyInAnyOrder(KModifier.CROSSINLINE)
   }
 
   @Test fun modifyAnnotations() {
@@ -153,19 +161,21 @@ class ParameterSpecTest {
   @Suppress("DEPRECATION_ERROR")
   @Test
   fun jvmModifiersAreNotAllowed() {
-    val e = assertFailsWith<IllegalArgumentException> {
+    assertFailure {
       ParameterSpec.builder("value", INT)
         .jvmModifiers(listOf(Modifier.FINAL))
         .build()
-    }
-    assertThat(e).hasMessageThat().contains("JVM modifiers are not permitted on parameters in Kotlin")
+    }.isInstanceOf<IllegalArgumentException>()
+      .message()
+      .isNotNull()
+      .contains("JVM modifiers are not permitted on parameters in Kotlin")
   }
 
   @Test
   fun illegalModifiers() {
     val builder = ParameterSpec.builder("value", INT)
 
-    val e = assertFailsWith<IllegalArgumentException> {
+    assertFailure {
       // Legal
       builder.addModifiers(KModifier.NOINLINE)
       builder.addModifiers(KModifier.CROSSINLINE)
@@ -174,7 +184,9 @@ class ParameterSpecTest {
       builder.addModifiers(KModifier.FINAL)
       builder.addModifiers(KModifier.PRIVATE)
       builder.build()
-    }
-    assertThat(e).hasMessageThat().contains("Modifiers [FINAL, PRIVATE] are not allowed on Kotlin parameters. Allowed modifiers: [VARARG, NOINLINE, CROSSINLINE]")
+    }.isInstanceOf<IllegalArgumentException>()
+      .message()
+      .isNotNull()
+      .contains("Modifiers [FINAL, PRIVATE] are not allowed on Kotlin parameters. Allowed modifiers: [VARARG, NOINLINE, CROSSINLINE]")
   }
 }

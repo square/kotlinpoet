@@ -15,7 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNotEqualTo
 import com.squareup.kotlinpoet.WildcardTypeName.Companion.consumerOf
 import com.squareup.kotlinpoet.WildcardTypeName.Companion.producerOf
 import org.junit.Test

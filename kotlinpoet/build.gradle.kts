@@ -79,7 +79,7 @@ kotlin {
     jvmTest {
       dependencies {
         implementation(libs.kotlin.junit)
-        implementation(libs.truth)
+        implementation(libs.assertk)
         implementation(libs.compileTesting)
         implementation(libs.jimfs)
         implementation(libs.ecj)

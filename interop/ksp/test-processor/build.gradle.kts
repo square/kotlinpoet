@@ -45,5 +45,5 @@ dependencies {
   testImplementation(libs.kotlinCompileTesting.ksp)
   testImplementation(libs.ksp.aaEmbeddable)
   testImplementation(libs.kotlin.junit)
-  testImplementation(libs.truth)
+  testImplementation(libs.assertk)
 }

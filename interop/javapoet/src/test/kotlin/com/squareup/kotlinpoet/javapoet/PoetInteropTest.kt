@@ -15,7 +15,8 @@
  */
 package com.squareup.kotlinpoet.javapoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.squareup.javapoet.ArrayTypeName
 import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ARRAY

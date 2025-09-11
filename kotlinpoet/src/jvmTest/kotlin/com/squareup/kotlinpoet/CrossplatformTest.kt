@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.Test
@@ -175,15 +179,16 @@ class CrossplatformTest {
   }
 
   @Test fun initBlockInExpectForbidden() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       TypeSpec.classBuilder("AtomicRef")
         .addModifiers(KModifier.EXPECT)
         .addInitializerBlock(CodeBlock.of("println()"))
-    }.hasMessageThat().isEqualTo("expect CLASS can't have initializer blocks")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("expect CLASS can't have initializer blocks")
   }
 
   @Test fun expectFunctionBodyForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("AtomicRef")
         .addModifiers(KModifier.EXPECT)
         .addFunction(
@@ -192,11 +197,12 @@ class CrossplatformTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("functions in expect classes can't have bodies")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("functions in expect classes can't have bodies")
   }
 
   @Test fun expectPropertyInitializerForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("AtomicRef")
         .addModifiers(KModifier.EXPECT)
         .addProperty(
@@ -204,11 +210,12 @@ class CrossplatformTest {
             .initializer("true")
             .build(),
         )
-    }.hasMessageThat().isEqualTo("properties in expect classes can't have initializers")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("properties in expect classes can't have initializers")
   }
 
   @Test fun expectPropertyGetterForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("AtomicRef")
         .addModifiers(KModifier.EXPECT)
         .addProperty(
@@ -220,11 +227,12 @@ class CrossplatformTest {
             )
             .build(),
         )
-    }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("properties in expect classes can't have getters and setters")
   }
 
   @Test fun expectPropertySetterForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       TypeSpec.classBuilder("AtomicRef")
         .addModifiers(KModifier.EXPECT)
         .addProperty(
@@ -238,6 +246,7 @@ class CrossplatformTest {
             )
             .build(),
         )
-    }.hasMessageThat().isEqualTo("properties in expect classes can't have getters and setters")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("properties in expect classes can't have getters and setters")
   }
 }

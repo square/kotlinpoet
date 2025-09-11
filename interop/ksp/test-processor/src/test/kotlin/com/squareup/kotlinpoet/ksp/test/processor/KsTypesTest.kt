@@ -15,7 +15,10 @@
  */
 package com.squareup.kotlinpoet.ksp.test.processor
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.contains
+import assertk.assertions.isNotNull
+import assertk.assertions.message
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
@@ -81,13 +84,15 @@ class KsTypesTest {
     val exception1 = assertFailsWith<IllegalArgumentException> {
       type.toClassName()
     }
-    assertThat(exception1).hasMessageThat()
+    assertThat(exception1).message()
+      .isNotNull()
       .contains("is not resolvable in the current round of processing")
 
     val exception2 = assertFailsWith<IllegalArgumentException> {
       type.toTypeName()
     }
-    assertThat(exception2).hasMessageThat()
+    assertThat(exception2).message()
+      .isNotNull()
       .contains("is not resolvable in the current round of processing")
   }
 }
