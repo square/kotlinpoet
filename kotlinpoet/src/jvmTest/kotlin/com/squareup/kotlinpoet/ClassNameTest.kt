@@ -15,12 +15,18 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEqualTo
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.Cased.Weird.Sup
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class ClassNameTest {
   @Rule @JvmField var compilationRule = CompilationRule()
@@ -79,9 +85,9 @@ class ClassNameTest {
   }
 
   private fun assertBestGuessThrows(s: String) {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName.bestGuess(s)
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun createNestedClass() {
@@ -115,7 +121,7 @@ class ClassNameTest {
     //  like TypeName.equals may subvert the correct partitioning of package and names.
     val hi = Sup.Hi::class.asClassName()
     assertThat(hi.packageName).isEqualTo("com.squareup.kotlinpoet.Cased.Weird")
-    assertThat(hi.simpleNames).containsExactly("Sup", "Hi").inOrder()
+    assertThat(hi.simpleNames).containsExactly("Sup", "Hi")
   }
 
   @Test fun classNameFromKClassSpecialCases() {
@@ -141,29 +147,29 @@ class ClassNameTest {
   }
 
   @Test fun fromClassRejectionTypes() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       java.lang.Integer.TYPE.asClassName()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       Void.TYPE.asClassName()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       Array<Any>::class.java.asClassName()
-    }
+    }.isInstanceOf<IllegalArgumentException>()
 
     // TODO
-    // assertThrows<IllegalArgumentException> {
+    // assertFailure {
     //  Array<Int>::class.asClassName()
-    // }
+    // }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Suppress("DEPRECATION_ERROR") // Ensure still throws in case called from Java.
   @Test fun fromEmptySimpleName() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName("foo" /* no simple name */)
-    }
+    }.isInstanceOf<IllegalArgumentException>()
   }
 
   @Test fun reflectionName() {
@@ -217,24 +223,28 @@ class ClassNameTest {
   }
 
   @Test fun emptySimpleNamesForbidden() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName(packageName = "", simpleNames = emptyArray())
-    }.hasMessageThat().isEqualTo("simpleNames must not be empty")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("simpleNames must not be empty")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName(packageName = "", simpleNames = arrayOf("Foo", "Bar", ""))
-    }.hasMessageThat().isEqualTo(
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
       "simpleNames must not contain empty items: " +
         "[Foo, Bar, ]"
     )
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName(packageName = "", simpleNames = emptyList())
-    }.hasMessageThat().isEqualTo("simpleNames must not be empty")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("simpleNames must not be empty")
 
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       ClassName(packageName = "", simpleNames = listOf("Foo", "Bar", ""))
-    }.hasMessageThat().isEqualTo(
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
       "simpleNames must not contain empty items: " +
         "[Foo, Bar, ]"
     )

@@ -15,7 +15,9 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEqualTo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Serializable
 import java.nio.charset.Charset
@@ -96,7 +98,7 @@ abstract class AbstractTypesTest {
     assertThat(typeVariables[5].asType().asTypeName())
       .isEqualTo(TypeVariableName("IntersectionOfInterfaces", runnable, serializable))
     assertThat((typeVariables[4].asType().asTypeName() as TypeVariableName).bounds)
-      .containsExactly(number, runnable)
+      .containsExactlyInAnyOrder(number, runnable)
   }
 
   internal class Recursive<T : Map<List<T>, Set<Array<T>>>>

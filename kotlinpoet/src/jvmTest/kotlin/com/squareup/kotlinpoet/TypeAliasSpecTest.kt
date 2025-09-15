@@ -15,7 +15,11 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -190,7 +194,7 @@ class TypeAliasSpecTest {
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
 
-    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+    assertThat(builder.build().modifiers).containsExactlyInAnyOrder(KModifier.INTERNAL)
   }
 
   @Test fun modifyTypeVariableNames() {

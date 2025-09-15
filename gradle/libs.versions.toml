@@ -44,7 +44,7 @@ ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp-aaEmbeddable = { module = "com.google.devtools.ksp:symbol-processing-aa-embeddable", version.ref = "ksp" }
 
-truth = { module = "com.google.truth:truth", version = "1.4.4" }
+assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.23.0" }
 jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.1" }
 ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }

@@ -15,7 +15,14 @@
  */
 package com.squareup.kotlinpoet
 
-import com.google.common.truth.Truth.assertThat
+import assertk.assertFailure
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.hasMessage
+import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isTrue
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -63,7 +70,7 @@ class PropertySpecTest {
 
   // https://github.com/square/kotlinpoet/issues/952
   @Test fun emptySetterCannotHaveBody() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("foo", String::class)
         .mutable()
         .setter(
@@ -72,7 +79,8 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("parameterless setter cannot have code")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("parameterless setter cannot have code")
   }
 
   @Test fun externalGetterAndSetter() {
@@ -101,7 +109,7 @@ class PropertySpecTest {
   }
 
   @Test fun externalGetterCannotHaveBody() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("foo", String::class)
         .getter(
           FunSpec.getterBuilder()
@@ -110,7 +118,8 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("external getter cannot have code")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("external getter cannot have code")
   }
 
   @Test fun publicGetterAndSetter() {
@@ -209,14 +218,15 @@ class PropertySpecTest {
   }
 
   @Test fun inlineForbiddenOnProperty() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("foo", String::class)
         .addModifiers(KModifier.INLINE)
         .build()
-    }.hasMessageThat().isEqualTo(
-      "KotlinPoet doesn't allow setting the inline modifier on " +
-        "properties. You should mark either the getter, the setter, or both inline.",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "KotlinPoet doesn't allow setting the inline modifier on " +
+          "properties. You should mark either the getter, the setter, or both inline.",
+      )
   }
 
   @Test fun equalsAndHashCode() {
@@ -318,7 +328,7 @@ class PropertySpecTest {
     builder.modifiers.clear()
     builder.modifiers.add(KModifier.INTERNAL)
 
-    assertThat(builder.build().modifiers).containsExactly(KModifier.INTERNAL)
+    assertThat(builder.build().modifiers).containsExactlyInAnyOrder(KModifier.INTERNAL)
   }
 
   @Test fun modifyAnnotations() {
@@ -405,17 +415,18 @@ class PropertySpecTest {
   }
 
   @Test fun reifiedTypeVariableNotAllowedWhenNoAccessors() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("property", String::class)
         .addTypeVariable(TypeVariableName("T").copy(reified = true))
         .build()
-    }.hasMessageThat().isEqualTo(
-      "only type parameters of properties with inline getters and/or setters can be reified!",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "only type parameters of properties with inline getters and/or setters can be reified!",
+      )
   }
 
   @Test fun reifiedTypeVariableNotAllowedWhenGetterNotInline() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("property", String::class)
         .addTypeVariable(TypeVariableName("T").copy(reified = true))
         .getter(
@@ -424,13 +435,14 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo(
-      "only type parameters of properties with inline getters and/or setters can be reified!",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "only type parameters of properties with inline getters and/or setters can be reified!",
+      )
   }
 
   @Test fun reifiedTypeVariableNotAllowedWhenSetterNotInline() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("property", String::class.asTypeName())
         .mutable()
         .addTypeVariable(TypeVariableName("T").copy(reified = true))
@@ -441,13 +453,14 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo(
-      "only type parameters of properties with inline getters and/or setters can be reified!",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "only type parameters of properties with inline getters and/or setters can be reified!",
+      )
   }
 
   @Test fun reifiedTypeVariableNotAllowedWhenOnlySetterIsInline() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("property", String::class.asTypeName())
         .mutable()
         .addTypeVariable(TypeVariableName("T").copy(reified = true))
@@ -464,13 +477,14 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo(
-      "only type parameters of properties with inline getters and/or setters can be reified!",
-    )
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "only type parameters of properties with inline getters and/or setters can be reified!",
+      )
   }
 
   @Test fun setterNotAllowedWhenPropertyIsNotMutable() {
-    assertThrows<IllegalArgumentException> {
+    assertFailure {
       PropertySpec.builder("property", String::class.asTypeName())
         .setter(
           FunSpec.setterBuilder()
@@ -480,7 +494,8 @@ class PropertySpecTest {
             .build(),
         )
         .build()
-    }.hasMessageThat().isEqualTo("only a mutable property can have a setter")
+    }.isInstanceOf<IllegalArgumentException>()
+      .hasMessage("only a mutable property can have a setter")
   }
 
   // https://github.com/square/kotlinpoet/issues/462
@@ -852,12 +867,13 @@ class PropertySpecTest {
   }
 
   @Test fun valWithBothContextReceiverAndContextParameter() {
-    assertThrows<IllegalStateException> {
+    assertFailure {
       PropertySpec.builder("foo", INT)
         .mutable(false)
         .contextReceivers(listOf(STRING))
         .contextParameter("str", INT)
         .build()
-    }.hasMessageThat().isEqualTo("Using both context receivers and context parameters is not allowed")
+    }.isInstanceOf<IllegalStateException>()
+      .hasMessage("Using both context receivers and context parameters is not allowed")
   }
 }
