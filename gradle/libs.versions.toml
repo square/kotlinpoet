@@ -14,8 +14,8 @@
 
 [versions]
 kotlin = "2.2.20"
-kct = "0.8.0"
-ksp = "2.2.20-RC2-2.0.2"
+kct = "0.9.0"
+ksp = "2.2.20-2.0.2"
 ktlint = "0.48.2"
 
 [plugins]
@@ -45,7 +45,7 @@ ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.re
 ksp-aaEmbeddable = { module = "com.google.devtools.ksp:symbol-processing-aa-embeddable", version.ref = "ksp" }
 
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
-compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.22.0" }
+compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.23.0" }
 jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.1" }
 ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }
 kotlinCompileTesting = { module = "dev.zacsweers.kctfork:core", version.ref = "kct" }
