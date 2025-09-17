@@ -6,6 +6,7 @@ Change Log
  * New: Add support for type aliases in types.
  * New: Add `FileSpec.addImport(MemberName)` to explicitly import a member (#2198)
  * New: Add `NameAllocator.contains` to check if a given tag is already allocated (#2154)
+ * Fix: `emitNullable` correctly when deferring type in `CodeWriter`. (#2216)
  * Fix: `FunSpec.beginControlFlow` to accept nullable arguments for consistency with `CodeBlock.beginControlFlow`. (#2174)
  * Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)
