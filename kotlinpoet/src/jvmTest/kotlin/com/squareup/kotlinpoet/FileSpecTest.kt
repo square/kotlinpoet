@@ -24,6 +24,7 @@ import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.FILE
 import com.squareup.kotlinpoet.AnnotationSpec.UseSiteTarget.SET
 import com.squareup.kotlinpoet.KModifier.VARARG
+import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.util.Collections
 import java.util.Date
@@ -1386,6 +1387,46 @@ class FileSpecTest {
       |  Expected
       |} else {
       |  Unexpected
+      |}
+      |
+      """.trimMargin(),
+    )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2216
+  @Test fun typeNameImportedViaMemberImportRendersCorrectly() {
+    val type = ClassName("com.example", "AnEnum")
+    val block = CodeBlock.of("var field: %T = null", type.copy(nullable = true))
+
+    val file = FileSpec.builder("com.example", "Test")
+      .addType(
+        TypeSpec.classBuilder("Test")
+          .addProperty(
+            PropertySpec.builder("field", type)
+              .initializer("%M", type.member("DEFAULT"))
+              .build(),
+          )
+          .addFunction(
+            FunSpec.builder("test")
+              .returns(UNIT)
+              .addCode(block)
+              .build(),
+          )
+          .build(),
+      )
+      .build()
+    assertThat(file.toString()).isEqualTo(
+      """
+      |package com.example
+      |
+      |import com.example.AnEnum.DEFAULT
+      |
+      |public class Test {
+      |  public val `field`: AnEnum = DEFAULT
+      |
+      |  public fun test() {
+      |    var field: AnEnum? = null
+      |  }
       |}
       |
       """.trimMargin(),

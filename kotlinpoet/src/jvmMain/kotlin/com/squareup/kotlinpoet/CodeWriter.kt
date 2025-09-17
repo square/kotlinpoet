@@ -336,8 +336,10 @@ internal class CodeWriter(
               }
             }
           }
-          if (!defer) typeName.emit(this)
-          typeName.emitNullable(this)
+          if (!defer) {
+            typeName.emit(this)
+            typeName.emitNullable(this)
+          }
         }
 
         "%M" -> {
@@ -395,6 +397,7 @@ internal class CodeWriter(
             }
             if (!doBreak) {
               deferredTypeName!!.emit(this)
+              deferredTypeName.emitNullable(this)
               deferredTypeName = null
             }
           }
