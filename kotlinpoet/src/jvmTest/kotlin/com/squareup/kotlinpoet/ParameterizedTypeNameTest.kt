@@ -33,6 +33,7 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.jvm.kotlinFunction
 import org.junit.Test
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // Explicitly testing Java classes.
 class ParameterizedTypeNameTest {
   @Test fun classNamePlusParameter() {
     val typeName = ClassName("kotlin.collections", "List")

@@ -34,6 +34,7 @@ import java.util.function.Function
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // Explicitly testing Java classes.
 class FileSpecTest {
   @Test fun importStaticReadmeExample() {
     val hoverboard = ClassName("com.mattel", "Hoverboard")
