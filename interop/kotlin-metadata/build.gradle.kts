@@ -25,7 +25,6 @@ tasks.jar {
 
 tasks.compileTestKotlin {
   compilerOptions {
-    freeCompilerArgs.addAll("-Xjvm-default=all")
     optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
   }
 }
