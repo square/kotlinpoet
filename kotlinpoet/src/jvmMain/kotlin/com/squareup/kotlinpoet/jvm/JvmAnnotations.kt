@@ -28,6 +28,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
 import java.lang.reflect.Type
+import kotlin.DeprecationLevel.HIDDEN
 import kotlin.reflect.KClass
 
 public fun FileSpec.Builder.jvmName(name: String): FileSpec.Builder = addAnnotation(
@@ -126,19 +127,9 @@ public fun TypeName.jvmWildcard(): TypeName =
   copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
 @Suppress("DEPRECATION")
-@Deprecated(
-  """
-  'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`.
-  In KotlinPoet 1.15.0 and newer, this method is a no-op. It will be deleted in KotlinPoet 2.0.
-""",
-)
+@Deprecated("", level = HIDDEN)
 public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder = this
 
 @Suppress("DEPRECATION")
-@Deprecated(
-  """
-  'JvmDefault' is deprecated. Switch to new -Xjvm-default modes: `all` or `all-compatibility`.
-  In KotlinPoet 1.15.0 and newer, this method is a no-op. It will be deleted in KotlinPoet 2.0.
-""",
-)
+@Deprecated("", level = HIDDEN)
 public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = this

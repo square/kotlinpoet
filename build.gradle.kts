@@ -48,7 +48,7 @@ subprojects {
   tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget = JvmTarget.JVM_1_8
-      freeCompilerArgs.add("-Xjvm-default=all")
+      freeCompilerArgs.add("-jvm-default=no-compatibility")
       freeCompilerArgs.add("-Xjdk-release=8")
     }
   }

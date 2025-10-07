@@ -1247,8 +1247,8 @@ public final class com/squareup/kotlinpoet/WildcardTypeNames {
 }
 
 public final class com/squareup/kotlinpoet/jvm/JvmAnnotations {
-	public static final fun jvmDefault (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
-	public static final fun jvmDefault (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
+	public static final synthetic fun jvmDefault (Lcom/squareup/kotlinpoet/FunSpec$Builder;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static final synthetic fun jvmDefault (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public static final fun jvmField (Lcom/squareup/kotlinpoet/PropertySpec$Builder;)Lcom/squareup/kotlinpoet/PropertySpec$Builder;
 	public static final fun jvmInline (Lcom/squareup/kotlinpoet/TypeSpec$Builder;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public static final fun jvmMultifileClass (Lcom/squareup/kotlinpoet/FileSpec$Builder;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
