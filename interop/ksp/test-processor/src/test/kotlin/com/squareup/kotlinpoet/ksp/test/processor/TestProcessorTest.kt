@@ -226,6 +226,7 @@ class TestProcessorTest {
       )
       @ExampleAnnotationWithDefaults(
         booleanArray = booleanArrayOf(false),
+        byte = 0.toByte(),
         short = 0.toShort(),
         int = 0,
         long = 0,
