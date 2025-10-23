@@ -950,7 +950,7 @@ class TestProcessorTest {
         inheritClassPath = true
         sources = sourceFiles.asList()
         verbose = false
-        configureKsp {
+        configureKsp(useKsp2 = true) {
           incremental = true // The default now
           symbolProcessorProviders += TestProcessorProvider()
         }
