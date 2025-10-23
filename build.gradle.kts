@@ -116,6 +116,12 @@ subprojects {
     }
   }
 
+  tasks.withType<Test>().configureEach {
+    testLogging {
+      exceptionFormat = TestExceptionFormat.FULL
+    }
+  }
+
   // Only enable the extra toolchain tests on CI. Otherwise local development is broken on Apple Silicon macs
   // because there are no matching toolchains for several older JDK versions.
   if ("CI" in System.getenv()) {
@@ -140,10 +146,6 @@ subprojects {
 
           classpath = testTask.classpath
           testClassesDirs = testTask.testClassesDirs
-
-          testLogging {
-            exceptionFormat = TestExceptionFormat.FULL
-          }
         }
         tasks.named("check").configure {
           dependsOn(jdkTest)
