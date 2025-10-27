@@ -12,13 +12,6 @@
       automerge: true,
     },
     {
-      groupName: 'Kotlin and KSP',
-      matchPackageNames: [
-        '/^org\\.jetbrains\\.kotlin:(?:[\\w-]+)$/',
-        '/^com\\.google\\.devtools\\.ksp:(?:[\\w-]+)$/',
-      ],
-    },
-    {
       matchManagers: [
         'pip_requirements',
       ],
