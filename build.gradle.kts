@@ -88,9 +88,7 @@ subprojects {
   configure<SpotlessExtension> {
     kotlin {
       target("**/*.kt")
-      ktlint(libs.versions.ktlint.get()).editorConfigOverride(
-        mapOf("ktlint_standard_filename" to "disabled"),
-      )
+      ktfmt(libs.ktfmt.get().version).googleStyle()
       trimTrailingWhitespace()
       endWithNewline()
 
