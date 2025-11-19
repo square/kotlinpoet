@@ -37,7 +37,8 @@ import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.tags.TypeAliasTag
 
 /**
- * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or [KSTypeAlias].
+ * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or
+ * [KSTypeAlias].
  */
 public fun KSType.toClassName(): ClassName {
   requireNotErrorType()
@@ -53,7 +54,8 @@ public fun KSType.toClassName(): ClassName {
 }
 
 /**
- * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or [KSTypeAlias].
+ * Returns the [ClassName] representation of this [KSType] IFF it's a [KSClassDeclaration] or
+ * [KSTypeAlias].
  *
  * If it's unable to resolve to a [ClassName] for any reason, this returns null.
  */
@@ -71,13 +73,13 @@ public fun KSType.toClassNameOrNull(): ClassName? {
 /**
  * Returns the [TypeName] representation of this [KSType].
  *
- * @see toTypeParameterResolver
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
- *                          declarations can be anything with generics that child nodes declare as
- *                          defined by [KSType.arguments].
+ *   declarations can be anything with generics that child nodes declare as defined by
+ *   [KSType.arguments].
+ * @see toTypeParameterResolver
  */
 public fun KSType.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName = toTypeName(typeParamResolver, arguments)
 
 internal fun KSType.toTypeName(
@@ -85,49 +87,54 @@ internal fun KSType.toTypeName(
   typeArguments: List<KSTypeArgument>,
 ): TypeName {
   requireNotErrorType()
-  val type = when (val decl = declaration) {
-    is KSClassDeclaration -> {
-      decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
-    }
-    is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
-    is KSTypeAlias -> {
-      var typeAlias: KSTypeAlias = decl
-      var arguments = arguments
+  val type =
+    when (val decl = declaration) {
+      is KSClassDeclaration -> {
+        decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
+      }
+      is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
+      is KSTypeAlias -> {
+        var typeAlias: KSTypeAlias = decl
+        var arguments = arguments
 
-      var resolvedType: KSType
-      var mappedArgs: List<KSTypeArgument>
-      var extraResolver: TypeParameterResolver = typeParamResolver
-      while (true) {
-        resolvedType = typeAlias.type.resolve()
-        mappedArgs = mapTypeArgumentsFromTypeAliasToAbbreviatedType(
-          typeAlias = typeAlias,
-          typeAliasTypeArguments = arguments,
-          abbreviatedType = resolvedType,
-        )
-        extraResolver = if (typeAlias.typeParameters.isEmpty()) {
-          extraResolver
-        } else {
-          typeAlias.typeParameters.toTypeParameterResolver(extraResolver)
+        var resolvedType: KSType
+        var mappedArgs: List<KSTypeArgument>
+        var extraResolver: TypeParameterResolver = typeParamResolver
+        while (true) {
+          resolvedType = typeAlias.type.resolve()
+          mappedArgs =
+            mapTypeArgumentsFromTypeAliasToAbbreviatedType(
+              typeAlias = typeAlias,
+              typeAliasTypeArguments = arguments,
+              abbreviatedType = resolvedType,
+            )
+          extraResolver =
+            if (typeAlias.typeParameters.isEmpty()) {
+              extraResolver
+            } else {
+              typeAlias.typeParameters.toTypeParameterResolver(extraResolver)
+            }
+
+          typeAlias = resolvedType.declaration as? KSTypeAlias ?: break
+          arguments = mappedArgs
         }
 
-        typeAlias = resolvedType.declaration as? KSTypeAlias ?: break
-        arguments = mappedArgs
+        val abbreviatedType =
+          resolvedType
+            .toTypeName(extraResolver)
+            .copy(nullable = isMarkedNullable)
+            .rawType()
+            .withTypeArguments(mappedArgs.map { it.toTypeName(extraResolver) })
+
+        val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
+
+        decl
+          .toClassName()
+          .withTypeArguments(aliasArgs)
+          .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
       }
-
-      val abbreviatedType = resolvedType
-        .toTypeName(extraResolver)
-        .copy(nullable = isMarkedNullable)
-        .rawType()
-        .withTypeArguments(mappedArgs.map { it.toTypeName(extraResolver) })
-
-      val aliasArgs = typeArguments.map { it.toTypeName(typeParamResolver) }
-
-      decl.toClassName()
-        .withTypeArguments(aliasArgs)
-        .copy(tags = mapOf(TypeAliasTag::class to TypeAliasTag(abbreviatedType)))
+      else -> error("Unsupported type: $declaration")
     }
-    else -> error("Unsupported type: $declaration")
-  }
 
   return type.copy(nullable = isMarkedNullable)
 }
@@ -137,51 +144,52 @@ private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
   typeAliasTypeArguments: List<KSTypeArgument>,
   abbreviatedType: KSType,
 ): List<KSTypeArgument> {
-  return abbreviatedType.arguments
-    .map { typeArgument ->
-      // Check if type argument is a reference to a typealias type parameter, and not an actual type.
-      val typeAliasTypeParameterIndex = typeAlias.typeParameters.indexOfFirst { typeAliasTypeParameter ->
+  return abbreviatedType.arguments.map { typeArgument ->
+    // Check if type argument is a reference to a typealias type parameter, and not an actual type.
+    val typeAliasTypeParameterIndex =
+      typeAlias.typeParameters.indexOfFirst { typeAliasTypeParameter ->
         typeAliasTypeParameter.name.asString() == typeArgument.type.toString()
       }
-      if (typeAliasTypeParameterIndex >= 0) {
-        typeAliasTypeArguments[typeAliasTypeParameterIndex]
-      } else {
-        typeArgument
-      }
+    if (typeAliasTypeParameterIndex >= 0) {
+      typeAliasTypeArguments[typeAliasTypeParameterIndex]
+    } else {
+      typeArgument
     }
+  }
 }
 
 /**
  * Returns a [TypeVariableName] representation of this [KSTypeParameter].
  *
- * @see toTypeParameterResolver
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
- *                          declarations can be anything with generics that child nodes declare as
- *                          defined by [KSType.arguments].
+ *   declarations can be anything with generics that child nodes declare as defined by
+ *   [KSType.arguments].
+ * @see toTypeParameterResolver
  */
 public fun KSTypeParameter.toTypeVariableName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeVariableName {
   val typeVarName = name.getShortName()
   val typeVarBounds = bounds.map { it.toTypeName(typeParamResolver) }.toList()
-  val typeVarVariance = when (variance) {
-    COVARIANT -> KModifier.OUT
-    CONTRAVARIANT -> KModifier.IN
-    else -> null
-  }
+  val typeVarVariance =
+    when (variance) {
+      COVARIANT -> KModifier.OUT
+      CONTRAVARIANT -> KModifier.IN
+      else -> null
+    }
   return TypeVariableName(typeVarName, bounds = typeVarBounds, variance = typeVarVariance)
 }
 
 /**
  * Returns a [TypeName] representation of this [KSTypeArgument].
  *
- * @see toTypeParameterResolver
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
- *                          declarations can be anything with generics that child nodes declare as
- *                          defined by [KSType.arguments].
+ *   declarations can be anything with generics that child nodes declare as defined by
+ *   [KSType.arguments].
+ * @see toTypeParameterResolver
  */
 public fun KSTypeArgument.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
   val type = this.type ?: return STAR
   return when (variance) {
@@ -195,23 +203,27 @@ public fun KSTypeArgument.toTypeName(
 /**
  * Returns a [TypeName] representation of this [KSTypeReference].
  *
- * @see toTypeParameterResolver
  * @param typeParamResolver an optional resolver for enclosing declarations' type parameters. Parent
- *                          declarations can be anything with generics that child nodes declare as
- *                          defined by [KSType.arguments].
+ *   declarations can be anything with generics that child nodes declare as defined by
+ *   [KSType.arguments].
+ * @see toTypeParameterResolver
  */
 public fun KSTypeReference.toTypeName(
-  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY,
+  typeParamResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 ): TypeName {
   val type = resolve()
   val elem = element
   // Don't wrap in a lambda if this is a typealias, even if the underlying type is a function type.
   return if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
     LambdaTypeName.get(
-      receiver = elem.receiverType?.toTypeName(typeParamResolver),
-      parameters = elem.functionParameters.map { ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver)) },
-      returnType = elem.returnType.toTypeName(typeParamResolver),
-    ).copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
+        receiver = elem.receiverType?.toTypeName(typeParamResolver),
+        parameters =
+          elem.functionParameters.map {
+            ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver))
+          },
+        returnType = elem.returnType.toTypeName(typeParamResolver),
+      )
+      .copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
   } else {
     type.toTypeName(typeParamResolver, type.arguments)
   }

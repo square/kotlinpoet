@@ -29,7 +29,7 @@ import kotlin.metadata.KmProperty
  * ever be applied on a Kotlin type (i.e. is annotated with [Metadata]).
  *
  * @property declarationContainer the [KmDeclarationContainer] as parsed from the class's
- *           [@Metadata][Metadata] annotation.
+ *   [@Metadata][Metadata] annotation.
  * @property annotations declared annotations on this class.
  * @property properties the mapping of [declarationContainer]'s properties to parsed [PropertyData].
  * @property methods the mapping of [declarationContainer]'s methods to parsed [MethodData].
@@ -45,11 +45,11 @@ public interface ContainerData {
  * Represents relevant information on a Kotlin class used for [ClassInspector]. Can only ever be
  * applied on a class and not file facades.
  *
- * @property declarationContainer the [KmClass] as parsed from the class's
- *           [@Metadata][Metadata] annotation.
+ * @property declarationContainer the [KmClass] as parsed from the class's [@Metadata][Metadata]
+ *   annotation.
  * @property className the KotlinPoet [ClassName] of the class.
  * @property constructors the mapping of [declarationContainer]'s constructors to parsed
- * [ConstructorData].
+ *   [ConstructorData].
  */
 public data class ClassData(
   override val declarationContainer: KmClass,
@@ -63,11 +63,11 @@ public data class ClassData(
 /**
  * Represents relevant information on a file facade used for [ClassInspector].
  *
- * @property declarationContainer the [KmClass] as parsed from the class's
- *           [@Metadata][Metadata] annotation.
+ * @property declarationContainer the [KmClass] as parsed from the class's [@Metadata][Metadata]
+ *   annotation.
  * @property className the KotlinPoet [ClassName] of the underlying facade class in JVM.
- * @property jvmName the `@JvmName` of the class or null if it does not have a custom name.
- *           Default will try to infer from the [className].
+ * @property jvmName the `@JvmName` of the class or null if it does not have a custom name. Default
+ *   will try to infer from the [className].
  */
 public data class FileData(
   override val declarationContainer: KmPackage,
@@ -75,8 +75,7 @@ public data class FileData(
   override val properties: Map<KmProperty, PropertyData>,
   override val methods: Map<KmFunction, MethodData>,
   val className: ClassName,
-  val jvmName: String? =
-    if (!className.simpleName.endsWith("Kt")) className.simpleName else null,
+  val jvmName: String? = if (!className.simpleName.endsWith("Kt")) className.simpleName else null,
 ) : ContainerData {
 
   /**
@@ -89,8 +88,8 @@ public data class FileData(
 /**
  * Represents relevant information on a Kotlin enum entry.
  *
- * @property declarationContainer the [KmClass] as parsed from the entry's
- * [@Metadata][Metadata] annotation.
+ * @property declarationContainer the [KmClass] as parsed from the entry's [@Metadata][Metadata]
+ *   annotation.
  * @property annotations the annotations for the entry
  */
 public data class EnumEntryData(

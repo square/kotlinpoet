@@ -22,7 +22,8 @@ import java.lang.reflect.WildcardType
 import javax.lang.model.element.TypeParameterElement
 import kotlin.reflect.KClass
 
-public class WildcardTypeName private constructor(
+public class WildcardTypeName
+private constructor(
   outTypes: List<TypeName>,
   inTypes: List<TypeName>,
   nullable: Boolean = false,
@@ -78,37 +79,39 @@ public class WildcardTypeName private constructor(
      * `outType` is `CharSequence`, this returns `out CharSequence`. If `outType` is `Any?`, this
      * returns `*`, which is shorthand for `out Any?`.
      */
-    @JvmStatic public fun producerOf(outType: TypeName): WildcardTypeName =
+    @JvmStatic
+    public fun producerOf(outType: TypeName): WildcardTypeName =
       WildcardTypeName(listOf(outType), emptyList())
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun producerOf(outType: Type): WildcardTypeName =
-      producerOf(outType.asTypeName())
+    public fun producerOf(outType: Type): WildcardTypeName = producerOf(outType.asTypeName())
 
-    @JvmStatic public fun producerOf(outType: KClass<*>): WildcardTypeName =
-      producerOf(outType.asTypeName())
+    @JvmStatic
+    public fun producerOf(outType: KClass<*>): WildcardTypeName = producerOf(outType.asTypeName())
 
     /**
      * Returns a type that represents an unknown type that consumes `inType`. For example, if
      * `inType` is `String`, this returns `in String`.
      */
-    @JvmStatic public fun consumerOf(inType: TypeName): WildcardTypeName =
+    @JvmStatic
+    public fun consumerOf(inType: TypeName): WildcardTypeName =
       WildcardTypeName(listOf(ANY), listOf(inType))
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun consumerOf(inType: Type): WildcardTypeName =
-      consumerOf(inType.asTypeName())
+    public fun consumerOf(inType: Type): WildcardTypeName = consumerOf(inType.asTypeName())
 
-    @JvmStatic public fun consumerOf(inType: KClass<*>): WildcardTypeName =
-      consumerOf(inType.asTypeName())
+    @JvmStatic
+    public fun consumerOf(inType: KClass<*>): WildcardTypeName = consumerOf(inType.asTypeName())
 
     internal fun get(
       mirror: javax.lang.model.type.WildcardType,
@@ -140,17 +143,18 @@ public class WildcardTypeName private constructor(
 }
 
 @DelicateKotlinPoetApi(
-  message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
+  message =
+    "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+      " the kotlinpoet-metadata APIs instead."
 )
 @JvmName("get")
 public fun javax.lang.model.type.WildcardType.asWildcardTypeName(): TypeName =
   WildcardTypeName.get(this, mutableMapOf())
 
 @DelicateKotlinPoetApi(
-  message = "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
+  message =
+    "Java reflection APIs don't give complete information on Kotlin types. Consider using" +
+      " the kotlinpoet-metadata APIs instead."
 )
 @JvmName("get")
-public fun WildcardType.asWildcardTypeName(): TypeName =
-  WildcardTypeName.get(this, mutableMapOf())
+public fun WildcardType.asWildcardTypeName(): TypeName = WildcardTypeName.get(this, mutableMapOf())

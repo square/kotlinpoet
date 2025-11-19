@@ -44,43 +44,50 @@ public data class PropertyData(
    * A collection of all annotations on this property including declared ones and any derived from
    * [fieldData], [getterData], [setterData], and [isJvmField].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations {
-    // Don't add annotations that are already defined on the parent
-    val higherScopedAnnotations = annotations.associateBy { it.typeName }
-    val fieldAnnotations = fieldData?.allAnnotations.orEmpty()
-      .filterNot { it.typeName in higherScopedAnnotations }
-      .associateByTo(LinkedHashMap()) { it.typeName }
-    val getterAnnotations = getterData?.allAnnotations(GET).orEmpty()
-      .filterNot { it.typeName in higherScopedAnnotations }
-      .associateByTo(LinkedHashMap()) { it.typeName }
+  val allAnnotations: Collection<AnnotationSpec> =
+    ClassInspectorUtil.createAnnotations {
+      // Don't add annotations that are already defined on the parent
+      val higherScopedAnnotations = annotations.associateBy { it.typeName }
+      val fieldAnnotations =
+        fieldData
+          ?.allAnnotations
+          .orEmpty()
+          .filterNot { it.typeName in higherScopedAnnotations }
+          .associateByTo(LinkedHashMap()) { it.typeName }
+      val getterAnnotations =
+        getterData
+          ?.allAnnotations(GET)
+          .orEmpty()
+          .filterNot { it.typeName in higherScopedAnnotations }
+          .associateByTo(LinkedHashMap()) { it.typeName }
 
-    val finalTopAnnotations = annotations.toMutableList()
+      val finalTopAnnotations = annotations.toMutableList()
 
-    // If this is a val, and annotation is on both getter and field, we can move it to just the
-    // regular annotations
-    if (setterData == null && !isJvmField) {
-      val sharedAnnotations = getterAnnotations.keys.intersect(fieldAnnotations.keys)
-      for (sharedAnnotation in sharedAnnotations) {
-        // Add it to the top-level annotations without a site-target
-        finalTopAnnotations += getterAnnotations.getValue(sharedAnnotation).toBuilder()
-          .useSiteTarget(null)
-          .build()
+      // If this is a val, and annotation is on both getter and field, we can move it to just the
+      // regular annotations
+      if (setterData == null && !isJvmField) {
+        val sharedAnnotations = getterAnnotations.keys.intersect(fieldAnnotations.keys)
+        for (sharedAnnotation in sharedAnnotations) {
+          // Add it to the top-level annotations without a site-target
+          finalTopAnnotations +=
+            getterAnnotations.getValue(sharedAnnotation).toBuilder().useSiteTarget(null).build()
 
-        // Remove from field and getter
-        fieldAnnotations.remove(sharedAnnotation)
-        getterAnnotations.remove(sharedAnnotation)
+          // Remove from field and getter
+          fieldAnnotations.remove(sharedAnnotation)
+          getterAnnotations.remove(sharedAnnotation)
+        }
+      }
+
+      addAll(finalTopAnnotations)
+      addAll(fieldAnnotations.values)
+      addAll(getterAnnotations.values)
+      addAll(
+        setterData?.allAnnotations(SET).orEmpty().filterNot {
+          it.typeName in higherScopedAnnotations
+        }
+      )
+      if (isJvmField) {
+        add(ClassInspectorUtil.JVM_FIELD_SPEC)
       }
     }
-
-    addAll(finalTopAnnotations)
-    addAll(fieldAnnotations.values)
-    addAll(getterAnnotations.values)
-    addAll(
-      setterData?.allAnnotations(SET).orEmpty()
-        .filterNot { it.typeName in higherScopedAnnotations },
-    )
-    if (isJvmField) {
-      add(ClassInspectorUtil.JVM_FIELD_SPEC)
-    }
-  }
 }

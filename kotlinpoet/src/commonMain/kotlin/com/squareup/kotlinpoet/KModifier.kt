@@ -20,10 +20,7 @@ import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PROTECTED
 import com.squareup.kotlinpoet.KModifier.PUBLIC
 
-public enum class KModifier(
-  internal val keyword: String,
-  private vararg val targets: Target,
-) {
+public enum class KModifier(internal val keyword: String, private vararg val targets: Target) {
   // Modifier order defined here:
   // https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers
 
@@ -36,13 +33,11 @@ public enum class KModifier(
   // Multiplatform modules.
   EXPECT("expect", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   ACTUAL("actual", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
-
   FINAL("final", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OPEN("open", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   ABSTRACT("abstract", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   SEALED("sealed", Target.CLASS),
   CONST("const", Target.PROPERTY),
-
   EXTERNAL("external", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
   OVERRIDE("override", Target.FUNCTION, Target.PROPERTY),
   LATEINIT("lateinit", Target.PROPERTY),
@@ -50,12 +45,10 @@ public enum class KModifier(
   VARARG("vararg", Target.PARAMETER),
   SUSPEND("suspend", Target.FUNCTION),
   INNER("inner", Target.CLASS),
-
   ENUM("enum", Target.CLASS),
   ANNOTATION("annotation", Target.CLASS),
   VALUE("value", Target.CLASS),
   FUN("fun", Target.INTERFACE),
-
   COMPANION("companion", Target.CLASS),
 
   // Call-site compiler tips.
@@ -63,15 +56,11 @@ public enum class KModifier(
   NOINLINE("noinline", Target.PARAMETER),
   CROSSINLINE("crossinline", Target.PARAMETER),
   REIFIED("reified", Target.TYPE_PARAMETER),
-
   INFIX("infix", Target.FUNCTION),
   OPERATOR("operator", Target.FUNCTION),
-
   DATA("data", Target.CLASS),
-
   IN("in", Target.VARIANCE_ANNOTATION),
-  OUT("out", Target.VARIANCE_ANNOTATION),
-  ;
+  OUT("out", Target.VARIANCE_ANNOTATION);
 
   internal enum class Target {
     CLASS,

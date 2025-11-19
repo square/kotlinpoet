@@ -33,65 +33,56 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     @JvmStatic
     @Parameterized.Parameters(name = "value={0}")
     fun data(): Collection<Array<Any>> {
-      return listOf(
-        arrayOf(true),
-        arrayOf(false),
-      )
+      return listOf(arrayOf(true), arrayOf(false))
     }
   }
 
   private val modifier = if (useValue) KModifier.VALUE else INLINE
   private val modifierString = modifier.keyword
 
-  private fun classBuilder() = if (useValue) {
-    TypeSpec.classBuilder("Guacamole")
-      .addModifiers(KModifier.VALUE)
-  } else {
-    TypeSpec.classBuilder("Guacamole")
-      .addModifiers(modifier)
-  }
+  private fun classBuilder() =
+    if (useValue) {
+      TypeSpec.classBuilder("Guacamole").addModifiers(KModifier.VALUE)
+    } else {
+      TypeSpec.classBuilder("Guacamole").addModifiers(modifier)
+    }
 
-  @Test fun validInlineClass() {
-    val guacamole = classBuilder()
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .addParameter("avacado", String::class)
-          .build(),
-      )
-      .addProperty(
-        PropertySpec.builder("avacado", String::class)
-          .initializer("avacado")
-          .build(),
-      )
-      .build()
+  @Test
+  fun validInlineClass() {
+    val guacamole =
+      classBuilder()
+        .primaryConstructor(
+          FunSpec.constructorBuilder().addParameter("avacado", String::class).build()
+        )
+        .addProperty(PropertySpec.builder("avacado", String::class).initializer("avacado").build())
+        .build()
 
-    assertThat(guacamole.toString()).isEqualTo(
-      """
+    assertThat(guacamole.toString())
+      .isEqualTo(
+        """
       |public $modifierString class Guacamole(
       |  public val avacado: kotlin.String,
       |)
       |
-      """.trimMargin(),
-    )
+      """
+          .trimMargin()
+      )
   }
 
-  @Test fun inlineClassWithInitBlock() {
-    val guacamole = classBuilder()
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .addParameter("avacado", String::class)
-          .build(),
-      )
-      .addProperty(
-        PropertySpec.builder("avacado", String::class)
-          .initializer("avacado")
-          .build(),
-      )
-      .addInitializerBlock(CodeBlock.EMPTY)
-      .build()
+  @Test
+  fun inlineClassWithInitBlock() {
+    val guacamole =
+      classBuilder()
+        .primaryConstructor(
+          FunSpec.constructorBuilder().addParameter("avacado", String::class).build()
+        )
+        .addProperty(PropertySpec.builder("avacado", String::class).initializer("avacado").build())
+        .addInitializerBlock(CodeBlock.EMPTY)
+        .build()
 
-    assertThat(guacamole.toString()).isEqualTo(
-      """
+    assertThat(guacamole.toString())
+      .isEqualTo(
+        """
       |public $modifierString class Guacamole(
       |  public val avacado: kotlin.String,
       |) {
@@ -99,158 +90,142 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  }
       |}
       |
-      """.trimMargin(),
-    )
+      """
+          .trimMargin()
+      )
   }
 
   class InlineSuperClass
 
-  @Test fun inlineClassWithSuperClass() {
+  @Test
+  fun inlineClassWithSuperClass() {
     assertFailure {
-      classBuilder()
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avocado", String::class)
-            .build(),
-        )
-        .addProperty(
-          PropertySpec.builder("avocado", String::class)
-            .initializer("avocado")
-            .build(),
-        )
-        .superclass(InlineSuperClass::class)
-        .build()
-    }.isInstanceOf<IllegalStateException>()
+        classBuilder()
+          .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+          )
+          .addProperty(
+            PropertySpec.builder("avocado", String::class).initializer("avocado").build()
+          )
+          .superclass(InlineSuperClass::class)
+          .build()
+      }
+      .isInstanceOf<IllegalStateException>()
       .hasMessage("value/inline classes cannot have super classes")
   }
 
   interface InlineSuperInterface
 
-  @Test fun inlineClassInheritsFromInterface() {
-    val guacamole = classBuilder()
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .addParameter("avocado", String::class)
-          .build(),
-      )
-      .addProperty(
-        PropertySpec.builder("avocado", String::class)
-          .initializer("avocado")
-          .build(),
-      )
-      .addSuperinterface(InlineSuperInterface::class)
-      .build()
+  @Test
+  fun inlineClassInheritsFromInterface() {
+    val guacamole =
+      classBuilder()
+        .primaryConstructor(
+          FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+        )
+        .addProperty(PropertySpec.builder("avocado", String::class).initializer("avocado").build())
+        .addSuperinterface(InlineSuperInterface::class)
+        .build()
 
-    assertThat(guacamole.toString()).isEqualTo(
-      """
+    assertThat(guacamole.toString())
+      .isEqualTo(
+        """
       |public $modifierString class Guacamole(
       |  public val avocado: kotlin.String,
       |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
       |
-      """.trimMargin(),
-    )
+      """
+          .trimMargin()
+      )
   }
 
-  @Test fun inlineClassWithoutBackingProperty() {
+  @Test
+  fun inlineClassWithoutBackingProperty() {
     assertFailure {
-      classBuilder()
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avocado", String::class)
-            .build(),
-        )
-        .addProperty("garlic", String::class)
-        .build()
-    }.isInstanceOf<IllegalArgumentException>()
+        classBuilder()
+          .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+          )
+          .addProperty("garlic", String::class)
+          .build()
+      }
+      .isInstanceOf<IllegalArgumentException>()
       .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
   }
 
-  @Test fun inlineClassWithoutProperties() {
+  @Test
+  fun inlineClassWithoutProperties() {
     assertFailure {
-      classBuilder()
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avocado", String::class)
-            .build(),
-        )
-        .build()
-    }.isInstanceOf<IllegalStateException>()
+        classBuilder()
+          .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+          )
+          .build()
+      }
+      .isInstanceOf<IllegalStateException>()
       .hasMessage("value/inline classes must have at least 1 property")
   }
 
-  @Test fun inlineClassWithMutableProperties() {
+  @Test
+  fun inlineClassWithMutableProperties() {
     assertFailure {
-      classBuilder()
-        .primaryConstructor(
-          FunSpec.constructorBuilder()
-            .addParameter("avocado", String::class)
-            .build(),
-        )
-        .addProperty(
-          PropertySpec.builder("avocado", String::class)
-            .initializer("avocado")
-            .mutable()
-            .build(),
-        )
-        .build()
-    }.isInstanceOf<IllegalStateException>()
+        classBuilder()
+          .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+          )
+          .addProperty(
+            PropertySpec.builder("avocado", String::class).initializer("avocado").mutable().build()
+          )
+          .build()
+      }
+      .isInstanceOf<IllegalStateException>()
       .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
   }
 
   @Test
   fun inlineClassWithPrivateConstructor() {
-    val guacamole = classBuilder()
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .addParameter("avocado", String::class)
-          .addModifiers(PRIVATE)
-          .build(),
-      )
-      .addProperty(
-        PropertySpec.builder("avocado", String::class)
-          .initializer("avocado")
-          .build(),
-      )
-      .build()
+    val guacamole =
+      classBuilder()
+        .primaryConstructor(
+          FunSpec.constructorBuilder()
+            .addParameter("avocado", String::class)
+            .addModifiers(PRIVATE)
+            .build()
+        )
+        .addProperty(PropertySpec.builder("avocado", String::class).initializer("avocado").build())
+        .build()
 
-    assertThat(guacamole.toString()).isEqualTo(
-      """
+    assertThat(guacamole.toString())
+      .isEqualTo(
+        """
       |public $modifierString class Guacamole private constructor(
       |  public val avocado: kotlin.String,
       |)
       |
-      """.trimMargin(),
-    )
+      """
+          .trimMargin()
+      )
   }
 
-  @Test fun inlineEnumClass() {
-    val guacamole = TypeSpec.enumBuilder("Foo")
-      .addModifiers(modifier)
-      .primaryConstructor(
-        FunSpec.constructorBuilder()
-          .addParameter("x", Int::class)
-          .build(),
-      )
-      .addEnumConstant(
-        "A",
-        TypeSpec.anonymousClassBuilder()
-          .addSuperclassConstructorParameter("%L", 1)
-          .build(),
-      )
-      .addEnumConstant(
-        "B",
-        TypeSpec.anonymousClassBuilder()
-          .addSuperclassConstructorParameter("%L", 2)
-          .build(),
-      )
-      .addProperty(
-        PropertySpec.builder("x", Int::class)
-          .initializer("x")
-          .build(),
-      )
-      .build()
-    assertThat(guacamole.toString()).isEqualTo(
-      """
+  @Test
+  fun inlineEnumClass() {
+    val guacamole =
+      TypeSpec.enumBuilder("Foo")
+        .addModifiers(modifier)
+        .primaryConstructor(FunSpec.constructorBuilder().addParameter("x", Int::class).build())
+        .addEnumConstant(
+          "A",
+          TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%L", 1).build(),
+        )
+        .addEnumConstant(
+          "B",
+          TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%L", 2).build(),
+        )
+        .addProperty(PropertySpec.builder("x", Int::class).initializer("x").build())
+        .build()
+    assertThat(guacamole.toString())
+      .isEqualTo(
+        """
       |public enum $modifierString class Foo(
       |  public val x: kotlin.Int,
       |) {
@@ -259,7 +234,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |  ;
       |}
       |
-      """.trimMargin(),
-    )
+      """
+          .trimMargin()
+      )
   }
 }

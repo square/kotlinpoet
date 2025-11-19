@@ -25,22 +25,25 @@ public interface Annotatable {
     public val annotations: MutableList<AnnotationSpec>
 
     @Suppress("UNCHECKED_CAST")
-    public fun addAnnotation(annotationSpec: AnnotationSpec): T = apply {
-      annotations += annotationSpec
-    } as T
+    public fun addAnnotation(annotationSpec: AnnotationSpec): T =
+      apply { annotations += annotationSpec } as T
 
     @Suppress("UNCHECKED_CAST")
-    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): T = apply {
-      for (annotationSpec in annotationSpecs) {
-        addAnnotation(annotationSpec)
+    public fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): T =
+      apply {
+        for (annotationSpec in annotationSpecs) {
+          addAnnotation(annotationSpec)
+        }
       }
-    } as T
+        as T
 
-    public fun addAnnotation(annotation: ClassName): T = addAnnotation(AnnotationSpec.builder(annotation).build())
+    public fun addAnnotation(annotation: ClassName): T =
+      addAnnotation(AnnotationSpec.builder(annotation).build())
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     public fun addAnnotation(annotation: Class<*>): T = addAnnotation(annotation.asClassName())
 

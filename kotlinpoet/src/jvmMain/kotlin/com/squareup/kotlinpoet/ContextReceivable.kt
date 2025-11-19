@@ -19,22 +19,19 @@ package com.squareup.kotlinpoet
 public interface ContextReceivable {
 
   /** The originating elements of this type. */
-  @ExperimentalKotlinPoetApi
-  public val contextReceiverTypes: List<TypeName>
+  @ExperimentalKotlinPoetApi public val contextReceiverTypes: List<TypeName>
 
   /** The builder analogue to [ContextReceivable] types. */
   public interface Builder<out T : Builder<T>> {
 
     /** Mutable map of the current originating elements this builder contains. */
-    @ExperimentalKotlinPoetApi
-    public val contextReceiverTypes: MutableList<TypeName>
+    @ExperimentalKotlinPoetApi public val contextReceiverTypes: MutableList<TypeName>
 
     /** Adds the given [receiverTypes] to this type's list of originating elements. */
     @Suppress("UNCHECKED_CAST")
     @ExperimentalKotlinPoetApi
-    public fun contextReceivers(receiverTypes: Iterable<TypeName>): T = apply {
-      contextReceiverTypes += receiverTypes
-    } as T
+    public fun contextReceivers(receiverTypes: Iterable<TypeName>): T =
+      apply { contextReceiverTypes += receiverTypes } as T
 
     /** Adds the given [receiverTypes] to this type's list of originating elements. */
     @ExperimentalKotlinPoetApi
@@ -49,6 +46,5 @@ internal fun ContextReceivable.Builder<*>.buildContextReceivers() =
 
 @JvmInline
 @ExperimentalKotlinPoetApi
-internal value class ContextReceivers(
-  override val contextReceiverTypes: List<TypeName>,
-) : ContextReceivable
+internal value class ContextReceivers(override val contextReceiverTypes: List<TypeName>) :
+  ContextReceivable

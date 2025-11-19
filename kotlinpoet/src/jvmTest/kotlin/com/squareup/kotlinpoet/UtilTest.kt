@@ -23,7 +23,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UtilTest {
-  @Test fun characterLiteral() {
+  @Test
+  fun characterLiteral() {
     assertEquals("a", characterLiteralWithoutSingleQuotes('a'))
     assertEquals("b", characterLiteralWithoutSingleQuotes('b'))
     assertEquals("c", characterLiteralWithoutSingleQuotes('c'))
@@ -59,7 +60,8 @@ class UtilTest {
     assertEquals("／", characterLiteralWithoutSingleQuotes('\uFF0F'))
   }
 
-  @Test fun stringLiteral() {
+  @Test
+  fun stringLiteral() {
     stringLiteral("abc")
     stringLiteral("♦♥♠♣")
     stringLiteral("€\\t@\\t\${\'\$\'}", "€\t@\t$")
@@ -71,7 +73,8 @@ class UtilTest {
       .isEqualTo("\"abc();\\ndef();\"")
   }
 
-  @Test fun legalIdentifiers() {
+  @Test
+  fun legalIdentifiers() {
     assertThat("foo".isIdentifier).isTrue()
     assertThat("bAr1".isIdentifier).isTrue()
     assertThat("1".isIdentifier).isFalse()
@@ -92,36 +95,45 @@ class UtilTest {
     assertThat("".isIdentifier).isFalse()
   }
 
-  @Test fun escapeNonJavaIdentifiers() {
+  @Test
+  fun escapeNonJavaIdentifiers() {
     assertThat("8startWithNumber".escapeIfNecessary()).isEqualTo("`8startWithNumber`")
     assertThat("with-hyphen".escapeIfNecessary()).isEqualTo("`with-hyphen`")
     assertThat("with space".escapeIfNecessary()).isEqualTo("`with space`")
-    assertThat("with_unicode_punctuation\u2026".escapeIfNecessary()).isEqualTo("`with_unicode_punctuation\u2026`")
+    assertThat("with_unicode_punctuation\u2026".escapeIfNecessary())
+      .isEqualTo("`with_unicode_punctuation\u2026`")
   }
 
-  @Test fun escapeSpaceInName() {
-    val generated = FileSpec.builder("a", "b")
-      .addFunction(
-        FunSpec.builder("foo").apply {
-          addParameter("aaa bbb", typeNameOf<(Int) -> String>())
-          val arg = mutableListOf<String>()
-          addStatement(
-            StringBuilder().apply {
-              repeat(10) {
-                append("%N($it) +♢")
-                arg += "aaa bbb"
-              }
-              append("%N(100)")
-              arg += "aaa bbb"
-            }.toString(),
-            *arg.toTypedArray(),
-          )
-        }.build(),
-      )
-      .build()
-      .toString()
+  @Test
+  fun escapeSpaceInName() {
+    val generated =
+      FileSpec.builder("a", "b")
+        .addFunction(
+          FunSpec.builder("foo")
+            .apply {
+              addParameter("aaa bbb", typeNameOf<(Int) -> String>())
+              val arg = mutableListOf<String>()
+              addStatement(
+                StringBuilder()
+                  .apply {
+                    repeat(10) {
+                      append("%N($it) +♢")
+                      arg += "aaa bbb"
+                    }
+                    append("%N(100)")
+                    arg += "aaa bbb"
+                  }
+                  .toString(),
+                *arg.toTypedArray(),
+              )
+            }
+            .build()
+        )
+        .build()
+        .toString()
 
-    val expectedOutput = """
+    val expectedOutput =
+      """
       package a
 
       import kotlin.Function1
@@ -133,16 +145,19 @@ class UtilTest {
             `aaa bbb`(6) + `aaa bbb`(7) + `aaa bbb`(8) + `aaa bbb`(9) + `aaa bbb`(100)
       }
 
-    """.trimIndent()
+      """
+        .trimIndent()
 
     assertThat(generated).isEqualTo(expectedOutput)
   }
 
-  @Test fun escapeMultipleTimes() {
+  @Test
+  fun escapeMultipleTimes() {
     assertThat("A-\$B".escapeIfNecessary()).isEqualTo("`A-\$B`")
   }
 
-  @Test fun escapeEscaped() {
+  @Test
+  fun escapeEscaped() {
     assertThat("`A`".escapeIfNecessary()).isEqualTo("`A`")
   }
 
@@ -186,10 +201,8 @@ class UtilTest {
     val input = "1SampleClass_\$Generated "
     val expected = "_1SampleClass___Generated_U0020"
 
-    assertThat(input.escapeAsAlias())
-      .isEqualTo(expected)
-    assertThat(input.escapeAsAlias().escapeAsAlias())
-      .isEqualTo(expected)
+    assertThat(input.escapeAsAlias()).isEqualTo(expected)
+    assertThat(input.escapeAsAlias().escapeAsAlias()).isEqualTo(expected)
   }
 
   private fun stringLiteral(string: String) = stringLiteral(string, string)

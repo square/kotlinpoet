@@ -31,18 +31,13 @@ import java.lang.reflect.Type
 import kotlin.DeprecationLevel.HIDDEN
 import kotlin.reflect.KClass
 
-public fun FileSpec.Builder.jvmName(name: String): FileSpec.Builder = addAnnotation(
-  AnnotationSpec.builder(JvmName::class)
-    .useSiteTarget(FILE)
-    .addMember("%S", name)
-    .build(),
-)
+public fun FileSpec.Builder.jvmName(name: String): FileSpec.Builder =
+  addAnnotation(
+    AnnotationSpec.builder(JvmName::class).useSiteTarget(FILE).addMember("%S", name).build()
+  )
 
-public fun FileSpec.Builder.jvmMultifileClass(): FileSpec.Builder = addAnnotation(
-  AnnotationSpec.builder(JvmMultifileClass::class)
-    .useSiteTarget(FILE)
-    .build(),
-)
+public fun FileSpec.Builder.jvmMultifileClass(): FileSpec.Builder =
+  addAnnotation(AnnotationSpec.builder(JvmMultifileClass::class).useSiteTarget(FILE).build())
 
 public fun TypeSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): TypeSpec.Builder =
   addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
@@ -70,11 +65,7 @@ public fun FunSpec.Builder.jvmOverloads(): FunSpec.Builder = apply {
 
 public fun FunSpec.Builder.jvmName(name: String): FunSpec.Builder = apply {
   check(!this.name.isConstructor) { "Can't apply @JvmName to a constructor!" }
-  addAnnotation(
-    AnnotationSpec.builder(JvmName::class)
-      .addMember("%S", name)
-      .build(),
-  )
+  addAnnotation(AnnotationSpec.builder(JvmName::class).addMember("%S", name).build())
 }
 
 public fun FunSpec.Builder.throws(vararg exceptionClasses: KClass<out Throwable>): FunSpec.Builder =
@@ -90,7 +81,7 @@ public fun FunSpec.Builder.throws(exceptionClasses: Iterable<TypeName>): FunSpec
   addAnnotation(
     AnnotationSpec.builder(Throws::class)
       .apply { exceptionClasses.forEach { addMember("%T::class", it) } }
-      .build(),
+      .build()
   )
 
 public fun FunSpec.Builder.jvmSuppressWildcards(suppress: Boolean = true): FunSpec.Builder = apply {
@@ -113,7 +104,7 @@ public fun PropertySpec.Builder.jvmField(): PropertySpec.Builder = addAnnotation
 public fun PropertySpec.Builder.jvmStatic(): PropertySpec.Builder = addAnnotation(JvmStatic::class)
 
 public fun PropertySpec.Builder.jvmSuppressWildcards(
-  suppress: Boolean = true,
+  suppress: Boolean = true
 ): PropertySpec.Builder = addAnnotation(jvmSuppressWildcardsAnnotation(suppress))
 
 public fun PropertySpec.Builder.transient(): PropertySpec.Builder = addAnnotation(Transient::class)

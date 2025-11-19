@@ -27,26 +27,23 @@ import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.reflect.KClass
 
 /** A generated annotation on a declaration. */
-public class AnnotationSpec private constructor(
-  builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap {
+public class AnnotationSpec
+private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
+  Taggable by tagMap {
   @Deprecated(
     message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
     replaceWith = ReplaceWith("typeName"),
   )
   public val className: ClassName
     get() = typeName as? ClassName ?: error("ClassName is not available. Call typeName instead.")
+
   public val typeName: TypeName = builder.typeName
   public val members: List<CodeBlock> = builder.members.toImmutableList()
   public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
-  /** Lazily-initialized toString of this AnnotationSpec.  */
-  private val cachedString by lazy(NONE) {
-    buildCodeString {
-      emit(this, inline = true, asParameter = false)
-    }
-  }
+  /** Lazily-initialized toString of this AnnotationSpec. */
+  private val cachedString by
+    lazy(NONE) { buildCodeString { emit(this, inline = true, asParameter = false) } }
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
     if (!asParameter) {
@@ -78,9 +75,10 @@ public class AnnotationSpec private constructor(
     codeWriter.emit("(")
     if (members.size > 1) codeWriter.emit(whitespace).indent(1)
     codeWriter.emitCode(
-      codeBlock = members
-        .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
-        .joinToCode(separator = memberSeparator, suffix = memberSuffix),
+      codeBlock =
+        members
+          .map { if (inline) it.replaceAll("[⇥|⇤]", "") else it }
+          .joinToCode(separator = memberSeparator, suffix = memberSuffix),
       isConstantContext = true,
     )
     if (members.size > 1) codeWriter.unindent(1).emit(whitespace)
@@ -116,14 +114,11 @@ public class AnnotationSpec private constructor(
     PARAM("param"),
     SETPARAM("setparam"),
     DELEGATE("delegate"),
-
-    @ExperimentalKotlinPoetApi
-    ALL("all"),
+    @ExperimentalKotlinPoetApi ALL("all"),
   }
 
-  public class Builder internal constructor(
-    internal val typeName: TypeName,
-  ) : Taggable.Builder<Builder> {
+  public class Builder internal constructor(internal val typeName: TypeName) :
+    Taggable.Builder<Builder> {
     internal var useSiteTarget: UseSiteTarget? = null
 
     public val members: MutableList<CodeBlock> = mutableListOf()
@@ -132,9 +127,7 @@ public class AnnotationSpec private constructor(
     public fun addMember(format: String, vararg args: Any): Builder =
       addMember(CodeBlock.of(format, *args))
 
-    public fun addMember(codeBlock: CodeBlock): Builder = apply {
-      members += codeBlock
-    }
+    public fun addMember(codeBlock: CodeBlock): Builder = apply { members += codeBlock }
 
     public fun useSiteTarget(useSiteTarget: UseSiteTarget?): Builder = apply {
       this.useSiteTarget = useSiteTarget
@@ -145,40 +138,35 @@ public class AnnotationSpec private constructor(
     public companion object {
       /**
        * Creates a [CodeBlock] with parameter `format` depending on the given `value` object.
-       * Handles a number of special cases, such as appending "f" to `Float` values, and uses
-       * `%L` for other types.
+       * Handles a number of special cases, such as appending "f" to `Float` values, and uses `%L`
+       * for other types.
        */
-      internal fun memberForValue(value: Any) = when (value) {
-        is Annotation -> CodeBlock.of("%L", get(value))
-        is Class<*> -> CodeBlock.of("%T::class", value)
-        is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
-        is String -> CodeBlock.of("%S", value)
-        is Float -> CodeBlock.of("%Lf", value)
-        is Char -> CodeBlock.of("'%L'", characterLiteralWithoutSingleQuotes(value))
-        else -> CodeBlock.of("%L", value)
-      }
+      internal fun memberForValue(value: Any) =
+        when (value) {
+          is Annotation -> CodeBlock.of("%L", get(value))
+          is Class<*> -> CodeBlock.of("%T::class", value)
+          is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
+          is String -> CodeBlock.of("%S", value)
+          is Float -> CodeBlock.of("%Lf", value)
+          is Char -> CodeBlock.of("'%L'", characterLiteralWithoutSingleQuotes(value))
+          else -> CodeBlock.of("%L", value)
+        }
     }
   }
 
-  /**
-   * Annotation value visitor adding members to the given builder instance.
-   */
+  /** Annotation value visitor adding members to the given builder instance. */
   @OptIn(DelicateKotlinPoetApi::class)
-  private class Visitor(
-    val builder: CodeBlock.Builder,
-  ) : SimpleAnnotationValueVisitor8<CodeBlock.Builder, String>(builder) {
+  private class Visitor(val builder: CodeBlock.Builder) :
+    SimpleAnnotationValueVisitor8<CodeBlock.Builder, String>(builder) {
 
-    override fun defaultAction(o: Any, name: String) =
-      builder.add(Builder.memberForValue(o))
+    override fun defaultAction(o: Any, name: String) = builder.add(Builder.memberForValue(o))
 
-    override fun visitAnnotation(a: AnnotationMirror, name: String) =
-      builder.add("%L", get(a))
+    override fun visitAnnotation(a: AnnotationMirror, name: String) = builder.add("%L", get(a))
 
     override fun visitEnumConstant(c: VariableElement, name: String) =
       builder.add("%T.%L", c.asType().asTypeName(), c.simpleName)
 
-    override fun visitType(t: TypeMirror, name: String) =
-      builder.add("%T::class", t.asTypeName())
+    override fun visitType(t: TypeMirror, name: String) = builder.add("%T::class", t.asTypeName())
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
       builder.add("arrayOf(⇥⇥")
@@ -193,20 +181,17 @@ public class AnnotationSpec private constructor(
 
   public companion object {
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     @JvmOverloads
-    public fun get(
-      annotation: Annotation,
-      includeDefaultValues: Boolean = false,
-    ): AnnotationSpec {
+    public fun get(annotation: Annotation, includeDefaultValues: Boolean = false): AnnotationSpec {
       try {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         val javaAnnotation = annotation as java.lang.annotation.Annotation
-        val builder = builder(javaAnnotation.annotationType())
-          .tag<Annotation>(annotation)
+        val builder = builder(javaAnnotation.annotationType()).tag<Annotation>(annotation)
         val methods = annotation.annotationType().declaredMethods.sortedBy { it.name }
         for (method in methods) {
           val value = method.invoke(annotation)
@@ -242,8 +227,9 @@ public class AnnotationSpec private constructor(
     }
 
     @DelicateKotlinPoetApi(
-      message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
+      message =
+        "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+          " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun get(annotation: AnnotationMirror): AnnotationSpec {
@@ -266,14 +252,14 @@ public class AnnotationSpec private constructor(
     @JvmStatic public fun builder(type: ParameterizedTypeName): Builder = Builder(type)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun builder(type: Class<out Annotation>): Builder =
-      builder(type.asClassName())
+    public fun builder(type: Class<out Annotation>): Builder = builder(type.asClassName())
 
-    @JvmStatic public fun builder(type: KClass<out Annotation>): Builder =
-      builder(type.asClassName())
+    @JvmStatic
+    public fun builder(type: KClass<out Annotation>): Builder = builder(type.asClassName())
   }
 }

@@ -23,7 +23,8 @@ import assertk.assertions.isInstanceOf
 import kotlin.test.Test
 
 class NameAllocatorTest {
-  @Test fun usage() {
+  @Test
+  fun usage() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
     assertThat(1 in nameAllocator).isEqualTo(true)
@@ -33,14 +34,16 @@ class NameAllocatorTest {
     assertThat(nameAllocator[2]).isEqualTo("bar")
   }
 
-  @Test fun nameCollision() {
+  @Test
+  fun nameCollision() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo")).isEqualTo("foo")
     assertThat(nameAllocator.newName("foo")).isEqualTo("foo_")
     assertThat(nameAllocator.newName("foo")).isEqualTo("foo__")
   }
 
-  @Test fun nameCollisionWithTag() {
+  @Test
+  fun nameCollisionWithTag() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo")
     assertThat(1 in nameAllocator).isEqualTo(true)
@@ -52,58 +55,65 @@ class NameAllocatorTest {
     assertThat(nameAllocator[3]).isEqualTo("foo__")
   }
 
-  @Test fun characterMappingSubstitute() {
+  @Test
+  fun characterMappingSubstitute() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("a-b", 1)).isEqualTo("a_b")
   }
 
-  @Test fun characterMappingSurrogate() {
+  @Test
+  fun characterMappingSurrogate() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("a\uD83C\uDF7Ab", 1)).isEqualTo("a_b")
   }
 
-  @Test fun characterMappingInvalidStartButValidPart() {
+  @Test
+  fun characterMappingInvalidStartButValidPart() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("1ab", 1)).isEqualTo("_1ab")
   }
 
-  @Test fun characterMappingInvalidStartIsInvalidPart() {
+  @Test
+  fun characterMappingInvalidStartIsInvalidPart() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("&ab", 1)).isEqualTo("_ab")
   }
 
-  @Test fun kotlinKeyword() {
+  @Test
+  fun kotlinKeyword() {
     val nameAllocator = NameAllocator()
     assertThat(nameAllocator.newName("when", 1)).isEqualTo("when_")
     assertThat(nameAllocator[1]).isEqualTo("when_")
   }
 
-  @Test fun kotlinKeywordNotPreAllocated() {
+  @Test
+  fun kotlinKeywordNotPreAllocated() {
     val nameAllocator = NameAllocator(preallocateKeywords = false)
     assertThat(nameAllocator.newName("when", 1)).isEqualTo("when")
     assertThat(nameAllocator[1]).isEqualTo("when")
   }
 
-  @Test fun tagReuseForbidden() {
+  @Test
+  fun tagReuseForbidden() {
     val nameAllocator = NameAllocator()
     nameAllocator.newName("foo", 1)
     assertThat(1 in nameAllocator).isEqualTo(true)
-    assertFailure {
-      nameAllocator.newName("bar", 1)
-    }.isInstanceOf<IllegalArgumentException>()
+    assertFailure { nameAllocator.newName("bar", 1) }
+      .isInstanceOf<IllegalArgumentException>()
       .hasMessage("tag 1 cannot be used for both 'foo' and 'bar'")
     assertThat(1 in nameAllocator).isEqualTo(true)
   }
 
-  @Test fun useBeforeAllocateForbidden() {
+  @Test
+  fun useBeforeAllocateForbidden() {
     val nameAllocator = NameAllocator()
-    assertFailure {
-      nameAllocator[1]
-    }.isInstanceOf<IllegalArgumentException>()
+    assertFailure { nameAllocator[1] }
+      .isInstanceOf<IllegalArgumentException>()
       .hasMessage("unknown tag: 1")
   }
 
-  @Test fun cloneUsage() {
+  @Test
+  fun cloneUsage() {
     val outerAllocator = NameAllocator()
     outerAllocator.newName("foo", 1)
 

@@ -24,8 +24,7 @@ public interface TypeSpecHolder {
     public fun addType(typeSpec: TypeSpec): T
 
     @Suppress("UNCHECKED_CAST")
-    public fun addTypes(typeSpecs: Iterable<TypeSpec>): T = apply {
-      for (typeSpec in typeSpecs) addType(typeSpec)
-    } as T
+    public fun addTypes(typeSpecs: Iterable<TypeSpec>): T =
+      apply { for (typeSpec in typeSpecs) addType(typeSpec) } as T
   }
 }

@@ -30,16 +30,15 @@ import org.junit.rules.TemporaryFolder
 
 class TestProcessorTest {
 
-  @Rule
-  @JvmField
-  val temporaryFolder: TemporaryFolder = TemporaryFolder()
+  @Rule @JvmField val temporaryFolder: TemporaryFolder = TemporaryFolder()
 
   @Test
   fun smokeTest() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
@@ -169,171 +168,174 @@ class TestProcessorTest {
              }
            }
            """,
-      ),
-    )
+        )
+      )
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestSmokeTestClass.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestSmokeTestClass.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
-      import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
-      import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
-      import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
-      import kotlin.Any
-      import kotlin.Array
-      import kotlin.Boolean
-      import kotlin.Enum
-      import kotlin.Float
-      import kotlin.Int
-      import kotlin.IntArray
-      import kotlin.String
-      import kotlin.Unit
-      import kotlin.collections.List
-      import kotlin.collections.Map
-      import kotlin.collections.MutableList
-      import kotlin.collections.Set
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationEnumValue
+        import com.squareup.kotlinpoet.ksp.test.processor.AnotherAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ComprehensiveAnnotation
+        import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+        import kotlin.Any
+        import kotlin.Array
+        import kotlin.Boolean
+        import kotlin.Enum
+        import kotlin.Float
+        import kotlin.Int
+        import kotlin.IntArray
+        import kotlin.String
+        import kotlin.Unit
+        import kotlin.collections.List
+        import kotlin.collections.Map
+        import kotlin.collections.MutableList
+        import kotlin.collections.Set
 
-      @ComprehensiveAnnotation<String>(
-        boolean = true,
-        booleanArray = booleanArrayOf(true),
-        byte = 0.toByte(),
-        byteArray = byteArrayOf(0.toByte()),
-        char = 'a',
-        charArray = charArrayOf('a', 'b', 'c'),
-        short = 0.toShort(),
-        shortArray = shortArrayOf(0.toShort()),
-        int = 0,
-        intArray = intArrayOf(0),
-        long = 0,
-        longArray = longArrayOf(0),
-        float = 0.0f,
-        floatArray = floatArrayOf(0.0f),
-        double = 0.0,
-        doubleArray = doubleArrayOf(0.0),
-        string = "Hello",
-        stringArray = arrayOf("Hello"),
-        someClass = String::class,
-        someClasses = arrayOf(String::class, Int::class),
-        enumValue = AnnotationEnumValue.ONE,
-        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
-        anotherAnnotation = AnotherAnnotation(input = "Hello"),
-        anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
-        defaultingString = "defaultValue",
+        @ComprehensiveAnnotation<String>(
+          boolean = true,
+          booleanArray = booleanArrayOf(true),
+          byte = 0.toByte(),
+          byteArray = byteArrayOf(0.toByte()),
+          char = 'a',
+          charArray = charArrayOf('a', 'b', 'c'),
+          short = 0.toShort(),
+          shortArray = shortArrayOf(0.toShort()),
+          int = 0,
+          intArray = intArrayOf(0),
+          long = 0,
+          longArray = longArrayOf(0),
+          float = 0.0f,
+          floatArray = floatArrayOf(0.0f),
+          double = 0.0,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          stringArray = arrayOf("Hello"),
+          someClass = String::class,
+          someClasses = arrayOf(String::class, Int::class),
+          enumValue = AnnotationEnumValue.ONE,
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+          anotherAnnotation = AnotherAnnotation(input = "Hello"),
+          anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+          defaultingString = "defaultValue",
+        )
+        @ExampleAnnotationWithDefaults(
+          booleanArray = booleanArrayOf(false),
+          byte = 0.toByte(),
+          short = 0.toShort(),
+          int = 0,
+          long = 0,
+          float = 0.0f,
+          doubleArray = doubleArrayOf(0.0),
+          string = "Hello",
+          someClasses = arrayOf(Int::class),
+          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+        )
+        public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
+          @field:AnotherAnnotation(input = "siteTargeting")
+          private val propA: String = TODO()
+
+          internal val propB: String = TODO()
+
+          public val propC: Int = TODO()
+
+          public val propD: Int? = TODO()
+
+          public lateinit var propE: String
+
+          public var propF: T? = TODO()
+
+          public fun functionA(): String = TODO()
+
+          public fun functionB(): R = TODO()
+
+          public fun <F> functionC(
+            param1: String,
+            param2: T,
+            param3: F,
+            param4: F?,
+          ): R = TODO()
+
+          public suspend fun functionD(
+            param1: () -> String,
+            param2: (String) -> String,
+            param3: String.() -> String,
+            param4: () -> String,
+            param5: (String) -> String,
+            param6: (
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+              Int,
+            ) -> Unit,
+            param7: ((String) -> String)?,
+            param8: suspend () -> String,
+          ): Unit = TODO()
+
+          public fun wildTypes(
+            age: Int,
+            nationalities: List<String>,
+            weight: Float,
+            tattoos: Boolean,
+            race: String?,
+            hasChildren: Boolean,
+            favoriteFood: String?,
+            favoriteDrink: String?,
+            wildcardOut: MutableList<out String>,
+            nullableWildcardOut: MutableList<out String?>,
+            wildcardIn: Array<in String>,
+            any: List<*>,
+            anyTwo: List<Any>,
+            anyOut: MutableList<out Any>,
+            nullableAnyOut: MutableList<*>,
+            favoriteThreeNumbers: IntArray,
+            favoriteArrayValues: Array<String>,
+            favoriteNullableArrayValues: Array<String?>,
+            nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
+            aliasedName: TypeAliasName,
+            genericAlias: GenericTypeAlias,
+            parameterizedTypeAlias: ParameterizedTypeAlias<String>,
+            nestedArray: Array<Map<String, Any>>?,
+          ): Unit = TODO()
+        }
+
+        """
+          .trimIndent()
       )
-      @ExampleAnnotationWithDefaults(
-        booleanArray = booleanArrayOf(false),
-        byte = 0.toByte(),
-        short = 0.toShort(),
-        int = 0,
-        long = 0,
-        float = 0.0f,
-        doubleArray = doubleArrayOf(0.0),
-        string = "Hello",
-        someClasses = arrayOf(Int::class),
-        enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
-      )
-      public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
-        @field:AnotherAnnotation(input = "siteTargeting")
-        private val propA: String = TODO()
-
-        internal val propB: String = TODO()
-
-        public val propC: Int = TODO()
-
-        public val propD: Int? = TODO()
-
-        public lateinit var propE: String
-
-        public var propF: T? = TODO()
-
-        public fun functionA(): String = TODO()
-
-        public fun functionB(): R = TODO()
-
-        public fun <F> functionC(
-          param1: String,
-          param2: T,
-          param3: F,
-          param4: F?,
-        ): R = TODO()
-
-        public suspend fun functionD(
-          param1: () -> String,
-          param2: (String) -> String,
-          param3: String.() -> String,
-          param4: () -> String,
-          param5: (String) -> String,
-          param6: (
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-            Int,
-          ) -> Unit,
-          param7: ((String) -> String)?,
-          param8: suspend () -> String,
-        ): Unit = TODO()
-
-        public fun wildTypes(
-          age: Int,
-          nationalities: List<String>,
-          weight: Float,
-          tattoos: Boolean,
-          race: String?,
-          hasChildren: Boolean,
-          favoriteFood: String?,
-          favoriteDrink: String?,
-          wildcardOut: MutableList<out String>,
-          nullableWildcardOut: MutableList<out String?>,
-          wildcardIn: Array<in String>,
-          any: List<*>,
-          anyTwo: List<Any>,
-          anyOut: MutableList<out Any>,
-          nullableAnyOut: MutableList<*>,
-          favoriteThreeNumbers: IntArray,
-          favoriteArrayValues: Array<String>,
-          favoriteNullableArrayValues: Array<String?>,
-          nullableSetListMapArrayNullableIntWithDefault: Set<List<Map<String, Array<IntArray?>>>>?,
-          aliasedName: TypeAliasName,
-          genericAlias: GenericTypeAlias,
-          parameterizedTypeAlias: ParameterizedTypeAlias<String>,
-          nestedArray: Array<Map<String, Any>>?,
-        ): Unit = TODO()
-      }
-
-      """.trimIndent(),
-    )
   }
 
   @Test
   fun unwrapTypeAliases() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -357,43 +359,45 @@ class TestProcessorTest {
              }
            }
            """,
-      ),
-    )
+        )
+      )
     compilation.kspProcessorOptions["unwrapTypeAliases"] = "true"
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      import kotlin.Int
-      import kotlin.String
-      import kotlin.Unit
-      import kotlin.collections.List
-      import kotlin.collections.Map
+        import kotlin.Int
+        import kotlin.String
+        import kotlin.Unit
+        import kotlin.collections.List
+        import kotlin.collections.Map
 
-      public class TestExample {
-        public fun aliases(
-          aliasedName: String,
-          genericAlias: List<String>,
-          genericMapAlias: Map<Int, String>,
-          t1Unused: Map<Int, String>,
-          a1: Map<String, Int>,
-        ): Unit = TODO()
-      }
+        public class TestExample {
+          public fun aliases(
+            aliasedName: String,
+            genericAlias: List<String>,
+            genericMapAlias: Map<Int, String>,
+            t1Unused: Map<Int, String>,
+            a1: Map<String, Int>,
+          ): Unit = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun removeDefaultValues() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
@@ -433,36 +437,38 @@ class TestProcessorTest {
              var r: R? = null
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
+        import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
 
-      @ExampleAnnotationWithDefaults
-      public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
-        public var t: T? = TODO()
+        @ExampleAnnotationWithDefaults
+        public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+          public var t: T? = TODO()
 
-        public var r: R? = TODO()
-      }
+          public var r: R? = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun complexSelfReferencingTypeArgs() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -473,34 +479,36 @@ class TestProcessorTest {
              var r: R? = null
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestNode.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
-        public var t: T? = TODO()
+        public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+          public var t: T? = TODO()
 
-        public var r: R? = TODO()
-      }
+          public var r: R? = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun wildcardParameterForRecursiveTypeBound() {
     // Enum is an example of a recursive type bound - Enum<E: Enum<E>>
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -510,33 +518,36 @@ class TestProcessorTest {
             val enumValue: Enum<*> = TODO()
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestEnumWrapper.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestEnumWrapper.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      import kotlin.Enum
+        import kotlin.Enum
 
-      public class TestEnumWrapper {
-        public val enumValue: Enum<*> = TODO()
-      }
+        public class TestEnumWrapper {
+          public val enumValue: Enum<*> = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun transitiveAliases() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -555,34 +566,37 @@ class TestProcessorTest {
               fun <T : Alias41<Alias23, out Alias77<Alias73<Int>>>> bar(vararg arg1: T)
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestTransitiveAliases.kt")
-      .readText()
-    assertThat(generatedFileText).isEqualTo(
-      """
-    package test
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestTransitiveAliases.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-    import kotlin.Int
-    import kotlin.Unit
+        import kotlin.Int
+        import kotlin.Unit
 
-    public class TestTransitiveAliases {
-      public fun <T : Alias41<Alias43<Alias23>, Alias47<out Alias77<Alias73<Int>>>>> bar(vararg arg1: T): Unit = TODO()
-    }
+        public class TestTransitiveAliases {
+          public fun <T : Alias41<Alias43<Alias23>, Alias47<out Alias77<Alias73<Int>>>>> bar(vararg arg1: T): Unit = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun aliasAsTypeArgument() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -594,81 +608,87 @@ class TestProcessorTest {
               fun bar(arg1: List<Alias997>)
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestAliasAsTypeArgument.kt")
-      .readText()
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestAliasAsTypeArgument.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
-    package test
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-    import kotlin.Unit
-    import kotlin.collections.List
+        import kotlin.Unit
+        import kotlin.collections.List
 
-    public class TestAliasAsTypeArgument {
-      public fun bar(arg1: List<Alias997>): Unit = TODO()
-    }
+        public class TestAliasAsTypeArgument {
+          public fun bar(arg1: List<Alias997>): Unit = TODO()
+        }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun varargArgument() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
-           package test
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+          package test
 
-           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
-           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+          import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+          import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
-           @RequiresOptIn
-           annotation class MyOptIn
+          @RequiresOptIn
+          annotation class MyOptIn
 
-           @ExampleAnnotation
-           @OptIn(MyOptIn::class)
-           @AnnotationWithVararg(0, "one", "two")
-           interface Example
-        """.trimIndent(),
-      ),
-    )
+          @ExampleAnnotation
+          @OptIn(MyOptIn::class)
+          @AnnotationWithVararg(0, "one", "two")
+          interface Example
+          """
+            .trimIndent(),
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
-      .readText()
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
-      package test
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
 
-      import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
-      import kotlin.OptIn
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
+        import kotlin.OptIn
 
-      @OptIn(MyOptIn::class)
-      @AnnotationWithVararg(
-        simpleArg = 0,
-        "one",
-        "two",
+        @OptIn(MyOptIn::class)
+        @AnnotationWithVararg(
+          simpleArg = 0,
+          "one",
+          "two",
+        )
+        public class TestExample
+
+        """
+          .trimIndent()
       )
-      public class TestExample
-
-      """.trimIndent(),
-    )
   }
 
   @Test
   fun regression_1513() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -678,32 +698,35 @@ class TestProcessorTest {
            @ExampleAnnotation
            class RealRepository @Inject constructor() : Repository<String>
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
-      .readText()
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import kotlin.String
 
         public class TestRealRepository : Repository<String>
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun regression_1513_annotation() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -714,16 +737,17 @@ class TestProcessorTest {
            @GenericAnnotation<String>
            class RealRepository
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
-      .readText()
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import kotlin.String
@@ -731,16 +755,18 @@ class TestProcessorTest {
         @GenericAnnotation<String>
         public class TestRealRepository
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun regression_1304() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -754,16 +780,17 @@ class TestProcessorTest {
              lateinit var complicated: Flow<LeAlias>
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
-      .readText()
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         public class TestRealRepository {
@@ -772,16 +799,18 @@ class TestProcessorTest {
           public lateinit var complicated: Flow<LeAlias>
         }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun regression_1304_with_type_parameters() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -794,16 +823,17 @@ class TestProcessorTest {
              lateinit var prop: LeAlias<String>
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt")
-      .readText()
+    val generatedFileText =
+      File(compilation.kspSourcesDir, "kotlin/test/TestRealRepository.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import kotlin.String
@@ -812,16 +842,18 @@ class TestProcessorTest {
           public lateinit var prop: LeAlias<String>
         }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun intersectionTypes() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -833,16 +865,16 @@ class TestProcessorTest {
              }
            }
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
-      .readText()
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import kotlin.CharSequence
@@ -853,16 +885,18 @@ class TestProcessorTest {
           public fun <T> example(): Unit where T : Appendable, T : CharSequence = TODO()
         }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun typeArgs() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
@@ -872,16 +906,16 @@ class TestProcessorTest {
            @AnnotationWithTypeArgs<String, List<Int>>
            class Example
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
-      .readText()
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
@@ -892,16 +926,18 @@ class TestProcessorTest {
         @AnnotationWithTypeArgs<String, List<Int>>
         public class TestExample
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   @Test
   fun complexAliasing() {
-    val compilation = prepareCompilation(
-      kotlin(
-        "Example.kt",
-        """
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
            package test
 
            import javax.inject.Provider
@@ -919,16 +955,16 @@ class TestProcessorTest {
              private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>>,
            )
            """,
-      ),
-    )
+        )
+      )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt")
-      .readText()
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
 
-    assertThat(generatedFileText).isEqualTo(
-      """
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
         package test
 
         import java.lang.Class
@@ -939,21 +975,21 @@ class TestProcessorTest {
           private val handlers: Map<Class<out SelectOptions>, DaggerProvider<SelectHandler<*>>> = TODO()
         }
 
-      """.trimIndent(),
-    )
+        """
+          .trimIndent()
+      )
   }
 
   private fun prepareCompilation(vararg sourceFiles: SourceFile): KotlinCompilation {
-    return KotlinCompilation()
-      .apply {
-        workingDir = temporaryFolder.root
-        inheritClassPath = true
-        sources = sourceFiles.asList()
-        verbose = false
-        configureKsp {
-          incremental = true // The default now
-          symbolProcessorProviders += TestProcessorProvider()
-        }
+    return KotlinCompilation().apply {
+      workingDir = temporaryFolder.root
+      inheritClassPath = true
+      sources = sourceFiles.asList()
+      verbose = false
+      configureKsp {
+        incremental = true // The default now
+        symbolProcessorProviders += TestProcessorProvider()
       }
+    }
   }
 }

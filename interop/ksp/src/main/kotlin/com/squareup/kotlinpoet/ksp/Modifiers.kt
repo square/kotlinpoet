@@ -49,8 +49,8 @@ import com.google.devtools.ksp.symbol.Modifier.VARARG
 import com.squareup.kotlinpoet.KModifier
 
 /**
- * Returns the [KModifier] representation of this [Modifier] or null if this is a Java-only
- * modifier (i.e. prefixed with `JAVA_`), which do not have obvious [KModifier] analogues.
+ * Returns the [KModifier] representation of this [Modifier] or null if this is a Java-only modifier
+ * (i.e. prefixed with `JAVA_`), which do not have obvious [KModifier] analogues.
  */
 public fun Modifier.toKModifier(): KModifier? {
   return when (this) {

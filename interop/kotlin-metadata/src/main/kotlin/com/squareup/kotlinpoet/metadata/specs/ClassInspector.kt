@@ -36,7 +36,7 @@ public interface ClassInspector {
    * @param declarationContainer the source [KmDeclarationContainer] to read from.
    * @param className the [ClassName] of the target class to to read from.
    * @param parentClassName the parent [ClassName] name if [declarationContainer] is nested, inner,
-   * or is a companion object.
+   *   or is a companion object.
    */
   public fun containerData(
     declarationContainer: KmDeclarationContainer,
@@ -49,8 +49,8 @@ public interface ClassInspector {
    * always be Kotlin, so Metadata can be relied on for this.
    *
    * @param className The [ClassName] representation of the class.
-   * @return the read [KmDeclarationContainer] from its metadata. If no class or facade
-   *         file was found, this should throw an exception.
+   * @return the read [KmDeclarationContainer] from its metadata. If no class or facade file was
+   *   found, this should throw an exception.
    */
   public fun declarationContainerFor(className: ClassName): KmDeclarationContainer
 
@@ -87,7 +87,7 @@ public interface ClassInspector {
  *
  * @param className the [ClassName] of the target class to to read from.
  * @param parentClassName the parent [ClassName] name if [className] is nested, inner, or is a
- *        companion object.
+ *   companion object.
  */
 public fun ClassInspector.containerData(
   className: ClassName,
@@ -97,17 +97,15 @@ public fun ClassInspector.containerData(
 }
 
 /**
- * Looks up other classes, such as for nested members. Note that this class would always be
- * Kotlin, so Metadata can be relied on for this.
+ * Looks up other classes, such as for nested members. Note that this class would always be Kotlin,
+ * so Metadata can be relied on for this.
  *
  * @param className The [ClassName] representation of the class.
- * @return the read [KmClass] from its metadata. If no class was found, this should throw
- *         an exception.
+ * @return the read [KmClass] from its metadata. If no class was found, this should throw an
+ *   exception.
  */
 public fun ClassInspector.classFor(className: ClassName): KmClass {
   val container = declarationContainerFor(className)
-  check(container is KmClass) {
-    "Container is not a class! Was ${container.javaClass.simpleName}"
-  }
+  check(container is KmClass) { "Container is not a class! Was ${container.javaClass.simpleName}" }
   return container
 }

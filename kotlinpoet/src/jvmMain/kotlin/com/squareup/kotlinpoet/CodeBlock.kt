@@ -32,40 +32,36 @@ import kotlin.reflect.KClass
  *
  * Code blocks support placeholders like [java.text.Format]. This class primarily uses a percent
  * sign `%` but has its own set of permitted placeholders:
- *
- *  * `%L` emits a *literal* value with no escaping. Arguments for literals may be strings,
- *    primitives, [type declarations][TypeSpec], [annotations][AnnotationSpec] and even other code
- *    blocks.
- *  * `%N` emits a *name*, using name collision avoidance where necessary. Arguments for names may
- *    be strings (actually any [character sequence][CharSequence]), [parameters][ParameterSpec],
- *    [properties][PropertySpec], [functions][FunSpec], and [types][TypeSpec].
- *  * `%S` escapes the value as a *string*, wraps it with double quotes, and emits that. For
- *    example, `6" sandwich` is emitted `"6\" sandwich"`. `%S` will also escape all dollar signs
- *    (`$`), use `%P` for string templates.
- *  * `%P` - Similar to `%S`, but doesn't escape dollar signs (`$`) to allow creation of string
- *    templates. If the string contains dollar signs that should be escaped - use `%S`.
- *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
- *    [classes][Class].
- *  * `%M` emits a *member* reference. A member is either a function or a property. If the member is
- *    importable, e.g. it's a top-level function or a property declared inside an object, the import
- *    will be resolved if possible. Arguments for members must be of type [MemberName].
- *  * `%%` emits a percent sign.
- *  * `♢` emits a space or a newline, depending on its position on the line. This prefers to wrap
- *    lines before 100 columns. It does this by replacing normal spaces with a newline and indent.
- *    Note that spaces in strings are never wrapped.
- *  * `·` emits a space that never wraps. Equivalent to the regular space (` `).
- *  * `⇥` increases the indentation level.
- *  * `⇤` decreases the indentation level.
- *  * `«` begins a statement. For multiline statements, every line after the first line is
- *    double-indented.
- *  * `»` ends a statement.
+ * * `%L` emits a *literal* value with no escaping. Arguments for literals may be strings,
+ *   primitives, [type declarations][TypeSpec], [annotations][AnnotationSpec] and even other code
+ *   blocks.
+ * * `%N` emits a *name*, using name collision avoidance where necessary. Arguments for names may be
+ *   strings (actually any [character sequence][CharSequence]), [parameters][ParameterSpec],
+ *   [properties][PropertySpec], [functions][FunSpec], and [types][TypeSpec].
+ * * `%S` escapes the value as a *string*, wraps it with double quotes, and emits that. For example,
+ *   `6" sandwich` is emitted `"6\" sandwich"`. `%S` will also escape all dollar signs (`$`), use
+ *   `%P` for string templates.
+ * * `%P` - Similar to `%S`, but doesn't escape dollar signs (`$`) to allow creation of string
+ *   templates. If the string contains dollar signs that should be escaped - use `%S`.
+ * * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
+ *   [classes][Class].
+ * * `%M` emits a *member* reference. A member is either a function or a property. If the member is
+ *   importable, e.g. it's a top-level function or a property declared inside an object, the import
+ *   will be resolved if possible. Arguments for members must be of type [MemberName].
+ * * `%%` emits a percent sign.
+ * * `♢` emits a space or a newline, depending on its position on the line. This prefers to wrap
+ *   lines before 100 columns. It does this by replacing normal spaces with a newline and indent.
+ *   Note that spaces in strings are never wrapped.
+ * * `·` emits a space that never wraps. Equivalent to the regular space (` `).
+ * * `⇥` increases the indentation level.
+ * * `⇤` decreases the indentation level.
+ * * `«` begins a statement. For multiline statements, every line after the first line is
+ *   double-indented.
+ * * `»` ends a statement.
  */
-public class CodeBlock private constructor(
-  internal val formatParts: List<String>,
-  internal val args: List<Any?>,
-) {
-  /** A heterogeneous list containing string literals and value placeholders.  */
-
+public class CodeBlock
+private constructor(internal val formatParts: List<String>, internal val args: List<Any?>) {
+  /** A heterogeneous list containing string literals and value placeholders. */
   public fun isEmpty(): Boolean = formatParts.isEmpty()
 
   public fun isNotEmpty(): Boolean = !isEmpty()
@@ -107,9 +103,7 @@ public class CodeBlock private constructor(
 
     // We found a prefix. Prepare the suffix as a result.
     val resultFormatParts = ArrayList<String>()
-    firstFormatPart?.let {
-      resultFormatParts.add(it)
-    }
+    firstFormatPart?.let { resultFormatParts.add(it) }
     for (i in prefix.formatParts.size..<formatParts.size) {
       resultFormatParts.add(formatParts[i])
     }
@@ -123,8 +117,8 @@ public class CodeBlock private constructor(
   }
 
   /**
-   * Returns a copy of the code block without leading and trailing no-arg placeholders
-   * (`⇥`, `⇤`, `«`, `»`).
+   * Returns a copy of the code block without leading and trailing no-arg placeholders (`⇥`, `⇤`,
+   * `«`, `»`).
    */
   internal fun trim(): CodeBlock {
     var start = 0
@@ -146,8 +140,8 @@ public class CodeBlock private constructor(
    * [java.lang.String.replaceAll].
    *
    * **Warning!** This method leaves the arguments list unchanged. Take care when replacing
-   * placeholders with arguments, such as `%L`, as it can result in a code block, where
-   * placeholders don't match their arguments.
+   * placeholders with arguments, such as `%L`, as it can result in a code block, where placeholders
+   * don't match their arguments.
    */
   internal fun replaceAll(oldValue: String, newValue: String) =
     CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
@@ -180,9 +174,8 @@ public class CodeBlock private constructor(
 
   override fun toString(): String = buildCodeString { emitCode(this@CodeBlock) }
 
-  internal fun toString(codeWriter: CodeWriter): String = buildCodeString(codeWriter) {
-    emitCode(this@CodeBlock)
-  }
+  internal fun toString(codeWriter: CodeWriter): String =
+    buildCodeString(codeWriter) { emitCode(this@CodeBlock) }
 
   public fun toBuilder(): Builder {
     val builder = Builder()
@@ -203,8 +196,8 @@ public class CodeBlock private constructor(
      * Adds code using named arguments.
      *
      * Named arguments specify their name after the '%' followed by : and the corresponding type
-     * character. Argument names consist of characters in `a-z, A-Z, 0-9, and _` and must start
-     * with a lowercase character.
+     * character. Argument names consist of characters in `a-z, A-Z, 0-9, and _` and must start with
+     * a lowercase character.
      *
      * For example, to refer to the type [java.lang.Integer] with the argument name `clazz` use a
      * format string containing `%clazz:T` and include the key `clazz` with value
@@ -265,8 +258,8 @@ public class CodeBlock private constructor(
      *
      * Relative arguments map 1:1 with the placeholders in the format string.
      *
-     * Positional arguments use an index after the placeholder to identify which argument index
-     * to use. For example, for a literal to reference the 3rd argument: "%3L" (1 based index)
+     * Positional arguments use an index after the placeholder to identify which argument index to
+     * use. For example, for a literal to reference the 3rd argument: "%3L" (1 based index)
      *
      * Mixing relative and positional arguments in a call to add is invalid and will result in an
      * error.
@@ -364,44 +357,49 @@ public class CodeBlock private constructor(
         'P' -> this.args += if (arg is CodeBlock) arg else argToString(arg)
         'T' -> this.args += argToType(arg)
         'M' -> this.args += arg
-        else -> throw IllegalArgumentException(
-          String.format("invalid format string: '%s'", format),
-        )
+        else -> throw IllegalArgumentException(String.format("invalid format string: '%s'", format))
       }
     }
 
-    private fun argToName(o: Any?) = when (o) {
-      is CharSequence -> o.toString()
-      is ParameterSpec -> o.name
-      is PropertySpec -> o.name
-      is FunSpec -> o.name
-      is TypeSpec -> o.name!!
-      is MemberName -> o.simpleName
-      is ContextParameter -> if (o.name == "_") throw IllegalStateException("Named context parameter required") else o.name
-      else -> throw IllegalArgumentException("expected name but was $o")
-    }
+    private fun argToName(o: Any?) =
+      when (o) {
+        is CharSequence -> o.toString()
+        is ParameterSpec -> o.name
+        is PropertySpec -> o.name
+        is FunSpec -> o.name
+        is TypeSpec -> o.name!!
+        is MemberName -> o.simpleName
+        is ContextParameter ->
+          if (o.name == "_") throw IllegalStateException("Named context parameter required")
+          else o.name
+        else -> throw IllegalArgumentException("expected name but was $o")
+      }
 
     private fun argToLiteral(o: Any?) = if (o is Number) formatNumericValue(o) else o
 
     private fun argToString(o: Any?) = o?.toString()
 
     private fun formatNumericValue(o: Number): Any? {
-      val format = DecimalFormatSymbols().apply {
-        decimalSeparator = '.'
-        groupingSeparator = '_'
-        minusSign = '-'
-      }
+      val format =
+        DecimalFormatSymbols().apply {
+          decimalSeparator = '.'
+          groupingSeparator = '_'
+          minusSign = '-'
+        }
 
-      val precision = when (o) {
-        is Float -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
-        is Double -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
-        else -> 0
-      }
+      val precision =
+        when (o) {
+          is Float -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
+          is Double -> max(o.toBigDecimal().stripTrailingZeros().scale(), 1)
+          else -> 0
+        }
 
-      val pattern = when (o) {
-        is Float, is Double -> "###,##0.0" + "#".repeat(precision - 1)
-        else -> "###,##0"
-      }
+      val pattern =
+        when (o) {
+          is Float,
+          is Double -> "###,##0.0" + "#".repeat(precision - 1)
+          else -> "###,##0"
+        }
 
       return DecimalFormat(pattern, format).format(o)
     }
@@ -409,30 +407,31 @@ public class CodeBlock private constructor(
     private fun logDeprecationWarning(o: Any) {
       println(
         "Deprecation warning: converting $o to TypeName. Conversion of TypeMirror and" +
-          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead.",
+          " TypeElement is deprecated in KotlinPoet, use kotlin-metadata APIs instead."
       )
     }
 
-    private fun argToType(o: Any?) = when (o) {
-      is TypeName -> o
-      is TypeMirror -> {
-        logDeprecationWarning(o)
-        o.asTypeName()
+    private fun argToType(o: Any?) =
+      when (o) {
+        is TypeName -> o
+        is TypeMirror -> {
+          logDeprecationWarning(o)
+          o.asTypeName()
+        }
+        is Element -> {
+          logDeprecationWarning(o)
+          o.asType().asTypeName()
+        }
+        is Type -> o.asTypeName()
+        is KClass<*> -> o.asTypeName()
+        else -> throw IllegalArgumentException("expected type but was $o")
       }
-      is Element -> {
-        logDeprecationWarning(o)
-        o.asType().asTypeName()
-      }
-      is Type -> o.asTypeName()
-      is KClass<*> -> o.asTypeName()
-      else -> throw IllegalArgumentException("expected type but was $o")
-    }
 
     /**
      * @param controlFlow the control flow construct and its code, such as `if (foo == 5)`.
-     *     Shouldn't contain newline characters. Can contain opening braces, e.g.
-     *     `beginControlFlow("list.forEach { element ->")`. If there's no opening brace at the end
-     *     of the string, it will be added.
+     *   Shouldn't contain newline characters. Can contain opening braces, e.g.
+     *   `beginControlFlow("list.forEach { element ->")`. If there's no opening brace at the end of
+     *   the string, it will be added.
      */
     public fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       add(controlFlow.withOpeningBrace(), *args)
@@ -452,7 +451,7 @@ public class CodeBlock private constructor(
 
     /**
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
-     *     Shouldn't contain braces or newline characters.
+     *   Shouldn't contain braces or newline characters.
      */
     public fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       unindent()
@@ -476,13 +475,9 @@ public class CodeBlock private constructor(
       args.addAll(codeBlock.args)
     }
 
-    public fun indent(): Builder = apply {
-      formatParts += "⇥"
-    }
+    public fun indent(): Builder = apply { formatParts += "⇥" }
 
-    public fun unindent(): Builder = apply {
-      formatParts += "⇤"
-    }
+    public fun unindent(): Builder = apply { formatParts += "⇤" }
 
     public fun clear(): Builder = apply {
       formatParts.clear()
@@ -500,16 +495,22 @@ public class CodeBlock private constructor(
     private val NO_ARG_PLACEHOLDERS = setOf("⇥", "⇤", "«", "»")
     internal val EMPTY = CodeBlock(emptyList(), emptyList())
 
-    @JvmStatic public fun of(format: String, vararg args: Any?): CodeBlock =
+    @JvmStatic
+    public fun of(format: String, vararg args: Any?): CodeBlock =
       Builder().add(format, *args).build()
 
     @JvmStatic public fun builder(): Builder = Builder()
 
-    internal val Char.isMultiCharNoArgPlaceholder get() = this == '%'
-    internal val Char.isSingleCharNoArgPlaceholder get() = isOneOf('⇥', '⇤', '«', '»')
+    internal val Char.isMultiCharNoArgPlaceholder
+      get() = this == '%'
+
+    internal val Char.isSingleCharNoArgPlaceholder
+      get() = isOneOf('⇥', '⇤', '«', '»')
+
     internal val String.isPlaceholder
-      get() = (length == 1 && first().isSingleCharNoArgPlaceholder) ||
-        (length == 2 && first().isMultiCharNoArgPlaceholder)
+      get() =
+        (length == 1 && first().isSingleCharNoArgPlaceholder) ||
+          (length == 2 && first().isMultiCharNoArgPlaceholder)
 
     internal fun String.nextPotentialPlaceholderPosition(startIndex: Int) =
       indexOfAny(charArrayOf('%', '«', '»', '⇥', '⇤'), startIndex)
@@ -554,9 +555,11 @@ public inline fun buildCodeBlock(builderAction: CodeBlock.Builder.() -> Unit): C
 
 /**
  * Calls [CodeBlock.Builder.indent] then executes the provided [builderAction] on the
- * [CodeBlock.Builder] and then executes [CodeBlock.Builder.unindent] before returning the
- * original [CodeBlock.Builder].
+ * [CodeBlock.Builder] and then executes [CodeBlock.Builder.unindent] before returning the original
+ * [CodeBlock.Builder].
  */
-public inline fun CodeBlock.Builder.withIndent(builderAction: CodeBlock.Builder.() -> Unit): CodeBlock.Builder {
+public inline fun CodeBlock.Builder.withIndent(
+  builderAction: CodeBlock.Builder.() -> Unit
+): CodeBlock.Builder {
   return indent().also(builderAction).unindent()
 }

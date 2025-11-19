@@ -25,7 +25,5 @@ public object Dynamic : TypeName(false, emptyList(), TagMap(emptyMap())) {
     tags: Map<KClass<*>, Any>,
   ): Nothing = throw UnsupportedOperationException("dynamic doesn't support copying")
 
-  override fun emit(out: CodeWriter) = out.apply {
-    emit("dynamic")
-  }
+  override fun emit(out: CodeWriter) = out.apply { emit("dynamic") }
 }

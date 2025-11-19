@@ -23,12 +23,8 @@ public interface Documentable {
   public interface Builder<out T : Builder<T>> {
     public val kdoc: CodeBlock.Builder
 
-    public fun addKdoc(format: String, vararg args: Any): T = apply {
-      kdoc.add(format, *args)
-    } as T
+    public fun addKdoc(format: String, vararg args: Any): T = apply { kdoc.add(format, *args) } as T
 
-    public fun addKdoc(block: CodeBlock): T = apply {
-      kdoc.add(block)
-    } as T
+    public fun addKdoc(block: CodeBlock): T = apply { kdoc.add(block) } as T
   }
 }

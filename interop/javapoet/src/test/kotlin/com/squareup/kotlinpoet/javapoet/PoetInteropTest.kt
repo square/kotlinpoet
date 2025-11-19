@@ -135,26 +135,29 @@ class PoetInteropTest {
   @Test
   fun wildcards() {
     val inKType = typeNameOf<GenericType<in String>>()
-    val superJType = JParameterizedTypeName.get(
-      JClassName.get(GenericType::class.java),
-      JWildcardTypeName.supertypeOf(String::class.java),
-    )
+    val superJType =
+      JParameterizedTypeName.get(
+        JClassName.get(GenericType::class.java),
+        JWildcardTypeName.supertypeOf(String::class.java),
+      )
     assertThat(inKType.toJTypeName()).isEqualTo(superJType)
     assertThat(superJType.toKTypeName().toString()).isEqualTo(inKType.toString())
 
     val outKType = typeNameOf<GenericType<out String>>()
-    val extendsJType = JParameterizedTypeName.get(
-      JClassName.get(GenericType::class.java),
-      JWildcardTypeName.subtypeOf(String::class.java),
-    )
+    val extendsJType =
+      JParameterizedTypeName.get(
+        JClassName.get(GenericType::class.java),
+        JWildcardTypeName.subtypeOf(String::class.java),
+      )
     assertThat(outKType.toJTypeName()).isEqualTo(extendsJType)
     assertThat(extendsJType.toKTypeName().toString()).isEqualTo(outKType.toString())
 
     val star = typeNameOf<GenericType<*>>()
-    val extendsObjectJType = JParameterizedTypeName.get(
-      JClassName.get(GenericType::class.java),
-      JWildcardTypeName.subtypeOf(JTypeName.OBJECT),
-    )
+    val extendsObjectJType =
+      JParameterizedTypeName.get(
+        JClassName.get(GenericType::class.java),
+        JWildcardTypeName.subtypeOf(JTypeName.OBJECT),
+      )
     assertThat(star.toJTypeName()).isEqualTo(extendsObjectJType)
     assertThat(extendsObjectJType.toKTypeName().toString()).isEqualTo(star.toString())
     assertThat(STAR.toJTypeName()).isEqualTo(JWildcardTypeName.subtypeOf(JTypeName.OBJECT))
@@ -164,18 +167,19 @@ class PoetInteropTest {
   @Test
   fun complex() {
     val complexType = typeNameOf<Map<String?, List<MutableMap<Int, IntArray>>>>()
-    val jType = JParameterizedTypeName.get(
-      JClassName.get(Map::class.java),
-      JClassName.get(String::class.java),
+    val jType =
       JParameterizedTypeName.get(
-        JClassName.get(List::class.java),
+        JClassName.get(Map::class.java),
+        JClassName.get(String::class.java),
         JParameterizedTypeName.get(
-          JClassName.get(Map::class.java),
-          JClassName.INT.box(),
-          ArrayTypeName.of(JClassName.INT),
+          JClassName.get(List::class.java),
+          JParameterizedTypeName.get(
+            JClassName.get(Map::class.java),
+            JClassName.INT.box(),
+            ArrayTypeName.of(JClassName.INT),
+          ),
         ),
-      ),
-    )
+      )
     assertThat(complexType.toJTypeName()).isEqualTo(jType)
 
     assertThat(jType.toKTypeName())

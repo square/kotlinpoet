@@ -73,7 +73,8 @@ public fun JClassName.toKClassName(): KClassName {
 
 @KotlinPoetJavaPoetPreview
 public fun JParameterizedTypeName.toKParameterizedTypeName(): KParameterizedTypeName {
-  return rawType.toKClassName()
+  return rawType
+    .toKClassName()
     .parameterizedBy(*typeArguments.map { it.toKTypeName() }.toTypedArray())
 }
 
@@ -117,17 +118,18 @@ public fun JTypeName.toKTypeName(): KTypeName {
         else -> ARRAY.parameterizedBy(componentType.toKTypeName())
       }
     }
-    else -> when (unboxIfBoxedPrimitive()) {
-      JTypeName.BOOLEAN -> BOOLEAN
-      JTypeName.BYTE -> BYTE
-      JTypeName.CHAR -> CHAR
-      JTypeName.SHORT -> SHORT
-      JTypeName.INT -> INT
-      JTypeName.LONG -> LONG
-      JTypeName.FLOAT -> FLOAT
-      JTypeName.DOUBLE -> DOUBLE
-      else -> error("Unrecognized type $this")
-    }
+    else ->
+      when (unboxIfBoxedPrimitive()) {
+        JTypeName.BOOLEAN -> BOOLEAN
+        JTypeName.BYTE -> BYTE
+        JTypeName.CHAR -> CHAR
+        JTypeName.SHORT -> SHORT
+        JTypeName.INT -> INT
+        JTypeName.LONG -> LONG
+        JTypeName.FLOAT -> FLOAT
+        JTypeName.DOUBLE -> DOUBLE
+        else -> error("Unrecognized type $this")
+      }
   }
 }
 

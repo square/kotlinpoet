@@ -21,14 +21,12 @@ import com.squareup.kotlinpoet.asClassName
 /** Modifiers that are annotations or implicit in Kotlin but modifier keywords in bytecode. */
 public enum class JvmMethodModifier : JvmModifier {
   STATIC {
-    override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      JvmStatic::class.asClassName(),
-    ).build()
+    override fun annotationSpec(): AnnotationSpec =
+      AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
   },
   SYNCHRONIZED {
-    override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      Synchronized::class.asClassName(),
-    ).build()
+    override fun annotationSpec(): AnnotationSpec =
+      AnnotationSpec.builder(Synchronized::class.asClassName()).build()
   },
   DEFAULT,
 }

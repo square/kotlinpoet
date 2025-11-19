@@ -18,7 +18,7 @@ package com.squareup.kotlinpoet
 import java.io.Closeable
 import kotlin.math.min
 
-/** Sentinel value that indicates that no user-provided package has been set.  */
+/** Sentinel value that indicates that no user-provided package has been set. */
 private val NO_PACKAGE = String()
 
 internal val NULLABLE_ANY = ANY.copy(nullable = true)
@@ -35,16 +35,11 @@ private fun extractMemberName(part: String): String {
 
 internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
   val stringBuilder = StringBuilder()
-  CodeWriter(stringBuilder, columnLimit = Integer.MAX_VALUE).use {
-    it.builderAction()
-  }
+  CodeWriter(stringBuilder, columnLimit = Integer.MAX_VALUE).use { it.builderAction() }
   return stringBuilder.toString()
 }
 
-internal fun buildCodeString(
-  codeWriter: CodeWriter,
-  builderAction: CodeWriter.() -> Unit,
-): String {
+internal fun buildCodeString(codeWriter: CodeWriter, builderAction: CodeWriter.() -> Unit): String {
   val stringBuilder = StringBuilder()
   codeWriter.emitInto(stringBuilder, builderAction)
   return stringBuilder.toString()
@@ -71,18 +66,20 @@ internal class CodeWriter(
   private val typeSpecStack = mutableListOf<TypeSpec>()
   private val memberImportNames = mutableSetOf<String>()
   private val importableTypes = mutableMapOf<String, List<ClassName>>().withDefault { emptyList() }
-  private val importableMembers = mutableMapOf<String, List<MemberName>>().withDefault { emptyList() }
+  private val importableMembers =
+    mutableMapOf<String, List<MemberName>>().withDefault { emptyList() }
   private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
 
-  val imports = imports.also {
-    for ((memberName, _) in imports) {
-      val lastDotIndex = memberName.lastIndexOf('.')
-      if (lastDotIndex >= 0) {
-        memberImportNames.add(memberName.substring(0, lastDotIndex))
+  val imports =
+    imports.also {
+      for ((memberName, _) in imports) {
+        val lastDotIndex = memberName.lastIndexOf('.')
+        if (lastDotIndex >= 0) {
+          memberImportNames.add(memberName.substring(0, lastDotIndex))
+        }
       }
     }
-  }
 
   /**
    * When emitting a statement, this is the line of the statement currently being written. The first
@@ -91,9 +88,7 @@ internal class CodeWriter(
    */
   var statementLine = -1
 
-  fun indent(levels: Int = 1) = apply {
-    indentLevel += levels
-  }
+  fun indent(levels: Int = 1) = apply { indentLevel += levels }
 
   fun unindent(levels: Int = 1) = apply {
     require(indentLevel - levels >= 0) { "cannot unindent $levels from $indentLevel" }
@@ -110,13 +105,9 @@ internal class CodeWriter(
     packageName = NO_PACKAGE
   }
 
-  fun pushType(type: TypeSpec) = apply {
-    this.typeSpecStack.add(type)
-  }
+  fun pushType(type: TypeSpec) = apply { this.typeSpecStack.add(type) }
 
-  fun popType() = apply {
-    this.typeSpecStack.removeAt(typeSpecStack.size - 1)
-  }
+  fun popType() = apply { this.typeSpecStack.removeAt(typeSpecStack.size - 1) }
 
   fun emitComment(codeBlock: CodeBlock) {
     trailingNewline = true // Force the '//' prefix for the comment.
@@ -150,13 +141,10 @@ internal class CodeWriter(
   }
 
   /**
-   * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not
-   * be emitted except for [KModifier.PUBLIC]
+   * Emits `modifiers` in the standard order. Modifiers in `implicitModifiers` will not be emitted
+   * except for [KModifier.PUBLIC]
    */
-  fun emitModifiers(
-    modifiers: Set<KModifier>,
-    implicitModifiers: Set<KModifier> = emptySet(),
-  ) {
+  fun emitModifiers(modifiers: Set<KModifier>, implicitModifiers: Set<KModifier> = emptySet()) {
     if (shouldEmitPublicModifier(modifiers, implicitModifiers)) {
       emit(KModifier.PUBLIC.keyword)
       emit(" ")
@@ -172,22 +160,19 @@ internal class CodeWriter(
     }
   }
 
-  /**
-   * Emits the `context` block for [contextReceivers].
-   */
+  /** Emits the `context` block for [contextReceivers]. */
   fun emitContextReceivers(contextReceivers: List<TypeName>, suffix: String = "") {
     if (contextReceivers.isNotEmpty()) {
-      val receivers = contextReceivers
-        .map { CodeBlock.of("%T", it) }
-        .joinToCode(prefix = "context(", suffix = ")")
+      val receivers =
+        contextReceivers
+          .map { CodeBlock.of("%T", it) }
+          .joinToCode(prefix = "context(", suffix = ")")
       emitCode(receivers)
       emit(suffix)
     }
   }
 
-  /**
-   * Emits the `context` block for [contextParameters].
-   */
+  /** Emits the `context` block for [contextParameters]. */
   fun emitContextParameters(contextParameters: List<ContextParameter>, suffix: String = "") {
     emitContextParameters(
       contextParameters.map { CodeBlock.of("%L: %T", it.name, it.type) },
@@ -195,22 +180,14 @@ internal class CodeWriter(
     )
   }
 
-  /**
-   * Emits the `context` block for [contextParameters].
-   */
+  /** Emits the `context` block for [contextParameters]. */
   @JvmName("emitContextParametersFromTypeNames")
   fun emitContextParameters(contextParameters: List<TypeName>, suffix: String = "") {
-    emitContextParameters(
-      contextParameters.map { CodeBlock.of("%T", it) },
-      suffix,
-    )
+    emitContextParameters(contextParameters.map { CodeBlock.of("%T", it) }, suffix)
   }
 
   @JvmName("emitContextParametersFromCodeBlocks")
-  private fun emitContextParameters(
-    contextParameters: List<CodeBlock>,
-    suffix: String = "",
-  ) {
+  private fun emitContextParameters(contextParameters: List<CodeBlock>, suffix: String = "") {
     if (contextParameters.isNotEmpty()) {
       val parameters = contextParameters.joinToCode(prefix = "context(", suffix = ")")
       emitCode(parameters)
@@ -285,36 +262,39 @@ internal class CodeWriter(
         "%S" -> {
           val string = codeBlock.args[a++] as String?
           // Emit null as a literal null: no quotes.
-          val literal = if (string != null) {
-            stringLiteralWithQuotes(
-              string,
-              isInsideRawString = false,
-              isConstantContext = isConstantContext,
-            )
-          } else {
-            "null"
-          }
+          val literal =
+            if (string != null) {
+              stringLiteralWithQuotes(
+                string,
+                isInsideRawString = false,
+                isConstantContext = isConstantContext,
+              )
+            } else {
+              "null"
+            }
           emit(literal, nonWrapping = true)
         }
 
         "%P" -> {
-          val string = codeBlock.args[a++]?.let { arg ->
-            if (arg is CodeBlock) {
-              arg.toString(this@CodeWriter)
-            } else {
-              arg as String?
+          val string =
+            codeBlock.args[a++]?.let { arg ->
+              if (arg is CodeBlock) {
+                arg.toString(this@CodeWriter)
+              } else {
+                arg as String?
+              }
             }
-          }
           // Emit null as a literal null: no quotes.
-          val literal = if (string != null) {
-            stringLiteralWithQuotes(
-              string,
-              isInsideRawString = true,
-              isConstantContext = isConstantContext,
-            )
-          } else {
-            "null"
-          }
+          val literal =
+            if (string != null) {
+              stringLiteralWithQuotes(
+                string,
+                isInsideRawString = true,
+                isConstantContext = isConstantContext,
+              )
+            } else {
+              "null"
+            }
           emit(literal, nonWrapping = true)
         }
 
@@ -362,7 +342,8 @@ internal class CodeWriter(
             |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
             |- Arguments: ${codeBlock.args}
             |
-            """.trimMargin()
+            """
+              .trimMargin()
           }
           statementLine = 0
         }
@@ -376,7 +357,8 @@ internal class CodeWriter(
             |- Format parts: ${codeBlock.formatParts.map(::escapeCharacterLiterals)}
             |- Arguments: ${codeBlock.args}
             |
-            """.trimMargin()
+            """
+              .trimMargin()
           }
           if (statementLine > 0) {
             unindent(2) // End a multi-line statement. Decrease the indentation level.
@@ -435,12 +417,13 @@ internal class CodeWriter(
       is TypeSpec -> o.emit(this, null)
       is AnnotationSpec -> o.emit(this, inline = true, asParameter = isConstantContext)
       is PropertySpec -> o.emit(this, emptySet())
-      is FunSpec -> o.emit(
-        codeWriter = this,
-        enclosingName = null,
-        implicitModifiers = if (omitImplicitModifiers) emptySet() else setOf(KModifier.PUBLIC),
-        includeKdocTags = true,
-      )
+      is FunSpec ->
+        o.emit(
+          codeWriter = this,
+          enclosingName = null,
+          implicitModifiers = if (omitImplicitModifiers) emptySet() else setOf(KModifier.PUBLIC),
+          includeKdocTags = true,
+        )
 
       is TypeAliasSpec -> o.emit(this)
       is CodeBlock -> emitCode(o, isConstantContext = isConstantContext)
@@ -469,10 +452,10 @@ internal class CodeWriter(
         if (alias == null) {
           referencedNames.add(className.topLevelClassName().simpleName)
         }
-        val nestedClassNames = className.simpleNames.subList(
-          c.simpleNames.size,
-          className.simpleNames.size,
-        ).joinToString(".")
+        val nestedClassNames =
+          className.simpleNames
+            .subList(c.simpleNames.size, className.simpleNames.size)
+            .joinToString(".")
         return "$simpleName.$nestedClassNames"
       }
       c = c.enclosingClassName()
@@ -520,10 +503,8 @@ internal class CodeWriter(
     // We'll have to use the fully-qualified name.
     // Mark the member as importable for a future pass unless the name clashes with
     // a method in the current context
-    if (!kdoc && (
-        memberName.isExtension ||
-          !isMethodNameUsedInCurrentContext(memberName.simpleName)
-        )
+    if (
+      !kdoc && (memberName.isExtension || !isMethodNameUsedInCurrentContext(memberName.simpleName))
     ) {
       importableMember(memberName)
     }
@@ -551,11 +532,12 @@ internal class CodeWriter(
     // Check for name clashes with members.
     if (simpleName !in importableMembers) {
       // Maintain the inner class name if the alias exists.
-      val newImportTypes = if (alias == null) {
-        topLevelClassName
-      } else {
-        className.copy(nullable = false) as ClassName
-      }
+      val newImportTypes =
+        if (alias == null) {
+          topLevelClassName
+        } else {
+          className.copy(nullable = false) as ClassName
+        }
       importableTypes[simpleName] = importableTypes.getValue(simpleName) + newImportTypes
     }
   }
@@ -569,8 +551,8 @@ internal class CodeWriter(
   }
 
   /**
-   * Returns the class or enum value referenced by `simpleName`, using the current nesting context and
-   * imports.
+   * Returns the class or enum value referenced by `simpleName`, using the current nesting context
+   * and imports.
    */
   // TODO(jwilson): also honor superclass members when resolving names.
   private fun resolve(simpleName: String): ClassName? {
@@ -603,7 +585,7 @@ internal class CodeWriter(
     return null
   }
 
-  /** Returns the class named `simpleName` when nested in the class at `stackDepth`.  */
+  /** Returns the class named `simpleName` when nested in the class at `stackDepth`. */
   private fun stackClassName(stackDepth: Int, simpleName: String): ClassName {
     var className = ClassName(packageName, typeSpecStack[0].name!!)
     for (i in 1..stackDepth) {
@@ -724,8 +706,7 @@ internal class CodeWriter(
     LineWrapper(out, indent = DEFAULT_INDENT, columnLimit = Int.MAX_VALUE).use { newOut ->
       val oldOut = codeWrapper.out
       codeWrapper.out = newOut
-      @Suppress("UNUSED_EXPRESSION", "unused")
-      action()
+      @Suppress("UNUSED_EXPRESSION", "unused") action()
       codeWrapper.out = oldOut
     }
   }
@@ -746,28 +727,28 @@ internal class CodeWriter(
       emitStep: (importsCollector: CodeWriter) -> Unit,
     ): CodeWriter {
       // First pass: emit the entire class, just to collect the types we'll need to import.
-      val importsCollector = CodeWriter(
-        NullAppendable,
-        indent,
-        memberImports,
-        columnLimit = Integer.MAX_VALUE,
-      )
+      val importsCollector =
+        CodeWriter(NullAppendable, indent, memberImports, columnLimit = Integer.MAX_VALUE)
       emitStep(importsCollector)
       val generatedImports = mutableMapOf<String, Import>()
-      val importedTypes = importsCollector.suggestedTypeImports()
-        .generateImports(
-          generatedImports,
-          computeCanonicalName = ClassName::canonicalName,
-          capitalizeAliases = true,
-          referencedNames = importsCollector.referencedNames,
-        )
-      val importedMembers = importsCollector.suggestedMemberImports()
-        .generateImports(
-          generatedImports,
-          computeCanonicalName = MemberName::canonicalName,
-          capitalizeAliases = false,
-          referencedNames = importsCollector.referencedNames,
-        )
+      val importedTypes =
+        importsCollector
+          .suggestedTypeImports()
+          .generateImports(
+            generatedImports,
+            computeCanonicalName = ClassName::canonicalName,
+            capitalizeAliases = true,
+            referencedNames = importsCollector.referencedNames,
+          )
+      val importedMembers =
+        importsCollector
+          .suggestedMemberImports()
+          .generateImports(
+            generatedImports,
+            computeCanonicalName = MemberName::canonicalName,
+            capitalizeAliases = false,
+            referencedNames = importsCollector.referencedNames,
+          )
       importsCollector.close()
 
       return CodeWriter(
@@ -787,22 +768,34 @@ internal class CodeWriter(
     ): Map<String, Set<T>> {
       val imported = mutableMapOf<String, Set<T>>()
       entries
-        // Pre-sorting entries by the number of qualified names to ensure we first process simple names
-        // that don't require aliases (qualifiedNames.size == 1), that way we don't run into conflicts when
-        // a newly generated alias now clashes with a simple name that didn't originally need an alias.
+        // Pre-sorting entries by the number of qualified names to ensure we first process simple
+        // names
+        // that don't require aliases (qualifiedNames.size == 1), that way we don't run into
+        // conflicts when
+        // a newly generated alias now clashes with a simple name that didn't originally need an
+        // alias.
         .sortedBy { (_, qualifiedNames) -> qualifiedNames.size }
         .forEach { (simpleName, qualifiedNames) ->
-          val canonicalNamesToQualifiedNames = qualifiedNames.associateBy { it.computeCanonicalName() }
+          val canonicalNamesToQualifiedNames =
+            qualifiedNames.associateBy { it.computeCanonicalName() }
           if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
             val canonicalName = canonicalNamesToQualifiedNames.keys.single()
             generatedImports[canonicalName] = Import(canonicalName)
 
-            // For types, qualifiedNames should consist of a single name, for which an import will be generated. For
-            // members, there can be more than one qualified name mapping to a single simple name, e.g. overloaded
-            // functions declared in the same package. In these cases, a single import will suffice for all of them.
+            // For types, qualifiedNames should consist of a single name, for which an import will
+            // be generated. For
+            // members, there can be more than one qualified name mapping to a single simple name,
+            // e.g. overloaded
+            // functions declared in the same package. In these cases, a single import will suffice
+            // for all of them.
             imported[simpleName] = qualifiedNames
           } else {
-            generateImportAliases(simpleName, canonicalNamesToQualifiedNames, capitalizeAliases, imported.keys)
+            generateImportAliases(
+                simpleName,
+                canonicalNamesToQualifiedNames,
+                capitalizeAliases,
+                imported.keys,
+              )
               .onEach { (a, qualifiedName) ->
                 val alias = a.escapeAsAlias()
                 val canonicalName = qualifiedName.computeCanonicalName()
@@ -821,12 +814,16 @@ internal class CodeWriter(
       capitalizeAliases: Boolean,
       imported: Set<String>,
     ): List<Pair<String, T>> {
-      val canonicalNameSegmentsToQualifiedNames = canonicalNamesToQualifiedNames.mapKeys { (canonicalName, _) ->
-        canonicalName.split('.')
-          .dropLast(1) // Last segment of the canonical name is the simple name, drop it to avoid repetition.
-          .filter { it != "Companion" }
-          .map { it.replaceFirstChar(Char::uppercaseChar) }
-      }
+      val canonicalNameSegmentsToQualifiedNames =
+        canonicalNamesToQualifiedNames.mapKeys { (canonicalName, _) ->
+          canonicalName
+            .split('.')
+            .dropLast(
+              1
+            ) // Last segment of the canonical name is the simple name, drop it to avoid repetition.
+            .filter { it != "Companion" }
+            .map { it.replaceFirstChar(Char::uppercaseChar) }
+        }
       val aliasNames = mutableMapOf<String, T>()
       var segmentsToUse = 0
       // Iterate until we have unique aliases for all names.
@@ -834,12 +831,16 @@ internal class CodeWriter(
         segmentsToUse += 1
         aliasNames.clear()
         for ((segments, qualifiedName) in canonicalNameSegmentsToQualifiedNames) {
-          val aliasPrefix = segments.takeLast(min(segmentsToUse, segments.size))
-            .joinToString(separator = "")
-            .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }
+          val aliasPrefix =
+            segments
+              .takeLast(min(segmentsToUse, segments.size))
+              .joinToString(separator = "")
+              .replaceFirstChar { if (!capitalizeAliases) it.lowercaseChar() else it }
           val aliasSuffix = "_".repeat((segmentsToUse - segments.size).coerceAtLeast(0))
-          val aliasName = aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar) + aliasSuffix
-          // If this name has already been imported (e.g. a regular import already exists with this name),
+          val aliasName =
+            aliasPrefix + simpleName.replaceFirstChar(Char::uppercaseChar) + aliasSuffix
+          // If this name has already been imported (e.g. a regular import already exists with this
+          // name),
           // continue trying with a greater number of segments.
           if (aliasName in imported) {
             aliasNames.clear()

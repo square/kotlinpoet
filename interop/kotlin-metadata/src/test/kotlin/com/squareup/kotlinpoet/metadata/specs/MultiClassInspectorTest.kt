@@ -42,17 +42,16 @@ abstract class MultiClassInspectorTest {
     @JvmStatic
     @Parameterized.Parameters(name = "{0}")
     fun data(): Collection<Array<ClassInspectorType>> {
-      return listOf(
-        arrayOf(ClassInspectorType.REFLECTIVE),
-        arrayOf(ClassInspectorType.ELEMENTS),
-      )
+      return listOf(arrayOf(ClassInspectorType.REFLECTIVE), arrayOf(ClassInspectorType.ELEMENTS))
     }
   }
 
   enum class ClassInspectorType {
     NONE {
       override fun create(testInstance: MultiClassInspectorTest): ClassInspector {
-        throw IllegalStateException("Should not be called, just here to default the jvmfield to something.")
+        throw IllegalStateException(
+          "Should not be called, just here to default the jvmfield to something."
+        )
       }
     },
     REFLECTIVE {
@@ -62,10 +61,13 @@ abstract class MultiClassInspectorTest {
     },
     ELEMENTS {
       override fun create(testInstance: MultiClassInspectorTest): ClassInspector {
-        return ElementsClassInspector.create(lenient = false, testInstance.compilation.elements, testInstance.compilation.types)
+        return ElementsClassInspector.create(
+          lenient = false,
+          testInstance.compilation.elements,
+          testInstance.compilation.types,
+        )
       }
-    },
-    ;
+    };
 
     abstract fun create(testInstance: MultiClassInspectorTest): ClassInspector
   }
@@ -73,27 +75,18 @@ abstract class MultiClassInspectorTest {
   @Retention(RUNTIME)
   @Target(AnnotationTarget.FUNCTION)
   @Inherited
-  annotation class IgnoreForHandlerType(
-    val reason: String,
-    val handlerType: ClassInspectorType,
-  )
+  annotation class IgnoreForHandlerType(val reason: String, val handlerType: ClassInspectorType)
 
-  @JvmField
-  @Parameter
-  var classInspectorType: ClassInspectorType = ClassInspectorType.NONE
+  @JvmField @Parameter var classInspectorType: ClassInspectorType = ClassInspectorType.NONE
 
-  @Rule
-  @JvmField
-  val compilation = CompilationRule()
+  @Rule @JvmField val compilation = CompilationRule()
 
   @Rule
   @JvmField
   val ignoreForElementsRule = TestRule { base, description ->
     object : Statement() {
       override fun evaluate() {
-        val annotation = description.getAnnotation(
-          IgnoreForHandlerType::class.java,
-        )
+        val annotation = description.getAnnotation(IgnoreForHandlerType::class.java)
         val shouldIgnore = annotation?.handlerType == classInspectorType
         Assume.assumeTrue(
           "Ignoring ${description.methodName}: ${annotation?.reason}",
@@ -110,7 +103,10 @@ abstract class MultiClassInspectorTest {
 
   protected fun KClass<*>.toFileSpecWithTestHandler(): FileSpec {
     val classInspector = classInspectorType.create(this@MultiClassInspectorTest)
-    return java.annotations.filterIsInstance<Metadata>().first().toKotlinClassMetadata<FileFacade>(lenient = false)
+    return java.annotations
+      .filterIsInstance<Metadata>()
+      .first()
+      .toKotlinClassMetadata<FileFacade>(lenient = false)
       .kmPackage
       .toFileSpec(classInspector, asClassName())
   }

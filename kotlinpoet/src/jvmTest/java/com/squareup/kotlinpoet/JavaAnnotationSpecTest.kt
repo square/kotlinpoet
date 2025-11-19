@@ -23,43 +23,23 @@ import org.junit.Rule
 
 class JavaAnnotationSpecTest {
 
-  @Rule @JvmField
-  val compilation = CompilationRule()
+  @Rule @JvmField val compilation = CompilationRule()
 
-  @Test fun getOnValueArrayTypeMirrorShouldNameValueArg() {
-    val myClazz = compilation.elements
-      .getTypeElement(JavaClassWithArrayValueAnnotation::class.java.canonicalName)
+  @Test
+  fun getOnValueArrayTypeMirrorShouldNameValueArg() {
+    val myClazz =
+      compilation.elements.getTypeElement(
+        JavaClassWithArrayValueAnnotation::class.java.canonicalName
+      )
     val classBuilder = TypeSpec.classBuilder("Result")
 
-    myClazz.annotationMirrors.map { AnnotationSpec.get(it) }
-      .forEach {
-        classBuilder.addAnnotation(it)
-      }
+    myClazz.annotationMirrors
+      .map { AnnotationSpec.get(it) }
+      .forEach { classBuilder.addAnnotation(it) }
 
-    assertThat(toString(classBuilder.build())).isEqualTo(
-      """
-            |package com.squareup.tacos
-            |
-            |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
-            |import java.lang.Boolean
-            |import java.lang.Object
-            |
-            |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
-            |public class Result
-            |
-      """.trimMargin(),
-    )
-  }
-
-  @Test fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
-    val annotation = JavaClassWithArrayValueAnnotation::class.java.getAnnotation(
-      JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java,
-    )
-    val classBuilder = TypeSpec.classBuilder("Result")
-      .addAnnotation(AnnotationSpec.get(annotation))
-
-    assertThat(toString(classBuilder.build()).trim()).isEqualTo(
-      """
+    assertThat(toString(classBuilder.build()))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
@@ -68,10 +48,34 @@ class JavaAnnotationSpecTest {
         |
         |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
         |public class Result
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  private fun toString(typeSpec: TypeSpec) =
-    FileSpec.get("com.squareup.tacos", typeSpec).toString()
+  @Test
+  fun getOnValueArrayTypeAnnotationShouldNameValueArg() {
+    val annotation =
+      JavaClassWithArrayValueAnnotation::class
+        .java
+        .getAnnotation(JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue::class.java)
+    val classBuilder = TypeSpec.classBuilder("Result").addAnnotation(AnnotationSpec.get(annotation))
+
+    assertThat(toString(classBuilder.build()).trim())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import com.squareup.kotlinpoet.JavaClassWithArrayValueAnnotation
+        |import java.lang.Boolean
+        |import java.lang.Object
+        |
+        |@JavaClassWithArrayValueAnnotation.AnnotationWithArrayValue(value = arrayOf(Object::class, Boolean::class))
+        |public class Result
+        """
+          .trimMargin()
+      )
+  }
+
+  private fun toString(typeSpec: TypeSpec) = FileSpec.get("com.squareup.tacos", typeSpec).toString()
 }

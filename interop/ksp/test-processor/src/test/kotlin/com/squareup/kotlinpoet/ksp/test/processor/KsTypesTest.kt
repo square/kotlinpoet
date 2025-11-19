@@ -33,65 +33,70 @@ class KsTypesTest {
   // Regression test for https://github.com/square/kotlinpoet/issues/1178
   @Test
   fun errorTypesShouldFail() {
-    val type = object : KSType {
-      override val isError: Boolean = true
+    val type =
+      object : KSType {
+        override val isError: Boolean = true
 
-      // Boilerplate
-      override val annotations: Sequence<KSAnnotation>
-        get() = throw NotImplementedError()
-      override val arguments: List<KSTypeArgument>
-        get() = emptyList()
-      override val declaration: KSDeclaration
-        get() = throw NotImplementedError()
-      override val isFunctionType: Boolean
-        get() = throw NotImplementedError()
-      override val isMarkedNullable: Boolean
-        get() = throw NotImplementedError()
-      override val isSuspendFunctionType: Boolean
-        get() = throw NotImplementedError()
-      override val nullability: Nullability
-        get() = throw NotImplementedError()
+        // Boilerplate
+        override val annotations: Sequence<KSAnnotation>
+          get() = throw NotImplementedError()
 
-      override fun isAssignableFrom(that: KSType): Boolean {
-        throw NotImplementedError()
+        override val arguments: List<KSTypeArgument>
+          get() = emptyList()
+
+        override val declaration: KSDeclaration
+          get() = throw NotImplementedError()
+
+        override val isFunctionType: Boolean
+          get() = throw NotImplementedError()
+
+        override val isMarkedNullable: Boolean
+          get() = throw NotImplementedError()
+
+        override val isSuspendFunctionType: Boolean
+          get() = throw NotImplementedError()
+
+        override val nullability: Nullability
+          get() = throw NotImplementedError()
+
+        override fun isAssignableFrom(that: KSType): Boolean {
+          throw NotImplementedError()
+        }
+
+        override fun isCovarianceFlexible(): Boolean {
+          throw NotImplementedError()
+        }
+
+        override fun isMutabilityFlexible(): Boolean {
+          throw NotImplementedError()
+        }
+
+        override fun makeNotNullable(): KSType {
+          throw NotImplementedError()
+        }
+
+        override fun makeNullable(): KSType {
+          throw NotImplementedError()
+        }
+
+        override fun replace(arguments: List<KSTypeArgument>): KSType {
+          throw NotImplementedError()
+        }
+
+        override fun starProjection(): KSType {
+          throw NotImplementedError()
+        }
       }
 
-      override fun isCovarianceFlexible(): Boolean {
-        throw NotImplementedError()
-      }
-
-      override fun isMutabilityFlexible(): Boolean {
-        throw NotImplementedError()
-      }
-
-      override fun makeNotNullable(): KSType {
-        throw NotImplementedError()
-      }
-
-      override fun makeNullable(): KSType {
-        throw NotImplementedError()
-      }
-
-      override fun replace(arguments: List<KSTypeArgument>): KSType {
-        throw NotImplementedError()
-      }
-
-      override fun starProjection(): KSType {
-        throw NotImplementedError()
-      }
-    }
-
-    val exception1 = assertFailsWith<IllegalArgumentException> {
-      type.toClassName()
-    }
-    assertThat(exception1).message()
+    val exception1 = assertFailsWith<IllegalArgumentException> { type.toClassName() }
+    assertThat(exception1)
+      .message()
       .isNotNull()
       .contains("is not resolvable in the current round of processing")
 
-    val exception2 = assertFailsWith<IllegalArgumentException> {
-      type.toTypeName()
-    }
-    assertThat(exception2).message()
+    val exception2 = assertFailsWith<IllegalArgumentException> { type.toTypeName() }
+    assertThat(exception2)
+      .message()
       .isNotNull()
       .contains("is not resolvable in the current round of processing")
   }

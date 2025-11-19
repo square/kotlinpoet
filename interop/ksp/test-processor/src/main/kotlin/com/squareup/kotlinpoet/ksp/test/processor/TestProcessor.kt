@@ -59,7 +59,8 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
   private val unwrapTypeAliases = env.options["unwrapTypeAliases"]?.toBooleanStrictOrNull() ?: false
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
-    resolver.getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
+    resolver
+      .getSymbolsWithAnnotation(ExampleAnnotation::class.java.canonicalName)
       .forEach(::process)
     return emptyList()
   }
@@ -76,44 +77,50 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
   private fun process(decl: KSAnnotated) {
     check(decl is KSClassDeclaration)
 
-    val classBuilder = TypeSpec.classBuilder("Test${decl.simpleName.getShortName()}")
-      .addOriginatingKSFile(decl.containingFile!!)
-      .apply {
-        decl.getVisibility().toKModifier()?.let { addModifiers(it) }
-        addModifiers(decl.modifiers.mapNotNull { it.toKModifier() })
-        addAnnotations(
-          decl.annotations
-            .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
-            .map { it.toAnnotationSpec(it.shortName.getShortName() == "ExampleAnnotationWithDefaults") }
-            .asIterable(),
-        )
-        val allSupertypes = decl.superTypes.toList()
-        val (superclassReference, superInterfaces) = if (allSupertypes.isNotEmpty()) {
-          val superClass = allSupertypes.firstOrNull {
-            val resolved = it.resolve()
-            resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
-          }
-          if (superClass != null) {
-            superClass to allSupertypes.filterNot { it == superClass }
-          } else {
-            null to allSupertypes
-          }
-        } else {
-          null to allSupertypes
-        }
+    val classBuilder =
+      TypeSpec.classBuilder("Test${decl.simpleName.getShortName()}")
+        .addOriginatingKSFile(decl.containingFile!!)
+        .apply {
+          decl.getVisibility().toKModifier()?.let { addModifiers(it) }
+          addModifiers(decl.modifiers.mapNotNull { it.toKModifier() })
+          addAnnotations(
+            decl.annotations
+              .filterNot { it.shortName.getShortName() == "ExampleAnnotation" }
+              .map {
+                it.toAnnotationSpec(it.shortName.getShortName() == "ExampleAnnotationWithDefaults")
+              }
+              .asIterable()
+          )
+          val allSupertypes = decl.superTypes.toList()
+          val (superclassReference, superInterfaces) =
+            if (allSupertypes.isNotEmpty()) {
+              val superClass =
+                allSupertypes.firstOrNull {
+                  val resolved = it.resolve()
+                  resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
+                }
+              if (superClass != null) {
+                superClass to allSupertypes.filterNot { it == superClass }
+              } else {
+                null to allSupertypes
+              }
+            } else {
+              null to allSupertypes
+            }
 
-        superclassReference?.let {
-          val typeName = it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver())
-          if (typeName != ANY) {
-            superclass(typeName)
+          superclassReference?.let {
+            val typeName = it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver())
+            if (typeName != ANY) {
+              superclass(typeName)
+            }
           }
+          addSuperinterfaces(
+            superInterfaces
+              .map { it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver()) }
+              .filterNot { it == ANY }
+              .toList()
+          )
         }
-        addSuperinterfaces(
-          superInterfaces.map { it.toValidatedTypeName(decl.typeParameters.toTypeParameterResolver()) }
-            .filterNot { it == ANY }
-            .toList(),
-        )
-      }
     val classTypeParams = decl.typeParameters.toTypeParameterResolver()
     classBuilder.addTypeVariables(
       decl.typeParameters.map { typeParam ->
@@ -124,36 +131,33 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
             it
           }
         }
-      },
+      }
     )
 
     // Add properties
     for (property in decl.getDeclaredProperties()) {
       classBuilder.addProperty(
         PropertySpec.builder(
-          property.simpleName.getShortName(),
-          property.type.toValidatedTypeName(classTypeParams).let {
-            if (unwrapTypeAliases) {
-              it.unwrapTypeAlias()
-            } else {
-              it
-            }
-          },
-        )
+            property.simpleName.getShortName(),
+            property.type.toValidatedTypeName(classTypeParams).let {
+              if (unwrapTypeAliases) {
+                it.unwrapTypeAlias()
+              } else {
+                it
+              }
+            },
+          )
           .addOriginatingKSFile(decl.containingFile!!)
           .mutable(property.isMutable)
           .apply {
             property.getVisibility().toKModifier()?.let { addModifiers(it) }
             addModifiers(property.modifiers.mapNotNull { it.toKModifier() })
-            addAnnotations(
-              property.annotations
-                .map { it.toAnnotationSpec() }.asIterable(),
-            )
+            addAnnotations(property.annotations.map { it.toAnnotationSpec() }.asIterable())
             if (Modifier.LATEINIT !in property.modifiers) {
               initializer(CodeBlock.of("TODO()"))
             }
           }
-          .build(),
+          .build()
       )
     }
 
@@ -176,48 +180,56 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
                   it
                 }
               }
-            },
+            }
           )
           .addParameters(
             function.parameters.map { parameter ->
               val isVararg = parameter.isVararg
-              val possibleVararg = if (isVararg) {
-                arrayOf(KModifier.VARARG)
-              } else {
-                emptyArray()
-              }
-              // Function references can't be obtained from a resolved KSType because it resolves to FunctionN<> which
-              // loses the necessary context, skip validation in these cases as we know they won't match.
-              val typeName = if (parameter.type.resolve().run { isFunctionType || isSuspendFunctionType }) {
-                parameter.type.toTypeName(functionTypeParams)
-              } else {
-                parameter.type.toValidatedTypeName(functionTypeParams)
-              }.let { paramType ->
-                // In KSP1, this just gives us the T type for the param
-                // In KSP2, this gives us an Array<out T> for the param
-                if (paramType is ParameterizedTypeName && paramType.rawType == ARRAY && isVararg) {
-                  paramType.typeArguments.single().let { componentType ->
-                    if (componentType is WildcardTypeName) {
-                      componentType.outTypes.single()
+              val possibleVararg =
+                if (isVararg) {
+                  arrayOf(KModifier.VARARG)
+                } else {
+                  emptyArray()
+                }
+              // Function references can't be obtained from a resolved KSType because it resolves to
+              // FunctionN<> which
+              // loses the necessary context, skip validation in these cases as we know they won't
+              // match.
+              val typeName =
+                if (parameter.type.resolve().run { isFunctionType || isSuspendFunctionType }) {
+                    parameter.type.toTypeName(functionTypeParams)
+                  } else {
+                    parameter.type.toValidatedTypeName(functionTypeParams)
+                  }
+                  .let { paramType ->
+                    // In KSP1, this just gives us the T type for the param
+                    // In KSP2, this gives us an Array<out T> for the param
+                    if (
+                      paramType is ParameterizedTypeName && paramType.rawType == ARRAY && isVararg
+                    ) {
+                      paramType.typeArguments.single().let { componentType ->
+                        if (componentType is WildcardTypeName) {
+                          componentType.outTypes.single()
+                        } else {
+                          componentType
+                        }
+                      }
                     } else {
-                      componentType
+                      paramType
                     }
                   }
-                } else {
-                  paramType
+              val parameterType =
+                typeName.let {
+                  if (unwrapTypeAliases) {
+                    it.unwrapTypeAlias()
+                  } else {
+                    it
+                  }
                 }
-              }
-              val parameterType = typeName.let {
-                if (unwrapTypeAliases) {
-                  it.unwrapTypeAlias()
-                } else {
-                  it
-                }
-              }
               parameter.name?.let {
                 ParameterSpec.builder(it.getShortName(), parameterType, *possibleVararg).build()
               } ?: ParameterSpec.unnamed(parameterType)
-            },
+            }
           )
           .returns(
             function.returnType!!.toValidatedTypeName(functionTypeParams).let {
@@ -226,17 +238,16 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
               } else {
                 it
               }
-            },
+            }
           )
           .addCode(CodeBlock.of("return TODO()"))
-          .build(),
+          .build()
       )
     }
 
     val typeSpec = classBuilder.build()
-    val fileSpec = FileSpec.builder(decl.packageName.asString(), typeSpec.name!!)
-      .addType(typeSpec)
-      .build()
+    val fileSpec =
+      FileSpec.builder(decl.packageName.asString(), typeSpec.name!!).addType(typeSpec).build()
 
     // Ensure that we're properly de-duping these under the hood.
     check(fileSpec.originatingKSFiles().size == 1)

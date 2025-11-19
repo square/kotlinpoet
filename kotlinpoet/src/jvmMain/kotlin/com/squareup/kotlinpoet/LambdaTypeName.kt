@@ -18,12 +18,11 @@ package com.squareup.kotlinpoet
 import kotlin.reflect.KClass
 
 @OptIn(ExperimentalKotlinPoetApi::class)
-public class LambdaTypeName private constructor(
+public class LambdaTypeName
+private constructor(
   public val receiver: TypeName? = null,
-  @property:ExperimentalKotlinPoetApi
-  public val contextReceivers: List<TypeName> = emptyList(),
-  @property:ExperimentalKotlinPoetApi
-  public val contextParameters: List<TypeName> = emptyList(),
+  @property:ExperimentalKotlinPoetApi public val contextReceivers: List<TypeName> = emptyList(),
+  @property:ExperimentalKotlinPoetApi public val contextParameters: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
   nullable: Boolean = false,
@@ -130,26 +129,31 @@ public class LambdaTypeName private constructor(
     result = 31 * result + parameters.hashCode()
     return result
   }
+
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @ExperimentalKotlinPoetApi @JvmStatic
+    @ExperimentalKotlinPoetApi
+    @JvmStatic
     public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName,
       contextReceivers: List<TypeName> = emptyList(),
       contextParameters: List<TypeName> = emptyList(),
-    ): LambdaTypeName = LambdaTypeName(receiver, contextReceivers, contextParameters, parameters, returnType)
+    ): LambdaTypeName =
+      LambdaTypeName(receiver, contextReceivers, contextParameters, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @JvmStatic public fun get(
+    @JvmStatic
+    public fun get(
       receiver: TypeName? = null,
       parameters: List<ParameterSpec> = emptyList(),
       returnType: TypeName,
     ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), emptyList(), parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @JvmStatic public fun get(
+    @JvmStatic
+    public fun get(
       receiver: TypeName? = null,
       vararg parameters: TypeName = emptyArray(),
       returnType: TypeName,
@@ -164,10 +168,12 @@ public class LambdaTypeName private constructor(
     }
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
-    @JvmStatic public fun get(
+    @JvmStatic
+    public fun get(
       receiver: TypeName? = null,
       vararg parameters: ParameterSpec = emptyArray(),
       returnType: TypeName,
-    ): LambdaTypeName = LambdaTypeName(receiver, emptyList(), emptyList(), parameters.toList(), returnType)
+    ): LambdaTypeName =
+      LambdaTypeName(receiver, emptyList(), emptyList(), parameters.toList(), returnType)
   }
 }

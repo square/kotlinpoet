@@ -42,8 +42,8 @@ import kotlin.reflect.typeOf
  * nullable types like `Int?`, composite types like `Array<String>` and `Set<String>`, and
  * unassignable types like `Unit`.
  *
- * Type names are dumb identifiers only and do not model the values they name. For example, the
- * type name for `kotlin.List` doesn't know about the `size()` function, the fact that lists are
+ * Type names are dumb identifiers only and do not model the values they name. For example, the type
+ * name for `kotlin.List` doesn't know about the `size()` function, the fact that lists are
  * collections, or even that it accepts a single type parameter.
  *
  * Instances of this class are immutable value objects that implement `equals()` and `hashCode()`
@@ -51,25 +51,24 @@ import kotlin.reflect.typeOf
  *
  * Referencing existing types
  * --------------------------
- *
  * In an annotation processor you can get a type name instance for a type mirror by calling
  * [asTypeName]. In reflection code, you can use [asTypeName].
-
+ *
  * Defining new types
  * ------------------
- *
- * Create new reference types like `com.example.HelloWorld` with [ClassName.bestGuess]. To build composite
- * types like `Set<Long>`, use the factory methods on [ParameterizedTypeName], [TypeVariableName],
- * and [WildcardTypeName].
+ * Create new reference types like `com.example.HelloWorld` with [ClassName.bestGuess]. To build
+ * composite types like `Set<Long>`, use the factory methods on [ParameterizedTypeName],
+ * [TypeVariableName], and [WildcardTypeName].
  */
-public sealed class TypeName constructor(
+public sealed class TypeName
+constructor(
   public val isNullable: Boolean,
   annotations: List<AnnotationSpec>,
   internal val tagMap: TagMap,
 ) : Taggable by tagMap, Annotatable {
   override val annotations: List<AnnotationSpec> = annotations.toImmutableList()
 
-  /** Lazily-initialized toString of this type name.  */
+  /** Lazily-initialized toString of this type name. */
   private val cachedString: String by lazy {
     buildCodeString {
       emitAnnotations(this)
@@ -91,7 +90,8 @@ public sealed class TypeName constructor(
     tags: Map<KClass<*>, Any> = this.tags,
   ): TypeName
 
-  public val isAnnotated: Boolean get() = annotations.isNotEmpty()
+  public val isAnnotated: Boolean
+    get() = annotations.isNotEmpty()
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -153,13 +153,14 @@ public sealed class TypeName constructor(
           override fun visitDeclared(t: DeclaredType, p: Void?): TypeName {
             val rawType: ClassName = (t.asElement() as TypeElement).asClassName()
             val enclosingType = t.enclosingType
-            val enclosing = if (enclosingType.kind != TypeKind.NONE &&
-              Modifier.STATIC !in t.asElement().modifiers
-            ) {
-              enclosingType.accept(this, null)
-            } else {
-              null
-            }
+            val enclosing =
+              if (
+                enclosingType.kind != TypeKind.NONE && Modifier.STATIC !in t.asElement().modifiers
+              ) {
+                enclosingType.accept(this, null)
+              } else {
+                null
+              }
             if (t.typeArguments.isEmpty() && enclosing !is ParameterizedTypeName) {
               return rawType
             }
@@ -209,19 +210,20 @@ public sealed class TypeName constructor(
 
     internal fun get(type: Type, map: MutableMap<Type, TypeVariableName>): TypeName {
       return when (type) {
-        is Class<*> -> when {
-          type === Void.TYPE -> UNIT
-          type === Boolean::class.javaPrimitiveType -> BOOLEAN
-          type === Byte::class.javaPrimitiveType -> BYTE
-          type === Short::class.javaPrimitiveType -> SHORT
-          type === Int::class.javaPrimitiveType -> INT
-          type === Long::class.javaPrimitiveType -> LONG
-          type === Char::class.javaPrimitiveType -> CHAR
-          type === Float::class.javaPrimitiveType -> FLOAT
-          type === Double::class.javaPrimitiveType -> DOUBLE
-          type.isArray -> ARRAY.parameterizedBy(get(type.componentType, map))
-          else -> type.asClassName()
-        }
+        is Class<*> ->
+          when {
+            type === Void.TYPE -> UNIT
+            type === Boolean::class.javaPrimitiveType -> BOOLEAN
+            type === Byte::class.javaPrimitiveType -> BYTE
+            type === Short::class.javaPrimitiveType -> SHORT
+            type === Int::class.javaPrimitiveType -> INT
+            type === Long::class.javaPrimitiveType -> LONG
+            type === Char::class.javaPrimitiveType -> CHAR
+            type === Float::class.javaPrimitiveType -> FLOAT
+            type === Double::class.javaPrimitiveType -> DOUBLE
+            type.isArray -> ARRAY.parameterizedBy(get(type.componentType, map))
+            else -> type.asClassName()
+          }
         is ParameterizedType -> ParameterizedTypeName.get(type, map)
         is WildcardType -> WildcardTypeName.get(type, map)
         is TypeVariable<*> -> TypeVariableName.get(type, map)
@@ -280,11 +282,11 @@ public sealed class TypeName constructor(
 
 @JvmField public val MAP_ENTRY: ClassName = MAP.nestedClass("Entry")
 
-@JvmField public val MUTABLE_ITERABLE: ClassName =
-  ClassName("kotlin.collections", "MutableIterable")
+@JvmField
+public val MUTABLE_ITERABLE: ClassName = ClassName("kotlin.collections", "MutableIterable")
 
-@JvmField public val MUTABLE_COLLECTION: ClassName =
-  ClassName("kotlin.collections", "MutableCollection")
+@JvmField
+public val MUTABLE_COLLECTION: ClassName = ClassName("kotlin.collections", "MutableCollection")
 
 @JvmField public val MUTABLE_LIST: ClassName = ClassName("kotlin.collections", "MutableList")
 
@@ -336,22 +338,21 @@ public sealed class TypeName constructor(
 
 /** Returns a [TypeName] equivalent to this [TypeMirror]. */
 @DelicateKotlinPoetApi(
-  message = "Mirror APIs don't give complete information on Kotlin types. Consider using" +
-    " the kotlinpoet-metadata APIs instead.",
+  message =
+    "Mirror APIs don't give complete information on Kotlin types. Consider using" +
+      " the kotlinpoet-metadata APIs instead."
 )
 @JvmName("get")
 public fun TypeMirror.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
 
-/** Returns a [TypeName] equivalent to this [KClass].  */
-@JvmName("get")
-public fun KClass<*>.asTypeName(): ClassName = asClassName()
+/** Returns a [TypeName] equivalent to this [KClass]. */
+@JvmName("get") public fun KClass<*>.asTypeName(): ClassName = asClassName()
 
-/** Returns a [TypeName] equivalent to this [Type].  */
-@JvmName("get")
-public fun Type.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
+/** Returns a [TypeName] equivalent to this [Type]. */
+@JvmName("get") public fun Type.asTypeName(): TypeName = TypeName.get(this, mutableMapOf())
 
 /**
- * Returns a [TypeName] equivalent of the reified type parameter [T] using reflection, maybe using kotlin-reflect
- * if required.
+ * Returns a [TypeName] equivalent of the reified type parameter [T] using reflection, maybe using
+ * kotlin-reflect if required.
  */
 public inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()

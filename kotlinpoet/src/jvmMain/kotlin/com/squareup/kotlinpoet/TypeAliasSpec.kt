@@ -23,10 +23,9 @@ import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /** A generated typealias declaration */
-public class TypeAliasSpec private constructor(
-  builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+public class TypeAliasSpec
+private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
+  Taggable by tagMap, Annotatable, Documentable {
   public val name: String = builder.name
   public val type: TypeName = builder.type
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
@@ -66,10 +65,9 @@ public class TypeAliasSpec private constructor(
     return builder
   }
 
-  public class Builder internal constructor(
-    internal val name: String,
-    internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  public class Builder
+  internal constructor(internal val name: String, internal val type: TypeName) :
+    Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
     public val modifiers: MutableSet<KModifier> = mutableSetOf()
     public val typeVariables: MutableSet<TypeVariableName> = mutableSetOf()
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -96,9 +94,10 @@ public class TypeAliasSpec private constructor(
       typeVariables += typeVariable
     }
 
-    //region Overrides for binary compatibility
+    // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
-    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder = super.addAnnotation(annotationSpec)
+    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder =
+      super.addAnnotation(annotationSpec)
 
     @Suppress("RedundantOverride")
     override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
@@ -108,8 +107,9 @@ public class TypeAliasSpec private constructor(
     override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
 
@@ -121,13 +121,12 @@ public class TypeAliasSpec private constructor(
 
     @Suppress("RedundantOverride")
     override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
-    //endregion
+
+    // endregion
 
     public fun build(): TypeAliasSpec {
       for (it in modifiers) {
-        require(it in ALLOWABLE_MODIFIERS) {
-          "unexpected typealias modifier $it"
-        }
+        require(it in ALLOWABLE_MODIFIERS) { "unexpected typealias modifier $it" }
       }
       return TypeAliasSpec(this)
     }
@@ -141,14 +140,14 @@ public class TypeAliasSpec private constructor(
     @JvmStatic public fun builder(name: String, type: TypeName): Builder = Builder(name, type)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun builder(name: String, type: Type): Builder =
-      builder(name, type.asTypeName())
+    public fun builder(name: String, type: Type): Builder = builder(name, type.asTypeName())
 
-    @JvmStatic public fun builder(name: String, type: KClass<*>): Builder =
-      builder(name, type.asTypeName())
+    @JvmStatic
+    public fun builder(name: String, type: KClass<*>): Builder = builder(name, type.asTypeName())
   }
 }

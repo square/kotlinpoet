@@ -15,10 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
-public enum class KOperator(
-  internal val operator: String,
-  internal val functionName: String,
-) {
+public enum class KOperator(internal val operator: String, internal val functionName: String) {
   UNARY_PLUS("+", "unaryPlus"),
   PLUS("+", "plus"),
   UNARY_MINUS("-", "unaryMinus"),

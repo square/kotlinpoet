@@ -46,14 +46,16 @@ import kotlin.reflect.KClass
  * - Imports
  * - Members
  */
-public class FileSpec private constructor(
-  builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, TypeSpecHolder, MemberSpecHolder {
+public class FileSpec
+private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
+  Taggable by tagMap, Annotatable, TypeSpecHolder, MemberSpecHolder {
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  override val typeSpecs: List<TypeSpec> = builder.members.filterIsInstance<TypeSpec>().toImmutableList()
-  override val propertySpecs: List<PropertySpec> = builder.members.filterIsInstance<PropertySpec>().toImmutableList()
-  override val funSpecs: List<FunSpec> = builder.members.filterIsInstance<FunSpec>().toImmutableList()
+  override val typeSpecs: List<TypeSpec> =
+    builder.members.filterIsInstance<TypeSpec>().toImmutableList()
+  override val propertySpecs: List<PropertySpec> =
+    builder.members.filterIsInstance<PropertySpec>().toImmutableList()
+  override val funSpecs: List<FunSpec> =
+    builder.members.filterIsInstance<FunSpec>().toImmutableList()
   public val comment: CodeBlock = builder.comment.build()
   public val packageName: String = builder.packageName
   public val name: String = builder.name
@@ -66,8 +68,8 @@ public class FileSpec private constructor(
   private val extension = if (isScript) "kts" else "kt"
 
   /**
-   * The relative path of the file which would be produced by a call to [writeTo].
-   * This value always uses unix-style path separators (`/`).
+   * The relative path of the file which would be produced by a call to [writeTo]. This value always
+   * uses unix-style path separators (`/`).
    */
   public val relativePath: String = buildString {
     for (packageComponent in packageName.split('.').dropLastWhile { it.isEmpty() }) {
@@ -81,12 +83,13 @@ public class FileSpec private constructor(
 
   @Throws(IOException::class)
   public fun writeTo(out: Appendable) {
-    val codeWriter = CodeWriter.withCollectedImports(
-      out = out,
-      indent = indent,
-      memberImports = memberImports,
-      emitStep = { importsCollector -> emit(importsCollector, collectingImports = true) },
-    )
+    val codeWriter =
+      CodeWriter.withCollectedImports(
+        out = out,
+        indent = indent,
+        memberImports = memberImports,
+        emitStep = { importsCollector -> emit(importsCollector, collectingImports = true) },
+      )
     emit(codeWriter, collectingImports = false)
     codeWriter.close()
   }
@@ -98,8 +101,8 @@ public class FileSpec private constructor(
   }
 
   /**
-   * Writes this to [directory] as UTF-8 using the standard directory structure
-   * and returns the newly output path.
+   * Writes this to [directory] as UTF-8 using the standard directory structure and returns the
+   * newly output path.
    */
   @Throws(IOException::class)
   public fun writeTo(directory: Path): Path {
@@ -119,32 +122,34 @@ public class FileSpec private constructor(
   }
 
   /**
-   * Writes this to [directory] as UTF-8 using the standard directory structure
-   * and returns the newly output file.
+   * Writes this to [directory] as UTF-8 using the standard directory structure and returns the
+   * newly output file.
    */
   @Throws(IOException::class)
   public fun writeTo(directory: File): File = writeTo(directory.toPath()).toFile()
 
-  /** Writes this to `filer`.  */
+  /** Writes this to `filer`. */
   @Throws(IOException::class)
   public fun writeTo(filer: Filer) {
-    val originatingElements = members.asSequence()
-      .filterIsInstance<OriginatingElementsHolder>()
-      .flatMap { it.originatingElements.asSequence() }
-      .toSet()
-    val filerSourceFile = filer.createResource(
-      StandardLocation.SOURCE_OUTPUT,
-      packageName,
-      "$name.$extension",
-      *originatingElements.toTypedArray(),
-    )
+    val originatingElements =
+      members
+        .asSequence()
+        .filterIsInstance<OriginatingElementsHolder>()
+        .flatMap { it.originatingElements.asSequence() }
+        .toSet()
+    val filerSourceFile =
+      filer.createResource(
+        StandardLocation.SOURCE_OUTPUT,
+        packageName,
+        "$name.$extension",
+        *originatingElements.toTypedArray(),
+      )
     try {
       filerSourceFile.openWriter().use { writer -> writeTo(writer) }
     } catch (e: Exception) {
       try {
         filerSourceFile.delete()
-      } catch (_: Exception) {
-      }
+      } catch (_: Exception) {}
       throw e
     }
   }
@@ -172,17 +177,18 @@ public class FileSpec private constructor(
     var isDefaultImport: (String) -> Boolean = { false }
     if (!collectingImports && defaultImports.isNotEmpty()) {
       val defaultImports = defaultImports.map(String::escapeSegmentsIfNecessary)
-      isDefaultImport = { importName ->
-        importName.substringBeforeLast(".") in defaultImports
-      }
+      isDefaultImport = { importName -> importName.substringBeforeLast(".") in defaultImports }
     }
     // Aliased imports should always appear at the bottom of the imports list.
-    val (aliasedImports, nonAliasedImports) = codeWriter.imports.values
-      .partition { it.alias != null }
-    val imports = nonAliasedImports.asSequence().map { it.toString() }
-      .filterNot(isDefaultImport)
-      .toSortedSet()
-      .plus(aliasedImports.map { it.toString() }.toSortedSet())
+    val (aliasedImports, nonAliasedImports) =
+      codeWriter.imports.values.partition { it.alias != null }
+    val imports =
+      nonAliasedImports
+        .asSequence()
+        .map { it.toString() }
+        .filterNot(isDefaultImport)
+        .toSortedSet()
+        .plus(aliasedImports.map { it.toString() }.toSortedSet())
 
     if (imports.isNotEmpty()) {
       for (import in imports) {
@@ -225,6 +231,7 @@ public class FileSpec private constructor(
     val uri = URI.create(relativePath)
     return object : SimpleJavaFileObject(uri, Kind.SOURCE) {
       private val lastModified = System.currentTimeMillis()
+
       override fun getCharContent(ignoreEncodingErrors: Boolean): String {
         return this@FileSpec.toString()
       }
@@ -251,11 +258,13 @@ public class FileSpec private constructor(
     return builder
   }
 
-  public class Builder internal constructor(
+  public class Builder
+  internal constructor(
     public val packageName: String,
     public val name: String,
     public val isScript: Boolean,
-  ) : Taggable.Builder<Builder>,
+  ) :
+    Taggable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     TypeSpecHolder.Builder<Builder>,
     MemberSpecHolder.Builder<Builder> {
@@ -267,7 +276,9 @@ public class FileSpec private constructor(
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     public val defaultImports: MutableSet<String> = mutableSetOf()
-    public val imports: List<Import> get() = memberImports.toList()
+    public val imports: List<Import>
+      get() = memberImports.toList()
+
     public val members: MutableList<Any> = mutableListOf()
     internal val body = CodeBlock.builder()
 
@@ -278,17 +289,22 @@ public class FileSpec private constructor(
      * or not have a use-site target specified (in which case it will be changed to `file`).
      */
     override fun addAnnotation(annotationSpec: AnnotationSpec): Builder = apply {
-      val spec = when (annotationSpec.useSiteTarget) {
-        FILE -> annotationSpec
-        null -> annotationSpec.toBuilder().useSiteTarget(FILE).build()
-        else -> error(
-          "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.",
-        )
-      }
+      val spec =
+        when (annotationSpec.useSiteTarget) {
+          FILE -> annotationSpec
+          null -> annotationSpec.toBuilder().useSiteTarget(FILE).build()
+          else ->
+            error(
+              "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
+            )
+        }
       annotations += spec
     }
 
-    /** Adds a file-site comment. This is prefixed to the start of the file and different from [addBodyComment]. */
+    /**
+     * Adds a file-site comment. This is prefixed to the start of the file and different from
+     * [addBodyComment].
+     */
     public fun addFileComment(format: String, vararg args: Any): Builder = apply {
       comment.add(format, *args)
     }
@@ -300,9 +316,7 @@ public class FileSpec private constructor(
     )
     public fun addComment(format: String, vararg args: Any): Builder = addFileComment(format, *args)
 
-    public fun clearComment(): Builder = apply {
-      comment.clear()
-    }
+    public fun clearComment(): Builder = apply { comment.clear() }
 
     override fun addType(typeSpec: TypeSpec): Builder = apply {
       if (isScript) {
@@ -312,10 +326,11 @@ public class FileSpec private constructor(
       }
     }
 
-    //region Overrides for binary compatibility
+    // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
     override fun addTypes(typeSpecs: Iterable<TypeSpec>): Builder = super.addTypes(typeSpecs)
-    //endregion
+
+    // endregion
 
     override fun addFunction(funSpec: FunSpec): Builder = apply {
       require(!funSpec.isConstructor && !funSpec.isAccessor) {
@@ -344,10 +359,8 @@ public class FileSpec private constructor(
       }
     }
 
-    public fun addImport(constant: Enum<*>): Builder = addImport(
-      constant.declaringJavaClass.asClassName(),
-      constant.name,
-    )
+    public fun addImport(constant: Enum<*>): Builder =
+      addImport(constant.declaringJavaClass.asClassName(), constant.name)
 
     public fun addImport(`class`: Class<*>, vararg names: String): Builder = apply {
       require(names.isNotEmpty()) { "names array is empty" }
@@ -389,21 +402,18 @@ public class FileSpec private constructor(
     public fun addImport(packageName: String, names: Iterable<String>): Builder = apply {
       require("*" !in names) { "Wildcard imports are not allowed" }
       for (name in names) {
-        memberImports += if (packageName.isNotEmpty()) {
-          Import("$packageName.$name")
-        } else {
-          Import(name)
-        }
+        memberImports +=
+          if (packageName.isNotEmpty()) {
+            Import("$packageName.$name")
+          } else {
+            Import(name)
+          }
       }
     }
 
-    public fun addImport(import: Import): Builder = apply {
-      memberImports += import
-    }
+    public fun addImport(import: Import): Builder = apply { memberImports += import }
 
-    public fun clearImports(): Builder = apply {
-      memberImports.clear()
-    }
+    public fun clearImports(): Builder = apply { memberImports.clear() }
 
     public fun addAliasedImport(`class`: Class<*>, `as`: String): Builder =
       addAliasedImport(`class`.asClassName(), `as`)
@@ -415,13 +425,10 @@ public class FileSpec private constructor(
       memberImports += Import(className.canonicalName, `as`)
     }
 
-    public fun addAliasedImport(
-      className: ClassName,
-      memberName: String,
-      `as`: String,
-    ): Builder = apply {
-      memberImports += Import("${className.canonicalName}.$memberName", `as`)
-    }
+    public fun addAliasedImport(className: ClassName, memberName: String, `as`: String): Builder =
+      apply {
+        memberImports += Import("${className.canonicalName}.$memberName", `as`)
+      }
 
     public fun addAliasedImport(memberName: MemberName, `as`: String): Builder = apply {
       memberImports += Import(memberName.canonicalName, `as`)
@@ -454,83 +461,63 @@ public class FileSpec private constructor(
       }
     }
 
-    public fun indent(indent: String): Builder = apply {
-      this.indent = indent
-    }
+    public fun indent(indent: String): Builder = apply { this.indent = indent }
 
     public fun addCode(format: String, vararg args: Any?): Builder = apply {
-      check(isScript) {
-        "addCode() is only allowed in script files"
-      }
+      check(isScript) { "addCode() is only allowed in script files" }
       body.add(format, *args)
     }
 
     public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
-      check(isScript) {
-        "addNamedCode() is only allowed in script files"
-      }
+      check(isScript) { "addNamedCode() is only allowed in script files" }
       body.addNamed(format, args)
     }
 
     public fun addCode(codeBlock: CodeBlock): Builder = apply {
-      check(isScript) {
-        "addCode() is only allowed in script files"
-      }
+      check(isScript) { "addCode() is only allowed in script files" }
       body.add(codeBlock)
     }
 
     /** Adds a comment to the body of this script file in the order that it was added. */
     public fun addBodyComment(format: String, vararg args: Any): Builder = apply {
-      check(isScript) {
-        "addBodyComment() is only allowed in script files"
-      }
+      check(isScript) { "addBodyComment() is only allowed in script files" }
       body.add("// $format\n", *args)
     }
 
     /**
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
-     * Shouldn't contain braces or newline characters.
+     *   Shouldn't contain braces or newline characters.
      */
     public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
-      check(isScript) {
-        "beginControlFlow() is only allowed in script files"
-      }
+      check(isScript) { "beginControlFlow() is only allowed in script files" }
       body.beginControlFlow(controlFlow, *args)
     }
 
     /**
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
-     * Shouldn't contain braces or newline characters.
+     *   Shouldn't contain braces or newline characters.
      */
     public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
-      check(isScript) {
-        "nextControlFlow() is only allowed in script files"
-      }
+      check(isScript) { "nextControlFlow() is only allowed in script files" }
       body.nextControlFlow(controlFlow, *args)
     }
 
     public fun endControlFlow(): Builder = apply {
-      check(isScript) {
-        "endControlFlow() is only allowed in script files"
-      }
+      check(isScript) { "endControlFlow() is only allowed in script files" }
       body.endControlFlow()
     }
 
     public fun addStatement(format: String, vararg args: Any): Builder = apply {
-      check(isScript) {
-        "addStatement() is only allowed in script files"
-      }
+      check(isScript) { "addStatement() is only allowed in script files" }
       body.addStatement(format, *args)
     }
 
     public fun clearBody(): Builder = apply {
-      check(isScript) {
-        "clearBody() is only allowed in script files"
-      }
+      check(isScript) { "clearBody() is only allowed in script files" }
       body.clear()
     }
 
-    //region Overrides for binary compatibility
+    // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
     override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
       super.addAnnotations(annotationSpecs)
@@ -539,20 +526,22 @@ public class FileSpec private constructor(
     override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
 
     @Suppress("RedundantOverride")
     override fun addAnnotation(annotation: KClass<*>): Builder = super.addAnnotation(annotation)
-    //endregion
+
+    // endregion
 
     public fun build(): FileSpec {
       for (annotationSpec in annotations) {
         if (annotationSpec.useSiteTarget != FILE) {
           error(
-            "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations.",
+            "Use-site target ${annotationSpec.useSiteTarget} not supported for file annotations."
           )
         }
       }
@@ -561,42 +550,48 @@ public class FileSpec private constructor(
   }
 
   public companion object {
-    @JvmStatic public fun get(packageName: String, typeSpec: TypeSpec): FileSpec {
-      val fileName = typeSpec.name
-        ?: throw IllegalArgumentException("file name required but type has no name")
+    @JvmStatic
+    public fun get(packageName: String, typeSpec: TypeSpec): FileSpec {
+      val fileName =
+        typeSpec.name ?: throw IllegalArgumentException("file name required but type has no name")
       return builder(packageName, fileName).addType(typeSpec).build()
     }
 
-    @JvmStatic public fun builder(className: ClassName): Builder {
+    @JvmStatic
+    public fun builder(className: ClassName): Builder {
       require(className.simpleNames.size == 1) {
         "nested types can't be used to name a file: ${className.simpleNames.joinToString(".")}"
       }
       return builder(className.packageName, className.simpleName)
     }
 
-    @JvmStatic public fun builder(memberName: MemberName): Builder {
+    @JvmStatic
+    public fun builder(memberName: MemberName): Builder {
       return builder(memberName.packageName, memberName.simpleName)
     }
 
-    @JvmStatic public fun builder(packageName: String, fileName: String): Builder =
+    @JvmStatic
+    public fun builder(packageName: String, fileName: String): Builder =
       Builder(packageName, fileName, isScript = false)
 
-    @JvmStatic public fun scriptBuilder(fileName: String, packageName: String = ""): Builder =
+    @JvmStatic
+    public fun scriptBuilder(fileName: String, packageName: String = ""): Builder =
       Builder(packageName, fileName, isScript = true)
   }
 }
 
 internal const val DEFAULT_INDENT = "  "
 
-private val KOTLIN_DEFAULT_IMPORTS = setOf(
-  "kotlin",
-  "kotlin.annotation",
-  "kotlin.collections",
-  "kotlin.comparisons",
-  "kotlin.io",
-  "kotlin.ranges",
-  "kotlin.sequences",
-  "kotlin.text",
-)
+private val KOTLIN_DEFAULT_IMPORTS =
+  setOf(
+    "kotlin",
+    "kotlin.annotation",
+    "kotlin.collections",
+    "kotlin.comparisons",
+    "kotlin.io",
+    "kotlin.ranges",
+    "kotlin.sequences",
+    "kotlin.text",
+  )
 private val KOTLIN_DEFAULT_JVM_IMPORTS = setOf("java.lang")
 private val KOTLIN_DEFAULT_JS_IMPORTS = setOf("kotlin.js")

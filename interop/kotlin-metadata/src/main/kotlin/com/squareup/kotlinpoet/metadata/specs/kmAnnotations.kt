@@ -45,11 +45,7 @@ import kotlin.metadata.KmAnnotationArgument.UShortValue
 internal fun KmAnnotation.toAnnotationSpec(): AnnotationSpec {
   val cn = createClassName(className)
   return AnnotationSpec.builder(cn)
-    .apply {
-      arguments.forEach { (name, arg) ->
-        addMember("%L = %L", name, arg.toCodeBlock())
-      }
-    }
+    .apply { arguments.forEach { (name, arg) -> addMember("%L = %L", name, arg.toCodeBlock()) } }
     .tag(this)
     .build()
 }
@@ -73,10 +69,11 @@ internal fun KmAnnotationArgument.toCodeBlock(): CodeBlock {
     is EnumValue -> CodeBlock.of("%T.%L", createClassName(enumClassName), enumEntryName)
     is AnnotationValue -> CodeBlock.of("%L", annotation.toAnnotationSpec())
     is ArrayValue -> elements.map { it.toCodeBlock() }.joinToCode(", ", "[", "]")
-    is KmAnnotationArgument.ArrayKClassValue -> buildCodeBlock {
-      repeat(arrayDimensionCount) { add("%T<", ARRAY) }
-      add("%T::class", createClassName(className))
-      repeat(arrayDimensionCount) { add(">") }
-    }
+    is KmAnnotationArgument.ArrayKClassValue ->
+      buildCodeBlock {
+        repeat(arrayDimensionCount) { add("%T<", ARRAY) }
+        add("%T::class", createClassName(className))
+        repeat(arrayDimensionCount) { add(">") }
+      }
   }
 }
