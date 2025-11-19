@@ -20,9 +20,7 @@ import kotlin.annotation.AnnotationTarget.FUNCTION
 import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.annotation.AnnotationTarget.TYPEALIAS
 
-/**
- * Indicates that a given API is experimental and subject to change.
- */
+/** Indicates that a given API is experimental and subject to change. */
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, TYPEALIAS)

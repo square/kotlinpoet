@@ -55,45 +55,34 @@ internal object ClassInspectorUtil {
   internal val JAVA_DEPRECATED = java.lang.Deprecated::class.asClassName()
   private val JVM_TRANSIENT = Transient::class.asClassName()
   private val JVM_VOLATILE = Volatile::class.asClassName()
-  private val IMPLICIT_FIELD_ANNOTATIONS = setOf(
-    JVM_FIELD,
-    JVM_TRANSIENT,
-    JVM_VOLATILE,
-  )
+  private val IMPLICIT_FIELD_ANNOTATIONS = setOf(JVM_FIELD, JVM_TRANSIENT, JVM_VOLATILE)
   private val NOT_NULL = NotNull::class.asClassName()
   private val NULLABLE = Nullable::class.asClassName()
   private val EXTENSION_FUNCTION_TYPE = ExtensionFunctionType::class.asClassName()
-  private val KOTLIN_INTRINSIC_ANNOTATIONS = setOf(
-    NOT_NULL,
-    NULLABLE,
-    EXTENSION_FUNCTION_TYPE,
-  )
+  private val KOTLIN_INTRINSIC_ANNOTATIONS = setOf(NOT_NULL, NULLABLE, EXTENSION_FUNCTION_TYPE)
 
-  val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> = setOf(
-    CHAR_SEQUENCE,
-    COMPARABLE,
-    ITERABLE,
-    COLLECTION,
-    LIST,
-    SET,
-    MAP,
-    MAP_ENTRY,
-    MUTABLE_ITERABLE,
-    MUTABLE_COLLECTION,
-    MUTABLE_LIST,
-    MUTABLE_SET,
-    MUTABLE_MAP,
-    MUTABLE_MAP_ENTRY,
-  )
+  val KOTLIN_INTRINSIC_INTERFACES: Set<ClassName> =
+    setOf(
+      CHAR_SEQUENCE,
+      COMPARABLE,
+      ITERABLE,
+      COLLECTION,
+      LIST,
+      SET,
+      MAP,
+      MAP_ENTRY,
+      MUTABLE_ITERABLE,
+      MUTABLE_COLLECTION,
+      MUTABLE_LIST,
+      MUTABLE_SET,
+      MUTABLE_MAP,
+      MUTABLE_MAP_ENTRY,
+    )
 
-  private val KOTLIN_NULLABILITY_ANNOTATIONS = setOf(
-    "org.jetbrains.annotations.NotNull",
-    "org.jetbrains.annotations.Nullable",
-  )
+  private val KOTLIN_NULLABILITY_ANNOTATIONS =
+    setOf("org.jetbrains.annotations.NotNull", "org.jetbrains.annotations.Nullable")
 
-  fun filterOutNullabilityAnnotations(
-    annotations: List<AnnotationSpec>,
-  ): List<AnnotationSpec> {
+  fun filterOutNullabilityAnnotations(annotations: List<AnnotationSpec>): List<AnnotationSpec> {
     return annotations.filterNot {
       val typeName = it.typeName
       return@filterNot typeName is ClassName &&
@@ -112,8 +101,7 @@ internal object ClassInspectorUtil {
   }
 
   /**
-   * Infers if [property] is a jvm field and should be annotated as such given the input
-   * parameters.
+   * Infers if [property] is a jvm field and should be annotated as such given the input parameters.
    */
   fun computeIsJvmField(
     property: KmProperty,
@@ -123,11 +111,7 @@ internal object ClassInspectorUtil {
     hasSetter: Boolean,
     hasField: Boolean,
   ): Boolean {
-    return if (!hasGetter &&
-      !hasSetter &&
-      hasField &&
-      !property.isConst
-    ) {
+    return if (!hasGetter && !hasSetter && hasField && !property.isConst) {
       !(classInspector.supportsNonRuntimeRetainedAnnotations && !isCompanionObject)
     } else {
       false
@@ -135,30 +119,30 @@ internal object ClassInspectorUtil {
   }
 
   /**
-   * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping
-   *         input annotations from [body].
+   * @return a new collection of [AnnotationSpecs][AnnotationSpec] with sorting and de-duping input
+   *   annotations from [body].
    */
   fun createAnnotations(
     siteTarget: UseSiteTarget? = null,
     body: MutableCollection<AnnotationSpec>.() -> Unit,
   ): Collection<AnnotationSpec> {
-    val result = mutableSetOf<AnnotationSpec>()
-      .apply(body)
-      .filterNot { spec ->
+    val result =
+      mutableSetOf<AnnotationSpec>().apply(body).filterNot { spec ->
         spec.typeName in KOTLIN_INTRINSIC_ANNOTATIONS
       }
-    val withUseSiteTarget = if (siteTarget != null) {
-      result.map {
-        if (!(siteTarget == FIELD && it.typeName in IMPLICIT_FIELD_ANNOTATIONS)) {
-          // Some annotations are implicitly only for FIELD, so don't emit those site targets
-          it.toBuilder().useSiteTarget(siteTarget).build()
-        } else {
-          it
+    val withUseSiteTarget =
+      if (siteTarget != null) {
+        result.map {
+          if (!(siteTarget == FIELD && it.typeName in IMPLICIT_FIELD_ANNOTATIONS)) {
+            // Some annotations are implicitly only for FIELD, so don't emit those site targets
+            it.toBuilder().useSiteTarget(siteTarget).build()
+          } else {
+            it
+          }
         }
+      } else {
+        result
       }
-    } else {
-      result
-    }
 
     val sorted = withUseSiteTarget.toTreeSet()
 
@@ -167,7 +151,7 @@ internal object ClassInspectorUtil {
 
   /**
    * @return a [@Throws][Throws] [AnnotationSpec] representation of a given collection of
-   *         [exceptions].
+   *   [exceptions].
    */
   fun createThrowsSpec(
     exceptions: Collection<TypeName>,
@@ -176,8 +160,7 @@ internal object ClassInspectorUtil {
     return AnnotationSpec.builder(Throws::class)
       .addMember(
         "exceptionClasses = %L",
-        exceptions.map { CodeBlock.of("%T::class", it) }
-          .joinToCode(prefix = "[", suffix = "]"),
+        exceptions.map { CodeBlock.of("%T::class", it) }.joinToCode(prefix = "[", suffix = "]"),
       )
       .useSiteTarget(useSiteTarget)
       .build()
@@ -193,43 +176,37 @@ internal object ClassInspectorUtil {
    * with those.
    */
   fun createClassName(kotlinMetadataName: String): ClassName {
-    require(!kotlinMetadataName.isLocalClassName()) {
-      "Local/anonymous classes are not supported!"
-    }
+    require(!kotlinMetadataName.isLocalClassName()) { "Local/anonymous classes are not supported!" }
     // Top-level: package/of/class/MyClass
     // Nested A:  package/of/class/MyClass.NestedClass
-    val simpleName = kotlinMetadataName.substringAfterLast(
-      '/', // Drop the package name, e.g. "package/of/class/"
-      '.', // Drop any enclosing classes, e.g. "MyClass."
-    )
-    val packageName = kotlinMetadataName.substringBeforeLast(
-      delimiter = "/",
-      missingDelimiterValue = "",
-    )
-    val simpleNames = kotlinMetadataName.removeSuffix(simpleName)
-      .removeSuffix(".") // Trailing "." if any
-      .removePrefix(packageName)
-      .removePrefix("/")
-      .let {
-        if (it.isNotEmpty()) {
-          it.split(".")
-        } else {
-          // Don't split, otherwise we end up with an empty string as the first element!
-          emptyList()
+    val simpleName =
+      kotlinMetadataName.substringAfterLast(
+        '/', // Drop the package name, e.g. "package/of/class/"
+        '.', // Drop any enclosing classes, e.g. "MyClass."
+      )
+    val packageName =
+      kotlinMetadataName.substringBeforeLast(delimiter = "/", missingDelimiterValue = "")
+    val simpleNames =
+      kotlinMetadataName
+        .removeSuffix(simpleName)
+        .removeSuffix(".") // Trailing "." if any
+        .removePrefix(packageName)
+        .removePrefix("/")
+        .let {
+          if (it.isNotEmpty()) {
+            it.split(".")
+          } else {
+            // Don't split, otherwise we end up with an empty string as the first element!
+            emptyList()
+          }
         }
-      }
-      .plus(simpleName)
+        .plus(simpleName)
 
-    return ClassName(
-      packageName = packageName.replace("/", "."),
-      simpleNames = simpleNames,
-    )
+    return ClassName(packageName = packageName.replace("/", "."), simpleNames = simpleNames)
   }
 
   fun Iterable<AnnotationSpec>.toTreeSet(): TreeSet<AnnotationSpec> {
-    return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply {
-      addAll(this@toTreeSet)
-    }
+    return TreeSet<AnnotationSpec>(compareBy { it.toString() }).apply { addAll(this@toTreeSet) }
   }
 
   private fun String.substringAfterLast(vararg delimiters: Char): String {

@@ -47,5 +47,4 @@ private fun jsCodePointAt(str: String, index: Int): Int =
   js("str.codePointAt(index)").unsafeCast<Int>()
 
 @Suppress("unused")
-private fun jsFromCodePoint(code: Int): String =
-  js("String.fromCodePoint(code)").toString()
+private fun jsFromCodePoint(code: Int): String = js("String.fromCodePoint(code)").toString()

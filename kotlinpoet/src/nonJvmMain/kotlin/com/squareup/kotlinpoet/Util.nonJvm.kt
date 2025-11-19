@@ -15,20 +15,14 @@
  */
 package com.squareup.kotlinpoet
 
-internal actual fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> =
-  toMap()
+internal actual fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> = toMap()
 
-internal actual fun <T> Collection<T>.toImmutableList(): List<T> =
-  toList()
+internal actual fun <T> Collection<T>.toImmutableList(): List<T> = toList()
 
-internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
-  toSet()
+internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> = toSet()
 
 internal actual fun Char.isJavaIdentifierStart(): Boolean {
-  return isLetter() ||
-    this in CharCategory.LETTER_NUMBER ||
-    this == '$' ||
-    this == '_'
+  return isLetter() || this in CharCategory.LETTER_NUMBER || this == '$' || this == '_'
 }
 
 internal actual fun Char.isJavaIdentifierPart(): Boolean {
@@ -61,11 +55,7 @@ internal fun Char.isIdentifierIgnorable(): Boolean {
   //   - '\u000E' through '\u001B'
   //   - '\u007F' through '\u009F'
   // - all characters that have the FORMAT general category value
-  return (
-    isISOControl() && (
-      this in '\u0000'..'\u0008' ||
-        this in '\u000E'..'\u001B' ||
-        this in '\u007F'..'\u009F'
-      )
-    ) || this in CharCategory.FORMAT
+  return (isISOControl() &&
+    (this in '\u0000'..'\u0008' || this in '\u000E'..'\u001B' || this in '\u007F'..'\u009F')) ||
+    this in CharCategory.FORMAT
 }

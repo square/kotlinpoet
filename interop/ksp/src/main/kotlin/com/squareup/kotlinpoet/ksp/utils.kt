@@ -41,11 +41,12 @@ internal fun TypeName.findRawType(): ClassName? {
       if (receiver != null) {
         count++
       }
-      val functionSimpleName = if (count >= 23) {
-        "FunctionN"
-      } else {
-        "Function$count"
-      }
+      val functionSimpleName =
+        if (count >= 23) {
+          "FunctionN"
+        } else {
+          "Function$count"
+        }
       ClassName("kotlin.jvm.functions", functionSimpleName)
     }
     else -> null
@@ -61,9 +62,7 @@ internal fun ClassName.withTypeArguments(arguments: List<TypeName>): TypeName {
 }
 
 internal fun KSDeclaration.toClassNameInternal(): ClassName {
-  require(!isLocal()) {
-    "Local/anonymous classes are not supported!"
-  }
+  require(!isLocal()) { "Local/anonymous classes are not supported!" }
 
   if (this is KSClassDeclaration && classKind == ClassKind.ENUM_ENTRY) {
     val simpleName = this.simpleName.asString()
@@ -75,20 +74,15 @@ internal fun KSDeclaration.toClassNameInternal(): ClassName {
 
   val typesString = checkNotNull(qualifiedName).asString().removePrefix("$pkgName.")
 
-  val simpleNames = typesString
-    .split(".")
+  val simpleNames = typesString.split(".")
   return ClassName(pkgName, simpleNames)
 }
 
 internal fun KSType.requireNotErrorType() {
-  require(!isError) {
-    "Error type '$this' is not resolvable in the current round of processing."
-  }
+  require(!isError) { "Error type '$this' is not resolvable in the current round of processing." }
 }
 
-/**
- * Resolves the [KSClassDeclaration] for this type, including following typealiases as needed.
- */
+/** Resolves the [KSClassDeclaration] for this type, including following typealiases as needed. */
 internal fun KSType.resolveKSClassDeclaration(): KSClassDeclaration? {
   requireNotErrorType()
   return declaration.resolveKSClassDeclaration()
@@ -109,10 +103,9 @@ internal fun KSDeclaration.resolveKSClassDeclaration(): KSClassDeclaration? {
   }
 }
 
-/**
- * Returns the resolved declaration following any typealiases.
- */
-internal tailrec fun KSDeclaration.unwrapTypealiases(): KSDeclaration = when (this) {
-  is KSTypeAlias -> type.resolve().declaration.unwrapTypealiases()
-  else -> this
-}
+/** Returns the resolved declaration following any typealiases. */
+internal tailrec fun KSDeclaration.unwrapTypealiases(): KSDeclaration =
+  when (this) {
+    is KSTypeAlias -> type.resolve().declaration.unwrapTypealiases()
+    else -> this
+  }

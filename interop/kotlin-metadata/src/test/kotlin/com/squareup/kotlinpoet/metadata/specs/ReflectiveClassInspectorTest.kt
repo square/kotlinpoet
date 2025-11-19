@@ -26,6 +26,7 @@ import org.junit.Test
 
 /**
  * Class to test the new functionality of Issue#1036.
+ *
  * @see <a href="https://github.com/square/kotlinpoet/issues/1036">issue</a>
  * @author oberstrike
  */
@@ -34,8 +35,8 @@ class ReflectiveClassInspectorTest {
   data class Person(val name: String)
 
   /**
-   * Tests if the [ReflectiveClassInspector] can be created without a
-   * custom ClassLoader and still works.
+   * Tests if the [ReflectiveClassInspector] can be created without a custom ClassLoader and still
+   * works.
    */
   @Test
   fun standardClassLoaderTest() {
@@ -45,10 +46,7 @@ class ReflectiveClassInspectorTest {
     assertNotNull(declarationContainer)
   }
 
-  /**
-   * Tests if the [ReflectiveClassInspector] can be created with a
-   * custom ClassLoader.
-   */
+  /** Tests if the [ReflectiveClassInspector] can be created with a custom ClassLoader. */
   @Test
   fun useACustomClassLoaderTest() {
     val testClass = "Person"
@@ -58,17 +56,17 @@ class ReflectiveClassInspectorTest {
     val testClassName = ClassName(testPackageName, testClass)
     val testKtFileName = "KClass.kt"
 
-    val kotlinSource = SourceFile.kotlin(
-      testKtFileName,
-      """
+    val kotlinSource =
+      SourceFile.kotlin(
+        testKtFileName,
+        """
             package $testPackageName
             data class $testClass(val $testPropertyName: $testPropertyType)
-      """.trimIndent(),
-    )
+      """
+          .trimIndent(),
+      )
 
-    val result = KotlinCompilation().apply {
-      sources = listOf(kotlinSource)
-    }.compile()
+    val result = KotlinCompilation().apply { sources = listOf(kotlinSource) }.compile()
 
     assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
     val classLoader = result.classLoader

@@ -25,9 +25,8 @@ public interface MemberSpecHolder {
 
   public interface Builder<out T : Builder<T>> {
     @Suppress("UNCHECKED_CAST")
-    public fun addProperties(propertySpecs: Iterable<PropertySpec>): T = apply {
-      propertySpecs.map(::addProperty)
-    } as T
+    public fun addProperties(propertySpecs: Iterable<PropertySpec>): T =
+      apply { propertySpecs.map(::addProperty) } as T
 
     public fun addProperty(propertySpec: PropertySpec): T
 
@@ -35,8 +34,9 @@ public interface MemberSpecHolder {
       addProperty(PropertySpec.builder(name, type, *modifiers).build())
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     public fun addProperty(name: String, type: Type, vararg modifiers: KModifier): T =
       addProperty(name, type.asTypeName(), *modifiers)
@@ -48,8 +48,9 @@ public interface MemberSpecHolder {
       addProperty(PropertySpec.builder(name, type, modifiers).build())
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     public fun addProperty(name: String, type: Type, modifiers: Iterable<KModifier>): T =
       addProperty(name, type.asTypeName(), modifiers)
@@ -58,9 +59,8 @@ public interface MemberSpecHolder {
       addProperty(name, type.asTypeName(), modifiers)
 
     @Suppress("UNCHECKED_CAST")
-    public fun addFunctions(funSpecs: Iterable<FunSpec>): T = apply {
-      funSpecs.forEach(::addFunction)
-    } as T
+    public fun addFunctions(funSpecs: Iterable<FunSpec>): T =
+      apply { funSpecs.forEach(::addFunction) } as T
 
     public fun addFunction(funSpec: FunSpec): T
   }

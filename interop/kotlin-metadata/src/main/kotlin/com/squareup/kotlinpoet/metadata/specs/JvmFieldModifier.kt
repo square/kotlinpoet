@@ -21,18 +21,15 @@ import com.squareup.kotlinpoet.asClassName
 /** Modifiers that are annotations in Kotlin but modifier keywords in bytecode. */
 public enum class JvmFieldModifier : JvmModifier {
   STATIC {
-    override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      JvmStatic::class.asClassName(),
-    ).build()
+    override fun annotationSpec(): AnnotationSpec =
+      AnnotationSpec.builder(JvmStatic::class.asClassName()).build()
   },
   TRANSIENT {
-    override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      Transient::class.asClassName(),
-    ).build()
+    override fun annotationSpec(): AnnotationSpec =
+      AnnotationSpec.builder(Transient::class.asClassName()).build()
   },
   VOLATILE {
-    override fun annotationSpec(): AnnotationSpec = AnnotationSpec.builder(
-      Volatile::class.asClassName(),
-    ).build()
+    override fun annotationSpec(): AnnotationSpec =
+      AnnotationSpec.builder(Volatile::class.asClassName()).build()
   },
 }

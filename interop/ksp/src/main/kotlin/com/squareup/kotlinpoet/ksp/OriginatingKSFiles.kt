@@ -51,9 +51,9 @@ public fun PropertySpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 public fun TypeAliasSpec.originatingKSFiles(): List<KSFile> = getKSFilesTag()
 
 /**
- * Returns the list of all files added to the contained
- * [TypeSpecs][TypeSpec], [PropertySpecs][PropertySpec], [FunSpecs][FunSpec], or
- * [TypeAliasSpecs][TypeAliasSpec] contained in this spec.
+ * Returns the list of all files added to the contained [TypeSpecs][TypeSpec],
+ * [PropertySpecs][PropertySpec], [FunSpecs][FunSpec], or [TypeAliasSpecs][TypeAliasSpec] contained
+ * in this spec.
  */
 public fun FileSpec.originatingKSFiles(): List<KSFile> {
   return members
@@ -70,9 +70,10 @@ public fun FileSpec.originatingKSFiles(): List<KSFile> {
 }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
-public fun TypeAliasSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeAliasSpec.Builder = apply {
-  getOrCreateKSFilesTag().add(ksFile)
-}
+public fun TypeAliasSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeAliasSpec.Builder =
+  apply {
+    getOrCreateKSFilesTag().add(ksFile)
+  }
 
 /** Adds the given [ksFile] to this builder's tags for use with [originatingKSFiles]. */
 public fun PropertySpec.Builder.addOriginatingKSFile(ksFile: KSFile): PropertySpec.Builder = apply {
@@ -93,14 +94,14 @@ public fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Build
  * Writes this [FileSpec] to a given [codeGenerator] with the given [originatingKSFiles].
  *
  * Note that if none are specified, the [originatingKSFiles] argument defaults to using
- * [FileSpec.originatingKSFiles], which will automatically resolve any files added to the
- * contained declarations.
+ * [FileSpec.originatingKSFiles], which will automatically resolve any files added to the contained
+ * declarations.
  *
  * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
  *
- * @see FileSpec.originatingKSFiles
  * @param codeGenerator the [CodeGenerator] to write to.
  * @param aggregating flag indicating if this is an aggregating symbol processor.
+ * @see FileSpec.originatingKSFiles
  */
 public fun FileSpec.writeTo(
   codeGenerator: CodeGenerator,
@@ -116,34 +117,30 @@ public fun FileSpec.writeTo(
  *
  * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
  *
- * @see FileSpec.originatingKSFiles
- * @see kspDependencies
  * @param codeGenerator the [CodeGenerator] to write to.
  * @param dependencies the [Dependencies] to create a new file with.
+ * @see FileSpec.originatingKSFiles
+ * @see kspDependencies
  */
-public fun FileSpec.writeTo(
-  codeGenerator: CodeGenerator,
-  dependencies: Dependencies,
-) {
+public fun FileSpec.writeTo(codeGenerator: CodeGenerator, dependencies: Dependencies) {
   val file = codeGenerator.createNewFile(dependencies, packageName, name)
   // Don't use writeTo(file) because that tries to handle directories under the hood
-  OutputStreamWriter(file, StandardCharsets.UTF_8)
-    .use(::writeTo)
+  OutputStreamWriter(file, StandardCharsets.UTF_8).use(::writeTo)
 }
 
 /**
  * Returns a KSP [Dependencies] component of this [FileSpec] with the given [originatingKSFiles],
  * intended to be used in tandem with [writeTo].
  *
- * Note that if no [originatingKSFiles] are specified, the [originatingKSFiles] argument defaults
- * to using [FileSpec.originatingKSFiles], which will automatically resolve any files added to the
+ * Note that if no [originatingKSFiles] are specified, the [originatingKSFiles] argument defaults to
+ * using [FileSpec.originatingKSFiles], which will automatically resolve any files added to the
  * contained declarations.
  *
  * See [the docs](https://github.com/google/ksp/blob/main/docs/incremental.md) for more information.
  *
+ * @param aggregating flag indicating if this is an aggregating symbol processor.
  * @see FileSpec.originatingKSFiles
  * @see FileSpec.writeTo
- * @param aggregating flag indicating if this is an aggregating symbol processor.
  */
 public fun FileSpec.kspDependencies(
   aggregating: Boolean,
@@ -157,16 +154,17 @@ private interface MutableOriginatingKSFiles : OriginatingKSFiles {
   override val files: MutableList<KSFile>
 }
 
-private data class MutableOriginatingKSFilesImpl(override val files: MutableList<KSFile> = mutableListOf()) : MutableOriginatingKSFiles
+private data class MutableOriginatingKSFilesImpl(
+  override val files: MutableList<KSFile> = mutableListOf()
+) : MutableOriginatingKSFiles
 
 private fun Taggable.getKSFilesTag(): List<KSFile> {
   return tag<OriginatingKSFiles>()?.files.orEmpty()
 }
 
 private fun Taggable.Builder<*>.getOrCreateKSFilesTag(): MutableList<KSFile> {
-  val holder = tags.getOrPut(
-    OriginatingKSFiles::class,
-    ::MutableOriginatingKSFilesImpl,
-  ) as MutableOriginatingKSFiles
+  val holder =
+    tags.getOrPut(OriginatingKSFiles::class, ::MutableOriginatingKSFilesImpl)
+      as MutableOriginatingKSFiles
   return holder.files
 }

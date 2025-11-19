@@ -20,166 +20,180 @@ import assertk.assertions.isEqualTo
 import kotlin.test.Test
 
 class ExternalDeclarationsTest {
-  @Test fun externalFunDeclarationWithoutBody() {
-    val methodSpec = FunSpec.builder("function")
-      .addModifiers(KModifier.EXTERNAL)
-      .build()
+  @Test
+  fun externalFunDeclarationWithoutBody() {
+    val methodSpec = FunSpec.builder("function").addModifiers(KModifier.EXTERNAL).build()
 
-    assertThat(methodSpec.toString()).isEqualTo(
-      """
-      |public external fun function()
-      |
-      """.trimMargin(),
-    )
+    assertThat(methodSpec.toString())
+      .isEqualTo(
+        """
+        |public external fun function()
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun externalFunDeclarationWithDefinedExternally() {
-    val methodSpec = FunSpec.builder("function")
-      .addModifiers(KModifier.EXTERNAL)
-      .returns(STRING)
-      .addCode("return kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun externalFunDeclarationWithDefinedExternally() {
+    val methodSpec =
+      FunSpec.builder("function")
+        .addModifiers(KModifier.EXTERNAL)
+        .returns(STRING)
+        .addCode("return kotlin.js.definedExternally")
+        .build()
 
-    assertThat(methodSpec.toString()).isEqualTo(
-      """
-      |public external fun function(): kotlin.String = kotlin.js.definedExternally
-      |
-      """.trimMargin(),
-    )
+    assertThat(methodSpec.toString())
+      .isEqualTo(
+        """
+        |public external fun function(): kotlin.String = kotlin.js.definedExternally
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun externalFunDeclarationWithDefinedExternally2() {
-    val methodSpec = FunSpec.builder("function")
-      .addModifiers(KModifier.EXTERNAL)
-      .addCode("kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun externalFunDeclarationWithDefinedExternally2() {
+    val methodSpec =
+      FunSpec.builder("function")
+        .addModifiers(KModifier.EXTERNAL)
+        .addCode("kotlin.js.definedExternally")
+        .build()
 
-    assertThat(methodSpec.toString()).isEqualTo(
-      """
-      |public external fun function() {
-      |  kotlin.js.definedExternally
-      |}
-      |
-      """.trimMargin(),
-    )
+    assertThat(methodSpec.toString())
+      .isEqualTo(
+        """
+        |public external fun function() {
+        |  kotlin.js.definedExternally
+        |}
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExternalFunDeclarationWithoutBody() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXTERNAL)
-    val methodSpec = FunSpec.builder("function")
-      .build()
+  @Test
+  fun implicitExternalFunDeclarationWithoutBody() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXTERNAL)
+    val methodSpec = FunSpec.builder("function").build()
     builder.addFunction(methodSpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public external class Test {
         |  public fun function()
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExternalFunDeclarationWithDefinedExternally() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXTERNAL)
-    val methodSpec = FunSpec.builder("function")
-      .returns(STRING)
-      .addCode("return kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun implicitExternalFunDeclarationWithDefinedExternally() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXTERNAL)
+    val methodSpec =
+      FunSpec.builder("function")
+        .returns(STRING)
+        .addCode("return kotlin.js.definedExternally")
+        .build()
     builder.addFunction(methodSpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public external class Test {
         |  public fun function(): kotlin.String = kotlin.js.definedExternally
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExternalFunDeclarationWithDefinedExternally2() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXTERNAL)
-    val methodSpec = FunSpec.builder("function")
-      .addModifiers(KModifier.EXTERNAL)
-      .addCode("kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun implicitExternalFunDeclarationWithDefinedExternally2() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXTERNAL)
+    val methodSpec =
+      FunSpec.builder("function")
+        .addModifiers(KModifier.EXTERNAL)
+        .addCode("kotlin.js.definedExternally")
+        .build()
     builder.addFunction(methodSpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public external class Test {
         |  public fun function() {
         |    kotlin.js.definedExternally
         |  }
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun externalPropertyDeclarationWithoutInitializer() {
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .addModifiers(KModifier.EXTERNAL)
-      .build()
+  @Test
+  fun externalPropertyDeclarationWithoutInitializer() {
+    val propertySpec =
+      PropertySpec.builder("prop", String::class).addModifiers(KModifier.EXTERNAL).build()
 
-    assertThat(propertySpec.toString()).isEqualTo(
-      """
-      |external val prop: kotlin.String
-      |
-      """.trimMargin(),
-    )
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        |external val prop: kotlin.String
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun externalPropertyDeclarationWithDefinedExternally() {
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .addModifiers(KModifier.EXTERNAL)
-      .initializer("kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun externalPropertyDeclarationWithDefinedExternally() {
+    val propertySpec =
+      PropertySpec.builder("prop", String::class)
+        .addModifiers(KModifier.EXTERNAL)
+        .initializer("kotlin.js.definedExternally")
+        .build()
 
-    assertThat(propertySpec.toString()).isEqualTo(
-      """
-      |external val prop: kotlin.String = kotlin.js.definedExternally
-      |
-      """.trimMargin(),
-    )
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        |external val prop: kotlin.String = kotlin.js.definedExternally
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExternalPropertyDeclarationWithoutInitializer() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXTERNAL)
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .build()
+  @Test
+  fun implicitExternalPropertyDeclarationWithoutInitializer() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXTERNAL)
+    val propertySpec = PropertySpec.builder("prop", String::class).build()
     builder.addProperty(propertySpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public external class Test {
         |  public val prop: kotlin.String
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExternalPropertyDeclarationWithDefinedExternally() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXTERNAL)
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .initializer("kotlin.js.definedExternally")
-      .build()
+  @Test
+  fun implicitExternalPropertyDeclarationWithDefinedExternally() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXTERNAL)
+    val propertySpec =
+      PropertySpec.builder("prop", String::class).initializer("kotlin.js.definedExternally").build()
     builder.addProperty(propertySpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public external class Test {
         |  public val prop: kotlin.String = kotlin.js.definedExternally
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 }

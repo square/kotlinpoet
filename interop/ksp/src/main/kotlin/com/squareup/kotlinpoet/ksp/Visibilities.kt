@@ -21,8 +21,8 @@ import com.google.devtools.ksp.symbol.Visibility.LOCAL
 import com.squareup.kotlinpoet.KModifier
 
 /**
- * Returns the [KModifier] representation of this visibility or null if this is [JAVA_PACKAGE]
- * or [LOCAL] (which do not have obvious [KModifier] alternatives).
+ * Returns the [KModifier] representation of this visibility or null if this is [JAVA_PACKAGE] or
+ * [LOCAL] (which do not have obvious [KModifier] alternatives).
  */
 public fun Visibility.toKModifier(): KModifier? {
   return when (this) {

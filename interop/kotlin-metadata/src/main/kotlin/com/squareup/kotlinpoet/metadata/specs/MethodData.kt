@@ -21,8 +21,8 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.metadata.classinspectors.ClassInspectorUtil
 
 /**
- * Represents relevant information on a method used for [ClassInspector]. Should only be
- * associated with methods of a [ClassData] or [PropertyData].
+ * Represents relevant information on a method used for [ClassInspector]. Should only be associated
+ * with methods of a [ClassData] or [PropertyData].
  *
  * @param annotations declared annotations on this method.
  * @property parameterAnnotations a mapping of parameter indices to annotations on them.
@@ -45,45 +45,44 @@ public data class MethodData(
    * [isSynthetic], and [exceptions].
    *
    * @param useSiteTarget an optional [UseSiteTarget] that all annotations on this method should
-   *        use.
+   *   use.
    * @param containsReifiedTypeParameter an optional boolean indicating if any type parameters on
-   *        this function are `reified`, which are implicitly synthetic.
+   *   this function are `reified`, which are implicitly synthetic.
    */
   public fun allAnnotations(
     useSiteTarget: UseSiteTarget? = null,
     containsReifiedTypeParameter: Boolean = false,
   ): Collection<AnnotationSpec> {
-    return ClassInspectorUtil.createAnnotations(
-      useSiteTarget,
-    ) {
+    return ClassInspectorUtil.createAnnotations(useSiteTarget) {
       addAll(annotations)
       if (isSynthetic && !containsReifiedTypeParameter) {
         add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
       addAll(jvmModifiers.mapNotNull(JvmMethodModifier::annotationSpec))
-      exceptions.takeIf { it.isNotEmpty() }
-        ?.let {
-          add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget))
-        }
+      exceptions
+        .takeIf { it.isNotEmpty() }
+        ?.let { add(ClassInspectorUtil.createThrowsSpec(it, useSiteTarget)) }
     }
   }
 
   public companion object {
-    public val SYNTHETIC: MethodData = MethodData(
-      annotations = emptyList(),
-      parameterAnnotations = emptyMap(),
-      isSynthetic = true,
-      jvmModifiers = emptySet(),
-      isOverride = false,
-      exceptions = emptyList(),
-    )
-    public val EMPTY: MethodData = MethodData(
-      annotations = emptyList(),
-      parameterAnnotations = emptyMap(),
-      isSynthetic = false,
-      jvmModifiers = emptySet(),
-      isOverride = false,
-      exceptions = emptyList(),
-    )
+    public val SYNTHETIC: MethodData =
+      MethodData(
+        annotations = emptyList(),
+        parameterAnnotations = emptyMap(),
+        isSynthetic = true,
+        jvmModifiers = emptySet(),
+        isOverride = false,
+        exceptions = emptyList(),
+      )
+    public val EMPTY: MethodData =
+      MethodData(
+        annotations = emptyList(),
+        parameterAnnotations = emptyMap(),
+        isSynthetic = false,
+        jvmModifiers = emptySet(),
+        isOverride = false,
+        exceptions = emptyList(),
+      )
   }
 }

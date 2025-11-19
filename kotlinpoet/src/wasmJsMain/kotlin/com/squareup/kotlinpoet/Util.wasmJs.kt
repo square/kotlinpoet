@@ -31,6 +31,7 @@ internal external interface RegExpMatch {
 
 internal external class RegExp(pattern: String, flags: String? = definedExternally) : JsAny {
   fun exec(str: String): RegExpMatch?
+
   override fun toString(): String
 
   var lastIndex: Int

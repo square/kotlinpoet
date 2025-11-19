@@ -20,80 +20,132 @@ import assertk.assertions.isEqualTo
 import org.junit.Test
 
 class LineWrappingTest {
-  @Test fun codeSpacesDoNotWrap() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .returns(STRING)
-      .addStatement(
-        "return %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L",
-        10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
-        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
-      )
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun codeSpacesDoNotWrap() {
+    val wrapMe =
+      FunSpec.builder("wrapMe")
+        .returns(STRING)
+        .addStatement(
+          "return %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L * %L",
+          10000000000,
+          20000000000,
+          30000000000,
+          40000000000,
+          50000000000,
+          60000000000,
+          70000000000,
+          80000000000,
+          90000000000,
+          10000000000,
+          20000000000,
+          30000000000,
+        )
+        .build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import kotlin.String
         |
         |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun stringSpacesDoNotWrap() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .returns(STRING)
-      .addStatement(
-        "return %S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S",
-        "Aaaa Aaaa", "Bbbb Bbbb", "Cccc Cccc", "Dddd Dddd", "Eeee Eeee", "Ffff Ffff",
-        "Gggg Gggg", "Hhhh Hhhh", "Iiii Iiii", "Jjjj Jjjj", "Kkkk Kkkk", "Llll Llll",
-      )
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun stringSpacesDoNotWrap() {
+    val wrapMe =
+      FunSpec.builder("wrapMe")
+        .returns(STRING)
+        .addStatement(
+          "return %S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S+%S",
+          "Aaaa Aaaa",
+          "Bbbb Bbbb",
+          "Cccc Cccc",
+          "Dddd Dddd",
+          "Eeee Eeee",
+          "Ffff Ffff",
+          "Gggg Gggg",
+          "Hhhh Hhhh",
+          "Iiii Iiii",
+          "Jjjj Jjjj",
+          "Kkkk Kkkk",
+          "Llll Llll",
+        )
+        .build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import kotlin.String
         |
         |public fun wrapMe(): String = "Aaaa Aaaa"+"Bbbb Bbbb"+"Cccc Cccc"+"Dddd Dddd"+"Eeee Eeee"+"Ffff Ffff"+"Gggg Gggg"+"Hhhh Hhhh"+"Iiii Iiii"+"Jjjj Jjjj"+"Kkkk Kkkk"+"Llll Llll"
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun nonwrappingWhitespaceDoesNotWrap() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .returns(STRING)
-      .addStatement(
-        "return %L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L",
-        10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
-        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
-      )
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun nonwrappingWhitespaceDoesNotWrap() {
+    val wrapMe =
+      FunSpec.builder("wrapMe")
+        .returns(STRING)
+        .addStatement(
+          "return %L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L·*·%L",
+          10000000000,
+          20000000000,
+          30000000000,
+          40000000000,
+          50000000000,
+          60000000000,
+          70000000000,
+          80000000000,
+          90000000000,
+          10000000000,
+          20000000000,
+          30000000000,
+        )
+        .build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import kotlin.String
         |
         |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 * 50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 * 10_000_000_000 * 20_000_000_000 * 30_000_000_000
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun wrappingWhitespaceWraps() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .returns(STRING)
-      .addStatement(
-        "return %L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L",
-        10000000000, 20000000000, 30000000000, 40000000000, 50000000000, 60000000000,
-        70000000000, 80000000000, 90000000000, 10000000000, 20000000000, 30000000000,
-      )
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun wrappingWhitespaceWraps() {
+    val wrapMe =
+      FunSpec.builder("wrapMe")
+        .returns(STRING)
+        .addStatement(
+          "return %L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L♢*♢%L",
+          10000000000,
+          20000000000,
+          30000000000,
+          40000000000,
+          50000000000,
+          60000000000,
+          70000000000,
+          80000000000,
+          90000000000,
+          10000000000,
+          20000000000,
+          30000000000,
+        )
+        .build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import kotlin.String
@@ -101,37 +153,39 @@ class LineWrappingTest {
         |public fun wrapMe(): String = 10_000_000_000 * 20_000_000_000 * 30_000_000_000 * 40_000_000_000 *
         |    50_000_000_000 * 60_000_000_000 * 70_000_000_000 * 80_000_000_000 * 90_000_000_000 *
         |    10_000_000_000 * 20_000_000_000 * 30_000_000_000
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun nonwrappingWhitespaceIsRetainedInStrings() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .returns(STRING)
-      .addStatement("return %S", "a·b")
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun nonwrappingWhitespaceIsRetainedInStrings() {
+    val wrapMe = FunSpec.builder("wrapMe").returns(STRING).addStatement("return %S", "a·b").build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |import kotlin.String
         |
         |public fun wrapMe(): String = "a·b"
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun insignificantWhitespaceRetained() {
-    val wrapMe = FunSpec.builder("wrapMe")
-      .addStatement("val a =    8")
-      .addStatement("val b =   64")
-      .addStatement("val c =  512")
-      .addStatement("val d = 4096")
-      .build()
-    assertThat(toString(wrapMe)).isEqualTo(
-      """
+  @Test
+  fun insignificantWhitespaceRetained() {
+    val wrapMe =
+      FunSpec.builder("wrapMe")
+        .addStatement("val a =    8")
+        .addStatement("val b =   64")
+        .addStatement("val c =  512")
+        .addStatement("val d = 4096")
+        .build()
+    assertThat(toString(wrapMe))
+      .isEqualTo(
+        """
         |package com.squareup.tacos
         |
         |public fun wrapMe() {
@@ -140,12 +194,13 @@ class LineWrappingTest {
         |  val c =  512
         |  val d = 4096
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun parameterWrapping() {
+  @Test
+  fun parameterWrapping() {
     val funSpecBuilder = FunSpec.builder("call")
     funSpecBuilder.addCode("«call(")
     for (i in 0..31) {
@@ -154,9 +209,7 @@ class LineWrappingTest {
     }
     funSpecBuilder.addCode(")»\n")
 
-    val taco = TypeSpec.classBuilder("Taco")
-      .addFunction(funSpecBuilder.build())
-      .build()
+    val taco = TypeSpec.classBuilder("Taco").addFunction(funSpecBuilder.build()).build()
     assertThat(toString(taco))
       .isEqualTo(
         """
@@ -203,8 +256,8 @@ class LineWrappingTest {
         |        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
         |  }
         |}
-        |
-        """.trimMargin(),
+        |"""
+          .trimMargin()
       )
   }
 
@@ -213,9 +266,8 @@ class LineWrappingTest {
   }
 
   private fun toString(funSpec: FunSpec): String {
-    val fileSpec = FileSpec.builder("com.squareup.tacos", "${funSpec.name}.kt")
-      .addFunction(funSpec)
-      .build()
+    val fileSpec =
+      FileSpec.builder("com.squareup.tacos", "${funSpec.name}.kt").addFunction(funSpec).build()
     return fileSpec.toString()
   }
 }

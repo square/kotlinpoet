@@ -18,6 +18,7 @@ package com.squareup.kotlinpoet.ksp.test.processor
 import kotlin.reflect.KClass
 
 annotation class ExampleAnnotation
+
 annotation class ExampleAnnotationWithDefaults(
   val boolean: Boolean = true,
   val booleanArray: BooleanArray = [true],
@@ -70,15 +71,19 @@ annotation class ComprehensiveAnnotation<T : CharSequence>(
   val enumValueArray: Array<AnnotationEnumValue>,
   val anotherAnnotation: AnotherAnnotation,
   val anotherAnnotationArray: Array<AnotherAnnotation>,
-  // This is still included even when the argument is omitted until https://github.com/google/ksp/issues/674
+  // This is still included even when the argument is omitted until
+  // https://github.com/google/ksp/issues/674
   val defaultingString: String = "defaultValue",
 )
 
 annotation class AnotherAnnotation(val input: String)
 
 enum class AnnotationEnumValue {
-  ONE, TWO, THREE
+  ONE,
+  TWO,
+  THREE,
 }
 
 annotation class AnnotationWithVararg(val simpleArg: Int, vararg val args: String)
+
 annotation class AnnotationWithTypeArgs<T, R>

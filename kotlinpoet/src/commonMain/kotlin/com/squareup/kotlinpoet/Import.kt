@@ -16,10 +16,8 @@
 package com.squareup.kotlinpoet
 
 @ExposedCopyVisibility
-public data class Import internal constructor(
-  val qualifiedName: String,
-  val alias: String? = null,
-) : Comparable<Import> {
+public data class Import
+internal constructor(val qualifiedName: String, val alias: String? = null) : Comparable<Import> {
 
   private val importString = buildString {
     append(qualifiedName.escapeSegmentsIfNecessary())

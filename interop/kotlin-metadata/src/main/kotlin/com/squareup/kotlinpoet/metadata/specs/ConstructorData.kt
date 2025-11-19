@@ -41,25 +41,24 @@ public data class ConstructorData(
    * A collection of all annotations on this constructor, including any derived from [jvmModifiers],
    * [isSynthetic], and [exceptions].
    */
-  val allAnnotations: Collection<AnnotationSpec> = ClassInspectorUtil.createAnnotations {
-    addAll(annotations)
-    if (isSynthetic) {
-      add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
-    }
-    addAll(jvmModifiers.mapNotNull { it.annotationSpec() })
-    exceptions.takeIf { it.isNotEmpty() }
-      ?.let {
-        add(ClassInspectorUtil.createThrowsSpec(it))
+  val allAnnotations: Collection<AnnotationSpec> =
+    ClassInspectorUtil.createAnnotations {
+      addAll(annotations)
+      if (isSynthetic) {
+        add(ClassInspectorUtil.JVM_SYNTHETIC_SPEC)
       }
-  }
+      addAll(jvmModifiers.mapNotNull { it.annotationSpec() })
+      exceptions.takeIf { it.isNotEmpty() }?.let { add(ClassInspectorUtil.createThrowsSpec(it)) }
+    }
 
   public companion object {
-    public val EMPTY: ConstructorData = ConstructorData(
-      annotations = emptyList(),
-      parameterAnnotations = emptyMap(),
-      isSynthetic = false,
-      jvmModifiers = emptySet(),
-      exceptions = emptyList(),
-    )
+    public val EMPTY: ConstructorData =
+      ConstructorData(
+        annotations = emptyList(),
+        parameterAnnotations = emptyMap(),
+        isSynthetic = false,
+        jvmModifiers = emptySet(),
+        exceptions = emptyList(),
+      )
   }
 }

@@ -32,10 +32,7 @@ import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 import javax.tools.SimpleJavaFileObject
 
-internal class TestFiler(
-  fileSystem: FileSystem,
-  private val fileSystemRoot: Path,
-) : Filer {
+internal class TestFiler(fileSystem: FileSystem, private val fileSystemRoot: Path) : Filer {
 
   internal inner class Source(private val path: Path) :
     SimpleJavaFileObject(path.toUri(), JavaFileObject.Kind.SOURCE) {
@@ -50,7 +47,8 @@ internal class TestFiler(
   private val fileSystemProvider = fileSystem.provider()
   private val originatingElementsMap = mutableMapOf<Path, List<Element>>()
 
-  fun getOriginatingElements(path: Path) = originatingElementsMap[path] ?: throw NullPointerException("Could not find $path")
+  fun getOriginatingElements(path: Path) =
+    originatingElementsMap[path] ?: throw NullPointerException("Could not find $path")
 
   override fun createSourceFile(
     name: CharSequence,

@@ -51,24 +51,26 @@ internal val KmConstructor.isPrimary: Boolean
 internal val KmProperty.isVal: Boolean
   get() = !isVar
 
-internal fun Modality.toKModifier(): KModifier = when (this) {
-  Modality.FINAL -> KModifier.FINAL
-  Modality.OPEN -> KModifier.OPEN
-  Modality.ABSTRACT -> KModifier.ABSTRACT
-  Modality.SEALED -> KModifier.SEALED
-}
-
-internal fun Visibility.toKModifier(): KModifier = when (this) {
-  Visibility.INTERNAL -> KModifier.INTERNAL
-  Visibility.PRIVATE -> KModifier.PRIVATE
-  Visibility.PROTECTED -> KModifier.PROTECTED
-  Visibility.PUBLIC -> KModifier.PUBLIC
-  Visibility.PRIVATE_TO_THIS,
-  Visibility.LOCAL,
-  -> {
-    // Default to public
-    KModifier.PUBLIC
+internal fun Modality.toKModifier(): KModifier =
+  when (this) {
+    Modality.FINAL -> KModifier.FINAL
+    Modality.OPEN -> KModifier.OPEN
+    Modality.ABSTRACT -> KModifier.ABSTRACT
+    Modality.SEALED -> KModifier.SEALED
   }
-}
 
-internal val MemberKind.isDeclaration: Boolean get() = this == MemberKind.DECLARATION
+internal fun Visibility.toKModifier(): KModifier =
+  when (this) {
+    Visibility.INTERNAL -> KModifier.INTERNAL
+    Visibility.PRIVATE -> KModifier.PRIVATE
+    Visibility.PROTECTED -> KModifier.PROTECTED
+    Visibility.PUBLIC -> KModifier.PUBLIC
+    Visibility.PRIVATE_TO_THIS,
+    Visibility.LOCAL -> {
+      // Default to public
+      KModifier.PUBLIC
+    }
+  }
+
+internal val MemberKind.isDeclaration: Boolean
+  get() = this == MemberKind.DECLARATION

@@ -25,13 +25,16 @@ import kotlin.reflect.KClass
 
 /** A generated property declaration. */
 @OptIn(ExperimentalKotlinPoetApi::class)
-public class PropertySpec private constructor(
+public class PropertySpec
+private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-  private val delegateOriginatingElementsHolder: OriginatingElementsHolder = builder.buildOriginatingElements(),
+  private val delegateOriginatingElementsHolder: OriginatingElementsHolder =
+    builder.buildOriginatingElements(),
   private val contextReceivers: ContextReceivers = builder.buildContextReceivers(),
   private val contextParams: ContextParameters = builder.buildContextParameters(),
-) : Taggable by tagMap,
+) :
+  Taggable by tagMap,
   OriginatingElementsHolder by delegateOriginatingElementsHolder,
   ContextReceivable by contextReceivers,
   ContextParameterizable by contextParams,
@@ -54,14 +57,12 @@ public class PropertySpec private constructor(
     require(
       typeVariables.none { it.isReified } ||
         (getter != null || setter != null) &&
-        (getter == null || KModifier.INLINE in getter.modifiers) &&
-        (setter == null || KModifier.INLINE in setter.modifiers),
+          (getter == null || KModifier.INLINE in getter.modifiers) &&
+          (setter == null || KModifier.INLINE in setter.modifiers)
     ) {
       "only type parameters of properties with inline getters and/or setters can be reified!"
     }
-    require(mutable || setter == null) {
-      "only a mutable property can have a setter"
-    }
+    require(mutable || setter == null) { "only a mutable property can have a setter" }
   }
 
   internal fun emit(
@@ -72,8 +73,9 @@ public class PropertySpec private constructor(
     inline: Boolean = false,
     inlineAnnotations: Boolean = inline,
   ) {
-    val isInlineProperty = getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
-      (!mutable || setter?.modifiers?.contains(KModifier.INLINE) ?: false)
+    val isInlineProperty =
+      getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
+        (!mutable || setter?.modifiers?.contains(KModifier.INLINE) ?: false)
     val propertyModifiers = if (isInlineProperty) modifiers + KModifier.INLINE else modifiers
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
@@ -135,8 +137,7 @@ public class PropertySpec private constructor(
   }
 
   internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
-    val builder = toBuilder()
-      .addAnnotations(parameter.annotations)
+    val builder = toBuilder().addAnnotations(parameter.annotations)
     builder.isPrimaryConstructorParameter = true
     builder.modifiers += parameter.modifiers
     if (builder.kdoc.isEmpty()) {
@@ -176,10 +177,9 @@ public class PropertySpec private constructor(
     return builder
   }
 
-  public class Builder internal constructor(
-    internal val name: String,
-    internal val type: TypeName,
-  ) : Taggable.Builder<Builder>,
+  public class Builder
+  internal constructor(internal val name: String, internal val type: TypeName) :
+    Taggable.Builder<Builder>,
     OriginatingElementsHolder.Builder<Builder>,
     ContextReceivable.Builder<Builder>,
     ContextParameterizable.Builder<Builder>,
@@ -207,9 +207,7 @@ public class PropertySpec private constructor(
     override val contextParameters: MutableList<ContextParameter> = mutableListOf()
 
     /** True to create a `var` instead of a `val`. */
-    public fun mutable(mutable: Boolean = true): Builder = apply {
-      this.mutable = mutable
-    }
+    public fun mutable(mutable: Boolean = true): Builder = apply { this.mutable = mutable }
 
     public fun addModifiers(vararg modifiers: KModifier): Builder = apply {
       this.modifiers += modifiers
@@ -258,16 +256,18 @@ public class PropertySpec private constructor(
     }
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
 
-    //region Overrides for binary compatibility
+    // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
-    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder = super.addAnnotation(annotationSpec)
+    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder =
+      super.addAnnotation(annotationSpec)
 
     @Suppress("RedundantOverride")
     override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
@@ -277,8 +277,9 @@ public class PropertySpec private constructor(
     override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
 
@@ -290,13 +291,14 @@ public class PropertySpec private constructor(
 
     @Suppress("RedundantOverride")
     override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
-    //endregion
+
+    // endregion
 
     public fun build(): PropertySpec {
       if (KModifier.INLINE in modifiers) {
         throw IllegalArgumentException(
           "KotlinPoet doesn't allow setting the inline modifier on " +
-            "properties. You should mark either the getter, the setter, or both inline.",
+            "properties. You should mark either the getter, the setter, or both inline."
         )
       }
       for (it in modifiers) {
@@ -310,46 +312,35 @@ public class PropertySpec private constructor(
   }
 
   public companion object {
-    @JvmStatic public fun builder(
-      name: String,
-      type: TypeName,
-      vararg modifiers: KModifier,
-    ): Builder {
+    @JvmStatic
+    public fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       return Builder(name, type).addModifiers(*modifiers)
     }
 
-    @JvmStatic public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
+    @JvmStatic
+    public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
       builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: KClass<*>,
-      vararg modifiers: KModifier,
-    ): Builder = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic
+    public fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
+      builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: TypeName,
-      modifiers: Iterable<KModifier>,
-    ): Builder {
+    @JvmStatic
+    public fun builder(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder {
       return Builder(name, type).addModifiers(modifiers)
     }
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun builder(
-      name: String,
-      type: Type,
-      modifiers: Iterable<KModifier>,
-    ): Builder = builder(name, type.asTypeName(), modifiers)
+    public fun builder(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
+      builder(name, type.asTypeName(), modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: KClass<*>,
-      modifiers: Iterable<KModifier>,
-    ): Builder = builder(name, type.asTypeName(), modifiers)
+    @JvmStatic
+    public fun builder(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): Builder =
+      builder(name, type.asTypeName(), modifiers)
   }
 }

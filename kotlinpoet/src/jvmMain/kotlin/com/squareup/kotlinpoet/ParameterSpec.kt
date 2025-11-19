@@ -26,30 +26,39 @@ import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 /** A generated parameter declaration. */
-public class ParameterSpec private constructor(
-  builder: Builder,
-  private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Annotatable, Documentable {
+public class ParameterSpec
+private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
+  Taggable by tagMap, Annotatable, Documentable {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
-  public val modifiers: Set<KModifier> = builder.modifiers
-    .also {
-      LinkedHashSet(it).apply {
-        removeAll(ALLOWED_PARAMETER_MODIFIERS)
-        if (!isEmpty()) {
-          throw IllegalArgumentException("Modifiers $this are not allowed on Kotlin parameters. Allowed modifiers: $ALLOWED_PARAMETER_MODIFIERS")
+  public val modifiers: Set<KModifier> =
+    builder.modifiers
+      .also {
+        LinkedHashSet(it).apply {
+          removeAll(ALLOWED_PARAMETER_MODIFIERS)
+          if (!isEmpty()) {
+            throw IllegalArgumentException(
+              "Modifiers $this are not allowed on Kotlin parameters. Allowed modifiers: $ALLOWED_PARAMETER_MODIFIERS"
+            )
+          }
         }
       }
-    }
-    .toImmutableSet()
+      .toImmutableSet()
   public val type: TypeName = builder.type
   public val defaultValue: CodeBlock? = builder.defaultValue
 
-  public constructor(name: String, type: TypeName, vararg modifiers: KModifier) :
-    this(builder(name, type, *modifiers))
-  public constructor(name: String, type: TypeName, modifiers: Iterable<KModifier>) :
-    this(builder(name, type, modifiers))
+  public constructor(
+    name: String,
+    type: TypeName,
+    vararg modifiers: KModifier,
+  ) : this(builder(name, type, *modifiers))
+
+  public constructor(
+    name: String,
+    type: TypeName,
+    modifiers: Iterable<KModifier>,
+  ) : this(builder(name, type, modifiers))
 
   internal fun emit(
     codeWriter: CodeWriter,
@@ -91,10 +100,9 @@ public class ParameterSpec private constructor(
     return builder
   }
 
-  public class Builder internal constructor(
-    internal val name: String,
-    internal val type: TypeName,
-  ) : Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
+  public class Builder
+  internal constructor(internal val name: String, internal val type: TypeName) :
+    Taggable.Builder<Builder>, Annotatable.Builder<Builder>, Documentable.Builder<Builder> {
     internal var defaultValue: CodeBlock? = null
 
     public val modifiers: MutableList<KModifier> = mutableListOf()
@@ -115,7 +123,9 @@ public class ParameterSpec private constructor(
       ReplaceWith(""),
       level = ERROR,
     )
-    public fun jvmModifiers(@Suppress("UNUSED_PARAMETER", "unused") modifiers: Iterable<Modifier>): Builder = apply {
+    public fun jvmModifiers(
+      @Suppress("UNUSED_PARAMETER", "unused") modifiers: Iterable<Modifier>
+    ): Builder = apply {
       throw IllegalArgumentException("JVM modifiers are not permitted on parameters in Kotlin")
     }
 
@@ -126,9 +136,10 @@ public class ParameterSpec private constructor(
       this.defaultValue = codeBlock
     }
 
-    //region Overrides for binary compatibility
+    // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
-    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder = super.addAnnotation(annotationSpec)
+    override fun addAnnotation(annotationSpec: AnnotationSpec): Builder =
+      super.addAnnotation(annotationSpec)
 
     @Suppress("RedundantOverride")
     override fun addAnnotations(annotationSpecs: Iterable<AnnotationSpec>): Builder =
@@ -138,8 +149,9 @@ public class ParameterSpec private constructor(
     override fun addAnnotation(annotation: ClassName): Builder = super.addAnnotation(annotation)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     override fun addAnnotation(annotation: Class<*>): Builder = super.addAnnotation(annotation)
 
@@ -151,68 +163,59 @@ public class ParameterSpec private constructor(
 
     @Suppress("RedundantOverride")
     override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
-    //endregion
+
+    // endregion
 
     public fun build(): ParameterSpec = ParameterSpec(this)
   }
 
   public companion object {
     @DelicateKotlinPoetApi(
-      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
+      message =
+        "Element APIs don't give complete information on Kotlin types. Consider using" +
+          " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun get(element: VariableElement): ParameterSpec {
       val name = element.simpleName.toString()
       val type = element.asType().asTypeName()
-      return builder(name, type)
-        .build()
+      return builder(name, type).build()
     }
 
     @DelicateKotlinPoetApi(
-      message = "Element APIs don't give complete information on Kotlin types. Consider using" +
-        " the kotlinpoet-metadata APIs instead.",
+      message =
+        "Element APIs don't give complete information on Kotlin types. Consider using" +
+          " the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     public fun parametersOf(method: ExecutableElement): List<ParameterSpec> =
       method.parameters.map(::get)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: TypeName,
-      vararg modifiers: KModifier,
-    ): Builder {
+    @JvmStatic
+    public fun builder(name: String, type: TypeName, vararg modifiers: KModifier): Builder {
       return Builder(name, type).addModifiers(*modifiers)
     }
 
-    @JvmStatic public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
+    @JvmStatic
+    public fun builder(name: String, type: Type, vararg modifiers: KModifier): Builder =
       builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: KClass<*>,
-      vararg modifiers: KModifier,
-    ): Builder = builder(name, type.asTypeName(), *modifiers)
+    @JvmStatic
+    public fun builder(name: String, type: KClass<*>, vararg modifiers: KModifier): Builder =
+      builder(name, type.asTypeName(), *modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: TypeName,
-      modifiers: Iterable<KModifier>,
-    ): Builder {
+    @JvmStatic
+    public fun builder(name: String, type: TypeName, modifiers: Iterable<KModifier>): Builder {
       return Builder(name, type).addModifiers(modifiers)
     }
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: Type,
-      modifiers: Iterable<KModifier>,
-    ): Builder = builder(name, type.asTypeName(), modifiers)
+    @JvmStatic
+    public fun builder(name: String, type: Type, modifiers: Iterable<KModifier>): Builder =
+      builder(name, type.asTypeName(), modifiers)
 
-    @JvmStatic public fun builder(
-      name: String,
-      type: KClass<*>,
-      modifiers: Iterable<KModifier>,
-    ): Builder = builder(name, type.asTypeName(), modifiers)
+    @JvmStatic
+    public fun builder(name: String, type: KClass<*>, modifiers: Iterable<KModifier>): Builder =
+      builder(name, type.asTypeName(), modifiers)
 
     @JvmStatic public fun unnamed(type: KClass<*>): ParameterSpec = unnamed(type.asTypeName())
 
@@ -229,28 +232,29 @@ internal fun List<ParameterSpec>.emit(
   codeWriter: CodeWriter,
   forceNewLines: Boolean = false,
   emitBlock: (ParameterSpec) -> Unit = { it.emit(codeWriter) },
-) = with(codeWriter) {
-  emit("(")
+) =
+  with(codeWriter) {
+    emit("(")
 
-  if (isNotEmpty()) {
-    val emitNewLines = size > 2 || forceNewLines
-    if (emitNewLines) {
-      emit("\n")
-      indent(1)
-    }
-    forEachIndexed { index, parameter ->
-      if (index > 0) {
-        emit(if (emitNewLines) "\n" else ", ")
-      }
-      emitBlock(parameter)
+    if (isNotEmpty()) {
+      val emitNewLines = size > 2 || forceNewLines
       if (emitNewLines) {
-        emit(",")
+        emit("\n")
+        indent(1)
+      }
+      forEachIndexed { index, parameter ->
+        if (index > 0) {
+          emit(if (emitNewLines) "\n" else ", ")
+        }
+        emitBlock(parameter)
+        if (emitNewLines) {
+          emit(",")
+        }
+      }
+      if (emitNewLines) {
+        unindent(1)
+        emit("\n")
       }
     }
-    if (emitNewLines) {
-      unindent(1)
-      emit("\n")
-    }
+    emit(")")
   }
-  emit(")")
-}

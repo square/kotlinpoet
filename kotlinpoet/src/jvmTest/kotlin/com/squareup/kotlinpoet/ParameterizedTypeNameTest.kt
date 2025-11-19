@@ -35,43 +35,49 @@ import org.junit.Test
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // Explicitly testing Java classes.
 class ParameterizedTypeNameTest {
-  @Test fun classNamePlusParameter() {
-    val typeName = ClassName("kotlin.collections", "List")
-      .plusParameter(ClassName("kotlin", "String"))
+  @Test
+  fun classNamePlusParameter() {
+    val typeName =
+      ClassName("kotlin.collections", "List").plusParameter(ClassName("kotlin", "String"))
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.List<kotlin.String>")
   }
 
-  @Test fun classNamePlusTwoParameters() {
-    val typeName = ClassName("kotlin.collections", "Map")
-      .plusParameter(ClassName("kotlin", "String"))
-      .plusParameter(ClassName("kotlin", "Int"))
+  @Test
+  fun classNamePlusTwoParameters() {
+    val typeName =
+      ClassName("kotlin.collections", "Map")
+        .plusParameter(ClassName("kotlin", "String"))
+        .plusParameter(ClassName("kotlin", "Int"))
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Int>")
   }
 
-  @Test fun classNamePlusTypeVariableParameter() {
+  @Test
+  fun classNamePlusTypeVariableParameter() {
     val t = TypeVariableName("T")
     val mapOfT = Map::class.asTypeName().plusParameter(t)
     assertThat(mapOfT.toString()).isEqualTo("kotlin.collections.Map<T>")
   }
 
-  @Test fun kClassPlusParameter() {
+  @Test
+  fun kClassPlusParameter() {
     val typeName = List::class.plusParameter(String::class)
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.List<kotlin.String>")
   }
 
-  @Test fun kClassPlusTwoParameters() {
-    val typeName = Map::class
-      .plusParameter(String::class)
-      .plusParameter(Int::class)
+  @Test
+  fun kClassPlusTwoParameters() {
+    val typeName = Map::class.plusParameter(String::class).plusParameter(Int::class)
     assertThat(typeName.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.Int>")
   }
 
-  @Test fun classPlusParameter() {
+  @Test
+  fun classPlusParameter() {
     val typeName = java.util.List::class.java.plusParameter(java.lang.String::class.java)
     assertThat(typeName.toString()).isEqualTo("java.util.List<java.lang.String>")
   }
 
-  @Test fun primitiveArray() {
+  @Test
+  fun primitiveArray() {
     assertThat(ByteArray::class.asTypeName().toString()).isEqualTo("kotlin.ByteArray")
     assertThat(CharArray::class.asTypeName().toString()).isEqualTo("kotlin.CharArray")
     assertThat(ShortArray::class.asTypeName().toString()).isEqualTo("kotlin.ShortArray")
@@ -81,56 +87,69 @@ class ParameterizedTypeNameTest {
     assertThat(DoubleArray::class.asTypeName().toString()).isEqualTo("kotlin.DoubleArray")
   }
 
-  @Test fun arrayPlusPrimitiveParameter() {
+  @Test
+  fun arrayPlusPrimitiveParameter() {
     val invariantInt = KTypeProjection(KVariance.INVARIANT, Int::class.createType())
     val typeName = Array<Unit>::class.createType(listOf(invariantInt)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<kotlin.Int>")
   }
 
-  @Test fun arrayPlusObjectParameter() {
+  @Test
+  fun arrayPlusObjectParameter() {
     val invariantCloseable = KTypeProjection(KVariance.INVARIANT, Closeable::class.createType())
     val typeName = Array<Unit>::class.createType(listOf(invariantCloseable)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable>")
   }
 
-  @Test fun arrayPlusNullableParameter() {
-    val invariantNullableCloseable = KTypeProjection(KVariance.INVARIANT, Closeable::class.createType(nullable = true))
+  @Test
+  fun arrayPlusNullableParameter() {
+    val invariantNullableCloseable =
+      KTypeProjection(KVariance.INVARIANT, Closeable::class.createType(nullable = true))
     val typeName = Array<Unit>::class.createType(listOf(invariantNullableCloseable)).asTypeName()
     assertThat(typeName.toString()).isEqualTo("kotlin.Array<java.io.Closeable?>")
   }
 
-  @Test fun typeParameter() {
+  @Test
+  fun typeParameter() {
     val funWithParam: () -> Closeable = this::withParam
     val typeName = (funWithParam as KFunction<*>).returnType.asTypeName()
     assertThat(typeName.toString()).isEqualTo("Param")
   }
 
-  @Test fun nullableTypeParameter() {
+  @Test
+  fun nullableTypeParameter() {
     val funWithParam: () -> Closeable? = this::withNullableParam
     val typeName = (funWithParam as KFunction<*>).returnType.asTypeName()
     assertThat(typeName.toString()).isEqualTo("Param?")
   }
 
-  @Test fun classPlusTwoParameters() {
-    val typeName = java.util.Map::class.java
-      .plusParameter(java.lang.String::class.java)
-      .plusParameter(java.lang.Integer::class.java)
+  @Test
+  fun classPlusTwoParameters() {
+    val typeName =
+      java.util.Map::class
+        .java
+        .plusParameter(java.lang.String::class.java)
+        .plusParameter(java.lang.Integer::class.java)
     assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>")
   }
 
-  @Test fun copyingTypeArguments() {
-    val typeName = java.util.Map::class.java
-      .plusParameter(java.lang.String::class.java)
-      .plusParameter(java.lang.Integer::class.java)
-      .nestedClass(
-        "Entry",
-        listOf(
-          java.lang.String::class.java.asClassName(),
-          java.lang.Integer::class.java.asClassName(),
-        ),
-      )
-      .copy(typeArguments = listOf(STAR, STAR))
-    assertThat(typeName.toString()).isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>.Entry<*, *>")
+  @Test
+  fun copyingTypeArguments() {
+    val typeName =
+      java.util.Map::class
+        .java
+        .plusParameter(java.lang.String::class.java)
+        .plusParameter(java.lang.Integer::class.java)
+        .nestedClass(
+          "Entry",
+          listOf(
+            java.lang.String::class.java.asClassName(),
+            java.lang.Integer::class.java.asClassName(),
+          ),
+        )
+        .copy(typeArguments = listOf(STAR, STAR))
+    assertThat(typeName.toString())
+      .isEqualTo("java.util.Map<java.lang.String, java.lang.Integer>.Entry<*, *>")
   }
 
   interface Projections {
@@ -142,29 +161,39 @@ class ParameterizedTypeNameTest {
     val outAnyOnTypeWithoutBoundsAndVariance: KMutableProperty<out Any>
   }
 
-  private fun assertKTypeProjections(kType: KType) = assertThat(kType.asTypeName().toString()).isEqualTo(kType.toString())
+  private fun assertKTypeProjections(kType: KType) =
+    assertThat(kType.asTypeName().toString()).isEqualTo(kType.toString())
 
   @Test fun kTypeOutProjection() = assertKTypeProjections(Projections::outVariance.returnType)
 
   @Test fun kTypeInProjection() = assertKTypeProjections(Projections::inVariance.returnType)
 
-  @Test fun kTypeInvariantNullableProjection() = assertKTypeProjections(Projections::invariantNullable.returnType)
+  @Test
+  fun kTypeInvariantNullableProjection() =
+    assertKTypeProjections(Projections::invariantNullable.returnType)
 
   @Test fun kTypeStarProjection() = assertKTypeProjections(Projections::star.returnType)
 
-  @Test fun kTypeMultiVariantProjection() = assertKTypeProjections(Projections::multiVariant.returnType)
+  @Test
+  fun kTypeMultiVariantProjection() = assertKTypeProjections(Projections::multiVariant.returnType)
 
-  @Test fun kTypeOutAnyOnTypeWithoutBoundsVariance() = assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
+  @Test
+  fun kTypeOutAnyOnTypeWithoutBoundsVariance() =
+    assertKTypeProjections(Projections::outAnyOnTypeWithoutBoundsAndVariance.returnType)
 
-  private fun <Param : Closeable> withParam(): Param = throw NotImplementedError("for testing purposes")
+  private fun <Param : Closeable> withParam(): Param =
+    throw NotImplementedError("for testing purposes")
 
-  private fun <Param : Closeable> withNullableParam(): Param? = throw NotImplementedError("for testing purposes")
+  private fun <Param : Closeable> withNullableParam(): Param? =
+    throw NotImplementedError("for testing purposes")
 
-  @Test fun annotatedLambdaTypeParameter() {
+  @Test
+  fun annotatedLambdaTypeParameter() {
     val annotation = AnnotationSpec.builder(ClassName("", "Annotation")).build()
-    val typeName = Map::class.asTypeName()
-      .plusParameter(String::class.asTypeName())
-      .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
+    val typeName =
+      Map::class.asTypeName()
+        .plusParameter(String::class.asTypeName())
+        .plusParameter(LambdaTypeName.get(returnType = UNIT).copy(annotations = listOf(annotation)))
     assertThat(typeName.toString())
       .isEqualTo("kotlin.collections.Map<kotlin.String, @Annotation () -> kotlin.Unit>")
   }
@@ -177,19 +206,29 @@ class ParameterizedTypeNameTest {
     class Foo
   }
 
-  @Test fun equalsAndHashCode() {
-    val parameterizedTypeName1 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
-    val parameterizedTypeName2 = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+  @Test
+  fun equalsAndHashCode() {
+    val parameterizedTypeName1 =
+      Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+    val parameterizedTypeName2 =
+      Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
     assertThat(parameterizedTypeName1).isEqualTo(parameterizedTypeName2)
     assertThat(parameterizedTypeName1.hashCode()).isEqualTo(parameterizedTypeName2.hashCode())
 
     assertThat(parameterizedTypeName1.copy(nullable = true)).isNotEqualTo(parameterizedTypeName1)
 
-    assertThat(parameterizedTypeName1.copy(annotations = listOf(AnnotationSpec.builder(Suppress::class).build()))).isNotEqualTo(parameterizedTypeName1)
+    assertThat(
+        parameterizedTypeName1.copy(
+          annotations = listOf(AnnotationSpec.builder(Suppress::class).build())
+        )
+      )
+      .isNotEqualTo(parameterizedTypeName1)
   }
 
-  @Test fun equalsAndHashCodeIgnoreTags() {
-    val parameterizedTypeName = Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
+  @Test
+  fun equalsAndHashCodeIgnoreTags() {
+    val parameterizedTypeName =
+      Enclosing1.GenericClass::class.parameterizedBy(Enclosing2.Foo::class)
     val tagged = parameterizedTypeName.copy(tags = mapOf(String::class to "test"))
 
     assertThat(parameterizedTypeName).isEqualTo(tagged)
@@ -197,10 +236,12 @@ class ParameterizedTypeNameTest {
   }
 
   // https://github.com/square/kotlinpoet/issues/1914
-  @Test fun stackOverflowOnRecursivelyBoundGeneric() {
-    val method = Class.forName("kotlin.collections.ArraysKt").methods.first {
-      it.name == "max" && it.parameters.first().parameterizedType.typeName.contains("Comparable")
-    }
+  @Test
+  fun stackOverflowOnRecursivelyBoundGeneric() {
+    val method =
+      Class.forName("kotlin.collections.ArraysKt").methods.first {
+        it.name == "max" && it.parameters.first().parameterizedType.typeName.contains("Comparable")
+      }
     val kotlinFunction = method.kotlinFunction
     assertThat(kotlinFunction).isNotNull()
     val parameter = kotlinFunction!!.parameters.first()

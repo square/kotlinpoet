@@ -16,7 +16,6 @@
 kotlin = "2.2.21"
 kct = "0.11.0"
 ksp = "2.3.2"
-ktlint = "0.48.2"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -43,6 +42,8 @@ kotlin-metadata = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version
 ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp-aaEmbeddable = { module = "com.google.devtools.ksp:symbol-processing-aa-embeddable", version.ref = "ksp" }
+
+ktfmt = "com.facebook:ktfmt:0.59"
 
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.23.0" }

@@ -21,27 +21,16 @@ package com.squareup.kotlinpoet.metadata.specs
 
 import kotlin.annotation.AnnotationTarget.FILE
 
-@Target(FILE)
-annotation class FileAnnotation(val value: String)
+@Target(FILE) annotation class FileAnnotation(val value: String)
 
-@JvmName("jvmStaticFunction")
-fun jvmNameFunction() {
-}
+@JvmName("jvmStaticFunction") fun jvmNameFunction() {}
 
-fun regularFun() {
-}
+fun regularFun() {}
 
-@Synchronized
-fun synchronizedFun() {
-}
+@Synchronized fun synchronizedFun() {}
 
 @JvmOverloads
-fun jvmOverloads(
-  param1: String,
-  optionalParam2: String = "",
-  nullableParam3: String? = null,
-) {
-}
+fun jvmOverloads(param1: String, optionalParam2: String = "", nullableParam3: String? = null) {}
 
 val BOOL_PROP = false
 val BINARY_PROP = 0b00001011
@@ -75,23 +64,18 @@ const val CONST_FLOAT_PROP = 1.0f
 const val CONST_DOUBLE_PROP = 1.0
 const val CONST_STRING_PROP = "prop"
 
-@JvmField
-@JvmSynthetic
-val syntheticFieldProperty: kotlin.String? = null
+@JvmField @JvmSynthetic val syntheticFieldProperty: kotlin.String? = null
 
-@field:JvmSynthetic
-val syntheticProperty: kotlin.String? = null
+@field:JvmSynthetic val syntheticProperty: kotlin.String? = null
 
-@get:JvmSynthetic
-val syntheticPropertyGet: kotlin.String? = null
+@get:JvmSynthetic val syntheticPropertyGet: kotlin.String? = null
 
-@get:JvmSynthetic
-@set:JvmSynthetic
-var syntheticPropertyGetAndSet: kotlin.String? = null
+@get:JvmSynthetic @set:JvmSynthetic var syntheticPropertyGetAndSet: kotlin.String? = null
 
-@set:JvmSynthetic
-var syntheticPropertySet: kotlin.String? = null
+@set:JvmSynthetic var syntheticPropertySet: kotlin.String? = null
 
 typealias FacadeTypeAliasName = String
+
 typealias FacadeGenericTypeAlias = List<String>
+
 typealias FacadeNestedTypeAlias = List<GenericTypeAlias>

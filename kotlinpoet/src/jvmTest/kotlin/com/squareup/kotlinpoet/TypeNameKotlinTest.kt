@@ -60,23 +60,28 @@ class TypeNameKotlinTest {
   @Test
   fun typeNameOf_generic_wildcard_out() {
     val type = typeNameOf<GenericType<out String>>()
-    assertThat(type.toString()).isEqualTo("com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>")
+    assertThat(type.toString())
+      .isEqualTo("com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>")
   }
 
   @Test
   fun typeNameOf_generic_wildcard_in() {
     val type = typeNameOf<GenericType<in String>>()
-    assertThat(type.toString()).isEqualTo("com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.String>")
+    assertThat(type.toString())
+      .isEqualTo("com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.String>")
   }
 
   @Test
   fun typeNameOf_complex() {
-    val type = typeNameOf<Map<String, List<Map<*, GenericType<in Set<Array<GenericType<out String>?>>>>>>>()
-    assertThat(type.toString()).isEqualTo("kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.collections.Map<*, com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.collections.Set<kotlin.Array<com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>?>>>>>>")
+    val type =
+      typeNameOf<Map<String, List<Map<*, GenericType<in Set<Array<GenericType<out String>?>>>>>>>()
+    assertThat(type.toString())
+      .isEqualTo(
+        "kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.collections.Map<*, com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<in kotlin.collections.Set<kotlin.Array<com.squareup.kotlinpoet.TypeNameKotlinTest.GenericType<out kotlin.String>?>>>>>>"
+      )
   }
 
-  @Suppress("unused")
-  class GenericType<T>
+  @Suppress("unused") class GenericType<T>
 
   @Test
   fun tag() {

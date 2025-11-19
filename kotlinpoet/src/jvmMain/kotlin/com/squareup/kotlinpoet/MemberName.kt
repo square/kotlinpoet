@@ -22,14 +22,13 @@ import kotlin.reflect.KClass
  *
  * @param packageName e.g. `kotlin.collections`
  * @param enclosingClassName e.g. `Map.Entry.Companion`, if the member is declared inside the
- * companion object of the Map.Entry class
+ *   companion object of the Map.Entry class
  * @param simpleName e.g. `isBlank`, `size`
  * @param isExtension whether the member is an extension property or an extension function. Default
- * is false.
+ *   is false.
  *
  * If there is a member with the same name as this member in a local scope, the generated code will
  * include this member's fully-qualified name to avoid ambiguity, e.g.:
- *
  * ```kotlin
  * package com.squareup.tacos
  *
@@ -48,7 +47,6 @@ import kotlin.reflect.KClass
  * However, since Kotlin compiler does not allow fully-qualified extension members, if [isExtension]
  * is set to true for this [MemberName], the generated code will include an import for this member
  * and its simple name at the call site, e.g.:
- *
  * ```kotlin
  * package com.squareup.tacos
  *
@@ -68,7 +66,8 @@ import kotlin.reflect.KClass
  * ```
  */
 @ExposedCopyVisibility
-public data class MemberName internal constructor(
+public data class MemberName
+internal constructor(
   public val packageName: String,
   public val enclosingClassName: ClassName?,
   public val simpleName: String,
@@ -97,7 +96,13 @@ public data class MemberName internal constructor(
     enclosingClassName: ClassName,
     simpleName: String,
     isExtension: Boolean,
-  ) : this(enclosingClassName.packageName, enclosingClassName, simpleName, operator = null, isExtension)
+  ) : this(
+    enclosingClassName.packageName,
+    enclosingClassName,
+    simpleName,
+    operator = null,
+    isExtension,
+  )
 
   public constructor(
     packageName: String,
@@ -122,17 +127,18 @@ public data class MemberName internal constructor(
   }
 
   /**
-   * Callable reference to this member. Emits [enclosingClassName] if it exists, followed by
-   * the reference operator `::`, followed by either [simpleName] or the fully-qualified
-   * name if this is a top-level member.
+   * Callable reference to this member. Emits [enclosingClassName] if it exists, followed by the
+   * reference operator `::`, followed by either [simpleName] or the fully-qualified name if this is
+   * a top-level member.
    *
-   * Note: As `::$packageName.$simpleName` is not valid syntax, an aliased import may be
-   * required for a top-level member with a conflicting name.
+   * Note: As `::$packageName.$simpleName` is not valid syntax, an aliased import may be required
+   * for a top-level member with a conflicting name.
    */
-  public fun reference(): CodeBlock = when (enclosingClassName) {
-    null -> CodeBlock.of("::%M", this)
-    else -> CodeBlock.of("%T::%N", enclosingClassName, simpleName)
-  }
+  public fun reference(): CodeBlock =
+    when (enclosingClassName) {
+      null -> CodeBlock.of("::%M", this)
+      else -> CodeBlock.of("%T::%N", enclosingClassName, simpleName)
+    }
 
   internal fun emit(out: CodeWriter) {
     if (operator == null) {
@@ -154,16 +160,15 @@ public data class MemberName internal constructor(
 
     @JvmStatic
     @JvmName("get")
-    public fun KClass<*>.member(simpleName: String): MemberName =
-      asClassName().member(simpleName)
+    public fun KClass<*>.member(simpleName: String): MemberName = asClassName().member(simpleName)
 
     @DelicateKotlinPoetApi(
-      message = "Java reflection APIs don't give complete information on Kotlin types. Consider " +
-        "using the kotlinpoet-metadata APIs instead.",
+      message =
+        "Java reflection APIs don't give complete information on Kotlin types. Consider " +
+          "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
     @JvmName("get")
-    public fun Class<*>.member(simpleName: String): MemberName =
-      asClassName().member(simpleName)
+    public fun Class<*>.member(simpleName: String): MemberName = asClassName().member(simpleName)
   }
 }

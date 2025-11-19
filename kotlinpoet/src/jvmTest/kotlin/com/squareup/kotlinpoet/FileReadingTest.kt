@@ -24,26 +24,29 @@ import javax.tools.JavaFileObject.Kind
 import kotlin.test.Test
 
 class FileReadingTest {
-  @Test fun javaFileObjectUri() {
+  @Test
+  fun javaFileObjectUri() {
     val type = TypeSpec.classBuilder("Test").build()
-    assertThat(FileSpec.get("", type).toJavaFileObject().toUri())
-      .isEqualTo(URI.create("Test.kt"))
+    assertThat(FileSpec.get("", type).toJavaFileObject().toUri()).isEqualTo(URI.create("Test.kt"))
     assertThat(FileSpec.get("foo", type).toJavaFileObject().toUri())
       .isEqualTo(URI.create("foo/Test.kt"))
     assertThat(FileSpec.get("com.example", type).toJavaFileObject().toUri())
       .isEqualTo(URI.create("com/example/Test.kt"))
   }
 
-  @Test fun javaFileObjectKind() {
+  @Test
+  fun javaFileObjectKind() {
     val source = FileSpec.get("", TypeSpec.classBuilder("Test").build())
     assertThat(source.toJavaFileObject().kind).isEqualTo(Kind.SOURCE)
   }
 
-  @Test fun javaFileObjectCharacterContent() {
-    val type = TypeSpec.classBuilder("Test")
-      .addKdoc("Pi\u00f1ata\u00a1")
-      .addFunction(FunSpec.builder("fooBar").build())
-      .build()
+  @Test
+  fun javaFileObjectCharacterContent() {
+    val type =
+      TypeSpec.classBuilder("Test")
+        .addKdoc("Pi\u00f1ata\u00a1")
+        .addFunction(FunSpec.builder("fooBar").build())
+        .build()
     val source = FileSpec.get("foo", type)
     val javaFileObject = source.toJavaFileObject()
 
@@ -52,11 +55,13 @@ class FileReadingTest {
     assertThat(javaFileObject.getCharContent(false)).isEqualTo(source.toString())
   }
 
-  @Test fun javaFileObjectInputStreamIsUtf8() {
-    val source = FileSpec.builder("foo", "Test")
-      .addType(TypeSpec.classBuilder("Test").build())
-      .addFileComment("Pi\u00f1ata\u00a1")
-      .build()
+  @Test
+  fun javaFileObjectInputStreamIsUtf8() {
+    val source =
+      FileSpec.builder("foo", "Test")
+        .addType(TypeSpec.classBuilder("Test").build())
+        .addFileComment("Pi\u00f1ata\u00a1")
+        .build()
     val bytes = source.toJavaFileObject().openInputStream().use(InputStream::readBytes)
 
     // KotlinPoet always uses UTF-8.

@@ -60,25 +60,36 @@ import com.squareup.kotlinpoet.U_SHORT_ARRAY
 public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
   return when (copy(nullable = false)) {
     BOOLEAN -> JTypeName.BOOLEAN.boxIfPrimitive(boxIfPrimitive || isNullable)
-    BYTE, U_BYTE -> JTypeName.BYTE.boxIfPrimitive(boxIfPrimitive || isNullable)
+    BYTE,
+    U_BYTE -> JTypeName.BYTE.boxIfPrimitive(boxIfPrimitive || isNullable)
     CHAR -> JTypeName.CHAR.boxIfPrimitive(boxIfPrimitive || isNullable)
-    SHORT, U_SHORT -> JTypeName.SHORT.boxIfPrimitive(boxIfPrimitive || isNullable)
-    INT, U_INT -> JTypeName.INT.boxIfPrimitive(boxIfPrimitive || isNullable)
-    LONG, U_LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
+    SHORT,
+    U_SHORT -> JTypeName.SHORT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    INT,
+    U_INT -> JTypeName.INT.boxIfPrimitive(boxIfPrimitive || isNullable)
+    LONG,
+    U_LONG -> JTypeName.LONG.boxIfPrimitive(boxIfPrimitive || isNullable)
     FLOAT -> JTypeName.FLOAT.boxIfPrimitive(boxIfPrimitive || isNullable)
     DOUBLE -> JTypeName.DOUBLE.boxIfPrimitive(boxIfPrimitive || isNullable)
     ANY -> JTypeName.OBJECT
     CHAR_SEQUENCE -> PoetInterop.CN_JAVA_CHAR_SEQUENCE
     STRING -> PoetInterop.CN_JAVA_STRING
-    LIST, MUTABLE_LIST -> PoetInterop.CN_JAVA_LIST
-    SET, MUTABLE_SET -> PoetInterop.CN_JAVA_SET
-    MAP, MUTABLE_MAP -> PoetInterop.CN_JAVA_MAP
+    LIST,
+    MUTABLE_LIST -> PoetInterop.CN_JAVA_LIST
+    SET,
+    MUTABLE_SET -> PoetInterop.CN_JAVA_SET
+    MAP,
+    MUTABLE_MAP -> PoetInterop.CN_JAVA_MAP
     BOOLEAN_ARRAY -> ArrayTypeName.of(JTypeName.BOOLEAN)
-    BYTE_ARRAY, U_BYTE_ARRAY -> ArrayTypeName.of(JTypeName.BYTE)
+    BYTE_ARRAY,
+    U_BYTE_ARRAY -> ArrayTypeName.of(JTypeName.BYTE)
     CHAR_ARRAY -> ArrayTypeName.of(JTypeName.CHAR)
-    SHORT_ARRAY, U_SHORT_ARRAY -> ArrayTypeName.of(JTypeName.SHORT)
-    INT_ARRAY, U_INT_ARRAY -> ArrayTypeName.of(JTypeName.INT)
-    LONG_ARRAY, U_LONG_ARRAY -> ArrayTypeName.of(JTypeName.LONG)
+    SHORT_ARRAY,
+    U_SHORT_ARRAY -> ArrayTypeName.of(JTypeName.SHORT)
+    INT_ARRAY,
+    U_INT_ARRAY -> ArrayTypeName.of(JTypeName.INT)
+    LONG_ARRAY,
+    U_LONG_ARRAY -> ArrayTypeName.of(JTypeName.LONG)
     FLOAT_ARRAY -> ArrayTypeName.of(JTypeName.FLOAT)
     DOUBLE_ARRAY -> ArrayTypeName.of(JTypeName.DOUBLE)
     ENUM -> PoetInterop.CN_JAVA_ENUM
@@ -96,8 +107,9 @@ public fun KClassName.toJClassName(boxIfPrimitive: Boolean = false): JTypeName {
 public fun KParameterizedTypeName.toJParameterizedOrArrayTypeName(): JTypeName {
   return when (rawType) {
     ARRAY -> {
-      val componentType = typeArguments.firstOrNull()?.toJTypeName()
-        ?: throw IllegalStateException("Array with no type! $this")
+      val componentType =
+        typeArguments.firstOrNull()?.toJTypeName()
+          ?: throw IllegalStateException("Array with no type! $this")
       ArrayTypeName.of(componentType)
     }
     else -> {
@@ -119,7 +131,10 @@ public fun KParameterizedTypeName.toJParameterizedTypeName(): JParameterizedType
 
 @KotlinPoetJavaPoetPreview
 public fun KTypeVariableName.toJTypeVariableName(): JTypeVariableName {
-  return JTypeVariableName.get(name, *bounds.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray())
+  return JTypeVariableName.get(
+    name,
+    *bounds.map { it.toJTypeName(boxIfPrimitive = true) }.toTypedArray(),
+  )
 }
 
 @KotlinPoetJavaPoetPreview

@@ -30,21 +30,28 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
 
 /**
  * Returns an [AnnotationSpec] representation of this [KSAnnotation] instance.
+ *
  * @param omitDefaultValues omit defining default values when `true`
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
   val typeName = annotationType.resolve().toTypeName()
 
-  val builder = if (typeName is ClassName) {
-    AnnotationSpec.builder(typeName)
-  } else {
-    AnnotationSpec.builder(typeName as ParameterizedTypeName)
-  }
+  val builder =
+    if (typeName is ClassName) {
+      AnnotationSpec.builder(typeName)
+    } else {
+      AnnotationSpec.builder(typeName as ParameterizedTypeName)
+    }
 
-  val params = annotationType.resolve()
-    .resolveKSClassDeclaration()?.primaryConstructor?.parameters.orEmpty()
-    .associateBy { it.name }
+  val params =
+    annotationType
+      .resolve()
+      .resolveKSClassDeclaration()
+      ?.primaryConstructor
+      ?.parameters
+      .orEmpty()
+      .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
 
   var varargValues: List<*>? = null
@@ -82,47 +89,51 @@ private fun isDefaultValue(value: Any?, defaultValue: Any?): Boolean {
   if (defaultValue == null) return false
   if (value is KSAnnotation && defaultValue is KSAnnotation) {
     return defaultValue.defaultArguments.all { defaultValueArg ->
-      isDefaultValue(value.arguments.firstOrNull { it.name == defaultValueArg.name }?.value, defaultValueArg.value)
+      isDefaultValue(
+        value.arguments.firstOrNull { it.name == defaultValueArg.name }?.value,
+        defaultValueArg.value,
+      )
     }
   }
   if (value is List<*> && defaultValue is List<*>) {
-    return value.size == defaultValue.size && defaultValue.indices.all { index ->
-      isDefaultValue(value[index], defaultValue[index])
-    }
+    return value.size == defaultValue.size &&
+      defaultValue.indices.all { index -> isDefaultValue(value[index], defaultValue[index]) }
   }
   return value == defaultValue
 }
 
 @OptIn(ExperimentalKotlinPoetApi::class)
 private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
-  get() = when (this) {
-    AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
-    AnnotationUseSiteTarget.PROPERTY -> UseSiteTarget.PROPERTY
-    AnnotationUseSiteTarget.FIELD -> UseSiteTarget.FIELD
-    AnnotationUseSiteTarget.GET -> UseSiteTarget.GET
-    AnnotationUseSiteTarget.SET -> UseSiteTarget.SET
-    AnnotationUseSiteTarget.RECEIVER -> UseSiteTarget.RECEIVER
-    AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
-    AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
-    AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
-    AnnotationUseSiteTarget.ALL -> UseSiteTarget.ALL
-  }
+  get() =
+    when (this) {
+      AnnotationUseSiteTarget.FILE -> UseSiteTarget.FILE
+      AnnotationUseSiteTarget.PROPERTY -> UseSiteTarget.PROPERTY
+      AnnotationUseSiteTarget.FIELD -> UseSiteTarget.FIELD
+      AnnotationUseSiteTarget.GET -> UseSiteTarget.GET
+      AnnotationUseSiteTarget.SET -> UseSiteTarget.SET
+      AnnotationUseSiteTarget.RECEIVER -> UseSiteTarget.RECEIVER
+      AnnotationUseSiteTarget.PARAM -> UseSiteTarget.PARAM
+      AnnotationUseSiteTarget.SETPARAM -> UseSiteTarget.SETPARAM
+      AnnotationUseSiteTarget.DELEGATE -> UseSiteTarget.DELEGATE
+      AnnotationUseSiteTarget.ALL -> UseSiteTarget.ALL
+    }
 
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultValues: Boolean) {
   when (value) {
     is List<*> -> {
       // Array type
-      val arrayType = when (value.firstOrNull()) {
-        is Boolean -> "booleanArrayOf"
-        is Byte -> "byteArrayOf"
-        is Char -> "charArrayOf"
-        is Short -> "shortArrayOf"
-        is Int -> "intArrayOf"
-        is Long -> "longArrayOf"
-        is Float -> "floatArrayOf"
-        is Double -> "doubleArrayOf"
-        else -> "arrayOf"
-      }
+      val arrayType =
+        when (value.firstOrNull()) {
+          is Boolean -> "booleanArrayOf"
+          is Byte -> "byteArrayOf"
+          is Char -> "charArrayOf"
+          is Short -> "shortArrayOf"
+          is Int -> "intArrayOf"
+          is Long -> "longArrayOf"
+          is Float -> "floatArrayOf"
+          is Double -> "doubleArrayOf"
+          else -> "arrayOf"
+        }
       member.add("$arrayType(⇥⇥")
       value.forEachIndexed { index, innerValue ->
         if (index > 0) member.add(", ")
@@ -135,8 +146,11 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
       val declaration = value.resolveKSClassDeclaration() ?: error("Cannot resolve type of $value")
       val isEnum = declaration.classKind == ClassKind.ENUM_ENTRY
       if (isEnum) {
-        val parent = declaration.parentDeclaration?.resolveKSClassDeclaration()
-          ?: error("Could not resolve enclosing enum class of entry ${declaration.qualifiedName?.asString()}")
+        val parent =
+          declaration.parentDeclaration?.resolveKSClassDeclaration()
+            ?: error(
+              "Could not resolve enclosing enum class of entry ${declaration.qualifiedName?.asString()}"
+            )
         val entry = declaration.simpleName.getShortName()
         member.add("%T.%L", parent.toClassName(), entry)
       } else {
@@ -146,18 +160,11 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
 
     is KSClassDeclaration -> {
       check(value.classKind == ClassKind.ENUM_ENTRY)
-      member.add(
-        "%T",
-        value.toClassName(),
-      )
+      member.add("%T", value.toClassName())
     }
 
     is KSName ->
-      member.add(
-        "%T.%L",
-        ClassName.bestGuess(value.getQualifier()),
-        value.getShortName(),
-      )
+      member.add("%T.%L", ClassName.bestGuess(value.getQualifier()), value.getShortName())
 
     is KSAnnotation -> member.add("%L", value.toAnnotationSpec(omitDefaultValues))
     else -> member.add(memberForValue(value))
@@ -165,19 +172,19 @@ private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultVa
 }
 
 /**
- * Creates a [CodeBlock] with parameter `format` depending on the given `value` object.
- * Handles a number of special cases, such as appending "f" to `Float` values, and uses
- * `%L` for other types.
+ * Creates a [CodeBlock] with parameter `format` depending on the given `value` object. Handles a
+ * number of special cases, such as appending "f" to `Float` values, and uses `%L` for other types.
  */
-internal fun memberForValue(value: Any) = when (value) {
-  is Class<*> -> CodeBlock.of("%T::class", value)
-  is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
-  is String -> CodeBlock.of("%S", value)
-  is Float -> CodeBlock.of("%Lf", value)
-  is Double -> CodeBlock.of("%L", value)
-  is Char -> CodeBlock.of("'%L'", value)
-  is Byte -> CodeBlock.of("$value.toByte()")
-  is Short -> CodeBlock.of("$value.toShort()")
-  // Int or Boolean
-  else -> CodeBlock.of("%L", value)
-}
+internal fun memberForValue(value: Any) =
+  when (value) {
+    is Class<*> -> CodeBlock.of("%T::class", value)
+    is Enum<*> -> CodeBlock.of("%T.%L", value.javaClass, value.name)
+    is String -> CodeBlock.of("%S", value)
+    is Float -> CodeBlock.of("%Lf", value)
+    is Double -> CodeBlock.of("%L", value)
+    is Char -> CodeBlock.of("'%L'", value)
+    is Byte -> CodeBlock.of("$value.toByte()")
+    is Short -> CodeBlock.of("$value.toShort()")
+    // Int or Boolean
+    else -> CodeBlock.of("%L", value)
+  }

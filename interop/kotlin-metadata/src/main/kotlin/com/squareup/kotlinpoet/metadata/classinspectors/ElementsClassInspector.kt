@@ -85,32 +85,35 @@ import kotlin.metadata.kind
 
 private typealias ElementsModifier = javax.lang.model.element.Modifier
 
-/**
- * An [Elements]-based implementation of [ClassInspector].
- */
-public class ElementsClassInspector private constructor(
+/** An [Elements]-based implementation of [ClassInspector]. */
+public class ElementsClassInspector
+private constructor(
   private val lenient: Boolean,
   private val elements: Elements,
   private val types: Types,
 ) : ClassInspector {
   private val typeElementCache = ConcurrentHashMap<ClassName, Optional<TypeElement>>()
-  private val methodCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
-  private val variableElementCache = ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
+  private val methodCache =
+    ConcurrentHashMap<Pair<TypeElement, String>, Optional<ExecutableElement>>()
+  private val variableElementCache =
+    ConcurrentHashMap<Pair<TypeElement, String>, Optional<VariableElement>>()
   private val jvmNameType = elements.getTypeElement(JVM_NAME.canonicalName)
-  private val jvmNameName = ElementFilter.methodsIn(jvmNameType.enclosedElements)
-    .first { it.simpleName.toString() == "name" }
+  private val jvmNameName =
+    ElementFilter.methodsIn(jvmNameType.enclosedElements).first {
+      it.simpleName.toString() == "name"
+    }
 
   private fun lookupTypeElement(className: ClassName): TypeElement? {
-    return typeElementCache.getOrPut(className) {
-      elements.getTypeElement(className.canonicalName).toOptional()
-    }.nullableValue
+    return typeElementCache
+      .getOrPut(className) { elements.getTypeElement(className.canonicalName).toOptional() }
+      .nullableValue
   }
 
   override val supportsNonRuntimeRetainedAnnotations: Boolean = true
 
   override fun declarationContainerFor(className: ClassName): KmDeclarationContainer {
-    val typeElement = lookupTypeElement(className)
-      ?: error("No type element found for: $className.")
+    val typeElement =
+      lookupTypeElement(className) ?: error("No type element found for: $className.")
 
     val metadata = typeElement.getAnnotation(Metadata::class.java)
     return when (val kotlinClassMetadata = metadata.readKotlinClassMetadata(lenient)) {
@@ -129,10 +132,13 @@ public class ElementsClassInspector private constructor(
 
   private fun TypeElement.lookupField(fieldSignature: JvmFieldSignature): VariableElement? {
     val signatureString = fieldSignature.toString()
-    return variableElementCache.getOrPut(this to signatureString) {
-      ElementFilter.fieldsIn(enclosedElements)
-        .find { signatureString == it.jvmFieldSignature(types) }.toOptional()
-    }.nullableValue
+    return variableElementCache
+      .getOrPut(this to signatureString) {
+        ElementFilter.fieldsIn(enclosedElements)
+          .find { signatureString == it.jvmFieldSignature(types) }
+          .toOptional()
+      }
+      .nullableValue
   }
 
   private fun lookupMethod(
@@ -148,10 +154,13 @@ public class ElementsClassInspector private constructor(
     elementFilter: (Iterable<Element>) -> List<ExecutableElement>,
   ): ExecutableElement? {
     val signatureString = methodSignature.toString()
-    return methodCache.getOrPut(this to signatureString) {
-      elementFilter(enclosedElements)
-        .find { signatureString == it.jvmMethodSignature(types) }.toOptional()
-    }.nullableValue
+    return methodCache
+      .getOrPut(this to signatureString) {
+        elementFilter(enclosedElements)
+          .find { signatureString == it.jvmMethodSignature(types) }
+          .toOptional()
+      }
+      .nullableValue
   }
 
   private fun VariableElement.jvmModifiers(isJvmField: Boolean): Set<JvmFieldModifier> {
@@ -167,9 +176,7 @@ public class ElementsClassInspector private constructor(
 
   @OptIn(DelicateKotlinPoetApi::class)
   private fun VariableElement.annotationSpecs(): List<AnnotationSpec> {
-    return filterOutNullabilityAnnotations(
-      annotationMirrors.map { AnnotationSpec.get(it) },
-    )
+    return filterOutNullabilityAnnotations(annotationMirrors.map { AnnotationSpec.get(it) })
   }
 
   private fun ExecutableElement.jvmModifiers(): Set<JvmMethodModifier> {
@@ -185,9 +192,7 @@ public class ElementsClassInspector private constructor(
 
   @OptIn(DelicateKotlinPoetApi::class)
   private fun ExecutableElement.annotationSpecs(): List<AnnotationSpec> {
-    return filterOutNullabilityAnnotations(
-      annotationMirrors.map { AnnotationSpec.get(it) },
-    )
+    return filterOutNullabilityAnnotations(annotationMirrors.map { AnnotationSpec.get(it) })
   }
 
   @OptIn(DelicateKotlinPoetApi::class)
@@ -196,20 +201,25 @@ public class ElementsClassInspector private constructor(
   }
 
   override fun enumEntry(enumClassName: ClassName, memberName: String): EnumEntryData {
-    val enumType = lookupTypeElement(enumClassName)
-      ?: error("No type element found for: $enumClassName.")
+    val enumType =
+      lookupTypeElement(enumClassName) ?: error("No type element found for: $enumClassName.")
     val enumTypeAsType = enumType.asType()
-    val member = typeElementCache.getOrPut(enumClassName.nestedClass(memberName)) {
-      ElementFilter.typesIn(enumType.enclosedElements)
-        .asSequence()
-        .filter { types.isSubtype(enumTypeAsType, it.superclass) }
-        .find { it.simpleName.contentEquals(memberName) }.toOptional()
-    }.nullableValue
+    val member =
+      typeElementCache
+        .getOrPut(enumClassName.nestedClass(memberName)) {
+          ElementFilter.typesIn(enumType.enclosedElements)
+            .asSequence()
+            .filter { types.isSubtype(enumTypeAsType, it.superclass) }
+            .find { it.simpleName.contentEquals(memberName) }
+            .toOptional()
+        }
+        .nullableValue
     val declarationContainer = member?.getAnnotation(Metadata::class.java)?.toKmClass(lenient)
 
-    val entry = ElementFilter.fieldsIn(enumType.enclosedElements)
-      .find { it.simpleName.contentEquals(memberName) }
-      ?: error("Could not find the enum entry for: $enumClassName")
+    val entry =
+      ElementFilter.fieldsIn(enumType.enclosedElements).find {
+        it.simpleName.contentEquals(memberName)
+      } ?: error("Could not find the enum entry for: $enumClassName")
 
     return EnumEntryData(
       declarationContainer = declarationContainer,
@@ -228,9 +238,8 @@ public class ElementsClassInspector private constructor(
   /**
    * Detects whether [this] given method is overridden in [type].
    *
-   * Adapted and simplified from AutoCommon's private
-   * [MoreElements.getLocalAndInheritedMethods] methods implementations for detecting
-   * overrides.
+   * Adapted and simplified from AutoCommon's private [MoreElements.getLocalAndInheritedMethods]
+   * methods implementations for detecting overrides.
    */
   private fun ExecutableElement.isOverriddenIn(type: TypeElement): Boolean {
     val methodMap = mutableMapOf<String, MutableList<ExecutableElement>>()
@@ -246,21 +255,22 @@ public class ElementsClassInspector private constructor(
     //       and compare against only preceding ones.
     val methodList = methodMap[simpleName.toString()] ?: return false
     val signature = jvmMethodSignature(types)
-    return methodList.asSequence()
+    return methodList
+      .asSequence()
       .filter { it.jvmMethodSignature(types) == signature }
       .take(1)
       .any { elements.overrides(this, it, type) }
   }
 
   /**
-   * Add to [methodsAccumulator] the instance methods from [this] that are visible to code in
-   * the package [pkg]. This means all the instance methods from [this] itself and all
-   * instance methods it inherits from its ancestors, except private methods and
-   * package-private methods in other packages. This method does not take overriding into
-   * account, so it will add both an ancestor method and a descendant method that overrides
-   * it. [methodsAccumulator] is a multimap from a method name to all of the methods with
-   * that name, including methods that override or overload one another. Within those
-   * methods, those in ancestor types always precede those in descendant types.
+   * Add to [methodsAccumulator] the instance methods from [this] that are visible to code in the
+   * package [pkg]. This means all the instance methods from [this] itself and all instance methods
+   * it inherits from its ancestors, except private methods and package-private methods in other
+   * packages. This method does not take overriding into account, so it will add both an ancestor
+   * method and a descendant method that overrides it. [methodsAccumulator] is a multimap from a
+   * method name to all of the methods with that name, including methods that override or overload
+   * one another. Within those methods, those in ancestor types always precede those in descendant
+   * types.
    *
    * Adapted from AutoCommon's private [MoreElements.getLocalAndInheritedMethods] methods'
    * implementations, before overridden methods are stripped.
@@ -278,10 +288,11 @@ public class ElementsClassInspector private constructor(
       MoreTypes.asTypeElement(superclass).getAllMethods(pkg, methodsAccumulator)
     }
     for (method in ElementFilter.methodsIn(enclosedElements)) {
-      if (ElementsModifier.STATIC !in method.modifiers &&
-        ElementsModifier.FINAL !in method.modifiers &&
-        ElementsModifier.PRIVATE !in method.modifiers &&
-        method.isVisibleFrom(pkg)
+      if (
+        ElementsModifier.STATIC !in method.modifiers &&
+          ElementsModifier.FINAL !in method.modifiers &&
+          ElementsModifier.PRIVATE !in method.modifiers &&
+          method.isVisibleFrom(pkg)
       ) {
         methodsAccumulator.getOrPut(method.simpleName.toString(), ::ArrayList).add(method)
       }
@@ -306,162 +317,180 @@ public class ElementsClassInspector private constructor(
     className: ClassName,
     parentClassName: ClassName?,
   ): ContainerData {
-    val typeElement: TypeElement = lookupTypeElement(className) ?: error("No class found for: $className.")
-    val isCompanionObject = when (declarationContainer) {
-      is KmClass -> {
-        declarationContainer.kind == ClassKind.COMPANION_OBJECT
+    val typeElement: TypeElement =
+      lookupTypeElement(className) ?: error("No class found for: $className.")
+    val isCompanionObject =
+      when (declarationContainer) {
+        is KmClass -> {
+          declarationContainer.kind == ClassKind.COMPANION_OBJECT
+        }
+        is KmPackage -> {
+          false
+        }
+        else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
       }
-      is KmPackage -> {
-        false
-      }
-      else -> TODO("Not implemented yet: ${declarationContainer.javaClass.simpleName}")
-    }
 
     // Should only be called if parentName has been null-checked
-    val classIfCompanion by lazy(NONE) {
-      if (isCompanionObject && parentClassName != null) {
-        lookupTypeElement(parentClassName)
-          ?: error("No class found for: $parentClassName.")
-      } else {
-        typeElement
+    val classIfCompanion by
+      lazy(NONE) {
+        if (isCompanionObject && parentClassName != null) {
+          lookupTypeElement(parentClassName) ?: error("No class found for: $parentClassName.")
+        } else {
+          typeElement
+        }
       }
-    }
 
-    val propertyData = declarationContainer.properties
-      .asSequence()
-      .filter { it.kind.isDeclaration }
-      .associateWithTo(TreeMap(KM_PROPERTY_COMPARATOR)) { property ->
-        val isJvmField = ClassInspectorUtil.computeIsJvmField(
-          property = property,
-          classInspector = this,
-          isCompanionObject = isCompanionObject,
-          hasGetter = property.getterSignature != null,
-          hasSetter = property.setterSignature != null,
-          hasField = property.fieldSignature != null,
-        )
-
-        val fieldData = property.fieldSignature?.let fieldDataLet@{ fieldSignature ->
-          // Check the field in the parent first. For const/static/jvmField elements, these only
-          // exist in the parent and we want to check that if necessary to avoid looking up a
-          // non-existent field in the companion.
-          val parentModifiers = if (isCompanionObject && parentClassName != null) {
-            classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
-          } else {
-            emptySet()
-          }
-
-          val isStatic = JvmFieldModifier.STATIC in parentModifiers
-
-          // TODO we looked up field once, let's reuse it
-          val classForOriginalField = typeElement.takeUnless {
-            isCompanionObject &&
-              (property.isConst || isJvmField || isStatic)
-          } ?: classIfCompanion
-
-          val field = classForOriginalField.lookupField(fieldSignature)
-            ?: return@fieldDataLet FieldData.SYNTHETIC
-          val constant = if (property.hasConstant) {
-            val fieldWithConstant = classIfCompanion.takeIf { it != typeElement }?.let {
-              if (it.kind.isInterface) {
-                field
-              } else {
-                // const properties are relocated to the enclosing class
-                it.lookupField(fieldSignature)
-                  ?: return@fieldDataLet FieldData.SYNTHETIC
-              }
-            } ?: field
-            fieldWithConstant.constantValue()
-          } else {
-            null
-          }
-
-          val jvmModifiers = field.jvmModifiers(isJvmField) + parentModifiers
-
-          FieldData(
-            annotations = field.annotationSpecs(),
-            isSynthetic = false,
-            jvmModifiers = jvmModifiers.filterNotTo(mutableSetOf()) {
-              // JvmField companion objects don't need JvmStatic, it's implicit
-              isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
-            },
-            constant = constant,
-          )
-        }
-
-        val getterData = property.getterSignature?.let { getterSignature ->
-          val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
-          method?.methodData(
-            typeElement = typeElement,
-            hasAnnotations = property.getter.hasAnnotationsInBytecode,
-            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-              ?.lookupMethod(getterSignature, ElementFilter::methodsIn)
-              ?: method,
-          )
-            ?: return@let MethodData.SYNTHETIC
-        }
-
-        val setterData = property.setterSignature?.let { setterSignature ->
-          val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
-          method?.methodData(
-            typeElement = typeElement,
-            hasAnnotations = property.setter?.hasAnnotationsInBytecode ?: false,
-            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-              ?.lookupMethod(setterSignature, ElementFilter::methodsIn)
-              ?: method,
-            knownIsOverride = getterData?.isOverride,
-          )
-            ?: return@let MethodData.SYNTHETIC
-        }
-
-        val annotations = mutableListOf<AnnotationSpec>()
-        if (property.hasAnnotationsInBytecode) {
-          property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
-            val method = typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
-              ?: return@let MethodData.SYNTHETIC
-            annotations += method.annotationSpecs()
-              // Cover for https://github.com/square/kotlinpoet/issues/1046
-              .filterNot { it.typeName == JAVA_DEPRECATED }
-          }
-        }
-
-        // If a field is static in a companion object, remove the modifier and add the annotation
-        // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
-        // not legal
-        var finalFieldData = fieldData
-        fieldData?.jvmModifiers?.let { modifiers ->
-          if (isCompanionObject && JvmFieldModifier.STATIC in modifiers) {
-            finalFieldData = fieldData.copy(
-              jvmModifiers = fieldData.jvmModifiers
-                .filterNotTo(LinkedHashSet()) { it == JvmFieldModifier.STATIC },
+    val propertyData =
+      declarationContainer.properties
+        .asSequence()
+        .filter { it.kind.isDeclaration }
+        .associateWithTo(TreeMap(KM_PROPERTY_COMPARATOR)) { property ->
+          val isJvmField =
+            ClassInspectorUtil.computeIsJvmField(
+              property = property,
+              classInspector = this,
+              isCompanionObject = isCompanionObject,
+              hasGetter = property.getterSignature != null,
+              hasSetter = property.setterSignature != null,
+              hasField = property.fieldSignature != null,
             )
-            annotations += AnnotationSpec.builder(
-              JVM_STATIC,
-            ).build()
+
+          val fieldData =
+            property.fieldSignature?.let fieldDataLet@{ fieldSignature ->
+              // Check the field in the parent first. For const/static/jvmField elements, these only
+              // exist in the parent and we want to check that if necessary to avoid looking up a
+              // non-existent field in the companion.
+              val parentModifiers =
+                if (isCompanionObject && parentClassName != null) {
+                  classIfCompanion.lookupField(fieldSignature)?.jvmModifiers(isJvmField).orEmpty()
+                } else {
+                  emptySet()
+                }
+
+              val isStatic = JvmFieldModifier.STATIC in parentModifiers
+
+              // TODO we looked up field once, let's reuse it
+              val classForOriginalField =
+                typeElement.takeUnless {
+                  isCompanionObject && (property.isConst || isJvmField || isStatic)
+                } ?: classIfCompanion
+
+              val field =
+                classForOriginalField.lookupField(fieldSignature)
+                  ?: return@fieldDataLet FieldData.SYNTHETIC
+              val constant =
+                if (property.hasConstant) {
+                  val fieldWithConstant =
+                    classIfCompanion
+                      .takeIf { it != typeElement }
+                      ?.let {
+                        if (it.kind.isInterface) {
+                          field
+                        } else {
+                          // const properties are relocated to the enclosing class
+                          it.lookupField(fieldSignature) ?: return@fieldDataLet FieldData.SYNTHETIC
+                        }
+                      } ?: field
+                  fieldWithConstant.constantValue()
+                } else {
+                  null
+                }
+
+              val jvmModifiers = field.jvmModifiers(isJvmField) + parentModifiers
+
+              FieldData(
+                annotations = field.annotationSpecs(),
+                isSynthetic = false,
+                jvmModifiers =
+                  jvmModifiers.filterNotTo(mutableSetOf()) {
+                    // JvmField companion objects don't need JvmStatic, it's implicit
+                    isCompanionObject && isJvmField && it == JvmFieldModifier.STATIC
+                  },
+                constant = constant,
+              )
+            }
+
+          val getterData =
+            property.getterSignature?.let { getterSignature ->
+              val method = classIfCompanion.lookupMethod(getterSignature, ElementFilter::methodsIn)
+              method?.methodData(
+                typeElement = typeElement,
+                hasAnnotations = property.getter.hasAnnotationsInBytecode,
+                jvmInformationMethod =
+                  classIfCompanion
+                    .takeIf { it != typeElement }
+                    ?.lookupMethod(getterSignature, ElementFilter::methodsIn) ?: method,
+              ) ?: return@let MethodData.SYNTHETIC
+            }
+
+          val setterData =
+            property.setterSignature?.let { setterSignature ->
+              val method = classIfCompanion.lookupMethod(setterSignature, ElementFilter::methodsIn)
+              method?.methodData(
+                typeElement = typeElement,
+                hasAnnotations = property.setter?.hasAnnotationsInBytecode ?: false,
+                jvmInformationMethod =
+                  classIfCompanion
+                    .takeIf { it != typeElement }
+                    ?.lookupMethod(setterSignature, ElementFilter::methodsIn) ?: method,
+                knownIsOverride = getterData?.isOverride,
+              ) ?: return@let MethodData.SYNTHETIC
+            }
+
+          val annotations = mutableListOf<AnnotationSpec>()
+          if (property.hasAnnotationsInBytecode) {
+            property.syntheticMethodForAnnotations?.let { annotationsHolderSignature ->
+              val method =
+                typeElement.lookupMethod(annotationsHolderSignature, ElementFilter::methodsIn)
+                  ?: return@let MethodData.SYNTHETIC
+              annotations +=
+                method
+                  .annotationSpecs()
+                  // Cover for https://github.com/square/kotlinpoet/issues/1046
+                  .filterNot { it.typeName == JAVA_DEPRECATED }
+            }
           }
+
+          // If a field is static in a companion object, remove the modifier and add the annotation
+          // directly on the top level. Otherwise this will generate `@field:JvmStatic`, which is
+          // not legal
+          var finalFieldData = fieldData
+          fieldData?.jvmModifiers?.let { modifiers ->
+            if (isCompanionObject && JvmFieldModifier.STATIC in modifiers) {
+              finalFieldData =
+                fieldData.copy(
+                  jvmModifiers =
+                    fieldData.jvmModifiers.filterNotTo(LinkedHashSet()) {
+                      it == JvmFieldModifier.STATIC
+                    }
+                )
+              annotations += AnnotationSpec.builder(JVM_STATIC).build()
+            }
+          }
+
+          PropertyData(
+            annotations = annotations,
+            fieldData = finalFieldData,
+            getterData = getterData,
+            setterData = setterData,
+            isJvmField = isJvmField,
+          )
         }
 
-        PropertyData(
-          annotations = annotations,
-          fieldData = finalFieldData,
-          getterData = getterData,
-          setterData = setterData,
-          isJvmField = isJvmField,
-        )
-      }
-
-    val methodData = declarationContainer.functions
-      .associateWithTo(TreeMap(KM_FUNCTION_COMPARATOR)) { kmFunction ->
+    val methodData =
+      declarationContainer.functions.associateWithTo(TreeMap(KM_FUNCTION_COMPARATOR)) { kmFunction
+        ->
         val signature = kmFunction.signature
         if (signature != null) {
           val method = typeElement.lookupMethod(signature, ElementFilter::methodsIn)
           method?.methodData(
             typeElement = typeElement,
             hasAnnotations = kmFunction.hasAnnotationsInBytecode,
-            jvmInformationMethod = classIfCompanion.takeIf { it != typeElement }
-              ?.lookupMethod(signature, ElementFilter::methodsIn)
-              ?: method,
-          )
-            ?: return@associateWithTo MethodData.SYNTHETIC
+            jvmInformationMethod =
+              classIfCompanion
+                .takeIf { it != typeElement }
+                ?.lookupMethod(signature, ElementFilter::methodsIn) ?: method,
+          ) ?: return@associateWithTo MethodData.SYNTHETIC
         } else {
           MethodData.EMPTY
         }
@@ -469,9 +498,13 @@ public class ElementsClassInspector private constructor(
 
     when (declarationContainer) {
       is KmClass -> {
-        val constructorData = declarationContainer.constructors
-          .associateWithTo(TreeMap(KM_CONSTRUCTOR_COMPARATOR)) { kmConstructor ->
-            if (declarationContainer.kind == ClassKind.ANNOTATION_CLASS || declarationContainer.isValue) {
+        val constructorData =
+          declarationContainer.constructors.associateWithTo(TreeMap(KM_CONSTRUCTOR_COMPARATOR)) {
+            kmConstructor ->
+            if (
+              declarationContainer.kind == ClassKind.ANNOTATION_CLASS ||
+                declarationContainer.isValue
+            ) {
               //
               // Annotations are interfaces in bytecode, but kotlin metadata will still report a
               // constructor signature
@@ -482,14 +515,16 @@ public class ElementsClassInspector private constructor(
             }
             val signature = kmConstructor.signature
             if (signature != null) {
-              val constructor = typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
-                ?: return@associateWithTo ConstructorData.EMPTY
+              val constructor =
+                typeElement.lookupMethod(signature, ElementFilter::constructorsIn)
+                  ?: return@associateWithTo ConstructorData.EMPTY
               ConstructorData(
-                annotations = if (kmConstructor.hasAnnotationsInBytecode) {
-                  constructor.annotationSpecs()
-                } else {
-                  emptyList()
-                },
+                annotations =
+                  if (kmConstructor.hasAnnotationsInBytecode) {
+                    constructor.annotationSpecs()
+                  } else {
+                    emptyList()
+                  },
                 parameterAnnotations = constructor.parameters.indexedAnnotationSpecs(),
                 isSynthetic = false,
                 jvmModifiers = constructor.jvmModifiers(),
@@ -502,13 +537,14 @@ public class ElementsClassInspector private constructor(
         return ClassData(
           declarationContainer = declarationContainer,
           className = className,
-          annotations = if (declarationContainer.hasAnnotationsInBytecode) {
-            ClassInspectorUtil.createAnnotations {
-              addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
-            }
-          } else {
-            emptyList()
-          },
+          annotations =
+            if (declarationContainer.hasAnnotationsInBytecode) {
+              ClassInspectorUtil.createAnnotations {
+                addAll(typeElement.annotationMirrors.map { AnnotationSpec.get(it) })
+              }
+            } else {
+              emptyList()
+            },
           properties = propertyData,
           constructors = constructorData,
           methods = methodData,
@@ -519,19 +555,21 @@ public class ElementsClassInspector private constructor(
         // case. All annotations on this class are file: site targets in source. This includes
         // @JvmName.
         var jvmName: String? = null
-        val fileAnnotations = ClassInspectorUtil.createAnnotations(FILE) {
-          addAll(
-            typeElement.annotationMirrors.map {
-              if (it.annotationType == jvmNameType) {
-                val nameValue = requireNotNull(it.elementValues[jvmNameName]) {
-                  "No name property found on $it"
+        val fileAnnotations =
+          ClassInspectorUtil.createAnnotations(FILE) {
+            addAll(
+              typeElement.annotationMirrors.map {
+                if (it.annotationType == jvmNameType) {
+                  val nameValue =
+                    requireNotNull(it.elementValues[jvmNameName]) {
+                      "No name property found on $it"
+                    }
+                  jvmName = nameValue.value as String
                 }
-                jvmName = nameValue.value as String
+                AnnotationSpec.get(it)
               }
-              AnnotationSpec.get(it)
-            },
-          )
-        }
+            )
+          }
         return FileData(
           declarationContainer = declarationContainer,
           annotations = fileAnnotations,
@@ -569,7 +607,8 @@ public class ElementsClassInspector private constructor(
 
   public companion object {
     /**
-     * @param lenient see docs on [KotlinClassMetadata.readStrict] and [KotlinClassMetadata.readLenient] for more details.
+     * @param lenient see docs on [KotlinClassMetadata.readStrict] and
+     *   [KotlinClassMetadata.readLenient] for more details.
      * @return an [Elements]-based implementation of [ClassInspector].
      */
     @JvmStatic

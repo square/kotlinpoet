@@ -31,38 +31,38 @@ internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
 internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
 
 // TODO Waiting for `CodeBlock` migration.
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) = if (isEmpty()) {
-  this
-} else {
-  with(toBuilder()) {
-    val lastFormatPart = trim().formatParts.last()
-    if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-      val lastArg = args.last()
-      if (lastArg is String) {
-        val trimmedArg = lastArg.trimEnd('\n')
-        args[args.size - 1] = if (replaceWith != null) {
-          trimmedArg + replaceWith
-        } else {
-          trimmedArg
+internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
+  if (isEmpty()) {
+    this
+  } else {
+    with(toBuilder()) {
+      val lastFormatPart = trim().formatParts.last()
+      if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
+        val lastArg = args.last()
+        if (lastArg is String) {
+          val trimmedArg = lastArg.trimEnd('\n')
+          args[args.size - 1] =
+            if (replaceWith != null) {
+              trimmedArg + replaceWith
+            } else {
+              trimmedArg
+            }
+        }
+      } else {
+        formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+        if (replaceWith != null) {
+          formatParts += "$replaceWith"
         }
       }
-    } else {
-      formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
-      if (replaceWith != null) {
-        formatParts += "$replaceWith"
-      }
+      return@with build()
     }
-    return@with build()
   }
-}
 
 private val IDENTIFIER_REGEX = IDENTIFIER_REGEX_VALUE.toRegex()
 
 internal actual val String.isIdentifier: Boolean
   get() = IDENTIFIER_REGEX.matches(this)
 
-internal actual fun Char.isJavaIdentifierStart(): Boolean =
-  Character.isJavaIdentifierStart(this)
+internal actual fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
-internal actual fun Char.isJavaIdentifierPart(): Boolean =
-  Character.isJavaIdentifierPart(this)
+internal actual fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart(this)

@@ -21,9 +21,8 @@ import kotlin.random.nextULong
 
 /**
  * Assigns Kotlin identifier names to avoid collisions, keywords, and invalid characters. To use,
- * first create an instance and allocate all of the names that you need. Typically this is a
- * mix of user-supplied names and constants:
- *
+ * first create an instance and allocate all of the names that you need. Typically this is a mix of
+ * user-supplied names and constants:
  * ```kotlin
  * val nameAllocator = NameAllocator()
  * for (property in properties) {
@@ -38,7 +37,6 @@ import kotlin.random.nextULong
  * constant string builder.
  *
  * Once we've allocated names we can use them when generating code:
- *
  * ```kotlin
  * val builder = FunSpec.builder("toString")
  *     .addModifiers(KModifier.OVERRIDE)
@@ -57,7 +55,6 @@ import kotlin.random.nextULong
  *
  * The above code generates unique names if presented with conflicts. Given user-supplied properties
  * with names `ab` and `sb` this generates the following:
- *
  * ```kotlin
  * override fun toString(): kotlin.String {
  *   val sb_ = java.lang.StringBuilder()
@@ -75,23 +72,23 @@ import kotlin.random.nextULong
  * NameAllocator used for the outer scope to further refine name allocation for a specific inner
  * scope.
  */
-public class NameAllocator private constructor(
+public class NameAllocator
+private constructor(
   private val allocatedNames: MutableSet<String>,
   private val tagToName: MutableMap<Any, String>,
 ) {
   public constructor() : this(preallocateKeywords = true)
 
   /**
-   * @param preallocateKeywords If true, all Kotlin keywords will be preallocated. Requested names which
-   * collide with keywords will be suffixed with underscores to avoid being used as identifiers:
-   *
+   * @param preallocateKeywords If true, all Kotlin keywords will be preallocated. Requested names
+   *   which collide with keywords will be suffixed with underscores to avoid being used as
+   *   identifiers:
    * ```kotlin
    * val nameAllocator = NameAllocator(preallocateKeywords = true)
    * println(nameAllocator.newName("when")) // prints "when_"
    * ```
    *
    * If false, keywords will not get any special treatment:
-   *
    * ```kotlin
    * val nameAllocator = NameAllocator(preallocateKeywords = false)
    * println(nameAllocator.newName("when")) // prints "when"
@@ -99,16 +96,17 @@ public class NameAllocator private constructor(
    *
    * Note that you can use the `%N` placeholder when emitting a name produced by [NameAllocator] to
    * ensure it's properly escaped for use as an identifier:
-   *
    * ```kotlin
    * val nameAllocator = NameAllocator(preallocateKeywords = false)
    * println(CodeBlock.of("%N", nameAllocator.newName("when"))) // prints "`when`"
    * ```
    *
-   * The default behaviour of [NameAllocator] is to preallocate keywords - this is the behaviour you'll
-   * get when using the no-arg constructor.
+   * The default behaviour of [NameAllocator] is to preallocate keywords - this is the behaviour
+   * you'll get when using the no-arg constructor.
    */
-  public constructor(preallocateKeywords: Boolean) : this(
+  public constructor(
+    preallocateKeywords: Boolean
+  ) : this(
     allocatedNames = if (preallocateKeywords) KEYWORDS.toMutableSet() else mutableSetOf(),
     tagToName = mutableMapOf(),
   )
@@ -118,7 +116,8 @@ public class NameAllocator private constructor(
    * names. The returned value can be queried multiple times by passing `tag` to
    * [NameAllocator.get].
    */
-  @JvmOverloads public fun newName(
+  @JvmOverloads
+  public fun newName(
     suggestion: String,
     // TODO It's possible to use `kotlin.uuid.Uuid` when it's stable
     tag: Any = Random.nextULong().toString(16).padStart(16, '0'),
@@ -144,8 +143,8 @@ public class NameAllocator private constructor(
   public operator fun contains(tag: Any): Boolean = tag in tagToName
 
   /**
-   * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
-   * of a NameAllocator to be used in the respective definition of multiples, independently-scoped,
+   * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements of
+   * a NameAllocator to be used in the respective definition of multiples, independently-scoped,
    * inner code blocks.
    *
    * @return A deep copy of this NameAllocator.
@@ -159,18 +158,16 @@ private fun toJavaIdentifier(suggestion: String) = buildString {
   var i = 0
   while (i < suggestion.length) {
     val codePoint = suggestion.codePointAt(i)
-    if (i == 0 &&
-      !codePoint.isJavaIdentifierStart() &&
-      codePoint.isJavaIdentifierPart()
-    ) {
+    if (i == 0 && !codePoint.isJavaIdentifierStart() && codePoint.isJavaIdentifierPart()) {
       append("_")
     }
 
-    val validCodePoint: CodePoint = if (codePoint.isJavaIdentifierPart()) {
-      codePoint
-    } else {
-      CodePoint('_'.code)
-    }
+    val validCodePoint: CodePoint =
+      if (codePoint.isJavaIdentifierPart()) {
+        codePoint
+      } else {
+        CodePoint('_'.code)
+      }
     appendCodePoint(validCodePoint)
     i += codePoint.charCount()
   }

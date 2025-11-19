@@ -32,6 +32,7 @@ import com.squareup.kotlinpoet.TypeVariableName
  */
 public interface TypeParameterResolver {
   public val parametersMap: Map<String, TypeVariableName>
+
   public operator fun get(index: String): TypeVariableName
 
   public companion object {
@@ -39,11 +40,13 @@ public interface TypeParameterResolver {
      * An empty instance of [TypeParameterResolver], only should be used if enclosing declarations
      * are known to not have arguments, such as top-level classes.
      */
-    public val EMPTY: TypeParameterResolver = object : TypeParameterResolver {
-      override val parametersMap: Map<String, TypeVariableName> = emptyMap()
+    public val EMPTY: TypeParameterResolver =
+      object : TypeParameterResolver {
+        override val parametersMap: Map<String, TypeVariableName> = emptyMap()
 
-      override fun get(index: String): TypeVariableName = throw NoSuchElementException("No TypeParameter found for index $index")
-    }
+        override fun get(index: String): TypeVariableName =
+          throw NoSuchElementException("No TypeParameter found for index $index")
+      }
   }
 }
 
@@ -52,10 +55,10 @@ public interface TypeParameterResolver {
  * with enclosed declarations.
  *
  * @param parent the optional parent resolver, if any. An example of this is cases where you might
- *               create a resolver for a [KSFunction] and supply a parent resolved from the
- *               enclosing [KSClassDeclaration].
+ *   create a resolver for a [KSFunction] and supply a parent resolved from the enclosing
+ *   [KSClassDeclaration].
  * @param sourceTypeHint an optional hint for error messages. Unresolvable parameter IDs will
- *                       include this hint in the thrown error's message.
+ *   include this hint in the thrown error's message.
  */
 public fun List<KSTypeParameter>.toTypeParameterResolver(
   parent: TypeParameterResolver? = null,
@@ -67,17 +70,19 @@ public fun List<KSTypeParameter>.toTypeParameterResolver(
       ?: parent?.get(id)
       ?: throw IllegalStateException(
         "No type argument found for $id! Analyzed $sourceTypeHint with known parameters " +
-          "${parametersMap.keys}",
+          "${parametersMap.keys}"
       )
   }
 
-  val resolver = object : TypeParameterResolver {
-    override val parametersMap: Map<String, TypeVariableName> = parametersMap
+  val resolver =
+    object : TypeParameterResolver {
+      override val parametersMap: Map<String, TypeVariableName> = parametersMap
 
-    override operator fun get(index: String): TypeVariableName = typeParamResolver(index)
-  }
+      override operator fun get(index: String): TypeVariableName = typeParamResolver(index)
+    }
 
-  // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined params
+  // Fill the parametersMap. Need to do sequentially and allow for referencing previously defined
+  // params
   for (typeVar in this) {
     // Put the simple typevar in first, then it can be referenced in the full toTypeVariable()
     // replacement later that may add bounds referencing this.

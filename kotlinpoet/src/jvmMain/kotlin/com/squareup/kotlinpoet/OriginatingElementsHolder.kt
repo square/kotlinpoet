@@ -32,19 +32,16 @@ public interface OriginatingElementsHolder {
 
     /** Adds an [originatingElement] to this type's list of originating elements. */
     @Suppress("UNCHECKED_CAST")
-    public fun addOriginatingElement(originatingElement: Element): T = apply {
-      originatingElements += originatingElement
-    } as T
+    public fun addOriginatingElement(originatingElement: Element): T =
+      apply { originatingElements += originatingElement } as T
   }
 }
 
 internal fun OriginatingElementsHolder.Builder<*>.buildOriginatingElements() =
   OriginatingElements(originatingElements.toImmutableList())
 
-internal fun List<Element>.buildOriginatingElements() =
-  OriginatingElements(toImmutableList())
+internal fun List<Element>.buildOriginatingElements() = OriginatingElements(toImmutableList())
 
 @JvmInline
-internal value class OriginatingElements(
-  override val originatingElements: List<Element>,
-) : OriginatingElementsHolder
+internal value class OriginatingElements(override val originatingElements: List<Element>) :
+  OriginatingElementsHolder

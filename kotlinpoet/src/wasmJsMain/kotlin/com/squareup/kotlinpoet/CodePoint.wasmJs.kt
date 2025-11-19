@@ -46,9 +46,7 @@ internal actual fun CodePoint.isUpperCase(): Boolean {
 }
 
 @Suppress("UNUSED_PARAMETER")
-private fun jsCodePointAt(str: String, index: Int): Int =
-  js("str.codePointAt(index)")
+private fun jsCodePointAt(str: String, index: Int): Int = js("str.codePointAt(index)")
 
 @Suppress("UNUSED_PARAMETER")
-private fun jsFromCodePoint(code: Int): String =
-  js("String.fromCodePoint(code)")
+private fun jsFromCodePoint(code: Int): String = js("String.fromCodePoint(code)")

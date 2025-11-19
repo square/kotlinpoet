@@ -41,7 +41,8 @@ internal class LineWrapper(
   private var linePrefix = ""
 
   /** @return whether or not there are pending segments for the current line. */
-  val hasPendingSegments get() = segments.size != 1 || segments[0].isNotEmpty()
+  val hasPendingSegments
+    get() = segments.size != 1 || segments[0].isNotEmpty()
 
   /** Emit `s` handling formatting characters as necessary. */
   fun append(s: String, indentLevel: Int = -1, linePrefix: String = "") {
@@ -64,7 +65,8 @@ internal class LineWrapper(
           pos++
         }
 
-        ' ', '·' -> {
+        ' ',
+        '·' -> {
           // Render · as a non-breaking space.
           segments[segments.size - 1] += " "
           pos++
@@ -96,7 +98,7 @@ internal class LineWrapper(
     indentLevel = -1
   }
 
-  /** Flush any outstanding text and forbid future writes to this line wrapper.  */
+  /** Flush any outstanding text and forbid future writes to this line wrapper. */
   override fun close() {
     emitCurrentLine()
     closed = true

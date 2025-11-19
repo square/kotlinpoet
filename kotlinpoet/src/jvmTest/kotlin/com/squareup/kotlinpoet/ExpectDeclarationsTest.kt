@@ -20,63 +20,64 @@ import assertk.assertions.isEqualTo
 import kotlin.test.Test
 
 class ExpectDeclarationsTest {
-  @Test fun expectFunDeclaration() {
-    val methodSpec = FunSpec.builder("function")
-      .addModifiers(KModifier.EXPECT)
-      .build()
+  @Test
+  fun expectFunDeclaration() {
+    val methodSpec = FunSpec.builder("function").addModifiers(KModifier.EXPECT).build()
 
-    assertThat(methodSpec.toString()).isEqualTo(
-      """
-      |public expect fun function()
-      |
-      """.trimMargin(),
-    )
+    assertThat(methodSpec.toString())
+      .isEqualTo(
+        """
+        |public expect fun function()
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExpectFunDeclaration() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXPECT)
-    val methodSpec = FunSpec.builder("function")
-      .build()
+  @Test
+  fun implicitExpectFunDeclaration() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXPECT)
+    val methodSpec = FunSpec.builder("function").build()
     builder.addFunction(methodSpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public expect class Test {
         |  public fun function()
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun expectPropertyDeclaration() {
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .addModifiers(KModifier.EXPECT)
-      .build()
+  @Test
+  fun expectPropertyDeclaration() {
+    val propertySpec =
+      PropertySpec.builder("prop", String::class).addModifiers(KModifier.EXPECT).build()
 
-    assertThat(propertySpec.toString()).isEqualTo(
-      """
-      |expect val prop: kotlin.String
-      |
-      """.trimMargin(),
-    )
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        |expect val prop: kotlin.String
+        |"""
+          .trimMargin()
+      )
   }
 
-  @Test fun implicitExpectPropertyDeclaration() {
-    val builder = TypeSpec.classBuilder("Test")
-      .addModifiers(KModifier.EXPECT)
-    val propertySpec = PropertySpec.builder("prop", String::class)
-      .build()
+  @Test
+  fun implicitExpectPropertyDeclaration() {
+    val builder = TypeSpec.classBuilder("Test").addModifiers(KModifier.EXPECT)
+    val propertySpec = PropertySpec.builder("prop", String::class).build()
     builder.addProperty(propertySpec)
 
-    assertThat(builder.build().toString()).isEqualTo(
-      """
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
         |public expect class Test {
         |  public val prop: kotlin.String
         |}
-        |
-      """.trimMargin(),
-    )
+        |"""
+          .trimMargin()
+      )
   }
 }
