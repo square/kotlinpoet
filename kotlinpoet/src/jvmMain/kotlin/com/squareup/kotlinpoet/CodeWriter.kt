@@ -23,6 +23,8 @@ private val NO_PACKAGE = String()
 
 internal val NULLABLE_ANY = ANY.copy(nullable = true)
 
+private const val ESCAPED_STAR = "&#42;"
+
 private fun extractMemberName(part: String): String {
   require(Character.isJavaIdentifierStart(part[0])) { "not an identifier: $part" }
   for (i in 1..part.length) {
@@ -600,6 +602,13 @@ internal class CodeWriter(
    * unnecessary trailing whitespace.
    */
   fun emit(s: String, nonWrapping: Boolean = false) = apply {
+    val s =
+      if (kdoc) {
+        // Avoid potential unbalanced nested block comments
+        s.replace("/*", "/$ESCAPED_STAR").replace("*/", "$ESCAPED_STAR/")
+      } else {
+        s
+      }
     var first = true
     for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
