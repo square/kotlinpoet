@@ -47,7 +47,7 @@ class MemberNameTest {
         |  val bestTaco = bestTacoEver
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -70,7 +70,7 @@ class MemberNameTest {
         |  createTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -90,7 +90,7 @@ class MemberNameTest {
         |  createTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -112,7 +112,7 @@ class MemberNameTest {
         |  createTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -126,7 +126,7 @@ class MemberNameTest {
           FunSpec.builder("makeTastyTacos")
             .addStatement("%M()", createSquareTaco)
             .addStatement("%M()", createTwitterTaco)
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -142,7 +142,7 @@ class MemberNameTest {
         |  twitterTacosCreateTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -158,7 +158,7 @@ class MemberNameTest {
           FunSpec.builder("makeTastyTacos")
             .addStatement("%M()", createSquareTaco)
             .addStatement("%M()", createTwitterTaco)
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -174,7 +174,7 @@ class MemberNameTest {
         |  twitterTacosCreateTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -188,7 +188,7 @@ class MemberNameTest {
           FunSpec.builder("makeTastyTacos")
             .addStatement("val tacos = %T()", squareTacosClass)
             .addStatement("%M(tacos)", squareTacosFunction)
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -203,7 +203,7 @@ class MemberNameTest {
         |  com.squareup.tacos.math.SquareTacos(tacos)
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -215,10 +215,10 @@ class MemberNameTest {
         .addType(
           TypeSpec.classBuilder("TacoTest")
             .addFunction(
-              FunSpec.builder("test").addStatement("%M(%S)", kotlinErrorMember, "errorText").build(),
+              FunSpec.builder("test").addStatement("%M(%S)", kotlinErrorMember, "errorText").build()
             )
             .addFunction(FunSpec.builder("error").build())
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -235,7 +235,7 @@ class MemberNameTest {
         |  }
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -253,11 +253,11 @@ class MemberNameTest {
                 .addFunction(
                   FunSpec.builder("test")
                     .addStatement("%M(%S)", kotlinErrorMember, "errorText")
-                    .build(),
+                    .build()
                 )
-                .build(),
+                .build()
             )
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -276,7 +276,7 @@ class MemberNameTest {
         |  }
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -293,11 +293,11 @@ class MemberNameTest {
                 .addFunction(
                   FunSpec.builder("test")
                     .addStatement("%M(%S)", kotlinErrorMember, "errorText")
-                    .build(),
+                    .build()
                 )
-                .build(),
+                .build()
             )
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -318,7 +318,7 @@ class MemberNameTest {
         |  }
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -337,13 +337,13 @@ class MemberNameTest {
           TypeSpec.classBuilder("DeliciousTaco")
             .addFunction(buildFun)
             .addFunction(FunSpec.builder("deliciousMeat").build())
-            .build(),
+            .build()
         )
         .addType(
           TypeSpec.classBuilder("TastelessTaco")
             .addFunction(buildFun)
             .addFunction(FunSpec.builder("meat").build())
-            .build(),
+            .build()
         )
         .build()
     assertThat(spec.toString())
@@ -367,7 +367,7 @@ class MemberNameTest {
         |  }
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -383,7 +383,7 @@ class MemberNameTest {
           FunSpec.builder("makeTastyTacos")
             .addStatement("%M()", createSquareTaco)
             .addStatement("%M()", createTwitterTaco)
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -399,7 +399,7 @@ class MemberNameTest {
         |  createTwitterTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -414,9 +414,9 @@ class MemberNameTest {
               FunSpec.builder("setUp")
                 .addAnnotation(Before::class)
                 .addStatement("%M(tacoService.createTaco()).thenReturn(tastyTaco())", `when`)
-                .build(),
+                .build()
             )
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -434,7 +434,7 @@ class MemberNameTest {
         |  }
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -450,7 +450,7 @@ class MemberNameTest {
           FunSpec.builder("whenTastyTacos")
             .addStatement("%M()", whenSquareTaco)
             .addStatement("%M()", whenTwitterTaco)
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -466,7 +466,7 @@ class MemberNameTest {
         |  twitterTacosWhen()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -493,7 +493,7 @@ class MemberNameTest {
         |  val bestTacoFactory = TacoTruck::bestTacoEver
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -515,7 +515,7 @@ class MemberNameTest {
         |  println(`produce tacos`())
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -548,7 +548,7 @@ class MemberNameTest {
             .addParameter("tacos", LIST.parameterizedBy(taco))
             .addParameter("packager", packager)
             .addStatement("packager.%N(tacos)", packager.member("package"))
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -564,7 +564,7 @@ class MemberNameTest {
         |  packager.`package`(tacos)
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -583,7 +583,7 @@ class MemberNameTest {
             .addStatement("if (ingredient is %T) taco %M ingredient", meat, minusAssign)
             .endControlFlow()
             .addStatement("return taco")
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -603,7 +603,7 @@ class MemberNameTest {
         |  return taco
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -613,7 +613,7 @@ class MemberNameTest {
     val file =
       FileSpec.builder("com.example", "Test")
         .addFunction(
-          FunSpec.builder("makeTacoHealthy").addStatement("val taco = %M()", createTaco).build(),
+          FunSpec.builder("makeTacoHealthy").addStatement("val taco = %M()", createTaco).build()
         )
         .build()
     assertThat(file.toString())
@@ -627,7 +627,7 @@ class MemberNameTest {
         |  val taco = createTaco()
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -651,11 +651,11 @@ class MemberNameTest {
                     addStatement("super.hashCode = result")
                     endControlFlow()
                     addStatement("return result")
-                  },
+                  }
                 )
-                .build(),
+                .build()
             )
-            .build(),
+            .build()
         )
         .build()
     // language=kotlin
@@ -679,7 +679,7 @@ class MemberNameTest {
         }
 
         """
-          .trimIndent(),
+          .trimIndent()
       )
   }
 
@@ -695,7 +695,7 @@ class MemberNameTest {
               "println(Taco().%M())",
               MemberName("com.squareup.wrappers", "wrap", isExtension = true),
             )
-            .build(),
+            .build()
         )
         .build()
     assertThat(file.toString())
@@ -711,7 +711,7 @@ class MemberNameTest {
         }
 
         """
-          .trimIndent(),
+          .trimIndent()
       )
   }
 
@@ -741,7 +741,7 @@ class MemberNameTest {
         | */
         |public val bar: Int = 42
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -757,9 +757,7 @@ class MemberNameTest {
           .initializer("42")
           .addKdoc("`42.%M`", dpFactoryFunction)
           .build(),
-        PropertySpec.builder("baz", FLOAT)
-          .initializer("42.%M.value", dpFactoryFunction)
-          .build(),
+        PropertySpec.builder("baz", FLOAT).initializer("42.%M.value", dpFactoryFunction).build(),
       )
 
     val file = FileSpec.builder("foo", "Foo").addProperties(properties).build()
@@ -779,7 +777,7 @@ class MemberNameTest {
         |
         |public val baz: Float = 42.dp.value
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -809,7 +807,7 @@ class MemberNameTest {
         |  println("hello")
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 
@@ -828,15 +826,12 @@ class MemberNameTest {
           |This class uses dimension extensions.
           |
           |For example, you can use %M or %M.
-          |""".trimMargin(),
+          |"""
+            .trimMargin(),
           dpFactoryFunction,
           spFactoryFunction,
         )
-        .addProperty(
-          PropertySpec.builder("width", INT)
-            .initializer("100")
-            .build(),
-        )
+        .addProperty(PropertySpec.builder("width", INT).initializer("100").build())
         .build()
 
     val file = FileSpec.builder("foo", "Foo").addType(typeSpec).build()
@@ -858,7 +853,7 @@ class MemberNameTest {
         |  public val width: Int = 100
         |}
         |"""
-          .trimMargin(),
+          .trimMargin()
       )
   }
 }
