@@ -169,7 +169,7 @@ class MemberNameTest {
         |import com.squareup.tacos.SquareTacos.Companion.createTaco as squareTacosCreateTaco
         |import com.twitter.tacos.TwitterTacos.Companion.createTaco as twitterTacosCreateTaco
         |
-        |public fun whenTastyTacos() {
+        |public fun makeTastyTacos() {
         |  squareTacosCreateTaco()
         |  twitterTacosCreateTaco()
         |}
