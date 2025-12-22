@@ -504,9 +504,11 @@ internal class CodeWriter(
 
     // We'll have to use the fully-qualified name.
     // Mark the member as importable for a future pass unless the name clashes with
-    // a method in the current context
+    // a method in the current context.
+    // Extension members should always be importable, even in KDocs, so they can be
+    // referenced by simple name and have proper clickable links in documentation.
     if (
-      !kdoc && (memberName.isExtension || !isMethodNameUsedInCurrentContext(memberName.simpleName))
+      memberName.isExtension || (!kdoc && !isMethodNameUsedInCurrentContext(memberName.simpleName))
     ) {
       importableMember(memberName)
     }

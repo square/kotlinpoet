@@ -12,6 +12,7 @@ Change Log
  * Fix: `KType.asTypeName` now correctly handles recursively bound generics (e.g. `T : Comparable<T>`). (#1914)
  * Fix: Don't convert multi-statement function to expression body. (#1979)
  * Fix: Escape `/*` and `*/` when emitting Kdoc. (#887)
+ * Fix: Generate imports for extension members used via `%M` in KDocs. (#2189)
  * In-development snapshots are now published to the Central Portal Snapshots repository at https://central.sonatype.com/repository/maven-snapshots/.
 
 ## Version 2.2.0
