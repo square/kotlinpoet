@@ -14,5 +14,5 @@ python-dateutil==2.9.0.post0
 PyYAML==6.0.3
 repackage==0.7.3
 six==1.17.0
-termcolor==3.2.0
+termcolor==3.3.0
 tornado==6.5.4
