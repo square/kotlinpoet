@@ -43,7 +43,7 @@ ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp-aaEmbeddable = { module = "com.google.devtools.ksp:symbol-processing-aa-embeddable", version.ref = "ksp" }
 
-ktfmt = "com.facebook:ktfmt:0.60"
+ktfmt = "com.facebook:ktfmt:0.61"
 
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.23.0" }
