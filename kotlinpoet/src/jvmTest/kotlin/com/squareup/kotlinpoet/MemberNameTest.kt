@@ -714,4 +714,176 @@ class MemberNameTest {
           .trimIndent()
       )
   }
+
+  // https://github.com/square/kotlinpoet/issues/2189
+  @Test
+  fun `extension member used only in kdoc generates import`() {
+    val dpFactoryFunction =
+      MemberName(packageName = "androidx.compose.ui.unit", simpleName = "dp", isExtension = true)
+
+    val property =
+      PropertySpec.builder("bar", INT)
+        .initializer("42")
+        .addKdoc("`42.%M`", dpFactoryFunction)
+        .build()
+
+    val file = FileSpec.builder("foo", "Foo").addProperty(property).build()
+    assertThat(file.toString())
+      .isEqualTo(
+        """
+        |package foo
+        |
+        |import androidx.compose.ui.unit.dp
+        |import kotlin.Int
+        |
+        |/**
+        | * `42.dp`
+        | */
+        |public val bar: Int = 42
+        |"""
+          .trimMargin()
+      )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2189
+  @Test
+  fun `extension member used in kdoc and code generates single import`() {
+    val dpFactoryFunction =
+      MemberName(packageName = "androidx.compose.ui.unit", simpleName = "dp", isExtension = true)
+
+    val properties =
+      listOf(
+        PropertySpec.builder("bar", INT)
+          .initializer("42")
+          .addKdoc("`42.%M`", dpFactoryFunction)
+          .build(),
+        PropertySpec.builder("baz", FLOAT).initializer("42.%M.value", dpFactoryFunction).build(),
+      )
+
+    val file = FileSpec.builder("foo", "Foo").addProperties(properties).build()
+    assertThat(file.toString())
+      .isEqualTo(
+        """
+        |package foo
+        |
+        |import androidx.compose.ui.unit.dp
+        |import kotlin.Float
+        |import kotlin.Int
+        |
+        |/**
+        | * `42.dp`
+        | */
+        |public val bar: Int = 42
+        |
+        |public val baz: Float = 42.dp.value
+        |"""
+          .trimMargin()
+      )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2189
+  @Test
+  fun `non-extension member used only in kdoc generates import`() {
+    val createTaco = MemberName("com.squareup.tacos", "createTaco")
+
+    val function =
+      FunSpec.builder("main")
+        .addKdoc("Creates a taco using %M\n", createTaco)
+        .addStatement("println(\"hello\")")
+        .build()
+
+    val file = FileSpec.builder("foo", "Foo").addFunction(function).build()
+    assertThat(file.toString())
+      .isEqualTo(
+        """
+        |package foo
+        |
+        |import com.squareup.tacos.createTaco
+        |
+        |/**
+        | * Creates a taco using createTaco
+        | */
+        |public fun main() {
+        |  println("hello")
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2189
+  @Test
+  fun `non-extension member used only in kdoc generates import and linkable`() {
+    val createTaco = MemberName("com.squareup.tacos", "createTaco")
+
+    val function =
+      FunSpec.builder("main")
+        .addKdoc("Creates a taco using [%M]\n", createTaco)
+        .addStatement("println(\"hello\")")
+        .build()
+
+    val file = FileSpec.builder("foo", "Foo").addFunction(function).build()
+    assertThat(file.toString())
+      .isEqualTo(
+        """
+        |package foo
+        |
+        |import com.squareup.tacos.createTaco
+        |
+        |/**
+        | * Creates a taco using [createTaco]
+        | */
+        |public fun main() {
+        |  println("hello")
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  // https://github.com/square/kotlinpoet/issues/2189
+  @Test
+  fun `extension member in kdoc with complex formatting`() {
+    val dpFactoryFunction =
+      MemberName(packageName = "androidx.compose.ui.unit", simpleName = "dp", isExtension = true)
+    val spFactoryFunction =
+      MemberName(packageName = "androidx.compose.ui.unit", simpleName = "sp", isExtension = true)
+
+    val typeSpec =
+      TypeSpec.classBuilder("MyClass")
+        .addKdoc(
+          """
+          |This class uses dimension extensions.
+          |
+          |For example, you can use %M or %M.
+          |"""
+            .trimMargin(),
+          dpFactoryFunction,
+          spFactoryFunction,
+        )
+        .addProperty(PropertySpec.builder("width", INT).initializer("100").build())
+        .build()
+
+    val file = FileSpec.builder("foo", "Foo").addType(typeSpec).build()
+    assertThat(file.toString())
+      .isEqualTo(
+        """
+        |package foo
+        |
+        |import androidx.compose.ui.unit.dp
+        |import androidx.compose.ui.unit.sp
+        |import kotlin.Int
+        |
+        |/**
+        | * This class uses dimension extensions.
+        | *
+        | * For example, you can use dp or sp.
+        | */
+        |public class MyClass {
+        |  public val width: Int = 100
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
 }
