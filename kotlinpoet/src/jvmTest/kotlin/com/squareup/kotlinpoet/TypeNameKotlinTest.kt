@@ -95,4 +95,67 @@ class TypeNameKotlinTest {
     val copied = type.copy(nullable = true)
     assertThat(copied.tag<String>()).isEqualTo("Test")
   }
+
+  @Test
+  fun annotated_withAnnotationSpec() {
+    val annotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
+    val type = typeNameOf<String>().annotated(annotation)
+    assertThat(type.annotations).isEqualTo(listOf(annotation))
+    assertThat(type.toString()).isEqualTo("@kotlin.Suppress(\"unused\") kotlin.String")
+  }
+
+  @Test
+  fun annotated_withMultipleAnnotationSpecs() {
+    val suppress = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
+    val deprecated = AnnotationSpec.builder(Deprecated::class).addMember("%S", "test").build()
+    val type = typeNameOf<String>().annotated(suppress, deprecated)
+    assertThat(type.annotations).isEqualTo(listOf(suppress, deprecated))
+  }
+
+  @Test
+  fun annotated_withAnnotationList() {
+    val annotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
+    val type = typeNameOf<String>().annotated(listOf(annotation))
+    assertThat(type.annotations).isEqualTo(listOf(annotation))
+  }
+
+  @Test
+  fun annotated_withKClass() {
+    val type = typeNameOf<String>().annotated(Suppress::class)
+    assertThat(type.annotations.size).isEqualTo(1)
+    assertThat(type.annotations[0].typeName).isEqualTo(Suppress::class.asClassName())
+  }
+
+  @Test
+  fun annotated_withMultipleKClasses() {
+    val type = typeNameOf<String>().annotated(Suppress::class, Deprecated::class)
+    assertThat(type.annotations.size).isEqualTo(2)
+    assertThat(type.annotations[0].typeName).isEqualTo(Suppress::class.asClassName())
+    assertThat(type.annotations[1].typeName).isEqualTo(Deprecated::class.asClassName())
+  }
+
+  @Test
+  fun annotated_withClassName() {
+    val suppressClassName = Suppress::class.asClassName()
+    val type = typeNameOf<String>().annotated(suppressClassName)
+    assertThat(type.annotations.size).isEqualTo(1)
+    assertThat(type.annotations[0].typeName).isEqualTo(suppressClassName)
+  }
+
+  @Test
+  fun annotated_chainingMultipleCalls() {
+    val suppress = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
+    val deprecated = AnnotationSpec.builder(Deprecated::class).addMember("%S", "test").build()
+    val type = typeNameOf<String>().annotated(suppress).annotated(deprecated)
+    assertThat(type.annotations).isEqualTo(listOf(suppress, deprecated))
+  }
+
+  @Test
+  fun annotated_preservesExistingAnnotations() {
+    val suppress = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
+    val deprecated = AnnotationSpec.builder(Deprecated::class).addMember("%S", "test").build()
+    val typeWithSuppressAnnotation = typeNameOf<String>().copy(annotations = listOf(suppress))
+    val typeWithBothAnnotations = typeWithSuppressAnnotation.annotated(deprecated)
+    assertThat(typeWithBothAnnotations.annotations).isEqualTo(listOf(suppress, deprecated))
+  }
 }

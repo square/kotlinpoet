@@ -973,6 +973,10 @@ public final class com/squareup/kotlinpoet/TypeNames {
 	public static final field U_LONG_ARRAY Lcom/squareup/kotlinpoet/ClassName;
 	public static final field U_SHORT Lcom/squareup/kotlinpoet/ClassName;
 	public static final field U_SHORT_ARRAY Lcom/squareup/kotlinpoet/ClassName;
+	public static final fun annotated (Lcom/squareup/kotlinpoet/TypeName;Ljava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun annotated (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/AnnotationSpec;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun annotated (Lcom/squareup/kotlinpoet/TypeName;[Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/TypeName;
+	public static final fun annotated (Lcom/squareup/kotlinpoet/TypeName;[Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/TypeName;
 	public static final fun get (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/TypeName;
 	public static final fun get (Ljavax/lang/model/type/TypeMirror;)Lcom/squareup/kotlinpoet/TypeName;
 	public static final fun get (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/ClassName;
