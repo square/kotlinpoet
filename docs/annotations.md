@@ -116,3 +116,40 @@ import kotlin.jvm.JvmName
 
 fun Int.abs(): Int = if (this < 0) -this else this
 ```
+
+## Annotating Types
+
+KotlinPoet provides a convenient `annotated()` API for adding annotations to types:
+
+```kotlin
+// Add a single annotation
+val annotatedType = String::class.asTypeName()
+  .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
+
+// Add multiple annotations
+val multiAnnotatedType = Int::class.asTypeName()
+  .annotated(
+    AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build(),
+    AnnotationSpec.builder(Deprecated::class).addMember("%S", "Use something else").build()
+  )
+
+// Add annotations by class
+val simpleAnnotated = String::class.asTypeName().annotated(Suppress::class, Deprecated::class)
+
+// Chain multiple calls
+val chainedAnnotations = String::class.asTypeName()
+  .annotated(Suppress::class)
+  .annotated(Deprecated::class)
+```
+
+This is especially useful when working with lambda types:
+
+```kotlin
+val composableType = LambdaTypeName.get(
+  receiver = null,
+  parameters = listOf(ParameterSpec.unnamed(ClassName("androidx.compose.ui", "Modifier"))),
+  returnType = UNIT,
+).annotated(AnnotationSpec.builder(ClassName("androidx.compose.runtime", "Composable")).build())
+```
+
+See the [%T for Types](t-for-types.md#annotated-types) documentation for more details.
