@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.squareup.kotlinpoet.javapoet</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../index.html" tabindex="1">
+                    javapoet
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2.3.0-SNAPSHOT        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":interop:javapoet/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":interop:javapoet/main"
+                                       data-filter=":interop:javapoet/main"/>
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    javapoet
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageIds="javapoet::com.squareup.kotlinpoet.javapoet////PointingToDeclaration//2000470957">
+  <div class="breadcrumbs"><a href="../../index.html">javapoet</a><span class="delimiter">/</span><span class="current">com.squareup.kotlinpoet.javapoet</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1171274662%2FClasslikes%2F2000470957" anchor-label="JAnnotationSpec" id="1171274662%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-annotation-spec/index.html"><span>JAnnotation</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1171274662%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-annotation-spec/index.html">JAnnotationSpec</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-239608241%2FClasslikes%2F2000470957" anchor-label="JClassName" id="-239608241%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-class-name/index.html"><span>JClass</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-239608241%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-class-name/index.html">JClassName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/ClassName///PointingToDeclaration/">ClassName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1508954260%2FClasslikes%2F2000470957" anchor-label="JParameterizedTypeName" id="1508954260%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-parameterized-type-name/index.html"><span>JParameterized</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1508954260%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-parameterized-type-name/index.html">JParameterizedTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/ParameterizedTypeName///PointingToDeclaration/">ParameterizedTypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="390117867%2FClasslikes%2F2000470957" anchor-label="JTypeName" id="390117867%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-type-name/index.html"><span>JType</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="390117867%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-type-name/index.html">JTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/TypeName///PointingToDeclaration/">TypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="869561019%2FClasslikes%2F2000470957" anchor-label="JTypeSpec" id="869561019%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-type-spec/index.html"><span>JType</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="869561019%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-type-spec/index.html">JTypeSpec</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="87557071%2FClasslikes%2F2000470957" anchor-label="JTypeVariableName" id="87557071%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-type-variable-name/index.html"><span>JType</span><wbr></wbr><span>Variable</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="87557071%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-type-variable-name/index.html">JTypeVariableName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/TypeVariableName///PointingToDeclaration/">TypeVariableName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1378994127%2FClasslikes%2F2000470957" anchor-label="JWildcardTypeName" id="-1378994127%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-j-wildcard-type-name/index.html"><span>JWildcard</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1378994127%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-j-wildcard-type-name/index.html">JWildcardTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.javapoet/WildcardTypeName///PointingToDeclaration/">WildcardTypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1662112635%2FClasslikes%2F2000470957" anchor-label="KAnnotationSpec" id="-1662112635%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-annotation-spec/index.html"><span>KAnnotation</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1662112635%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-annotation-spec/index.html">KAnnotationSpec</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1485872656%2FClasslikes%2F2000470957" anchor-label="KClassName" id="1485872656%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-class-name/index.html"><span>KClass</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1485872656%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-class-name/index.html">KClassName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-749505871%2FClasslikes%2F2000470957" anchor-label="KotlinPoetJavaPoetPreview" id="-749505871%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-kotlin-poet-java-poet-preview/index.html"><span>Kotlin</span><wbr></wbr><span>Poet</span><wbr></wbr><span>Java</span><wbr></wbr><span>Poet</span><wbr></wbr><span><span>Preview</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-749505871%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-annotation-target/-c-l-a-s-s/index.html">AnnotationTarget.CLASS</a><span class="token punctuation">, </span></span><wbr></wbr><span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-annotation-target/-f-u-n-c-t-i-o-n/index.html">AnnotationTarget.FUNCTION</a><span class="token punctuation">, </span></span><wbr></wbr><span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-annotation-target/-p-r-o-p-e-r-t-y/index.html">AnnotationTarget.PROPERTY</a><span class="token punctuation">, </span></span><wbr></wbr><span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-annotation-target/-t-y-p-e-a-l-i-a-s/index.html">AnnotationTarget.TYPEALIAS</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-kotlin-poet-java-poet-preview/index.html">KotlinPoetJavaPoetPreview</a></div><div class="brief "><p class="paragraph">Indicates that a given API is part of the experimental KotlinPoet JavaPoet support and is subject to API changes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-815073579%2FClasslikes%2F2000470957" anchor-label="KParameterizedTypeName" id="-815073579%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-parameterized-type-name/index.html"><span>KParameterized</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-815073579%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-parameterized-type-name/index.html">KParameterizedTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/ParameterizedTypeName///PointingToDeclaration/">ParameterizedTypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1415609866%2FClasslikes%2F2000470957" anchor-label="KTypeName" id="1415609866%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-type-name/index.html"><span>KType</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1415609866%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-type-name/index.html">KTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeName///PointingToDeclaration/">TypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1895053018%2FClasslikes%2F2000470957" anchor-label="KTypeSpec" id="1895053018%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-type-spec/index.html"><span>KType</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1895053018%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-type-spec/index.html">KTypeSpec</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="211630318%2FClasslikes%2F2000470957" anchor-label="KTypeVariableName" id="211630318%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-type-variable-name/index.html"><span>KType</span><wbr></wbr><span>Variable</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="211630318%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-type-variable-name/index.html">KTypeVariableName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeVariableName///PointingToDeclaration/">TypeVariableName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1254920880%2FClasslikes%2F2000470957" anchor-label="KWildcardTypeName" id="-1254920880%2FClasslikes%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-k-wildcard-type-name/index.html"><span>KWildcard</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1254920880%2FClasslikes%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-k-wildcard-type-name/index.html">KWildcardTypeName</a><span class="token operator"> = </span><span data-unresolved-link="com.squareup.kotlinpoet/WildcardTypeName///PointingToDeclaration/">WildcardTypeName</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="EXTENSION_FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1629618581%2FFunctions%2F2000470957" anchor-label="toJClassName" id="-1629618581%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-class-name.html"><span>to</span><wbr></wbr><span>JClass</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1629618581%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-class-name/index.html">KClassName</a><span class="token punctuation">.</span><a href="to-j-class-name.html"><span class="token function">toJClassName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boxIfPrimitive<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-type-name/index.html">JTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1300981714%2FFunctions%2F2000470957" anchor-label="toJParameterizedOrArrayTypeName" id="1300981714%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-parameterized-or-array-type-name.html"><span>to</span><wbr></wbr><span>JParameterized</span><wbr></wbr><span>Or</span><wbr></wbr><span>Array</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1300981714%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-parameterized-type-name/index.html">KParameterizedTypeName</a><span class="token punctuation">.</span><a href="to-j-parameterized-or-array-type-name.html"><span class="token function">toJParameterizedOrArrayTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-type-name/index.html">JTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1348900964%2FFunctions%2F2000470957" anchor-label="toJParameterizedTypeName" id="-1348900964%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-parameterized-type-name.html"><span>to</span><wbr></wbr><span>JParameterized</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1348900964%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-parameterized-type-name/index.html">KParameterizedTypeName</a><span class="token punctuation">.</span><a href="to-j-parameterized-type-name.html"><span class="token function">toJParameterizedTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-parameterized-type-name/index.html">JParameterizedTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="740254511%2FFunctions%2F2000470957" anchor-label="toJTypeName" id="740254511%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-type-name.html"><span>to</span><wbr></wbr><span>JType</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="740254511%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-type-name/index.html">KTypeName</a><span class="token punctuation">.</span><a href="to-j-type-name.html"><span class="token function">toJTypeName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">boxIfPrimitive<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-type-name/index.html">JTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="261721834%2FFunctions%2F2000470957" anchor-label="toJTypeVariableName" id="261721834%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-type-variable-name.html"><span>to</span><wbr></wbr><span>JType</span><wbr></wbr><span>Variable</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="261721834%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-type-variable-name/index.html">KTypeVariableName</a><span class="token punctuation">.</span><a href="to-j-type-variable-name.html"><span class="token function">toJTypeVariableName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-type-variable-name/index.html">JTypeVariableName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1883443030%2FFunctions%2F2000470957" anchor-label="toJWildcardTypeName" id="-1883443030%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-j-wildcard-type-name.html"><span>to</span><wbr></wbr><span>JWildcard</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1883443030%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-k-wildcard-type-name/index.html">KWildcardTypeName</a><span class="token punctuation">.</span><a href="to-j-wildcard-type-name.html"><span class="token function">toJWildcardTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-j-wildcard-type-name/index.html">JWildcardTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-415019226%2FFunctions%2F2000470957" anchor-label="toKClassName" id="-415019226%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-k-class-name.html"><span>to</span><wbr></wbr><span>KClass</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-415019226%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-j-class-name/index.html">JClassName</a><span class="token punctuation">.</span><a href="to-k-class-name.html"><span class="token function">toKClassName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-k-class-name/index.html">KClassName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2001417892%2FFunctions%2F2000470957" anchor-label="toKParameterizedTypeName" id="-2001417892%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-k-parameterized-type-name.html"><span>to</span><wbr></wbr><span>KParameterized</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2001417892%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-j-parameterized-type-name/index.html">JParameterizedTypeName</a><span class="token punctuation">.</span><a href="to-k-parameterized-type-name.html"><span class="token function">toKParameterizedTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-k-parameterized-type-name/index.html">KParameterizedTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="302460616%2FFunctions%2F2000470957" anchor-label="toKTypeName" id="302460616%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-k-type-name.html"><span>to</span><wbr></wbr><span>KType</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="302460616%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-j-type-name/index.html">JTypeName</a><span class="token punctuation">.</span><a href="to-k-type-name.html"><span class="token function">toKTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-k-type-name/index.html">KTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1414063032%2FFunctions%2F2000470957" anchor-label="toKTypeVariableName" id="-1414063032%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-k-type-variable-name.html"><span>to</span><wbr></wbr><span>KType</span><wbr></wbr><span>Variable</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1414063032%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-j-type-variable-name/index.html">JTypeVariableName</a><span class="token punctuation">.</span><a href="to-k-type-variable-name.html"><span class="token function">toKTypeVariableName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-k-type-variable-name/index.html">KTypeVariableName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1612337528%2FFunctions%2F2000470957" anchor-label="toKWildcardTypeName" id="-1612337528%2FFunctions%2F2000470957" data-filterable-set=":interop:javapoet/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:javapoet/main" data-filterable-set=":interop:javapoet/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-k-wildcard-type-name.html"><span>to</span><wbr></wbr><span>KWildcard</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1612337528%2FFunctions%2F2000470957"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:javapoet/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-j-wildcard-type-name/index.html">JWildcardTypeName</a><span class="token punctuation">.</span><a href="to-k-wildcard-type-name.html"><span class="token function">toKWildcardTypeName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-k-wildcard-type-name/index.html">KWildcardTypeName</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
