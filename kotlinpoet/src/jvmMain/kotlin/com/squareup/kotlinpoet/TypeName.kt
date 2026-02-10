@@ -356,3 +356,57 @@ public fun TypeMirror.asTypeName(): TypeName = TypeName.get(this, mutableMapOf()
  * kotlin-reflect if required.
  */
 public inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
+
+/**
+ * Returns a copy of this [TypeName] with the specified [annotations] added.
+ *
+ * This is a convenience method that simplifies adding annotations to a type:
+ * ```kotlin
+ * val annotatedType = String::class.asTypeName()
+ *   .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
+ * ```
+ *
+ * Instead of:
+ * ```kotlin
+ * val annotatedType = String::class.asTypeName()
+ *   .copy(annotations = listOf(AnnotationSpec.builder(MyAnnotation::class).build()))
+ * ```
+ */
+public fun TypeName.annotated(vararg annotations: AnnotationSpec): TypeName =
+  copy(annotations = this.annotations + annotations)
+
+/**
+ * Returns a copy of this [TypeName] with the specified [annotations] added.
+ *
+ * This is a convenience method that simplifies adding annotations to a type:
+ * ```kotlin
+ * val annotatedType = String::class.asTypeName()
+ *   .annotated(listOf(AnnotationSpec.builder(MyAnnotation::class).build()))
+ * ```
+ */
+public fun TypeName.annotated(annotations: List<AnnotationSpec>): TypeName =
+  copy(annotations = this.annotations + annotations)
+
+/**
+ * Returns a copy of this [TypeName] with annotations created from the specified [annotations].
+ *
+ * This is a convenience method that simplifies adding annotations to a type:
+ * ```kotlin
+ * val annotatedType = String::class.asTypeName()
+ *   .annotated(MyAnnotation::class)
+ * ```
+ */
+public fun TypeName.annotated(vararg annotations: ClassName): TypeName =
+  copy(annotations = this.annotations + annotations.map { AnnotationSpec.builder(it).build() })
+
+/**
+ * Returns a copy of this [TypeName] with annotations created from the specified [annotations].
+ *
+ * This is a convenience method that simplifies adding annotations to a type:
+ * ```kotlin
+ * val annotatedType = String::class.asTypeName()
+ *   .annotated(MyAnnotation::class)
+ * ```
+ */
+public fun TypeName.annotated(vararg annotations: KClass<out Annotation>): TypeName =
+  copy(annotations = this.annotations + annotations.map { AnnotationSpec.builder(it).build() })
