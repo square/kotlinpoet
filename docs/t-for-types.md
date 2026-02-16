@@ -160,8 +160,7 @@ class HelloWorld {
 
 ## Annotated Types
 
-KotlinPoet provides a convenient `annotated()` API for adding annotations to types. Instead of using
-the `copy()` method with annotations, you can use the more readable `annotated()` method:
+KotlinPoet provides a concise `annotated()` API for adding annotations to types.
 
 ```kotlin
 val composableType = LambdaTypeName.get(
@@ -185,16 +184,13 @@ val annotatedType = String::class.asTypeName()
   .annotated(Deprecated::class)
 ```
 
-This is more concise than using `copy()`:
+You can also update, replace, or clear annotations on a type with the
+`copy()` function:
 
 ```kotlin
-// Before
-val type = String::class.asTypeName().copy(
-  annotations = listOf(AnnotationSpec.builder(Suppress::class).build())
-)
-
-// After
-val type = String::class.asTypeName().annotated(Suppress::class)
+val unannotatedString = String::class.asTypeName()
+  .annotated(Suppress::class)
+  .copy(annotations = listOf())
 ```
 
  [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/

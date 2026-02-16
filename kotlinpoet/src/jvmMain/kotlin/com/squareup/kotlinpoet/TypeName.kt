@@ -366,11 +366,7 @@ public inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
  *   .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
  * ```
  *
- * Instead of:
- * ```kotlin
- * val annotatedType = String::class.asTypeName()
- *   .copy(annotations = listOf(AnnotationSpec.builder(MyAnnotation::class).build()))
- * ```
+ * To update, remove, or clear annotations, use the [#copy] function.
  */
 public fun TypeName.annotated(vararg annotations: AnnotationSpec): TypeName =
   copy(annotations = this.annotations + annotations)

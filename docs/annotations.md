@@ -122,21 +122,21 @@ fun Int.abs(): Int = if (this < 0) -this else this
 KotlinPoet provides a convenient `annotated()` API for adding annotations to types:
 
 ```kotlin
-// Add a single annotation
+// Add a single annotation.
 val annotatedType = String::class.asTypeName()
   .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
 
-// Add multiple annotations
+// Add multiple annotations.
 val multiAnnotatedType = Int::class.asTypeName()
   .annotated(
     AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build(),
     AnnotationSpec.builder(Deprecated::class).addMember("%S", "Use something else").build()
   )
 
-// Add annotations by class
+// Add annotations by class.
 val simpleAnnotated = String::class.asTypeName().annotated(Suppress::class, Deprecated::class)
 
-// Chain multiple calls
+// Chain multiple calls.
 val chainedAnnotations = String::class.asTypeName()
   .annotated(Suppress::class)
   .annotated(Deprecated::class)
