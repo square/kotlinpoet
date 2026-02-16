@@ -360,7 +360,6 @@ public inline fun <reified T> typeNameOf(): TypeName = typeOf<T>().asTypeName()
 /**
  * Returns a copy of this [TypeName] with the specified [annotations] added.
  *
- * This is a convenience method that simplifies adding annotations to a type:
  * ```kotlin
  * val annotatedType = String::class.asTypeName()
  *   .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
