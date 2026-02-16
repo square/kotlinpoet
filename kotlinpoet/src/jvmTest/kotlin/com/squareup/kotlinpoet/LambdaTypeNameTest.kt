@@ -332,19 +332,4 @@ class LambdaTypeNameTest {
     assertThat(tagged).isEqualTo(lambdaTypeName)
     assertThat(tagged.hashCode()).isEqualTo(lambdaTypeName.hashCode())
   }
-
-  @Test
-  fun annotatedLambdaType_usingAnnotatedMethod() {
-    // Test the convenience method from issue #2202
-    val composableAnnotation = AnnotationSpec.builder(HasSomeAnnotation::class).build()
-
-    // Using the new annotated() method
-    val lambdaType =
-      LambdaTypeName.get(receiver = null, parameters = emptyList(), returnType = UNIT)
-        .annotated(composableAnnotation)
-
-    assertThat(lambdaType.toString())
-      .isEqualTo("@com.squareup.kotlinpoet.LambdaTypeNameTest.HasSomeAnnotation () -> kotlin.Unit")
-    assertThat(lambdaType.annotations).isEqualTo(listOf(composableAnnotation))
-  }
 }

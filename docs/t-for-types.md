@@ -160,37 +160,13 @@ class HelloWorld {
 
 ## Annotated Types
 
-KotlinPoet provides a concise `annotated()` API for adding annotations to types.
-
-```kotlin
-val composableType = LambdaTypeName.get(
-  receiver = null,
-  parameters = listOf(ParameterSpec.unnamed(ClassName("androidx.compose.ui", "Modifier"))),
-  returnType = UNIT,
-).annotated(AnnotationSpec.builder(ClassName("androidx.compose.runtime", "Composable")).build())
-```
-
-You can also pass annotations directly by class:
-
-```kotlin
-val suppressedType = String::class.asTypeName().annotated(Suppress::class)
-```
-
-Or chain multiple annotations:
+KotlinPoet supports annotated types. To add an annotation to a type, use the `annotated()` API:
 
 ```kotlin
 val annotatedType = String::class.asTypeName()
-  .annotated(AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build())
-  .annotated(Deprecated::class)
+  .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
 ```
 
-You can also update, replace, or clear annotations on a type with the
-`copy()` function:
-
-```kotlin
-val unannotatedString = String::class.asTypeName()
-  .annotated(Suppress::class)
-  .copy(annotations = listOf())
-```
+For comprehensive examples of annotating types, see [Annotations](annotations.md#annotating-types).
 
  [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/

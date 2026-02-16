@@ -152,4 +152,24 @@ val composableType = LambdaTypeName.get(
 ).annotated(AnnotationSpec.builder(ClassName("androidx.compose.runtime", "Composable")).build())
 ```
 
-See the [%T for Types](t-for-types.md#annotated-types) documentation for more details.
+You can also pass annotations directly by class:
+
+```kotlin
+val suppressedType = String::class.asTypeName().annotated(Suppress::class)
+```
+
+Or chain multiple annotations:
+
+```kotlin
+val chainedAnnotations = String::class.asTypeName()
+  .annotated(AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build())
+  .annotated(Deprecated::class)
+```
+
+You can also update, replace, or clear annotations on a type with the `copy()` function:
+
+```kotlin
+val unannotatedString = String::class.asTypeName()
+  .annotated(Suppress::class)
+  .copy(annotations = listOf())
+```
