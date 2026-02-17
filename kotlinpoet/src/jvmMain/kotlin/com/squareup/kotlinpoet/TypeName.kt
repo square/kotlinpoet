@@ -388,7 +388,7 @@ public fun TypeName.annotated(annotations: List<AnnotationSpec>): TypeName =
  * This is a convenience method that simplifies adding annotations to a type:
  * ```kotlin
  * val annotatedType = String::class.asTypeName()
- *   .annotated(MyAnnotation::class)
+ *   .annotated(MyAnnotation::class.asClassName())
  * ```
  */
 public fun TypeName.annotated(vararg annotations: ClassName): TypeName =
