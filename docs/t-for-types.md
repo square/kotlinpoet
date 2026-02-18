@@ -158,4 +158,15 @@ class HelloWorld {
 }
 ```
 
+## Annotated Types
+
+KotlinPoet supports annotated types. To add an annotation to a type, use the `annotated()` API:
+
+```kotlin
+val annotatedType = String::class.asTypeName()
+  .annotated(AnnotationSpec.builder(MyAnnotation::class).build())
+```
+
+For comprehensive examples of annotating types, see [Annotations](annotations.md#annotating-types).
+
  [kdoc]: https://square.github.io/kotlinpoet/1.x/kotlinpoet/kotlinpoet/com.squareup.kotlinpoet/
