@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.squareup.kotlinpoet.metadata.specs</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../index.html" tabindex="1">
+                    kotlin-metadata
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2.3.0-SNAPSHOT        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":interop:kotlin-metadata/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":interop:kotlin-metadata/main"
+                                       data-filter=":interop:kotlin-metadata/main"/>
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    kotlin-metadata
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageIds="kotlin-metadata::com.squareup.kotlinpoet.metadata.specs////PointingToDeclaration//253293292">
+  <div class="breadcrumbs"><a href="../../index.html">kotlin-metadata</a><span class="delimiter">/</span><span class="current">com.squareup.kotlinpoet.metadata.specs</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="712276687%2FClasslikes%2F253293292" anchor-label="ClassData" id="712276687%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-class-data/index.html"><span>Class</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="712276687%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-class-data/index.html">ClassData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>declarationContainer<span class="token operator">: </span><span data-unresolved-link="kotlin.metadata/KmClass///PointingToDeclaration/">KmClass</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>properties<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlin.metadata/KmProperty///PointingToDeclaration/">KmProperty</span><span class="token punctuation">, </span><a href="-property-data/index.html">PropertyData</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>constructors<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlin.metadata/KmConstructor///PointingToDeclaration/">KmConstructor</span><span class="token punctuation">, </span><a href="-constructor-data/index.html">ConstructorData</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>methods<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlin.metadata/KmFunction///PointingToDeclaration/">KmFunction</span><span class="token punctuation">, </span><a href="-method-data/index.html">MethodData</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span> : <a href="-container-data/index.html">ContainerData</a></div><div class="brief "><p class="paragraph">Represents relevant information on a Kotlin class used for <a href="-class-inspector/index.html">ClassInspector</a>. Can only ever be applied on a class and not file facades.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-865799406%2FClasslikes%2F253293292" anchor-label="ClassInspector" id="-865799406%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-class-inspector/index.html"><span>Class</span><wbr></wbr><span><span>Inspector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-865799406%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-class-inspector/index.html">ClassInspector</a></div><div class="brief "><p class="paragraph">A basic interface for looking up JVM information about a given Class.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="634977165%2FClasslikes%2F253293292" anchor-label="ConstructorData" id="634977165%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-constructor-data/index.html"><span>Constructor</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="634977165%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-constructor-data/index.html">ConstructorData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>parameterAnnotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isSynthetic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>jvmModifiers<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="-jvm-method-modifier/index.html">JvmMethodModifier</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>exceptions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/TypeName///PointingToDeclaration/">TypeName</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents relevant information on a constructor used for <a href="-class-inspector/index.html">ClassInspector</a>. Should only be associated with constructors of a <a href="-class-data/index.html">ClassData</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-415960986%2FClasslikes%2F253293292" anchor-label="ContainerData" id="-415960986%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-container-data/index.html"><span>Container</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-415960986%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-container-data/index.html">ContainerData</a></div><div class="brief "><p class="paragraph">Represents relevant information on a declaration container used for <a href="-class-inspector/index.html">ClassInspector</a>. Can only ever be applied on a Kotlin type (i.e. is annotated with <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-metadata/index.html">Metadata</a>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-9881866%2FClasslikes%2F253293292" anchor-label="EnumEntryData" id="-9881866%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-enum-entry-data/index.html"><span>Enum</span><wbr></wbr><span>Entry</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-9881866%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-enum-entry-data/index.html">EnumEntryData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>declarationContainer<span class="token operator">: </span><span data-unresolved-link="kotlin.metadata/KmClass///PointingToDeclaration/">KmClass</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents relevant information on a Kotlin enum entry.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-325973363%2FClasslikes%2F253293292" anchor-label="FieldData" id="-325973363%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-field-data/index.html"><span>Field</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-325973363%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-field-data/index.html">FieldData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isSynthetic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>jvmModifiers<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="-jvm-field-modifier/index.html">JvmFieldModifier</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>constant<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/CodeBlock///PointingToDeclaration/">CodeBlock</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents relevant information on a field used for <a href="-class-inspector/index.html">ClassInspector</a>. Should only be associated with a <a href="-property-data/index.html">PropertyData</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1584962059%2FClasslikes%2F253293292" anchor-label="FileData" id="1584962059%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-file-data/index.html"><span>File</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1584962059%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-file-data/index.html">FileData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>declarationContainer<span class="token operator">: </span><span data-unresolved-link="kotlin.metadata/KmPackage///PointingToDeclaration/">KmPackage</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>properties<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlin.metadata/KmProperty///PointingToDeclaration/">KmProperty</span><span class="token punctuation">, </span><a href="-property-data/index.html">PropertyData</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>methods<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlin.metadata/KmFunction///PointingToDeclaration/">KmFunction</span><span class="token punctuation">, </span><a href="-method-data/index.html">MethodData</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>jvmName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>if (!className.simpleName.endsWith(&quot;Kt&quot;)) className.simpleName else null</span></span><span class="token punctuation">)</span> : <a href="-container-data/index.html">ContainerData</a></div><div class="brief "><p class="paragraph">Represents relevant information on a file facade used for <a href="-class-inspector/index.html">ClassInspector</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-410167871%2FClasslikes%2F253293292" anchor-label="JvmFieldModifier" id="-410167871%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-jvm-field-modifier/index.html"><span>Jvm</span><wbr></wbr><span>Field</span><wbr></wbr><span><span>Modifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-410167871%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-jvm-field-modifier/index.html">JvmFieldModifier</a> : <a href="-jvm-modifier/index.html">JvmModifier</a>, <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-jvm-field-modifier/index.html">JvmFieldModifier</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Modifiers that are annotations in Kotlin but modifier keywords in bytecode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1464496664%2FClasslikes%2F253293292" anchor-label="JvmMethodModifier" id="1464496664%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-jvm-method-modifier/index.html"><span>Jvm</span><wbr></wbr><span>Method</span><wbr></wbr><span><span>Modifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1464496664%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-jvm-method-modifier/index.html">JvmMethodModifier</a> : <a href="-jvm-modifier/index.html">JvmModifier</a>, <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-jvm-method-modifier/index.html">JvmMethodModifier</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Modifiers that are annotations or implicit in Kotlin but modifier keywords in bytecode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-942612935%2FClasslikes%2F253293292" anchor-label="JvmModifier" id="-942612935%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-jvm-modifier/index.html"><span>Jvm</span><wbr></wbr><span><span>Modifier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942612935%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-jvm-modifier/index.html">JvmModifier</a></div><div class="brief "><p class="paragraph">Represents a JVM modifier that is represented as an annotation in Kotlin but as a modifier in bytecode. Examples include annotations such as <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html">@JvmStatic</a> or <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-synthetic/index.html">@JvmSynthetic</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1223474374%2FClasslikes%2F253293292" anchor-label="MethodData" id="1223474374%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-method-data/index.html"><span>Method</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1223474374%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-method-data/index.html">MethodData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>parameterAnnotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isSynthetic<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>jvmModifiers<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="-jvm-method-modifier/index.html">JvmMethodModifier</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isOverride<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>exceptions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/TypeName///PointingToDeclaration/">TypeName</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents relevant information on a method used for <a href="-class-inspector/index.html">ClassInspector</a>. Should only be associated with methods of a <a href="-class-data/index.html">ClassData</a> or <a href="-property-data/index.html">PropertyData</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="201469010%2FClasslikes%2F253293292" anchor-label="PropertyData" id="201469010%2FClasslikes%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-property-data/index.html"><span>Property</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="201469010%2FClasslikes%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-property-data/index.html">PropertyData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">annotations<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="com.squareup.kotlinpoet/AnnotationSpec///PointingToDeclaration/">AnnotationSpec</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>fieldData<span class="token operator">: </span><a href="-field-data/index.html">FieldData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>getterData<span class="token operator">: </span><a href="-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>setterData<span class="token operator">: </span><a href="-method-data/index.html">MethodData</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isJvmField<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents relevant information on a property used for <a href="-class-inspector/index.html">ClassInspector</a>. Should only be associated with properties of a <a href="-class-data/index.html">ClassData</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="EXTENSION_PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1116421771%2FProperties%2F253293292" anchor-label="isExtensionType" id="1116421771%2FProperties%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-extension-type.html"><span>is</span><wbr></wbr><span>Extension</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1116421771%2FProperties%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">val </span><span data-unresolved-link="kotlin.metadata/KmType///PointingToDeclaration/">KmType</span><span class="token punctuation">.</span><a href="is-extension-type.html">isExtensionType</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph"><code class="lang-kotlin">true</code> if this is an extension type (i.e. String.() -> Unit vs (String) -> Unit).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="EXTENSION_FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1766598744%2FFunctions%2F253293292" anchor-label="classFor" id="1766598744%2FFunctions%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="class-for.html"><span>class</span><wbr></wbr><span><span>For</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1766598744%2FFunctions%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token punctuation">.</span><a href="class-for.html"><span class="token function">classFor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlin.metadata/KmClass///PointingToDeclaration/">KmClass</span></div><div class="brief "><p class="paragraph">Looks up other classes, such as for nested members. Note that this class would always be Kotlin, so Metadata can be relied on for this.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="612756593%2FFunctions%2F253293292" anchor-label="containerData" id="612756593%2FFunctions%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="container-data.html"><span>container</span><wbr></wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="612756593%2FFunctions%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token punctuation">.</span><a href="container-data.html"><span class="token function">containerData</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token punctuation">, </span></span><span class="parameter ">parentClassName<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-container-data/index.html">ContainerData</a></div><div class="brief "><p class="paragraph">Creates a new <a href="-container-data/index.html">ContainerData</a> instance for a given <a href="container-data.html">className</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1462756439%2FFunctions%2F253293292" anchor-label="toFileSpec" id="1462756439%2FFunctions%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-file-spec.html"><span>to</span><wbr></wbr><span>File</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1462756439%2FFunctions%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-file-spec.html"><span class="token function">toFileSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/FileSpec///PointingToDeclaration/">FileSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.compiler/javax/lang/model/element/TypeElement.html">TypeElement</a><span class="token punctuation">.</span><a href="to-file-spec.html"><span class="token function">toFileSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/FileSpec///PointingToDeclaration/">FileSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="kotlin.metadata/KmClass///PointingToDeclaration/">KmClass</span><span class="token punctuation">.</span><a href="to-file-spec.html"><span class="token function">toFileSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token operator"> = </span>createClassName(name)</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/FileSpec///PointingToDeclaration/">FileSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="kotlin.metadata/KmPackage///PointingToDeclaration/">KmPackage</span><span class="token punctuation">.</span><a href="to-file-spec.html"><span class="token function">toFileSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/FileSpec///PointingToDeclaration/">FileSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-file-spec.html"><span class="token function">toFileSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/FileSpec///PointingToDeclaration/">FileSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-569981004%2FFunctions%2F253293292" anchor-label="toTypeSpec" id="-569981004%2FFunctions%2F253293292" data-filterable-set=":interop:kotlin-metadata/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":interop:kotlin-metadata/main" data-filterable-set=":interop:kotlin-metadata/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-type-spec.html"><span>to</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>Spec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-569981004%2FFunctions%2F253293292"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":interop:kotlin-metadata/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-type-spec.html"><span class="token function">toTypeSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.compiler/javax/lang/model/element/TypeElement.html">TypeElement</a><span class="token punctuation">.</span><a href="to-type-spec.html"><span class="token function">toTypeSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="kotlin.metadata/KmClass///PointingToDeclaration/">KmClass</span><span class="token punctuation">.</span><a href="to-type-spec.html"><span class="token function">toTypeSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">className<span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/ClassName///PointingToDeclaration/">ClassName</span><span class="token operator"> = </span>createClassName(name)</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-type-spec.html"><span class="token function">toTypeSpec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lenient<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">classInspector<span class="token operator">: </span><a href="-class-inspector/index.html">ClassInspector</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.squareup.kotlinpoet/TypeSpec///PointingToDeclaration/">TypeSpec</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

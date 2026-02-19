@@ -1,0 +1,3298 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Kotlin API for generating .kt source files">
+      
+      
+        <meta name="author" content="Square, Inc.">
+      
+      
+      
+        <link rel="prev" href="../1.x/interop-ksp/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../images/icon-square.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Change Log - KotlinPoet</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/app.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#change-log" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="KotlinPoet" class="md-header__button md-logo" aria-label="KotlinPoet" data-md-component="logo">
+      
+  <img src="../images/icon-square.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KotlinPoet
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Change Log
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue-grey"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/square/kotlinpoet" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KotlinPoet
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="KotlinPoet" class="md-nav__button md-logo" aria-label="KotlinPoet" data-md-component="logo">
+      
+  <img src="../images/icon-square.png" alt="logo">
+
+    </a>
+    KotlinPoet
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/square/kotlinpoet" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KotlinPoet
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-control-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code & Control Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Format Specifiers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Format Specifiers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../s-for-strings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %S for Strings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../p-for-string-templates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %P for String Templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../t-for-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %T for Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m-for-members/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %M for Members
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../n-for-names/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %N for Names
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../l-for-literals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    %L for Literals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-block-format-strings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Block Format Strings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constructors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constructors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../context-parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../properties/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Properties
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interfaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../objects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Objects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enums/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enums
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymous-inner-classes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anonymous Inner Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../type-aliases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Aliases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../callable-references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Callable References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kotlin-reflect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kotlin-reflect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interop-javapoet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interop - JavaPoet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interop-kotlin-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interop - kotlin-metadata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interop-ksp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interop - KSP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.x/kotlinpoet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kotlinpoet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.x/interop-javapoet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    interop-javapoet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.x/interop-kotlin-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    interop-kotlin-metadata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.x/interop-ksp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    interop-ksp
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://stackoverflow.com/questions/tagged/kotlinpoet?sort=active" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stack Overflow ⏏
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Change Log
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Change Log
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unreleased
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-220" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-210" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-200" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1181" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.18.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.18.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.17.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1160" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.16.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1153" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1152" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1151" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1150" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1142" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1141" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1131" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1130" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.12.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1110" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.11.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-190" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.9.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.8.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-171" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-160" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.6.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-150" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.5.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-143" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-142" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-141" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-130" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.3.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-110" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-070" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.7.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-060" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.6.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-050" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.5.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-040" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.4.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-030" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.3.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-010" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unreleased
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-220" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-210" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-200" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 2.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1181" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.18.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.18.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.17.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1160" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.16.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1153" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1152" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1151" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1150" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.15.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1142" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1141" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.14.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1132" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1131" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1130" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.13.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.12.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1110" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.11.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-1100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.10.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-190" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.9.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.8.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-171" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.7.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-160" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.6.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-150" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.5.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-143" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-142" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-141" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.4.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-130" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.3.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-110" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC3
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100-rc1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 1.0.0-RC1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-070" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.7.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-060" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.6.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-050" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.5.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-040" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.4.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-030" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.3.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-010" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version 0.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="change-log">Change Log<a class="headerlink" href="#change-log" title="Permanent link">&para;</a></h1>
+<h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<ul>
+<li>New: Add <code>TypeName.annotated()</code> convenience API for adding annotations to types (#2202)</li>
+<li>New: Add support for type aliases in types.</li>
+<li>New: Add <code>FileSpec.addImport(MemberName)</code> to explicitly import a member (#2198)</li>
+<li>New: Add <code>NameAllocator.contains</code> to check if a given tag is already allocated (#2154)</li>
+<li>Fix: <code>emitNullable</code> correctly when deferring type in <code>CodeWriter</code>. (#2216)</li>
+<li>Fix: <code>FunSpec.beginControlFlow</code> to accept nullable arguments for consistency with <code>CodeBlock.beginControlFlow</code>. (#2174)</li>
+<li>Fix: Annotation array parameters with annotation elements now correctly handled. (#2142)</li>
+<li>Fix: <code>KType.asTypeName</code> now correctly handles recursively bound generics (e.g. <code>T : Comparable&lt;T&gt;</code>). (#1914)</li>
+<li>Fix: Don&rsquo;t convert multi-statement function to expression body. (#1979)</li>
+<li>Fix: Escape <code>/*</code> and <code>*/</code> when emitting Kdoc. (#887)</li>
+<li>Fix: Generate imports for extension members used via <code>%M</code> in KDocs. (#2189)</li>
+<li>In-development snapshots are now published to the Central Portal Snapshots repository at <a href="https://central.sonatype.com/repository/maven-snapshots/">https://central.sonatype.com/repository/maven-snapshots/</a>.</li>
+</ul>
+<h2 id="version-220">Version 2.2.0<a class="headerlink" href="#version-220" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/IRus">@IRus</a> for contributing to this release.</p>
+<p><em>2025-05-16</em></p>
+<ul>
+<li>New: Kotlin 2.1.21.</li>
+<li>New: KSP 2.1.21-2.0.1.</li>
+<li>New: Add support for context parameters. (#2112)</li>
+<li>New: Eliminate Guava dependency. (#2110)</li>
+<li>New: Migrate to Dokka plugin V2. (#2113)</li>
+</ul>
+<h2 id="version-210">Version 2.1.0<a class="headerlink" href="#version-210" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/ForteScarlet">@ForteScarlet</a>, <a href="https://github.com/TrevorSStone">@TrevorSStone</a>,
+<a href="https://github.com/RaoPrashanth">@RaoPrashanth</a>, <a href="https://github.com/damianw">@damianw</a>, <a href="https://github.com/ansehoon1999">@ansehoon1999</a>,
+<a href="https://github.com/TheMrMilchmann">@TheMrMilchmann</a> for contributing to this release.</p>
+<p><em>2025-02-25</em></p>
+<ul>
+<li>New: Kotlin 2.1.10.</li>
+<li>New: KSP 2.1.10-1.0.30.</li>
+<li>Fix: Support delegates on anonymous classes. (#2034)</li>
+<li>Fix: Prevent aliased imports from colliding with existing imports. (#2052)</li>
+<li>Fix: <code>TypeName.MUTABLE_MAP_ENTRY</code> now correctly uses the <code>MutableEntry</code> nested class name. (#2061)</li>
+<li>Fix: Use the same aliased import for both the nullable and non-nullable versions of a type. (#2068)</li>
+<li>Fix: Allow zero methods in a functional interface if it has a superinterface. (#2075)</li>
+</ul>
+<h2 id="version-200">Version 2.0.0<a class="headerlink" href="#version-200" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/brokenhappy">@brokenhappy</a>, <a href="https://github.com/tajobe">@tajobe</a>, <a href="https://github.com/niyajali">@niyajali</a>,
+<a href="https://github.com/ForteScarlet">@ForteScarlet</a> for contributing to this release.</p>
+<p><em>2024-10-23</em></p>
+<p>This release is source- and binary-compatible with KotlinPoet 1.x.</p>
+<p>The most important behavior change in this release is that spaces in generated code don&rsquo;t wrap by
+default anymore.</p>
+<p>KotlinPoet 1.x used to replace space characters with newline characters whenever a given line of
+code exceeded the length limit. This usually led to better code formatting, but could also lead to
+compilation errors in generated code. Non-breaking spaces could be marked by the <code>·</code> character, but
+the discoverability of this feature wasn&rsquo;t great.</p>
+<p>KotlinPoet 2.0 does not wrap spaces, even if the line of code they occur in exceeds the length
+limit. The newly introduced <code>♢</code> character can be used to mark spaces that are safe to wrap, which
+can improve code formatting. The <code>·</code> character has been preserved for compatibility, but its
+behavior is now equivalent to a regular space character.</p>
+<ul>
+<li>New: Kotlin 2.0.10.</li>
+<li>New: Spaces don&rsquo;t break by default.</li>
+<li>New: New <code>♢</code> placeholder representing a space that is safe to wrap.</li>
+<li>New: Add <code>KSTypeAlias.toClassName()</code>. (#1956)</li>
+<li>New: Add <code>KSType.toClassNameOrNull()</code>. (#1956)</li>
+<li>Fix: Enum classes that only have an init block now also generate the required semicolon. (#1953)</li>
+<li>Fix: Preserve typealiases in <code>KSAnnotation.toAnnotationSpec()</code>. (#1956)</li>
+<li>Fix: Preserve nullability in <code>KSType.toClassName()</code>. (#1956)</li>
+</ul>
+<h2 id="version-1181">Version 1.18.1<a class="headerlink" href="#version-1181" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/mitasov-ra">@mitasov-ra</a> for contributing to this release.</p>
+<p><em>2024-07-15</em></p>
+<ul>
+<li>Fix: Workaround for <a href="https://youtrack.jetbrains.com/issue/KT-18706">KT-18706</a>: KotlinPoet now generates import aliases without backticks (#1920).</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// before, doesn&#39;t compile due to KT-18706</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">com.example.one.`$Foo`</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="err">`</span><span class="n">One</span><span class="err">$</span><span class="n">Foo</span><span class="err">`</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">com.example.two.`$Foo`</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="err">`</span><span class="n">Two</span><span class="err">$</span><span class="n">Foo</span><span class="err">`</span>
+
+<span class="c1">// now, compiles</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">com.example.one.`$Foo`</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">One__Foo</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">com.example.two.`$Foo`</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Two__Foo</span>
+</code></pre></div>
+<h2 id="version-1180">Version 1.18.0<a class="headerlink" href="#version-1180" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/DanielGronau">@DanielGronau</a> for contributing to this release.</p>
+<p><em>2024-07-05</em></p>
+<ul>
+<li>New: Kotlin 2.0.0.</li>
+<li>New: KSP 2.0.0-1.0.22.</li>
+<li>New: Promote <code>kotlinpoet-metadata</code> out of preview to stable.</li>
+<li>New: Migrate <code>kotlinpoet-metadata</code> to stable <code>org.jetbrains.kotlin:kotlin-metadata-jvm</code> artifact for Metadata parsing.</li>
+<li>New: Make enum entry references in <code>KSAnnotation.toAnnotationSpec()</code> and <code>KSClassDeclaration.toClassName()</code> more robust.</li>
+<li>Fix: Don&rsquo;t expand typealiases of function types to <code>LambdaTypeName</code>s in <code>KSTypeReference.toTypeName()</code>.</li>
+<li>Fix: Avoid rounding small double and float values in <code>%L</code> translation (#1927).</li>
+<li>Fix: Fix typealias type argument resolution in KSP2 (#1929).</li>
+</ul>
+<h2 id="version-1170">Version 1.17.0<a class="headerlink" href="#version-1170" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/jisungbin">@jisungbin</a>, <a href="https://github.com/hfhbd">@hfhbd</a>, <a href="https://github.com/evant">@evant</a>, <a href="https://github.com/sgjesse">@sgjesse</a>, <a href="https://github.com/sebek64">@sebek64</a> for
+contributing to this release.</p>
+<p><em>2024-05-24</em></p>
+<ul>
+<li>Change: kotlinx-metadata 0.9.0. Note that the <code>KotlinClassMetadata.read</code> is deprecated in 0.9.0 and replaced with
+  <code>readStrict</code> (#1830).</li>
+<li>Note: we now also provide <code>lenient</code> parameters to map to the underlying <code>readStrict()</code> and <code>readLenient()</code> calls
+    (#1766).</li>
+<li>We have also removed various <code>Class</code>/<code>TypeElement</code>/<code>Metadata</code>-to-<code>KmClass</code> APIs from the public API, as these are
+    trivial to write now with kotlinx-metadata&rsquo;s newer APIs and allows us to focus the API surface area of this artifact
+    better (#1891).</li>
+<li>New: Supertype list wraps to one-per-line if the primary constructor spans multiple lines (#1866).</li>
+<li>New: Extract <code>MemberSpecHolder</code> interface for constructs that can hold <code>PropertySpec</code>s and <code>FunSpec</code>s and their
+  builders (#1877).</li>
+<li>New: <code>joinToCode</code> variant which operates on any type, but requires a transform lambda to convert each element into a
+  <code>CodeBlock</code> (#1874).</li>
+<li>New: Support annotation type arguments in <code>KSAnnotation.toAnnotationSpec()</code> (#1889).</li>
+<li>Fix: Prevent name clashes between a function in class and a function call in current scope (#1850).</li>
+<li>Fix: Fix extension function imports (#1814).</li>
+<li>Fix: Omit implicit modifiers on <code>FileSpec.scriptBuilder</code> (#1813).</li>
+<li>Fix: Fix trailing newline in <code>PropertySpec</code> (#1827).</li>
+<li>Fix: <code>KSAnnotation.toAnnotationSpec</code> writes varargs in place instead of making them an array to work around a Kotlin
+  issue with <code>OptIn</code> annotations (#1833).</li>
+<li>Fix: <code>MemberName</code>s without a package are now correctly imported (#1841)</li>
+<li>Fix: Throw if primary constructor delegates to other constructors (#1859).</li>
+<li>Fix: Aliased imports with nested class (#1876).</li>
+<li>Fix: Check for error types in <code>KSType.toClassName()</code> (#1890).</li>
+<li>Fix: Support generating a single import for overloaded <code>MemberName</code>s (#1909).</li>
+</ul>
+<h2 id="version-1160">Version 1.16.0<a class="headerlink" href="#version-1160" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/drawers">@drawers</a>, <a href="https://github.com/rickclephas">@rickclephas</a> for contributing to this release.</p>
+<p><em>2024-01-18</em></p>
+<ul>
+<li>New: Kotlin 1.9.22.</li>
+<li>New: KSP 1.9.22-1.0.16.</li>
+<li>New: Add <code>NameAllocator</code> API to control keyword pre-allocation (#1803).</li>
+<li>Fix: Fix issue with missing <code>suspend</code> modifier in <code>KSTypeReference.toTypeName</code> (#1793).</li>
+<li>Fix: Honour same-package import aliases (#1794).</li>
+<li>Fix: Always include parameter docs in the type header (#1800).</li>
+</ul>
+<h2 id="version-1153">Version 1.15.3<a class="headerlink" href="#version-1153" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/gabrielittner">@gabrielittner</a> for contributing to this release.</p>
+<p><em>2023-12-04</em></p>
+<ul>
+<li>Fix: Fix nullability of lambdas in <code>KSTypeReference.toTypeName</code> (#1756).</li>
+</ul>
+<h2 id="version-1152">Version 1.15.2<a class="headerlink" href="#version-1152" title="Permanent link">&para;</a></h2>
+<p>Thanks to <a href="https://github.com/evant">@evant</a> for contributing to this release.</p>
+<p><em>2023-11-30</em></p>
+<ul>
+<li>New: Kotlin 1.9.21.</li>
+<li>New: KSP 1.9.21-1.0.15.</li>
+<li>New: KSP: more accurately represent function types (#1742).</li>
+</ul>
+<h2 id="version-1151">Version 1.15.1<a class="headerlink" href="#version-1151" title="Permanent link">&para;</a></h2>
+<p><em>2023-11-19</em></p>
+<ul>
+<li>Fix: Fix a regression introduced by #1637, where a superfluous newline is added to a type&rsquo;s KDoc
+ if it has a primary constructor with no docs (#1727).</li>
+</ul>
+<h2 id="version-1150">Version 1.15.0<a class="headerlink" href="#version-1150" title="Permanent link">&para;</a></h2>
+<p><em>2023-11-18</em></p>
+<p>Thanks to <a href="https://github.com/drawers">@drawers</a>, <a href="https://github.com/fejesjoco">@fejesjoco</a>, <a href="https://github.com/takahirom">@takahirom</a>,
+<a href="https://github.com/martinbonnin">@martinbonnin</a>, <a href="https://github.com/mcarleio">@mcarleio</a> for contributing to this release.</p>
+<p>In this release the <code>:kotlinpoet</code> module has been converted to a Kotlin Multiplatform module
+(#1654), though for now it only supports the JVM target. <strong>Important</strong>: unless you&rsquo;re building
+with Gradle, you will now need to depend on the <code>kotlinpoet-jvm</code> artifact, instead of <code>kotlinpoet</code> -
+see <a href="../#download">Downloads</a> for instructions.</p>
+<ul>
+<li>New: Kotlin 1.9.20.</li>
+<li>New: KSP 1.9.20-1.0.14.</li>
+<li>New: Extract <code>TypeSpecHolder</code> interface for constructs that can hold a TypeSpec and their builders (#1723).</li>
+<li>New: Expose relative path from <code>FileSpec</code> (#1720).</li>
+<li>New: Return the generated path from <code>FileSpec.writeTo()</code>. (#1514).</li>
+<li>New: Remove default compatibility from unstable types (#1662).</li>
+<li>New: Deprecate <code>TypeSpec.expectClassBuilder()</code> and <code>TypeSpec.valueClassBuilder()</code> (#1589).</li>
+<li>New: Add option to convert <code>KSAnnotation</code> to <code>AnnotationSpec</code> while omitting default values (#1538).</li>
+<li>New: Add <code>FileSpec.builder</code> convenience for <code>MemberName</code> (#1585).</li>
+<li>Fix: Set <code>DecimalFormatSymbols.minusSign</code> for consistency across locales (#1658).</li>
+<li>Fix: Fix link to incremental KSP in KDoc (#1638).</li>
+<li>Fix: Emit primary constructor KDoc (#1637).</li>
+<li>Change: kotlinx-metadata 0.7.0. This is a breaking change for users of the <code>:kotlinpoet-metadata</code>
+   module, as most <code>Flags</code>-API extensions have been removed in favor of the now-available first-party versions.</li>
+</ul>
+<h2 id="version-1142">Version 1.14.2<a class="headerlink" href="#version-1142" title="Permanent link">&para;</a></h2>
+<p><em>2023-05-30</em></p>
+<ul>
+<li>Fix: Fix one more missing API in binary compatibility override in <code>Annotatable.Builder</code> (#1581).</li>
+</ul>
+<h2 id="version-1141">Version 1.14.1<a class="headerlink" href="#version-1141" title="Permanent link">&para;</a></h2>
+<p><em>2023-05-29</em></p>
+<ul>
+<li>Fix: Restore ABI stability for annotatable and documentable builders (#1580).</li>
+</ul>
+<h2 id="version-1140">Version 1.14.0<a class="headerlink" href="#version-1140" title="Permanent link">&para;</a></h2>
+<p><em>2023-05-29</em></p>
+<p>Thanks to <a href="https://github.com/Omico">@Omico</a>, <a href="https://github.com/drawers">@drawers</a>, <a href="https://github.com/RBusarow">@RBusarow</a> for contributing to this release.</p>
+<ul>
+<li>New: Kotlin 1.8.21.</li>
+<li>New: KSP 1.8.21-1.0.11.</li>
+<li>New: Enable default methods in Java bytecode (#1561).</li>
+<li>New: Group Kotlin and Renovate updates together in Renovate (#1562).</li>
+<li>New: Extract trait interface for annotatable constructs and their builders (#1564).</li>
+<li>New: Extract trait interface for documentable constructs and their builders (#1571).</li>
+<li>New: Document the usage of <code>STAR</code> (#1572).</li>
+<li>New: Add builder for <code>FunSpec</code> which accepts a <code>MemberName</code> (#1574).</li>
+<li>Fix: Omit public modifier on override function or constructor parameters (#1550).</li>
+<li>Fix: Correct handling of members in various types (#1558).</li>
+<li>
+<p>Fix: Function return types now default to <code>Unit</code> unless explicitly set (#1559).</p>
+<p>Previously, when <code>FunSpec</code> didn&rsquo;t have a return type specified and an expression body was produced, no return
+type would be emitted. However, starting from <code>1.14.0</code>, KotlinPoet will not add <code>Unit</code> as a return type in such
+cases. In order to correct the generated output, you are to specify the actual return type of the <code>FunSpec</code>.</p>
+<p>Before <code>1.14.0</code>, if omitted, no return type is produced:
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">funSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FunSpec</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">addStatement</span><span class="p">(</span><span class="s">&quot;return 1&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">foo</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+</code></pre></div></p>
+<p>From <code>1.14.0</code>, the return type defaults to <code>Unit</code> if not otherwise set:
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">funSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FunSpec</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">addStatement</span><span class="p">(</span><span class="s">&quot;return 1&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">foo</span><span class="p">():</span><span class="w"> </span><span class="kt">Unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1">// ❌</span>
+</code></pre></div></p>
+<p>To fix it, explicitly define the return type:
+<div class="highlight"><pre><span></span><code><span class="w"> </span>val funSpec = FunSpec.builder(&quot;foo&quot;)
+<span class="gi">+  .returns(INT)</span>
+<span class="w"> </span>  .addStatement(&quot;return 1&quot;)
+<span class="w"> </span>  .build()
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">foo</span><span class="p">():</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1">// ✅</span>
+</code></pre></div></p>
+<p>Additionally, as part of this change, <code>FunSpec.returnType</code> has changed to be non-nullable. This is a source- and
+binary-compatible change, although if you were performing null-checks then new warnings may appear after upgrade.</p>
+</li>
+<li>
+<p>Fix: Append nested class names to alias during name lookup (#1568).</p>
+</li>
+<li>Fix: Allow PropertySpec with context receivers and without getter or setter (#1575).</li>
+</ul>
+<h2 id="version-1132">Version 1.13.2<a class="headerlink" href="#version-1132" title="Permanent link">&para;</a></h2>
+<p><em>2023-05-05</em></p>
+<p>Thanks to <a href="https://github.com/Squiry">@Squiry</a> for contributing to this release.</p>
+<ul>
+<li>Fix: <code>KSType.toTypeName</code> fixed to work with aliased types (#1534).</li>
+</ul>
+<h2 id="version-1131">Version 1.13.1<a class="headerlink" href="#version-1131" title="Permanent link">&para;</a></h2>
+<p><em>2023-04-28</em></p>
+<p>Thanks to <a href="https://github.com/rickclephas">@rickclephas</a> for contributing to this release.</p>
+<ul>
+<li>Fix: Look at canonical names instead of just package names when generating import aliases (#1519).</li>
+<li>Fix: Ignore KSP annotation arguments without a value (#1523).</li>
+<li>Fix: Fix arguments handling in <code>KSType.toTypeName()</code> (#1529).</li>
+</ul>
+<h2 id="version-1130">Version 1.13.0<a class="headerlink" href="#version-1130" title="Permanent link">&para;</a></h2>
+<p><em>2023-04-06</em></p>
+<p>Thanks to <a href="https://github.com/popematt">@popematt</a>, <a href="https://github.com/bitPogo">@bitPogo</a>, <a href="https://github.com/mars885">@mars885</a>, <a href="https://github.com/sjudd">@sjudd</a>, <a href="https://github.com/Sironheart">@Sironheart</a>,
+<a href="https://github.com/polarene">@polarene</a>, <a href="https://github.com/DeoTimeTheGithubUser">@DeoTimeTheGithubUser</a>, <a href="https://github.com/drawers">@drawers</a> for contributing to this release.</p>
+<ul>
+<li>New: Kotlin 1.8.0.</li>
+<li>New: KSP 1.8.0-1.0.9.</li>
+<li>New: Support context receivers on TypeSpecs + extract ContextReceivable API (#1269).</li>
+<li>New: Optimize <code>OriginatingElements</code> and <code>TagMap</code> implementations (#1270).</li>
+<li>New: Auto-generate import aliases for types and members (#1355).</li>
+<li>New: Insert underscores into large decimal literals (#1384).</li>
+<li>New: New factory function <code>FileSpec.builder(ClassName)</code> (#1397).</li>
+<li>Fix: Fix StackOverflowError when calling <code>KSTypeArgument.toTypeName()</code> for a wildcard in a recursive type bound (#1272).</li>
+<li>Fix: Fix transitive aliases (#1306).</li>
+<li>Fix: Fix Aliases as TypeArgument (#1321).</li>
+<li>Fix: Don&rsquo;t escape special characters inside raw strings (#1331).</li>
+<li>Fix: Fix KSP interop&rsquo;s output of the annotation parameter value of type Char (#1338).</li>
+<li>Fix: Fix KSP interop&rsquo;s output for primitive arrays (#1340).</li>
+<li>Fix: Avoid emitting public if <code>shouldEmitPublicModifier</code> returns false (#1342).</li>
+<li>Fix: Fix context receivers being rendered in an incorrect position when on a nullable/suspending <code>LambdaTypeName</code> (#1454).</li>
+<li>Fix: Do not use <code>bestGuess</code> for <code>KClass.asClassName</code> (#1469).</li>
+<li>Fix: Handle fake nested types with platform mapped parents (#1472).</li>
+<li>Fix: Fix <code>TypeName</code> equals (#1477).</li>
+<li>Fix: Make equals consistent with compareTo for <code>ClassName</code> (#1506).</li>
+</ul>
+<h2 id="version-1120">Version 1.12.0<a class="headerlink" href="#version-1120" title="Permanent link">&para;</a></h2>
+<p><em>2022-06-13</em></p>
+<p>Thanks to <a href="https://github.com/WhosNickDoglio">@WhosNickDoglio</a>, <a href="https://github.com/sullis">@sullis</a>, <a href="https://github.com/DRSchlaubi">@DRSchlaubi</a>,
+<a href="https://github.com/martinbonnin">@martinbonnin</a>, <a href="https://github.com/seriouslyhypersonic">@seriouslyhypersonic</a>, <a href="https://github.com/ephemient">@ephemient</a>,
+<a href="https://github.com/dkilmer">@dkilmer</a>, <a href="https://github.com/aksh1618">@aksh1618</a>, <a href="https://github.com/zsqw123">@zsqw123</a>, <a href="https://github.com/roihershberg">@roihershberg</a> for
+contributing to this release.</p>
+<ul>
+<li>New: Kotlin 1.7.0.</li>
+<li>New: Add support for context receivers.</li>
+<li>New: Add support for external property getter.</li>
+<li>New: <code>interop-ksp</code> API promoted to stable.</li>
+<li>Fix: Resolve enum constants when emitting types.</li>
+<li>Fix: Fix type argument mapping when processing typealiases with KSP.</li>
+<li>Fix: Properly unwrap <code>KSTypeAlias</code> with an unused type parameter.</li>
+<li>Fix: Unwrap nested <code>KSTypeAlias</code>-es recursively.</li>
+<li>Fix: Add support for context receivers <code>@PropertySpec</code> and fix issues with annotations.</li>
+<li>Fix: Treat <code>header</code> and <code>impl</code> as keywords (workaround for KT-52315).</li>
+<li>Fix: Use <code>%N</code> instead of <code>%L</code> for annotation arg names so keywords are handled.</li>
+<li>Fix: Improve handling of long <code>return</code> expressions.</li>
+</ul>
+<h2 id="version-1110">Version 1.11.0<a class="headerlink" href="#version-1110" title="Permanent link">&para;</a></h2>
+<p><em>2022-03-24</em></p>
+<p>Thanks to <a href="https://github.com/liujingxing">@liujingxing</a> and <a href="https://github.com/BoD">@BoD</a> for contributing to this release.</p>
+<ul>
+<li>New: Kotlin scripting support in <code>FileSpec</code>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileSpec</span><span class="p">.</span><span class="na">scriptBuilder</span><span class="p">(</span><span class="s">&quot;Taco&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">addStatement</span><span class="p">(</span><span class="s">&quot;println(%S)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello world!&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="na">addKotlinDefaultImports</span><span class="p">()</span>
+<span class="w">  </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
+</code></pre></div>
+<p>Generates a <code>Taco.kts</code> file with the following contents:</p>
+<div class="highlight"><pre><span></span><code><span class="n">println</span><span class="p">(</span><span class="s">&quot;hello world!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>New: Emit trailing commas for multi-line parameters and annotations.</li>
+<li>New: Add <code>KSAnnotation.toAnnotationSpec()</code>.</li>
+<li>New: Add <code>Unit</code> and <code>CharSequence</code> conversions in <code>javapoet-interop</code>.</li>
+<li>New: Add support for default imports in <code>FileSpec</code>.</li>
+<li>This is particularly oriented at scripting support, but can also be used in non-script files.</li>
+<li>New: Update to Kotlin 1.6.10.</li>
+<li>Fix: Fail compilation if you only pass one string to <code>ClassName</code>.</li>
+<li>Fix: Inline <code>val</code> property if its getter is <code>inline</code>.</li>
+<li>Fix: Add <code>yield</code> to the list of reserved keywords.</li>
+<li>Fix: Enforce only allowed parameter modifiers in <code>ParameterSpec</code> (i.e. <code>crossinline</code>, <code>vararg</code>, and <code>noinline</code>).</li>
+<li>Fix: Fix <code>CodeBlock</code>s in class delegation getting <code>toString()</code>&lsquo;d instead of participating in code writing.</li>
+<li>Fix: Error when attempting to convert KSP error types (i.e. if <code>KSType.isError</code> is true) to <code>TypeName</code>.</li>
+</ul>
+<h2 id="version-1102">Version 1.10.2<a class="headerlink" href="#version-1102" title="Permanent link">&para;</a></h2>
+<p><em>2021-10-22</em></p>
+<p>Thanks to <a href="https://github.com/glureau">@glureau</a> and <a href="https://github.com/goooler">@goooler</a> for contributing to this release.</p>
+<ul>
+<li>New: Switch <code>AnnotationSpec.get()</code> to use the <code>arrayOf()</code> syntax instead of <code>[]</code>.</li>
+<li>Fix: Don&rsquo;t wrap aliasing imports with long package names.</li>
+<li>Fix: Don&rsquo;t wrap type names inside line comments.</li>
+<li>Fix: Ignore Java&rsquo;s <code>@Deprecated</code> annotations on synthetic methods for annotations.</li>
+</ul>
+<h2 id="version-1101">Version 1.10.1<a class="headerlink" href="#version-1101" title="Permanent link">&para;</a></h2>
+<p><em>2021-09-21</em></p>
+<p>Thanks to <a href="https://github.com/evant">@evant</a> for contributing to this release.</p>
+<ul>
+<li>Fix: Correct generation of typealiases with type args in KSP interop.</li>
+<li>Fix: Add missing default <code>TypeParameterResolver.EMPTY</code> argument to
+   <code>fun KSTypeArgument.toTypeName</code> in KSP interop.</li>
+</ul>
+<h2 id="version-1100">Version 1.10.0<a class="headerlink" href="#version-1100" title="Permanent link">&para;</a></h2>
+<p><em>2021-09-20</em></p>
+<p>Thanks to <a href="https://github.com/martinbonnin">@martinbonnin</a>, <a href="https://github.com/idanakav">@idanakav</a>, <a href="https://github.com/goooler">@goooler</a>, and
+<a href="https://github.com/anandwana001">@anandwana001</a> for contributing to this release.</p>
+<ul>
+<li>New: Add a new <a href="https://github.com/google/ksp">KSP</a> interop artifact. See <a href="https://square.github.io/kotlinpoet/interop-ksp/">docs</a> for more details.</li>
+<li>New: Add a new <a href="https://github.com/square/javapoet">JavaPoet</a> interop artifact. See <a href="https://square.github.io/kotlinpoet/interop-javapoet/">docs</a> for more
+   details.</li>
+<li>New: Allow copying a <code>ParameterizedTypeName</code> with new type arguments via new <code>copy()</code> overload.</li>
+<li>kotlinx-metadata artifacts have been consolidated to a single <code>com.squareup:kotlinpoet-metadata</code>
+   maven artifact. The previous <code>kotlinpoet-metadata-*</code> subartifacts are no longer published.</li>
+<li>New: <code>TypeNameAliasTag</code> has been moved to KotlinPoet&rsquo;s main artifact under <code>TypeAliasTag</code>, for
+   reuse with KSP interop.</li>
+<li><code>ImmutableKm*</code> classes have been removed. They were deemed to be a needless abstraction over the base <code>kotlinx-metadata</code> Km types. All usages of these should be substituted with their non-immutable base types.</li>
+<li>Fix: Fix self-referencing type variables in metadata parsing.</li>
+<li>Fix: Use delicate APIs rather than noisy logging ones when converting annotation mirrors in
+   <code>AnnotationSpec.get</code>.</li>
+<li>Fix: Update error message when metadata cannot be read to a more actionable one.</li>
+<li>Fix: Avoid escaping already escaped strings.</li>
+<li>Add docs about <code>kotlin-reflect</code> usage.</li>
+<li>Avoid using kotlin-reflect for looking up <code>Unit</code> types where possible.</li>
+<li>Test all the way up to JDK 17.</li>
+<li>Update Kotlin to 1.5.31.</li>
+</ul>
+<h2 id="version-190">Version 1.9.0<a class="headerlink" href="#version-190" title="Permanent link">&para;</a></h2>
+<p><em>2021-06-22</em></p>
+<ul>
+<li>New: Kotlin 1.5.10.</li>
+<li>New: Previously deprecated API to interop with Java reflection and Mirror API have been
+   un-deprecated and marked with <code>@DelicateKotlinPoetApi</code> annotation.</li>
+<li>New: <code>CodeBlock.Builder.withIndent</code> helper function.</li>
+<li>New: Allow changing initializers and default values in <code>ParameterSpec.Builder</code> and
+   <code>PropertySpec.Builder</code> after they were set.</li>
+<li>New: <code>MemberName.isExtension</code> property that instructs KotlinPoet to always import the member,
+   even if conflicting declarations are present in the same scope.</li>
+<li>Fix: Escape member names that only contain underscores.</li>
+<li>Fix: Always emit an empty primary constructor if it was set via <code>TypeSpec.primaryConstructor</code>.</li>
+</ul>
+<h2 id="version-180">Version 1.8.0<a class="headerlink" href="#version-180" title="Permanent link">&para;</a></h2>
+<p><em>2021-03-29</em></p>
+<ul>
+<li>New: Kotlin 1.4.31.</li>
+<li>New: Add <code>KModifier.VALUE</code> to support <code>value class</code> declarations.</li>
+<li>New: Allow using a custom <code>ClassLoader</code> with <code>ReflectiveClassInspector</code>.</li>
+<li>New: Update to kotlinx-metadata 0.2.0.</li>
+<li>Fix: Ensure <code>ImmutableKmProperty.toMutable()</code> copies <code>fieldSignature</code>.</li>
+<li>Fix: Prevent name clashes between an imported <code>MemberName</code> and a member in current scope.</li>
+<li>Fix: Prevent name clashes between a type and a supertype with the same name.</li>
+<li>Fix: Don&rsquo;t generate empty body for <code>expect</code> and <code>external</code> functions.</li>
+<li>Fix: Don&rsquo;t allow <code>expect</code> or <code>external</code> classes to initialize supertypes.</li>
+<li>Fix: Disallow delegate constructor calls in <code>external</code> classes.</li>
+<li>Fix: Allow non-public primary constructors inside inline/value classes.</li>
+<li>Fix: Allow init blocks inside inline/value classes.</li>
+<li>Fix: Omit redundant <code>abstract</code> modifiers on members inside interfaces</li>
+</ul>
+<h2 id="version-172">Version 1.7.2<a class="headerlink" href="#version-172" title="Permanent link">&para;</a></h2>
+<p><em>2020-10-20</em></p>
+<ul>
+<li>New: Detect expression bodies with <code>return·</code> and <code>throw·</code> prefixes.</li>
+<li>Fix: Omit visibility modifiers on custom accessors.</li>
+</ul>
+<h2 id="version-171">Version 1.7.1<a class="headerlink" href="#version-171" title="Permanent link">&para;</a></h2>
+<p><em>2020-10-15</em></p>
+<ul>
+<li>Fix: 1.7.0 was published using JDK 11 which set <code>"org.gradle.jvm.version"</code> to <code>"11"</code> in Gradle
+   metadata, making it impossible to use the library on earlier Java versions (see
+   <a href="https://github.com/square/kotlinpoet/issues/999">#999</a>). 1.7.1 is published with JDK 8, which fixes the problem.</li>
+</ul>
+<h2 id="version-170">Version 1.7.0<a class="headerlink" href="#version-170" title="Permanent link">&para;</a></h2>
+<p><em>2020-10-14</em></p>
+<ul>
+<li>New: Kotlin 1.4.10.</li>
+<li>New: Generated code is now compatible with the <a href="https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors">explicit API mode</a> by default.</li>
+<li>New: Escape soft and modifier keywords, in addition to hard keywords.</li>
+<li>New: Improve enum constants generation for cleaner diffs.</li>
+<li>New: Disallow setters on immutable properties.</li>
+<li>New: Ensure trailing new lines in expression bodies.</li>
+<li>New: Ensure trailing new lines after parameterless custom setters.</li>
+<li>Fix: Don&rsquo;t auto-convert properties with custom accessors to primary constructor properties.</li>
+<li>Fix: Don&rsquo;t allow parameterless setters with body.</li>
+<li>Fix: Prevent auto-wrapping spaces inside escaped keywords.</li>
+</ul>
+<h2 id="version-160">Version 1.6.0<a class="headerlink" href="#version-160" title="Permanent link">&para;</a></h2>
+<p><em>2020-05-28</em></p>
+<ul>
+<li>New: Deprecate Mirror API integrations.</li>
+</ul>
+<p>Mirror API integrations, such as <code>TypeElement.asClassName()</code> and
+   <code>FunSpec.overriding(ExecutableElement)</code>, are being deprecated in this release. These KotlinPoet
+   APIs are most often used in annotation processors. Since kapt runs annotation processors over
+   stubs, which are Java files, a lot of the Kotlin-specific information gets lost in translation
+   and cannot be accessed by KotlinPoet through the Mirror API integrations. Examples include:</p>
+<ul>
+<li>Alias types, such as <code>kotlin.String</code>, get converted to their JVM representations, such as
+     <code>java.lang.String</code>.</li>
+<li>Type nullability information is not accessible.</li>
+<li><code>suspend</code> functions are seen as simple functions with an additional <code>Continuation</code> parameter.</li>
+</ul>
+<p>The correct solution is to switch to <a href="../kotlinpoet_metadata">KotlinPoet-metadata</a> or
+   <a href="../kotlinpoet_metadata_specs">KotlinPoet-metadata-specs</a> API, which fetches Kotlin-specific
+   information from the <code>@Metadata</code> annotation and produces correct KotlinPoet Specs. We may explore
+   adding new metadata-based alternatives to the deprecated APIs in the future.</p>
+<ul>
+<li>New: Kotlin 1.3.72.</li>
+<li>New: Improve <code>MemberName</code> to support operator overloading.</li>
+<li>New: Support generics in <code>AnnotationSpec</code>.</li>
+<li>New: Add support for functional interfaces.</li>
+<li>New: Make more <code>FunSpec.Builder</code> members public for easier mutation.</li>
+<li>Fix: Properly propagate implicit type and function modifiers in nested declarations.</li>
+<li>Fix: Properly escape type names containing <code>$</code> character.</li>
+<li>Fix: Don&rsquo;t emit <code>LambdaTypeName</code> annotations twice.</li>
+<li>Fix: Preserve tags in <code>TypeName.copy()</code>.</li>
+</ul>
+<h2 id="version-150">Version 1.5.0<a class="headerlink" href="#version-150" title="Permanent link">&para;</a></h2>
+<p><em>2020-01-09</em></p>
+<p>KotlinPoet now targets JDK8, which means that executing a build that includes KotlinPoet as a
+ dependency on a machine with an older version of JDK installed won&rsquo;t work. <strong>This has no effect on
+ the code that KotlinPoet produces</strong>: the code can still be compiled against JDK6, as long as it
+ doesn&rsquo;t use any features that were introduced in newer releases.</p>
+<ul>
+<li>New: Kotlin 1.3.61.</li>
+<li>New: Add support for processing FileFacades in KotlinPoet-metadata.</li>
+<li>New: Add support for inner nested and companion objects on annotation classes.</li>
+<li>New: Improve error messages for mismatched open/close statement characters.</li>
+<li>New: Tag <code>AnnotationSpec</code>s with the annotation mirror when available.</li>
+<li>New: Include annotations on enum entries when creating <code>TypeSpec</code>s from metadata.</li>
+<li>Fix: Fix metadata parsing for types.</li>
+<li>Fix: Allow file names that are Kotlin keywords.</li>
+<li>Fix: Properly escape type alias names with backticks.</li>
+<li>Fix: Allow creating <code>TypeSpec</code>s with names that can be escaped with backticks.</li>
+<li>Fix: Properly escape enum constant names with backticks.</li>
+<li>Fix: Maintain proper ordering of properties and initializers when emitting a <code>TypeSpec</code>.
+   <strong>Note</strong>: with this change, any properties declared after any initializer blocks will not be
+   added to the primary constructor and will instead be emitted inside the <code>TypeSpec</code> body.</li>
+<li>Fix: Don&rsquo;t emit a leading new line if type KDoc is empty but parameter KDocs are present.</li>
+<li>Fix: Ensure KotlinPoet-metadata resolves package names properly.</li>
+</ul>
+<p>## Version 1.4.4</p>
+<p><em>2019-11-16</em></p>
+<ul>
+<li>Fix: Support reified inline types in KotlinPoet-metadata.</li>
+</ul>
+<h2 id="version-143">Version 1.4.3<a class="headerlink" href="#version-143" title="Permanent link">&para;</a></h2>
+<p><em>2019-10-30</em></p>
+<ul>
+<li>Fix: Don&rsquo;t emit stubs for abstract functions in KotlinPoet-metadata.</li>
+</ul>
+<h2 id="version-142">Version 1.4.2<a class="headerlink" href="#version-142" title="Permanent link">&para;</a></h2>
+<p><em>2019-10-28</em></p>
+<ul>
+<li>Fix: Properly handle abstract elements in KotlinPoet-metadata.</li>
+<li>Fix: Properly handle typealiases in KotlinPoet-metadata.</li>
+<li>Fix: Properly render % symbols at the end of KDocs.</li>
+</ul>
+<h2 id="version-141">Version 1.4.1<a class="headerlink" href="#version-141" title="Permanent link">&para;</a></h2>
+<p><em>2019-10-18</em></p>
+<ul>
+<li>New: Add annotations support to <code>TypeAliasSpec</code>.</li>
+<li>New: Read type annotations from Kotlin <code>Metadata</code>.</li>
+<li>New: Introduce <code>ImmutableKmDeclarationContainer</code>.</li>
+<li>Fix: Use full package name for shading <code>auto-common</code>.</li>
+<li>Fix: Support reading self-type variables (e.g. <code>Asset&lt;A : Asset&lt;A&gt;&gt;</code>) from Kotlin <code>Metadata</code>.</li>
+</ul>
+<h2 id="version-140">Version 1.4.0<a class="headerlink" href="#version-140" title="Permanent link">&para;</a></h2>
+<p><em>2019-09-24</em></p>
+<ul>
+<li>New: This release introduces the new KotlinPoet-metadata API that makes it easy to introspect
+   Kotlin types and build KotlinPoet Specs based on that data.</li>
+</ul>
+<p>The strategy for type introspection is driven by <code>ClassInspector</code>, which is a basic interface for
+   looking up JVM information about a given Class. This optionally is used by the
+   <code>toTypeSpec()</code>/<code>toFileSpec()</code> APIs in <code>kotlinpoet-metadata-specs</code> artifact to inform about
+   Classes with information that isn’t present in metadata (overrides, JVM modifiers, etc). There
+   are two batteries-included implementations available in <code>ReflectiveClassInspector</code>
+   (for reflection) and <code>ElementsClassInspector</code> (for the javax Elements API in annotation
+   processing). These implementations are available through their respective
+   <code>kotlinpoet-classinspector-*</code> artifacts. For more information refer to the
+   <a href="../kotlinpoet_metadata_specs">KotlinPoet-metadata-specs README</a>.</p>
+<p>At the time of this release the API is in experimental mode and has to be opted into via the
+   <code>KotlinPoetMetadataPreview</code> annotation.</p>
+<ul>
+<li>New: Kotlin 1.3.50.</li>
+<li>New: A new constructor to simplify creation of <code>ParameterSpec</code> instances.</li>
+<li>New: New <code>ClassName</code> constructors.</li>
+<li>New: <code>TypeName</code> and subclasses can now store tags.</li>
+<li>New: Optional parameters added to <code>toBuilder()</code> methods of most Specs.</li>
+<li>New: <code>List</code> overrides for Spec methods that accept <code>vararg</code>s.</li>
+<li>New: <code>CodeBlock.Builder.clear()</code> helper method.</li>
+<li>New: <code>FunSpec.Builder.clearBody()</code> helper method.</li>
+<li>Fix: Properly escape enum constant names.</li>
+<li>Fix: Ensure trailing newlines in KDoc and function bodies.</li>
+<li>Fix: <code>TypeVariableName</code>s with empty bounds will now default to <code>Any?</code>.</li>
+<li>Fix: Don&rsquo;t emit parens for primary constructors.</li>
+<li>Fix: <code>ClassName</code>s with empty simple names are not allowed anymore.</li>
+<li>Fix: Throw if names contain illegal characters that can&rsquo;t be escaped with backticks.</li>
+</ul>
+<h2 id="version-130">Version 1.3.0<a class="headerlink" href="#version-130" title="Permanent link">&para;</a></h2>
+<p><em>2019-05-30</em></p>
+<ul>
+<li>New: Don&rsquo;t inline annotations in the primary constructor.</li>
+<li>New: Force new lines when emitting primary constructors.</li>
+<li>New: Support using MemberNames as arguments to %N.</li>
+<li>New: Add more ClassName constants: ClassName.STRING, ClassName.LIST, etc.</li>
+<li>New: Add ClassName.constructorReference() and MemberName.reference().</li>
+<li>New: Make %N accept MemberNames.</li>
+<li>New: Escape spaces in import aliases.</li>
+<li>New: Escape spaces in ClassNames.</li>
+<li>New: Escape spaces in MemberNames.</li>
+<li>New: Escape imports containing spaces.</li>
+<li>New: Escape package name containing spaces.</li>
+<li>New: Use 2-space indents.</li>
+<li>New: Only indent one level on annotation values.</li>
+<li>Fix: Pass only unique originating elements to Filer.</li>
+<li>Fix: Fix bug with MemberNames in same package nested inside a class.</li>
+</ul>
+<h2 id="version-120">Version 1.2.0<a class="headerlink" href="#version-120" title="Permanent link">&para;</a></h2>
+<p><em>2019-03-28</em></p>
+<ul>
+<li>New: Add writeTo(Filer) and originating element API.</li>
+<li>New: Make *Spec types taggable.</li>
+<li>New: Make FunSpec.Builder#addCode take vararg Any?.</li>
+<li>Fix: Import members from default package.</li>
+<li>Fix: Add non-wrapping spaces in control flow creation methods.</li>
+<li>Fix: Named &ldquo;value&rdquo; argument being omitted in annotation array types.</li>
+</ul>
+<h2 id="version-110">Version 1.1.0<a class="headerlink" href="#version-110" title="Permanent link">&para;</a></h2>
+<p><em>2019-02-28</em></p>
+<ul>
+<li>New: Kotlin 1.3.21.</li>
+<li>New: Support referencing members using <code>%M</code> and <code>MemberName</code> type.</li>
+<li>New: Add extensions for getting a <code>MemberName</code> from a <code>ClassName</code>, <code>KClass</code> and <code>Class</code>.</li>
+<li>New: Allow passing <code>CodeBlock</code>s as arguments to <code>%P</code>.</li>
+<li>New: Allow interface delegation for objects.</li>
+<li>Fix: Don&rsquo;t emit visible whitespace in <code>toString()</code>.</li>
+<li>Fix: Prevent line wrapping in weird places inside function signature.</li>
+<li>Fix: No line wrapping between val and property name.</li>
+<li>Fix: Allow passing line prefix into <code>LineWrapper</code> to enable proper line wrapping in KDoc.</li>
+<li>Fix: Add newline for <code>TypeSpec</code> Kdoc with no tags.</li>
+<li>Fix: Add newline for remaining Specs.</li>
+<li>Fix: Fix kdoc formatting for property getter/setters.</li>
+<li>Fix: Don&rsquo;t wrap single line comments inside <code>FunSpec</code>.</li>
+<li>Fix: Add non-wrapping package name.</li>
+<li>Fix: Remove n^2 algorithm in <code>CodeWriter.resolve()</code> by precomputing all of the nested simple names of a <code>TypeSpec</code>.</li>
+<li>Fix: Fix edge case with empty enum classes.</li>
+<li>Fix: Fix Nullable Type Parameter handling in <code>KType.asTypeName()</code>.</li>
+<li>Fix: Fix incorrect long comment wrapping in <code>FileSpec</code>.</li>
+<li>Fix: Attach primary constructor param/property KDoc to the element vs emitting it inside the type header.</li>
+</ul>
+<h2 id="version-101">Version 1.0.1<a class="headerlink" href="#version-101" title="Permanent link">&para;</a></h2>
+<p><em>2019-01-02</em></p>
+<ul>
+<li>New: Allow enums without constants.</li>
+<li>New: Improved formatting of TypeSpec KDoc.</li>
+<li>New: Support @property and @param KDoc tags in TypeSpec.</li>
+<li>Fix: Use pre-formatted strings for arguments to %P.</li>
+</ul>
+<h2 id="version-100">Version 1.0.0<a class="headerlink" href="#version-100" title="Permanent link">&para;</a></h2>
+<p><em>2018-12-10</em></p>
+<ul>
+<li>New: Kotlin 1.3.11.</li>
+<li>Fix: Prevent wrapping in import statements.</li>
+</ul>
+<h2 id="version-100-rc3">Version 1.0.0-RC3<a class="headerlink" href="#version-100-rc3" title="Permanent link">&para;</a></h2>
+<p><em>2018-11-28</em></p>
+<ul>
+<li>New: Kotlin 1.3.10.</li>
+<li>New: Add <code>%P</code> placeholder for string templates.</li>
+<li>New: Add support for receiver kdoc.</li>
+<li>New: Avoid emitting <code>Unit</code> as return type.</li>
+<li>New: Add support for empty setters.</li>
+<li>New: Add checks for inline classes.</li>
+<li>New: Escape property and variable names if keywords.</li>
+<li>New: Replace <code>%&gt;</code>, <code>%&lt;</code>, <code>%[</code>, <code>%]</code> placeholders with <code>⇥</code>, <code>⇤</code>, <code>«</code>, <code>»</code>.</li>
+<li>New: Replace <code>%W</code> with space, and add <code>·</code> as a non-breaking space.</li>
+<li>New: Change <code>TypeName</code> to sealed class.</li>
+<li>New: Documentation improvements.</li>
+<li>New: Replace <code>TypeName</code> modifier methods with <code>copy()</code>.</li>
+<li>New: Rename members of <code>WildcardTypeName</code> to match with the producer/consumer generics model.</li>
+<li>New: Rename <code>TypeName.nullable</code> into <code>TypeName.isNullable</code>.</li>
+<li>New: Rename <code>LambdaTypeName.suspending</code> into <code>LambdaTypeName.isSuspending</code>.</li>
+<li>New: Rename <code>TypeVariableName.reified</code> into <code>TypeVariableName.isReified</code>.</li>
+<li>Fix: Emit star-projection only for types with <code>Any?</code> upper bound.</li>
+<li>Fix: Fold property with escaped name.</li>
+</ul>
+<h2 id="version-100-rc2">Version 1.0.0-RC2<a class="headerlink" href="#version-100-rc2" title="Permanent link">&para;</a></h2>
+<p><em>2018-10-22</em></p>
+<ul>
+<li>New: Kotlin 1.2.71.</li>
+<li>New: README improvements.</li>
+<li>New: Allow opening braces and params in <code>beginControlFlow()</code>.</li>
+<li>New: Add KDoc to <code>ParameterSpec</code>, collapse into parent KDoc.</li>
+<li>New: Support <code>TypeVariable</code>s in <code>PropertySpec</code>.</li>
+<li>New: Add parens for annotated types in <code>LambdaTypeName</code>.</li>
+<li>New: Improve error messaging and documentation for inline properties.</li>
+<li>New: Allow sealed classes to declare abstract properties.</li>
+<li>New: Added <code>buildCodeBlock()</code> helper function.</li>
+<li>New: Allow using <code>CodeBlock</code>s with statements as property initializers and default parameter values.</li>
+<li>New: Rename <code>NameAllocator.clone()</code> into `NameAllocator.copy().</li>
+<li>New: Rename <code>TypeName.asNonNullable()</code> to <code>TypeName.asNonNull()</code>.</li>
+<li>New: Remove <code>PropertySpec.varBuilder()</code> (use <code>mutable()</code> instead).</li>
+<li>New: Allow importing top-level members in default package.</li>
+<li>New: Add overloads to add KDoc to return type.</li>
+<li>Fix: Distinguishing <code>IntArray</code> and <code>Array&lt;Int&gt;</code> when creating <code>TypeName</code>.</li>
+<li>Fix: Use <code>TypeName</code> instead of <code>ClassName</code> as parameter type of <code>plusParameter()</code>.</li>
+<li>Fix: Keep type-parameter variance when constructing <code>TypeName</code> from <code>KType</code>.</li>
+<li>Fix: Don&rsquo;t validate modifiers when merging properties with primary constructor parameters.</li>
+<li>Fix: Escape $ characters in formatted strings.</li>
+<li>Fix: <code>FileSpec.Builder</code> blank package and subfolder fix.</li>
+<li>Fix: Append new line at end of parameter KDoc.</li>
+<li>Fix: Add parameter KDoc in <code>toBuilder()</code>.</li>
+</ul>
+<h2 id="version-100-rc1">Version 1.0.0-RC1<a class="headerlink" href="#version-100-rc1" title="Permanent link">&para;</a></h2>
+<p><em>2018-07-16</em></p>
+<ul>
+<li>New: Escape keywords in imports and canonical class names.</li>
+<li>New: Improve <code>external</code> support.</li>
+<li>New: Extensions for <code>KType</code> and <code>KTypeParameter</code>.</li>
+<li>New: Add builder methods to simplify adding common kotlin.jvm annotations.</li>
+<li>New: Enums are able to have companion objects.</li>
+<li>New: Add missing primaryConstructor &amp; companionObject to <code>TypeSpec#toBuilder()</code>.</li>
+<li>New: Make subtype checking vals inside Kind public.</li>
+<li>New: Escape (class/property/function/variable) names automatically if they contain space, hyphen, or other symbols.</li>
+<li>New: Improve <code>ParameterizedTypeName</code> API.</li>
+<li>New: Add <code>WildcardTypeName.STAR</code> constant.</li>
+<li>New: Expose mutable builder properties and move their validations to build-time.</li>
+<li>Fix: Use regular indents for parameter lists.</li>
+<li>Fix: Inline annotations on properties defined in primary constructor.</li>
+<li>Fix: Use <code>Any?</code> as the default type variable bounds.</li>
+<li>Fix: Fix importing annotated <code>TypeName</code>.</li>
+<li>Fix: If any primary constructor property has KDoc, put properties on new lines.</li>
+<li>Fix: Properly emit where block in type signature.</li>
+<li>Fix: Avoid type name collisions in primary constructor.</li>
+<li>Fix: Remove implicit <code>TypeVariable</code> bound when more bounds are added.</li>
+<li>Fix: Combine annotations and modifiers from constructor params and properties.</li>
+<li>Fix: Replace delegate constructor args along with the constructor.</li>
+</ul>
+<h2 id="version-070">Version 0.7.0<a class="headerlink" href="#version-070" title="Permanent link">&para;</a></h2>
+<p><em>2018-02-16</em></p>
+<ul>
+<li>New: Increase indent to 4 spaces.</li>
+<li>New: Delegate super interfaces as constructor parameters.</li>
+<li>New: Support <code>PropertySpec</code>s as <code>CodeBlock</code> literals.</li>
+<li>New: Support KDoc for <code>TypeAliasSpec</code>.</li>
+<li>New: Allow for adding an initializer block inside a companion object.</li>
+<li>New: Escape name in <code>ParameterSpec</code> which is also a keyword.</li>
+<li>New: Escape names in statements.</li>
+<li>New: Set com.squareup.kotlinpoet as automatic module name.</li>
+<li>New: Support suspending lambda types.</li>
+<li>New: Support named <code>LambdaTypeName</code> parameters.</li>
+<li>New: Support dynamic type.</li>
+<li>New: Disallow wildcard imports.</li>
+<li>New: Depend on Kotlin 1.2.21.</li>
+<li>Fix: Correct handling of super-classes/interfaces on anonymous classes.</li>
+<li>Fix: Fix boundary filtering to <code>Any?</code>.</li>
+<li>Fix: Wrap long property initializers.</li>
+<li>Fix: Fix formatting and indentation of parameter lists.</li>
+</ul>
+<h2 id="version-060">Version 0.6.0<a class="headerlink" href="#version-060" title="Permanent link">&para;</a></h2>
+<p><em>2017-11-03</em></p>
+<ul>
+<li>New: Support lambda extensions.</li>
+<li>New: Support renames in imports like <code>import bar.Bar as bBar</code>.</li>
+<li>New: Support extension and inline properties.</li>
+<li>New: Support reified types.</li>
+<li>New: Expose enclosed types inside <code>LambdaTypeName</code>.</li>
+<li>New: Depend on Kotlin Kotlin 1.1.51.</li>
+<li>New: Improved API and formatting of annotations.</li>
+<li>New: Improved multiplatform support.</li>
+<li>Fix: Escape function and package names if they are a Kotlin keyword.</li>
+<li>Fix: Properly format WildcardTypeName&rsquo;s class declaration.</li>
+</ul>
+<h2 id="version-050">Version 0.5.0<a class="headerlink" href="#version-050" title="Permanent link">&para;</a></h2>
+<p><em>2017-09-13</em></p>
+<ul>
+<li>New: Rename <code>addFun()</code> to <code>addFunction()</code>.</li>
+<li>New: Rename <code>KotlinFile</code> to <code>FileSpec</code>.</li>
+<li>New: Rename <code>KotlinFile.addFileAnnotation()</code> to <code>addAnnotation()</code>.</li>
+<li>New: Rename <code>KotlinFile.addFileComment()</code> to <code>addComment()</code>.</li>
+<li>New: Support cross-platform code, including <code>HEADER</code> and <code>IMPL</code> modifiers.</li>
+<li>New: Support type variables for type aliases.</li>
+<li>New: Support constructor delegation.</li>
+<li>New: Support named companion objects.</li>
+<li>New: Depend on Kotlin 1.1.4-3.</li>
+<li>Fix: Format one parameter per line when there are more than two parameters.</li>
+<li>Fix: Don&rsquo;t emit braces when the constructor body is empty.</li>
+<li>Fix: Do not invoke superclass constructor when no primary constructor.</li>
+<li>Fix: Enforce the right modifiers on functions.</li>
+</ul>
+<h2 id="version-040">Version 0.4.0<a class="headerlink" href="#version-040" title="Permanent link">&para;</a></h2>
+<p><em>2017-08-08</em></p>
+<ul>
+<li>New: Change KotlinPoet&rsquo;s extensions like <code>asClassName()</code> to be top-level functions.</li>
+<li>New: Add declaration-site variance support.</li>
+<li>New: Improve handling of single expression bodies.</li>
+<li>New: Support file annotations.</li>
+<li>New: Support imports from the top-level file.</li>
+<li>New: Accept superclass constructor parameters.</li>
+<li>New: Support primary constructors using the <code>constructor</code> keyword.</li>
+<li>Fix: Don&rsquo;t emit setter parameter types.</li>
+<li>Fix: Support Kotlin keywords in <code>NameAllocator</code>.</li>
+<li>Fix: Emit the right default parameters for primary constructors.</li>
+<li>Fix: Format annotations properly when used as parameters.</li>
+<li>Fix: Recognize imports when emitting nullable types.</li>
+<li>Fix: Call through to the superclass constructor when superclass has a no-args constructor.</li>
+<li>Fix: Omit class braces if all properties are declared in primary constructor.</li>
+<li>Fix: Don&rsquo;t emit empty class bodies.</li>
+<li>Fix: Emit the right syntax for declaring multiple generic type constraints.</li>
+<li>Fix: Support properties on objects, companions and interfaces.</li>
+<li>Fix: Use <code>AnnotationSpec</code> for throws.</li>
+</ul>
+<h2 id="version-030">Version 0.3.0<a class="headerlink" href="#version-030" title="Permanent link">&para;</a></h2>
+<p><em>2017-06-11</em></p>
+<ul>
+<li>New: Objects and companion objects.</li>
+<li>New: <code>TypeAliasSpec</code> to create type aliases.</li>
+<li>New: <code>LambdaTypeName</code> to create lambda types.</li>
+<li>New: Collapse property declarations into constructor params.</li>
+<li>New: Extension and invoke functions for creating type names: <code>Runnable::class.asClassName()</code>.</li>
+<li>New: Basic support for expression bodies.</li>
+<li>New: Basic support for custom accessors.</li>
+<li>New: Remove <code>Filer</code> writing and originating elements concept. These stem from <code>javac</code> annotation
+   processors.</li>
+<li>Fix: Generate valid annotation classes.</li>
+<li>Fix: Use <code>KModifier</code> for varargs.</li>
+<li>Fix: Use <code>ParameterizedTypeName</code> for array types.</li>
+<li>Fix: Extract Kotlin name from <code>KClass</code> instead of Java name.</li>
+<li>Fix: Emit valid class literals: <code>Double::class</code> instead of <code>Double.class</code>.</li>
+<li>Fix: Emit modifiers in the expected order.</li>
+<li>Fix: Emit the correct syntax for enum classes and overridden members.</li>
+</ul>
+<h2 id="version-020">Version 0.2.0<a class="headerlink" href="#version-020" title="Permanent link">&para;</a></h2>
+<p><em>2017-05-21</em></p>
+<ul>
+<li>New: Flip API signatures to be (name, type) instead of (type, name).</li>
+<li>New: Support for nullable types.</li>
+<li>New: Support delegated properties.</li>
+<li>New: Extension functions.</li>
+<li>New: Support top-level properties.</li>
+<li>Fix: Inheritance should use <code>:</code> instead of <code>extends</code> and <code>implements</code>.</li>
+<li>Fix: Make initializerBlock emit <code>init {}</code>.</li>
+</ul>
+<h2 id="version-010">Version 0.1.0<a class="headerlink" href="#version-010" title="Permanent link">&para;</a></h2>
+<p><em>2017-05-16</em></p>
+<ul>
+<li>Initial public release.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2015 Square, Inc.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

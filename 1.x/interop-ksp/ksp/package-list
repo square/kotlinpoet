@@ -1,0 +1,35 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.squareup.kotlinpoet.ksp////PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/index.html
+$dokka.location:com.squareup.kotlinpoet.ksp//addOriginatingKSFile/com.squareup.kotlinpoet.FunSpec.Builder#com.google.devtools.ksp.symbol.KSFile/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/add-originating-k-s-file.html
+$dokka.location:com.squareup.kotlinpoet.ksp//addOriginatingKSFile/com.squareup.kotlinpoet.PropertySpec.Builder#com.google.devtools.ksp.symbol.KSFile/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/add-originating-k-s-file.html
+$dokka.location:com.squareup.kotlinpoet.ksp//addOriginatingKSFile/com.squareup.kotlinpoet.TypeAliasSpec.Builder#com.google.devtools.ksp.symbol.KSFile/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/add-originating-k-s-file.html
+$dokka.location:com.squareup.kotlinpoet.ksp//addOriginatingKSFile/com.squareup.kotlinpoet.TypeSpec.Builder#com.google.devtools.ksp.symbol.KSFile/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/add-originating-k-s-file.html
+$dokka.location:com.squareup.kotlinpoet.ksp//kspDependencies/com.squareup.kotlinpoet.FileSpec#kotlin.Boolean#kotlin.collections.Iterable[com.google.devtools.ksp.symbol.KSFile]/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/ksp-dependencies.html
+$dokka.location:com.squareup.kotlinpoet.ksp//originatingKSFiles/com.squareup.kotlinpoet.FileSpec#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/originating-k-s-files.html
+$dokka.location:com.squareup.kotlinpoet.ksp//originatingKSFiles/com.squareup.kotlinpoet.FunSpec#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/originating-k-s-files.html
+$dokka.location:com.squareup.kotlinpoet.ksp//originatingKSFiles/com.squareup.kotlinpoet.PropertySpec#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/originating-k-s-files.html
+$dokka.location:com.squareup.kotlinpoet.ksp//originatingKSFiles/com.squareup.kotlinpoet.TypeAliasSpec#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/originating-k-s-files.html
+$dokka.location:com.squareup.kotlinpoet.ksp//originatingKSFiles/com.squareup.kotlinpoet.TypeSpec#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/originating-k-s-files.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toAnnotationSpec/com.google.devtools.ksp.symbol.KSAnnotation#kotlin.Boolean/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-annotation-spec.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toClassName/com.google.devtools.ksp.symbol.KSClassDeclaration#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-class-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toClassName/com.google.devtools.ksp.symbol.KSType#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-class-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toClassName/com.google.devtools.ksp.symbol.KSTypeAlias#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-class-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toClassNameOrNull/com.google.devtools.ksp.symbol.KSType#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-class-name-or-null.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toKModifier/com.google.devtools.ksp.symbol.Modifier#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-k-modifier.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toKModifier/com.google.devtools.ksp.symbol.Visibility#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-k-modifier.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toTypeName/com.google.devtools.ksp.symbol.KSType#com.squareup.kotlinpoet.ksp.TypeParameterResolver/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-type-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toTypeName/com.google.devtools.ksp.symbol.KSTypeArgument#com.squareup.kotlinpoet.ksp.TypeParameterResolver/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-type-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toTypeName/com.google.devtools.ksp.symbol.KSTypeReference#com.squareup.kotlinpoet.ksp.TypeParameterResolver/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-type-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toTypeParameterResolver/kotlin.collections.List[com.google.devtools.ksp.symbol.KSTypeParameter]#com.squareup.kotlinpoet.ksp.TypeParameterResolver?#kotlin.String/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-type-parameter-resolver.html
+$dokka.location:com.squareup.kotlinpoet.ksp//toTypeVariableName/com.google.devtools.ksp.symbol.KSTypeParameter#com.squareup.kotlinpoet.ksp.TypeParameterResolver/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/to-type-variable-name.html
+$dokka.location:com.squareup.kotlinpoet.ksp//writeTo/com.squareup.kotlinpoet.FileSpec#com.google.devtools.ksp.processing.CodeGenerator#com.google.devtools.ksp.processing.Dependencies/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/write-to.html
+$dokka.location:com.squareup.kotlinpoet.ksp//writeTo/com.squareup.kotlinpoet.FileSpec#com.google.devtools.ksp.processing.CodeGenerator#kotlin.Boolean#kotlin.collections.Iterable[com.google.devtools.ksp.symbol.KSFile]/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/write-to.html
+$dokka.location:com.squareup.kotlinpoet.ksp/OriginatingKSFiles///PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-originating-k-s-files/index.html
+$dokka.location:com.squareup.kotlinpoet.ksp/OriginatingKSFiles/files/#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-originating-k-s-files/files.html
+$dokka.location:com.squareup.kotlinpoet.ksp/TypeParameterResolver.Companion///PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-type-parameter-resolver/-companion/index.html
+$dokka.location:com.squareup.kotlinpoet.ksp/TypeParameterResolver.Companion/EMPTY/#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-type-parameter-resolver/-companion/-e-m-p-t-y.html
+$dokka.location:com.squareup.kotlinpoet.ksp/TypeParameterResolver///PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-type-parameter-resolver/index.html
+$dokka.location:com.squareup.kotlinpoet.ksp/TypeParameterResolver/get/#kotlin.String/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-type-parameter-resolver/get.html
+$dokka.location:com.squareup.kotlinpoet.ksp/TypeParameterResolver/parametersMap/#/PointingToDeclaration/ksp/com.squareup.kotlinpoet.ksp/-type-parameter-resolver/parameters-map.html
+com.squareup.kotlinpoet.ksp

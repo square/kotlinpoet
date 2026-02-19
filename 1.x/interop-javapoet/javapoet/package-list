@@ -1,0 +1,30 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.squareup.kotlinpoet.javapoet////PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJClassName/com.squareup.kotlinpoet.ClassName#kotlin.Boolean/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-class-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJParameterizedOrArrayTypeName/com.squareup.kotlinpoet.ParameterizedTypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-parameterized-or-array-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJParameterizedTypeName/com.squareup.kotlinpoet.ParameterizedTypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-parameterized-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJTypeName/com.squareup.kotlinpoet.TypeName#kotlin.Boolean/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJTypeVariableName/com.squareup.kotlinpoet.TypeVariableName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-type-variable-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toJWildcardTypeName/com.squareup.kotlinpoet.WildcardTypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-j-wildcard-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toKClassName/com.squareup.javapoet.ClassName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-k-class-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toKParameterizedTypeName/com.squareup.javapoet.ParameterizedTypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-k-parameterized-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toKTypeName/com.squareup.javapoet.TypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-k-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toKTypeVariableName/com.squareup.javapoet.TypeVariableName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-k-type-variable-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet//toKWildcardTypeName/com.squareup.javapoet.WildcardTypeName#/PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/to-k-wildcard-type-name.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JAnnotationSpec///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-annotation-spec/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JClassName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-class-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JParameterizedTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-parameterized-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JTypeSpec///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-type-spec/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JTypeVariableName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-type-variable-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/JWildcardTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-j-wildcard-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KAnnotationSpec///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-annotation-spec/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KClassName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-class-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KParameterizedTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-parameterized-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KTypeSpec///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-type-spec/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KTypeVariableName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-type-variable-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KWildcardTypeName///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-k-wildcard-type-name/index.html
+$dokka.location:com.squareup.kotlinpoet.javapoet/KotlinPoetJavaPoetPreview///PointingToDeclaration/javapoet/com.squareup.kotlinpoet.javapoet/-kotlin-poet-java-poet-preview/index.html
+com.squareup.kotlinpoet.javapoet
