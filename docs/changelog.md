@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+ * New: Delete `:interop:javapoet` module. (#2292)
  * New: Add `TypeName.annotated()` convenience API for adding annotations to types (#2202)
  * New: Add support for type aliases in types.
  * New: Add `FileSpec.addImport(MemberName)` to explicitly import a member (#2198)
