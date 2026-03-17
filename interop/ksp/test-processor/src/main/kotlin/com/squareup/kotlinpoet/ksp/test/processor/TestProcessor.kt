@@ -94,11 +94,10 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
           val allSupertypes = decl.superTypes.toList()
           val (superclassReference, superInterfaces) =
             if (allSupertypes.isNotEmpty()) {
-              val superClass =
-                allSupertypes.firstOrNull {
-                  val resolved = it.resolve()
-                  resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
-                }
+              val superClass = allSupertypes.firstOrNull {
+                val resolved = it.resolve()
+                resolved is KSClassDeclaration && resolved.classKind == ClassKind.CLASS
+              }
               if (superClass != null) {
                 superClass to allSupertypes.filterNot { it == superClass }
               } else {
@@ -218,14 +217,13 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
                       paramType
                     }
                   }
-              val parameterType =
-                typeName.let {
-                  if (unwrapTypeAliases) {
-                    it.unwrapTypeAlias()
-                  } else {
-                    it
-                  }
+              val parameterType = typeName.let {
+                if (unwrapTypeAliases) {
+                  it.unwrapTypeAlias()
+                } else {
+                  it
                 }
+              }
               parameter.name?.let {
                 ParameterSpec.builder(it.getShortName(), parameterType, *possibleVararg).build()
               } ?: ParameterSpec.unnamed(parameterType)
