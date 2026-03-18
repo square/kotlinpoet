@@ -26,7 +26,6 @@ plugins {
 
 include(
   ":kotlinpoet",
-  ":interop:javapoet",
   ":interop:kotlin-metadata",
   ":interop:ksp",
   ":interop:ksp:test-processor",
