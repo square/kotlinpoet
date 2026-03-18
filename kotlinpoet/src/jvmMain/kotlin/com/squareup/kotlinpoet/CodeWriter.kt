@@ -73,15 +73,14 @@ internal class CodeWriter(
   private val referencedNames = mutableSetOf<String>()
   private var trailingNewline = false
 
-  val imports =
-    imports.also {
-      for ((memberName, _) in imports) {
-        val lastDotIndex = memberName.lastIndexOf('.')
-        if (lastDotIndex >= 0) {
-          memberImportNames.add(memberName.substring(0, lastDotIndex))
-        }
+  val imports = imports.also {
+    for ((memberName, _) in imports) {
+      val lastDotIndex = memberName.lastIndexOf('.')
+      if (lastDotIndex >= 0) {
+        memberImportNames.add(memberName.substring(0, lastDotIndex))
       }
     }
+  }
 
   /**
    * When emitting a statement, this is the line of the statement currently being written. The first
@@ -785,8 +784,9 @@ internal class CodeWriter(
         // alias.
         .sortedBy { (_, qualifiedNames) -> qualifiedNames.size }
         .forEach { (simpleName, qualifiedNames) ->
-          val canonicalNamesToQualifiedNames =
-            qualifiedNames.associateBy { it.computeCanonicalName() }
+          val canonicalNamesToQualifiedNames = qualifiedNames.associateBy {
+            it.computeCanonicalName()
+          }
           if (canonicalNamesToQualifiedNames.size == 1 && simpleName !in referencedNames) {
             val canonicalName = canonicalNamesToQualifiedNames.keys.single()
             generatedImports[canonicalName] = Import(canonicalName)
