@@ -8,7 +8,7 @@ Change Log
 Thanks to [@haruue][haruue], [@hfhbd][hfhbd], [@yz4230][yz4230], [@mina-jaff][mina-jaff], [@BoD][BoD],
 [@RaoPrashanth][RaoPrashanth] for contributing to this release.
 
-_2026-05-27_
+_2026-03-27_
 
  * New: Kotlin 2.3.20.
  * New: KSP 2.3.6.
