@@ -261,6 +261,26 @@ class LineWrappingTest {
       )
   }
 
+  @Test
+  fun fileCommentKeepsPrefixOnWrappedLines() {
+    val fileSpec =
+      FileSpec.builder("com.squareup.tacos", "Taco.kt")
+        .addFileComment(
+          "This is a really long line of text that will♢have to be wrapped when it is♢used in a comment because it is so long"
+        )
+        .build()
+    assertThat(fileSpec.toString())
+      .isEqualTo(
+        """
+        |// This is a really long line of text that will have to be wrapped when it is
+        |// used in a comment because it is so long
+        |package com.squareup.tacos
+        |
+        |"""
+          .trimMargin()
+      )
+  }
+
   private fun toString(typeSpec: TypeSpec): String {
     return FileSpec.get("com.squareup.tacos", typeSpec).toString()
   }

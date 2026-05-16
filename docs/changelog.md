@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
+
 ## Version 2.3.0
 
 Thanks to [@haruue][haruue], [@hfhbd][hfhbd], [@yz4230][yz4230], [@mina-jaff][mina-jaff], [@BoD][BoD],

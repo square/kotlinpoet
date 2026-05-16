@@ -644,8 +644,8 @@ internal class CodeWriter(
       } else {
         out.append(
           line,
-          indentLevel = if (kdoc) indentLevel else indentLevel + 2,
-          linePrefix = if (kdoc) " * " else "",
+          indentLevel = if (kdoc || comment) indentLevel else indentLevel + 2,
+          linePrefix = if (kdoc) " * " else if (comment) "// " else "",
         )
       }
       trailingNewline = false
