@@ -52,6 +52,8 @@ private constructor(
   public val getter: FunSpec? = builder.getter
   public val setter: FunSpec? = builder.setter
   public val receiverType: TypeName? = builder.receiverType
+  public val backingFieldType: TypeName = builder.backingFieldType
+  public val backingFieldInitializer: CodeBlock? = builder.backingFieldInitializer
 
   init {
     require(
@@ -134,6 +136,17 @@ private constructor(
       setter.emit(codeWriter, null, implicitAccessorModifiers, false)
       codeWriter.emitCode("⇤")
     }
+    if (backingFieldType != type || backingFieldInitializer != null) {
+      codeWriter.emitCode("⇥")
+      codeWriter.emit("field")
+      if (backingFieldType != type) {
+        codeWriter.emitCode(": %T", backingFieldType)
+      }
+      if (backingFieldInitializer != null) {
+        codeWriter.emitCode(" = %L", backingFieldInitializer)
+      }
+      codeWriter.emitCode("⇤")
+    }
   }
 
   internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
@@ -192,6 +205,8 @@ private constructor(
     internal var getter: FunSpec? = null
     internal var setter: FunSpec? = null
     internal var receiverType: TypeName? = null
+    internal var backingFieldType: TypeName = type
+    internal var backingFieldInitializer: CodeBlock? = null
 
     public val modifiers: MutableList<KModifier> = mutableListOf()
     public val typeVariables: MutableList<TypeVariableName> = mutableListOf()
@@ -263,6 +278,47 @@ private constructor(
     public fun receiver(receiverType: Type): Builder = receiver(receiverType.asTypeName())
 
     public fun receiver(receiverType: KClass<*>): Builder = receiver(receiverType.asTypeName())
+
+    /**
+     * Specify the type of this property's backing field. If different from [type], an explicit
+     * backing field will be emitted (see
+     * [KEEP-0430](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md)):
+     * ```kotlin
+     * val city: LiveData<String> field: MutableLiveData<String>
+     * ```
+     *
+     * Setting backing field type to the same value as [type] has no effect.
+     */
+    public fun backingFieldType(type: TypeName): Builder = apply {
+      this.backingFieldType = type
+    }
+
+    /**
+     * Specify the type of this property's backing field. If different from [type], an explicit
+     * backing field will be emitted (see
+     * [KEEP-0430](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md)):
+     * ```kotlin
+     * val city: LiveData<String> field: MutableLiveData<String>
+     * ```
+     *
+     * Setting backing field type to the same value as [type] has no effect.
+     */
+    public fun backingFieldType(type: KClass<*>): Builder = backingFieldType(type.asTypeName())
+
+    /**
+     * Specify an explicit initializer for this property's backing field (see
+     * [KEEP-0430](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md)).
+     */
+    public fun backingFieldInitializer(codeBlock: CodeBlock): Builder = apply {
+      this.backingFieldInitializer = codeBlock
+    }
+
+    /**
+     * Specify an explicit initializer for this property's backing field (see
+     * [KEEP-0430](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md)).
+     */
+    public fun backingFieldInitializer(format: String, vararg args: Any?): Builder =
+      backingFieldInitializer(CodeBlock.of(format, *args))
 
     // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
