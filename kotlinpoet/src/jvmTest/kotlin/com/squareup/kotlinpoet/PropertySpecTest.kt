@@ -884,4 +884,75 @@ class PropertySpecTest {
       .isInstanceOf<IllegalStateException>()
       .hasMessage("Using both context receivers and context parameters is not allowed")
   }
+
+  @Test
+  fun explicitBackingFieldWithTypeOnly() {
+    val propertySpec =
+      PropertySpec.builder("city", ClassName(packageName = "", "LiveData").parameterizedBy(STRING))
+        .mutable(false)
+        .backingFieldType(ClassName(packageName = "", "MutableLiveData").parameterizedBy(STRING))
+        .build()
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        val city: LiveData<kotlin.String>
+          field: MutableLiveData<kotlin.String>
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun explicitBackingFieldWithInitializerOnly() {
+    val propertySpec =
+      PropertySpec.builder("city", ClassName(packageName = "", "LiveData").parameterizedBy(STRING))
+        .mutable(false)
+        .backingFieldInitializer("%T()", ClassName(packageName = "", "MutableLiveData"))
+        .build()
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        val city: LiveData<kotlin.String>
+          field = MutableLiveData()
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun explicitBackingFieldWithTypeAndInitializer() {
+    val mutableLiveData = ClassName(packageName = "", "MutableLiveData")
+    val propertySpec =
+      PropertySpec.builder("city", ClassName(packageName = "", "LiveData").parameterizedBy(STRING))
+        .mutable(false)
+        .backingFieldType(mutableLiveData.parameterizedBy(STRING))
+        .backingFieldInitializer("%T()", mutableLiveData)
+        .build()
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        val city: LiveData<kotlin.String>
+          field: MutableLiveData<kotlin.String> = MutableLiveData()
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun explicitBackingFieldWithSameTypeAsProperty() {
+    val liveDataOfString = ClassName(packageName = "", "LiveData").parameterizedBy(STRING)
+    val propertySpec =
+      PropertySpec.builder("city", liveDataOfString)
+        .mutable(false)
+        .backingFieldType(liveDataOfString)
+        .build()
+    assertThat(propertySpec.toString())
+      .isEqualTo(
+        """
+        val city: LiveData<kotlin.String>
+
+        """
+          .trimIndent()
+      )
+  }
 }
