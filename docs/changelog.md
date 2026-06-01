@@ -3,6 +3,7 @@ Change Log
 
 ## Unreleased
 
+ * New: Support for explicit backing fields. (#2325)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
 
 ## Version 2.3.0
