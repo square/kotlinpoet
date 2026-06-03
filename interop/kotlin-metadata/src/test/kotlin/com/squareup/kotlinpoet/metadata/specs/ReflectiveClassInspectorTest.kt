@@ -70,9 +70,6 @@ class ReflectiveClassInspectorTest {
       KotlinCompilation()
         .apply {
           sources = listOf(kotlinSource)
-          // Remove the line below once
-          // https://github.com/ZacSweers/kotlin-compile-testing/issues/463 is fixed.
-          optIn = emptyList()
         }
         .compile()
 

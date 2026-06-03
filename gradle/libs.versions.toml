@@ -14,7 +14,7 @@
 
 [versions]
 kotlin = "2.4.0"
-kct = "0.12.1"
+kct = "0.13.0"
 ksp = "2.3.9"
 
 [plugins]
