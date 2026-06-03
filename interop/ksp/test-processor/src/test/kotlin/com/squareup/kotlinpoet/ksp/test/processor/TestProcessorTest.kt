@@ -990,6 +990,9 @@ class TestProcessorTest {
         incremental = true // The default now
         symbolProcessorProviders += TestProcessorProvider()
       }
+      // Remove the line below once https://github.com/ZacSweers/kotlin-compile-testing/issues/463
+      // is fixed.
+      optIn = emptyList()
     }
   }
 }
