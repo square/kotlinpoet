@@ -102,16 +102,14 @@ internal constructor(
   public fun nestedClass(name: String, typeArguments: List<TypeName>): ParameterizedTypeName =
     ParameterizedTypeName(this, rawType.nestedClass(name), typeArguments)
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    if (!super.equals(other)) return false
+  override fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
+    if (!super.equalsWithGuard(other, seen)) return false
 
     other as ParameterizedTypeName
 
-    if (enclosingType != other.enclosingType) return false
-    if (rawType != other.rawType) return false
-    if (typeArguments != other.typeArguments) return false
+    if (!enclosingType.deepEquals(other.enclosingType, seen)) return false
+    if (!rawType.deepEquals(other.rawType, seen)) return false
+    if (!typeArguments.deepEquals(other.typeArguments, seen)) return false
 
     return true
   }

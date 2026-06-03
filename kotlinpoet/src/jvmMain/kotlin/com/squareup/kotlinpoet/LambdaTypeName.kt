@@ -102,17 +102,15 @@ private constructor(
     return out
   }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    if (!super.equals(other)) return false
+  override fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
+    if (!super.equalsWithGuard(other, seen)) return false
 
     other as LambdaTypeName
 
-    if (receiver != other.receiver) return false
-    if (contextReceivers != other.contextReceivers) return false
-    if (contextParameters != other.contextParameters) return false
-    if (returnType != other.returnType) return false
+    if (!receiver.deepEquals(other.receiver, seen)) return false
+    if (!contextReceivers.deepEquals(other.contextReceivers, seen)) return false
+    if (!contextParameters.deepEquals(other.contextParameters, seen)) return false
+    if (!returnType.deepEquals(other.returnType, seen)) return false
     if (isSuspending != other.isSuspending) return false
     if (parameters != other.parameters) return false
 

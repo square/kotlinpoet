@@ -53,15 +53,13 @@ private constructor(
     }
   }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    if (!super.equals(other)) return false
+  override fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
+    if (!super.equalsWithGuard(other, seen)) return false
 
     other as WildcardTypeName
 
-    if (outTypes != other.outTypes) return false
-    if (inTypes != other.inTypes) return false
+    if (!outTypes.deepEquals(other.outTypes, seen)) return false
+    if (!inTypes.deepEquals(other.inTypes, seen)) return false
 
     return true
   }

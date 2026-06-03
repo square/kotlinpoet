@@ -21,6 +21,7 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotEqualTo
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeVariableName.Companion.NULLABLE_ANY_LIST
 import java.io.Serializable
 import kotlin.test.Test
@@ -323,5 +324,47 @@ class TypeVariableNameTest {
 
     assertThat(typeVariableName).isEqualTo(tagged)
     assertThat(typeVariableName.hashCode()).isEqualTo(tagged.hashCode())
+  }
+
+  @Test
+  fun recursivelyBoundedTypeVariableEqualsAndHashCode() {
+    // `Enum<E : Enum<E>>` produces a type variable whose bounds refer back to itself.
+    val typeParameter = Enum::class.java.typeParameters[0]
+    val first = TypeVariableName.get(typeParameter)
+    val second = TypeVariableName.get(typeParameter)
+
+    assertThat(first.hashCode()).isEqualTo(second.hashCode())
+    assertThat(first).isEqualTo(second)
+    assertThat(second).isEqualTo(first)
+    assertThat(first).isNotEqualTo(TypeVariableName("E"))
+  }
+
+  @Test
+  fun equalsComparesNestedBounds() {
+    fun boundedBy(argument: TypeName) =
+      TypeVariableName("T")
+        .copy(bounds = listOf(LIST.parameterizedBy(WildcardTypeName.producerOf(argument))))
+
+    assertThat(boundedBy(Number::class.asTypeName()))
+      .isEqualTo(boundedBy(Number::class.asTypeName()))
+    assertThat(boundedBy(Number::class.asTypeName()))
+      .isNotEqualTo(boundedBy(String::class.asTypeName()))
+  }
+
+  @Test
+  fun equalsComparesEnclosingTypeOfBound() {
+    fun boundedByInnerOf(outerArgument: TypeName) =
+      TypeVariableName("T")
+        .copy(
+          bounds =
+            listOf(
+              ClassName("com.example", "Outer")
+                .parameterizedBy(outerArgument)
+                .nestedClass("Inner", listOf(STRING))
+            )
+        )
+
+    assertThat(boundedByInnerOf(INT)).isEqualTo(boundedByInnerOf(INT))
+    assertThat(boundedByInnerOf(INT)).isNotEqualTo(boundedByInnerOf(STRING))
   }
 }
