@@ -66,7 +66,15 @@ class ReflectiveClassInspectorTest {
           .trimIndent(),
       )
 
-    val result = KotlinCompilation().apply { sources = listOf(kotlinSource) }.compile()
+    val result =
+      KotlinCompilation()
+        .apply {
+          sources = listOf(kotlinSource)
+          // Remove the line below once
+          // https://github.com/ZacSweers/kotlin-compile-testing/issues/463 is fixed.
+          optIn = emptyList()
+        }
+        .compile()
 
     assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
     val classLoader = result.classLoader
