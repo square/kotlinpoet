@@ -5,6 +5,7 @@ Change Log
 
  * New: Support for explicit backing fields. (#2325)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
+ * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)
 
 ## Version 2.3.0
 

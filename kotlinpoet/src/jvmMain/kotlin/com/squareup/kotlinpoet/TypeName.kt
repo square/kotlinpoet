@@ -23,6 +23,8 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
+import java.util.Collections
+import java.util.IdentityHashMap
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.TypeParameterElement
@@ -93,16 +95,22 @@ constructor(
   public val isAnnotated: Boolean
     get() = annotations.isNotEmpty()
 
-  override fun equals(other: Any?): Boolean {
+  final override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
+    if (other !is TypeName) return false
+    return deepEquals(other, RecursiveComparison())
+  }
 
-    other as TypeName
-
+  /**
+   * Compares this type name's own fields with [other], which is guaranteed to have the same class.
+   * Subtypes override this to compare their fields, reaching child type names through [deepEquals]
+   * so recursively bounded generics like `Enum<E : Enum<E>>` are compared without overflowing the
+   * stack. (#1737)
+   */
+  internal open fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
     if (isNullable != other.isNullable) return false
     if (annotations != other.annotations) return false
     // do not check for equality of tags, these are considered side-channel data
-
     return true
   }
 
@@ -231,6 +239,37 @@ constructor(
         else -> throw IllegalArgumentException("unexpected type: $type")
       }
     }
+  }
+}
+
+/**
+ * Compares two child type names through [seen], so recursively bounded generics like `Enum<E :
+ * Enum<E>>` terminate instead of overflowing the stack. (#1737)
+ */
+internal fun TypeName?.deepEquals(other: TypeName?, seen: RecursiveComparison): Boolean {
+  if (this === other) return true
+  if (this == null || other == null) return false
+  if (javaClass != other.javaClass) return false
+  return equalsWithGuard(other, seen)
+}
+
+internal fun List<TypeName>.deepEquals(other: List<TypeName>, seen: RecursiveComparison): Boolean {
+  if (size != other.size) return false
+  for (index in indices) {
+    if (!this[index].deepEquals(other[index], seen)) return false
+  }
+  return true
+}
+
+/** Tracks, by reference identity, the [TypeName] pairs currently being compared. (#1737) */
+internal class RecursiveComparison {
+  // Allocated on first use so non-recursive comparisons stay allocation-free.
+  private var compared: IdentityHashMap<TypeName, MutableSet<TypeName>>? = null
+
+  /** Records ([left], [right]). Returns false if that exact pair is already being compared. */
+  fun enter(left: TypeName, right: TypeName): Boolean {
+    val pairs = compared ?: IdentityHashMap<TypeName, MutableSet<TypeName>>().also { compared = it }
+    return pairs.getOrPut(left) { Collections.newSetFromMap(IdentityHashMap()) }.add(right)
   }
 }
 

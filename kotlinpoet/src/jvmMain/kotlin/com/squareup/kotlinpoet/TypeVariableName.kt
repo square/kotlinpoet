@@ -71,15 +71,17 @@ private constructor(
 
   override fun emit(out: CodeWriter) = out.emit(name)
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    if (!super.equals(other)) return false
+  override fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
+    // A recursively bounded variable like `Enum<E : Enum<E>>` reaches itself through its bounds,
+    // the only place a type-name cycle can form. Recording the pair here lets the repeat visit
+    // cut the cycle instead of overflowing the stack. (#1737)
+    if (!seen.enter(this, other)) return true
+    if (!super.equalsWithGuard(other, seen)) return false
 
     other as TypeVariableName
 
     if (name != other.name) return false
-    if (bounds != other.bounds) return false
+    if (!bounds.deepEquals(other.bounds, seen)) return false
     if (variance != other.variance) return false
     if (isReified != other.isReified) return false
 
@@ -89,7 +91,8 @@ private constructor(
   override fun hashCode(): Int {
     var result = super.hashCode()
     result = 31 * result + name.hashCode()
-    result = 31 * result + bounds.hashCode()
+    // `bounds` is omitted: it can refer back to this variable for recursive generics like
+    // `Enum<E : Enum<E>>` and would recurse forever. equals still compares bounds. (#1737)
     result = 31 * result + (variance?.hashCode() ?: 0)
     result = 31 * result + isReified.hashCode()
     return result

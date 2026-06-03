@@ -189,10 +189,8 @@ public class ClassName internal constructor(
   override fun emit(out: CodeWriter) =
     out.emit(out.lookupName(this).escapeSegmentsIfNecessary())
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    if (!super.equals(other)) return false
+  override fun equalsWithGuard(other: TypeName, seen: RecursiveComparison): Boolean {
+    if (!super.equalsWithGuard(other, seen)) return false
 
     other as ClassName
 
