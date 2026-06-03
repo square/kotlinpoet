@@ -393,8 +393,6 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun callThisConstructor ([Ljava/lang/String;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public static synthetic fun callThisConstructor$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;[Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun clearBody ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
-	public synthetic fun contextParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextParameterizable$Builder;
-	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public final fun endControlFlow ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
@@ -1105,7 +1103,6 @@ public final class com/squareup/kotlinpoet/TypeSpec$Builder : com/squareup/kotli
 	public fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpec$Builder;
 	public synthetic fun addTypes (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/TypeSpecHolder$Builder;
 	public final fun build ()Lcom/squareup/kotlinpoet/TypeSpec;
-	public synthetic fun contextReceivers (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/ContextReceivable$Builder;
 	public final fun getAnnotationSpecs ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
 	public final fun getEnumConstants ()Ljava/util/Map;
