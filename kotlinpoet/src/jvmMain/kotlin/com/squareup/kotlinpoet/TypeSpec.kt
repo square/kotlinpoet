@@ -600,8 +600,8 @@ private constructor(
         }
 
         if (isInlineOrValClass) {
-          check(primaryConstructor.parameters.size == 1) {
-            "value/inline classes must have 1 parameter in constructor"
+          check(primaryConstructor.parameters.size >= 1) {
+            "value/inline classes must have at least 1 parameter in constructor"
           }
         }
 
@@ -939,22 +939,22 @@ private constructor(
       }
 
       if (isInlineOrValClass) {
-        primaryConstructor?.let {
-          check(it.parameters.size == 1) {
-            "value/inline classes must have 1 parameter in constructor"
-          }
-        }
+        val primaryConstructor =
+          checkNotNull(primaryConstructor) {
+              "value/inline classes must have a primary constructor"
+            }
+            .also {
+              check(it.parameters.size >= 1) {
+                "value/inline classes must have at least 1 parameter in constructor"
+              }
+            }
 
         check(propertySpecs.size > 0) { "value/inline classes must have at least 1 property" }
 
-        val constructorParamName = primaryConstructor?.parameters?.firstOrNull()?.name
-        constructorParamName?.let { paramName ->
-          val underlyingProperty = propertySpecs.find { it.name == paramName }
-          requireNotNull(underlyingProperty) {
-            "value/inline classes must have a single read-only (val) property parameter."
-          }
-          check(!underlyingProperty.mutable) {
-            "value/inline classes must have a single read-only (val) property parameter."
+        for (constructorParamName in primaryConstructor.parameters.map { it.name }) {
+          val underlyingProperty = propertySpecs.find { it.name == constructorParamName }
+          check(underlyingProperty != null && !underlyingProperty.mutable) {
+            "value/inline classes must only have final read-only (val) property parameters"
           }
         }
         check(superclass == Any::class.asTypeName()) {
