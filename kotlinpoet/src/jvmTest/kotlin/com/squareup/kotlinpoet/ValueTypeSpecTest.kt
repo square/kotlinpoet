@@ -22,6 +22,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
+import com.squareup.kotlinpoet.jvm.jvmInline
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -149,8 +150,8 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .addProperty("garlic", String::class)
           .build()
       }
-      .isInstanceOf<IllegalArgumentException>()
-      .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
+      .isInstanceOf<IllegalStateException>()
+      .hasMessage("value/inline classes must only have final read-only (val) property parameters")
   }
 
   @Test
@@ -179,7 +180,7 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .build()
       }
       .isInstanceOf<IllegalStateException>()
-      .hasMessage("value/inline classes must have a single read-only (val) property parameter.")
+      .hasMessage("value/inline classes must only have final read-only (val) property parameters")
   }
 
   @Test
@@ -236,6 +237,41 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
       |
       """
           .trimMargin()
+      )
+  }
+
+  @Test
+  fun multiFieldValueClass() {
+    val color =
+      TypeSpec.classBuilder("Color")
+        .jvmInline()
+        .addModifiers(KModifier.VALUE)
+        .primaryConstructor(
+          FunSpec.constructorBuilder()
+            .addParameter("alpha", U_BYTE)
+            .addParameter("red", U_BYTE)
+            .addParameter("green", U_BYTE)
+            .addParameter("blue", U_BYTE)
+            .build()
+        )
+        .addProperty(PropertySpec.builder("alpha", U_BYTE).initializer("alpha").build())
+        .addProperty(PropertySpec.builder("red", U_BYTE).initializer("red").build())
+        .addProperty(PropertySpec.builder("green", U_BYTE).initializer("green").build())
+        .addProperty(PropertySpec.builder("blue", U_BYTE).initializer("blue").build())
+        .build()
+    assertThat(color.toString())
+      .isEqualTo(
+        """
+        @kotlin.jvm.JvmInline
+        public value class Color(
+          public val alpha: kotlin.UByte,
+          public val red: kotlin.UByte,
+          public val green: kotlin.UByte,
+          public val blue: kotlin.UByte,
+        )
+
+        """
+          .trimIndent()
       )
   }
 }

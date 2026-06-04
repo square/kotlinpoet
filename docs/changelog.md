@@ -4,6 +4,7 @@ Change Log
 ## Unreleased
 
  * New: Support for explicit backing fields. (#2325)
+ * New: `value class` validations have been relaxed to support multi-field value classes. (#2329)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
 
 ## Version 2.3.0
