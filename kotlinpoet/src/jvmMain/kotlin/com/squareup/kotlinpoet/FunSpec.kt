@@ -47,7 +47,8 @@ private constructor(
   ContextReceivable by contextReceivers,
   ContextParameterizable by contextParams,
   Annotatable,
-  Documentable {
+  Documentable,
+  CodeBlockHolder {
   public val name: String = builder.name
   override val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
@@ -62,7 +63,7 @@ private constructor(
   public val delegateConstructor: String? = builder.delegateConstructor
   public val delegateConstructorArguments: List<CodeBlock> =
     builder.delegateConstructorArguments.toImmutableList()
-  public val body: CodeBlock = builder.body.build()
+  override val body: CodeBlock = builder.body.build()
   private val isExternalGetter = name == GETTER && builder.modifiers.contains(EXTERNAL)
   private val isEmptySetter = name == SETTER && parameters.isEmpty()
 
@@ -318,7 +319,8 @@ private constructor(
     ContextReceivable.Builder<Builder>,
     ContextParameterizable.Builder<Builder>,
     Annotatable.Builder<Builder>,
-    Documentable.Builder<Builder> {
+    Documentable.Builder<Builder>,
+    CodeBlockHolder.Builder<Builder> {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
     internal var receiverType: TypeName? = null
@@ -507,15 +509,15 @@ private constructor(
       modifiers: Iterable<KModifier>,
     ): Builder = addParameter(name, type.asTypeName(), modifiers)
 
-    public fun addCode(format: String, vararg args: Any?): Builder = apply {
+    override fun addCode(format: String, vararg args: Any?): Builder = apply {
       body.add(format, *args)
     }
 
-    public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
+    override fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
       body.addNamed(format, args)
     }
 
-    public fun addCode(codeBlock: CodeBlock): Builder = apply { body.add(codeBlock) }
+    override fun addCode(codeBlock: CodeBlock): Builder = apply { body.add(codeBlock) }
 
     public fun addComment(format: String, vararg args: Any): Builder = apply {
       body.add("// $format\n", *args)
@@ -525,7 +527,7 @@ private constructor(
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      * * Shouldn't contain braces or newline characters.
      */
-    public fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
+    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       body.beginControlFlow(controlFlow, *args)
     }
 
@@ -533,17 +535,17 @@ private constructor(
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      * * Shouldn't contain braces or newline characters.
      */
-    public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       body.nextControlFlow(controlFlow, *args)
     }
 
-    public fun endControlFlow(): Builder = apply { body.endControlFlow() }
+    override fun endControlFlow(): Builder = apply { body.endControlFlow() }
 
-    public fun addStatement(format: String, vararg args: Any): Builder = apply {
+    override fun addStatement(format: String, vararg args: Any?): Builder = apply {
       body.addStatement(format, *args)
     }
 
-    public fun clearBody(): Builder = apply { body.clear() }
+    override fun clearBody(): Builder = apply { body.clear() }
 
     // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
