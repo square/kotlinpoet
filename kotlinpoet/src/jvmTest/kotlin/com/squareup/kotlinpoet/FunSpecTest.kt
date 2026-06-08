@@ -1032,6 +1032,155 @@ class FunSpecTest {
   }
 
   @Test
+  fun thisConstructorDelegateWithMultilineArgument() {
+    val typeSpec =
+      TypeSpec.classBuilder("Test")
+        .primaryConstructor(FunSpec.constructorBuilder().build())
+        .addFunction(
+          FunSpec.constructorBuilder()
+            .addParameter("name", STRING)
+            .callThisConstructor(
+              CodeBlock.of("name"),
+              buildCodeBlock {
+                beginControlFlow("computeValue")
+                addStatement("fallback()")
+                endControlFlow()
+              },
+            )
+            .build()
+        )
+        .build()
+
+    assertThat(typeSpec.toString())
+      .isEqualTo(
+        """
+        |public class Test() {
+        |  public constructor(name: kotlin.String) : this(
+        |    name,
+        |    computeValue {
+        |      fallback()
+        |    },
+        |  )
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun superConstructorDelegateWithMultilineArgument() {
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .addParameter("name", STRING)
+        .callSuperConstructor(
+          buildCodeBlock {
+            beginControlFlow("computeValue")
+            addStatement("fallback()")
+            endControlFlow()
+          }
+        )
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor(name: kotlin.String) : super(
+        |  computeValue {
+        |    fallback()
+        |  },
+        |)
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun thisConstructorDelegateWithMultilineArgumentAndBody() {
+    val typeSpec =
+      TypeSpec.classBuilder("Test")
+        .primaryConstructor(FunSpec.constructorBuilder().build())
+        .addFunction(
+          FunSpec.constructorBuilder()
+            .addParameter("name", STRING)
+            .callThisConstructor(
+              buildCodeBlock {
+                beginControlFlow("computeValue")
+                addStatement("fallback()")
+                endControlFlow()
+              }
+            )
+            .addStatement("println(name)")
+            .build()
+        )
+        .build()
+
+    assertThat(typeSpec.toString())
+      .isEqualTo(
+        """
+        |public class Test() {
+        |  public constructor(name: kotlin.String) : this(
+        |    computeValue {
+        |      fallback()
+        |    },
+        |  ) {
+        |    println(name)
+        |  }
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun thisConstructorDelegateWithNewlineStringLiteralStaysUnexpanded() {
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .addParameter("name", STRING)
+        .callThisConstructor(CodeBlock.of("%S", "alpha\nbeta"))
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor(name: kotlin.String) : this(${"\"\"\""}
+        ||alpha
+        ||beta
+        |${"\"\"\""}.trimMargin())
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun thisConstructorDelegateWithLongSingleLineArgumentStaysOneLine() {
+    val argument = "name" + "Access".repeat(20)
+    val typeSpec =
+      TypeSpec.classBuilder("Test")
+        .primaryConstructor(FunSpec.constructorBuilder().build())
+        .addFunction(
+          FunSpec.constructorBuilder()
+            .addParameter("name", STRING)
+            .callThisConstructor(CodeBlock.of("%L", argument))
+            .build()
+        )
+        .build()
+
+    assertThat(FileSpec.get("com.squareup.test", typeSpec).toString())
+      .isEqualTo(
+        """
+        |package com.squareup.test
+        |
+        |import kotlin.String
+        |
+        |public class Test() {
+        |  public constructor(name: String) : this($argument)
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun addingDelegateParametersToNonConstructorForbidden() {
     assertFailure { FunSpec.builder("main").callThisConstructor("a", "b", "c") }
       .isInstanceOf<IllegalStateException>()

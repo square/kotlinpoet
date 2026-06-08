@@ -175,7 +175,7 @@ private constructor(
 
     if (delegateConstructor != null) {
       codeWriter.emitCode(
-        delegateConstructorArguments.joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+        delegateConstructorArguments.toDelegateConstructorCode(delegateConstructor)
       )
     }
   }
@@ -693,3 +693,39 @@ private constructor(
     }
   }
 }
+
+private fun List<CodeBlock>.toDelegateConstructorCode(delegateConstructor: String): CodeBlock {
+  if (none(CodeBlock::isMultilineCode)) {
+    return joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+  }
+
+  return buildCodeBlock {
+    add(" : %L(\n⇥", delegateConstructor)
+    forEachIndexed { index, argument ->
+      if (index > 0) add("\n")
+      add("%L,", argument.trimTrailingNewLine())
+    }
+    add("\n⇤)")
+  }
+}
+
+private fun CodeBlock.isMultilineCode(): Boolean {
+  var argumentIndex = 0
+  for (formatPart in formatParts) {
+    if ('\n' in formatPart) return true
+
+    if (formatPart == "%L") {
+      when (val argument = args[argumentIndex]) {
+        is CodeBlock -> if (argument.isMultilineCode()) return true
+        is String -> if ('\n' in argument) return true
+      }
+    }
+
+    if (formatPart in ARGUMENT_PLACEHOLDERS) {
+      argumentIndex++
+    }
+  }
+  return false
+}
+
+private val ARGUMENT_PLACEHOLDERS = setOf("%L", "%N", "%S", "%P", "%T", "%M")
