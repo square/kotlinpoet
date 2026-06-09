@@ -20,20 +20,42 @@ public interface CodeBlockHolder {
   public val body: CodeBlock
 
   public interface Builder<out T : Builder<T>> {
-    public fun addCode(format: String, vararg args: Any?): T
+    public val body: CodeBlock.Builder
 
-    public fun addCode(codeBlock: CodeBlock): T
+    @Suppress("UNCHECKED_CAST")
+    public fun addCode(format: String, vararg args: Any?): T =
+      apply { body.add(format, *args) } as T
 
-    public fun addNamedCode(format: String, args: Map<String, *>): T
+    @Suppress("UNCHECKED_CAST")
+    public fun addCode(codeBlock: CodeBlock): T = apply { body.add(codeBlock) } as T
 
-    public fun addStatement(format: String, vararg args: Any?): T
+    @Suppress("UNCHECKED_CAST")
+    public fun addNamedCode(format: String, args: Map<String, *>): T =
+      apply { body.addNamed(format, args) } as T
 
-    public fun beginControlFlow(controlFlow: String, vararg args: Any?): T
+    @Suppress("UNCHECKED_CAST")
+    public fun addStatement(format: String, vararg args: Any?): T =
+      apply { body.addStatement(format, *args) } as T
 
-    public fun nextControlFlow(controlFlow: String, vararg args: Any?): T
+    /**
+     * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
+     *   Shouldn't contain braces or newline characters.
+     */
+    @Suppress("UNCHECKED_CAST")
+    public fun beginControlFlow(controlFlow: String, vararg args: Any?): T =
+      apply { body.beginControlFlow(controlFlow, *args) } as T
 
-    public fun endControlFlow(): T
+    /**
+     * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
+     *   Shouldn't contain braces or newline characters.
+     */
+    @Suppress("UNCHECKED_CAST")
+    public fun nextControlFlow(controlFlow: String, vararg args: Any?): T =
+      apply { body.nextControlFlow(controlFlow, *args) } as T
 
-    public fun clearBody(): T
+    @Suppress("UNCHECKED_CAST")
+    public fun endControlFlow(): T = apply { body.endControlFlow() } as T
+
+    @Suppress("UNCHECKED_CAST") public fun clearBody(): T = apply { body.clear() } as T
   }
 }

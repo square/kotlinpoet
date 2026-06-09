@@ -146,14 +146,15 @@ public abstract interface class com/squareup/kotlinpoet/CodeBlockHolder {
 }
 
 public abstract interface class com/squareup/kotlinpoet/CodeBlockHolder$Builder {
-	public abstract fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun clearBody ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun endControlFlow ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
-	public abstract fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun clearBody ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun endControlFlow ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public abstract fun getBody ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public fun nextControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 }
 
 public final class com/squareup/kotlinpoet/CodeBlocks {
@@ -311,6 +312,7 @@ public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotli
 	public synthetic fun endControlFlow ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun endControlFlow ()Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getBody ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun getDefaultImports ()Ljava/util/Set;
 	public final fun getImports ()Ljava/util/List;
 	public final fun getMembers ()Ljava/util/List;
@@ -424,6 +426,7 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public synthetic fun endControlFlow ()Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun endControlFlow ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getBody ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun getModifiers ()Ljava/util/List;
 	public fun getOriginatingElements ()Ljava/util/List;

@@ -327,7 +327,7 @@ private constructor(
     internal var returnType: TypeName = UNIT
     internal var delegateConstructor: String? = null
     internal var delegateConstructorArguments = listOf<CodeBlock>()
-    internal val body = CodeBlock.builder()
+    override val body: CodeBlock.Builder = CodeBlock.builder()
     override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     public val modifiers: MutableList<KModifier> = mutableListOf()
@@ -509,43 +509,9 @@ private constructor(
       modifiers: Iterable<KModifier>,
     ): Builder = addParameter(name, type.asTypeName(), modifiers)
 
-    override fun addCode(format: String, vararg args: Any?): Builder = apply {
-      body.add(format, *args)
-    }
-
-    override fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
-      body.addNamed(format, args)
-    }
-
-    override fun addCode(codeBlock: CodeBlock): Builder = apply { body.add(codeBlock) }
-
     public fun addComment(format: String, vararg args: Any): Builder = apply {
       body.add("// $format\n", *args)
     }
-
-    /**
-     * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
-     * * Shouldn't contain braces or newline characters.
-     */
-    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
-      body.beginControlFlow(controlFlow, *args)
-    }
-
-    /**
-     * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
-     * * Shouldn't contain braces or newline characters.
-     */
-    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
-      body.nextControlFlow(controlFlow, *args)
-    }
-
-    override fun endControlFlow(): Builder = apply { body.endControlFlow() }
-
-    override fun addStatement(format: String, vararg args: Any?): Builder = apply {
-      body.addStatement(format, *args)
-    }
-
-    override fun clearBody(): Builder = apply { body.clear() }
 
     // region Overrides for binary compatibility
     @Suppress("RedundantOverride")
@@ -574,6 +540,32 @@ private constructor(
 
     @Suppress("RedundantOverride")
     override fun addKdoc(block: CodeBlock): Builder = super.addKdoc(block)
+
+    @Suppress("RedundantOverride")
+    override fun addCode(format: String, vararg args: Any?): Builder = super.addCode(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun addCode(codeBlock: CodeBlock): Builder = super.addCode(codeBlock)
+
+    @Suppress("RedundantOverride")
+    override fun addNamedCode(format: String, args: Map<String, *>): Builder =
+      super.addNamedCode(format, args)
+
+    @Suppress("RedundantOverride")
+    override fun addStatement(format: String, vararg args: Any?): Builder =
+      super.addStatement(format, *args)
+
+    @Suppress("RedundantOverride")
+    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder =
+      super.beginControlFlow(controlFlow, *args)
+
+    @Suppress("RedundantOverride")
+    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder =
+      super.nextControlFlow(controlFlow, *args)
+
+    @Suppress("RedundantOverride") override fun endControlFlow(): Builder = super.endControlFlow()
+
+    @Suppress("RedundantOverride") override fun clearBody(): Builder = super.clearBody()
 
     // endregion
 
