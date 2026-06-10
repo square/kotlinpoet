@@ -618,6 +618,25 @@ class CodeBlockTest {
   }
 
   @Test
+  fun ensureEndsWithNewLineWithNestedCodeBlockArg() {
+    val codeBlock =
+      CodeBlock.of(
+        "%L",
+        buildCodeBlock {
+          addStatement("Statement with nested arg")
+        },
+      )
+
+    assertThat(codeBlock.ensureEndsWithNewLine().toString())
+      .isEqualTo(
+        """
+        |Statement with nested arg
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun `N escapes keywords`() {
     val funSpec = FunSpec.builder("object").build()
     assertThat(CodeBlock.of("%N", funSpec).toString()).isEqualTo("`object`")

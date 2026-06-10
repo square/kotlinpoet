@@ -1068,6 +1068,45 @@ class FunSpecTest {
   }
 
   @Test
+  fun thisConstructorDelegateWithReorderedIndexedMultilineArgument() {
+    val typeSpec =
+      TypeSpec.classBuilder("Test")
+        .primaryConstructor(FunSpec.constructorBuilder().build())
+        .addFunction(
+          FunSpec.constructorBuilder()
+            .addParameter("name", STRING)
+            .callThisConstructor(
+              CodeBlock.of(
+                "%2L,\n%1L",
+                buildCodeBlock {
+                  beginControlFlow("computeValue")
+                  addStatement("fallback()")
+                  endControlFlow()
+                },
+                "name",
+              )
+            )
+            .build()
+        )
+        .build()
+
+    assertThat(typeSpec.toString())
+      .isEqualTo(
+        """
+        |public class Test() {
+        |  public constructor(name: kotlin.String) : this(
+        |    name,
+        |    computeValue {
+        |      fallback()
+        |    },
+        |  )
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun superConstructorDelegateWithMultilineArgument() {
     val funSpec =
       FunSpec.constructorBuilder()
