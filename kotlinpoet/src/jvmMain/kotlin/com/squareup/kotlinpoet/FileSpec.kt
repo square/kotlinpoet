@@ -281,7 +281,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
       get() = memberImports.toList()
 
     public val members: MutableList<Any> = mutableListOf()
-    override val body: CodeBlock.Builder = CodeBlock.builder()
+    internal val body = CodeBlock.builder()
 
     /**
      * Add an annotation to the file.
@@ -464,19 +464,19 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
 
     public fun indent(indent: String): Builder = apply { this.indent = indent }
 
-    override fun addCode(format: String, vararg args: Any?): Builder {
+    override fun addCode(format: String, vararg args: Any?): Builder = apply {
       check(isScript) { "addCode() is only allowed in script files" }
-      return super.addCode(format, *args)
+      body.add(format, *args)
     }
 
-    override fun addNamedCode(format: String, args: Map<String, *>): Builder {
+    override fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
       check(isScript) { "addNamedCode() is only allowed in script files" }
-      return super.addNamedCode(format, args)
+      body.addNamed(format, args)
     }
 
-    override fun addCode(codeBlock: CodeBlock): Builder {
+    override fun addCode(codeBlock: CodeBlock): Builder = apply {
       check(isScript) { "addCode() is only allowed in script files" }
-      return super.addCode(codeBlock)
+      body.add(codeBlock)
     }
 
     /** Adds a comment to the body of this script file in the order that it was added. */
@@ -485,29 +485,37 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
       body.add("// $format\n", *args)
     }
 
-    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder {
+    /**
+     * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
+     *   Shouldn't contain braces or newline characters.
+     */
+    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       check(isScript) { "beginControlFlow() is only allowed in script files" }
-      return super.beginControlFlow(controlFlow, *args)
+      body.beginControlFlow(controlFlow, *args)
     }
 
-    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder {
+    /**
+     * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
+     *   Shouldn't contain braces or newline characters.
+     */
+    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       check(isScript) { "nextControlFlow() is only allowed in script files" }
-      return super.nextControlFlow(controlFlow, *args)
+      body.nextControlFlow(controlFlow, *args)
     }
 
-    override fun endControlFlow(): Builder {
+    override fun endControlFlow(): Builder = apply {
       check(isScript) { "endControlFlow() is only allowed in script files" }
-      return super.endControlFlow()
+      body.endControlFlow()
     }
 
-    override fun addStatement(format: String, vararg args: Any?): Builder {
+    override fun addStatement(format: String, vararg args: Any?): Builder = apply {
       check(isScript) { "addStatement() is only allowed in script files" }
-      return super.addStatement(format, *args)
+      body.addStatement(format, *args)
     }
 
-    override fun clearBody(): Builder {
+    override fun clearBody(): Builder = apply {
       check(isScript) { "clearBody() is only allowed in script files" }
-      return super.clearBody()
+      body.clear()
     }
 
     // region Overrides for binary compatibility
