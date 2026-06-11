@@ -48,7 +48,7 @@ import kotlin.reflect.KClass
  */
 public class FileSpec
 private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
-  Taggable by tagMap, Annotatable, TypeSpecHolder, MemberSpecHolder {
+  Taggable by tagMap, Annotatable, TypeSpecHolder, MemberSpecHolder, CodeBlockHolder {
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   override val typeSpecs: List<TypeSpec> =
     builder.members.filterIsInstance<TypeSpec>().toImmutableList()
@@ -61,7 +61,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
   public val name: String = builder.name
   public val members: List<Any> = builder.members.toList()
   public val defaultImports: Set<String> = builder.defaultImports.toSet()
-  public val body: CodeBlock = builder.body.build()
+  override val body: CodeBlock = builder.body.build()
   public val isScript: Boolean = builder.isScript
   private val memberImports = builder.memberImports.associateBy(Import::qualifiedName)
   private val indent = builder.indent
@@ -267,7 +267,8 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     Taggable.Builder<Builder>,
     Annotatable.Builder<Builder>,
     TypeSpecHolder.Builder<Builder>,
-    MemberSpecHolder.Builder<Builder> {
+    MemberSpecHolder.Builder<Builder>,
+    CodeBlockHolder.Builder<Builder> {
 
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
     internal val comment = CodeBlock.builder()
@@ -463,17 +464,17 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
 
     public fun indent(indent: String): Builder = apply { this.indent = indent }
 
-    public fun addCode(format: String, vararg args: Any?): Builder = apply {
+    override fun addCode(format: String, vararg args: Any?): Builder = apply {
       check(isScript) { "addCode() is only allowed in script files" }
       body.add(format, *args)
     }
 
-    public fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
+    override fun addNamedCode(format: String, args: Map<String, *>): Builder = apply {
       check(isScript) { "addNamedCode() is only allowed in script files" }
       body.addNamed(format, args)
     }
 
-    public fun addCode(codeBlock: CodeBlock): Builder = apply {
+    override fun addCode(codeBlock: CodeBlock): Builder = apply {
       check(isScript) { "addCode() is only allowed in script files" }
       body.add(codeBlock)
     }
@@ -488,7 +489,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
      * @param controlFlow the control flow construct and its code, such as "if (foo == 5)".
      *   Shouldn't contain braces or newline characters.
      */
-    public fun beginControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+    override fun beginControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       check(isScript) { "beginControlFlow() is only allowed in script files" }
       body.beginControlFlow(controlFlow, *args)
     }
@@ -497,22 +498,22 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
      * @param controlFlow the control flow construct and its code, such as "else if (foo == 10)".
      *   Shouldn't contain braces or newline characters.
      */
-    public fun nextControlFlow(controlFlow: String, vararg args: Any): Builder = apply {
+    override fun nextControlFlow(controlFlow: String, vararg args: Any?): Builder = apply {
       check(isScript) { "nextControlFlow() is only allowed in script files" }
       body.nextControlFlow(controlFlow, *args)
     }
 
-    public fun endControlFlow(): Builder = apply {
+    override fun endControlFlow(): Builder = apply {
       check(isScript) { "endControlFlow() is only allowed in script files" }
       body.endControlFlow()
     }
 
-    public fun addStatement(format: String, vararg args: Any): Builder = apply {
+    override fun addStatement(format: String, vararg args: Any?): Builder = apply {
       check(isScript) { "addStatement() is only allowed in script files" }
       body.addStatement(format, *args)
     }
 
-    public fun clearBody(): Builder = apply {
+    override fun clearBody(): Builder = apply {
       check(isScript) { "clearBody() is only allowed in script files" }
       body.clear()
     }
