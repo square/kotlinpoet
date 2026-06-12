@@ -5,6 +5,7 @@ Change Log
 
  * New: Support for explicit backing fields. (#2325)
  * New: `value class` validations have been relaxed to support multi-field value classes. (#2329)
+ * New: Disallow the deprecated `inline class` syntax. Use `value` classes instead. (#2330)
  * New: Extract `CodeBlockHolder` interface for constructs that can hold a `CodeBlock` body and their builders. (#1553)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
  * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)

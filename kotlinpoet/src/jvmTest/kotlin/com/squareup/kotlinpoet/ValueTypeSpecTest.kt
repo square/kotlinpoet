@@ -24,32 +24,13 @@ import com.squareup.kotlinpoet.KModifier.INLINE
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.jvm.jvmInline
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class ValueTypeSpecTest(private val useValue: Boolean) {
+class ValueTypeSpecTest {
 
-  companion object {
-    @JvmStatic
-    @Parameterized.Parameters(name = "value={0}")
-    fun data(): Collection<Array<Any>> {
-      return listOf(arrayOf(true), arrayOf(false))
-    }
-  }
-
-  private val modifier = if (useValue) KModifier.VALUE else INLINE
-  private val modifierString = modifier.keyword
-
-  private fun classBuilder() =
-    if (useValue) {
-      TypeSpec.classBuilder("Guacamole").addModifiers(KModifier.VALUE)
-    } else {
-      TypeSpec.classBuilder("Guacamole").addModifiers(modifier)
-    }
+  private fun classBuilder() = TypeSpec.classBuilder("Guacamole").addModifiers(KModifier.VALUE)
 
   @Test
-  fun validInlineClass() {
+  fun validValueClass() {
     val guacamole =
       classBuilder()
         .primaryConstructor(
@@ -61,17 +42,16 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString())
       .isEqualTo(
         """
-      |public $modifierString class Guacamole(
-      |  public val avacado: kotlin.String,
-      |)
-      |
-      """
+        |public value class Guacamole(
+        |  public val avacado: kotlin.String,
+        |)
+        |"""
           .trimMargin()
       )
   }
 
   @Test
-  fun inlineClassWithInitBlock() {
+  fun valueClassWithInitBlock() {
     val guacamole =
       classBuilder()
         .primaryConstructor(
@@ -84,22 +64,21 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString())
       .isEqualTo(
         """
-      |public $modifierString class Guacamole(
-      |  public val avacado: kotlin.String,
-      |) {
-      |  init {
-      |  }
-      |}
-      |
-      """
+        |public value class Guacamole(
+        |  public val avacado: kotlin.String,
+        |) {
+        |  init {
+        |  }
+        |}
+        |"""
           .trimMargin()
       )
   }
 
-  class InlineSuperClass
+  class ValueSuperClass
 
   @Test
-  fun inlineClassWithSuperClass() {
+  fun valueClassWithSuperClass() {
     assertFailure {
         classBuilder()
           .primaryConstructor(
@@ -108,40 +87,39 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .addProperty(
             PropertySpec.builder("avocado", String::class).initializer("avocado").build()
           )
-          .superclass(InlineSuperClass::class)
+          .superclass(ValueSuperClass::class)
           .build()
       }
       .isInstanceOf<IllegalStateException>()
-      .hasMessage("value/inline classes cannot have super classes")
+      .hasMessage("value classes cannot have super classes")
   }
 
-  interface InlineSuperInterface
+  interface ValueSuperInterface
 
   @Test
-  fun inlineClassInheritsFromInterface() {
+  fun valueClassInheritsFromInterface() {
     val guacamole =
       classBuilder()
         .primaryConstructor(
           FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
         )
         .addProperty(PropertySpec.builder("avocado", String::class).initializer("avocado").build())
-        .addSuperinterface(InlineSuperInterface::class)
+        .addSuperinterface(ValueSuperInterface::class)
         .build()
 
     assertThat(guacamole.toString())
       .isEqualTo(
         """
-      |public $modifierString class Guacamole(
-      |  public val avocado: kotlin.String,
-      |) : com.squareup.kotlinpoet.ValueTypeSpecTest.InlineSuperInterface
-      |
-      """
+        |public value class Guacamole(
+        |  public val avocado: kotlin.String,
+        |) : com.squareup.kotlinpoet.ValueTypeSpecTest.ValueSuperInterface
+        |"""
           .trimMargin()
       )
   }
 
   @Test
-  fun inlineClassWithoutBackingProperty() {
+  fun valueClassWithoutBackingProperty() {
     assertFailure {
         classBuilder()
           .primaryConstructor(
@@ -151,11 +129,11 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .build()
       }
       .isInstanceOf<IllegalStateException>()
-      .hasMessage("value/inline classes must only have final read-only (val) property parameters")
+      .hasMessage("value classes must only have final read-only (val) property parameters")
   }
 
   @Test
-  fun inlineClassWithoutProperties() {
+  fun valueClassWithoutProperties() {
     assertFailure {
         classBuilder()
           .primaryConstructor(
@@ -164,11 +142,11 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .build()
       }
       .isInstanceOf<IllegalStateException>()
-      .hasMessage("value/inline classes must have at least 1 property")
+      .hasMessage("value classes must have at least 1 property")
   }
 
   @Test
-  fun inlineClassWithMutableProperties() {
+  fun valueClassWithMutableProperties() {
     assertFailure {
         classBuilder()
           .primaryConstructor(
@@ -180,11 +158,11 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
           .build()
       }
       .isInstanceOf<IllegalStateException>()
-      .hasMessage("value/inline classes must only have final read-only (val) property parameters")
+      .hasMessage("value classes must only have final read-only (val) property parameters")
   }
 
   @Test
-  fun inlineClassWithPrivateConstructor() {
+  fun valueClassWithPrivateConstructor() {
     val guacamole =
       classBuilder()
         .primaryConstructor(
@@ -199,20 +177,19 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString())
       .isEqualTo(
         """
-      |public $modifierString class Guacamole private constructor(
-      |  public val avocado: kotlin.String,
-      |)
-      |
-      """
+        |public value class Guacamole private constructor(
+        |  public val avocado: kotlin.String,
+        |)
+        |"""
           .trimMargin()
       )
   }
 
   @Test
-  fun inlineEnumClass() {
+  fun valueEnumClass() {
     val guacamole =
       TypeSpec.enumBuilder("Foo")
-        .addModifiers(modifier)
+        .addModifiers(KModifier.VALUE)
         .primaryConstructor(FunSpec.constructorBuilder().addParameter("x", Int::class).build())
         .addEnumConstant(
           "A",
@@ -227,16 +204,51 @@ class ValueTypeSpecTest(private val useValue: Boolean) {
     assertThat(guacamole.toString())
       .isEqualTo(
         """
-      |public enum $modifierString class Foo(
-      |  public val x: kotlin.Int,
-      |) {
-      |  A(1),
-      |  B(2),
-      |  ;
-      |}
-      |
-      """
+        |public enum value class Foo(
+        |  public val x: kotlin.Int,
+        |) {
+        |  A(1),
+        |  B(2),
+        |  ;
+        |}
+        |"""
           .trimMargin()
+      )
+  }
+
+  @Test
+  fun inlineForbiddenOnClass() {
+    assertFailure {
+        TypeSpec.classBuilder("Guacamole")
+          .addModifiers(INLINE)
+          .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("avocado", String::class).build()
+          )
+          .addProperty(
+            PropertySpec.builder("avocado", String::class).initializer("avocado").build()
+          )
+          .build()
+      }
+      .isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "KotlinPoet doesn't allow setting the inline modifier on " +
+          "classes. You should use the value modifier instead."
+      )
+  }
+
+  @Test
+  fun inlineForbiddenOnEnum() {
+    assertFailure {
+        TypeSpec.enumBuilder("Foo")
+          .addModifiers(INLINE)
+          .primaryConstructor(FunSpec.constructorBuilder().addParameter("x", Int::class).build())
+          .addProperty(PropertySpec.builder("x", Int::class).initializer("x").build())
+          .build()
+      }
+      .isInstanceOf<IllegalArgumentException>()
+      .hasMessage(
+        "KotlinPoet doesn't allow setting the inline modifier on " +
+          "classes. You should use the value modifier instead."
       )
   }
 

@@ -544,8 +544,8 @@ private constructor(
     internal val isCompanion
       get() = kind == Kind.OBJECT && COMPANION in modifiers
 
-    internal val isInlineOrValClass
-      get() = kind == Kind.CLASS && (INLINE in modifiers || VALUE in modifiers)
+    internal val isValueClass
+      get() = kind == Kind.CLASS && VALUE in modifiers
 
     internal val isSimpleClass
       get() = kind == Kind.CLASS && !isEnum && !isAnnotation
@@ -599,9 +599,9 @@ private constructor(
           "expected a constructor but was ${primaryConstructor.name}"
         }
 
-        if (isInlineOrValClass) {
+        if (isValueClass) {
           check(primaryConstructor.parameters.size >= 1) {
-            "value/inline classes must have at least 1 parameter in constructor"
+            "value classes must have at least 1 parameter in constructor"
           }
         }
 
@@ -625,7 +625,7 @@ private constructor(
       check(isSimpleClass || kind == Kind.OBJECT) {
         "only classes can have super classes, not $kind"
       }
-      check(!isInlineOrValClass) { "value/inline classes cannot have super classes" }
+      check(!isValueClass) { "value classes cannot have super classes" }
     }
 
     private fun checkCanHaveInitializerBlocks() {
@@ -841,6 +841,13 @@ private constructor(
     // endregion
 
     public fun build(): TypeSpec {
+      if (kind == Kind.CLASS && INLINE in modifiers) {
+        throw IllegalArgumentException(
+          "KotlinPoet doesn't allow setting the inline modifier on " +
+            "classes. You should use the value modifier instead."
+        )
+      }
+
       if (enumConstants.isNotEmpty()) {
         check(isEnum) { "$name is not an enum and cannot have enum constants" }
       }
@@ -938,28 +945,24 @@ private constructor(
         }
       }
 
-      if (isInlineOrValClass) {
+      if (isValueClass) {
         val primaryConstructor =
-          checkNotNull(primaryConstructor) {
-              "value/inline classes must have a primary constructor"
-            }
+          checkNotNull(primaryConstructor) { "value classes must have a primary constructor" }
             .also {
               check(it.parameters.size >= 1) {
-                "value/inline classes must have at least 1 parameter in constructor"
+                "value classes must have at least 1 parameter in constructor"
               }
             }
 
-        check(propertySpecs.size > 0) { "value/inline classes must have at least 1 property" }
+        check(propertySpecs.size > 0) { "value classes must have at least 1 property" }
 
         for (constructorParamName in primaryConstructor.parameters.map { it.name }) {
           val underlyingProperty = propertySpecs.find { it.name == constructorParamName }
           check(underlyingProperty != null && !underlyingProperty.mutable) {
-            "value/inline classes must only have final read-only (val) property parameters"
+            "value classes must only have final read-only (val) property parameters"
           }
         }
-        check(superclass == Any::class.asTypeName()) {
-          "value/inline classes cannot have super classes"
-        }
+        check(superclass == Any::class.asTypeName()) { "value classes cannot have super classes" }
       }
 
       if (isFunInterface) {
