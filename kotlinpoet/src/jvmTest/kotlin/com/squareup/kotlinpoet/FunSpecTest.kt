@@ -228,6 +228,51 @@ class FunSpecTest {
   }
 
   @Test
+  fun operatorGetAndSetNamesAreNotEscaped() {
+    val get =
+      FunSpec.builder("get")
+        .addModifiers(KModifier.OPERATOR)
+        .addParameter("index", Int::class)
+        .returns(Int::class)
+        .addStatement("return values[index]")
+        .build()
+    assertThat(get.toString())
+      .isEqualTo(
+        """
+        |public operator fun get(index: kotlin.Int): kotlin.Int = values[index]
+        |"""
+          .trimMargin()
+      )
+
+    val set =
+      FunSpec.builder("set")
+        .addModifiers(KModifier.OPERATOR)
+        .addParameter("index", Int::class)
+        .addParameter("element", Int::class)
+        .addStatement("values[index] = element")
+        .build()
+    assertThat(set.toString())
+      .isEqualTo(
+        """
+        |public operator fun set(index: kotlin.Int, element: kotlin.Int) {
+        |  values[index] = element
+        |}
+        |"""
+          .trimMargin()
+      )
+
+    // Without the operator modifier, get/set are still escaped as soft keywords.
+    val nonOperatorGet = FunSpec.builder("get").returns(Int::class).addStatement("return 0").build()
+    assertThat(nonOperatorGet.toString())
+      .isEqualTo(
+        """
+        |public fun `get`(): kotlin.Int = 0
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun returnsLongExpression() {
     val funSpec =
       FunSpec.builder("foo")

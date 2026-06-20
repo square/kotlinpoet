@@ -8,6 +8,7 @@ Change Log
  * New: Extract `CodeBlockHolder` interface for constructs that can hold a `CodeBlock` body and their builders. (#1553)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
  * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)
+ * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
 
 ## Version 2.3.0
 

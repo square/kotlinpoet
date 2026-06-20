@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.INLINE
+import com.squareup.kotlinpoet.KModifier.OPERATOR
 import com.squareup.kotlinpoet.KModifier.VARARG
 import java.lang.reflect.Type
 import javax.lang.model.element.Element
@@ -163,7 +164,13 @@ private constructor(
           codeWriter.emitCode("%T.", receiverType)
         }
       }
-      codeWriter.emitCode("%N", this)
+      if (OPERATOR in modifiers && (name == "get" || name == "set")) {
+        // %N escapes get/set as soft keywords, but operator overloads must not be escaped.
+        // https://github.com/square/kotlinpoet/issues/1869
+        codeWriter.emitCode("%L", name)
+      } else {
+        codeWriter.emitCode("%N", this)
+      }
     }
 
     if (!isEmptySetter && !isExternalGetter) {
