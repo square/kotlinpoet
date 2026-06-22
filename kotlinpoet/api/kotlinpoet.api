@@ -123,6 +123,7 @@ public final class com/squareup/kotlinpoet/CodeBlock$Builder {
 	public fun <init> ()V
 	public final fun add (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun add (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun addNamed (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 	public final fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;

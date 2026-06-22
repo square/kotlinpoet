@@ -470,6 +470,10 @@ private constructor(internal val formatParts: List<String>, internal val args: L
       add("\n»")
     }
 
+    public fun addComment(format: String, vararg args: Any?): Builder = apply {
+      add("// $format\n", *args)
+    }
+
     public fun add(codeBlock: CodeBlock): Builder = apply {
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
