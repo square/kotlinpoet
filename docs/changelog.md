@@ -6,6 +6,7 @@ Change Log
  * New: Support for explicit backing fields. (#2325)
  * New: `value class` validations have been relaxed to support multi-field value classes. (#2329)
  * New: Extract `CodeBlockHolder` interface for constructs that can hold a `CodeBlock` body and their builders. (#1553)
+ * New: Add `CodeBlock.Builder.addComment()` for adding `//` comments. (#1690)
  * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
  * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)
  * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
