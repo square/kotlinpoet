@@ -71,8 +71,8 @@ class KotlinPoetTest {
   @Test
   fun noTopLevelConstructor() {
     assertFailure {
-        FileSpec.builder(tacosPackage, "Taco").addFunction(FunSpec.constructorBuilder().build())
-      }
+      FileSpec.builder(tacosPackage, "Taco").addFunction(FunSpec.constructorBuilder().build())
+    }
       .isInstanceOf<IllegalArgumentException>()
   }
 
