@@ -3261,13 +3261,13 @@ class TypeSpecTest {
       .isInstanceOf<IllegalStateException>()
 
     assertFailure {
-        TypeSpec.anonymousClassBuilder().addTypeVariable(TypeVariableName("T")).build()
-      }
+      TypeSpec.anonymousClassBuilder().addTypeVariable(TypeVariableName("T")).build()
+    }
       .isInstanceOf<IllegalStateException>()
 
     assertFailure {
-        TypeSpec.anonymousClassBuilder().addTypeVariables(listOf(TypeVariableName("T"))).build()
-      }
+      TypeSpec.anonymousClassBuilder().addTypeVariables(listOf(TypeVariableName("T"))).build()
+    }
       .isInstanceOf<IllegalStateException>()
   }
 
@@ -4033,8 +4033,8 @@ class TypeSpecTest {
   @Test
   fun superclassConstructorParamsForbiddenForAnnotation() {
     assertFailure {
-        TypeSpec.annotationBuilder("Taco").addSuperclassConstructorParameter("%S", "foo")
-      }
+      TypeSpec.annotationBuilder("Taco").addSuperclassConstructorParameter("%S", "foo")
+    }
       .isInstanceOf<IllegalStateException>()
   }
 
@@ -4806,15 +4806,15 @@ class TypeSpecTest {
   @Test
   fun multipleCompanionObjects() {
     assertFailure {
-        TypeSpec.classBuilder("Taco")
-          .addTypes(
-            listOf(
-              TypeSpec.companionObjectBuilder().build(),
-              TypeSpec.companionObjectBuilder().build(),
-            )
+      TypeSpec.classBuilder("Taco")
+        .addTypes(
+          listOf(
+            TypeSpec.companionObjectBuilder().build(),
+            TypeSpec.companionObjectBuilder().build(),
           )
-          .build()
-      }
+        )
+        .build()
+    }
       .isInstanceOf<IllegalArgumentException>()
   }
 
