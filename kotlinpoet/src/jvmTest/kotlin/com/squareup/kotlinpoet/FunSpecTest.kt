@@ -1035,7 +1035,6 @@ class FunSpecTest {
   fun thisConstructorDelegateWithMultilineArgument() {
     val typeSpec =
       TypeSpec.classBuilder("Test")
-        .primaryConstructor(FunSpec.constructorBuilder().build())
         .addFunction(
           FunSpec.constructorBuilder()
             .addParameter("name", STRING)
@@ -1054,7 +1053,7 @@ class FunSpecTest {
     assertThat(typeSpec.toString())
       .isEqualTo(
         """
-        |public class Test() {
+        |public class Test {
         |  public constructor(name: kotlin.String) : this(
         |    name,
         |    computeValue {
@@ -1071,7 +1070,6 @@ class FunSpecTest {
   fun thisConstructorDelegateWithReorderedIndexedMultilineArgument() {
     val typeSpec =
       TypeSpec.classBuilder("Test")
-        .primaryConstructor(FunSpec.constructorBuilder().build())
         .addFunction(
           FunSpec.constructorBuilder()
             .addParameter("name", STRING)
@@ -1093,7 +1091,7 @@ class FunSpecTest {
     assertThat(typeSpec.toString())
       .isEqualTo(
         """
-        |public class Test() {
+        |public class Test {
         |  public constructor(name: kotlin.String) : this(
         |    name,
         |    computeValue {
