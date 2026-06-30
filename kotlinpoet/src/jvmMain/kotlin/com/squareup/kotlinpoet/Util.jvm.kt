@@ -31,7 +31,7 @@ internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
 internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
 
 // TODO Waiting for `CodeBlock` migration.
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
+internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null): CodeBlock =
   if (isEmpty()) {
     this
   } else {
@@ -39,14 +39,20 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
       val lastFormatPart = trim().formatParts.last()
       if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
         val lastArg = args.last()
-        if (lastArg is String) {
-          val trimmedArg = lastArg.trimEnd('\n')
-          args[args.size - 1] =
-            if (replaceWith != null) {
-              trimmedArg + replaceWith
-            } else {
-              trimmedArg
-            }
+        when (lastArg) {
+          is String -> {
+            val trimmedArg = lastArg.trimEnd('\n')
+            args[args.size - 1] =
+              if (replaceWith != null) {
+                trimmedArg + replaceWith
+              } else {
+                trimmedArg
+              }
+          }
+          is CodeBlock -> {
+            args[args.size - 1] = lastArg.trimTrailingNewLine(replaceWith)
+          }
+          else -> Unit
         }
       } else {
         formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')

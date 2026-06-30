@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import com.squareup.kotlinpoet.CodeBlock.Companion.isPlaceholder
 import com.squareup.kotlinpoet.KModifier.ABSTRACT
 import com.squareup.kotlinpoet.KModifier.EXPECT
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
@@ -183,7 +184,7 @@ private constructor(
 
     if (delegateConstructor != null) {
       codeWriter.emitCode(
-        delegateConstructorArguments.joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+        delegateConstructorArguments.toDelegateConstructorCode(delegateConstructor)
       )
     }
   }
@@ -701,4 +702,37 @@ private constructor(
       return builder
     }
   }
+}
+
+private fun List<CodeBlock>.toDelegateConstructorCode(delegateConstructor: String): CodeBlock {
+  return if (none(CodeBlock::isMultilineCode)) {
+    joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+  } else {
+    joinToCode(
+      prefix = " : $delegateConstructor(\n⇥",
+      separator = "\n",
+      suffix = "\n⇤)",
+    ) { argument ->
+      CodeBlock.of("%L,", argument.trimTrailingNewLine())
+    }
+  }
+}
+
+private fun CodeBlock.isMultilineCode(): Boolean {
+  var argumentIndex = 0
+  for (formatPart in formatParts) {
+    if ('\n' in formatPart) return true
+
+    if (formatPart == "%L") {
+      when (val argument = args[argumentIndex]) {
+        is CodeBlock -> if (argument.isMultilineCode()) return true
+        is String -> if ('\n' in argument) return true
+      }
+    }
+
+    if (formatPart.isPlaceholder) {
+      argumentIndex++
+    }
+  }
+  return false
 }
