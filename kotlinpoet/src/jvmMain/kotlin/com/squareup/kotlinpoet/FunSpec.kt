@@ -526,7 +526,7 @@ private constructor(
 
     override fun addCode(codeBlock: CodeBlock): Builder = apply { body.add(codeBlock) }
 
-    public fun addComment(format: String, vararg args: Any): Builder = apply {
+    override fun addComment(format: String, vararg args: Any?): Builder = apply {
       body.add("// $format\n", *args)
     }
 

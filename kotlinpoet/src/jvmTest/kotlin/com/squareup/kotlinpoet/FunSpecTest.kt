@@ -121,6 +121,22 @@ class FunSpecTest {
   }
 
   @Test
+  fun addCommentThroughCodeBlockHolderBuilder() {
+    val builder = FunSpec.builder("main")
+    val holder: CodeBlockHolder.Builder<*> = builder
+    holder.addComment("this is a %L comment", "generated")
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
+        |public fun main() {
+        |  // this is a generated comment
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun overrideExtendsOthersWorksWithActualTypeParameters() {
     val classElement = getElement(ExtendsOthers::class.java)
     val classType = classElement.asType() as DeclaredType

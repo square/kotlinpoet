@@ -28,6 +28,8 @@ public interface CodeBlockHolder {
 
     public fun addStatement(format: String, vararg args: Any?): T
 
+    public fun addComment(format: String, vararg args: Any?): T
+
     public fun beginControlFlow(controlFlow: String, vararg args: Any?): T
 
     public fun nextControlFlow(controlFlow: String, vararg args: Any?): T

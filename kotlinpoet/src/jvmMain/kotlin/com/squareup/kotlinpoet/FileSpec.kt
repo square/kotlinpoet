@@ -315,7 +315,9 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
       ReplaceWith("addFileComment(format, args)"),
       DeprecationLevel.ERROR,
     )
-    public fun addComment(format: String, vararg args: Any): Builder = addFileComment(format, *args)
+    override fun addComment(format: String, vararg args: Any?): Builder = apply {
+      comment.add(format, *args)
+    }
 
     public fun clearComment(): Builder = apply { comment.clear() }
 
