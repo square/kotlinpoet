@@ -917,6 +917,24 @@ class FileSpecTest {
   }
 
   @Test
+  fun addCommentThroughCodeBlockHolderBuilder() {
+    val builder =
+      FileSpec.builder("com.squareup.tacos", "Taco").addType(TypeSpec.classBuilder("Taco").build())
+    val holder: CodeBlockHolder.Builder<*> = builder
+    holder.addComment("Generated %L. DO NOT EDIT!", "2015-01-13")
+    assertThat(builder.build().toString())
+      .isEqualTo(
+        """
+        |// Generated 2015-01-13. DO NOT EDIT!
+        |package com.squareup.tacos
+        |
+        |public class Taco
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun topOfFileComment() {
     val source =
       FileSpec.builder("com.squareup.tacos", "Taco")

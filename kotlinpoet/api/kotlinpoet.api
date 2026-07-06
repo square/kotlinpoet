@@ -149,6 +149,7 @@ public abstract interface class com/squareup/kotlinpoet/CodeBlockHolder {
 public abstract interface class com/squareup/kotlinpoet/CodeBlockHolder$Builder {
 	public abstract fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public abstract fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public abstract fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public abstract fun addNamedCode (Ljava/lang/String;Ljava/util/Map;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public abstract fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public abstract fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
@@ -273,7 +274,8 @@ public final class com/squareup/kotlinpoet/FileSpec$Builder : com/squareup/kotli
 	public fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public synthetic fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
-	public final fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
+	public synthetic fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addDefaultPackageImport (Ljava/lang/String;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public final fun addFileComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
 	public fun addFunction (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/FileSpec$Builder;
@@ -386,7 +388,8 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public fun addCode (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun addCode (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
-	public final fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public synthetic fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
+	public fun addComment (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/Documentable$Builder;
 	public fun addKdoc (Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun addKdoc (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/Documentable$Builder;
