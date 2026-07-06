@@ -306,7 +306,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
      * Adds a file-site comment. This is prefixed to the start of the file and different from
      * [addBodyComment].
      */
-    public fun addFileComment(format: String, vararg args: Any): Builder = apply {
+    public fun addFileComment(format: String, vararg args: Any?): Builder = apply {
       comment.add(format, *args)
     }
 
@@ -315,9 +315,8 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
       ReplaceWith("addFileComment(format, args)"),
       DeprecationLevel.ERROR,
     )
-    override fun addComment(format: String, vararg args: Any?): Builder = apply {
-      comment.add(format, *args)
-    }
+    override fun addComment(format: String, vararg args: Any?): Builder =
+      addFileComment(format, *args)
 
     public fun clearComment(): Builder = apply { comment.clear() }
 
