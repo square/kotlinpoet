@@ -89,7 +89,7 @@ kotlin {
       }
     }
 
-    val nonJvmMain by creating {
+    val nonJvmMain = create("nonJvmMain") {
       dependsOn(commonMain.get())
     }
 
