@@ -182,9 +182,22 @@ private constructor(
     }
 
     if (delegateConstructor != null) {
-      codeWriter.emitCode(
-        delegateConstructorArguments.joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
-      )
+      val constructorCall =
+        if (delegateConstructorArguments.any { it.hasExplicitNewLine() }) {
+          delegateConstructorArguments.joinToCode(
+            separator = ",\n",
+            prefix = " : $delegateConstructor(\n⇥",
+            suffix = ",\n⇤)",
+          ) {
+            it.trimTrailingNewLine(trimNonLiteralStringArguments = false)
+          }
+        } else {
+          delegateConstructorArguments.joinToCode(
+            prefix = " : $delegateConstructor(",
+            suffix = ")",
+          )
+        }
+      codeWriter.emitCode(constructorCall)
     }
   }
 

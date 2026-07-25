@@ -30,26 +30,59 @@ internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
 // TODO Waiting for `CodeBlock` migration.
 internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
 
+internal fun CodeBlock.hasExplicitNewLine(): Boolean {
+  var argIndex = 0
+  for (formatPart in formatParts) {
+    if (!formatPart.isPlaceholder) {
+      if ('\n' in formatPart) return true
+      continue
+    }
+    if (!formatPart.consumesArgument) continue
+
+    val arg = args[argIndex++]
+    if (formatPart != "%L") continue
+    if (arg is CodeBlock && arg.hasExplicitNewLine()) return true
+    if (arg is String && '\n' in arg) return true
+  }
+  return false
+}
+
 // TODO Waiting for `CodeBlock` migration.
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
+internal fun CodeBlock.trimTrailingNewLine(
+  replaceWith: Char? = null,
+  trimNonLiteralStringArguments: Boolean = true,
+): CodeBlock =
   if (isEmpty()) {
     this
   } else {
     with(toBuilder()) {
       val lastFormatPart = trim().formatParts.last()
-      if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
-        val lastArg = args.last()
-        if (lastArg is String) {
-          val trimmedArg = lastArg.trimEnd('\n')
-          args[args.size - 1] =
-            if (replaceWith != null) {
-              trimmedArg + replaceWith
-            } else {
-              trimmedArg
+      val lastFormatPartIndex = formatParts.lastIndexOf(lastFormatPart)
+      if (lastFormatPart.consumesArgument && args.isNotEmpty()) {
+        val lastArgIndex =
+          formatParts.take(lastFormatPartIndex + 1).count { it.consumesArgument } - 1
+        when (val lastArg = args[lastArgIndex]) {
+          is String -> {
+            if (lastFormatPart == "%L" || trimNonLiteralStringArguments) {
+              val trimmedArg = lastArg.trimEnd('\n')
+              args[lastArgIndex] =
+                if (replaceWith != null) {
+                  trimmedArg + replaceWith
+                } else {
+                  trimmedArg
+                }
             }
+          }
+
+          is CodeBlock -> {
+            if (lastFormatPart == "%L") {
+              args[lastArgIndex] =
+                lastArg.trimTrailingNewLine(replaceWith, trimNonLiteralStringArguments)
+            }
+          }
         }
       } else {
-        formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
+        formatParts[lastFormatPartIndex] = lastFormatPart.trimEnd('\n')
         if (replaceWith != null) {
           formatParts += "$replaceWith"
         }
@@ -57,6 +90,9 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
       return@with build()
     }
   }
+
+private val String.consumesArgument
+  get() = isPlaceholder && length == 2 && this != "%%"
 
 private val IDENTIFIER_REGEX = IDENTIFIER_REGEX_VALUE.toRegex()
 
