@@ -14,6 +14,7 @@ Change Log
  * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
  * Fix: Don't special case varargs in `KSAnnotation.toAnnotationSpec`. (#2360)
  * Fix: Emit context parameters after annotations in `FunSpec` and `PropertySpec`. (#2374)
+ * Fix: An expression body no longer leaks indentation into later declarations. (#1421)
 
 ## Version 2.3.0
 

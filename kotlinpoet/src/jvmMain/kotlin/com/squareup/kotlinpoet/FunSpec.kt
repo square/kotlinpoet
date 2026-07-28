@@ -243,7 +243,7 @@ private constructor(
   }
 
   private fun CodeBlock.asExpressionBody(): CodeBlock? {
-    val codeBlock = this.trim()
+    val codeBlock = this.trim(keepBalanced = true)
 
     // If after trimming there are unmatched closing statement symbols, we can't have an expression
     // body.
