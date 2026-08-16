@@ -669,11 +669,58 @@ class TestProcessorTest {
         import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
         import kotlin.OptIn
 
-        @OptIn(MyOptIn::class)
+        @OptIn(markerClass = arrayOf(MyOptIn::class))
         @AnnotationWithVararg(
           simpleArg = 0,
-          "one",
-          "two",
+          args = arrayOf("one", "two"),
+        )
+        public class TestExample
+
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
+  fun varargArgumentFirst() {
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+          package test
+
+          import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVarargFirst
+          import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+          @RequiresOptIn
+          annotation class MyOptIn
+
+          @ExampleAnnotation
+          @OptIn(MyOptIn::class)
+          @AnnotationWithVarargFirst(args = ["one", "two"], simpleArg = 0)
+          interface Example
+          """
+            .trimIndent(),
+        )
+      )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
+
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
+
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVarargFirst
+        import kotlin.OptIn
+
+        @OptIn(markerClass = arrayOf(MyOptIn::class))
+        @AnnotationWithVarargFirst(
+          args = arrayOf("one", "two"),
+          simpleArg = 0,
         )
         public class TestExample
 
