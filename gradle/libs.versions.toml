@@ -46,7 +46,7 @@ ktfmt = "com.facebook:ktfmt:0.64"
 
 assertk = "com.willowtreeapps.assertk:assertk:0.28.1"
 compileTesting = { module = "com.google.testing.compile:compile-testing", version = "0.23.0" }
-jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.1" }
+jimfs = { module = "com.google.jimfs:jimfs", version = "1.3.2" }
 ecj = { module = "org.eclipse.jdt.core.compiler:ecj", version = "4.6.1" }
 kotlinCompileTesting = { module = "dev.zacsweers.kctfork:core", version.ref = "kct" }
 kotlinCompileTesting-ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kct" }
