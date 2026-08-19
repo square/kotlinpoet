@@ -169,12 +169,12 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     override fun visitType(t: TypeMirror, name: String) = builder.add("%T::class", t.asTypeName())
 
     override fun visitArray(values: List<AnnotationValue>, name: String): CodeBlock.Builder {
-      builder.add("arrayOf(⇥⇥")
+      builder.add("[⇥⇥")
       values.forEachIndexed { index, value ->
         if (index > 0) builder.add(", ")
         value.accept(this, name)
       }
-      builder.add("⇤⇤)")
+      builder.add("⇤⇤]")
       return builder
     }
   }
@@ -203,12 +203,12 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
           val member = CodeBlock.builder()
           member.add("%L = ", method.name)
           if (value.javaClass.isArray) {
-            member.add("arrayOf(⇥⇥")
+            member.add("[⇥⇥")
             for (i in 0..<Array.getLength(value)) {
               if (i > 0) member.add(", ")
               member.add(Builder.memberForValue(Array.get(value, i)))
             }
-            member.add("⇤⇤)")
+            member.add("⇤⇤]")
             builder.addMember(member.build())
             continue
           }

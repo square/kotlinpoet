@@ -199,42 +199,42 @@ class TestProcessorTest {
 
         @ComprehensiveAnnotation<String>(
           boolean = true,
-          booleanArray = booleanArrayOf(true),
+          booleanArray = [true],
           byte = 0.toByte(),
-          byteArray = byteArrayOf(0.toByte()),
+          byteArray = [0.toByte()],
           char = 'a',
-          charArray = charArrayOf('a', 'b', 'c'),
+          charArray = ['a', 'b', 'c'],
           short = 0.toShort(),
-          shortArray = shortArrayOf(0.toShort()),
+          shortArray = [0.toShort()],
           int = 0,
-          intArray = intArrayOf(0),
+          intArray = [0],
           long = 0,
-          longArray = longArrayOf(0),
+          longArray = [0],
           float = 0.0f,
-          floatArray = floatArrayOf(0.0f),
+          floatArray = [0.0f],
           double = 0.0,
-          doubleArray = doubleArrayOf(0.0),
+          doubleArray = [0.0],
           string = "Hello",
-          stringArray = arrayOf("Hello"),
+          stringArray = ["Hello"],
           someClass = String::class,
-          someClasses = arrayOf(String::class, Int::class),
+          someClasses = [String::class, Int::class],
           enumValue = AnnotationEnumValue.ONE,
-          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+          enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
           anotherAnnotation = AnotherAnnotation(input = "Hello"),
-          anotherAnnotationArray = arrayOf(AnotherAnnotation(input = "Hello")),
+          anotherAnnotationArray = [AnotherAnnotation(input = "Hello")],
           defaultingString = "defaultValue",
         )
         @ExampleAnnotationWithDefaults(
-          booleanArray = booleanArrayOf(false),
+          booleanArray = [false],
           byte = 0.toByte(),
           short = 0.toShort(),
           int = 0,
           long = 0,
           float = 0.0f,
-          doubleArray = doubleArrayOf(0.0),
+          doubleArray = [0.0],
           string = "Hello",
-          someClasses = arrayOf(Int::class),
-          enumValueArray = arrayOf(AnnotationEnumValue.ONE, AnnotationEnumValue.TWO),
+          someClasses = [Int::class],
+          enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
         )
         public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
           @field:AnotherAnnotation(input = "siteTargeting")
@@ -669,10 +669,10 @@ class TestProcessorTest {
         import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVararg
         import kotlin.OptIn
 
-        @OptIn(markerClass = arrayOf(MyOptIn::class))
+        @OptIn(markerClass = [MyOptIn::class])
         @AnnotationWithVararg(
           simpleArg = 0,
-          args = arrayOf("one", "two"),
+          args = ["one", "two"],
         )
         public class TestExample
 
@@ -717,9 +717,9 @@ class TestProcessorTest {
         import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithVarargFirst
         import kotlin.OptIn
 
-        @OptIn(markerClass = arrayOf(MyOptIn::class))
+        @OptIn(markerClass = [MyOptIn::class])
         @AnnotationWithVarargFirst(
-          args = arrayOf("one", "two"),
+          args = ["one", "two"],
           simpleArg = 0,
         )
         public class TestExample

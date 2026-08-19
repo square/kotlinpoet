@@ -99,25 +99,12 @@ private val AnnotationUseSiteTarget.kpAnalog: UseSiteTarget
 private fun addValueToBlock(value: Any, member: CodeBlock.Builder, omitDefaultValues: Boolean) {
   when (value) {
     is List<*> -> {
-      // Array type
-      val arrayType =
-        when (value.firstOrNull()) {
-          is Boolean -> "booleanArrayOf"
-          is Byte -> "byteArrayOf"
-          is Char -> "charArrayOf"
-          is Short -> "shortArrayOf"
-          is Int -> "intArrayOf"
-          is Long -> "longArrayOf"
-          is Float -> "floatArrayOf"
-          is Double -> "doubleArrayOf"
-          else -> "arrayOf"
-        }
-      member.add("$arrayType(⇥⇥")
+      member.add("[⇥⇥")
       value.forEachIndexed { index, innerValue ->
         if (index > 0) member.add(", ")
         addValueToBlock(innerValue!!, member, omitDefaultValues)
       }
-      member.add("⇤⇤)")
+      member.add("⇤⇤]")
     }
 
     is KSType -> {
