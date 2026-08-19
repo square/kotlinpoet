@@ -86,4 +86,6 @@ enum class AnnotationEnumValue {
 
 annotation class AnnotationWithVararg(val simpleArg: Int, vararg val args: String)
 
+annotation class AnnotationWithVarargFirst(vararg val args: String, val simpleArg: Int)
+
 annotation class AnnotationWithTypeArgs<T, R>

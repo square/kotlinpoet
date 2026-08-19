@@ -44,43 +44,21 @@ public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): An
       AnnotationSpec.builder(typeName as ParameterizedTypeName)
     }
 
-  val params =
-    annotationType
-      .resolve()
-      .resolveKSClassDeclaration()
-      ?.primaryConstructor
-      ?.parameters
-      .orEmpty()
-      .associateBy { it.name }
   useSiteTarget?.let { builder.useSiteTarget(it.kpAnalog) }
 
-  var varargValues: List<*>? = null
   for (argument in arguments) {
     val value = argument.value ?: continue
     val name = argument.name!!.getShortName()
-    val type = params[argument.name]
     if (omitDefaultValues) {
       val defaultValue = this.defaultArguments.firstOrNull { it.name?.asString() == name }?.value
       if (isDefaultValue(value, defaultValue)) {
         continue
       }
     }
-    if (type?.isVararg == true) {
-      // Wait to add varargs to end.
-      varargValues = value as List<*>
-    } else {
-      val member = CodeBlock.builder()
-      member.add("%N = ", name)
-      addValueToBlock(value, member, omitDefaultValues)
-      builder.addMember(member.build())
-    }
-  }
-  if (varargValues != null) {
-    for (item in varargValues) {
-      val member = CodeBlock.builder()
-      addValueToBlock(item!!, member, omitDefaultValues)
-      builder.addMember(member.build())
-    }
+    val member = CodeBlock.builder()
+    member.add("%N = ", name)
+    addValueToBlock(value, member, omitDefaultValues)
+    builder.addMember(member.build())
   }
   return builder.build()
 }
