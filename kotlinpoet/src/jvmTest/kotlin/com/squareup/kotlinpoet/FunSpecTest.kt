@@ -1042,6 +1042,30 @@ class FunSpecTest {
   }
 
   @Test
+  fun thisConstructorDelegateWithMultilineArgument() {
+    val argument = buildCodeBlock {
+      beginControlFlow("run")
+      addStatement("value")
+      endControlFlow()
+    }
+    val funSpec =
+      FunSpec.constructorBuilder().callThisConstructor(argument, CodeBlock.of("fallback")).build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor() : this(
+        |  run {
+        |    value
+        |  },
+        |  fallback,
+        |)
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun superConstructorDelegate() {
     val funSpec =
       FunSpec.constructorBuilder()
@@ -1053,6 +1077,28 @@ class FunSpecTest {
       .isEqualTo(
         """
         |public constructor(list: kotlin.collections.List<kotlin.Int>) : super(list[0], list[1])
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun superConstructorDelegateWithMultilineArgument() {
+    val argument = buildCodeBlock {
+      beginControlFlow("run")
+      addStatement("value")
+      endControlFlow()
+    }
+    val funSpec = FunSpec.constructorBuilder().callSuperConstructor(argument).build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor() : super(
+        |  run {
+        |    value
+        |  },
+        |)
         |"""
           .trimMargin()
       )
@@ -1089,6 +1135,88 @@ class FunSpecTest {
         |}
         |"""
           .trimMargin()
+      )
+  }
+
+  @Test
+  fun constructorDelegateWithMultilineArgumentAndBody() {
+    val argument = buildCodeBlock {
+      beginControlFlow("run")
+      addStatement("value")
+      endControlFlow()
+    }
+    val funSpec =
+      FunSpec.constructorBuilder().callThisConstructor(argument).addStatement("println()").build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor() : this(
+        |  run {
+        |    value
+        |  },
+        |) {
+        |  println()
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun constructorDelegateWithLongSingleLineArgument() {
+    val argument =
+      "aLongSingleLineArgumentThatExceedsTheUsualColumnLimitWithoutContainingAnyNewlines"
+    val funSpec = FunSpec.constructorBuilder().callThisConstructor(CodeBlock.of(argument)).build()
+
+    assertThat(funSpec.toString()).isEqualTo("public constructor() : this($argument)\n")
+  }
+
+  @Test
+  fun constructorDelegateWithNewlinesInStringLiteralArguments() {
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .callThisConstructor(
+          CodeBlock.of("%S", "first\nsecond"),
+          CodeBlock.of("%P", "third\nfourth"),
+        )
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        "public constructor() : this(\"\"\"\n" +
+          "|first\n" +
+          "|second\n" +
+          "\"\"\".trimMargin(), \"\"\"\n" +
+          "|third\n" +
+          "|fourth\n" +
+          "\"\"\".trimMargin())\n"
+      )
+  }
+
+  @Test
+  fun multilineConstructorDelegatePreservesTrailingNewlinesInStringLiteralArguments() {
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .callThisConstructor(
+          CodeBlock.of("first\nsecond\n"),
+          CodeBlock.of("%S", "keep\n"),
+          CodeBlock.of("%P", "template\n"),
+        )
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        "public constructor() : this(\n" +
+          "  first\n" +
+          "  second,\n" +
+          "  \"\"\"\n" +
+          "  |keep\n" +
+          "  |\"\"\".trimMargin(),\n" +
+          "  \"\"\"\n" +
+          "  |template\n" +
+          "  |\"\"\".trimMargin(),\n" +
+          ")\n"
       )
   }
 

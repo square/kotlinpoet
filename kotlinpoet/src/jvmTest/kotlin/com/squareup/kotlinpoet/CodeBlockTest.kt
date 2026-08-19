@@ -612,6 +612,21 @@ class CodeBlockTest {
   }
 
   @Test
+  fun trimTrailingNewLineWithNestedCodeBlock() {
+    val codeBlock = CodeBlock.of("before %L", CodeBlock.of("after\n\n"))
+
+    assertThat(codeBlock.trimTrailingNewLine().toString()).isEqualTo("before after")
+  }
+
+  @Test
+  fun ensureEndsWithNewLineWithReorderedNestedCodeBlockAndPercentLiteral() {
+    val trailingCodeBlock = CodeBlock.of("last\n\n")
+    val codeBlock = CodeBlock.of("%2L %% %1L", trailingCodeBlock, "first")
+
+    assertThat(codeBlock.ensureEndsWithNewLine().toString()).isEqualTo("first % last\n")
+  }
+
+  @Test
   fun ensureEndsWithNewLineWithNoArgs() {
     val codeBlock =
       CodeBlock.builder()
