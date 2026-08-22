@@ -72,7 +72,7 @@ class TestProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcess
     val resolvedTypeName = resolve().toTypeName(resolver)
     check(typeName == resolvedTypeName)
     // Default EMPTY resolver used to throw on type parameters (#2065).
-    resolve().toTypeName()
+    check(resolve().toTypeName() == typeName)
     return typeName
   }
 

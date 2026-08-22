@@ -24,6 +24,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.Nullability
+import com.squareup.kotlinpoet.ksp.TypeParameterResolver
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import kotlin.test.assertFailsWith
@@ -99,5 +100,11 @@ class KsTypesTest {
       .message()
       .isNotNull()
       .contains("is not resolvable in the current round of processing")
+  }
+
+  @Test
+  fun emptyTypeParameterResolverGetThrows() {
+    val exception = assertFailsWith<NoSuchElementException> { TypeParameterResolver.EMPTY["T"] }
+    assertThat(exception).message().isNotNull().contains("No TypeParameter found for index T")
   }
 }

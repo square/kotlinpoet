@@ -17,7 +17,10 @@ package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.symbol.KSCallableReference
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSClassifierReference
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeArgument
@@ -91,7 +94,7 @@ internal fun KSType.toTypeName(
   val type =
     when (val decl = declaration) {
       is KSClassDeclaration -> {
-        decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
+        decl.toClassName().withTypeArguments(typeArguments.map { it.toTypeName(typeParamResolver) })
       }
       is KSTypeParameter -> resolveTypeParameter(decl, typeParamResolver)
       is KSTypeAlias -> {
@@ -214,6 +217,18 @@ public fun KSTypeReference.toTypeName(
 ): TypeName {
   val type = resolve()
   val elem = element
+  if (type.isError) {
+    val referencedName = (elem as? KSClassifierReference)?.referencedName()
+    if (referencedName != null) {
+      val resolver =
+        if (typeParamResolver !== TypeParameterResolver.EMPTY) {
+          typeParamResolver
+        } else {
+          enclosingTypeParameterResolver()
+        }
+      return resolver[referencedName].copy(nullable = type.isMarkedNullable)
+    }
+  }
   // Don't wrap in a lambda if this is a typealias, even if the underlying type is a function type.
   return if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
     LambdaTypeName.get(
@@ -226,7 +241,8 @@ public fun KSTypeReference.toTypeName(
       )
       .copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
   } else {
-    type.toTypeName(typeParamResolver, type.arguments)
+    val typeArgs = elem?.typeArguments?.takeIf { it.isNotEmpty() } ?: type.arguments
+    type.toTypeName(typeParamResolver, typeArgs)
   }
 }
 
@@ -235,22 +251,29 @@ private fun resolveTypeParameter(
   typeParamResolver: TypeParameterResolver,
 ): TypeVariableName {
   val name = typeParameter.name.getShortName()
-  typeParamResolver.parametersMap[name]?.let {
-    return it
-  }
   if (typeParamResolver !== TypeParameterResolver.EMPTY) {
     return typeParamResolver[name]
   }
-  val enclosingParameters =
-    when (val parent = typeParameter.parentDeclaration) {
-      is KSClassDeclaration -> parent.typeParameters
-      is KSFunctionDeclaration -> parent.typeParameters
-      is KSTypeAlias -> parent.typeParameters
-      else -> emptyList()
+  return typeParameter.enclosingTypeParameterResolver()[name]
+}
+
+private fun KSNode.enclosingTypeParameterResolver(): TypeParameterResolver {
+  val owners = mutableListOf<List<KSTypeParameter>>()
+  var current: KSNode? = this
+  while (current != null) {
+    val typeParameters =
+      when (current) {
+        is KSClassDeclaration -> current.typeParameters
+        is KSFunctionDeclaration -> current.typeParameters
+        is KSTypeAlias -> current.typeParameters
+        else -> emptyList()
+      }
+    if (typeParameters.isNotEmpty()) {
+      owners += typeParameters
     }
-  return if (enclosingParameters.isEmpty()) {
-    TypeVariableName(name)
-  } else {
-    enclosingParameters.toTypeParameterResolver()[name]
+    current = (current as? KSDeclaration)?.parentDeclaration ?: current.parent
   }
+  return owners.asReversed().fold(null as TypeParameterResolver?) { parent, parameters ->
+    parameters.toTypeParameterResolver(parent)
+  } ?: TypeParameterResolver.EMPTY
 }

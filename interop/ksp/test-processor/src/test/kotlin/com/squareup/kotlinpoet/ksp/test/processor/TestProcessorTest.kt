@@ -819,23 +819,81 @@ class TestProcessorTest {
            import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
 
            @ExampleAnnotation
-           abstract class Subject<T> : Comparable<T>
+           abstract class Subject<Foo> : Comparable<Foo>
+
+           @ExampleAnnotation
+           class Host<E, T> {
+             fun <B> foo(): Map<E, B> {
+               TODO()
+             }
+
+             fun <U : T> bar(): List<U> {
+               TODO()
+             }
+           }
            """,
         )
       )
 
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestSubject.kt").readText()
-
-    assertThat(generatedFileText)
+    assertThat(File(compilation.kspSourcesDir, "kotlin/test/TestSubject.kt").readText())
       .isEqualTo(
         """
         package test
 
         import kotlin.Comparable
 
-        public abstract class TestSubject<T> : Comparable<T>
+        public abstract class TestSubject<Foo> : Comparable<Foo>
+
+        """
+          .trimIndent()
+      )
+    assertThat(File(compilation.kspSourcesDir, "kotlin/test/TestHost.kt").readText())
+      .isEqualTo(
+        """
+        package test
+
+        import kotlin.collections.List
+        import kotlin.collections.Map
+
+        public class TestHost<E, T> {
+          public fun <B> foo(): Map<E, B> = TODO()
+
+          public fun <U : T> bar(): List<U> = TODO()
+        }
+
+        """
+          .trimIndent()
+      )
+
+    val annotated =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           @AnnotationWithTypeArgs<E, String>
+           class Host<E>
+           """,
+        )
+      )
+    annotated.compile()
+    assertThat(File(annotated.kspSourcesDir, "kotlin/test/TestHost.kt").readText())
+      .isEqualTo(
+        """
+        package test
+
+        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
+        import kotlin.String
+
+        @AnnotationWithTypeArgs<E, String>
+        public class TestHost<E>
 
         """
           .trimIndent()

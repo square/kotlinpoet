@@ -35,7 +35,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
  */
 @JvmOverloads
 public fun KSAnnotation.toAnnotationSpec(omitDefaultValues: Boolean = false): AnnotationSpec {
-  val typeName = annotationType.resolve().toTypeName()
+  val typeName = annotationType.toTypeName()
 
   val builder =
     if (typeName is ClassName) {
