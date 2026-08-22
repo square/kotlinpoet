@@ -17,6 +17,7 @@ package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.symbol.KSCallableReference
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeArgument
@@ -92,7 +93,7 @@ internal fun KSType.toTypeName(
       is KSClassDeclaration -> {
         decl.toClassName().withTypeArguments(arguments.map { it.toTypeName(typeParamResolver) })
       }
-      is KSTypeParameter -> typeParamResolver[decl.name.getShortName()]
+      is KSTypeParameter -> resolveTypeParameter(decl, typeParamResolver)
       is KSTypeAlias -> {
         var typeAlias: KSTypeAlias = decl
         var arguments = arguments
@@ -226,5 +227,30 @@ public fun KSTypeReference.toTypeName(
       .copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
   } else {
     type.toTypeName(typeParamResolver, type.arguments)
+  }
+}
+
+private fun resolveTypeParameter(
+  typeParameter: KSTypeParameter,
+  typeParamResolver: TypeParameterResolver,
+): TypeVariableName {
+  val name = typeParameter.name.getShortName()
+  typeParamResolver.parametersMap[name]?.let {
+    return it
+  }
+  if (typeParamResolver !== TypeParameterResolver.EMPTY) {
+    return typeParamResolver[name]
+  }
+  val enclosingParameters =
+    when (val parent = typeParameter.parentDeclaration) {
+      is KSClassDeclaration -> parent.typeParameters
+      is KSFunctionDeclaration -> parent.typeParameters
+      is KSTypeAlias -> parent.typeParameters
+      else -> emptyList()
+    }
+  return if (enclosingParameters.isEmpty()) {
+    TypeVariableName(name)
+  } else {
+    enclosingParameters.toTypeParameterResolver()[name]
   }
 }

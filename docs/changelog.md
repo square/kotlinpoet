@@ -13,6 +13,7 @@ Change Log
  * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)
  * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
  * Fix: Don't special case varargs in `KSAnnotation.toAnnotationSpec`. (#2360)
+ * Fix: `KSType.toTypeName()` with the default `TypeParameterResolver.EMPTY` now resolves type parameters from their enclosing declaration instead of throwing. (#2065)
 
 ## Version 2.3.0
 

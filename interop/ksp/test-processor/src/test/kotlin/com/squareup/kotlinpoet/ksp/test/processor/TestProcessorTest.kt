@@ -808,6 +808,41 @@ class TestProcessorTest {
   }
 
   @Test
+  fun regression_2065() {
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           abstract class Subject<T> : Comparable<T>
+           """,
+        )
+      )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestSubject.kt").readText()
+
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
+
+        import kotlin.Comparable
+
+        public abstract class TestSubject<T> : Comparable<T>
+
+        """
+          .trimIndent()
+      )
+  }
+
+  @Test
   fun regression_1304() {
     val compilation =
       prepareCompilation(
