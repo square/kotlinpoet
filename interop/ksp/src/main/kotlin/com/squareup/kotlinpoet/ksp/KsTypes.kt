@@ -17,7 +17,6 @@ package com.squareup.kotlinpoet.ksp
 
 import com.google.devtools.ksp.symbol.KSCallableReference
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSClassifierReference
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
@@ -217,18 +216,6 @@ public fun KSTypeReference.toTypeName(
 ): TypeName {
   val type = resolve()
   val elem = element
-  if (type.isError) {
-    val referencedName = (elem as? KSClassifierReference)?.referencedName()
-    if (referencedName != null) {
-      val resolver =
-        if (typeParamResolver !== TypeParameterResolver.EMPTY) {
-          typeParamResolver
-        } else {
-          enclosingTypeParameterResolver()
-        }
-      return resolver[referencedName].copy(nullable = type.isMarkedNullable)
-    }
-  }
   // Don't wrap in a lambda if this is a typealias, even if the underlying type is a function type.
   return if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
     LambdaTypeName.get(

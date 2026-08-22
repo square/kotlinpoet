@@ -866,38 +866,6 @@ class TestProcessorTest {
         """
           .trimIndent()
       )
-
-    val annotated =
-      prepareCompilation(
-        kotlin(
-          "Example.kt",
-          """
-           package test
-
-           import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
-           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
-
-           @ExampleAnnotation
-           @AnnotationWithTypeArgs<E, String>
-           class Host<E>
-           """,
-        )
-      )
-    annotated.compile()
-    assertThat(File(annotated.kspSourcesDir, "kotlin/test/TestHost.kt").readText())
-      .isEqualTo(
-        """
-        package test
-
-        import com.squareup.kotlinpoet.ksp.test.processor.AnnotationWithTypeArgs
-        import kotlin.String
-
-        @AnnotationWithTypeArgs<E, String>
-        public class TestHost<E>
-
-        """
-          .trimIndent()
-      )
   }
 
   @Test
