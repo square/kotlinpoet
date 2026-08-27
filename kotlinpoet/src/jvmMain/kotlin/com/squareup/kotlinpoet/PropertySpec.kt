@@ -82,12 +82,12 @@ private constructor(
     if (emitKdoc) {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
+    codeWriter.emitAnnotations(annotations, inlineAnnotations)
     if (contextParameters.isNotEmpty()) {
       codeWriter.emitContextParameters(contextParameters, suffix = "\n")
     } else {
       codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
     }
-    codeWriter.emitAnnotations(annotations, inlineAnnotations)
     codeWriter.emitModifiers(propertyModifiers, implicitModifiers)
     codeWriter.emitCode(if (mutable) "var " else "val ")
     if (typeVariables.isNotEmpty()) {
