@@ -748,8 +748,8 @@ class PropertySpecTest {
     assertThat(propertySpec.toString())
       .isEqualTo(
         """
-        |context(kotlin.String)
         |@com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation
+        |context(kotlin.String)
         |val foo: kotlin.Int
         |  get() = length
         |"""
@@ -820,8 +820,8 @@ class PropertySpecTest {
     assertThat(propertySpec.toString())
       .isEqualTo(
         """
-        |context(str: kotlin.String)
         |@com.squareup.kotlinpoet.PropertySpecTest.TestAnnotation
+        |context(str: kotlin.String)
         |val foo: kotlin.Int
         |  get() = str.length
         |"""
