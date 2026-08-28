@@ -653,8 +653,8 @@ class FunSpecTest {
     assertThat(funSpec.toString())
       .isEqualTo(
         """
-        |context(kotlin.String)
         |@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation
+        |context(kotlin.String)
         |public fun foo() {
         |}
         |"""
@@ -778,8 +778,8 @@ class FunSpecTest {
     assertThat(funSpec.toString())
       .isEqualTo(
         """
-        |context(user: kotlin.String)
         |@com.squareup.kotlinpoet.FunSpecTest.TestAnnotation
+        |context(user: kotlin.String)
         |public fun foo() {
         |}
         |"""

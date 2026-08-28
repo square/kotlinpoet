@@ -96,12 +96,12 @@ private constructor(
     } else {
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
+    codeWriter.emitAnnotations(annotations, false)
     if (contextParameters.isNotEmpty()) {
       codeWriter.emitContextParameters(contextParameters, suffix = "\n")
     } else {
       codeWriter.emitContextReceivers(contextReceiverTypes, suffix = "\n")
     }
-    codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
     if (!isConstructor && !name.isAccessor) {

@@ -14,6 +14,7 @@ Change Log
  * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
  * Fix: Don't special case varargs in `KSAnnotation.toAnnotationSpec`. (#2360)
  * Fix: `KSType.toTypeName()` with the default `TypeParameterResolver.EMPTY` now resolves type parameters from their enclosing declarations instead of throwing. (#2065)
+ * Fix: Emit context parameters after annotations in `FunSpec` and `PropertySpec`. (#2374)
 
 ## Version 2.3.0
 
