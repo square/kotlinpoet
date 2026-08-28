@@ -807,8 +807,9 @@ class TestProcessorTest {
       )
   }
 
+  // https://github.com/square/kotlinpoet/issues/2065
   @Test
-  fun regression_2065() {
+  fun toTypeNameWithEmptyResolverDoesNotThrowOnTypeParameters() {
     val compilation =
       prepareCompilation(
         kotlin(
