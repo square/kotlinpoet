@@ -495,10 +495,18 @@ class CodeBlockTest {
   }
 
   @Test
-  fun trimKeepsAStatementAndItsIndentTogether() {
+  fun trimKeepsStatementsAndIndentsBalanced() {
     val codeBlock = CodeBlock.of("«⇥return %S⇤».trim()", "taco")
 
     assertThat(codeBlock.trim(keepBalanced = true)).isEqualTo(codeBlock)
+  }
+
+  @Test
+  fun trimLeavesCrossedStatementAndIndentAlone() {
+    val codeBlock = CodeBlock.of("⇥return %S«.trim()⇤⇥»⇤", "taco")
+
+    assertThat(codeBlock.trim(keepBalanced = true))
+      .isEqualTo(CodeBlock.of("return %S«.trim()", "taco"))
   }
 
   @Test

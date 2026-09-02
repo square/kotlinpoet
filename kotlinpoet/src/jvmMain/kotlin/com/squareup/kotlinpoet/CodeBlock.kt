@@ -147,19 +147,19 @@ private constructor(internal val formatParts: List<String>, internal val args: L
    * [trimTrailingNewLine] relies on the default, which always drops both runs.
    */
   internal fun trim(keepBalanced: Boolean = false): CodeBlock {
-    var start = 0
-    var end = formatParts.size
-    while (start < end && formatParts[start] in NO_ARG_PLACEHOLDERS) {
-      start++
+    var keepFrom = 0
+    var keepUntil = formatParts.size
+    while (keepFrom < keepUntil && formatParts[keepFrom] in NO_ARG_PLACEHOLDERS) {
+      keepFrom++
     }
-    while (start < end && formatParts[end - 1] in NO_ARG_PLACEHOLDERS) {
-      end--
+    while (keepFrom < keepUntil && formatParts[keepUntil - 1] in NO_ARG_PLACEHOLDERS) {
+      keepUntil--
     }
-    if (keepBalanced && (start > 0 || end < formatParts.size)) {
-      // Both stripped runs are placeholders by definition, so they are the first `start` and the
-      // last `formatParts.size - end` entries of this list, and the kept range is what sits
-      // between them. Everything below walks placeholders rather than format parts, which keeps
-      // the balance check to a single pass over the parts.
+    if (keepBalanced && (keepFrom > 0 || keepUntil < formatParts.size)) {
+      // Both stripped runs are placeholders by definition, so they are the first `keepFrom` and
+      // the last `formatParts.size - keepUntil` entries of this list, and the kept range is what
+      // sits between them. Everything below walks placeholders rather than format parts, which
+      // keeps the balance check to a single pass over the parts.
       val placeholders = CharArray(formatParts.size)
       var placeholderCount = 0
       for (formatPart in formatParts) {
@@ -167,15 +167,31 @@ private constructor(internal val formatParts: List<String>, internal val args: L
           placeholders[placeholderCount++] = formatPart[0]
         }
       }
-      val keptEnd = placeholderCount - (formatParts.size - end)
-      if (isBalanced(placeholders, placeholderCount)) {
+      val keepPlaceholdersFrom = keepFrom
+      val keepPlaceholdersUntil = placeholderCount - (formatParts.size - keepUntil)
+      fun isBalanced(): Boolean {
+        var indent = 0
+        var statement = 0
+        for (i in 0..<placeholderCount) {
+          when (placeholders[i]) {
+            '⇥' -> indent++
+            '⇤' -> indent--
+            '«' -> statement++
+            '»' -> statement--
+          }
+          if (indent < 0 || statement < 0) return false
+        }
+        return indent == 0 && statement == 0
+      }
+
+      if (isBalanced()) {
         // Track the lowest point reached, not just the running total. Two unrelated halves can
         // cancel out to a total of zero and still emit an unindent ahead of its indent.
         var indentLow = 0
         var indentTotal = 0
         var statementLow = 0
         var statementTotal = 0
-        for (i in start..<keptEnd) {
+        for (i in keepPlaceholdersFrom..<keepPlaceholdersUntil) {
           when (placeholders[i]) {
             '⇥' -> indentTotal++
             '⇤' -> indentTotal--
@@ -185,9 +201,9 @@ private constructor(internal val formatParts: List<String>, internal val args: L
           if (indentTotal < indentLow) indentLow = indentTotal
           if (statementTotal < statementLow) statementLow = statementTotal
         }
-        var first = start
-        while (first > 0 && (indentLow < 0 || statementLow < 0)) {
-          when (placeholders[first - 1]) {
+        var pointer = keepPlaceholdersFrom
+        while (pointer > 0 && (indentLow < 0 || statementLow < 0)) {
+          when (placeholders[pointer - 1]) {
             '⇥' -> {
               indentLow++
               indentTotal++
@@ -205,31 +221,32 @@ private constructor(internal val formatParts: List<String>, internal val args: L
               statementTotal--
             }
           }
-          first--
+          pointer--
           if (indentLow >= 0 && statementLow >= 0) {
-            start = first
+            keepFrom -= keepPlaceholdersFrom - pointer
             break
           }
         }
-        var last = keptEnd
-        while (last < placeholderCount && (indentTotal > 0 || statementTotal > 0)) {
-          when (placeholders[last]) {
+        pointer = keepPlaceholdersUntil
+        while (pointer < placeholderCount && (indentTotal > 0 || statementTotal > 0)) {
+          when (placeholders[pointer]) {
             '⇥' -> indentTotal++
             '⇤' -> indentTotal--
             '«' -> statementTotal++
             '»' -> statementTotal--
           }
           if (indentTotal < 0 || statementTotal < 0) break
-          last++
+          pointer++
           if (indentTotal == 0 && statementTotal == 0) {
-            end += last - keptEnd
+            keepUntil += pointer - keepPlaceholdersUntil
             break
           }
         }
       }
     }
     return when {
-      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args)
+      keepFrom > 0 || keepUntil < formatParts.size ->
+        CodeBlock(formatParts.subList(keepFrom, keepUntil), args)
       else -> this
     }
   }
@@ -246,21 +263,6 @@ private constructor(internal val formatParts: List<String>, internal val args: L
     CodeBlock(formatParts.map { it.replace(oldValue, newValue) }, args)
 
   internal fun hasStatements() = formatParts.any { "«" in it }
-
-  private fun isBalanced(placeholders: CharArray, count: Int): Boolean {
-    var indent = 0
-    var statement = 0
-    for (i in 0..<count) {
-      when (placeholders[i]) {
-        '⇥' -> indent++
-        '⇤' -> indent--
-        '«' -> statement++
-        '»' -> statement--
-      }
-      if (indent < 0 || statement < 0) return false
-    }
-    return indent == 0 && statement == 0
-  }
 
   internal fun hasUnmatchedClosingStatement(): Boolean {
     var openCount = 0
