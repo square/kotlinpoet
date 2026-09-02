@@ -807,6 +807,68 @@ class TestProcessorTest {
       )
   }
 
+  // https://github.com/square/kotlinpoet/issues/2065
+  @Test
+  fun toTypeNameWithEmptyResolverDoesNotThrowOnTypeParameters() {
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+           package test
+
+           import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+           @ExampleAnnotation
+           abstract class Subject<Foo> : Comparable<Foo>
+
+           @ExampleAnnotation
+           class Host<E, T> {
+             fun <B> foo(): Map<E, B> {
+               TODO()
+             }
+
+             fun <U : T> bar(): List<U> {
+               TODO()
+             }
+           }
+           """,
+        )
+      )
+
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    assertThat(File(compilation.kspSourcesDir, "kotlin/test/TestSubject.kt").readText())
+      .isEqualTo(
+        """
+        package test
+
+        import kotlin.Comparable
+
+        public abstract class TestSubject<Foo> : Comparable<Foo>
+
+        """
+          .trimIndent()
+      )
+    assertThat(File(compilation.kspSourcesDir, "kotlin/test/TestHost.kt").readText())
+      .isEqualTo(
+        """
+        package test
+
+        import kotlin.collections.List
+        import kotlin.collections.Map
+
+        public class TestHost<E, T> {
+          public fun <B> foo(): Map<E, B> = TODO()
+
+          public fun <U : T> bar(): List<U> = TODO()
+        }
+
+        """
+          .trimIndent()
+      )
+  }
+
   @Test
   fun regression_1304() {
     val compilation =
