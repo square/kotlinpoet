@@ -495,6 +495,21 @@ class CodeBlockTest {
   }
 
   @Test
+  fun trimKeepsStatementsAndIndentsBalanced() {
+    val codeBlock = CodeBlock.of("«⇥return %S⇤».trim()", "taco")
+
+    assertThat(codeBlock.trim(keepBalanced = true)).isEqualTo(codeBlock)
+  }
+
+  @Test
+  fun trimLeavesCrossedStatementAndIndentAlone() {
+    val codeBlock = CodeBlock.of("⇥return %S«.trim()⇤⇥»⇤", "taco")
+
+    assertThat(codeBlock.trim(keepBalanced = true))
+      .isEqualTo(CodeBlock.of("return %S«.trim()", "taco"))
+  }
+
+  @Test
   fun replaceSimple() {
     assertThat(CodeBlock.of("%%⇥%%").replaceAll("%%", "")).isEqualTo(CodeBlock.of("⇥"))
   }
@@ -626,6 +641,23 @@ class CodeBlockTest {
         |Modeling a kdoc
         |
         |Statement with no args
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun ensureEndsWithNewLineKeepsArgsWhenBlockEndsInIndent() {
+    val codeBlock =
+      CodeBlock.builder().add("%S", "taco\n").indent().add("\nmore").unindent().build()
+
+    assertThat(codeBlock.ensureEndsWithNewLine().toString())
+      .isEqualTo(
+        """
+        |""${'"'}
+        ||taco
+        ||""${'"'}.trimMargin()
+        |  more
         |"""
           .trimMargin()
       )

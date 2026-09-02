@@ -506,6 +506,235 @@ class FunSpecTest {
   }
 
   @Test
+  fun expressionBodyEndingInIndentDoesNotIndentFollowingDeclarations() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(
+          FunSpec.builder("foo")
+            .returns(STRING)
+            .addCode(
+              buildCodeBlock {
+                add("return %S", "taco")
+                withIndent { add("\n.trim()") }
+              }
+            )
+            .build()
+        )
+        .addFunction(FunSpec.builder("bar").build())
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun foo(): String = "taco"
+        |  .trim()
+        |
+        |public fun bar() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun expressionBodyEndingInStatementDoesNotLeakIndent() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(
+          FunSpec.builder("foo")
+            .returns(STRING)
+            .addCode(
+              buildCodeBlock {
+                add("return %S", "taco")
+                addStatement(".trim()")
+              }
+            )
+            .build()
+        )
+        .addFunction(FunSpec.builder("bar").build())
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun foo(): String = "taco".trim()
+        |
+        |public fun bar() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun expressionBodyEndingInEmptyIndentDoesNotLeakIndent() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(
+          FunSpec.builder("foo")
+            .returns(STRING)
+            .addCode(
+              buildCodeBlock {
+                add("return %S", "taco")
+                withIndent {
+                  addStatement(".trim()")
+                  withIndent {}
+                }
+              }
+            )
+            .build()
+        )
+        .addFunction(FunSpec.builder("bar").build())
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun foo(): String = "taco".trim()
+        |
+        |public fun bar() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun expressionBodyStartingInIndentDoesNotLeakIndent() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(
+          TypeSpec.classBuilder("Taco")
+            .addFunction(
+              FunSpec.builder("foo")
+                .returns(STRING)
+                .addCode(
+                  buildCodeBlock {
+                    withIndent { add("return %S", "taco") }
+                    addStatement(".trim()")
+                  }
+                )
+                .build()
+            )
+            .addFunction(FunSpec.builder("bar").build())
+            .build()
+        )
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public class Taco {
+        |  public fun foo(): String {
+        |      return "taco".trim()
+        |  }
+        |
+        |  public fun bar() {
+        |  }
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun expressionBodyWithTwoIndentedSegmentsDoesNotLeakIndent() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addFunction(
+          FunSpec.builder("foo")
+            .returns(STRING)
+            .addCode(
+              buildCodeBlock {
+                withIndent { add("return %S", "taco") }
+                addStatement(".a()")
+                withIndent { addStatement(".b()") }
+              }
+            )
+            .build()
+        )
+        .addFunction(FunSpec.builder("bar").build())
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public fun foo(): String {
+        |    return "taco".a()
+        |    .b()
+        |}
+        |
+        |public fun bar() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun expressionBodyWithUnbalancedIndentIsLeftAlone() {
+    val spec =
+      FileSpec.builder("com.squareup.tacos", "Taco")
+        .addType(
+          TypeSpec.classBuilder("Taco")
+            .addFunction(
+              FunSpec.builder("foo")
+                .returns(STRING)
+                .addCode(
+                  buildCodeBlock {
+                    indent()
+                    add("return %S", "taco")
+                    unindent()
+                    indent()
+                    add(".trim()")
+                  }
+                )
+                .build()
+            )
+            .addFunction(FunSpec.builder("bar").build())
+            .build()
+        )
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |package com.squareup.tacos
+        |
+        |import kotlin.String
+        |
+        |public class Taco {
+        |  public fun foo(): String = "taco".trim()
+        |
+        |  public fun bar() {
+        |  }
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun functionWithReturnKDocAndMainKdoc() {
     val funSpec =
       FunSpec.builder("foo")
