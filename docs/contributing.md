@@ -14,6 +14,11 @@ patch description and PR # to `Unreleased` section.
 Before your code can be accepted into the project you must also sign the
 [Individual Contributor License Agreement (CLA)][1].
 
+When submitting a pull request, please do not delete the default contents of
+the pull request template (see [pull_request_template.md][3]) and make sure
+you've completed the checklist before submitting. Pull requests that are
+missing the checklist will be closed.
 
  [1]: https://spreadsheets.google.com/spreadsheet/viewform?formkey=dDViT2xzUHAwRkI3X3k5Z0lQM091OGc6MQ&ndplr=1
  [2]: https://github.com/square/kotlinpoet/blob/main/docs/changelog.md
+ [3]: https://github.com/square/kotlinpoet/blob/main/.github/pull_request_template.md
