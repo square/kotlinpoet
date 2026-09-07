@@ -71,6 +71,17 @@ class UtilTest {
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0")
     assertThat(stringLiteralWithQuotes("abc();\ndef();", isConstantContext = true))
       .isEqualTo("\"abc();\\ndef();\"")
+    assertThat(stringLiteralWithQuotes("abc();\r\ndef();")).isEqualTo("\"abc();\\r\\ndef();\"")
+    assertThat(stringLiteralWithQuotes("abc();\r\ndef();", isInsideRawString = true))
+      .isEqualTo("\"\"\"abc();\${'\\r'}\${'\\n'}def();\"\"\"")
+    assertThat(
+        stringLiteralWithQuotes(
+          "abc();\ndef();",
+          isInsideRawString = true,
+          isConstantContext = true,
+        )
+      )
+      .isEqualTo("\"\"\"abc();\${'\\n'}def();\"\"\"")
   }
 
   @Test

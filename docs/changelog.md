@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
+
 ## Version 2.4.0
 
 Thanks to [@eyupcanakman][eyupcanakman] and [@arimu1][arimu1] for contributing to this release.
