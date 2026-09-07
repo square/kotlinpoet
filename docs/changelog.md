@@ -3,19 +3,27 @@ Change Log
 
 ## Unreleased
 
+## Version 2.4.0
+
+Thanks to [@eyupcanakman][eyupcanakman] and [@arimu1][arimu1] for contributing to this release.
+
+_2026-09-07_
+
+ * New: Kotlin 2.4.20.
+ * New: KSP 2.3.11.
  * New: Support for explicit backing fields. (#2325)
  * New: `value class` validations have been relaxed to support multi-field value classes. (#2329)
- * New: Extract `CodeBlockHolder` interface for constructs that can hold a `CodeBlock` body and their builders. (#1553)
- * New: Add `CodeBlock.Builder.addComment()` for adding `//` comments. (#1690)
- * New: Add `CodeBlockHolder.Builder.addComment()`. (#1553)
+ * New: Extract `CodeBlockHolder` interface for constructs that can hold a `CodeBlock` body and their builders. (#2331)
+ * New: Add `CodeBlock.Builder.addComment()` for adding `//` comments. (#2340)
+ * New: Add `CodeBlockHolder.Builder.addComment()`. (#2347)
  * New: Use `[]` syntax instead of `arrayOf` when emitting annotation arguments. (#2361)
- * Fix: Keep the `//` prefix on wrapped file comment lines. (#1922)
- * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#1737)
- * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#1869)
+ * Fix: Keep the `//` prefix on wrapped file comment lines. (#2315)
+ * Fix: `TypeVariableName.equals`/`hashCode` no longer overflow on recursively bound generics like `Enum<E : Enum<E>>`. (#2320)
+ * Fix: `get` and `set` operator function names are no longer escaped with backticks. (#2338)
  * Fix: Don't special case varargs in `KSAnnotation.toAnnotationSpec`. (#2360)
- * Fix: `KSType.toTypeName()` with the default `TypeParameterResolver.EMPTY` now resolves type parameters from their enclosing declarations instead of throwing. (#2065)
+ * Fix: `KSType.toTypeName()` with the default `TypeParameterResolver.EMPTY` now resolves type parameters from their enclosing declarations instead of throwing. (#2368)
  * Fix: Emit context parameters after annotations in `FunSpec` and `PropertySpec`. (#2374)
- * Fix: An expression body no longer leaks indentation into later declarations. (#1421)
+ * Fix: An expression body no longer leaks indentation into later declarations. (#2365)
 
 ## Version 2.3.0
 
@@ -967,3 +975,5 @@ _2017-05-16_
  [haruue]: https://github.com/haruue
  [yz4230]: https://github.com/yz4230
  [mina-jaff]: https://github.com/mina-jaff
+ [eyupcanakman]: https://github.com/eyupcanakman
+ [arimu1]: https://github.com/arimu1
