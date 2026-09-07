@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * Fix: `Class.asClassName()` no longer drops the package slot of a class in the default package. (#2382)
+
 ## Version 2.4.0
 
 Thanks to [@eyupcanakman][eyupcanakman] and [@arimu1][arimu1] for contributing to this release.
