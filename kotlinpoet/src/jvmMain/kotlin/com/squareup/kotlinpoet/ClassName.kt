@@ -261,7 +261,7 @@ public fun Class<*>.asClassName(): ClassName {
   }
   // Avoid unreliable Class.getPackage(). https://github.com/square/javapoet/issues/295
   val lastDot = c.name.lastIndexOf('.')
-  if (lastDot != -1) names += c.name.substring(0, lastDot)
+  names += if (lastDot != -1) c.name.substring(0, lastDot) else ""
   names.reverse()
   return ClassName(names)
 }

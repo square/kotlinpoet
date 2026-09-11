@@ -15,6 +15,7 @@
  */
 package com.squareup.kotlinpoet
 
+import DefaultPackageClass
 import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.containsExactly
@@ -109,6 +110,15 @@ class ClassNameTest {
       .isEqualTo("java.lang.Object")
     assertThat(OuterClass.InnerClass::class.java.asClassName().toString())
       .isEqualTo("com.squareup.kotlinpoet.ClassNameTest.OuterClass.InnerClass")
+  }
+
+  @Test fun classNameFromClassInDefaultPackage() {
+    val className = DefaultPackageClass::class.java.asClassName()
+    assertThat(className.packageName).isEqualTo("")
+    assertThat(className.simpleNames).containsExactly("DefaultPackageClass")
+    assertThat(className.toString()).isEqualTo("DefaultPackageClass")
+    assertThat(DefaultPackageClass.Nested::class.java.asClassName().reflectionName())
+      .isEqualTo("DefaultPackageClass\$Nested")
   }
 
   @Test fun classNameFromKClass() {

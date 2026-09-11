@@ -4,6 +4,7 @@ Change Log
 ## Unreleased
 
  * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
+ * Fix: `Class.asClassName()` no longer drops the package slot of a class in the default package. (#2382)
 
 ## Version 2.4.0
 
