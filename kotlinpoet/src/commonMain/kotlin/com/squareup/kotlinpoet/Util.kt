@@ -89,7 +89,8 @@ internal fun stringLiteralWithQuotes(
   isInsideRawString: Boolean = false,
   isConstantContext: Boolean = false,
 ): String {
-  if (!isConstantContext && '\n' in value) {
+  // A raw string reads a bare carriage return as a line terminator, so use the escaped form.
+  if (!isConstantContext && '\n' in value && '\r' !in value) {
     val result = StringBuilder(value.length + 32)
     result.append("\"\"\"\n|")
     var i = 0
@@ -134,6 +135,11 @@ internal fun stringLiteralWithQuotes(
       // Trivial case: $ signs must be escaped.
       if (c == '$' && !isInsideRawString) {
         result.append("\${\'\$\'}")
+        continue
+      }
+      // Line terminators can't appear in a raw string literally, so splice them in as templates.
+      if (isInsideRawString && (c == '\r' || c == '\n')) {
+        result.append(if (c == '\r') "\${'\\r'}" else "\${'\\n'}")
         continue
       }
       // Default case: just let character literal do its work.
