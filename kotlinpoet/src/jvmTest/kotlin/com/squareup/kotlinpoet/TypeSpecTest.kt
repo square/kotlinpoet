@@ -2830,7 +2830,7 @@ class TypeSpecTest {
         |      |beef
         |      |lettuce
         |      |cheese
-        |      ${"\"\"\""}.trimMargin()
+        |      |${"\"\"\""}.trimMargin()
         |}
         |"""
           .trimMargin()
