@@ -19,7 +19,7 @@
       matchPackageNames: [
         'mkdocs{/,}**',
       ],
-    }
+    },
   ],
   ignorePresets: [
     // Ensure we get the latest version and are not pinned to old versions.
@@ -29,8 +29,8 @@
     // Update .java-version file with the latest JDK version.
     {
       customType: 'regex',
-      fileMatch: [
-        '\\.java-version$',
+      managerFilePatterns: [
+        '/\\.java-version$/',
       ],
       matchStrings: [
         '(?<currentValue>.*)\\n',
@@ -40,5 +40,5 @@
       // Only write the major version.
       extractVersionTemplate: '^(?<version>\\d+)',
     },
-  ]
+  ],
 }
