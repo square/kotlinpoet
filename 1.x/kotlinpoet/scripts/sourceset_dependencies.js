@@ -1,0 +1,1 @@
+sourceset_dependencies='{":kotlinpoet/commonMain":[],":kotlinpoet/jsMain":[":kotlinpoet/commonMain",":kotlinpoet/nonJvmMain"],":kotlinpoet/jvmMain":[":kotlinpoet/commonMain"],":kotlinpoet/nonJvmMain":[":kotlinpoet/commonMain"],":kotlinpoet/wasmJsMain":[":kotlinpoet/commonMain",":kotlinpoet/nonJvmMain"]}'
