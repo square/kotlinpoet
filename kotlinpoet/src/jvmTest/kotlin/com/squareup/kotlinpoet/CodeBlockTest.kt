@@ -627,6 +627,28 @@ class CodeBlockTest {
   }
 
   @Test
+  fun ensureEndsWithNewLineDoesNotChangeStringLiteralArg() {
+    val codeBlock = CodeBlock.of("val a = %S", "taco")
+
+    assertThat(codeBlock.ensureEndsWithNewLine().toString()).isEqualTo("val a = \"taco\"\n")
+  }
+
+  @Test
+  fun trimTrailingNewLineDoesNotChangeStringLiteralArg() {
+    val codeBlock = CodeBlock.of("val a = %S", "taco\n")
+
+    assertThat(codeBlock.trimTrailingNewLine().toString())
+      .isEqualTo(
+        """
+        |val a = ""${'"'}
+        ||taco
+        ||""${'"'}.trimMargin()
+        """
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun ensureEndsWithNewLineWithNoArgs() {
     val codeBlock =
       CodeBlock.builder()

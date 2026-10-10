@@ -40,13 +40,17 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
       if (lastFormatPart.isPlaceholder && args.isNotEmpty()) {
         val lastArg = args.last()
         if (lastArg is String) {
-          val trimmedArg = lastArg.trimEnd('\n')
-          args[args.size - 1] =
-            if (replaceWith != null) {
-              trimmedArg + replaceWith
-            } else {
-              trimmedArg
-            }
+          if (lastFormatPart == "%L") {
+            val trimmedArg = lastArg.trimEnd('\n')
+            args[args.size - 1] =
+              if (replaceWith != null) {
+                trimmedArg + replaceWith
+              } else {
+                trimmedArg
+              }
+          } else if (replaceWith != null) {
+            formatParts += "$replaceWith"
+          }
         }
       } else {
         formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
