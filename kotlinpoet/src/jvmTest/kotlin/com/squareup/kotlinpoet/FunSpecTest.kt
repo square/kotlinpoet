@@ -26,6 +26,7 @@ import assertk.assertions.isTrue
 import com.google.testing.compile.CompilationRule
 import com.squareup.kotlinpoet.FunSpec.Companion.GETTER
 import com.squareup.kotlinpoet.FunSpec.Companion.SETTER
+import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.Closeable
 import java.io.IOException
@@ -1873,6 +1874,27 @@ class FunSpecTest {
         |  return 1
         |  .plus(2)
         |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun companionExtensionFunction() {
+    val className = ClassName(packageName = "", "Vector")
+    val spec =
+      FunSpec.builder("unit")
+        .addModifiers(COMPANION)
+        .receiver(className)
+        .addParameter("angle", Double::class)
+        .addCode("return %T(cos(angle), sin(angle))", className)
+        .returns(className)
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |public companion fun Vector.unit(angle: kotlin.Double): Vector = Vector(cos(angle), sin(angle))
         |"""
           .trimMargin()
       )
