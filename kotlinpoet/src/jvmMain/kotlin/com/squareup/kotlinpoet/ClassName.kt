@@ -37,12 +37,12 @@ public class ClassName internal constructor(
    * Returns a class name created from the given parts. For example, calling this with package name
    * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
    */
-  @Deprecated("", level = DeprecationLevel.HIDDEN)
+  @Deprecated("This constructor will be removed in KotlinPoet 3.0.", level = DeprecationLevel.HIDDEN)
   public constructor(packageName: String, simpleName: String, vararg simpleNames: String) :
     this(listOf(packageName, simpleName, *simpleNames))
 
   @Deprecated(
-    "Simple names must not be empty. Did you forget an argument?",
+    "Simple names must not be empty. Did you forget an argument? This constructor will be removed in KotlinPoet 3.0.",
     level = DeprecationLevel.ERROR,
     replaceWith = ReplaceWith("ClassName(packageName, TODO())"),
   )

@@ -94,7 +94,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     codeWriter.close()
   }
 
-  @Deprecated("", level = HIDDEN)
+  @Deprecated("This function will be removed in KotlinPoet 3.0.", level = HIDDEN)
   @JvmName("writeTo") // For binary compatibility.
   public fun oldWriteTo(directory: Path) {
     writeTo(directory)
@@ -115,7 +115,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     return outputPath
   }
 
-  @Deprecated("", level = HIDDEN)
+  @Deprecated("This function will be removed in KotlinPoet 3.0.", level = HIDDEN)
   @JvmName("writeTo") // For binary compatibility.
   public fun oldWriteTo(directory: File) {
     writeTo(directory)
@@ -311,7 +311,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     }
 
     @Deprecated(
-      "Use addFileComment() instead.",
+      "Use addFileComment() instead. This function will be removed in KotlinPoet 3.0.",
       ReplaceWith("addFileComment(format, args)"),
       DeprecationLevel.ERROR,
     )

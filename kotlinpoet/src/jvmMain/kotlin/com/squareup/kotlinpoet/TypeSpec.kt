@@ -86,7 +86,11 @@ private constructor(
   public val typeAliasSpecs: List<TypeAliasSpec> = builder.typeAliasSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
 
-  @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
+  @Deprecated(
+    message = "Use annotations property. This property will be removed in KotlinPoet 3.0.",
+    replaceWith = ReplaceWith("annotations"),
+    level = ERROR,
+  )
   public val annotationSpecs: List<AnnotationSpec>
     get() = annotations
 
@@ -570,7 +574,11 @@ private constructor(
     public val typeSpecs: MutableList<TypeSpec> = mutableListOf()
     public val typeAliasSpecs: MutableList<TypeAliasSpec> = mutableListOf()
 
-    @Deprecated("Use annotations property", ReplaceWith("annotations"), ERROR)
+    @Deprecated(
+      message = "Use annotations property. This property will be removed in KotlinPoet 3.0.",
+      replaceWith = ReplaceWith("annotations"),
+      level = ERROR,
+    )
     public val annotationSpecs: MutableList<AnnotationSpec>
       get() = annotations
 
@@ -999,14 +1007,14 @@ private constructor(
     public fun classBuilder(className: ClassName): Builder = classBuilder(className.simpleName)
 
     @Deprecated(
-      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 3.0.",
       ReplaceWith("TypeSpec.classBuilder(name).addModifiers(KModifier.EXPECT)"),
     )
     @JvmStatic
     public fun expectClassBuilder(name: String): Builder = Builder(Kind.CLASS, name, EXPECT)
 
     @Deprecated(
-      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 3.0.",
       ReplaceWith("TypeSpec.classBuilder(className).addModifiers(KModifier.EXPECT)"),
     )
     @JvmStatic
@@ -1014,7 +1022,7 @@ private constructor(
       classBuilder(className.simpleName).addModifiers(EXPECT)
 
     @Deprecated(
-      "Use classBuilder() instead. This function will be removed in KotlinPoet 2.0.",
+      "Use classBuilder() instead. This function will be removed in KotlinPoet 3.0.",
       ReplaceWith("TypeSpec.classBuilder(name).addModifiers(KModifier.VALUE)"),
     )
     @JvmStatic

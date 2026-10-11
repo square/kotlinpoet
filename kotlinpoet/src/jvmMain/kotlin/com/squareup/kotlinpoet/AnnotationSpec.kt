@@ -31,7 +31,7 @@ public class AnnotationSpec
 private constructor(builder: Builder, private val tagMap: TagMap = builder.buildTagMap()) :
   Taggable by tagMap {
   @Deprecated(
-    message = "Use typeName instead. This property will be removed in KotlinPoet 2.0.",
+    message = "Use typeName instead. This property will be removed in KotlinPoet 3.0.",
     replaceWith = ReplaceWith("typeName"),
   )
   public val className: ClassName
