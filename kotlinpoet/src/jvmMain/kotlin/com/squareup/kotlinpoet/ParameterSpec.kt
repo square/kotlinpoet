@@ -119,7 +119,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     }
 
     @Deprecated(
-      "There are no jvm modifiers applicable to parameters in Kotlin",
+      "There are no jvm modifiers applicable to parameters in Kotlin. This function will be removed in KotlinPoet 3.0.",
       ReplaceWith(""),
       level = ERROR,
     )

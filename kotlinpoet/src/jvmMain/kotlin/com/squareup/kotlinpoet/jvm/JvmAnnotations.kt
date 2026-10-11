@@ -118,9 +118,9 @@ public fun TypeName.jvmWildcard(): TypeName =
   copy(annotations = this.annotations + AnnotationSpec.builder(JvmWildcard::class).build())
 
 @Suppress("DEPRECATION")
-@Deprecated("", level = HIDDEN)
+@Deprecated("This function will be removed in KotlinPoet 3.0.", level = HIDDEN)
 public fun PropertySpec.Builder.jvmDefault(): PropertySpec.Builder = this
 
 @Suppress("DEPRECATION")
-@Deprecated("", level = HIDDEN)
+@Deprecated("This function will be removed in KotlinPoet 3.0.", level = HIDDEN)
 public fun FunSpec.Builder.jvmDefault(): FunSpec.Builder = this

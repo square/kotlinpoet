@@ -674,7 +674,7 @@ private constructor(
     @Deprecated(
       message =
         "Element APIs don't give complete information on Kotlin types. Consider using" +
-          " the kotlinpoet-metadata APIs instead.",
+          " the kotlinpoet-metadata APIs instead. This function will be removed in KotlinPoet 3.0.",
       level = WARNING,
     )
     @JvmStatic
