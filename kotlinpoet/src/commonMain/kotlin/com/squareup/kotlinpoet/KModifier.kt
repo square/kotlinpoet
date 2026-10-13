@@ -49,7 +49,7 @@ public enum class KModifier(internal val keyword: String, private vararg val tar
   ANNOTATION("annotation", Target.CLASS),
   VALUE("value", Target.CLASS),
   FUN("fun", Target.INTERFACE),
-  COMPANION("companion", Target.CLASS),
+  COMPANION("companion", Target.CLASS, Target.FUNCTION, Target.PROPERTY),
 
   // Call-site compiler tips.
   INLINE("inline", Target.FUNCTION),

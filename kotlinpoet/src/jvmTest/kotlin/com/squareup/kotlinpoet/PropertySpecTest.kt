@@ -23,6 +23,7 @@ import assertk.assertions.hasMessage
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
+import com.squareup.kotlinpoet.KModifier.COMPANION
 import com.squareup.kotlinpoet.KModifier.EXTERNAL
 import com.squareup.kotlinpoet.KModifier.PRIVATE
 import com.squareup.kotlinpoet.KModifier.PUBLIC
@@ -953,6 +954,25 @@ class PropertySpecTest {
 
         """
           .trimIndent()
+      )
+  }
+
+  @Test
+  fun companionExtensionProperty() {
+    val className = ClassName(packageName = "", "Vector")
+    val spec =
+      PropertySpec.builder("UnitX", className, COMPANION)
+        .receiver(className)
+        .getter(FunSpec.getterBuilder().addStatement("return %T(1.0, 0.0)", className).build())
+        .build()
+
+    assertThat(spec.toString())
+      .isEqualTo(
+        """
+        |companion val Vector.UnitX: Vector
+        |  get() = Vector(1.0, 0.0)
+        |"""
+          .trimMargin()
       )
   }
 }
