@@ -61,6 +61,7 @@ class LambdaTypeNameTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun contextReceiver() {
     val typeName =
@@ -73,6 +74,7 @@ class LambdaTypeNameTest {
     assertThat(typeName.toString()).isEqualTo("context(kotlin.String) kotlin.Int.() -> kotlin.Unit")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun nullableFunctionWithContextReceiver() {
     val typeName =
@@ -87,6 +89,7 @@ class LambdaTypeNameTest {
       .isEqualTo("(context(kotlin.String) kotlin.Int.() -> kotlin.Unit)?")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun suspendingFunctionWithContextReceiver() {
     val typeName =
@@ -101,6 +104,7 @@ class LambdaTypeNameTest {
       .isEqualTo("suspend context(kotlin.String) kotlin.Int.() -> kotlin.Unit")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithMultipleContextReceivers() {
     val typeName =
@@ -114,6 +118,7 @@ class LambdaTypeNameTest {
       .isEqualTo("context(kotlin.String, kotlin.Boolean) kotlin.Int.() -> kotlin.Unit")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithGenericContextReceiver() {
     val genericType = TypeVariableName("T")
@@ -128,6 +133,7 @@ class LambdaTypeNameTest {
     assertThat(typeName.toString()).isEqualTo("context(T) kotlin.Int.() -> kotlin.Unit")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithAnnotatedContextReceiver() {
     val annotatedType =
@@ -217,6 +223,7 @@ class LambdaTypeNameTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithContextReceiverAndContextParameter() {
     assertFailure {
