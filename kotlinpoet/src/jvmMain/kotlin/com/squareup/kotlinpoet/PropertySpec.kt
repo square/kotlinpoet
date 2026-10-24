@@ -24,6 +24,7 @@ import javax.lang.model.element.Element
 import kotlin.reflect.KClass
 
 /** A generated property declaration. */
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalKotlinPoetApi::class)
 public class PropertySpec
 private constructor(
@@ -215,6 +216,10 @@ private constructor(
     override val originatingElements: MutableList<Element> = mutableListOf()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. Use ContextParameterizable.Builder.contextParameters instead. This property will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 

@@ -5683,6 +5683,7 @@ class TypeSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun contextReceiver() {
     val typeSpec = TypeSpec.classBuilder("Example").contextReceivers(STRING).build()
@@ -5697,6 +5698,7 @@ class TypeSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun contextReceiver_mustBeClass() {
     assertFailure { TypeSpec.interfaceBuilder("Example").contextReceivers(STRING) }
@@ -5706,6 +5708,7 @@ class TypeSpecTest {
       .contains("contextReceivers can only be applied on simple classes")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun valWithContextReceiverWithoutGetter() {
     assertFailure {
@@ -5719,6 +5722,7 @@ class TypeSpecTest {
       .hasMessage("non-abstract properties with context receivers require a get()")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun varWithContextReceiverWithoutAccessors() {
     assertFailure {
@@ -5761,6 +5765,7 @@ class TypeSpecTest {
   }
 
   // https://github.com/square/kotlinpoet/issues/1525
+  @Suppress("DEPRECATION")
   @Test
   fun propertyWithContextReceiverInInterface() {
     val typeSpec =
@@ -5786,6 +5791,7 @@ class TypeSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun nonAbstractPropertyWithContextReceiverInAbstractClass() {
     assertFailure {
@@ -5798,6 +5804,7 @@ class TypeSpecTest {
       .hasMessage("non-abstract properties with context receivers require a get()")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun abstractPropertyWithContextReceiverInAbstractClass() {
     val typeSpec =

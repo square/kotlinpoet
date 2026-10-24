@@ -686,6 +686,7 @@ class PropertySpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun varWithContextReceiver() {
     val propertySpec =
@@ -715,6 +716,7 @@ class PropertySpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun valWithContextReceiver() {
     val propertySpec =
@@ -735,6 +737,7 @@ class PropertySpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @OptIn(DelicateKotlinPoetApi::class)
   @Test
   fun annotatedValWithContextReceiver() {
@@ -873,6 +876,7 @@ class PropertySpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun valWithBothContextReceiverAndContextParameter() {
     assertFailure {
