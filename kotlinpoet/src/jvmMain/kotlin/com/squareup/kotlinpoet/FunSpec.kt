@@ -33,6 +33,7 @@ import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 /** A generated function declaration. */
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalKotlinPoetApi::class)
 public class FunSpec
 private constructor(
@@ -343,6 +344,10 @@ private constructor(
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
     override val originatingElements: MutableList<Element> = mutableListOf()
 
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. Use ContextParameterizable.Builder.contextParameters instead. This property will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
 
@@ -385,6 +390,10 @@ private constructor(
       typeVariables += typeVariable
     }
 
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. Use contextParameters() instead. This function will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(!name.isConstructor) { "constructors cannot have context receivers" }

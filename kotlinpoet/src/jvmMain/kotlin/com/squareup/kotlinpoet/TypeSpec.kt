@@ -36,6 +36,7 @@ import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 /** A generated class, interface, or enum declaration. */
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalKotlinPoetApi::class)
 public class TypeSpec
 private constructor(
@@ -562,6 +563,10 @@ private constructor(
     override val originatingElements: MutableList<Element> = mutableListOf()
     override val annotations: MutableList<AnnotationSpec> = mutableListOf()
 
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. This property will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     override val contextReceiverTypes: MutableList<TypeName> = mutableListOf()
     public val modifiers: MutableSet<KModifier> = mutableSetOf(*modifiers)
@@ -764,6 +769,10 @@ private constructor(
       typeAliasSpecs += typeAliasSpec
     }
 
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. This function will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     override fun contextReceivers(receiverTypes: Iterable<TypeName>): Builder = apply {
       check(isSimpleClass) { "contextReceivers can only be applied on simple classes" }

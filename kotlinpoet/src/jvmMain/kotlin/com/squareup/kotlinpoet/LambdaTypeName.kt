@@ -21,7 +21,12 @@ import kotlin.reflect.KClass
 public class LambdaTypeName
 private constructor(
   public val receiver: TypeName? = null,
-  @property:ExperimentalKotlinPoetApi public val contextReceivers: List<TypeName> = emptyList(),
+  @Deprecated(
+    message =
+      "Context receivers have been superseded by context parameters. Use contextParameters instead. This property will be removed in KotlinPoet 3.0."
+  )
+  @property:ExperimentalKotlinPoetApi
+  public val contextReceivers: List<TypeName> = emptyList(),
   @property:ExperimentalKotlinPoetApi public val contextParameters: List<TypeName> = emptyList(),
   parameters: List<ParameterSpec> = emptyList(),
   public val returnType: TypeName = UNIT,
@@ -38,6 +43,7 @@ private constructor(
       require(param.modifiers.isEmpty()) { "Parameters with modifiers are not allowed" }
       require(param.defaultValue == null) { "Parameters with default values are not allowed" }
     }
+    @Suppress("DEPRECATION")
     require(contextReceivers.isEmpty() || contextParameters.isEmpty()) {
       "Using both context receivers and context parameters is not allowed"
     }
@@ -57,6 +63,7 @@ private constructor(
     suspending: Boolean = this.isSuspending,
     tags: Map<KClass<*>, Any> = this.tags.toMap(),
   ): LambdaTypeName {
+    @Suppress("DEPRECATION")
     return LambdaTypeName(
       receiver = receiver,
       contextReceivers = contextReceivers,
@@ -82,7 +89,7 @@ private constructor(
     if (contextParameters.isNotEmpty()) {
       out.emitContextParameters(contextParameters, suffix = " ")
     } else {
-      out.emitContextReceivers(contextReceivers, suffix = " ")
+      @Suppress("DEPRECATION") out.emitContextReceivers(contextReceivers, suffix = " ")
     }
 
     receiver?.let {
@@ -108,6 +115,7 @@ private constructor(
     other as LambdaTypeName
 
     if (!receiver.deepEquals(other.receiver, seen)) return false
+    @Suppress("DEPRECATION")
     if (!contextReceivers.deepEquals(other.contextReceivers, seen)) return false
     if (!contextParameters.deepEquals(other.contextParameters, seen)) return false
     if (!returnType.deepEquals(other.returnType, seen)) return false
@@ -120,6 +128,7 @@ private constructor(
   override fun hashCode(): Int {
     var result = super.hashCode()
     result = 31 * result + (receiver?.hashCode() ?: 0)
+    @Suppress("DEPRECATION")
     result = 31 * result + contextReceivers.hashCode()
     result = 31 * result + contextParameters.hashCode()
     result = 31 * result + returnType.hashCode()
@@ -130,6 +139,10 @@ private constructor(
 
   public companion object {
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @Deprecated(
+      message =
+        "Context receivers have been superseded by context parameters. Use the overload without contextReceivers instead. This function will be removed in KotlinPoet 3.0."
+    )
     @ExperimentalKotlinPoetApi
     @JvmStatic
     public fun get(
@@ -140,6 +153,17 @@ private constructor(
       contextParameters: List<TypeName> = emptyList(),
     ): LambdaTypeName =
       LambdaTypeName(receiver, contextReceivers, contextParameters, parameters, returnType)
+
+    /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
+    @ExperimentalKotlinPoetApi
+    @JvmStatic
+    public fun get(
+      receiver: TypeName? = null,
+      parameters: List<ParameterSpec> = emptyList(),
+      returnType: TypeName,
+      contextParameters: List<TypeName> = emptyList(),
+    ): LambdaTypeName =
+      LambdaTypeName(receiver, emptyList(), contextParameters, parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters listed in `parameters`. */
     @JvmStatic

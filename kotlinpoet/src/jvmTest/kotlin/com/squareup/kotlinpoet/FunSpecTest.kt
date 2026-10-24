@@ -818,6 +818,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithContextReceiver() {
     val stringType = STRING
@@ -835,6 +836,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithMultipleContextReceivers() {
     val stringType = STRING
@@ -854,6 +856,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithGenericContextReceiver() {
     val genericType = TypeVariableName("T")
@@ -872,6 +875,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun annotatedFunctionWithContextReceiver() {
     val funSpec =
@@ -892,6 +896,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithAnnotatedContextReceiver() {
     val genericType = STRING.copy(annotations = listOf(AnnotationSpec.get(TestAnnotation())))
@@ -909,6 +914,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun constructorWithContextReceiver() {
     assertFailure { FunSpec.constructorBuilder().contextReceivers(STRING) }
@@ -916,6 +922,7 @@ class FunSpecTest {
       .hasMessage("constructors cannot have context receivers")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun accessorWithContextReceiver() {
     assertFailure { FunSpec.getterBuilder().contextReceivers(STRING) }
@@ -1033,6 +1040,7 @@ class FunSpecTest {
       )
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun functionWithBothContextReceiverAndContextParameter() {
     assertFailure {
