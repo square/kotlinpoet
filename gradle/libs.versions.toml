@@ -15,7 +15,7 @@
 [versions]
 kotlin = "2.4.21"
 kct = "0.14.0"
-ksp = "2.3.12"
+ksp = "2.3.13"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
