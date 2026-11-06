@@ -7,6 +7,7 @@ Change Log
  * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
  * Fix: `Class.asClassName()` no longer drops the package slot of a class in the default package. (#2382)
  * Fix: A trailing newline in a `%S` or `%P` string argument that ends a `CodeBlock` is no longer trimmed or added. (#2391)
+ * Fix: Emitting a long line no longer takes quadratic time. (#2420)
 
 ## Version 2.4.0
 

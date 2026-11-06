@@ -30,9 +30,9 @@ internal class LineWrapper(
 
   /**
    * Segments of the current line to be joined by spaces or wraps. Never empty, but contains a lone
-   * empty string if no data has been emitted since the last newline.
+   * empty builder if no data has been emitted since the last newline.
    */
-  private val segments = mutableListOf("")
+  private val segments = mutableListOf(StringBuilder())
 
   /** Number of indents in wraps. -1 if the current line has no wraps. */
   private var indentLevel = -1
@@ -55,7 +55,7 @@ internal class LineWrapper(
           // Each wrapping space starts a new empty segment.
           this.indentLevel = indentLevel
           this.linePrefix = linePrefix
-          segments += ""
+          segments += StringBuilder()
           pos++
         }
 
@@ -68,14 +68,14 @@ internal class LineWrapper(
         ' ',
         '·' -> {
           // Render · as a non-breaking space.
-          segments[segments.size - 1] += " "
+          segments[segments.size - 1].append(' ')
           pos++
         }
 
         else -> {
           var next = s.indexOfAny(SPECIAL_CHARACTERS, pos)
           if (next == -1) next = s.length
-          segments[segments.size - 1] += s.substring(pos, next)
+          segments[segments.size - 1].append(s, pos, next)
           pos = next
         }
       }
@@ -87,7 +87,7 @@ internal class LineWrapper(
     check(!closed) { "closed" }
     require(!s.contains("\n"))
 
-    segments[segments.size - 1] += s
+    segments[segments.size - 1].append(s)
   }
 
   fun newline() {
@@ -127,7 +127,7 @@ internal class LineWrapper(
     emitSegmentRange(start, segments.size)
 
     segments.clear()
-    segments += ""
+    segments += StringBuilder()
   }
 
   private fun emitSegmentRange(startIndex: Int, endIndex: Int) {
