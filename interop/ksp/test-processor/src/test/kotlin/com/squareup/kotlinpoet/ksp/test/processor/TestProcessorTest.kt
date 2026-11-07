@@ -17,6 +17,15 @@ package com.squareup.kotlinpoet.ksp.test.processor
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
+import com.google.devtools.ksp.getDeclaredFunctions
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
+import com.squareup.kotlinpoet.ksp.toTypeName
+import com.squareup.kotlinpoet.tags.TypeAliasTag
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
@@ -31,6 +40,114 @@ import org.junit.rules.TemporaryFolder
 class TestProcessorTest {
 
   @Rule @JvmField val temporaryFolder: TemporaryFolder = TemporaryFolder()
+
+  @Test
+  fun preservesParameterTypeUseAnnotations() {
+    val compilation =
+      prepareCompilation(
+        kotlin(
+          "Example.kt",
+          """
+          package test
+
+          import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotation
+
+          @Target(AnnotationTarget.TYPE)
+          @Retention(AnnotationRetention.SOURCE)
+          @Repeatable
+          annotation class Mark(val value: String)
+
+          @Target(AnnotationTarget.CLASS)
+          annotation class DeclarationOnly
+
+          @DeclarationOnly
+          class Factory
+
+          typealias Factories = Set<Factory>
+
+          @ExampleAnnotation
+          class Example<T> {
+            fun nested(value: Set<@JvmSuppressWildcards Factory>) {}
+            fun outer(value: @JvmSuppressWildcards Set<Factory>) {}
+            fun types(
+              nested: List<@Mark("list") Set<@Mark("first") @Mark("second") Factory?>>,
+              producer: MutableList<out @Mark("out") Factory?>,
+              consumer: MutableList<in @Mark("in") Factory>,
+              star: List<*>,
+              plain: Factory,
+              variable: @Mark("variable") T?,
+              alias: @Mark("alias") Factories,
+            ) {}
+            fun callable(
+              value: @Mark("callable") (suspend (@Mark("parameter") Factory) -> @Mark("return") Factory?)?,
+            ) {}
+          }
+          """,
+        )
+      )
+    compilation.configureKsp {
+      symbolProcessorProviders += SymbolProcessorProvider {
+        object : SymbolProcessor {
+          override fun process(resolver: Resolver): List<KSAnnotated> {
+            val declaration =
+              resolver.getClassDeclarationByName(resolver.getKSNameFromString("test.Example"))!!
+            for (function in declaration.getDeclaredFunctions()) {
+              for (parameter in function.parameters) {
+                val reference = parameter.type
+                val resolved = reference.resolve()
+                val referenceAnnotations =
+                  reference.annotations.map { it.toAnnotationSpec() }.toList()
+                val resolvedAnnotations =
+                  resolved.annotations.map { it.toAnnotationSpec() }.toList()
+                assertThat(reference.toTypeName().annotations).isEqualTo(referenceAnnotations)
+                assertThat(resolved.toTypeName().annotations).isEqualTo(resolvedAnnotations)
+                if (parameter.name?.asString() == "alias") {
+                  assertThat(reference.toTypeName().tag(TypeAliasTag::class)).isNotNull()
+                  assertThat(resolved.toTypeName().tag(TypeAliasTag::class)).isNotNull()
+                }
+              }
+            }
+            return emptyList()
+          }
+        }
+      }
+    }
+    val result = compilation.compile()
+    assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+    val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
+    assertThat(generatedFileText)
+      .isEqualTo(
+        """
+        package test
+
+        import kotlin.Unit
+        import kotlin.collections.List
+        import kotlin.collections.MutableList
+        import kotlin.collections.Set
+        import kotlin.jvm.JvmSuppressWildcards
+
+        public class TestExample<T> {
+          public fun nested(`value`: Set<@JvmSuppressWildcards(suppress = true) Factory>): Unit = TODO()
+
+          public fun outer(`value`: @JvmSuppressWildcards(suppress = true) Set<Factory>): Unit = TODO()
+
+          public fun types(
+            nested: List<@Mark(`value` = "list") Set<@Mark(`value` = "first") @Mark(`value` = "second") Factory?>>,
+            producer: MutableList<out @Mark(`value` = "out") Factory?>,
+            consumer: MutableList<in @Mark(`value` = "in") Factory>,
+            star: List<*>,
+            plain: Factory,
+            variable: @Mark(`value` = "variable") T?,
+            alias: @Mark(`value` = "alias") Factories,
+          ): Unit = TODO()
+
+          public fun callable(`value`: @Mark(`value` = "callable") (suspend (@Mark(`value` = "parameter") Factory) -> @Mark(`value` = "return") Factory?)?): Unit = TODO()
+        }
+
+        """
+          .trimIndent()
+      )
+  }
 
   @Test
   fun smokeTest() {
