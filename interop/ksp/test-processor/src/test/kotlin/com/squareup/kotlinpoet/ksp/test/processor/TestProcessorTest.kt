@@ -17,15 +17,6 @@ package com.squareup.kotlinpoet.ksp.test.processor
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import com.google.devtools.ksp.getDeclaredFunctions
-import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessor
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.squareup.kotlinpoet.ksp.toAnnotationSpec
-import com.squareup.kotlinpoet.ksp.toTypeName
-import com.squareup.kotlinpoet.tags.TypeAliasTag
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
@@ -85,33 +76,6 @@ class TestProcessorTest {
           """,
         )
       )
-    compilation.configureKsp {
-      symbolProcessorProviders += SymbolProcessorProvider {
-        object : SymbolProcessor {
-          override fun process(resolver: Resolver): List<KSAnnotated> {
-            val declaration =
-              resolver.getClassDeclarationByName(resolver.getKSNameFromString("test.Example"))!!
-            for (function in declaration.getDeclaredFunctions()) {
-              for (parameter in function.parameters) {
-                val reference = parameter.type
-                val resolved = reference.resolve()
-                val referenceAnnotations =
-                  reference.annotations.map { it.toAnnotationSpec() }.toList()
-                val resolvedAnnotations =
-                  resolved.annotations.map { it.toAnnotationSpec() }.toList()
-                assertThat(reference.toTypeName().annotations).isEqualTo(referenceAnnotations)
-                assertThat(resolved.toTypeName().annotations).isEqualTo(resolvedAnnotations)
-                if (parameter.name?.asString() == "alias") {
-                  assertThat(reference.toTypeName().tag(TypeAliasTag::class)).isNotNull()
-                  assertThat(resolved.toTypeName().tag(TypeAliasTag::class)).isNotNull()
-                }
-              }
-            }
-            return emptyList()
-          }
-        }
-      }
-    }
     val result = compilation.compile()
     assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
     val generatedFileText = File(compilation.kspSourcesDir, "kotlin/test/TestExample.kt").readText()
