@@ -25,6 +25,7 @@ import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.symbol.Variance
 import com.google.devtools.ksp.symbol.Variance.CONTRAVARIANT
 import com.google.devtools.ksp.symbol.Variance.COVARIANT
@@ -139,7 +140,10 @@ internal fun KSType.toTypeName(
       else -> error("Unsupported type: $declaration")
     }
 
-  return type.copy(nullable = isMarkedNullable)
+  return type.copy(
+    nullable = isMarkedNullable,
+    annotations = annotations.map { it.toAnnotationSpec() }.toList(),
+  )
 }
 
 private fun mapTypeArgumentsFromTypeAliasToAbbreviatedType(
@@ -217,20 +221,35 @@ public fun KSTypeReference.toTypeName(
   val type = resolve()
   val elem = element
   // Don't wrap in a lambda if this is a typealias, even if the underlying type is a function type.
-  return if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
-    LambdaTypeName.get(
-        receiver = elem.receiverType?.toTypeName(typeParamResolver),
-        parameters =
-          elem.functionParameters.map {
-            ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver))
-          },
-        returnType = elem.returnType.toTypeName(typeParamResolver),
-      )
-      .copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
-  } else {
-    val typeArgs = elem?.typeArguments?.takeIf { it.isNotEmpty() } ?: type.arguments
-    type.toTypeName(typeParamResolver, typeArgs)
-  }
+  val typeName =
+    if (elem is KSCallableReference && type.declaration !is KSTypeAlias) {
+      LambdaTypeName.get(
+          receiver = elem.receiverType?.toTypeName(typeParamResolver),
+          parameters =
+            elem.functionParameters.map {
+              ParameterSpec.unnamed(it.type.toTypeName(typeParamResolver))
+            },
+          returnType = elem.returnType.toTypeName(typeParamResolver),
+        )
+        .copy(nullable = type.isMarkedNullable, suspending = type.isSuspendFunctionType)
+    } else {
+      val typeArgs = elem?.typeArguments?.takeIf { it.isNotEmpty() } ?: type.arguments
+      type.toTypeName(typeParamResolver, typeArgs)
+    }
+  // Prefer the source reference: resolved types may omit source-only annotations. Select a
+  // single source so overlapping annotations aren't duplicated and repeatable ones stay intact.
+  val typeAnnotations = annotations.toList().ifEmpty { type.annotations.toList() }
+  return typeName.copy(
+    annotations =
+      typeAnnotations
+        .filterNot {
+          // KSP exposes this synthetic marker, but the lambda receiver already represents it.
+          typeName is LambdaTypeName &&
+            it.origin == Origin.SYNTHETIC &&
+            it.shortName.asString() == "ExtensionFunctionType"
+        }
+        .map { it.toAnnotationSpec() }
+  )
 }
 
 private fun resolveTypeParameter(
