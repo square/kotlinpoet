@@ -79,7 +79,7 @@ constructor(
     }
   }
 
-  public fun copy(
+  public open fun copy(
     nullable: Boolean = this.isNullable,
     annotations: List<AnnotationSpec> = this.annotations.toList(),
   ): TypeName {

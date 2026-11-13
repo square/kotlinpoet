@@ -37,6 +37,10 @@ private constructor(
     require(this.outTypes.size == 1) { "unexpected out types: $outTypes" }
   }
 
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): WildcardTypeName {
+    return copy(nullable, annotations, this.tags)
+  }
+
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,

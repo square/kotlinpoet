@@ -82,6 +82,8 @@ public final class com/squareup/kotlinpoet/ClassName : com/squareup/kotlinpoet/T
 	public fun compareTo (Lcom/squareup/kotlinpoet/ClassName;)I
 	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public final fun constructorReference ()Lcom/squareup/kotlinpoet/CodeBlock;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/ClassName;
+	public synthetic fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/ClassName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun enclosingClassName ()Lcom/squareup/kotlinpoet/ClassName;
@@ -556,6 +558,8 @@ public final class com/squareup/kotlinpoet/KOperator : java/lang/Enum {
 
 public final class com/squareup/kotlinpoet/LambdaTypeName : com/squareup/kotlinpoet/TypeName {
 	public static final field Companion Lcom/squareup/kotlinpoet/LambdaTypeName$Companion;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/LambdaTypeName;
+	public synthetic fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/LambdaTypeName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun copy (ZLjava/util/List;ZLjava/util/Map;)Lcom/squareup/kotlinpoet/LambdaTypeName;
@@ -731,6 +735,8 @@ public final class com/squareup/kotlinpoet/ParameterSpec$Companion {
 
 public final class com/squareup/kotlinpoet/ParameterizedTypeName : com/squareup/kotlinpoet/TypeName {
 	public static final field Companion Lcom/squareup/kotlinpoet/ParameterizedTypeName$Companion;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
+	public synthetic fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public final fun copy (ZLjava/util/List;Ljava/util/Map;Ljava/util/List;)Lcom/squareup/kotlinpoet/ParameterizedTypeName;
@@ -941,7 +947,7 @@ public final class com/squareup/kotlinpoet/TypeAliasSpec$Companion {
 public abstract class com/squareup/kotlinpoet/TypeName : com/squareup/kotlinpoet/Annotatable, com/squareup/kotlinpoet/Taggable {
 	public static final field Companion Lcom/squareup/kotlinpoet/TypeName$Companion;
 	public synthetic fun <init> (ZLjava/util/List;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
 	public abstract fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeName;ZLjava/util/List;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
 	public static synthetic fun copy$default (Lcom/squareup/kotlinpoet/TypeName;ZLjava/util/List;Ljava/util/Map;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/TypeName;
@@ -1199,6 +1205,8 @@ public abstract interface class com/squareup/kotlinpoet/TypeSpecHolder$Builder {
 
 public final class com/squareup/kotlinpoet/TypeVariableName : com/squareup/kotlinpoet/TypeName {
 	public static final field Companion Lcom/squareup/kotlinpoet/TypeVariableName$Companion;
+	public synthetic fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public final fun copy (ZLjava/util/List;Ljava/util/List;ZLjava/util/Map;)Lcom/squareup/kotlinpoet/TypeVariableName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeVariableName;
@@ -1259,6 +1267,8 @@ public final class com/squareup/kotlinpoet/WildcardTypeName : com/squareup/kotli
 	public static final fun consumerOf (Lcom/squareup/kotlinpoet/TypeName;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public static final fun consumerOf (Ljava/lang/reflect/Type;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public static final fun consumerOf (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/WildcardTypeName;
+	public synthetic fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/TypeName;
+	public fun copy (ZLjava/util/List;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public synthetic fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/TypeName;
 	public fun copy (ZLjava/util/List;Ljava/util/Map;)Lcom/squareup/kotlinpoet/WildcardTypeName;
 	public final fun getInTypes ()Ljava/util/List;

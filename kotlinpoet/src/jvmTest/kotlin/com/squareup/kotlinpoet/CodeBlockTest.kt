@@ -320,14 +320,16 @@ class CodeBlockTest {
     assertThat(typeBlock.toString()).isEqualTo("kotlin.String?")
 
     val list =
-      (List::class.asClassName().copy(nullable = true) as ClassName)
+      List::class.asClassName()
+        .copy(nullable = true)
         .parameterizedBy(Int::class.asTypeName().copy(nullable = true))
         .copy(nullable = true)
     val listBlock = CodeBlock.of("%T", list)
     assertThat(listBlock.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")
 
     val map =
-      (Map::class.asClassName().copy(nullable = true) as ClassName)
+      Map::class.asClassName()
+        .copy(nullable = true)
         .parameterizedBy(String::class.asTypeName().copy(nullable = true), list)
         .copy(nullable = true)
     val mapBlock = CodeBlock.of("%T", map)

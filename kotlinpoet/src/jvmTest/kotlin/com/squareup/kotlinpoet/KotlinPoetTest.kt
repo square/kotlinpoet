@@ -595,7 +595,8 @@ class KotlinPoetTest {
   @Test
   fun nullableTypes() {
     val list =
-      (List::class.asClassName().copy(nullable = true) as ClassName)
+      List::class.asClassName()
+        .copy(nullable = true)
         .parameterizedBy(Int::class.asClassName().copy(nullable = true))
         .copy(nullable = true)
     assertThat(list.toString()).isEqualTo("kotlin.collections.List<kotlin.Int?>?")

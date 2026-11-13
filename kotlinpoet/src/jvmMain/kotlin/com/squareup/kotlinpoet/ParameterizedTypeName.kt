@@ -41,6 +41,10 @@ internal constructor(
     require(typeArguments.isNotEmpty() || enclosingType != null) { "no type arguments: $rawType" }
   }
 
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): ParameterizedTypeName {
+    return copy(nullable, annotations, this.tags)
+  }
+
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,

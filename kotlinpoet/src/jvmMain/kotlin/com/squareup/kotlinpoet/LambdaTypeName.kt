@@ -49,6 +49,10 @@ private constructor(
     }
   }
 
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): LambdaTypeName {
+    return copy(nullable, annotations, this.tags)
+  }
+
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,
