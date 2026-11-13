@@ -1107,7 +1107,7 @@ class TypeSpecTest {
   fun typeVariableWithBounds() {
     val a = AnnotationSpec.builder(ClassName("com.squareup.tacos", "A")).build()
     val p = TypeVariableName("P", Number::class)
-    val q = TypeVariableName("Q", Number::class).copy(annotations = listOf(a)) as TypeVariableName
+    val q = TypeVariableName("Q", Number::class).copy(annotations = listOf(a))
     val typeSpec =
       TypeSpec.classBuilder("Location")
         .addTypeVariable(p.copy(bounds = p.bounds + listOf(Comparable::class.asTypeName())))

@@ -39,6 +39,10 @@ private constructor(
   tags: Map<KClass<*>, Any> = emptyMap(),
 ) : TypeName(nullable, annotations, TagMap(tags)) {
 
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): TypeVariableName {
+    return copy(nullable, annotations, this.tags)
+  }
+
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,

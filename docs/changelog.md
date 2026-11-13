@@ -10,6 +10,7 @@ Change Log
  * Fix: A trailing newline in a `%S` or `%P` string argument that ends a `CodeBlock` is no longer trimmed or added. (#2391)
  * Fix: Emitting a long line no longer takes quadratic time. (#2420)
  * Fix: Preserve KSP type-use annotations when converting types to KotlinPoet type names. (#2422)
+ * Fix: Copies of type names retain their specific return type when tags are not specified. (#2429)
 
 ## Version 2.4.0
 

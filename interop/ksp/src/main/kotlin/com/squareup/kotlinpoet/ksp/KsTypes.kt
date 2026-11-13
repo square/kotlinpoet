@@ -54,7 +54,7 @@ public fun KSType.toClassName(): ClassName {
     is KSTypeAlias -> decl.toClassName()
     is KSTypeParameter -> error("Cannot convert KSTypeParameter to ClassName: '$this'")
     else -> error("Could not compute ClassName for '$this'")
-  }.copy(nullable = isMarkedNullable) as ClassName
+  }.copy(nullable = isMarkedNullable)
 }
 
 /**
@@ -71,7 +71,7 @@ public fun KSType.toClassNameOrNull(): ClassName? {
     is KSTypeAlias -> decl.toClassName()
     is KSTypeParameter -> null
     else -> null
-  }?.let { it.copy(nullable = isMarkedNullable) as ClassName }
+  }?.let { it.copy(nullable = isMarkedNullable) }
 }
 
 /**

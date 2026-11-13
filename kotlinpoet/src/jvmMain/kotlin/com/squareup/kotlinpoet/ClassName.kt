@@ -98,6 +98,10 @@ public class ClassName internal constructor(
    */
   public val simpleNames: List<String> get() = names.subList(1, names.size)
 
+  override fun copy(nullable: Boolean, annotations: List<AnnotationSpec>): ClassName {
+    return copy(nullable, annotations, this.tags)
+  }
+
   override fun copy(
     nullable: Boolean,
     annotations: List<AnnotationSpec>,

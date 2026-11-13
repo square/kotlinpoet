@@ -537,7 +537,7 @@ internal class CodeWriter(
         if (alias == null) {
           topLevelClassName
         } else {
-          className.copy(nullable = false) as ClassName
+          className.copy(nullable = false)
         }
       importableTypes[simpleName] = importableTypes.getValue(simpleName) + newImportTypes
     }
