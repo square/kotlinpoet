@@ -3,7 +3,7 @@ Change Log
 
 ## Unreleased
 
- * Fix: Copies of type names retain their specific return type when tags are not specified.
+ * Fix: Copies of type names retain their specific return type when tags are not specified. (#2429)
  * New: Support for companion extensions. (#2406)
  * New: Deprecate support for context receivers. (#2413)
  * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
