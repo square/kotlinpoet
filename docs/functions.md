@@ -91,7 +91,9 @@ public inline fun <reified T> printMembers() {
 ```
 
 The `variance` parameter of `TypeVariableName` accepts `KModifier.IN` or `KModifier.OUT`,
-not `KModifier.REIFIED`. Reified type parameters are only allowed on inline functions.
+not `KModifier.REIFIED`.
+
+Reified type parameters are only allowed on inline functions.
 
 ## Default function arguments
 
