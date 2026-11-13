@@ -69,6 +69,32 @@ Which outputs:
 fun abs(x: Int): Int = if (x < 0) -x else x
 ```
 
+## Reified type parameters
+
+To generate a reified type parameter, use `TypeVariableName.copy(reified = true)` and add
+`KModifier.INLINE` to the function:
+
+```kotlin
+val printMembers = FunSpec.builder("printMembers")
+  .addModifiers(KModifier.INLINE)
+  .addTypeVariable(TypeVariableName("T").copy(reified = true))
+  .addStatement("println(T::class.members)")
+  .build()
+```
+
+Which outputs:
+
+```kotlin
+public inline fun <reified T> printMembers() {
+  println(T::class.members)
+}
+```
+
+The `variance` parameter of `TypeVariableName` accepts `KModifier.IN` or `KModifier.OUT`,
+not `KModifier.REIFIED`.
+
+Reified type parameters are only allowed on inline functions.
+
 ## Default function arguments
 
 Consider the example below.
