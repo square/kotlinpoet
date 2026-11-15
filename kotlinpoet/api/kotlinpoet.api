@@ -172,6 +172,18 @@ public final class com/squareup/kotlinpoet/CodeBlocks {
 	public static final fun withIndent (Lcom/squareup/kotlinpoet/CodeBlock$Builder;Lkotlin/jvm/functions/Function1;)Lcom/squareup/kotlinpoet/CodeBlock$Builder;
 }
 
+public final class com/squareup/kotlinpoet/CompanionBlockSpec$Builder : com/squareup/kotlinpoet/Documentable$Builder, com/squareup/kotlinpoet/MemberSpecHolder$Builder, com/squareup/kotlinpoet/Taggable$Builder {
+	public fun addFunction (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/CompanionBlockSpec$Builder;
+	public synthetic fun addFunction (Lcom/squareup/kotlinpoet/FunSpec;)Lcom/squareup/kotlinpoet/MemberSpecHolder$Builder;
+	public fun addProperty (Lcom/squareup/kotlinpoet/PropertySpec;)Lcom/squareup/kotlinpoet/CompanionBlockSpec$Builder;
+	public synthetic fun addProperty (Lcom/squareup/kotlinpoet/PropertySpec;)Lcom/squareup/kotlinpoet/MemberSpecHolder$Builder;
+	public final fun build ()Lcom/squareup/kotlinpoet/CompanionBlockSpec;
+	public final fun getFunSpecs ()Ljava/util/List;
+	public fun getKdoc ()Lcom/squareup/kotlinpoet/CodeBlock$Builder;
+	public final fun getPropertySpecs ()Ljava/util/List;
+	public fun getTags ()Ljava/util/Map;
+}
+
 public final class com/squareup/kotlinpoet/ContextParameter {
 	public fun <init> (Lcom/squareup/kotlinpoet/TypeName;)V
 	public fun <init> (Ljava/lang/String;Lcom/squareup/kotlinpoet/TypeName;)V

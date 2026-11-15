@@ -86,6 +86,9 @@ private constructor(
   public override val typeSpecs: List<TypeSpec> = builder.typeSpecs.toImmutableList()
   public val typeAliasSpecs: List<TypeAliasSpec> = builder.typeAliasSpecs.toImmutableList()
   internal val nestedTypesSimpleNames = typeSpecs.map { it.name }.toImmutableSet()
+  @ExperimentalKotlinPoetApi
+  public val companionBlockSpecs: List<CompanionBlockSpec> =
+    builder.companionBlockSpecs.toImmutableList()
 
   @Deprecated(
     message = "Use annotations property. This property will be removed in KotlinPoet 3.0.",
@@ -116,6 +119,7 @@ private constructor(
     builder.tags += tagMap.tags
     builder.originatingElements += originatingElements
     builder.contextReceiverTypes += contextReceiverTypes
+    builder.companionBlockSpecs += companionBlockSpecs
     return builder
   }
 
@@ -373,6 +377,12 @@ private constructor(
         firstMember = false
       }
 
+      for (companionBlockSpec in companionBlockSpecs) {
+        if (!firstMember) codeWriter.emit("\n")
+        companionBlockSpec.emit(codeWriter)
+        firstMember = false
+      }
+
       codeWriter.unindent()
       codeWriter.popType()
 
@@ -464,7 +474,8 @@ private constructor(
         (primaryConstructor?.body?.isEmpty() ?: true) &&
         funSpecs.isEmpty() &&
         typeSpecs.isEmpty() &&
-        typeAliasSpecs.isEmpty()
+        typeAliasSpecs.isEmpty() &&
+        companionBlockSpecs.isEmpty()
     }
 
   override fun equals(other: Any?): Boolean {
@@ -578,6 +589,8 @@ private constructor(
     public val funSpecs: MutableList<FunSpec> = mutableListOf()
     public val typeSpecs: MutableList<TypeSpec> = mutableListOf()
     public val typeAliasSpecs: MutableList<TypeAliasSpec> = mutableListOf()
+    @ExperimentalKotlinPoetApi
+    public val companionBlockSpecs: MutableList<CompanionBlockSpec> = mutableListOf()
 
     @Deprecated(
       message = "Use annotations property. This property will be removed in KotlinPoet 3.0.",
@@ -854,6 +867,11 @@ private constructor(
 
     @Suppress("RedundantOverride")
     override fun addFunctions(funSpecs: Iterable<FunSpec>): Builder = super.addFunctions(funSpecs)
+
+    @ExperimentalKotlinPoetApi
+    public fun addCompanionBlock(companionBlockSpec: CompanionBlockSpec): Builder = apply {
+      companionBlockSpecs += companionBlockSpec
+    }
 
     // endregion
 

@@ -75,6 +75,7 @@ nav:
     - 'Anonymous Inner Classes': anonymous-inner-classes.md
     - 'Annotations': annotations.md
     - 'Type Aliases': type-aliases.md
+    - 'Companion Blocks': companion-blocks.md
     - 'Callable References': callable-references.md
     - 'kotlin-reflect': kotlin-reflect.md
   - 'Interop - kotlin-metadata': interop-kotlin-metadata.md
