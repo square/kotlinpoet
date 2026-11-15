@@ -4,6 +4,7 @@ Change Log
 ## Unreleased
 
  * New: Support for companion extensions. (#2406)
+ * New: Support for companion blocks. (#2431)
  * New: Deprecate support for context receivers. (#2413)
  * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
  * Fix: `Class.asClassName()` no longer drops the package slot of a class in the default package. (#2382)
