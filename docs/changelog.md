@@ -11,6 +11,7 @@ Change Log
  * Fix: Emitting a long line no longer takes quadratic time. (#2420)
  * Fix: Preserve KSP type-use annotations when converting types to KotlinPoet type names. (#2422)
  * Fix: Copies of type names retain their specific return type when tags are not specified. (#2429)
+ * Fix: Delegated constructor calls with a multiline argument put each argument on its own line. (#2433)
 
 ## Version 2.4.0
 
