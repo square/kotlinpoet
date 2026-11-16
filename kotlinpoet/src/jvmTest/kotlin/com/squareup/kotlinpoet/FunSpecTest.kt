@@ -1565,7 +1565,9 @@ class FunSpecTest {
   fun throwsKdocWithoutDescription() {
     val funSpec =
       FunSpec.builder("read")
-        .addThrowsKdoc(ClassName("java.io", "IOException"), CodeBlock.EMPTY)
+        .addThrowsKdoc(ClassName("java.io", "IOException"))
+        .addThrowsKdoc(SecurityException::class.java)
+        .addThrowsKdoc(IllegalStateException::class)
         .build()
 
     assertThat(funSpec.toString())
@@ -1573,6 +1575,8 @@ class FunSpecTest {
         """
         |/**
         | * @throws java.io.IOException
+        | * @throws java.lang.SecurityException
+        | * @throws java.lang.IllegalStateException
         | */
         |public fun read() {
         |}
@@ -1648,13 +1652,13 @@ class FunSpecTest {
   }
 
   @Test
-  fun throwsKdocNullableException() {
+  fun throwsKdocNullableThrowable() {
     assertFailure {
         FunSpec.builder("read")
-          .addThrowsKdoc(IOException::class.asClassName().copy(nullable = true), CodeBlock.EMPTY)
+          .addThrowsKdoc(IOException::class.asClassName().copy(nullable = true))
       }
       .isInstanceOf<IllegalArgumentException>()
-      .hasMessage("exception type java.io.IOException? cannot be nullable")
+      .hasMessage("throwable type java.io.IOException? cannot be nullable")
   }
 
   @Test

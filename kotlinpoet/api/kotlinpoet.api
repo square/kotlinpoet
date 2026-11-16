@@ -411,12 +411,18 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun addParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lcom/squareup/kotlinpoet/ClassName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Ljava/lang/Class;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Ljava/lang/Class;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lkotlin/reflect/KClass;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addThrowsKdoc (Lkotlin/reflect/KClass;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun addThrowsKdoc$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun addThrowsKdoc$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Ljava/lang/Class;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public static synthetic fun addThrowsKdoc$default (Lcom/squareup/kotlinpoet/FunSpec$Builder;Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;ILjava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;

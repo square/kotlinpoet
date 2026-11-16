@@ -223,15 +223,15 @@ private constructor(
         }
         add("@return %L", returnKdoc.ensureEndsWithNewLine())
       }
-      throwsKdoc.forEach { (exception, kdoc) ->
+      throwsKdoc.forEach { (throwable, kdoc) ->
         if (!newLineAdded && isNotEmpty) {
           add("\n")
           newLineAdded = true
         }
         if (kdoc.isNotEmpty()) {
-          add("@throws %T %L", exception, kdoc.ensureEndsWithNewLine())
+          add("@throws %T %L", throwable, kdoc.ensureEndsWithNewLine())
         } else {
-          add("@throws %T\n", exception)
+          add("@throws %T\n", throwable)
         }
       }
       build()
@@ -471,36 +471,44 @@ private constructor(
       returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
 
     /**
-     * Adds a `@throws` tag for [exception] to this function's KDoc. Calling this again with the
-     * same [exception] replaces its [kdoc].
+     * Adds a `@throws` tag for [throwable] to this function's KDoc. Calling this again with the
+     * same [throwable] replaces its [kdoc].
      *
      * This only affects the KDoc. Use [addAnnotation] to add a [Throws] annotation.
      */
-    public fun addThrowsKdoc(exception: ClassName, kdoc: CodeBlock): Builder = apply {
-      require(!exception.isNullable) { "exception type $exception cannot be nullable" }
-      throwsKdoc[exception] = kdoc
-    }
+    @JvmOverloads
+    public fun addThrowsKdoc(throwable: ClassName, kdoc: CodeBlock = CodeBlock.EMPTY): Builder =
+      apply {
+        require(!throwable.isNullable) { "throwable type $throwable cannot be nullable" }
+        throwsKdoc[throwable] = kdoc
+      }
 
-    public fun addThrowsKdoc(exception: ClassName, kdoc: String, vararg args: Any): Builder =
-      addThrowsKdoc(exception, CodeBlock.of(kdoc, *args))
+    public fun addThrowsKdoc(throwable: ClassName, kdoc: String, vararg args: Any): Builder =
+      addThrowsKdoc(throwable, CodeBlock.of(kdoc, *args))
 
-    public fun addThrowsKdoc(exception: Class<out Throwable>, kdoc: CodeBlock): Builder =
-      addThrowsKdoc(exception.asClassName(), kdoc)
+    @JvmOverloads
+    public fun addThrowsKdoc(
+      throwable: Class<out Throwable>,
+      kdoc: CodeBlock = CodeBlock.EMPTY,
+    ): Builder = addThrowsKdoc(throwable.asClassName(), kdoc)
 
     public fun addThrowsKdoc(
-      exception: Class<out Throwable>,
+      throwable: Class<out Throwable>,
       kdoc: String,
       vararg args: Any,
-    ): Builder = addThrowsKdoc(exception.asClassName(), CodeBlock.of(kdoc, *args))
+    ): Builder = addThrowsKdoc(throwable.asClassName(), CodeBlock.of(kdoc, *args))
 
-    public fun addThrowsKdoc(exception: KClass<out Throwable>, kdoc: CodeBlock): Builder =
-      addThrowsKdoc(exception.asClassName(), kdoc)
+    @JvmOverloads
+    public fun addThrowsKdoc(
+      throwable: KClass<out Throwable>,
+      kdoc: CodeBlock = CodeBlock.EMPTY,
+    ): Builder = addThrowsKdoc(throwable.asClassName(), kdoc)
 
     public fun addThrowsKdoc(
-      exception: KClass<out Throwable>,
+      throwable: KClass<out Throwable>,
       kdoc: String,
       vararg args: Any,
-    ): Builder = addThrowsKdoc(exception.asClassName(), CodeBlock.of(kdoc, *args))
+    ): Builder = addThrowsKdoc(throwable.asClassName(), CodeBlock.of(kdoc, *args))
 
     public fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder = apply {
       for (parameterSpec in parameterSpecs) {
