@@ -55,6 +55,7 @@ private constructor(
   override val kdoc: CodeBlock = builder.kdoc.build()
   public val returnKdoc: CodeBlock = builder.returnKdoc
   public val receiverKdoc: CodeBlock = builder.receiverKdoc
+  public val throwsKdoc: Map<ClassName, CodeBlock> = builder.throwsKdoc.toImmutableMap()
   override val annotations: List<AnnotationSpec> = builder.annotations.toImmutableList()
   public val modifiers: Set<KModifier> = builder.modifiers.toImmutableSet()
   public val typeVariables: List<TypeVariableName> = builder.typeVariables.toImmutableList()
@@ -222,6 +223,17 @@ private constructor(
         }
         add("@return %L", returnKdoc.ensureEndsWithNewLine())
       }
+      throwsKdoc.forEach { (exception, kdoc) ->
+        if (!newLineAdded && isNotEmpty) {
+          add("\n")
+          newLineAdded = true
+        }
+        if (kdoc.isNotEmpty()) {
+          add("@throws %T %L", exception, kdoc.ensureEndsWithNewLine())
+        } else {
+          add("@throws %T\n", exception)
+        }
+      }
       build()
     }
   }
@@ -305,6 +317,7 @@ private constructor(
     builder.kdoc.add(kdoc)
     builder.returnKdoc = returnKdoc
     builder.receiverKdoc = receiverKdoc
+    builder.throwsKdoc += throwsKdoc
     builder.annotations += annotations
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
@@ -331,6 +344,7 @@ private constructor(
     CodeBlockHolder.Builder<Builder> {
     internal var returnKdoc = CodeBlock.EMPTY
     internal var receiverKdoc = CodeBlock.EMPTY
+    internal val throwsKdoc = mutableMapOf<ClassName, CodeBlock>()
     internal var receiverType: TypeName? = null
     internal var returnType: TypeName = UNIT
     internal var delegateConstructor: String? = null
@@ -455,6 +469,38 @@ private constructor(
 
     public fun returns(returnType: KClass<*>, kdoc: String, vararg args: Any): Builder =
       returns(returnType.asTypeName(), CodeBlock.of(kdoc, args))
+
+    /**
+     * Adds a `@throws` tag for [exception] to this function's KDoc. Calling this again with the
+     * same [exception] replaces its [kdoc].
+     *
+     * This only affects the KDoc. Use [addAnnotation] to add a [Throws] annotation.
+     */
+    public fun addThrowsKdoc(exception: ClassName, kdoc: CodeBlock): Builder = apply {
+      require(!exception.isNullable) { "exception type $exception cannot be nullable" }
+      throwsKdoc[exception] = kdoc
+    }
+
+    public fun addThrowsKdoc(exception: ClassName, kdoc: String, vararg args: Any): Builder =
+      addThrowsKdoc(exception, CodeBlock.of(kdoc, *args))
+
+    public fun addThrowsKdoc(exception: Class<out Throwable>, kdoc: CodeBlock): Builder =
+      addThrowsKdoc(exception.asClassName(), kdoc)
+
+    public fun addThrowsKdoc(
+      exception: Class<out Throwable>,
+      kdoc: String,
+      vararg args: Any,
+    ): Builder = addThrowsKdoc(exception.asClassName(), CodeBlock.of(kdoc, *args))
+
+    public fun addThrowsKdoc(exception: KClass<out Throwable>, kdoc: CodeBlock): Builder =
+      addThrowsKdoc(exception.asClassName(), kdoc)
+
+    public fun addThrowsKdoc(
+      exception: KClass<out Throwable>,
+      kdoc: String,
+      vararg args: Any,
+    ): Builder = addThrowsKdoc(exception.asClassName(), CodeBlock.of(kdoc, *args))
 
     public fun addParameters(parameterSpecs: Iterable<ParameterSpec>): Builder = apply {
       for (parameterSpec in parameterSpecs) {

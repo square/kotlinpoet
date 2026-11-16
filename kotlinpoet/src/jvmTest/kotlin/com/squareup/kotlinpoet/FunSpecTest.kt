@@ -1519,6 +1519,145 @@ class FunSpecTest {
   }
 
   @Test
+  fun throwsKdoc() {
+    val funSpec =
+      FunSpec.builder("read")
+        .addThrowsKdoc(IOException::class, "if the file can't be read.")
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |/**
+        | * @throws java.io.IOException if the file can't be read.
+        | */
+        |public fun read() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun throwsKdocWithMainKdoc() {
+    val funSpec =
+      FunSpec.builder("read")
+        .addKdoc("Reads the file.")
+        .addThrowsKdoc(IOException::class, CodeBlock.of("if the file can't be read."))
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |/**
+        | * Reads the file.
+        | *
+        | * @throws java.io.IOException if the file can't be read.
+        | */
+        |public fun read() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun throwsKdocWithoutDescription() {
+    val funSpec =
+      FunSpec.builder("read")
+        .addThrowsKdoc(ClassName("java.io", "IOException"), CodeBlock.EMPTY)
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |/**
+        | * @throws java.io.IOException
+        | */
+        |public fun read() {
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun withAllKdocTagsAndThrowsKdoc() {
+    val funSpec =
+      FunSpec.builder("charAt")
+        .addThrowsKdoc(
+          IndexOutOfBoundsException::class.java,
+          "if [position] is out of bounds.",
+        )
+        .addThrowsKdoc(
+          ClassName("kotlin", "IllegalStateException"),
+          "if %L is empty.",
+          "the string",
+        )
+        .receiver(String::class, kdoc = "the string you want the char from.")
+        .returns(Char::class, kdoc = "The char at the given [position].")
+        .addParameter(
+          ParameterSpec.builder("position", Int::class)
+            .addKdoc("the index of the character that is returned.")
+            .build()
+        )
+        .addKdoc("Returns the character at the given [position].\n\n")
+        .addStatement("return -1")
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |/**
+        | * Returns the character at the given [position].
+        | *
+        | * @receiver the string you want the char from.
+        | * @param position the index of the character that is returned.
+        | * @return The char at the given [position].
+        | * @throws java.lang.IndexOutOfBoundsException if [position] is out of bounds.
+        | * @throws kotlin.IllegalStateException if the string is empty.
+        | */
+        |public fun kotlin.String.charAt(position: kotlin.Int): kotlin.Char = -1
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun throwsKdocToBuilder() {
+    val funSpec =
+      FunSpec.builder("read")
+        .addThrowsKdoc(IOException::class, "if the file can't be read.")
+        .build()
+
+    assertThat(funSpec.toBuilder().build()).isEqualTo(funSpec)
+
+    val modified =
+      funSpec
+        .toBuilder()
+        .addThrowsKdoc(IOException::class, "if the file is missing.")
+        .addThrowsKdoc(SecurityException::class.java, CodeBlock.of("if access is denied."))
+        .build()
+    assertThat(modified.throwsKdoc)
+      .isEqualTo(
+        mapOf(
+          IOException::class.asClassName() to CodeBlock.of("if the file is missing."),
+          SecurityException::class.asClassName() to CodeBlock.of("if access is denied."),
+        )
+      )
+  }
+
+  @Test
+  fun throwsKdocNullableException() {
+    assertFailure {
+        FunSpec.builder("read")
+          .addThrowsKdoc(IOException::class.asClassName().copy(nullable = true), CodeBlock.EMPTY)
+      }
+      .isInstanceOf<IllegalArgumentException>()
+      .hasMessage("exception type java.io.IOException? cannot be nullable")
+  }
+
+  @Test
   fun constructorBuilderEqualityTest() {
     val funSpec =
       FunSpec.constructorBuilder()

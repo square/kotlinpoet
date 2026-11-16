@@ -359,6 +359,7 @@ public final class com/squareup/kotlinpoet/FunSpec : com/squareup/kotlinpoet/Ann
 	public final fun getReturnKdoc ()Lcom/squareup/kotlinpoet/CodeBlock;
 	public final fun getReturnType ()Lcom/squareup/kotlinpoet/TypeName;
 	public fun getTags ()Ljava/util/Map;
+	public final fun getThrowsKdoc ()Ljava/util/Map;
 	public final fun getTypeVariables ()Ljava/util/List;
 	public static final fun getterBuilder ()Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public fun hashCode ()I
@@ -410,6 +411,12 @@ public final class com/squareup/kotlinpoet/FunSpec$Builder : com/squareup/kotlin
 	public final fun addParameters (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
 	public fun addStatement (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lcom/squareup/kotlinpoet/ClassName;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lcom/squareup/kotlinpoet/ClassName;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Ljava/lang/Class;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lkotlin/reflect/KClass;Lcom/squareup/kotlinpoet/CodeBlock;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
+	public final fun addThrowsKdoc (Lkotlin/reflect/KClass;Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addTypeVariable (Lcom/squareup/kotlinpoet/TypeVariableName;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public final fun addTypeVariables (Ljava/lang/Iterable;)Lcom/squareup/kotlinpoet/FunSpec$Builder;
 	public synthetic fun beginControlFlow (Ljava/lang/String;[Ljava/lang/Object;)Lcom/squareup/kotlinpoet/CodeBlockHolder$Builder;
