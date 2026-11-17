@@ -24,14 +24,12 @@ public class CompanionBlockSpec
 private constructor(
   builder: Builder,
   private val tagMap: TagMap = builder.buildTagMap(),
-) : Taggable by tagMap, Documentable, MemberSpecHolder {
+) : Taggable by tagMap, MemberSpecHolder {
 
-  override val kdoc: CodeBlock = builder.kdoc.build()
   override val propertySpecs: List<PropertySpec> = builder.propertySpecs.toImmutableList()
   override val funSpecs: List<FunSpec> = builder.funSpecs.toImmutableList()
 
   internal fun emit(codeWriter: CodeWriter) {
-    codeWriter.emitKdoc(kdoc)
     codeWriter.emit("companion {\n")
     codeWriter.indent()
 
@@ -50,7 +48,6 @@ private constructor(
   public fun toBuilder(): Builder {
     val builder = Builder()
     builder.tags += tagMap.tags
-    builder.kdoc.add(kdoc)
     builder.propertySpecs += propertySpecs
     builder.funSpecs += funSpecs
     return builder
@@ -68,10 +65,9 @@ private constructor(
   override fun toString(): String = buildCodeString { emit(this) }
 
   public class Builder internal constructor() :
-    Taggable.Builder<Builder>, Documentable.Builder<Builder>, MemberSpecHolder.Builder<Builder> {
+    Taggable.Builder<Builder>, MemberSpecHolder.Builder<Builder> {
 
     override val tags: MutableMap<KClass<*>, Any> = mutableMapOf()
-    override val kdoc: CodeBlock.Builder = CodeBlock.builder()
     public val propertySpecs: MutableList<PropertySpec> = mutableListOf()
     public val funSpecs: MutableList<FunSpec> = mutableListOf()
 

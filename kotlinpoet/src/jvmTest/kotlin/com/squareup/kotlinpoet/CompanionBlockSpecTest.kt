@@ -31,7 +31,6 @@ class CompanionBlockSpecTest {
       vectorTypeSpec()
         .addCompanionBlock(
           CompanionBlockSpec.Builder()
-            .addKdoc("This is a companion block.")
             .addProperty(
               PropertySpec.builder("Zero", VECTOR)
                 .getter(FunSpec.getterBuilder().addStatement("return %T(0.0, 0.0)", VECTOR).build())
@@ -61,9 +60,6 @@ class CompanionBlockSpecTest {
         |  public val x: Double,
         |  public val y: Double,
         |) {
-        |  /**
-        |   * This is a companion block.
-        |   */
         |  companion {
         |    public val Zero: Vector
         |      get() = Vector(0.0, 0.0)
@@ -253,7 +249,6 @@ class CompanionBlockSpecTest {
   fun builderEqualityTest() {
     val companionBlockSpec =
       CompanionBlockSpec.Builder()
-        .addKdoc("This is a companion block.")
         .addProperty("tacos", Int::class)
         .addFunction(FunSpec.builder("test").addModifiers(KModifier.PUBLIC).build())
         .build()
