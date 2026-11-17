@@ -4,6 +4,7 @@ Change Log
 ## Unreleased
 
  * New: Support for companion extensions. (#2406)
+ * New: Support for companion blocks. (#2431)
  * New: Deprecate support for context receivers. (#2413)
  * New: Add `FunSpec.Builder.addThrowsKdoc()` for documenting `@throws` tags. (#2432)
  * Fix: Carriage returns are no longer lost in `%S` and `%P` string literals. (#2380)
