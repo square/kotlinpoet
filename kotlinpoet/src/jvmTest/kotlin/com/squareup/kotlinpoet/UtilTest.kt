@@ -82,6 +82,20 @@ class UtilTest {
         )
       )
       .isEqualTo("\"\"\"abc();\${'\\n'}def();\"\"\"")
+    assertThat(stringLiteralWithQuotes(">\"\"\"<", isInsideRawString = true))
+      .isEqualTo("\"\"\">\"\"\${'\"'}<\"\"\"")
+    assertThat(stringLiteralWithQuotes("a\"\"\"b\"\"\"\"\"\"c", isInsideRawString = true))
+      .isEqualTo("\"\"\"a\"\"\${'\"'}b\"\"\${'\"'}\"\"\${'\"'}c\"\"\"")
+    assertThat(stringLiteralWithQuotes("a\"\"\"\r\nb", isInsideRawString = true))
+      .isEqualTo("\"\"\"a\"\"\${'\"'}\${'\\r'}\${'\\n'}b\"\"\"")
+    assertThat(
+        stringLiteralWithQuotes(
+          "a\"\"\"\nb",
+          isInsideRawString = true,
+          isConstantContext = true,
+        )
+      )
+      .isEqualTo("\"\"\"a\"\"\${'\"'}\${'\\n'}b\"\"\"")
   }
 
   @Test

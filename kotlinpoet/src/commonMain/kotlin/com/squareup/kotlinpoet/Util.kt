@@ -121,30 +121,30 @@ internal fun stringLiteralWithQuotes(
     // using pre-formatted strings allows us to get away with not escaping symbols that would
     // normally require escaping, e.g. "foo ${"bar"} baz"
     if (isInsideRawString) result.append("\"\"\"") else result.append('"')
-    for (c in value) {
-      // Trivial case: single quote must not be escaped.
-      if (c == '\'') {
+    var i = 0
+    while (i < value.length) {
+      val c = value[i]
+      if (isInsideRawString && value.regionMatches(i, "\"\"\"", 0, 3)) {
+        // Don't inadvertently end the raw string too early
+        result.append("\"\"\${'\"'}")
+        i += 2
+      } else if (c == '\'') {
+        // Trivial case: single quote must not be escaped.
         result.append("'")
-        continue
-      }
-      // Trivial case: double quotes must be escaped.
-      if (c == '\"' && !isInsideRawString) {
+      } else if (c == '\"' && !isInsideRawString) {
+        // Trivial case: double quotes must be escaped.
         result.append("\\\"")
-        continue
-      }
-      // Trivial case: $ signs must be escaped.
-      if (c == '$' && !isInsideRawString) {
+      } else if (c == '$' && !isInsideRawString) {
+        // Trivial case: $ signs must be escaped.
         result.append("\${\'\$\'}")
-        continue
-      }
-      // Line terminators can't appear in a raw string literally, so splice them in as templates.
-      if (isInsideRawString && (c == '\r' || c == '\n')) {
+      } else if (isInsideRawString && (c == '\r' || c == '\n')) {
+        // Line terminators can't appear in a raw string literally, so splice them in as templates.
         result.append(if (c == '\r') "\${'\\r'}" else "\${'\\n'}")
-        continue
+      } else {
+        // Default case: just let character literal do its work.
+        result.append(if (isInsideRawString) c else characterLiteralWithoutSingleQuotes(c))
       }
-      // Default case: just let character literal do its work.
-      result.append(if (isInsideRawString) c else characterLiteralWithoutSingleQuotes(c))
-      // Need to append indent after linefeed?
+      i++
     }
     if (isInsideRawString) result.append("\"\"\"") else result.append('"')
     return result.toString()
