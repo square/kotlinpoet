@@ -2010,7 +2010,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       .isEqualTo(
         """
         public class Asset<A : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<A>>() {
-          public fun <D : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<A>> function() {
+          public fun <D, C> function() where D : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<D>, C : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset<A> {
           }
 
           public class AssetOut<out B : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Asset.AssetOut<B>>()
@@ -2241,7 +2241,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
     assertThat(typeSpec.trimmedToString())
       .isEqualTo(
         """
-        public open class Node<T : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<T, R>, R : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<R, T>>() {
+        public open class Node<T, R>() where T : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<T, R>, R : com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.Node<R, T> {
           public var t: T? = null
 
           public var r: R? = null

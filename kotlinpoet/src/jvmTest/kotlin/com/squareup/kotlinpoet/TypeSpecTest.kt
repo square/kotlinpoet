@@ -1083,7 +1083,7 @@ class TypeSpecTest {
         |import kotlin.Int
         |import kotlin.Number
         |
-        |public class Location<T, P : Number> : Comparable<P> {
+        |public class Location<T, P> : Comparable<P> where P : Number {
         |  public val label: T
         |
         |  public val x: P
@@ -1092,11 +1092,11 @@ class TypeSpecTest {
         |
         |  public override fun compareTo(p: P): Int = 0
         |
-        |  public fun <T, P : Number> of(
+        |  public fun <T, P> of(
         |    label: T,
         |    x: P,
         |    y: P,
-        |  ): Location<T, P> = throw UnsupportedOperationException("TODO")
+        |  ): Location<T, P> where P : Number = throw UnsupportedOperationException("TODO")
         |}
         |"""
           .trimMargin()
@@ -2968,7 +2968,7 @@ class TypeSpecTest {
         |
         |import kotlin.Number
         |
-        |public class Location<T, P : Number>
+        |public class Location<T, P> where P : Number
         |"""
           .trimMargin()
       )

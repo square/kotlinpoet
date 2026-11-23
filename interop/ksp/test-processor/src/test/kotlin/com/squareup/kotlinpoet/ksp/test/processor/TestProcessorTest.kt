@@ -317,7 +317,7 @@ class TestProcessorTest {
           someClasses = [Int::class],
           enumValueArray = [AnnotationEnumValue.ONE, AnnotationEnumValue.TWO],
         )
-        public class TestSmokeTestClass<T, R : Any, E : Enum<E>> {
+        public class TestSmokeTestClass<T, R, E> where R : Any, E : Enum<E> {
           @field:AnotherAnnotation(input = "siteTargeting")
           private val propA: String = TODO()
 
@@ -532,7 +532,7 @@ class TestProcessorTest {
         import com.squareup.kotlinpoet.ksp.test.processor.ExampleAnnotationWithDefaults
 
         @ExampleAnnotationWithDefaults
-        public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+        public open class TestNode<T, R> where T : Node<T, R>, R : Node<R, T> {
           public var t: T? = TODO()
 
           public var r: R? = TODO()
@@ -571,7 +571,7 @@ class TestProcessorTest {
         """
         package test
 
-        public open class TestNode<T : Node<T, R>, R : Node<R, T>> {
+        public open class TestNode<T, R> where T : Node<T, R>, R : Node<R, T> {
           public var t: T? = TODO()
 
           public var r: R? = TODO()

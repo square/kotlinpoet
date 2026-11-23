@@ -392,10 +392,26 @@ class PropertySpecTest {
     assertThat(prop.toString())
       .isEqualTo(
         """
-        |private val <T, R : kotlin.Any> java.util.function.Function<T, R>.`property`: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable
+        |private val <T, R> java.util.function.Function<T, R>.`property`: kotlin.String where T : java.io.Serializable, T : kotlin.Cloneable, R : kotlin.Any
         |  get() = ""
         |"""
           .trimMargin()
+      )
+  }
+
+  @Test
+  fun whereClausePrecedesPropertyDelegate() {
+    val k = TypeVariableName("K")
+    val v = TypeVariableName("V", Number::class)
+    val prop =
+      PropertySpec.builder("sizeHint", INT)
+        .receiver(Pair::class.asClassName().parameterizedBy(k, v))
+        .addTypeVariables(listOf(k, v))
+        .delegate("lazy { 1 }")
+        .build()
+    assertThat(prop.toString())
+      .isEqualTo(
+        "val <K, V> kotlin.Pair<K, V>.sizeHint: kotlin.Int where V : kotlin.Number by lazy { 1 }\n"
       )
   }
 

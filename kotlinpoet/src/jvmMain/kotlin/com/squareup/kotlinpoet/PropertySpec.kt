@@ -103,6 +103,7 @@ private constructor(
       }
     }
     codeWriter.emitCode("%N:♢%T", this, type)
+    codeWriter.emitWhereBlock(typeVariables)
     if (withInitializer && initializer != null) {
       if (delegated) {
         codeWriter.emit("♢by♢")
@@ -115,7 +116,6 @@ private constructor(
         isConstantContext = KModifier.CONST in modifiers,
       )
     }
-    codeWriter.emitWhereBlock(typeVariables)
     if (!inline) codeWriter.emit("\n")
     val implicitAccessorModifiers = EnumSet.noneOf(KModifier::class.java)
     for (modifier in implicitModifiers) {
