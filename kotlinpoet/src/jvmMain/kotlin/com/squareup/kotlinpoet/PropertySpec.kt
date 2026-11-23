@@ -151,7 +151,11 @@ private constructor(
   }
 
   internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
-    val builder = toBuilder().addAnnotations(parameter.annotations)
+    val builder = toBuilder()
+    builder.annotations.replaceAll { it.onConstructorProperty(parameter = false) }
+    for (annotation in parameter.annotations) {
+      builder.addAnnotation(annotation.onConstructorProperty(parameter = true))
+    }
     builder.isPrimaryConstructorParameter = true
     builder.modifiers += parameter.modifiers
     if (builder.kdoc.isEmpty()) {

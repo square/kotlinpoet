@@ -4327,6 +4327,28 @@ class TypeSpecTest {
       )
   }
 
+  @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER) annotation class FieldOrParam
+
+  @Test
+  fun annotatedConstructorPropertyKeepsOriginalTargets() {
+    val parameter = ParameterSpec.builder("id", INT).addAnnotation(Suppress::class).build()
+    val type =
+      TypeSpec.classBuilder("Example")
+        .primaryConstructor(FunSpec.constructorBuilder().addParameter(parameter).build())
+        .addProperty(
+          PropertySpec.builder("id", INT)
+            .initializer("id")
+            .addAnnotation(FieldOrParam::class)
+            .build()
+        )
+        .build()
+
+    val source = toString(type)
+    assertThat(source).contains("@field:")
+    assertThat(source).contains("@param:Suppress")
+    assertThat(source).contains("public val id: Int,")
+  }
+
   @Test
   fun classHeaderAnnotations() {
     val idParameterSpec =

@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * Fix: Preserve annotation placement when combining constructor parameters and properties if the supplied annotation class declares both applicable Kotlin targets.
+
  * New: Support for companion extensions. (#2406)
  * New: Support for companion blocks. (#2431)
  * New: Deprecate support for context receivers. (#2413)
