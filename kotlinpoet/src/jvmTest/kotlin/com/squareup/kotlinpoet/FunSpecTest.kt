@@ -1331,6 +1331,64 @@ class FunSpecTest {
   }
 
   @Test
+  fun constructorDelegateWithMultilineArgument() {
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .addParameter("name", String::class)
+        .callThisConstructor(
+          CodeBlock.of("name"),
+          buildCodeBlock {
+            beginControlFlow("computeValue")
+            addStatement("fallback()")
+            endControlFlow()
+          },
+        )
+        .addStatement("println()")
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor(name: kotlin.String) : this(
+        |  name,
+        |  computeValue {
+        |    fallback()
+        |  },
+        |) {
+        |  println()
+        |}
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
+  fun constructorDelegateWithMultilinePositionalArgument() {
+    val lambda = buildCodeBlock {
+      beginControlFlow("computeValue")
+      addStatement("fallback()")
+      endControlFlow()
+    }
+    val funSpec =
+      FunSpec.constructorBuilder()
+        .callSuperConstructor(CodeBlock.of("%2L,\n%1L", lambda, "first"))
+        .build()
+
+    assertThat(funSpec.toString())
+      .isEqualTo(
+        """
+        |public constructor() : super(
+        |  first,
+        |  computeValue {
+        |    fallback()
+        |  },
+        |)
+        |"""
+          .trimMargin()
+      )
+  }
+
+  @Test
   fun addingDelegateParametersToNonConstructorForbidden() {
     assertFailure { FunSpec.builder("main").callThisConstructor("a", "b", "c") }
       .isInstanceOf<IllegalStateException>()

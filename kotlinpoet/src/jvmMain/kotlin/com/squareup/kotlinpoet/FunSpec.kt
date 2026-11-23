@@ -185,7 +185,17 @@ private constructor(
 
     if (delegateConstructor != null) {
       codeWriter.emitCode(
-        delegateConstructorArguments.joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+        if (delegateConstructorArguments.none { '\n' in it.toString() }) {
+          delegateConstructorArguments.joinToCode(prefix = " : $delegateConstructor(", suffix = ")")
+        } else {
+          delegateConstructorArguments.joinToCode(
+            prefix = " : $delegateConstructor(\n⇥",
+            separator = "\n",
+            suffix = "\n⇤)",
+          ) { argument ->
+            CodeBlock.of("%L,", argument.trimTrailingNewLine())
+          }
+        }
       )
     }
   }

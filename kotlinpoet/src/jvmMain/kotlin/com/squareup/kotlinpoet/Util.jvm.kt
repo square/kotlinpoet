@@ -31,7 +31,7 @@ internal actual fun <T> Collection<T>.toImmutableSet(): Set<T> =
 internal fun CodeBlock.ensureEndsWithNewLine() = trimTrailingNewLine('\n')
 
 // TODO Waiting for `CodeBlock` migration.
-internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
+internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null): CodeBlock =
   if (isEmpty()) {
     this
   } else {
@@ -51,6 +51,8 @@ internal fun CodeBlock.trimTrailingNewLine(replaceWith: Char? = null) =
           } else if (replaceWith != null) {
             formatParts += "$replaceWith"
           }
+        } else if (lastArg is CodeBlock && lastFormatPart == "%L") {
+          args[args.size - 1] = lastArg.trimTrailingNewLine(replaceWith)
         }
       } else {
         formatParts[formatParts.lastIndexOf(lastFormatPart)] = lastFormatPart.trimEnd('\n')
