@@ -75,6 +75,7 @@ private constructor(
     emitKdoc: Boolean = true,
     inline: Boolean = false,
     inlineAnnotations: Boolean = inline,
+    constructorParameter: ParameterSpec? = null,
   ) {
     val isInlineProperty =
       getter?.modifiers?.contains(KModifier.INLINE) ?: false &&
@@ -84,6 +85,16 @@ private constructor(
       codeWriter.emitKdoc(kdoc.ensureEndsWithNewLine())
     }
     codeWriter.emitAnnotations(annotations, inlineAnnotations)
+    if (constructorParameter != null) {
+      for (annotation in constructorParameter.annotations) {
+        annotation.emit(
+          codeWriter,
+          inline = false,
+          defaultTarget = AnnotationSpec.UseSiteTarget.PARAM,
+        )
+        codeWriter.emit("\n")
+      }
+    }
     if (contextParameters.isNotEmpty()) {
       codeWriter.emitContextParameters(contextParameters, suffix = "\n")
     } else {
@@ -152,10 +163,6 @@ private constructor(
 
   internal fun fromPrimaryConstructorParameter(parameter: ParameterSpec): PropertySpec {
     val builder = toBuilder()
-    builder.annotations.replaceAll { it.onConstructorProperty(parameter = false) }
-    for (annotation in parameter.annotations) {
-      builder.addAnnotation(annotation.onConstructorProperty(parameter = true))
-    }
     builder.isPrimaryConstructorParameter = true
     builder.modifiers += parameter.modifiers
     if (builder.kdoc.isEmpty()) {

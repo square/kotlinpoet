@@ -1872,7 +1872,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
         """
         public class ParameterAnnotations(
           @property:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "${'$'}{'${'$'}'}a")
-          @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
+          @param:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
           public val param1: kotlin.String,
           @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
           param2: kotlin.String,
@@ -1899,7 +1899,7 @@ class KotlinPoetMetadataSpecsTest : MultiClassInspectorTest() {
       .isEqualTo(
         """
         public class ParameterAnnotations(
-          @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
+          @param:com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "b")
           public val param1: kotlin.String,
           @com.squareup.kotlinpoet.metadata.specs.KotlinPoetMetadataSpecsTest.CustomAnnotation(name = "2")
           param2: kotlin.String,

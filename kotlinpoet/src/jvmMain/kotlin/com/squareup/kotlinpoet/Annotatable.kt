@@ -45,10 +45,8 @@ public interface Annotatable {
         "Java reflection APIs don't give complete information on Kotlin types. Consider " +
           "using the kotlinpoet-metadata APIs instead."
     )
-    public fun addAnnotation(annotation: Class<*>): T =
-      addAnnotation(AnnotationSpec.builderForClass(annotation).build())
+    public fun addAnnotation(annotation: Class<*>): T = addAnnotation(annotation.asClassName())
 
-    public fun addAnnotation(annotation: KClass<*>): T =
-      addAnnotation(AnnotationSpec.builderForClass(annotation.java).build())
+    public fun addAnnotation(annotation: KClass<*>): T = addAnnotation(annotation.asClassName())
   }
 }

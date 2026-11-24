@@ -41,32 +41,20 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
   public val members: List<CodeBlock> = builder.members.toImmutableList()
   public val useSiteTarget: UseSiteTarget? = builder.useSiteTarget
 
-  private val annotationClass = builder.annotationClass
-
-  internal fun onConstructorProperty(parameter: Boolean): AnnotationSpec {
-    if (useSiteTarget != null) return this
-    val targets = annotationClass?.getAnnotation(Target::class.java)?.allowedTargets ?: return this
-    if (AnnotationTarget.VALUE_PARAMETER !in targets) return this
-    val propertyTarget =
-      when {
-        AnnotationTarget.PROPERTY in targets -> UseSiteTarget.PROPERTY
-        AnnotationTarget.FIELD in targets -> UseSiteTarget.FIELD
-        else -> return this
-      }
-    return toBuilder().useSiteTarget(if (parameter) UseSiteTarget.PARAM else propertyTarget).build()
-  }
-
   /** Lazily-initialized toString of this AnnotationSpec. */
   private val cachedString by
     lazy(NONE) { buildCodeString { emit(this, inline = true, asParameter = false) } }
 
-  internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
+  internal fun emit(
+    codeWriter: CodeWriter,
+    inline: Boolean,
+    asParameter: Boolean = false,
+    defaultTarget: UseSiteTarget? = null,
+  ) {
     if (!asParameter) {
       codeWriter.emit("@")
     }
-    if (useSiteTarget != null) {
-      codeWriter.emit(useSiteTarget.keyword + ":")
-    }
+    (useSiteTarget ?: defaultTarget)?.let { codeWriter.emit(it.keyword + ":") }
     codeWriter.emitCode("%T", typeName)
 
     if (members.isEmpty() && !asParameter) {
@@ -102,7 +90,6 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
 
   public fun toBuilder(): Builder {
     val builder = Builder(typeName)
-    builder.annotationClass = annotationClass
     builder.members += members
     builder.useSiteTarget = useSiteTarget
     builder.tags += tagMap.tags
@@ -135,7 +122,6 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
 
   public class Builder internal constructor(internal val typeName: TypeName) :
     Taggable.Builder<Builder> {
-    internal var annotationClass: Class<*>? = null
     internal var useSiteTarget: UseSiteTarget? = null
 
     public val members: MutableList<CodeBlock> = mutableListOf()
@@ -264,9 +250,6 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
       return builder.build()
     }
 
-    internal fun builderForClass(type: Class<*>): Builder =
-      builder(type.asClassName()).apply { annotationClass = type }
-
     @JvmStatic public fun builder(type: ClassName): Builder = Builder(type)
 
     @JvmStatic public fun builder(type: ParameterizedTypeName): Builder = Builder(type)
@@ -277,9 +260,9 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
           "using the kotlinpoet-metadata APIs instead."
     )
     @JvmStatic
-    public fun builder(type: Class<out Annotation>): Builder = builderForClass(type)
+    public fun builder(type: Class<out Annotation>): Builder = builder(type.asClassName())
 
     @JvmStatic
-    public fun builder(type: KClass<out Annotation>): Builder = builderForClass(type.java)
+    public fun builder(type: KClass<out Annotation>): Builder = builder(type.asClassName())
   }
 }

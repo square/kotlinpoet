@@ -230,6 +230,7 @@ private constructor(
                 withInitializer = false,
                 inline = true,
                 inlineAnnotations = false,
+                constructorParameter = param,
               )
               param.emitDefaultValue(codeWriter)
             } else {

@@ -3,8 +3,6 @@ Change Log
 
 ## Unreleased
 
- * Fix: Preserve annotation placement when combining constructor parameters and properties if the supplied annotation class declares both applicable Kotlin targets.
-
  * New: Support for companion extensions. (#2406)
  * New: Support for companion blocks. (#2431)
  * New: Deprecate support for context receivers. (#2413)
@@ -15,6 +13,7 @@ Change Log
  * Fix: Emitting a long line no longer takes quadratic time. (#2420)
  * Fix: Preserve KSP type-use annotations when converting types to KotlinPoet type names. (#2422)
  * Fix: Copies of type names retain their specific return type when tags are not specified. (#2429)
+ * New: Emit `@param:` for untargeted constructor parameter annotations when merging a parameter with a property. (#2442)
 
 ## Version 2.4.0
 
