@@ -94,4 +94,25 @@ class StringsTest {
         "public fun getString(): kotlin.String = \"\"\"SELECT * FROM socialFeedItem WHERE message IS NOT NULL AND userId \${ if (userId == null) \"IS\" else \"=\" } ?1 ORDER BY datetime(creation_time) DESC\"\"\"\n"
       )
   }
+
+  // https://github.com/square/kotlinpoet/issues/2440
+  @Test
+  fun singleLineStringTemplateWithTripleQuotes() {
+    val funSpec =
+      FunSpec.builder("getString").returns(STRING).addStatement("return %P", ">\"\"\"<").build()
+    assertThat(funSpec.toString())
+      .isEqualTo("public fun getString(): kotlin.String = \"\"\">\"\"\${'\"'}<\"\"\"\n")
+
+    assertThat(CodeBlock.of("%P", "\"\"\"\"\"\"").toString())
+      .isEqualTo("\"\"\"\"\"\${'\"'}\"\"\${'\"'}\"\"\"")
+    assertThat(CodeBlock.of("%P", "a\"\"\"b\"\"\"\"c").toString())
+      .isEqualTo("\"\"\"a\"\"\${'\"'}b\"\"\${'\"'}\"c\"\"\"")
+    assertThat(
+        PropertySpec.builder("CONST_TRIPLE", STRING, KModifier.CONST)
+          .initializer("%P", ">\"\"\"<")
+          .build()
+          .toString()
+      )
+      .isEqualTo("const val CONST_TRIPLE: kotlin.String = \"\"\">\"\"\${'\"'}<\"\"\"\n")
+  }
 }

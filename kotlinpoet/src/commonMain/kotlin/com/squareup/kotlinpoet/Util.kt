@@ -121,7 +121,15 @@ internal fun stringLiteralWithQuotes(
     // using pre-formatted strings allows us to get away with not escaping symbols that would
     // normally require escaping, e.g. "foo ${"bar"} baz"
     if (isInsideRawString) result.append("\"\"\"") else result.append('"')
-    for (c in value) {
+    var i = 0
+    while (i < value.length) {
+      val c = value[i++]
+      // Don't inadvertently end the raw string too early.
+      if (isInsideRawString && c == '"' && value.regionMatches(i - 1, "\"\"\"", 0, 3)) {
+        result.append("\"\"\${'\"'}")
+        i += 2
+        continue
+      }
       // Trivial case: single quote must not be escaped.
       if (c == '\'') {
         result.append("'")
