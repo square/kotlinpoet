@@ -196,15 +196,21 @@ internal class CodeWriter(
     }
   }
 
+  private fun needsWhereBlock(typeVariables: List<TypeVariableName>): Boolean =
+    typeVariables.any { it.bounds.size > 1 } ||
+      (typeVariables.size > 1 &&
+        typeVariables.any { it.bounds.any { bound -> bound != NULLABLE_ANY } })
+
   /**
-   * Emit type variables with their bounds. If a type variable has more than a single bound - call
-   * [emitWhereBlock] with same input to produce an additional `where` block.
+   * Emit type variables with their bounds. Call [emitWhereBlock] with the same input to emit
+   * constraints that were omitted from this declaration.
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  fun emitTypeVariables(typeVariables: List<TypeVariableName>) {
+  fun emitTypeVariables(typeVariables: List<TypeVariableName>, allowWhereBlock: Boolean = true) {
     if (typeVariables.isEmpty()) return
 
+    val useWhereBlock = allowWhereBlock && needsWhereBlock(typeVariables)
     emit("<")
     typeVariables.forEachIndexed { index, typeVariable ->
       if (index > 0) emit(", ")
@@ -215,7 +221,9 @@ internal class CodeWriter(
         emit("reified ")
       }
       emitCode("%L", typeVariable.name)
-      if (typeVariable.bounds.size == 1 && typeVariable.bounds[0] != NULLABLE_ANY) {
+      if (
+        !useWhereBlock && typeVariable.bounds.size == 1 && typeVariable.bounds[0] != NULLABLE_ANY
+      ) {
         emitCode(" : %T", typeVariable.bounds[0])
       }
     }
@@ -223,16 +231,16 @@ internal class CodeWriter(
   }
 
   /**
-   * Emit a `where` block containing type bounds for each type variable that has at least two
-   * bounds.
+   * Emit a `where` block for multiple bounds or for bounded declarations with multiple type
+   * variables.
    */
   fun emitWhereBlock(typeVariables: List<TypeVariableName>) {
-    if (typeVariables.isEmpty()) return
+    if (!needsWhereBlock(typeVariables)) return
 
     var firstBound = true
     for (typeVariable in typeVariables) {
-      if (typeVariable.bounds.size > 1) {
-        for (bound in typeVariable.bounds) {
+      for (bound in typeVariable.bounds) {
+        if (bound != NULLABLE_ANY) {
           if (!firstBound) emitCode(", ") else emitCode(" where ")
           emitCode("%L : %T", typeVariable.name, bound)
           firstBound = false

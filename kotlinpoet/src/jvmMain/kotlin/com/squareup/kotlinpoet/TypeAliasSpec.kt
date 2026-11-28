@@ -38,7 +38,7 @@ private constructor(builder: Builder, private val tagMap: TagMap = builder.build
     codeWriter.emitAnnotations(annotations, false)
     codeWriter.emitModifiers(modifiers, setOf(PUBLIC))
     codeWriter.emitCode("typealias %N", name)
-    codeWriter.emitTypeVariables(typeVariables)
+    codeWriter.emitTypeVariables(typeVariables, allowWhereBlock = false)
     codeWriter.emitCode(" = %T", type)
     codeWriter.emit("\n")
   }

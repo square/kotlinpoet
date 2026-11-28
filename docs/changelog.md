@@ -3,6 +3,8 @@ Change Log
 
 ## Unreleased
 
+ * New: Emit type constraints in a `where` clause when multiple type parameters include a bound.
+
  * New: Support for companion extensions. (#2406)
  * New: Support for companion blocks. (#2431)
  * New: Deprecate support for context receivers. (#2413)
